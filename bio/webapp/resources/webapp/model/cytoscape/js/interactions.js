@@ -233,9 +233,9 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
         jQuery('#cytoWebContent').height(600)
                                .width(1000);
         vis.panZoomControlVisible(true);
-        vis.zoom(1.5);  // Change the scale of the network until it fits the screen, vis.zoomToFit() is too small
         jQuery('#caption').html("[Right click a node or edge for more options]");   // Change the caption
         vis.removeListener("click", "none");    // mimic of jQuery.one('click', func)
+        vis.zoomToFit();  // Change the scale of the network until it fits the screen, vis.zoom(1.5) is over-sized
     });
   });
 

@@ -20,9 +20,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 
 /**
  * This class has the logics to query the database for interaction information.
@@ -39,20 +37,19 @@ public class CytoscapeInteractionDBQuerier
     /**
      * Find genes that interact with the hub gene.
      *
-     * @param genePID hub gene
+     * @param geneId the InterMine id, hub gene
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return a set of genes
      */
-    public Set<String> findInteractingGenes(String geneId, Model model,
+    public Set<Integer> findInteractingGenes(String geneId, Model model,
             PathQueryExecutor executor) {
 
         PathQuery q = new PathQuery(model);
 
-        Set<String> interactingGeneSet = new HashSet<String>();
+        Set<Integer> interactingGeneSet = new HashSet<Integer>();
 
         q.addView("Gene.interactions.interactingGenes.id");
-        q.addOrderBy("Gene.interactions.interactingGenes.id", OrderDirection.ASC);
         q.addConstraint(Constraints.eq("Gene.id", geneId));
 
         ExportResultsIterator results = executor.execute(q);
@@ -61,8 +58,7 @@ public class CytoscapeInteractionDBQuerier
             List<ResultElement> row = results.next();
 
             // parse returned data
-            String interactingGene = (Integer.toString((Integer) row.get(0).getField()));
-            //String interactingGene = (String)row.get(0).getField();
+            Integer interactingGene = (Integer) row.get(0).getField();
             interactingGeneSet.add(interactingGene);
         }
 
@@ -77,7 +73,7 @@ public class CytoscapeInteractionDBQuerier
      * @param executor the PathQueryExecutor
      * @return raw query results
      */
-    public ExportResultsIterator queryInteractions(Set<String> keys, Model model,
+    public ExportResultsIterator queryInteractions(Set<Integer> keys, Model model,
             PathQueryExecutor executor) {
 
         PathQuery q = new PathQuery(model);
@@ -85,8 +81,6 @@ public class CytoscapeInteractionDBQuerier
         if (keys == null || keys.size() < 1) {
             return null;
         }
-
-        String bag = StringUtil.join(keys, ",");
 
         q.addViews("Gene.primaryIdentifier",
                 "Gene.symbol",
@@ -98,9 +92,8 @@ public class CytoscapeInteractionDBQuerier
                 "Gene.id", //object store id
                 "Gene.interactions.interactingGenes.id");
 
-        //q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", bag, ""), "B");
-        q.addConstraint(Constraints.lookup("Gene.interactions.interactingGenes", bag, ""), "A");
+        q.addConstraint(Constraints.inIds("Gene", keys), "B");
+        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes", keys), "A");
         q.setConstraintLogic("B and A");
 
         ExportResultsIterator results = executor.execute(q);
@@ -118,9 +111,9 @@ public class CytoscapeInteractionDBQuerier
      * @return raw query results
      */
     public ExportResultsIterator extendNetwork(String geneId,
-            Set<String> keys, Model model, PathQueryExecutor executor) {
+            Set<Integer> keys, Model model, PathQueryExecutor executor) {
 
-        Set<String> interactingGeneSet = findInteractingGenes(geneId, model, executor);
+        Set<Integer> interactingGeneSet = findInteractingGenes(geneId, model, executor);
         keys.addAll(interactingGeneSet);
         ExportResultsIterator results = queryInteractions(keys, model, executor);
 
