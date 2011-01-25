@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.template.result;
+package org.intermine.web.logic.template;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
