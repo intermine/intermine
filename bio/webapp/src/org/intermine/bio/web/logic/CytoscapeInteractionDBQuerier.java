@@ -51,8 +51,8 @@ public class CytoscapeInteractionDBQuerier
 
         Set<String> interactingGeneSet = new HashSet<String>();
 
-        q.addView("Gene.interactions.interactingGenes.primaryIdentifier");
-        q.addOrderBy("Gene.interactions.interactingGenes.primaryIdentifier", OrderDirection.ASC);
+        q.addView("Gene.interactions.interactingGenes.id");
+        q.addOrderBy("Gene.interactions.interactingGenes.id", OrderDirection.ASC);
         q.addConstraint(Constraints.eq("Gene.id", geneId));
 
         ExportResultsIterator results = executor.execute(q);
@@ -61,7 +61,8 @@ public class CytoscapeInteractionDBQuerier
             List<ResultElement> row = results.next();
 
             // parse returned data
-            String interactingGene = (String) row.get(0).getField();
+            String interactingGene = (Integer.toString((Integer) row.get(0).getField()));
+            //String interactingGene = (String)row.get(0).getField();
             interactingGeneSet.add(interactingGene);
         }
 
@@ -97,7 +98,7 @@ public class CytoscapeInteractionDBQuerier
                 "Gene.id", //object store id
                 "Gene.interactions.interactingGenes.id");
 
-        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        //q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
         q.addConstraint(Constraints.lookup("Gene", bag, ""), "B");
         q.addConstraint(Constraints.lookup("Gene.interactions.interactingGenes", bag, ""), "A");
         q.setConstraintLogic("B and A");
