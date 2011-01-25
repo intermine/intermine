@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -61,8 +61,8 @@ public class CytoscapeInteractionDataGenerator
      * @return the network in XGMML format as a string or text
      */
     public String createGeneNetworkInXGMML(
-            Set<CytoscapeNetworkEdgeData> interactionEdgeSet,
-            Set<CytoscapeNetworkNodeData> interactionNodeSet) {
+            Set<CytoscapeNetworkNodeData> interactionNodeSet,
+            Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
 
         StringBuffer sb = new StringBuffer();
         sb = addHeaderToGeneNetworkInXGMML(sb);
