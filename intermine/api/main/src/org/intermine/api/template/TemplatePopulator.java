@@ -42,6 +42,7 @@ import org.intermine.util.DynamicUtil;
 public final class TemplatePopulator
 {
     private TemplatePopulator() {
+        // don't
     }
 
     /**
@@ -59,8 +60,8 @@ public final class TemplatePopulator
             Map<String, List<TemplateValue>> newConstraints) {
         TemplateQuery template = origTemplate.clone();
         template.setEdited(true);
-        Set<List<TemplateValue>> providedValues 
-        	= new HashSet<List<TemplateValue>>(newConstraints.values());
+        Set<List<TemplateValue>> providedValues = new HashSet<List<TemplateValue>>(
+                newConstraints.values());
 
         for (String editablePath : template.getEditablePaths()) {
             List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
@@ -92,18 +93,18 @@ public final class TemplatePopulator
                     }
                 }
                 if (!found) {
-                	if (! template.isOptional(con)) {
-                		throw new TemplatePopulatorException(
-                				"No value provided for required constraint " + con);
-                	}
+                    if (!template.isOptional(con)) {
+                        throw new TemplatePopulatorException(
+                                "No value provided for required constraint " + con);
+                    }
                     template.removeConstraint(con);
                 }
             }
             providedValues.remove(values);
         }
-        if (! providedValues.isEmpty()) {
-        	throw new TemplatePopulatorException("Values provided for non-existent constraints: "
-        		+ providedValues);
+        if (!providedValues.isEmpty()) {
+            throw new TemplatePopulatorException("Values provided for non-existent constraints: "
+                + providedValues);
         }
         return template;
     }
