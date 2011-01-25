@@ -26,7 +26,7 @@
   <li>Human SNPs (including dbSNP 131) - Ensembl 60</li>
   <li>Human GWAS results - Ensembl 60</li>
   <li>Human gene names and symbols - NCBI and HGNC</li>
-  <li>Human gene names and symbols - MGI</li>
+  <li>Mouse gene names and symbols - MGI</li>
   <li>Human and Mouse protein sequences and information - Uniprot 2011_01</li>
   <li>Human and Mouse protein domains - InterPro</li>
   <li>Human and Mouse Gene Ontology (GO) terms - UniProt and MGI</li>
