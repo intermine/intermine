@@ -10,30 +10,34 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplatePopulatorException;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateResultInput;
 
 /**
  * Implementation of <strong>Action</strong> that runs a template
@@ -42,8 +46,11 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class LoadTemplateAction extends DispatchAction
 {
+
+    private static final Logger LOG = Logger.getLogger(LoadTemplateAction.class);
     /**
-     * Load a query from path query XML passed as a request parameter.
+     * Load a template from template name passed as parameter.
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -52,73 +59,52 @@ public class LoadTemplateAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward method(ActionMapping mapping,
-                             ActionForm form,
-                              HttpServletRequest request,
+    public ActionForward results(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        String trail = request.getParameter("trail");
-        String queryXml = request.getParameter("query");
-        Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
-        String exportFormat = request.getParameter("exportFormat");
 
+        // forward to list or results
+        String forward = request.getParameter("forward");
+        // or export
+        String exportFormat = request.getParameter("format");
+        // template name
+        String name = request.getParameter("name");
 
-        PathQuery query = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
-                PathQuery.USERPROFILE_VERSION);
-        BagManager bagManager = im.getBagManager();
+        TemplateResultInput input = new TemplateResultInput();
+        // parse constraints from request
+        input.setConstraints(TemplateHelper.parseConstraints(request));
+        input.setName(name);
 
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-        for (String bagName : query.getBagNames()) {
-            if (!allBags.containsKey(bagName)) {
-                throw new RuntimeException("Saved bag (list) '" + bagName + "' not found for "
-                        + "profile: " + profile.getUsername() + ", referenced in query: " + query);
-            }
+        TemplateManager templateManager = im.getTemplateManager();
+        TemplateQuery template = templateManager.getGlobalTemplate(name);
+        if (template == null) {
+            throw new RuntimeException("template not found: " + name);
         }
 
-        if (exportFormat == null) {
-            SessionMethods.loadQuery(query, session, response);
-            if (!skipBuilder.booleanValue()) {
-                return mapping.findForward("query");
-            } else {
-                String qid = SessionMethods.startQueryWithTimeout(request, false, query);
-                Thread.sleep(200); // slight pause in the hope of avoiding holding page
-                return new ForwardParameters(mapping.findForward("waiting"))
-                                   .addParameter("trail", trail)
-                                   .addParameter("qid", qid).forward();
-            }
-        } else {
-            PagedTable pt = null;
-            try {
-                WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-                pt = new PagedTable(executor.execute(query));
+        Map<String, List<TemplateValue>> templateValues = TemplateHelper.getValuesFromInput(
+                template, input);
 
-                if (pt.getWebTable() instanceof WebResults) {
-                    ((WebResults) pt.getWebTable()).goFaster();
-                }
-
-                WebConfig webConfig = SessionMethods.getWebConfig(request);
-                TableExporterFactory factory = new TableExporterFactory(webConfig);
-
-                TableHttpExporter exporter = factory.getExporter(exportFormat);
-
-                if (exporter == null) {
-                    throw new RuntimeException("unknown export format: " + exportFormat);
-                }
-
-                exporter.export(pt, request, response, null);
-
-                // If null is returned then no forwarding is performed and
-                // to the output is not flushed any jsp output, so user
-                // will get only required export data
-                return null;
-            } finally {
-                if (pt != null && pt.getWebTable() instanceof WebResults) {
-                    ((WebResults) pt.getWebTable()).releaseGoFaster();
-                }
-            }
+        // make new template
+        try {
+            template =
+                TemplatePopulator.getPopulatedTemplate(template, templateValues);
+        } catch (TemplatePopulatorException e) {
+            throw new RuntimeException("Error in applying constraint values to template: "
+                    + name);
         }
+
+        // run query
+        if (true) {
+            SessionMethods.loadQuery(template, session, response);
+            String qid = SessionMethods.startQueryWithTimeout(request, false, template);
+            Thread.sleep(200); // slight pause in the hope of avoiding holding page
+            return new ForwardParameters(mapping.findForward("waiting"))
+                .addParameter("qid", qid).forward();
+
+
+        }
+        return null;
     }
 }
