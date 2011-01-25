@@ -64,7 +64,7 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
 
     vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
         var data = evt.target.data;
-        url = webapp_baseurl+"/" + webapp_path + "/portal.do?externalid=" + data.id + "&class=Gene";
+        url = webapp_baseurl+"/" + webapp_path + "/objectDetails.do?id=" + data.id;
         window.open(url);
     })
 
