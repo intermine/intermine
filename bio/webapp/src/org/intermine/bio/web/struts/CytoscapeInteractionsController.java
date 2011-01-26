@@ -34,7 +34,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.bio.web.logic.CytoscapeInteractionDBQuerier;
+import org.intermine.bio.web.logic.CytoscapeInteractionDBQueryRunner;
 import org.intermine.bio.web.logic.CytoscapeInteractionDataGenerator;
 import org.intermine.bio.web.logic.CytoscapeInteractionUtil;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
@@ -203,7 +203,7 @@ public class CytoscapeInteractionsController extends TilesAction
         keySet.add(gene.getId());
 
         // Get all the genes that interact with the hub gene
-        CytoscapeInteractionDBQuerier dbQuerier = new CytoscapeInteractionDBQuerier();
+        CytoscapeInteractionDBQueryRunner dbQuerier = new CytoscapeInteractionDBQueryRunner();
         Set<Integer> interactingGeneSet = dbQuerier.findInteractingGenes(
                 String.valueOf(gene.getId()), model, executor);
         if (interactingGeneSet.size() < 1) {
