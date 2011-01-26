@@ -750,7 +750,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
-                createTable(conn);
+                DatabaseUtil.createBagValuesTables(conn);
             }
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
@@ -773,18 +773,6 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         } finally {
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
-        }
-    }
-
-    private void createTable(Connection con) {
-        String sqlTable = "CREATE TABLE " + BAG_VALUES + " (savedbagid integer, value text)";
-        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON " + BAG_VALUES
-                          + " (savedbagid, value)";
-        try {
-            con.createStatement().execute(sqlTable);
-            con.createStatement().execute(sqlIndex);
-        } catch (SQLException sqle) {
-            LOG.warn("Error creatin table or index for bagvalues", sqle);
         }
     }
 
