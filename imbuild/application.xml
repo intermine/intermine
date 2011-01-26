@@ -104,7 +104,7 @@
 	
   <target name="load-bagvalues-table" depends="-init-properties, -init-build-db">
     <load-bagvalues-table osAlias="${objectstore.name}"
-	                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
+	                            userProfileAlias="${userprofile.objectstore.name}"/>
   </target>
 
   <target name="write-templatetrack-xml" depends="-init-properties, -init-build-db">
