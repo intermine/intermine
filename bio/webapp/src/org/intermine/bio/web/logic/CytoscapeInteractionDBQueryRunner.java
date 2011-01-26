@@ -28,10 +28,10 @@ import org.intermine.pathquery.PathQuery;
  * @author Fengyuan Hu
  *
  */
-public class CytoscapeInteractionDBQuerier
+public class CytoscapeInteractionDBQueryRunner
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionDBQuerier.class);
+    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionDBQueryRunner.class);
 
     //========== for normal gene-gene interaction ==========
     /**
