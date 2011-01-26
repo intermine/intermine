@@ -442,7 +442,8 @@ public class ProfileManager
     }
 
     /**
-     * Creates a profile in the userprofile database.
+     * Creates a profile in the userprofile database withou adding bag.
+     * Method used by the ProfielReadXml.
      *
      * @param profile a Profile object
      */
