@@ -34,7 +34,7 @@ public class TrackerDelegate
     public TrackerDelegate(Map<String, Tracker> trackers) {
         this.trackers = trackers;
         if (!trackers.isEmpty()) {
-            templateTracker = (TemplateTracker) trackers.get(TemplateTracker.getTrackerName());
+            templateTracker = (TemplateTracker) trackers.get(TemplateTracker.TRACKER_NAME);
         }
     }
 
