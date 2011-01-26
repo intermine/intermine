@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -479,6 +480,35 @@ public final class DatabaseUtil
     }
 
     /**
+     * Tests if a table exists in the database
+     *
+     * @param con a connection to a database
+     * @param tableName the name of a table to test for
+     * @return true if the table exists, false otherwise
+     * @throws SQLException if an error occurs in the underlying database
+     * @throws NullPointerException if tableName is null
+     */
+    public static boolean columnExists(Connection con, String tableName, String columnName) throws SQLException {
+        if (tableName == null) {
+            throw new NullPointerException("tableName cannot be null");
+        }
+        if (columnName == null) {
+            throw new NullPointerException("columnName cannot be null");
+        }
+
+        ResultSet res = con.getMetaData().getColumns(null, null, tableName, columnName);
+
+        while (res.next()) {
+            if (res.getString(3).equals(tableName)
+                && res.getString(4).equals(columnName)
+                && res.getInt(5) == Types.BOOLEAN) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Removes every single table from the database given.
      *
      * @param con the Connection to the database
@@ -813,6 +843,33 @@ public final class DatabaseUtil
         s.execute(indexCreateSql);
 
         s.execute("ANALYSE " + tableName);
+    }
+
+    /**
+     * Create the table 'bagvalues' containing the values of the key field objects
+     * contained in a bag
+     * @param con the Connection to use
+     * @throws SQLException if there is a database problem
+     */
+    public static void createBagValuesTables(Connection con)
+        throws SQLException {
+        String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text)";
+        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value)";
+        con.createStatement().execute(sqlTable);
+        con.createStatement().execute(sqlIndex);
+    }
+
+    /**
+     * Add the column intermine_current (type boolean) in the savedbag table
+     * @param con the connection to use
+     * @throws SQLException if there is a database problem
+     */
+    public static void addIntermineCurrentColumn(Connection con)
+        throws SQLException {
+        String sqlAddIntermineCurrentColumn = "ALTER TABLE savedbag ADD COLUMN intermine_current boolean";
+        String sqlUpdateCurrentColumnValue = "UPDATE savedbag SET intermine_current=true";
+        con.createStatement().execute(sqlAddIntermineCurrentColumn);
+        con.createStatement().execute(sqlUpdateCurrentColumnValue);
     }
 }
 
