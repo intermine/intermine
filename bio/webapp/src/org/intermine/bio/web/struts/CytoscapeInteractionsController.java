@@ -35,7 +35,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.logic.CytoscapeInteractionDBQueryRunner;
-import org.intermine.bio.web.logic.CytoscapeInteractionDataGenerator;
+import org.intermine.bio.web.logic.CytoscapeInteractionNetworkGenerator;
 import org.intermine.bio.web.logic.CytoscapeInteractionUtil;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
@@ -94,7 +94,7 @@ public class CytoscapeInteractionsController extends TilesAction
 
         String theNetwork = new String(); // Network data as a string in different formats
 
-        CytoscapeInteractionDataGenerator dataGen = new CytoscapeInteractionDataGenerator();
+        CytoscapeInteractionNetworkGenerator dataGen = new CytoscapeInteractionNetworkGenerator();
 
         // Whether the object is a Gene or Protein
         if (object instanceof Protein) {

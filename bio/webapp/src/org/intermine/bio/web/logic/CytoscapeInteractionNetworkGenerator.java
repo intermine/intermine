@@ -25,10 +25,10 @@ import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
  * @author Fengyuan Hu
  *
  */
-public class CytoscapeInteractionDataGenerator
+public class CytoscapeInteractionNetworkGenerator
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionDataGenerator.class);
+    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionNetworkGenerator.class);
 
     //============ for SIF format ============
     /**
