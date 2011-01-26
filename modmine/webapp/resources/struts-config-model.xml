@@ -91,8 +91,8 @@
 </action>
 
 <!-- Begining of Cytoscape Web configuration -->
-<action path="/initCytoscapeInteractionsDisplayer"
-        type="org.intermine.bio.web.struts.CytoscapeInteractionsController"/>
+<action path="/initCytoscapeNetworkDisplayer"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
 
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>

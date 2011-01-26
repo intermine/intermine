@@ -86,8 +86,8 @@
 </definition>
 
 <!-- Begining of Cytoscape Web configuration -->
-<definition name="cytoscapeInteractionsDisplayer.tile" path="/model/cytoscapeInteractionsDisplayer.jsp"
-        controllerUrl="/initCytoscapeInteractionsDisplayer.do"/>
+<definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
+        controllerUrl="/initCytoscapeNetworkDisplayer.do"/>
 <!-- End of Cytoscape Web configuration -->
 
 <!-- Begining of Span Upload configuration -->

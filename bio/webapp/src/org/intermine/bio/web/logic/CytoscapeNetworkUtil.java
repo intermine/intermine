@@ -29,13 +29,13 @@ import org.intermine.pathquery.PathQuery;
  *
  * @author Fengyuan Hu
  */
-public final class CytoscapeInteractionUtil
+public final class CytoscapeNetworkUtil
 {
-    protected static final Logger LOG = Logger.getLogger(CytoscapeInteractionUtil.class);
+    protected static final Logger LOG = Logger.getLogger(CytoscapeNetworkUtil.class);
 
     private static Map<String, Set<String>> interactionInfoMap = null;
 
-    private CytoscapeInteractionUtil() {
+    private CytoscapeNetworkUtil() {
         super();
     }
 
