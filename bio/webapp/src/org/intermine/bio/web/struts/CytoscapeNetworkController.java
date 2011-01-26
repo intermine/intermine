@@ -34,9 +34,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.bio.web.logic.CytoscapeInteractionDBQueryRunner;
-import org.intermine.bio.web.logic.CytoscapeInteractionNetworkGenerator;
-import org.intermine.bio.web.logic.CytoscapeInteractionUtil;
+import org.intermine.bio.web.logic.CytoscapeNetworkDBQueryRunner;
+import org.intermine.bio.web.logic.CytoscapeNetworkGenerator;
+import org.intermine.bio.web.logic.CytoscapeNetworkUtil;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
 import org.intermine.metadata.Model;
@@ -55,10 +55,10 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Fengyuan Hu
  *
  */
-public class CytoscapeInteractionsController extends TilesAction
+public class CytoscapeNetworkController extends TilesAction
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionsController.class);
+    private static final Logger LOG = Logger.getLogger(CytoscapeNetworkController.class);
 
     /**
      * {@inheritDoc}
@@ -80,7 +80,7 @@ public class CytoscapeInteractionsController extends TilesAction
         Profile profile = SessionMethods.getProfile(session); // Get Profile
         PathQueryExecutor executor = im.getPathQueryExecutor(profile); // Get PathQueryExecutor
 
-        Map<String, Set<String>> interactionInfoMap = CytoscapeInteractionUtil
+        Map<String, Set<String>> interactionInfoMap = CytoscapeNetworkUtil
                 .getInteractionInfo(model, executor);
 
         if (interactionInfoMap == null) {
@@ -94,7 +94,7 @@ public class CytoscapeInteractionsController extends TilesAction
 
         String theNetwork = new String(); // Network data as a string in different formats
 
-        CytoscapeInteractionNetworkGenerator dataGen = new CytoscapeInteractionNetworkGenerator();
+        CytoscapeNetworkGenerator dataGen = new CytoscapeNetworkGenerator();
 
         // Whether the object is a Gene or Protein
         if (object instanceof Protein) {
@@ -203,7 +203,7 @@ public class CytoscapeInteractionsController extends TilesAction
         keySet.add(gene.getId());
 
         // Get all the genes that interact with the hub gene
-        CytoscapeInteractionDBQueryRunner dbQuerier = new CytoscapeInteractionDBQueryRunner();
+        CytoscapeNetworkDBQueryRunner dbQuerier = new CytoscapeNetworkDBQueryRunner();
         Set<Integer> interactingGeneSet = dbQuerier.findInteractingGenes(
                 String.valueOf(gene.getId()), model, executor);
         if (interactingGeneSet.size() < 1) {

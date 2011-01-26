@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<!-- cytoscapeInteractionsDisplayer.jsp -->
+<!-- cytoscapeNetworkDisplayer.jsp -->
 
 <html:xhtml/>
 
@@ -115,4 +115,4 @@
     }
 </script>
 
-<!-- /cytoscapeInteractionsDisplayer.jsp -->
+<!-- /cytoscapeNetworkDisplayer.jsp -->

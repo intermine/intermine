@@ -357,7 +357,7 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="modmineGBrowse.tile"/>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
    <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
@@ -503,7 +503,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
