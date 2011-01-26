@@ -65,17 +65,6 @@ public class TrackerDelegate
     }
 
     /**
-     * Return the template name associated to the public template with the highest rank
-     * @return String the template name
-     */
-    public String getMostPopularTemplate() {
-        if (templateTracker != null) {
-            return templateTracker.getMostPopularTemplate();
-        }
-        return null;
-    }
-
-    /**
      * Return the list of public templates ordered by rank descendant.
      * @return List of template names
      */
