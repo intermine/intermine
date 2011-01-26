@@ -192,6 +192,14 @@ public class BagManagerTest extends TestCase
         assertEquals(userCompanyBag, bagManager.getUserOrGlobalBag(testUser, bagName));
     }
 
+    public void testGetCurrentUserOrGlobalBagsOfType() throws Exception {
+        Map<String, InterMineBag> expected = createExpected(globalAddressBag, userAddressBag);
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
+        globalAddressBag.setCurrent(false);
+        expected = createExpectedCurrent(globalAddressBag, userAddressBag);
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
+    }
+
     public void testGetUserOrGlobalBagsOfType() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalAddressBag, userAddressBag);
         assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(testUser, "Address"));
@@ -217,8 +225,9 @@ public class BagManagerTest extends TestCase
         storeAddress();
         globalAddressBag.addIdToBag(ADDRESS_ID, "Address");
         userAddressBag.addIdToBag(ADDRESS_ID, "Address");
+        userAddressBag.setCurrent(false);
 
-        Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpected(globalAddressBag, userAddressBag).values());
+        Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpectedCurrent(globalAddressBag, userAddressBag).values());
         try {
             assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
         } finally {
@@ -235,6 +244,16 @@ public class BagManagerTest extends TestCase
         Map<String, InterMineBag> expected = new HashMap<String, InterMineBag>();
         for(InterMineBag bag : bags) {
             expected.put(bag.getName(), bag);
+        }
+        return expected;
+    }
+    
+    private Map<String, InterMineBag> createExpectedCurrent(InterMineBag... bags) {
+        Map<String, InterMineBag> expected = new HashMap<String, InterMineBag>();
+        for(InterMineBag bag : bags) {
+            if (bag.isCurrent()) {
+                expected.put(bag.getName(), bag);
+            }
         }
         return expected;
     }
