@@ -151,7 +151,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
-    Map<Integer, SubmissionReference> submissionRefs = null;
+    Map<Integer, List<SubmissionReference>> submissionRefs = null;
     private IdResolverFactory flyResolverFactory = null;
     private IdResolverFactory wormResolverFactory = null;
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
@@ -1725,7 +1725,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes =
             new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
 
-        submissionRefs = new HashMap<Integer, SubmissionReference>();
+        submissionRefs = new HashMap<Integer, List<SubmissionReference>>();
 
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -1763,7 +1763,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (referencedSubId != null) {
                     SubmissionReference subRef =
                         new SubmissionReference(referencedSubId, wikiPageUrl);
-                    submissionRefs.put(submissionId, subRef);
+                    BioConverterUtil.addToListMap(submissionRefs, submissionId, subRef);
                     LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
                             + attValue + " (" + referencedSubId + ")");
                 } else {
@@ -1801,7 +1801,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // some submissions use reagents created in reference submissions, find the properties
         // of the reagents and add to referencing submission
         addSubmissionPropsFromReferencedSubmissions(subToTypes, props, submissionRefs);
-
+        
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -2123,24 +2123,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void addSubmissionPropsFromReferencedSubmissions(
             Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Map<String, SubmissionProperty> props,
-            Map<Integer, SubmissionReference> submissionRefs) {
-
-        for (Map.Entry<Integer, SubmissionReference> entry : submissionRefs.entrySet()) {
+            Map<Integer, List<SubmissionReference>> submissionRefs) {
+        
+        for (Map.Entry<Integer, List<SubmissionReference>> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
-            SubmissionReference subRef = entry.getValue();
-
-
-            List<AppliedData> refAppliedData = findAppliedDataFromReferencedSubmission(subRef);
-            for (AppliedData aData : refAppliedData) {
-                String possibleWikiUrl = aData.actualValue;
-                if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
-                    SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
-                    addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
+            
+            List<SubmissionReference> lref = entry.getValue();
+            Iterator<SubmissionReference> i = lref.iterator();
+            while (i.hasNext()) {
+                SubmissionReference ref = i.next();
+                List<AppliedData> refAppliedData = findAppliedDataFromReferencedSubmission(ref);
+                for (AppliedData aData : refAppliedData) {
+                    String possibleWikiUrl = aData.actualValue;
+                    if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
+                        SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
+                        addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
+                    }
                 }
             }
         }
     }
-
+   
     private List<AppliedData> findAppliedDataFromReferencedSubmission(SubmissionReference subRef) {
         List<AppliedData> foundAppliedData = new ArrayList<AppliedData>();
         findAppliedProtocolsAndDataFromReferencedSubmission(subRef, foundAppliedData, null);
@@ -3021,11 +3024,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void createRelatedSubmissions(Connection connection) throws ObjectStoreException {
         Map<Integer, Set<String>> relatedSubs = new HashMap<Integer, Set<String>>();
-        for (Map.Entry<Integer, SubmissionReference> entry : submissionRefs.entrySet()) {
+        
+        for (Map.Entry<Integer, List<SubmissionReference>> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
-            SubmissionReference ref = entry.getValue();
-            addRelatedSubmissions(relatedSubs, submissionId, ref.referencedSubmissionId);
-            addRelatedSubmissions(relatedSubs, ref.referencedSubmissionId, submissionId);
+            
+            List<SubmissionReference> lref = entry.getValue();
+            Iterator<SubmissionReference> i = lref.iterator();
+            while (i.hasNext()) {
+                SubmissionReference ref = i.next();
+                addRelatedSubmissions(relatedSubs, submissionId, ref.referencedSubmissionId);
+                addRelatedSubmissions(relatedSubs, ref.referencedSubmissionId, submissionId);
+                String dccId = dccIdMap.get(submissionId);
+            }
+            LOG.debug("RRSS11 " + relatedSubs.size() + "|" + relatedSubs.keySet() + "|" +
+                    relatedSubs.values());
         }
         for (Map.Entry<Integer, Set<String>> entry : relatedSubs.entrySet()) {
             ReferenceList related = new ReferenceList("relatedSubmissions",
@@ -3036,13 +3048,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void addRelatedSubmissions(Map<Integer, Set<String>> relatedSubs, Integer subId,
             Integer relatedId) {
-        Set<String> itemIds = relatedSubs.get(subId);
+        Integer subIdObjectId = submissionMap.get(subId).interMineObjectId;
+        Set<String> itemIds = relatedSubs.get(subIdObjectId);
         if (itemIds == null) {
             itemIds = new HashSet<String>();
             relatedSubs.put(submissionMap.get(subId).interMineObjectId, itemIds);
         }
         itemIds.add(submissionMap.get(relatedId).itemIdentifier);
+        LOG.info("RRSSadd1 " + subId + "->" + relatedId + "|" + itemIds);            
     }
+    
+    
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
         throws ObjectStoreException {
@@ -3107,7 +3123,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + " populated, this method needs to be called after"
                     + " processSubmissionProperties");
         }
-        SubmissionReference subRef = submissionRefs.get(submissionId);
+        //****************NNN
+        SubmissionReference subRef = submissionRefs.get(submissionId).get(0);
         if (subRef != null) {
             for (AppliedProtocol aProtocol : findAppliedProtocolsFromReferencedSubmission(subRef)) {
                 protocolIds.add(aProtocol.protocolId);
