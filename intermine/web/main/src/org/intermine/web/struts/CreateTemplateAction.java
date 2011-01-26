@@ -10,10 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +23,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
@@ -63,10 +58,8 @@ public class CreateTemplateAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -98,7 +91,8 @@ public class CreateTemplateAction extends InterMineAction
 
         // Check whether there is a template name clash
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
-            && (Boolean) session.getAttribute(Constants.NEW_TEMPLATE)) ? true : false;
+            && ((Boolean) session.getAttribute(Constants.NEW_TEMPLATE)).booleanValue())
+            ? true : false;
         String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (profile.getSavedTemplates().containsKey(template.getName())
                 && (isNewTemplate
@@ -183,8 +177,9 @@ public class CreateTemplateAction extends InterMineAction
         }
         session.removeAttribute(Constants.NEW_TEMPLATE);
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
-        return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "templates").forward();
+
+        SessionMethods.loadQuery(template, request.getSession(), response);
+        return mapping.findForward("query");
     }
 
     private void updateTrackers(TrackerDelegate trackerDelegate,
