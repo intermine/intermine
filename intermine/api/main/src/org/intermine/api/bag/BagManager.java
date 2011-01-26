@@ -189,7 +189,7 @@ public class BagManager
      * Fetch global and user bags of the specified type or a subclass of the specified type.
      * @param profile the user to fetch bags for
      * @param type an unqualified class name
-     * @param onlyCurrent if true return only the bag current
+     * @param onlyCurrent if true return only the current bags
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type,
