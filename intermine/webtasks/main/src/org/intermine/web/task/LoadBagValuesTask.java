@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,8 @@ package org.intermine.web.task;
  *
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +30,16 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * Task to load bagvalues table in the userprofile database.
+ * If in the table savedbag, the column 'intermine_current' doesn't exist , add it.
  *
  * @author dbutano
  */
@@ -68,20 +72,34 @@ public class LoadBagValuesTask extends Task
      */
     public void execute() {
         ObjectStore os = null;
+        ObjectStore uos = null;
         ObjectStoreWriter uosw = null;
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
-            uosw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            uos = ObjectStoreFactory.getObjectStore(userProfileAlias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
-
+        if (uos instanceof ObjectStoreInterMineImpl) {
+            try {
+                Connection conn = ((ObjectStoreInterMineImpl) uos).getConnection();
+                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                    DatabaseUtil.addIntermineCurrentColumn(conn);
+                }
+            } catch (SQLException sqle) {
+                throw new BuildException("Problems connecting bagvalues table", sqle);
+            }
+        }
+        try {
+            uosw = uos.getNewWriter();
+        } catch (ObjectStoreException ose) {
+            throw new BuildException("Problems retriving the new writer", ose);
+        }
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-
-        Results bags = uosw.execute(q, 1000, false, false, true);
+        Results bags = uos.execute(q, 1000, false, false, true);
         for (Iterator i = bags.iterator(); i.hasNext();) {
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
