@@ -107,23 +107,6 @@ public class BeginAction extends InterMineAction
         request.setAttribute("templateCount", new Integer(im
                 .getTemplateManager().getGlobalTemplates().size()));
 
-        /*most popular template*/
-        TrackerDelegate trackerDelegate = im.getTrackerDelegate();
-        if (trackerDelegate != null) {
-            trackerDelegate.setTemplateManager(im.getTemplateManager());
-            String templateName = trackerDelegate.getMostPopularTemplate();
-            if (templateName != null) {
-                Profile profile = SessionMethods.getProfile(session);
-                TemplateQuery template = im.getTemplateManager()
-                                         .getTemplate(profile, templateName, Scope.ALL);
-                if (template != null) {
-                    request.setAttribute("mostPopularTemplate", template.getTitle());
-                } else {
-                    LOG.error("The most popular template " + templateName + "is not public");
-                }
-            }
-        }
-
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
         List<String> mostPopularTemplateNames;
@@ -157,6 +140,10 @@ public class BeginAction extends InterMineAction
 
                         // fetch the actual template queries
                         templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
+                        TrackerDelegate trackerDelegate = im.getTrackerDelegate();
+                        if (trackerDelegate != null) {
+                            trackerDelegate.setTemplateManager(im.getTemplateManager());
+                        }
                         if (SessionMethods.getProfile(session).isLoggedIn()) {
                             mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
                         } else {

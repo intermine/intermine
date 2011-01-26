@@ -131,18 +131,6 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the template name associated to the public template with the highest rank
-     * @return String the template name
-     */
-    public String getMostPopularTemplate() {
-        List<String> templateListOrdered = getMostPopularTemplateOrder();
-        if (!templateListOrdered.isEmpty()) {
-            return templateListOrdered.get(0);
-        }
-        return null;
-    }
-
-    /**
      * Return the list of public templates ordered by rank descendant.
      * @return List of template names
      */
