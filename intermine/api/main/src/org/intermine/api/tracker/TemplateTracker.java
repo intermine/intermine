@@ -38,6 +38,9 @@ public class TemplateTracker extends TrackerAbstract
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static TemplateTracker templateTracker = null;
+    /**
+     * TRACKER_NAME the tracker name
+     */
     public static final String TRACKER_NAME = "TemplateTracker";
     private static TemplatesExecutionMap templatesExecutionCache;
     private TemplateManager templateManager;
