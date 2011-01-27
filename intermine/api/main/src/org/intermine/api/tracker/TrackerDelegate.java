@@ -67,11 +67,12 @@ public class TrackerDelegate
 
     /**
      * Return the list of public templates ordered by rank descendant.
+     * @param size maximum number of templates to return
      * @return List of template names
      */
-    public List<String> getMostPopularTemplateOrder() {
+    public List<String> getMostPopularTemplateOrder(Integer size) {
         if (templateTracker != null) {
-            return templateTracker.getMostPopularTemplateOrder();
+            return templateTracker.getMostPopularTemplateOrder(size);
         }
         return null;
     }
@@ -80,17 +81,19 @@ public class TrackerDelegate
      * Return the template list ordered by rank descendant for the user specified in input
      * @param profile the user profile
      * @param sessionIdentifier the session id
+     * @param size maximum number of templates to return
      * @return List of template names
      */
-    public List<String> getMostPopularTemplateOrder(Profile profile, String sessionIdentifier) {
+    public List<String> getMostPopularTemplateOrder(Profile profile, String sessionIdentifier,
+                                                    Integer size) {
         if (profile != null && templateTracker != null) {
             return templateTracker.getMostPopularTemplateOrder(profile.getUsername(),
-                                                               sessionIdentifier);
+                                                               sessionIdentifier, size);
         }
         return null;
     }
 
-    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, int size) {
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size) {
         if (templateTracker != null) {
             return templateTracker.getPopularTemplatesByAspect(aspectTag, size);
         }
