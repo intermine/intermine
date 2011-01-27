@@ -162,7 +162,7 @@ public class CreateTemplateAction extends InterMineAction
                 ? prevTemplateName : template.getName();
             profile.updateTemplate(oldTemplateName, template);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
-            updateTrackers(im.getTrackerDelegate(), oldTemplateName, template.getName());
+            im.getTrackerDelegate().updateTemplateName(oldTemplateName, template.getName());
         }
 
         // If superuser then rebuild shared templates
@@ -180,10 +180,5 @@ public class CreateTemplateAction extends InterMineAction
 
         SessionMethods.loadQuery(template, request.getSession(), response);
         return mapping.findForward("query");
-    }
-
-    private void updateTrackers(TrackerDelegate trackerDelegate,
-                                String oldTemplateName, String newTemplateName) {
-        trackerDelegate.updateTemplateName(oldTemplateName, newTemplateName);
     }
 }
