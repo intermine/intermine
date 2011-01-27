@@ -42,7 +42,7 @@
     <div id="caption" style="font-size:12px; font-style:italic">
     <!-- jQuery will add stuff here -->
     </div>
-    <div id="cytoWebContent" width="*">Please wait while the network data loads</div>
+    <div id="cytoWebContent" width="*"></div>
     <div id="menu">
     <!-- jQuery will add stuff here -->
     </div>
@@ -68,20 +68,13 @@
 <!-- qTip -->
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/jquery-ui/jquery-ui-1.8.7.custom.min.js'/>"></script>
-<script type="text/javascript">
-    // TODO separate showNetwork() method from interactions.js
-</script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/interactions.js'/>"></script>
 <script type="text/javascript">
 
-    var networkdata = '${networkdata}';
-    var hubgene = '${hubGene}'; // could be a set of genes
-    var geneOSIds = '${geneOSIds}'.split(","); // a string arrray of gene object store ids
-
+    // from controller
+    var fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
-    var geneWithNoDatasourceMessage = '${geneWithNoDatasourceMessage}'; // case: no interaction data for the gene from the data sources
-
 
     var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
     var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
@@ -97,22 +90,28 @@
                                .height(20)
                                .width(600);
     }
-    else if (geneWithNoDatasourceMessage != "") {
-        jQuery('#cytoWebContent').html(geneWithNoDatasourceMessage)
-                                 .css('font-style','italic')
-                                 .height(20)
-                                 .width(1200);
-    }
-    else if (hubgene == "") {
-      jQuery('#cytoWebContent').html("internal error")
-                             .css('font-weight','bold')
-                             .css('color','red')
-                             .height(50)
-                             .width(150);
-    }
     else {
-        showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_path, project_title);
+
+       jQuery("#cytoWebContent")
+          .ajaxStart(function(){ jQuery(this).html("Please wait while the network data loads..."); })
+          .ajaxStop(function(){})
+          .ajaxError(function(){ jQuery(this).html("ajax error!"); return;});
+
+        // use ajax to get network
+        jQuery.post("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/cytoscapeNetworkAjax.do", { fullInteractingGeneSet: '${fullInteractingGeneSet}'}, function(data){
+            if (data.match("^"+"No interaction data found from data sources:")) {
+                geneWithNoDatasourceMessage = data; // case: no interaction data found from the data sources
+                jQuery('#cytoWebContent').html(geneWithNoDatasourceMessage)
+                                         .css('font-style','italic')
+                                         .height(20)
+                                         .width(1200);
+            } else {
+                networkdata = data;
+                showNetwork(networkdata, fullInteractingGeneSet);
+            }
+        });
     }
+
 </script>
 
 <!-- /cytoscapeNetworkDisplayer.jsp -->

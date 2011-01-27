@@ -1,6 +1,6 @@
 // Functions for network display
 
-function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_path, project_title) {
+function showNetwork(networkdata, fullInteractingGeneSet) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -64,7 +64,7 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
 
     vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
         var data = evt.target.data;
-        url = webapp_baseurl+"/" + webapp_path + "/objectDetails.do?id=" + data.id;
+        url = webapp_baseurl + "/" + webapp_path + "/objectDetails.do?id=" + data.id;
         window.open(url);
     })
 
@@ -77,7 +77,7 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
     */
 
     .addContextMenuItem("Create a gene list...", "none", function(evt) {
-       url = webapp_baseurl+"/"+webapp_path+"/saveFromIdsToBag.do?type=Gene&ids="+geneOSIds+"&source=objectDetails&newBagName=interacting_gene_list";
+       url = webapp_baseurl + "/" + webapp_path + "/saveFromIdsToBag.do?type=Gene&ids="+fullInteractingGeneSet+"&source=objectDetails&newBagName=interacting_gene_list";
        window.open(url);
     })
 
@@ -94,18 +94,18 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
     })
 
     .addContextMenuItem("Export network as TSV...", "none", function(evt) {
-      vis.exportNetwork('tab', 'cytoscapeNetworkExport.do?type=tab&hub='+hubgene);
+      vis.exportNetwork('tab', 'cytoscapeNetworkExport.do?type=tab&fullInteractingGeneSet='+fullInteractingGeneSet);
     })
 
     .addContextMenuItem("Export network as CSV...", "none", function(evt) {
-      vis.exportNetwork('csv', 'cytoscapeNetworkExport.do?type=csv&hub='+hubgene);
+      vis.exportNetwork('csv', 'cytoscapeNetworkExport.do?type=csv&fullInteractingGeneSet='+fullInteractingGeneSet);
     })
 
      /* will be enabled in the next release
     .addContextMenuItem("View interaction report...", "edges", function(evt) {
         var data = evt.target.data;
         var url = data.url;
-        if (url == null) { url = webapp_baseurl+"/"+webapp_path+"/portal.do?externalid="+shortname+"&class=Interaction";}
+        if (url == null) { url = webapp_baseurl + "/" + webapp_path + "/portal.do?externalid="+shortname+"&class=Interaction";}
         window.open(url);
     })
     */
