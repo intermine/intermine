@@ -166,8 +166,10 @@ public class TemplateTracker extends TrackerAbstract
         for (Entry<String, Double> entry : listOrdered) {
             mostPopularTemplateOrder.add(entry.getKey());
         }
-        if (mostPopularTemplateOrder.size() > size) {
-            mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+        if (mostPopularTemplateOrder != null && size != null) {
+            if (mostPopularTemplateOrder != null && mostPopularTemplateOrder.size() > size) {
+                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+            }
         }
         return mostPopularTemplateOrder;
     }
@@ -205,8 +207,10 @@ public class TemplateTracker extends TrackerAbstract
             Collections.sort(templates, new MostPopularTemplateComparator(
                                             mostPopularTemplateNames));
         }
-        if (templates.size() > size) {
-            templates = templates.subList(0, size);
+        if (templates != null && size != null) {
+            if (templates.size() > size) {
+                templates = templates.subList(0, size);
+            }
         }
         return templates;
     }
