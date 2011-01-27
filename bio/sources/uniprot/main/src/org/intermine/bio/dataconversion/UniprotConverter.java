@@ -611,7 +611,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     if (pubRefId != null) {
                         pubRefIds.add(pubRefId);
                     } else {
-                        throw new RuntimeException("bad code:" + code);
+                        LOG.error("bad evidence code:" + code + " for "
+                                + uniprotEntry.getPrimaryAccession());
                     }
                 }
                 if (!pubRefIds.isEmpty()) {
