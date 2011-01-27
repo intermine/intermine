@@ -27,7 +27,26 @@ function toggleForm(matchCount) {
 
 // -->
 </script>
-<c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
+
+<c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>
+<div class="body">
+
+    <c:choose>
+      <c:when test="${(totalIdCount - fn:length(unresolved)) > 0}">
+        <h1>Before we show you the results...</h1>
+      </c:when>
+      <c:otherwise>
+        <h1>There are no matches</h1>
+      </c:otherwise>
+    </c:choose>
+
+    <div id="list-progress">
+      <div class="gray"><strong>1</strong> <span>Upload list of identifiers</span></div
+      ><div class="gray-to-white">&nbsp;</div
+      ><div class="white"><strong>2</strong> <span>Verify identifier matches</span></div><div class="white-to-gray">&nbsp;</div
+      ><div class="gray"><img src="images/icons/lists-16.png" alt="list" /> <span
+      <c:if test="${(totalIdCount - fn:length(unresolved)) == 0}">style="text-decoration: line-through;"</c:if>>List analysis</span></div>
+    </div>
 
     <div id="uploadConfirmMessage">
       <strong>
@@ -63,32 +82,37 @@ function toggleForm(matchCount) {
         <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
       </c:if>
     </div>
-    <div class="blueBg">
-      <c:choose>
-        <c:when test="${matchCount < totalIdCount}">
-          <p>
-            <strong><span id="initialIdCount">${matchCount}</span></strong>
-            of the <strong>${totalIdCount}</strong>
-            identifier(s) you provided will be saved in your list.
-          </p>
-        </c:when>
-        <c:otherwise>
-          <p>Matches found for all identifiers</p>
-        </c:otherwise>
-      </c:choose>
-      <fmt:message key="bagUploadConfirm.bagName"/>:
+
+
+    <c:if test="${(totalIdCount - fn:length(unresolved)) > 0}">
+      <h2><c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">a) </c:if>Choose a name for the list</h2>
+      <div style="clear:both;"></div>
+      <div class="formik">
       <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
-    <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
-    </div>
+      <input id="saveList" type="button" name="confirmBagUpload" value="Save a list of ${matchCount} ${bagUploadConfirmForm.bagType}(s)" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
+      <script type="text/javascript">
+        var matchCount = ${matchCount};
+        var totalCount = ${totalIdCount - fn:length(unresolved)};
+        var listType = "${bagUploadConfirmForm.bagType}(s)";
+        var furtherMatchesText = "There are further matches provided below.";
+      </script>
+      </div>
+      <div>
+        <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
+        <p id="furtherMatches" class="hl">There are further matches provided below.</p>
+      </c:if>
+      <div style="clear:both"></div>
+      </div>
+    </c:if>
+
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
-    <div class="heading">
-      <fmt:message key="bagUploadConfirm.issues"/>
-  </div>
-    <div class="body">
 
-  <p><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> |
+    <div class="body">
+    <h2>b) Add additional matches</h2>
+    <p class="inline h2"><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> |
     <span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
+    <div style="clear:both;"></div>
 
         <br/>
 
