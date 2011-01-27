@@ -65,8 +65,7 @@ public class ModifyBagAction extends InterMineAction
      */
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused")
-            HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModifyBagForm mbf = (ModifyBagForm) form;
         String[] selectedBagNames = mbf.getSelectedBags();
 
