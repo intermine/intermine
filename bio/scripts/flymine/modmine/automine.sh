@@ -193,7 +193,7 @@ else
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
 
-
+#***
 LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
@@ -374,6 +374,8 @@ do
     # unzip and rename dowloaded file
     DCCID=`echo $sub | cut -f 1 -d.`
     echo "unzipping $1 file $DCCID"
+    echo "unzipping $1 file $DCCID" | cat >> $LOGDIR/downloaded.log$WLOGDATE
+         
     gzip -S .chadoxml -d $sub
     mv $DCCID $MIRROR/$1/$sub
   	FOUND=y
