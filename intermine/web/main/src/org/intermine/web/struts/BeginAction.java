@@ -132,32 +132,30 @@ public class BeginAction extends InterMineAction
                         String identifier;
 
                         // identifier, has to be present
-                        identifier = (String) props.get(i + ".id"); tab.put("identifier", identifier);
+                        identifier = (String) props.get(i + ".id");
+                        tab.put("identifier", identifier);
                         // (optional) description
-                        tab.put("description", props.containsKey(i + ".description") ? (String) props.get(i + ".description") : "");
+                        tab.put("description", props.containsKey(i + ".description")
+                                              ? (String) props.get(i + ".description") : "");
                         // (optional) custom name, otherwise use identifier
-                        tab.put("name", props.containsKey(i + ".name") ? (String) props.get(i + ".name") : identifier);
+                        tab.put("name", props.containsKey(i + ".name")
+                                        ? (String) props.get(i + ".name") : identifier);
 
                         // fetch the actual template queries
-                        templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
                         TrackerDelegate trackerDelegate = im.getTrackerDelegate();
                         if (trackerDelegate != null) {
                             trackerDelegate.setTemplateManager(im.getTemplateManager());
                         }
                         if (SessionMethods.getProfile(session).isLoggedIn()) {
-                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
+                            templates = trackerDelegate.getPopularTemplatesByAspect(
+                                        TagNames.IM_ASPECT_PREFIX + identifier,
+                                        MAX_TEMPLATES, SessionMethods.getProfile(session),
+                                        session.getId());
                         } else {
-                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+                            templates = trackerDelegate.getPopularTemplatesByAspect(
+                                                        TagNames.IM_ASPECT_PREFIX + identifier,
+                                                        MAX_TEMPLATES);
                         }
-
-                        if (mostPopularTemplateNames != null) {
-                            Collections.sort(templates, new MostPopularTemplateComparator(mostPopularTemplateNames));
-                        }
-
-                        if (templates.size() > MAX_TEMPLATES) {
-                            templates = templates.subList(0, MAX_TEMPLATES);
-                        }
-
                         tab.put("templates", templates);
 
                         bagOfTabs.put(Integer.toString(i), tab);
@@ -180,34 +178,5 @@ public class BeginAction extends InterMineAction
         request.setAttribute("preferredBags", preferredBags);
 
         return mapping.findForward("begin");
-    }
-
-    private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
-    {
-        private List<String> mostPopularTemplateNames;
-
-        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
-            this.mostPopularTemplateNames = mostPopularTemplateNames;
-        }
-        public int compare(TemplateQuery template1, TemplateQuery template2) {
-            String templateName1 = template1.getName();
-            String templateName2 = template2.getName();
-            if (!mostPopularTemplateNames.contains(templateName1)
-                && !mostPopularTemplateNames.contains(templateName2)) {
-                if (template1.getTitle().equals(template2.getTitle())) {
-                    return template1.getName().compareTo(template2.getName());
-                } else {
-                    return template1.getTitle().compareTo(template2.getTitle());
-                }
-            }
-            if (!mostPopularTemplateNames.contains(templateName1)) {
-                return +1;
-            }
-            if (!mostPopularTemplateNames.contains(templateName2)) {
-                return -1;
-            }
-            return (mostPopularTemplateNames.indexOf(templateName1)
-                   < mostPopularTemplateNames.indexOf(templateName2)) ? -1 : 1;
-        }
     }
 }

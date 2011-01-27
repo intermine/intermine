@@ -27,6 +27,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
 
 /**
  * Class for tracking the templates execution by the users. When a user executes a template,
@@ -162,6 +163,58 @@ public class TemplateTracker extends TrackerAbstract
         return mostPopularTemplateOrder;
     }
 
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size) {
+        return getPopularTemplatesByAspect(aspectTag, size, null, null);
+    }
+
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size,
+                                                           String userName, String sessionId) {
+        List<TemplateQuery> templates = templateManager.getAspectTemplates(aspectTag, null);
+        List<String> mostPopularTemplateNames;
+        if (userName != null && sessionId != null) {
+            mostPopularTemplateNames = getMostPopularTemplateOrder(userName, sessionId);
+        } else {
+            mostPopularTemplateNames = getMostPopularTemplateOrder();
+        }
+
+        if (mostPopularTemplateNames != null) {
+            Collections.sort(templates, new MostPopularTemplateComparator(
+                                            mostPopularTemplateNames));
+        }
+        if (templates.size() > size) {
+            templates = templates.subList(0, size);
+        }
+        return templates;
+    }
+
+    private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
+    {
+        private List<String> mostPopularTemplateNames;
+
+        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
+            this.mostPopularTemplateNames = mostPopularTemplateNames;
+        }
+        public int compare(TemplateQuery template1, TemplateQuery template2) {
+            String templateName1 = template1.getName();
+            String templateName2 = template2.getName();
+            if (!mostPopularTemplateNames.contains(templateName1)
+                && !mostPopularTemplateNames.contains(templateName2)) {
+                if (template1.getTitle().equals(template2.getTitle())) {
+                    return template1.getName().compareTo(template2.getName());
+                } else {
+                    return template1.getTitle().compareTo(template2.getTitle());
+                }
+            }
+            if (!mostPopularTemplateNames.contains(templateName1)) {
+                return +1;
+            }
+            if (!mostPopularTemplateNames.contains(templateName2)) {
+                return -1;
+            }
+            return (mostPopularTemplateNames.indexOf(templateName1)
+                   < mostPopularTemplateNames.indexOf(templateName2)) ? -1 : 1;
+        }
+    }
     /**
      * Return the number of executions for each template
      * @return map with key the template name and executions number
