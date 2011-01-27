@@ -11,38 +11,28 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.tracker.TemplateTracker;
-import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -52,7 +42,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class BeginAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static final Integer MAX_TEMPLATES = new Integer(8);
 
     /**
@@ -108,8 +97,6 @@ public class BeginAction extends InterMineAction
                 .getTemplateManager().getGlobalTemplates().size()));
 
         List<TemplateQuery> templates = null;
-        TemplateManager templateManager = im.getTemplateManager();
-        List<String> mostPopularTemplateNames;
 
         Object beginQueryClassConfig = properties.get("begin.query.classes");
         if (beginQueryClassConfig != null) {
@@ -142,17 +129,19 @@ public class BeginAction extends InterMineAction
                                         ? (String) props.get(i + ".name") : identifier);
 
                         // fetch the actual template queries
-                        TrackerDelegate trackerDelegate = im.getTrackerDelegate();
+                        /*TrackerDelegate trackerDelegate = im.getTrackerDelegate();
                         if (trackerDelegate != null) {
                             trackerDelegate.setTemplateManager(im.getTemplateManager());
-                        }
-                        if (SessionMethods.getProfile(session).isLoggedIn()) {
-                            templates = trackerDelegate.getPopularTemplatesByAspect(
+                        }*/
+                        TemplateManager tm = im.getTemplateManager();
+                        Profile profile = SessionMethods.getProfile(session);
+                        if (profile.isLoggedIn()) {
+                            templates = tm.getPopularTemplatesByAspect(
                                         TagNames.IM_ASPECT_PREFIX + identifier,
-                                        MAX_TEMPLATES, SessionMethods.getProfile(session),
+                                        MAX_TEMPLATES, profile.getUsername(),
                                         session.getId());
                         } else {
-                            templates = trackerDelegate.getPopularTemplatesByAspect(
+                            templates = tm.getPopularTemplatesByAspect(
                                                         TagNames.IM_ASPECT_PREFIX + identifier,
                                                         MAX_TEMPLATES);
                         }
@@ -171,7 +160,8 @@ public class BeginAction extends InterMineAction
         // preferred bags (Gucci)
         ArrayList<String> preferredBags = new ArrayList<String>();
         TagManager tagManager = im.getTagManager();
-        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
+        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
+                                                            im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferredBags.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
