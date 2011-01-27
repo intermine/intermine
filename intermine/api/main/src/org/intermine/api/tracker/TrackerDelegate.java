@@ -22,7 +22,6 @@ import org.intermine.api.template.TemplateManager;
 public class TrackerDelegate
 {
     protected Map<String, Tracker> trackers;
-    protected TemplateTracker templateTracker;
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -30,9 +29,6 @@ public class TrackerDelegate
      */
     public TrackerDelegate(Map<String, Tracker> trackers) {
         this.trackers = trackers;
-        if (!trackers.isEmpty()) {
-            templateTracker = (TemplateTracker) trackers.get(TemplateTracker.TRACKER_NAME);
-        }
     }
 
     /**
@@ -48,7 +44,10 @@ public class TrackerDelegate
      * @return map containing names and trackers
      */
     public TemplateTracker getTemplateTracker() {
-        return (TemplateTracker ) trackers.get(TemplateTracker.TRACKER_NAME);
+        if (!trackers.isEmpty()) {
+            return (TemplateTracker ) trackers.get(TemplateTracker.TRACKER_NAME);
+        }
+        return null;
     }
 
     /**
@@ -59,8 +58,9 @@ public class TrackerDelegate
      */
     public void trackTemplate(String templateName, Profile profile,
                              String sessionIdentifier) {
-        if (templateTracker != null) {
-            templateTracker.trackTemplate(templateName, profile, sessionIdentifier);
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            tt.trackTemplate(templateName, profile, sessionIdentifier);
         }
     }
 
@@ -69,8 +69,9 @@ public class TrackerDelegate
      * @return map with key the template name and value the rank associated
      */
     public Map<String, Integer> getAccessCounter() {
-        if (templateTracker != null) {
-            return templateTracker.getAccessCounter();
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getAccessCounter();
         }
         return null;
     }
@@ -81,8 +82,9 @@ public class TrackerDelegate
      * @return map with key the template name and value the rank associated
      */
     public Map<String, Integer> getRank(TemplateManager templateManager) {
-        if (templateTracker != null) {
-            return templateTracker.getRank(templateManager);
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getRank(templateManager);
         }
         return null;
     }
@@ -93,8 +95,9 @@ public class TrackerDelegate
      * @param newTemplateName the new name
      */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
-        if (templateTracker != null) {
-            templateTracker.updateTemplateName(oldTemplateName, newTemplateName);
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            tt.updateTemplateName(oldTemplateName, newTemplateName);
         }
     }
 }
