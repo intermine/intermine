@@ -1434,3 +1434,7 @@ div.floatRight { float:right; }
       display:inline-block; }
     #list-progress div.gray-to-white { background:url('../images/progress/gray-to-white.gif') no-repeat left; padding:7px 0; width:25px;
       display:inline-block; }
+
+/* list lists (bag.do) */
+a.operation { padding:0 4px; }
+  a.operation img { vertical-align:top; }
