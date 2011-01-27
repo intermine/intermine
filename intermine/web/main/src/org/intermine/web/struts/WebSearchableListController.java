@@ -182,16 +182,17 @@ public class WebSearchableListController extends TilesAction
     }
 
     private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
-    filteredWebSearchables, HttpSession session) {
+        filteredWebSearchables, HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TrackerDelegate td = im.getTrackerDelegate();
         td.setTemplateManager(im.getTemplateManager());
         Profile profile = SessionMethods.getProfile(session);
         List<String> mostPopulareTemplateNames;
         if (SessionMethods.getProfile(session).isLoggedIn()) {
-            mostPopulareTemplateNames = td.getMostPopularTemplateOrder(profile, session.getId());
+            mostPopulareTemplateNames = td.getMostPopularTemplateOrder(profile, session.getId(),
+                                                                       null);
         } else {
-            mostPopulareTemplateNames = td.getMostPopularTemplateOrder();
+            mostPopulareTemplateNames = td.getMostPopularTemplateOrder(null);
         }
         if (mostPopulareTemplateNames == null) {
             return sortList(filteredWebSearchables);

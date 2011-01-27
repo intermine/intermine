@@ -133,10 +133,11 @@ public class TemplateTracker extends TrackerAbstract
 
     /**
      * Return the list of public templates ordered by rank descendant.
+     * @param size maximum number of templates to return
      * @return List of template names
      */
-    public List<String> getMostPopularTemplateOrder() {
-        return getMostPopularTemplateOrder(null, null);
+    public List<String> getMostPopularTemplateOrder(Integer size) {
+        return getMostPopularTemplateOrder(null, null, size);
     }
 
     /**
@@ -144,9 +145,11 @@ public class TemplateTracker extends TrackerAbstract
      * in the input
      * @param userName the user name
      * @param sessionId the session id
+     * @param size maximum number of templates to return
      * @return List of template names
      */
-    public List<String> getMostPopularTemplateOrder(String userName, String sessionId) {
+    public List<String> getMostPopularTemplateOrder(String userName, String sessionId,
+        Integer size) {
         List<String> mostPopularTemplateOrder = new ArrayList<String>();
         Map<String, Double> templateLnRank = getLogarithmMap(userName, sessionId);
         //create an entry list ordered
@@ -160,21 +163,39 @@ public class TemplateTracker extends TrackerAbstract
         for (Entry<String, Double> entry : listOrdered) {
             mostPopularTemplateOrder.add(entry.getKey());
         }
+        if (mostPopularTemplateOrder.size() > size) {
+            mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+        }
         return mostPopularTemplateOrder;
     }
 
+    /**
+     * Return the template list for a particular aspect given in input, ordered by rank descendant
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @return List of template names
+     */
     public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size) {
         return getPopularTemplatesByAspect(aspectTag, size, null, null);
     }
 
+    /**
+     * Return the template list for a particular aspect, ordered by rank descendant for
+     * the user/sessionid specified in the input
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @param userName the user name
+     * @param sessionId the session id
+     * @return List of template names
+     */
     public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size,
                                                            String userName, String sessionId) {
         List<TemplateQuery> templates = templateManager.getAspectTemplates(aspectTag, null);
         List<String> mostPopularTemplateNames;
         if (userName != null && sessionId != null) {
-            mostPopularTemplateNames = getMostPopularTemplateOrder(userName, sessionId);
+            mostPopularTemplateNames = getMostPopularTemplateOrder(userName, sessionId, null);
         } else {
-            mostPopularTemplateNames = getMostPopularTemplateOrder();
+            mostPopularTemplateNames = getMostPopularTemplateOrder(null);
         }
 
         if (mostPopularTemplateNames != null) {
