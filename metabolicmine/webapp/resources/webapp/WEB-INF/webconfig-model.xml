@@ -146,7 +146,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="uniProtCommentsDisplayer.tile"/>
       <displayer src="/model/jBrowse.jsp"/>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
@@ -161,7 +161,7 @@
         <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <longdisplayers>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
   </class>
 

@@ -25,8 +25,14 @@
 <action path="/initSnpToGeneFormDisplayer"
   type="org.metabolicmine.web.SnpToGeneFormDisplayerController" />
 
-<action path="/initCytoscapeInteractionsDisplayer"
-        type="org.intermine.bio.web.struts.CytoscapeInteractionsController"/>
+<action path="/initCytoscapeNetworkDisplayer"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
+
+<action path="/cytoscapeNetworkExport"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
+
+<action path="/cytoscapeNetworkAjax"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 
 <action path="/snpToGeneAction" name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneAction" input="objectDetails">
   <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
