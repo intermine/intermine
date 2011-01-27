@@ -96,6 +96,9 @@
 
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
+
+<action path="/cytoscapeNetworkAjax"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 <!-- End of Cytoscape Web configuration -->
 
 <!-- Begining of Span Upload configuration -->
