@@ -4,13 +4,13 @@
             type="text/javascript"></script>
         <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
         <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
+        <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.stack.js"></script>
 
         <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
         <script src="src/imbedding.js" type="text/javascript"></script>
         <script src="lib/jquery-ui-1.8.8.custom.min.js" type="text/javascript"></script>
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
         <script src="lib/tutorial.js" type="text/javascript"></script>
-        <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Cabin:bold' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
@@ -45,25 +45,138 @@
         </div>
     </form>
     <ul>
-        <li><a href="#tabs-1">Using Events</a></li>
-        <li><a href="#tabs-2">Arbitrary Queries</a></li>
+        <li><a href="#tabs-1">The Basics</a></li>
         <li><a href="#tabs-3">Templates</a></li>
-        <li><a href="#tabs-4">Widgets</a></li>
+        <li><a href="#tabs-2">Arbitrary Queries</a></li>
+        <li><a href="#tabs-4">Doing Other Things with Results</a></li>
+        <li><a href="#tabs-5">Resources</a></li>
     </ul>
 
 
     <div id="tabs-1">
-        <h2>Loading a table automatically</h2>
-        <p> 
-        Results can be loaded in automatically on page ready or any other event. 
-        Here, three queries are bound to button click events, and another was
-        loaded as soon as the page was ready. Click on the names 
-        of the templates to load the corresponding data. Also, click on the buttons
-        in the top-right to change the style of the table without reloading
-        the page.
-        </p><p>
-        Click on the other two tabs to see how you can code this behaviour yourself.
+        <h2>The basics</h2>
+        <p>
+        Here you can find out what the new Webservice fatures are,
+        and how you can go about setting it up yourself. You can also see some
+        full code samples that demonstrate how to load the queries you see on
+        this tab.
         </p>
+        <input type="checkbox" id="explanationCB" onclick="$('#explanation').slideToggle('fast', function(){});"/><label for="explanationCB">Show me what all this is about</label>
+        <input type="checkbox" id="requirementsCD" onclick="$('#requirements').slideToggle('fast', function(){});"/><label for="requirementsCD">Show me how to set this up</label>
+        <div id="explanation" style="display: none;">
+        <p> 
+        The purpose of this page is to demonstrate ways of including data from an
+        InterMine implementation on your webpage. In particular it focusses on some
+        new facilities for seemlessly embedding tables, and making asynchronous
+        requests for data in a range of formats. These facilities will become 
+        generally available with <strong>InterMine 0.96</strong>, which provides
+        the version 3 <a href="http://intermine.org/wiki/WebService">Webservice.</a>
+        </p><p>
+        Up to now, the standard ways of linking to information contained in an 
+        InterMine has been the use of external links (such as 
+        <a href="templink">Employees Between 30 and 35</a>) and IFrames. Both of these facilities
+        will continue to be available in the future. External links break the content
+        integrity of a page, and users may not be inclined to click on a link
+        on the off-chance of finding useful information. IFrames resolve these
+        problems by including the data into the requesting page, but are not
+        natively styled, and thus break page appearance, and they have limited
+        flexibility.
+        </p><p>
+        The new approach is to return data in <a href="http://json.org">JSON</a> 
+        format using asynchronous ajax calls. This approach comes at a slight cost, 
+        which we have tried to minimise. Whereas IFrames can be cut-and-pasted 
+        into an html page, an ajax led approach requires some use of javascript. 
+        We have written a library to take the leg work out of composing queries
+        and inserting tables, and we hope that this page demonstrates the superior
+        results that an ajax-led approach can achieve.
+        </p><p>
+        Data from mines can be requested in a number of ways, and unlike
+        IFrames, the page has control over when, whether, and how the data should
+        be displayed. 
+        </p>
+        <h4>When and Whether it is displayed</h4>
+        <p>
+        Below you should see a table already loaded 
+        (titled <em>Search for Managers</em>). This table was loaded automatically 
+        after the page was ready in the browser. Just above the table are three 
+        buttons which load other query data on demand. Data can be loaded 
+        (or hidden) on any other scriptable event. 
+        </p>
+        <h4>How it is displayed</h4>
+        <p>
+        In the top right corner there are three buttons (<em>bold,dark,light</em>).
+        Pressing these changes the style of the table without reloading the page,
+        demonstrating that the table is totally integrated into the page, and the
+        degree of control that is available over the data's appearabce. Whether
+        the table is loaded minimised (with just title and count visible) or fully
+        opened, is determined by css style properties (specifically the 
+        <code>imbedded-initial-state</code> class). Here, the <em>dark</em>
+        and <em>light</em> styles open tables fully open, while the <em>bold</em>
+        style opens tables minimised. You can view the <a href='#'>css files</a>
+        to see how this is achieved.
+        </p>
+        </div>
+        <div id="requirements" style="display: none;">
+            <p>
+            The functionality described on this page is accessed through ajax calls to 
+            the webservice of a compatible mine (version &gt;= 3). Such mines provide 
+            JSON representations of:
+            </p>
+            <ul>
+                <li>The model<code style="float: right;">baseUrl + /service/model?format=json(p)</code></li>
+                <li>Template descriptions<code style="float: right;">baseUrl + /service/templates?format=json(p)</code></li>
+                <li>Query and template results<code style="float: right;">baseUrl + /service/[query|template]/results? + Params + format=[json(p)table|json(p)rows|json(p)objects]</code></li>
+                <li>Query result counts<code style="float: right;">baseUrl + /service/[query|template]/results? + Params + format=json(p)count</code></li>
+            </ul>
+            <p>
+            Clearly, these can be accessed like any other webservice, as long as you have the
+            appropriate urls. We also provide a convenience library to simplify 
+            requests and to provide a default behaviour for inserting inline tables.
+            </p><p>
+            To use the InterMine Embedding library (imbedding.js), you will need to 
+            include the following scripts into your page: 
+            <a href="www.jquery.com">jQuery</a>,
+            <a href="http://code.google.com/p/jquery-jsonp/">jQuery-JSONP</a> and 
+            <a href="#">imbedding.js library</a>.
+            You do not need to download them, just add the following lines to the 
+            head of the page:
+            </p>
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<head>
+    <!-- jQuery is hosted by Google -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
+        type="text/javascript">
+    </script>
+    <!-- jquery-jsonp is likewise available from an online repository -->
+    <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
+        type="text/javascript">
+    </script>
+    <!-- InterMine similarly hosts imbedding -->
+    <script src="http://www.intermine.org/ajax/libs/imbedding/0.1/imbedding.min.js" 
+        type="text/javascript">
+    </script>
+</head>
+            </textarea>
+            <p>
+            To style the tables, you will also need to include some css with the appropriate 
+            classes. These classes are:
+            <ul>
+                <li>.imbedded-table-container: The outer container that holds the table</li>
+                <li>.imbedded-table-titlebox: The box that holds the title and count</li>
+                <li>.imbedded-table-title: The text with the actual title</li>
+                <li>.imbedded-table: The table element</li>
+                <li>.imbedded-column-header-row: The row with the column headings</li>
+                <li>.imbedded-initial-state: The opening state of the table</li>
+                <li>.imbedded-cell: Each cell of the table</li>
+                <li>.imbedded-row-odd: Odd numbered table rows</li>
+                <li>.imbedded-row-even: Even numbered table rows</li>
+                <li>.imbedded-exportlink: The CSV and TSV export links</li>
+                <li>.imbedded-pagelink: The previous/next paging links</li>
+            </ul>
+            <p>
+            The three example styles used on this page are included in the download as examples.
+            </p>
+        </div>
         <div class="option-box">
         <form>
             <span style="float: right"><input type="checkbox" id="showMe" /><label for="showMe">Show the code</label></span>
@@ -74,9 +187,13 @@
             </div>
         </form>
         <div id="showMeAreaContainer" style="display: none;">
-        <textarea rows="20" cols="80" id="showMeArea" class="coder">
+        <textarea rows="20" cols="80" id="showMeArea" class="coder js-snippet">
+// The base url must be set before any calls to are made:
+
+var baseUrl = "http://squirrel.flymine.org/intermine-test";
+IMBedding.setBaseUrl(baseUrl);
+
 // for page load: 
-// See the other tabs for how to write the function
 $(function() {loadTemplate();}); 
 
 // for button click
@@ -85,6 +202,78 @@ $('#button').click(function() {loadTemplate();});
 // nb: the imbedding.js library requires jquery, hence
 // we assume that you will have jQuery functionality available 
 // (ie, $() and $.click())
+
+// The functions:
+
+function loadTable1() {
+    IMBedding.loadTemplate(
+        {
+            name: "employeesOverACertainAgeFromDepartmentA",
+            size: 10,
+
+            constraint1: "Employee.age",
+            op1: "&gt;=",
+            value1: 25,
+
+            constraint2: "Employee.department.name",
+            op2: "=",
+            value2: "DepartmentB1"
+        },
+        "#placeholder1"
+    );
+}
+
+function loadTable2() {
+    IMBedding.loadTemplate(
+        {
+            name: "employeesFromCompanyAndDepartment",
+            size: 10,
+
+            constraint1: "Employee.department.company.name",
+            op1: "LIKE",
+            value1: "Company*",
+
+            constraint2: "Employee.department.name",
+            op2: "LIKE",
+            value2: "Department*"
+        },
+        "#placeholder1"
+    );
+}
+
+function loadTable3() {
+    IMBedding.loadTemplate(
+        {
+            name: "employeesOfACertainAge",
+            size: 10,
+
+            constraint1: "Employee.age",
+            code1: "A",
+            op1: "&gt;",
+            value1: 30,
+
+            constraint2: "Employee.age",
+            code2: "B",
+            op2: "&lt;=",
+            value2: "60"
+        },
+        "#placeholder1"
+    );
+}
+
+function loadTable4() {
+    IMBedding.loadTemplate(
+        {
+            name:           "ManagerLookup",
+        
+            constraint1:    "Manager",
+            op1:            "LOOKUP",
+            value1:         "M.",
+            code1:          "A",
+        },
+        '#placeholder1'
+    );
+}
 </textarea>
         </div>
         </div>
@@ -98,11 +287,17 @@ $('#button').click(function() {loadTemplate();});
         or as a json object. The loading module must be prepared with the base url
         before-hand in either case. 
         </p><p>
-        Please define your query using the form below, and press <em>"Load Query"</em>
-        to see the effect. To see how to put such a query into your own code, 
-        click on the <em>"Show the code"</em> button.
+        You can either define your query using the form below, 
+        or simply paste in some XML/JSON. When you press <em>"Load Query"</em>
+        the results will be loaded, and the corresponding code will be generated
+        for you to cut and paste into your own page (just click on the 
+        <em>"Show the code"</em> button.)
         </p>
         <input type="checkbox" id="formatDetailsCB" onclick="$('#formatDetails').slideToggle('fast', function(){});"/><label for="formatDetailsCB">see information about the formats</label>
+        <div id="query-radios" style="display: inline">
+            <input class="querier" type="radio" checked="true" value="querybuilder" id="querybuilder-opt" name="query"/><label for="querybuilder-opt">Build A Query</label>
+            <input class="querier" type="radio" value="cutandpaste" id="cutandpaste-opt" name="query"/><label for="cutandpaste-opt">Paste in some XML/JSON</label>
+        </div>
         <div id="formatDetails" style="display: none;">
             <p>
             Your query is ultimately passed to the mine as xml, which has a 
@@ -124,8 +319,40 @@ $('#button').click(function() {loadTemplate();});
             </p><p>
             Click <a href="http://intermine.org/wiki/WebService#a2.1Querywebservice">here</a> for 
             detailed information on the query webservice api.
-            </p></div>
-        <div class="option-box">
+            </p>
+        </div>
+        <div id="cutandpaste" style="display: none;">
+            <p>
+            You can simply paste in xml or json into the appropriate box below, press
+            load, and see the results, and the generating code for them.
+            </p>
+            <label for="boxselector">Use: </label>
+            <select id="boxselector">
+                <option value="xml" checked="true">Use XML</option>
+                <option value="json" >Use JSON</option>
+            </select>
+            <table>
+                <tr>
+                    <td>
+                        <textarea class="coder" id="xmlarea" rows="15"  cols="60">
+<query view="Employee.name Employee.age Employee.department.name" model="testmodel">
+    <constraint path="Employee.age" op="&amp;lt;" value="50"/>
+</query></textarea>
+                    </td>
+                    <td>
+                        <textarea disabled="true" class="coder" id="jsonarea" rows="15" cols="60">
+{
+    select: ["Employee.name", "Employee.age", "Employee.department.name"],
+    from: "testmodel",
+    where: [
+        {path: "Employee.age", op: "<", value: 50}
+    ]
+}</textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="option-box" id="querybuilder">
             
     <form id="root-class-form">
         <p><label for "root-class"><em>Construct a query for</em></label>
@@ -213,7 +440,7 @@ $('#button').click(function() {loadTemplate();});
         <div class="option-box">
             <form id="template-form">
                 <p><label for="templateName">Template Name: </label>
-                <input size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" ></input></p>
+                <input spellcheck="false" size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" ></input></p>
                 <div id="templateSpecific"></div>
                 <br/>
                 <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()"></input>
@@ -230,11 +457,19 @@ $('#button').click(function() {loadTemplate();});
 
 
     <div id="tabs-4">
-        <h2>Using data in widgets</h2>
+        <h2>Other ways to use the data you get back</h2>
         <p> 
-        The previous examples all load the results of the query into tables, 
-        but you can supply any function you wish to process the data. The 
-        graphing widgets below demonstrate ways to use this functionality.
+        The previous examples all demonstrate the default functionality, where
+        a table is inserted into the page at the location of the given selector string.
+        However, any arbitrary behaviour is possible by passing a function instead of
+        a selector. The examples below demonstrate some potential applications of this, with 
+        two graphs and an alternative tabular display.
+        </p><p>
+        One difference between this and the default behaviour is the fact that you will need
+        to specify a result format. The two that will be most useful are 
+        <a href='#'>jsonpobjects</a>, which all these examples use, and 
+        <a href='#'>jsonprows</a>, which is similar but provides less syntactic sugar
+        for accessing fields of the result items.
         </p>
         <div class="option-box">
         <form>
@@ -242,23 +477,27 @@ $('#button').click(function() {loadTemplate();});
             <div id="graph-radios">
                 <input class="grapher" type="radio" id="graph1" name="graph"/><label for="graph1">Employee Age Distribution</label>
                 <input class="grapher" type="radio" id="graph2" name="graph"/><label for="graph2">Manager Age vs Seniority</label>
+                <input class="grapher" type="radio" id="graph3" name="graph"/><label for="graph3">Department Summary</label>
             </div>
         </form>
         <div id="showGraphAreaContainer" style="display: none;">
-        <textarea rows="20" cols="80" id="showGraphArea" class="coder">
+        <textarea rows="20" cols="80" id="showGraphArea" class="coder js-snippet">
 function loadGraph1() {
     IMBedding.loadQuery(
         {
             select: ["Employee.age", "Employee.department.company.name"],
             from: "testmodel"
         },
-        {size: 1000, format: "jsonprows"},
+        {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
             var graphData = [];
+            var ageSum = 0;
             var countAtAgeAtCompany = {};
             for (i in resultSet.results) {
-                var age = resultSet.results[i][0].value;
-                var company = resultSet.results[i][1].value;
+                var employee = resultSet.results[i];
+                var age = employee.age;
+                var company = employee.department.company.name
+                ageSum += age;
                 if (! countAtAgeAtCompany[company]) {
                     countAtAgeAtCompany[company] = {};
                 }
@@ -269,81 +508,164 @@ function loadGraph1() {
                         = countAtAgeAtCompany[company][age] + 1;
                 }
             }
-            for (company in countAtAgeAtCompany) {
+            for (name in countAtAgeAtCompany) {
+                var company = countAtAgeAtCompany[name];
+                var count = 0;
+                var sum = 0;
                 var companyData = {
-                    label: company,
                     data: []
                 }
-                for (age in countAtAgeAtCompany[company]) {
-                    companyData.data.push([age, countAtAgeAtCompany[company][age]]);
+                for (age in company) {
+                    count += company[age];
+                    sum += age * company[age];
+                    companyData.data.push([age, company[age]]);
                 }
+                var companyAverage = parseInt(sum / count);
+                companyData.label = 
+                    name + " [av: " + companyAverage + "]";
                 graphData.push(companyData);
             }
             var options = {
-                stack: true,
-                bars: {show: true},
+                series: {
+                    stack: true,
+                    lines: {show: false},
+                    bars: {show: true, barWidth: 0.9},
+                },
                 legend: {position: "nw"}
             };
             var plot = $.plot("#graph", graphData, options);
-            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+            var averageAge = parseInt(ageSum / resultSet.results.length);
+            $('<span></span>').html("Age (average:" + averageAge + ")")
+                              .addClass("axis-label").appendTo('#graph');
         }
     );
 }
 
-function showTooltip(x, y, contents) {
-     $('<div id="tooltip">' + contents + '</div>').css( {
+function showTooltip(x, y, name) {
+     $('<div id="tooltip">' + name + '</div>').css( {
            position: 'absolute',
            display: 'none',
-           top: y + 5,
-           left: x + 5,
+           top: y + 10,
+           left: x + 10,
            border: '1px solid #fdd',
            padding: '2px',
-          'background-color': '#fee',
+          'background-color': '#FF0084',
+          color: "white",
            opacity: 0.80
       }).appendTo("body").fadeIn(200);
+}
+
+function findLineByLeastSquares(datapoints) {
+    var sum_x = 0;
+    var sum_y = 0;
+    var sum_xy = 0;
+    var sum_xx = 0;
+    var count = 0;
+    
+    /*
+     * Prevent multipe calls to length
+     */
+    var values_length = datapoints.length;
+    
+    /*
+     * Nothing to do.
+     */
+    if (values_length === 0) {
+        return [ ];
+    }
+    
+    /*
+     * Calculate the sum for each of the parts necessary.
+     */
+    for (var i = 0; i < values_length; i++) {
+        var x = datapoints[i][0];
+        var y = datapoints[i][1];
+        sum_x += x;
+        sum_y += y;
+        sum_xx += x*x;
+        sum_xy += x*y;
+        count++;
+    }
+    
+    /*
+     * Calculate m and b for the formula:
+     * y = x * m + b
+     */
+    var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
+    var b = (sum_y/count) - (m*sum_x)/count;
+    
+    /*
+     * We will make the x and y result line now
+     */
+    var data = [];
+    
+    for (var i = 0; i < values_length; i++) {
+        x = datapoints[i][0];
+        y = x * m + b;
+        data.push([x, y]);
+    }
+    
+    return data;
 }
 
 function loadGraph2() {
     IMBedding.loadQuery(
         {
-            select: ["Manager.seniority", "Manager.age", "Manager.name"],
+            select: ["Manager.age", "Manager.seniority", "Manager.name"],
             from: "testmodel"
         },
-        {size: 1000, format: "jsonprows"},
+        {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
             var graphData = [];
-            var nameOfManager = {};
+            var managers = {};
             var ageVsSen = {
                 label: "Seniority by Age",
                 color: "rgb(0, 115, 234)",
                 points: {show: true},
                 data: []
             };
+            var trendLine = {
+                label: "Trend Line",
+                color: "rgb(255, 0, 132)",
+                lines: {show: true},
+            };
             for (i in resultSet.results) {
-                var seniority = resultSet.results[i][0].value;
-                var age = resultSet.results[i][1].value;
+                var manager = resultSet.results[i];
+                var seniority =manager.seniority;
+                var age = manager.age;
                 ageVsSen.data.push([age, seniority]);
-                nameOfManager[age + "-" + seniority] = resultSet.results[i][2].value;
+                managers[age + "-" + seniority] = manager;
             }
+            trendLine.data = findLineByLeastSquares(ageVsSen.data);
             graphData.push(ageVsSen);
+            graphData.push(trendLine);
             var options = {
-                grid: {hoverable: true},
+                grid: {hoverable: true, clickable: true},
                 legend: {position: "nw"}
             };
             var plot = $.plot("#graph", graphData, options);
             $('#graph').bind("plothover", function(event, pos, item) {
                 if (item) {
-                 
-                 $("#tooltip").remove();
+                    $("#tooltip").remove();
                     var x = item.datapoint[0].toFixed(2),
                         y = item.datapoint[1].toFixed(2);
                     var key = parseInt(x) + "-" + parseInt(y);
-                    var tooltip = nameOfManager[key];
-                    showTooltip(item.pageX, item.pageY, tooltip);
+                    var manager = managers[key];
+                    showTooltip(item.pageX, item.pageY, manager.name);
                 }
                 else {
                     $("#tooltip").remove();
                     previousPoint = null;            
+                }
+            }).bind("plotclick", function(event, pos, item) {
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+                    var key = parseInt(x) + "-" + parseInt(y);
+                    var manager = managers[key];
+                    var url = baseUrl + "/objectDetails.do?id=" 
+                                + manager.objectId;
+                    window.location.replace(url);
                 }
             });
             $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
@@ -354,6 +676,51 @@ function loadGraph2() {
         </div>
         </div>
         <div id="graph" style="width: 600px; height: 300px;"><p>This will be where the graph goes</p></div>
+    </div>
+    <div id="tabs-5">
+        <h2>You May Be Interested In</h2>
+        <ul>
+            <li class="resource">
+                <a href="http://jquery.com">jQuery</a>
+                <p> 
+                A powerful javascript framework this site makes extensive use of
+                </p>
+            </li>
+            <li class="resource">
+                <a href="http://code.google.com/p/jquery-jsonp/">jQuery-JSONP</a>
+                <p> 
+                A an extension to jQuery to improve jsonp requests (through the 
+                addition of better error handling).
+                </p>
+            </li>
+            <li class="resource">
+                <a href="http://jquery-ui.com">jQuery-UI</a>
+                <p>
+                User interface extensions to jQuery. Used here for tabs, buttons
+                and autocomplete.
+                </p>
+            </li>
+            <li class="resource">
+                <a href="http://www.oriontransfer.co.nz/software/jquery-syntax/index.en">jQuery-Syntax</a>
+                <p>
+                Used here for syntax highlighting in the code demonstration boxes.
+                </p>
+            </li>
+            <li class="resource">
+                <a href="http://code.google.com/p/flot/">Flot</a>
+                <p>
+                The library used to generate the graphs on the 
+                "other things you can do with data" tab.
+                </p>
+            </li>
+            <li class="resource">
+                <a href="http://code.google.com/apis/webfonts/">Google Font API</a>
+                <p>
+                A webservice for supplying beautiful web-fonts so you don't have
+                to do the messy business of hosting them.
+                </p>
+            </li>
+        </ul>
     </div>
 </div>
         <div id="xml-string" style="display: none;">
