@@ -4,15 +4,15 @@ var baseUrl = "http://squirrel.flymine.org/intermine-test";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";
-    $('#showMeArea').syntax({
+    $('.js-snippet').syntax({
         brush: 'javascript', 
         layout: 'list', 
         replace: true,
         tabWidth: 4,
         root: "lib/jquery-syntax/"
     });
-    $('#showGraphArea').syntax({
-        brush: 'javascript', 
+    $('.html-snippet').syntax({
+        brush: 'html', 
         layout: 'list', 
         replace: true,
         tabWidth: 4,
@@ -106,98 +106,191 @@ function loadGraph1() {
             select: ["Employee.age", "Employee.department.company.name"],
             from: "testmodel"
         },
-        {size: 1000, format: "jsonprows"},
+        {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
             var graphData = [];
+            var ageSum = 0;
             var countAtAgeAtCompany = {};
             for (i in resultSet.results) {
-                var age = resultSet.results[i][0].value;
-                var company = resultSet.results[i][1].value;
+                var employee = resultSet.results[i];
+                var age = employee.age;
+                var company = employee.department.company.name
+                ageSum += age;
                 if (! countAtAgeAtCompany[company]) {
                     countAtAgeAtCompany[company] = {};
                 }
                 if (! countAtAgeAtCompany[company][age]) {
                     countAtAgeAtCompany[company][age] = 1;
                 } else {
-                    countAtAgeAtCompany[company][age] = countAtAgeAtCompany[company][age] + 1;
+                    countAtAgeAtCompany[company][age] 
+                        = countAtAgeAtCompany[company][age] + 1;
                 }
             }
-            for (company in countAtAgeAtCompany) {
+            for (name in countAtAgeAtCompany) {
+                var company = countAtAgeAtCompany[name];
+                var count = 0;
+                var sum = 0;
                 var companyData = {
-                    label: company,
                     data: []
                 }
-                for (age in countAtAgeAtCompany[company]) {
-                    companyData.data.push([age, countAtAgeAtCompany[company][age]]);
+                for (age in company) {
+                    count += company[age];
+                    sum += age * company[age];
+                    companyData.data.push([age, company[age]]);
                 }
+                var companyAverage = parseInt(sum / count);
+                companyData.label = 
+                    name + " [av: " + companyAverage + "]";
                 graphData.push(companyData);
             }
             var options = {
-                stack: true,
-                bars: {show: true},
+                series: {
+                    stack: true,
+                    lines: {show: false},
+                    bars: {show: true, barWidth: 0.9},
+                },
                 legend: {position: "nw"}
             };
             var plot = $.plot("#graph", graphData, options);
-            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+            var averageAge = parseInt(ageSum / resultSet.results.length);
+            $('<span></span>').html("Age (average:" + averageAge + ")")
+                              .addClass("axis-label").appendTo('#graph');
         }
     );
 }
 
-function showTooltip(x, y, contents) {
-     $('<div id="tooltip">' + contents + '</div>').css( {
-           position: 'absolute',
-           display: 'none',
-           top: y + 10,
-           left: x + 10,
-           border: '1px solid #fdd',
-           padding: '2px',
-          'background-color': '#FF0084',
-          color: "white",
-           opacity: 0.80
+function showTooltip(x, y, content) {
+     $('<div id="tooltip"></div>').html(content)
+                                  .addClass("tooltip")
+                                  .css( {
+        position:             'absolute',
+        display:              'none',
+        top:                  y + 10,
+        left:                 x + 10,
+        border:               '2px solid #FF0084',
+        padding:              '5px',
+        'border-radius':      '5px',
+        '-moz-border-radius': '5px',
+        'background-color':   '#FE45A5',
+        color:                "white",
+        opacity:              0.70
       }).appendTo("body").fadeIn(200);
+}
+
+function findLineByLeastSquares(datapoints) {
+    var sum_x = 0;
+    var sum_y = 0;
+    var sum_xy = 0;
+    var sum_xx = 0;
+    var count = 0;
+    
+    /*
+     * We'll use those variables for faster read/write access.
+     */
+    var x = 0;
+    var y = 0;
+    var values_length = datapoints.length;
+    
+    /*
+     * Nothing to do.
+     */
+    if (values_length === 0) {
+        return [ ];
+    }
+    
+    /*
+     * Calculate the sum for each of the parts necessary.
+     */
+    for (var i = 0; i < values_length; i++) {
+        x = datapoints[i][0];
+        y = datapoints[i][1];
+        sum_x += x;
+        sum_y += y;
+        sum_xx += x*x;
+        sum_xy += x*y;
+        count++;
+    }
+    
+    /*
+     * Calculate m and b for the formular:
+     * y = x * m + b
+     */
+    var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
+    var b = (sum_y/count) - (m*sum_x)/count;
+    
+    /*
+     * We will make the x and y result line now
+     */
+    var data = [];
+    
+    for (var i = 0; i < values_length; i++) {
+        x = datapoints[i][0];
+        y = x * m + b;
+        data.push([x, y]);
+    }
+    
+    return data;
 }
 
 function loadGraph2() {
     IMBedding.loadQuery(
         {
-            select: ["Manager.seniority", "Manager.age", "Manager.name"],
+            select: ["Manager.age", "Manager.seniority", "Manager.name"],
+            where: [{path: "Manager.age", op: ">", value: 30}],
             from: "testmodel"
         },
-        {size: 1000, format: "jsonprows"},
+        {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
             var graphData = [];
-            var nameOfManager = {};
+            var managers = {};
             var ageVsSen = {
                 label: "Seniority by Age",
                 color: "rgb(0, 115, 234)",
                 points: {show: true},
                 data: []
             };
+            var trendLine = {
+                label: "Trend Line",
+                color: "rgb(255, 0, 132)",
+                lines: {show: true},
+            };
             for (i in resultSet.results) {
-                var seniority = resultSet.results[i][0].value;
-                var age = resultSet.results[i][1].value;
+                var manager = resultSet.results[i];
+                var seniority =manager.seniority;
+                var age = manager.age;
                 ageVsSen.data.push([age, seniority]);
-                nameOfManager[age + "-" + seniority] = resultSet.results[i][2].value;
+                managers[age + "-" + seniority] = manager;
             }
+            trendLine.data = findLineByLeastSquares(ageVsSen.data);
             graphData.push(ageVsSen);
+            graphData.push(trendLine);
             var options = {
-                grid: {hoverable: true},
+                grid: {hoverable: true, clickable: true},
                 legend: {position: "nw"}
             };
             var plot = $.plot("#graph", graphData, options);
             $('#graph').bind("plothover", function(event, pos, item) {
                 if (item) {
-                 
-                 $("#tooltip").remove();
+                    $("#tooltip").remove();
                     var x = item.datapoint[0].toFixed(2),
                         y = item.datapoint[1].toFixed(2);
                     var key = parseInt(x) + "-" + parseInt(y);
-                    var tooltip = nameOfManager[key];
-                    showTooltip(item.pageX, item.pageY, tooltip);
+                    var manager = managers[key];
+                    showTooltip(item.pageX, item.pageY, manager.name);
                 }
                 else {
                     $("#tooltip").remove();
                     previousPoint = null;            
+                }
+            }).bind("plotclick", function(event, pos, item) {
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+                    var key = parseInt(x) + "-" + parseInt(y);
+                    var manager = managers[key];
+                    var url = baseUrl + "/objectDetails.do?id=" 
+                                + manager.objectId;
+                    window.location.replace(url);
                 }
             });
             $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
@@ -205,6 +298,125 @@ function loadGraph2() {
     );
 }
 
+function loadDepartmentSummary(departmentName) {
+    departmentName = departmentName || "Sales";
+    IMBedding.loadQuery(
+        {
+            select: [
+                "Department.name", "Department.company.name", 
+                "Department.employees.name", 
+                "Department.employees.age", 
+                "Department.employees.address.address", 
+                "Department.manager.name",
+                "Department.company.departments.name"
+            ],
+            where: [
+                {
+                    path: "Department.name", 
+                    op: "=", value: departmentName
+                },
+                {
+                    path: "Department.company.name", 
+                    op: "=", value: "Wernham-Hogg"
+                }
+            ],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonpobjects"},
+        function(resultSet) {
+            var department = resultSet.results[0];
+            var summary = $('<div></div>').addClass("department-summary");
+            var title = document.createElement("h2");
+            title.appendChild(document.createTextNode(
+                        department.company.name + ": "));
+            var depSelect = document.createElement("select");
+            $(depSelect).button();
+            var noOfDeps = department.company.departments.length;
+            for (var i = 0; i < noOfDeps; i++) {
+                var dep = department.company.departments[i];
+                var depOption = document.createElement("option");
+                if (dep.objectId == department.objectId) {
+                    depOption.selected = true;
+                }
+                depOption.innerHTML = dep.name;
+                depSelect.appendChild(depOption);
+            }
+            title.appendChild(depSelect);
+            console.log(depSelect);
+            $(depSelect).change(function() {
+                loadDepartmentSummary($(depSelect).val());
+            });
+            summary.append(title);
+            var subtitle = document.createElement("h3");
+            subtitle.innerHTML = "Manager: " + department.manager.name;
+            summary.append(subtitle);
+            var employeeCount = department.employees.length;
+            var list = document.createElement("ul");
+            for (var i = 0; i < employeeCount; i++) {
+                var employee = department.employees[i];
+                if (employee.objectId == department.manager.objectId) {
+                    continue;
+                }
+                var item = document.createElement("li");
+                var link = document.createElement("a");
+                link.href = baseUrl + "/objectDetails.do?id=" 
+                                    + employee.objectId;
+                link.innerHTML = employee.name;
+                item.appendChild(link);
+                $(link).hover(
+                    getEmployeeTooltipper(employee),
+                    function(event) {
+                        $('.tooltip').remove();
+                    }
+                );
+                list.appendChild(item);
+            }
+            summary.append(list);
+            $('#graph').empty().append(summary);
+        }
+    );
+};
+
+var getEmployeeTooltipper = function(employee) {
+    return function(event) {
+        var tooltip = document.createElement("div");
+        var ttTitle = document.createElement("h3");
+        ttTitle.innerHTML = employee.name;
+        tooltip.appendChild(ttTitle);
+        var table = document.createElement("table");
+        table.className = "employee-details";
+        var rowA = document.createElement("tr");
+        var cellA1 = document.createElement("td");
+        cellA1.innerHTML = "Age:";
+        cellA1.className = "summary-cell";
+        var cellA2 = document.createElement("td");
+        cellA2.innerHTML = employee.age;
+        cellA2.align = "right";
+        cellA2.className = "summary-cell";
+        rowA.appendChild(cellA1);
+        rowA.appendChild(cellA2);
+        table.appendChild(rowA);
+        var rowB = document.createElement("tr");
+        var cellB1 = document.createElement("td");
+        cellB1.innerHTML = "Address:";
+        cellB1.className = "summary-cell";
+        var cellB2 = document.createElement("td");
+        cellB2.innerHTML = employee.address.address;
+        cellB2.className = "summary-cell";
+        rowB.appendChild(cellB1);
+        rowB.appendChild(cellB2);
+        table.appendChild(rowB);
+        tooltip.appendChild(table);
+        var x = event.pageX;
+        var y = event.pageY;
+        showTooltip(x, y, tooltip);
+    };
+};
+
+var toggleExample = function() {
+    $('#exampleCode').slideToggle('fast', function(){});
+    $('#querybuilder').slideToggle('fast', function(){});
+};
 
 var firstline = "/* Below is the Javascript to load this table using ajax:\n"
 + "You can cut and paste this into a page to get started.\n"
@@ -235,7 +447,7 @@ JSON.stringify = JSON.stringify || function (obj) {
     }
 };
 
-function loadUserQuery() {
+var getQueryFromForm = function() {
     var rootClass = $("#root-class").val();
     var views = [];
     var viewsFormValues = $("#views-form").serializeArray();
@@ -317,36 +529,88 @@ function loadUserQuery() {
     if (logic.length > 0) {
         query.constraintLogic = logic;
     }
+    return query;
+};
 
+var getQueryFromBox = function() {
+    var format = $('#boxselector').val();
+    if (format == "xml") {
+        return $('#xmlarea').val();
+    } else if (format == "json") {
+        var jsonString = $('#jsonarea').val();
+        var parsedQuery;
+        try {
+            parsedQuery = eval('(' + jsonString + ')');
+        } catch(e) {
+            alert("Something is wrong with your json\n" + e);
+        }
+        return parsedQuery;
+    } else {
+        return null;
+    }
+};
+
+var makeQueryDisplayStrings = function(query) {
+    if (! jQuery.isPlainObject(query)) {
+        // assume it is xml
+        return [null, query];
+    }
     // Make the displayed json string
     // It needs munging to prettify it as well
-    var queryDisplayString = JSON.stringify(query);
-    var keys = queryDisplayString.match(/"\w+":/g);
+    var jsonString = JSON.stringify(query);
+    var keys = jsonString.match(/"\w+":/g);
     if (keys) {
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
             var newKey = key.replace(/"/g, "").replace(":", ": ");
-            queryDisplayString = queryDisplayString.replace(key, newKey);
+            jsonString = jsonString.replace(key, newKey);
         }
     }
-    queryDisplayString = queryDisplayString.replace(/\}\],/g, "}\n\t],")
-                                          .replace(/\},\{/g, "},\n\t{")
-                                          .replace(/\],/g, "],\n\t")
-                                          .replace(/^\{/, "{\n\t")
-                                          .replace(/\[\{/g, "[\n\t{")
-                                          .replace(/\}$/, "\n}")
-                                          .replace(/",/g, "\", ")
-                                          .replace(/\t\{/g, "\t\t{");
-    var xmlString = IMBedding.makeQueryXML(query).replace(/&gt;/g, "&amp;gt;")
-                                                 .replace(/&lt;/g, "&amp;lt;"); 
+    jsonString = jsonString.replace(/\}\],/g, "}\n\t],")
+                            .replace(/\},\{/g, "},\n\t{")
+                            .replace(/\],/g, "],\n\t")
+                            .replace(/^\{/, "{\n\t")
+                            .replace(/\[\{/g, "[\n\t{")
+                            .replace(/\}$/, "\n}")
+                            .replace(/",/g, "\", ")
+                            .replace(/\t\{/g, "\t\t{");
+    var xmlString = IMBedding.makeQueryXML(query)
+                            .replace(/&gt;/g, "&amp;gt;")
+                            .replace(/&lt;/g, "&amp;lt;"); 
+    return [jsonString, xmlString];
+};
+
+function loadUserQuery() {
+    var source = $('input:radio[name=query]:checked').val();
+    var query;
+    if (source == "querybuilder") {
+        query = getQueryFromForm();
+    } else {
+        query = getQueryFromBox();
+    }
+    if (! query) {
+        return false;
+    }
+    var displayStrings = makeQueryDisplayStrings(query);
+    if (! displayStrings) {
+        return false;
+    }
+
     var data = {size: 10};
-    var newValue = firstline
-     + "/*You can define the query as a regular javascript object*/\n"
-     +  "var query = " + queryDisplayString + ";\n"
-     + "\n/*Or as xml*/\n"
-     + "var query = '" + xmlString + "';\n\n"
-     + "/*Execution is the same in either case*/\n"
-     + "IMBedding.loadQuery(query, {size: 10}, '#placeholder');"
+    var newValue = firstline;
+    if (displayStrings[0]) {
+        newValue 
+            += "/*You can define the query as a regular javascript object*/\n"
+            +  "var query = " + displayStrings[0] + ";\n";
+    }
+    if (displayStrings[1]) {
+        newValue
+            += "\n/*A query can be defined as XML*/\n"
+            + "var query = '" + displayStrings[1] + "';\n\n";
+    }
+    newValue 
+        += "/*Execution is the same in either case*/\n"
+        + "IMBedding.loadQuery(query, {size: 10}, '#placeholder');";
 
     var codeContainer = $("#codeContainer");
     codeContainer.empty();
@@ -488,10 +752,23 @@ $(function() {
 
     $('#sortOrderSelector').button();
     $('#sortDirectionDiv').buttonset();
+    $('#boxselector').change(function() {
+        document.getElementById('jsonarea').disabled = ($(this).val() == "xml");
+        document.getElementById('xmlarea').disabled = ($(this).val() == "json");
+    });
     $("input:checkbox").button();
     $('#radio').buttonset();
     $('#graph-radios').buttonset();
+    $('#query-radios').buttonset();
     $('#styles').buttonset();
+    $('#querybuilder-opt').click(function() {
+        $('#querybuilder').slideDown('fast', function() {});
+        $('#cutandpaste').slideUp('fast', function() {});
+    });
+    $('#cutandpaste-opt').click(function() {
+        $('#querybuilder').slideUp('fast', function() {});
+        $('#cutandpaste').slideDown('fast', function() {});
+    });
     $('#showMe').click(function() {
         $('#showMeAreaContainer').slideToggle('fast', function() {});
     });
@@ -521,6 +798,8 @@ $(function() {
             loadGraph1();
         } else if (this.id.match(/2/)) {
             loadGraph2();
+        } else if (this.id.match(/3/)) {
+            loadDepartmentSummary();
         }
     });
 });

@@ -37,15 +37,30 @@ IMBedding = (function() {
         }
     };
 
-    var getTableResizer = function(tableId, containerId) {
+    var getTableResizer = function(tableId, containerId, uid) {
         return function() {
+            $('#imbedded-csvlink-' + uid).toggle();
+            $('#imbedded-tsvlink-' + uid).toggle();
             $('#' + tableId).fadeToggle('slow', function() {
                 fitContainerToTable(tableId, containerId);
+                updateVisibilityOfPagers(uid);
             });
         };
     };
 
+    var hidePagers = function(uid) {
+        var table = tables[uid];
+        var nextLink = $("#imbedded-nextlink-" + uid);
+        var prevLink = $("#imbedded-prevlink-" + uid);
+        nextLink.hide();
+        prevLink.hide();
+    };
+
     var updateVisibilityOfPagers = function(uid) {
+        if (! $('#imbedded-table-' + uid).is(':visible')) {
+            hidePagers(uid);
+            return;
+        }
         var table = tables[uid];
         var nextLink = $("#imbedded-nextlink-" + uid);
         var prevLink = $("#imbedded-prevlink-" + uid);
@@ -75,8 +90,9 @@ IMBedding = (function() {
             
         var titlebox = document.createElement("div");
         titlebox.setAttribute("class", "imbedded-table-titlebox");
-        var title = document.createElement("span");
+        var title = document.createElement("a");
         title.className = "imbedded-table-title";
+        title.href = '#';
         title.appendChild(document.createTextNode(data.title + " ("));
         var countDisplayer = document.createElement("span");
         countDisplayer.id = "imbedded-count-displayer-" + uid;
@@ -105,12 +121,11 @@ IMBedding = (function() {
 
         var tableClasses = "imbedded-table";
         if (data.start == 0) {
-            tableClasses += " firstpage";
+            tableClasses += " imbedded-initial-state";
         }
         table.className = tableClasses;
         tables[uid].pagePath = data.current + "&size=" + data.size;
 
-        $(titlebox).click(getTableResizer(table.id, container.id));
 
         var colHeaderRow = document.createElement("tr");
         colHeaderRow.setAttribute("class", "imbedded-table-row imbedded-column-header-row");
@@ -134,22 +149,26 @@ IMBedding = (function() {
 
         container.appendChild(table);
         var csvLink = document.createElement("a");
+        csvLink.id = "imbedded-csvlink-" + uid;
         csvLink.setAttribute("class", "imbedded-exportlink");
         csvLink.href = localiseUrl(data.csv_url);
         csvLink.innerHTML = "Export as CSV file";
         container.appendChild(csvLink);
         var tsvLink = document.createElement("a");
+        tsvLink.id = "imbedded-tsvlink-" + uid;
         tsvLink.setAttribute("class", "imbedded-exportlink");
         tsvLink.href = localiseUrl(data.tsv_url);
         tsvLink.innerHTML = "Export as TSV file";
         container.appendChild(tsvLink);
         var nextLink = document.createElement("a");
         nextLink.id = "imbedded-nextlink-" + uid;
-        nextLink.setAttribute("class", "imbedded-pagelink next");
+        nextLink.setAttribute("class", 
+                "imbedded-pagelink next imbedded-initial-state");
         nextLink.href = target;
         tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size);
         $(nextLink).click(function() {
-            // It is difficult to tell what the throbber looks like until we have some queries that take some time
+            // It is difficult to tell what the throbber looks like until we 
+            // have some queries that take some time
             /*$(table).children('tbody').detach();
             var throbber = document.createElement("img");
             throbber.src = "images/throbber.gif";
@@ -168,7 +187,8 @@ IMBedding = (function() {
         container.appendChild(nextLink);
         var prevLink = document.createElement("a");
         prevLink.id = "imbedded-prevlink-" + uid;
-        prevLink.setAttribute("class", "imbedded-pagelink prev");
+        prevLink.setAttribute("class", 
+                "imbedded-pagelink prev imbedded-initial-state");
         prevLink.href = target;
         $(prevLink).click(function() {
             $.jsonp({
@@ -186,9 +206,7 @@ IMBedding = (function() {
             $(prevLink).hide();
         }
         jQuery(target).empty().append(container);
-        if (data.previous) {
-            fitContainerToTable(table.id, container.id);
-        }
+        jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
     };
 
     var getNextUrl =function(basePath, count, start, size) {

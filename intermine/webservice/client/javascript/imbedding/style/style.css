@@ -1,10 +1,3 @@
-.option-box {
-    border-style: inset; 
-    border-width: 1px;
-    margin: 5px;
-    padding:10px;
-}
-
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
@@ -23,8 +16,9 @@
     padding: 5px;
 }
 
-.imbedded-table-title {
+a.imbedded-table-title {
     font-family: "Cabin", "Helvetica", "sans-serif";
+    color: white;
 }
 
 .imbedded-column-header-row {
