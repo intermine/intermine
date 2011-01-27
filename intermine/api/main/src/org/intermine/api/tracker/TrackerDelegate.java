@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
 
 /**
  * Intermediate class which decouples the tracker components from the code that uses them.
@@ -85,6 +86,22 @@ public class TrackerDelegate
         if (profile != null && templateTracker != null) {
             return templateTracker.getMostPopularTemplateOrder(profile.getUsername(),
                                                                sessionIdentifier);
+        }
+        return null;
+    }
+
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, int size) {
+        if (templateTracker != null) {
+            return templateTracker.getPopularTemplatesByAspect(aspectTag, size);
+        }
+        return null;
+    }
+
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size,
+        Profile profile, String sessionIdentifier) {
+        if (profile != null && templateTracker != null) {
+            return templateTracker.getPopularTemplatesByAspect(aspectTag, size,
+                                   profile.getUsername(), sessionIdentifier);
         }
         return null;
     }
