@@ -143,6 +143,7 @@ function clearBagName(element) {
         <a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
         <a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract')" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
         <a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
+        <a href="#operations" title="Delete" onclick="jQuery('#listsButton').val('delete')" class="boxy"><img src="images/delete.png" width="16" height="16" alt="Delete">Delete</a>
     </c:otherwise>
     </c:choose>
     <strong class="pad">Options:</strong>
@@ -165,7 +166,9 @@ function clearBagName(element) {
         jQuery(".boxy").boxy();
     });
     function submitBagOperation() {
-       jQuery("#newBagName").val(jQuery("#dummy_text").val());
+       if (jQuery('#listsButton').val() != "Delete") {}
+        jQuery("#newBagName").val(jQuery("#dummy_text").val());
+       }
        validateBagOperations('modifyBagForm',jQuery('#listsButton').val());
     }
 </script>
