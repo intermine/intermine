@@ -33,36 +33,65 @@ public class CytoscapeNetworkDBQueryRunner
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkDBQueryRunner.class);
 
-    //========== for normal gene-gene interaction ==========
     /**
-     * Find genes that interact with the hub gene.
+     * Find all genes that interact with each other.
      *
-     * @param geneId the InterMine id, hub gene
+     * @param featureType Gene or Protein
+     * @param startingFeatureSet a set starting genes or proteins
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return a set of genes
      */
-    public Set<Integer> findInteractingGenes(String geneId, Model model,
-            PathQueryExecutor executor) {
+    public Set<Integer> getInteractingGenes(String featureType, Set<Integer> startingFeatureSet,
+            Model model, PathQueryExecutor executor) {
+
+        Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
+        Set<Integer> startingGeneSet = new HashSet<Integer>();
+
+        //=== Get starting genes ===
+        if ("Gene".equals(featureType)) {
+            startingGeneSet.addAll(startingFeatureSet);
+        } else if ("Protein".equals(featureType)) {
+
+            PathQuery q = new PathQuery(model);
+
+            q.addView("Protein.genes.id");
+            q.addConstraint(Constraints.inIds(featureType, startingFeatureSet));
+
+            ExportResultsIterator results = executor.execute(q);
+
+            while (results.hasNext()) {
+                List<ResultElement> row = results.next();
+
+                Integer interactingGene = (Integer) row.get(0).getField();
+                startingGeneSet.add(interactingGene);
+            }
+        }
+
+        //=== Get genes interacting with starting genes ===
 
         PathQuery q = new PathQuery(model);
 
         Set<Integer> interactingGeneSet = new HashSet<Integer>();
 
         q.addView("Gene.interactions.interactingGenes.id");
-        q.addConstraint(Constraints.eq("Gene.id", geneId));
+        q.addConstraint(Constraints.inIds("Gene", startingGeneSet));
 
         ExportResultsIterator results = executor.execute(q);
 
         while (results.hasNext()) {
             List<ResultElement> row = results.next();
 
-            // parse returned data
             Integer interactingGene = (Integer) row.get(0).getField();
             interactingGeneSet.add(interactingGene);
         }
 
-        return interactingGeneSet;
+        // TODO could create a bag with a temp name, and use it in the next query
+
+        fullInteractingGeneSet.addAll(startingGeneSet);
+        fullInteractingGeneSet.addAll(interactingGeneSet);
+
+        return fullInteractingGeneSet;
     }
 
     /**
@@ -73,7 +102,7 @@ public class CytoscapeNetworkDBQueryRunner
      * @param executor the PathQueryExecutor
      * @return raw query results
      */
-    public ExportResultsIterator queryInteractions(Set<Integer> keys, Model model,
+    public ExportResultsIterator getInteractions(Set<Integer> keys, Model model,
             PathQueryExecutor executor) {
 
         PathQuery q = new PathQuery(model);
@@ -89,7 +118,7 @@ public class CytoscapeNetworkDBQueryRunner
                 "Gene.interactions.interactingGenes.symbol",
                 "Gene.interactions.dataSets.dataSource.name",
                 "Gene.interactions.shortName",
-                "Gene.id", //object store id
+                "Gene.id",
                 "Gene.interactions.interactingGenes.id");
 
         q.addConstraint(Constraints.inIds("Gene", keys), "B");
@@ -113,12 +142,12 @@ public class CytoscapeNetworkDBQueryRunner
     public ExportResultsIterator extendNetwork(String geneId,
             Set<Integer> keys, Model model, PathQueryExecutor executor) {
 
-        Set<Integer> interactingGeneSet = findInteractingGenes(geneId, model, executor);
-        keys.addAll(interactingGeneSet);
-        ExportResultsIterator results = queryInteractions(keys, model, executor);
+        Set<Integer> startingGeneSet = new HashSet<Integer>(Integer.valueOf(geneId));
+
+        Set<Integer> fullInteractingGeneSet = getInteractingGenes("Gene",
+                startingGeneSet, model, executor);
+        ExportResultsIterator results = getInteractions(fullInteractingGeneSet, model, executor);
 
         return results;
     }
-
-    // Separated modMine specific logics from bio, moved to RegulatoryNetworkDBUtil in modMine
 }
