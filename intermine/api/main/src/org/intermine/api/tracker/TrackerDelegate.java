@@ -93,6 +93,12 @@ public class TrackerDelegate
         return null;
     }
 
+    /**
+     * Return the template list for a particular aspect given in input, ordered by rank descendant
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @return List of template names
+     */
     public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size) {
         if (templateTracker != null) {
             return templateTracker.getPopularTemplatesByAspect(aspectTag, size);
@@ -100,6 +106,15 @@ public class TrackerDelegate
         return null;
     }
 
+    /**
+     * Return the template list for a particular aspect, ordered by rank descendant for
+     * the user/sessionid specified in the input
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
+     * @return List of template names
+     */
     public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size,
         Profile profile, String sessionIdentifier) {
         if (profile != null && templateTracker != null) {
