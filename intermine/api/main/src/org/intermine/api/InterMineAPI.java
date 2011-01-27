@@ -79,7 +79,8 @@ public class InterMineAPI
         this.oss = oss;
         this.profileManager = new ProfileManager(objectStore, userProfileWriter);
         this.bagManager = new BagManager(profileManager.getSuperuserProfile(), model);
-        this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model);
+        this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model,
+                                                  trackerDelegate.getTemplateTracker());
         this.templateSummariser = new TemplateSummariser(objectStore,
                 profileManager.getProfileObjectStoreWriter());
         this.bagQueryRunner =
