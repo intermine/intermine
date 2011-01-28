@@ -10,12 +10,9 @@ package org.intermine.dwr;
  *
  */
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -96,7 +93,6 @@ import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidget;
-import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.HTMLWidget;
 import org.intermine.web.logic.widget.TableWidget;
@@ -722,6 +718,12 @@ public class AjaxServices
                     if (queries.size() > 0) {
                         return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
                             + "by other queries " + queries;
+                    }
+                }
+                for (int i = 0; i < selectedBags.length; i++) {
+                    if (profile.getSavedBags().get(selectedBags[i]) == null) {
+                        return "List " + selectedBags[i] + " cannot be deleted as it is a shared "
+                            + "list";
                     }
                 }
             } else if (!"copy".equals(operation)) {
