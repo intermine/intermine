@@ -67,14 +67,6 @@ public class TemplateTrack implements Track
     }
 
     /**
-     * Set the template name
-     * @param templateName the template name
-     */
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
-
-    /**
      * Return the time of access
      * @return long the time of access
      */
