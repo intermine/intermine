@@ -1,6 +1,6 @@
 // Functions for network display
 
-function showNetwork(networkdata, fullInteractingGeneSet) {
+function displayNetwork(networkdata, fullInteractingGeneSet) {
 
     jQuery('#menu').html("&nbsp;");
 
