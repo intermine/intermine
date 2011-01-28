@@ -68,7 +68,7 @@
 <!-- qTip -->
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/jquery-ui/jquery-ui-1.8.7.custom.min.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/interactions.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
 
     // from controller
@@ -107,7 +107,7 @@
                                          .width(1200);
             } else {
                 networkdata = data;
-                showNetwork(networkdata, fullInteractingGeneSet);
+                displayNetwork(networkdata, fullInteractingGeneSet);
             }
         });
     }
