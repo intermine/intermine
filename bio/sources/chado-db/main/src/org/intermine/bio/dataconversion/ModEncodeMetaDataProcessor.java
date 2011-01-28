@@ -3034,7 +3034,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 SubmissionReference ref = i.next();
                 addRelatedSubmissions(relatedSubs, submissionId, ref.referencedSubmissionId);
                 addRelatedSubmissions(relatedSubs, ref.referencedSubmissionId, submissionId);
-                String dccId = dccIdMap.get(submissionId);
             }
             LOG.debug("RRSS11 " + relatedSubs.size() + "|" + relatedSubs.keySet() + "|" +
                     relatedSubs.values());
@@ -3055,7 +3054,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             relatedSubs.put(submissionMap.get(subId).interMineObjectId, itemIds);
         }
         itemIds.add(submissionMap.get(relatedId).itemIdentifier);
-        LOG.info("RRSSadd1 " + subId + "->" + relatedId + "|" + itemIds);            
     }
     
     
@@ -3086,7 +3084,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             getChadoDBConverter().store(collection, storedSubmissionId);
 
             // TODO use Item?
+            // why is looking for Assay type? TODO check
             if (!submissionWithExpTypeSet.contains(thisSubmissionId)) {
+                LOG.info("RRSSprotoprot: " + thisSubmissionId);
                 // may need protocols from referenced submissions to work out experiment type
                 protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
 
@@ -3123,10 +3123,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + " populated, this method needs to be called after"
                     + " processSubmissionProperties");
         }
-        //****************NNN
-        SubmissionReference subRef = submissionRefs.get(submissionId).get(0);
-        if (subRef != null) {
+        
+        List<SubmissionReference> refs = submissionRefs.get(submissionId);        
+        for (SubmissionReference subRef : refs) {
+            LOG.info("RRSSprot: " + subRef.referencedSubmissionId
+                    + "|" + subRef.dataValue);
             for (AppliedProtocol aProtocol : findAppliedProtocolsFromReferencedSubmission(subRef)) {
+                LOG.info("RRSSprotId: " + aProtocol.protocolId);
                 protocolIds.add(aProtocol.protocolId);
             }
         }
