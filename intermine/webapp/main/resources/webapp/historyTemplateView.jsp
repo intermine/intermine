@@ -123,9 +123,6 @@
                 ${savedTemplate.value.title}
               </td>
               <td class="sorting">
-                ${savedTemplate.value.title}
-              </td>
-              <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">
                     ${fn:substring(savedTemplate.value.description, 0, 60)}...
