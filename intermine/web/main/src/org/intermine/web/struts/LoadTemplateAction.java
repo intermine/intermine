@@ -119,11 +119,11 @@ public class LoadTemplateAction extends DispatchAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TemplateQuery template = parseTemplate(request, im);
         Profile profile = SessionMethods.getProfile(session);
-
+        String path = request.getParameter("path");
         String bagName = template.getName() + "_results";
         bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
         BagHelper.createBagFromPathQuery(template.getPathQuery(), bagName,
-                template.getDescription(), null, profile, im);
+                template.getDescription(), path, profile, im);
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();

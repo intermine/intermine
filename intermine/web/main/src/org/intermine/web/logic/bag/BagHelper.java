@@ -19,6 +19,7 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -52,14 +53,17 @@ public final class BagHelper
 
 
     /**
-     * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must
-     * select only the id field from the type the bag is to be created from.  The name will be
-     * made unique with "_n" if it already exists in the profile.
+     * Create a bag for the given profile and bag name from a PathQuery.
+     *
+     * The PathQuery must select only the id field from the type the bag is to be created from or
+     * else provide a path.
+     *
+     * The name will be made unique with "_n" if it already exists in the profile.
      *
      * @param pathQuery the query to create the bag from
      * @param bagName name of new bag
      * @param bagDescription a description for the new bag
-     * @param bagType the class of object in the bag
+     * @param pathString path used to create list
      * @param profile bag will be created in this profile
      * @param im InterMineAPI that will give us BagManager
      *
@@ -67,22 +71,20 @@ public final class BagHelper
      * @throws ObjectStoreException if persistence problem
      */
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
-            String bagDescription, String bagType, Profile profile, InterMineAPI im)
+            String bagDescription, String pathString, Profile profile, InterMineAPI im)
         throws ObjectStoreException {
+        String bagType = pathString;
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
             if (!"id".equals(idPath.getLastElement())) {
-                String featureType = idPath.getLastClassDescriptor().getUnqualifiedName();
                 pathQuery.clearView();
                 pathQuery.clearDescriptions();
-                pathQuery.addView(featureType + ".id");
-                if (bagType == null) {
-                    bagType = featureType;
-                }
+                pathQuery.addView(pathString + ".id");
+                Path path = new Path(im.getModel(), pathString);
+                bagType = path.getLastClassDescriptor().getUnqualifiedName();
             }
         } catch (PathException e) {
-            throw new RuntimeException("Bag creation query has invalid path in view: "
-                    + pathQuery.getView(), e);
+            throw new RuntimeException("Query has invalid path: " + pathQuery.getView(), e);
         }
 
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
