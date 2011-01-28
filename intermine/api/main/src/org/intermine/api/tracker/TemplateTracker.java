@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 
 /**
  * Class for tracking the templates execution by the users. When a user executes a template,
