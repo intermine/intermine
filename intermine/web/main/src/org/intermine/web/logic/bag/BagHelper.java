@@ -19,7 +19,6 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -76,7 +75,7 @@ public final class BagHelper
         String bagType = pathString;
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
-            if (!"id".equals(idPath.getLastElement())) {
+            if (!"id".equals(idPath.getLastElement()) || pathString.contains(".")) {
                 pathQuery.clearView();
                 pathQuery.clearDescriptions();
                 pathQuery.addView(pathString + ".id");
