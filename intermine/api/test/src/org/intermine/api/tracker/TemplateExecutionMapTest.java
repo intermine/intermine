@@ -11,6 +11,7 @@ package org.intermine.api.tracker;
  */
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.api.profile.Profile;
@@ -18,10 +19,19 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 
 import junit.framework.TestCase;
@@ -35,6 +45,7 @@ public class TemplateExecutionMapTest extends TestCase
 {
     MokaTemplatesExecutionMap templateExecutionsMap = new MokaTemplatesExecutionMap();
     TemplateTrack tt1, tt2, tt3, tt4, tt5, tt6;
+    private ObjectStoreWriter uosw;
 
     /**
      * Create some template track objects
@@ -84,13 +95,32 @@ public class TemplateExecutionMapTest extends TestCase
 
     private Profile setUpProfile() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStoreWriter uosw =  ObjectStoreWriterFactory.getObjectStoreWriter(
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter(
                                                            "osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
         Profile profile = new Profile(pm, "user", null, "password", new HashMap(),
                 new HashMap(), new HashMap());
         pm.createProfile(profile);
         return profile;
+    }
+
+    private void removeProfile() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "username");
+        SimpleConstraint sc =
+            new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("user"));
+        q.setConstraint(sc);
+        SingletonResults res = uosw.getObjectStore().executeSingleton(q);
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            uosw.delete(o);
+        }
+
+        uosw.close();
     }
 
     /**
@@ -114,7 +144,7 @@ public class TemplateExecutionMapTest extends TestCase
         }
     }
 
-    public void testGetLogarithmMap() throws Exception{
+    public void testGetLogarithmMap() throws Exception {
         MokaTemplateManager templateManager = new MokaTemplateManager();
         assertEquals(Math.log(4), templateExecutionsMap.getLogarithmMap("userName1",
                                                         templateManager).get("template1"));
@@ -129,5 +159,7 @@ public class TemplateExecutionMapTest extends TestCase
                      templateExecutionsMap.getLogarithmMap(null, templateManager).get("template1"));
         assertEquals(Math.log(2),
                     templateExecutionsMap.getLogarithmMap(null, templateManager).get("template2"));
+
+        removeProfile();
     }
 }
