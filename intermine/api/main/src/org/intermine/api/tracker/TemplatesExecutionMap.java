@@ -23,7 +23,7 @@ import org.intermine.api.template.TemplateQuery;
  */
 public class TemplatesExecutionMap
 {
-    private Map<String, Map<String, Integer>> templateExecutions =
+    protected Map<String, Map<String, Integer>> templateExecutions =
                                               new HashMap<String, Map<String, Integer>>();
 
     /**
