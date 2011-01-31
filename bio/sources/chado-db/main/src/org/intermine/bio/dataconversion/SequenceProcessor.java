@@ -93,7 +93,7 @@ public class SequenceProcessor extends ChadoProcessor
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     // Avoid explosion of log messages by only logging missing collections once
-    Set<String> loggedMissingCols = new HashSet<String>();
+    private Set<String> loggedMissingCols = new HashSet<String>();
 
     /**
      * An action that makes a synonym.
@@ -653,11 +653,13 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             } else {
-                // TODO
+                // FIXME 31 Jan 11 - there is an error in the FlyBase data that causes this
+                // exception to be thrown, so I am temporarily disabling until the next release
+                // FB2011_02
                 String msg = "srcfeature_id (" + srcFeatureId + ") from location "
                             + featureLocId + " was not found in the feature table";
-//                LOG.error(msg);
-                throw new RuntimeException(msg);
+                LOG.error(msg);
+//                throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");
