@@ -130,8 +130,13 @@ public class TemplateManager
         }
     }
 
-
-    private Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+    /**
+     * Fetch all user and global templates in a single map for the given user.  If there are naming
+     * collisions between user and global templates user templates take precedence.
+     * @param profile the user to fetch templates
+     * @return a map of template name to template query, the map will be empty if no templates found
+     */
+    protected Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
         // where name collisions occur user templates take precedence
         Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
 
