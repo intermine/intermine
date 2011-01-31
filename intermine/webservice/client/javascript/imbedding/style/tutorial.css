@@ -6,7 +6,7 @@
 }
 
 h1, h2, h3, h4 {
-    font-family: "Cabin", "Arial", sans-serif;
+    font-family: "Cuprum", "Arial", sans-serif;
 }
 
 #dialog-confirm {
@@ -17,8 +17,8 @@ h3.querybuilder-section-header {
     margin: .5em 0px;
 }
 
-p, .ui-button-text, .ui-button {
-    font-family: "Merriweather", "Arial", sans-serif ! important;
+p, .ui-button-text, .ui-button, .ui-tabs {
+    font-family: "Cuprum", "Arial", sans-serif ! important;
 }
 
 .text-input {
@@ -43,9 +43,10 @@ li.resource {
 }
 
 li.resource a, p {
-    font-family: "Merriweather", "Arial", sans-serif ! important;
+    font-family: "Neuton", "Arial", sans-serif ! important;
     color: black;
 }
+
 
 #page {
     margin-left: 200px;
@@ -61,7 +62,7 @@ span.axis-label {
 }
 
 div.department-summary {
-    font-family: "Merriweather", "Arial", sans-serif ! important;
+    font-family: "Neuton", "Arial", sans-serif ! important;
     border-style: inset; 
     border-width: 1px;
     margin: 5px;
@@ -72,7 +73,7 @@ div.department-summary {
     border-collapse: collapse;
     border-width: 3px;
     border-color: white;
-    font-family: "Merriweather", "Arial", sans-serif ! important;
+    font-family: "Neuton", "Arial", sans-serif ! important;
     background: #555;
     color: white;
     text-size: 14px;

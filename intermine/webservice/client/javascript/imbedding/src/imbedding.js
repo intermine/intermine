@@ -11,19 +11,13 @@ IMBedding = (function() {
     var getRowClass = function(index) {
         return ((index % 2 == 0) ? "imbedded-row-even" : "imbedded-row-odd");
     };
-    var getStyle = function(elem, cssprop, cssprop2) {
-        // IE
-        if (elem.currentStyle) {
-        return elem.currentStyle[cssprop];
 
-        // other browsers
-        } else if (document.defaultView && document.defaultView.getComputedStyle) {
-            return document.defaultView.getComputedStyle(elem, null).getPropertyValue(cssprop2);
-        // fallback
-        } else {
-            return null;
-        }
+    var defaultOptions = {
+        onTitleClick: "collapse",
+        showExportLinks: true,
+        showMineLink: true
     };
+
     var fitContainerToTable = function(tableId, containerId) {
         var table = document.getElementById(tableId);
         var container = document.getElementById(containerId);
@@ -32,7 +26,7 @@ IMBedding = (function() {
             container.style.width = (table.offsetWidth + 1) + 'px';
         } else if (table.offsetWidth == 0) {
             if (container.defaultWidth) {
-                container.style.width = container.defaultWidth + "px";
+                container.style.width = container.defaultWidth + 'px';
             }
         }
     };
@@ -41,6 +35,7 @@ IMBedding = (function() {
         return function() {
             $('#imbedded-csvlink-' + uid).toggle();
             $('#imbedded-tsvlink-' + uid).toggle();
+            $('#imbedded-mineresultslink-' + uid).toggle();
             $('#' + tableId).fadeToggle('slow', function() {
                 fitContainerToTable(tableId, containerId);
                 updateVisibilityOfPagers(uid);
@@ -64,8 +59,8 @@ IMBedding = (function() {
         var table = tables[uid];
         var nextLink = $("#imbedded-nextlink-" + uid);
         var prevLink = $("#imbedded-prevlink-" + uid);
-        table.nextLink = getNextUrl(table.pagePath, table.count, table.start, table.size);
-        table.prevLink = getPrevUrl(table.pagePath, table.start, table.size); 
+        table.nextLink = getNextUrl(table.pagePath, table.count, table.start, table.size, table.options);
+        table.prevLink = getPrevUrl(table.pagePath, table.start, table.size, table.options); 
 
         if (table.start > 0) {
             prevLink.show();
@@ -79,10 +74,25 @@ IMBedding = (function() {
         }
     };
 
-    var buildTable = function(data, target) {
-        var uid = data.title + new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
+    var showIMTooltip = function(x, y, content) {
+     $('<div></div>').html(content)
+                     .attr("id", "imtooltip")
+                     .addClass("imbedded-table-tooltip")
+                     .appendTo("body")
+                     .css( {
+        position:             'absolute',
+        display:              'none',
+        top:                  y + 10,
+        left:                 x + 10,
+      }).fadeIn(200);
+     var tt = document.getElementById("imtooltip");
+    };
+
+    var buildTable = function(data, target, passedOpts) {
+        var options = jQuery.extend({}, defaultOptions, passedOpts);
+        var uid = new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
         uid = uid.replace(/\s+/g, '');
-        tables[uid] = {};
+        tables[uid] = {options: options};
 
         var container = document.createElement("div");
         container.setAttribute("class", "imbedded-table-container");
@@ -109,9 +119,9 @@ IMBedding = (function() {
         table.setAttribute("size", data.size);
         table.id = "imbedded-table-" + uid;
         $.jsonp({
-            url: localiseUrl(data.count),
+            url: localiseUrl(data.count, options),
             success: function(countData) {
-                countDisplayer.innerHTML = countData.count;
+                countDisplayer.innerHTML = countData.count + " results";
                 countDisplayer.setAttribute("count", countData.count);
                 tables[uid].count = countData.count;
                 updateVisibilityOfPagers(uid);
@@ -125,7 +135,6 @@ IMBedding = (function() {
         }
         table.className = tableClasses;
         tables[uid].pagePath = data.current + "&size=" + data.size;
-
 
         var colHeaderRow = document.createElement("tr");
         colHeaderRow.setAttribute("class", "imbedded-table-row imbedded-column-header-row");
@@ -142,30 +151,41 @@ IMBedding = (function() {
         }
         table.appendChild(colHeaderRow);
         $.jsonp({
-            url: localiseUrl(tables[uid].pagePath),
-            success: function(data) {fillInTable(uid, data);},
+            url: localiseUrl(tables[uid].pagePath, options),
+            success: function(data) {fillInTable(uid, data, options);},
             callbackParameter: "callback"
         });
 
         container.appendChild(table);
-        var csvLink = document.createElement("a");
-        csvLink.id = "imbedded-csvlink-" + uid;
-        csvLink.setAttribute("class", "imbedded-exportlink");
-        csvLink.href = localiseUrl(data.csv_url);
-        csvLink.innerHTML = "Export as CSV file";
-        container.appendChild(csvLink);
-        var tsvLink = document.createElement("a");
-        tsvLink.id = "imbedded-tsvlink-" + uid;
-        tsvLink.setAttribute("class", "imbedded-exportlink");
-        tsvLink.href = localiseUrl(data.tsv_url);
-        tsvLink.innerHTML = "Export as TSV file";
-        container.appendChild(tsvLink);
+        if (options.showExportLinks) {
+            var csvLink = document.createElement("a");
+            csvLink.id = "imbedded-csvlink-" + uid;
+            csvLink.setAttribute("class", "imbedded-exportlink");
+            csvLink.href = localiseUrl(data.csv_url, options);
+            csvLink.innerHTML = "Export as CSV file";
+            container.appendChild(csvLink);
+            var tsvLink = document.createElement("a");
+            tsvLink.id = "imbedded-tsvlink-" + uid;
+            tsvLink.setAttribute("class", "imbedded-exportlink");
+            tsvLink.href = localiseUrl(data.tsv_url, options);
+            tsvLink.innerHTML = "Export as TSV file";
+            container.appendChild(tsvLink);
+        }
+        if (options.showMineLink && options.onTitleClick != "mine") {
+            var mineResultsLink = document.createElement("a");
+            mineResultsLink.target = "_blank";
+            mineResultsLink.id = "imbedded-mineresultslink-" + uid;
+            mineResultsLink.setAttribute("class", "imbedded-exportlink");
+            mineResultsLink.href = localiseUrl(data.mineResultsLink, options);
+            mineResultsLink.innerHTML = "View in Mine";
+            container.appendChild(mineResultsLink);
+        }
         var nextLink = document.createElement("a");
         nextLink.id = "imbedded-nextlink-" + uid;
         nextLink.setAttribute("class", 
                 "imbedded-pagelink next imbedded-initial-state");
         nextLink.href = target;
-        tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size);
+        tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size, options);
         $(nextLink).click(function() {
             // It is difficult to tell what the throbber looks like until we 
             // have some queries that take some time
@@ -178,7 +198,7 @@ IMBedding = (function() {
                 callbackParameter: "callback",
                 success: function(data) {
                     /*$(throbber).detach();*/
-                    fillInTable(uid, data);
+                    fillInTable(uid, data, options);
                     updateVisibilityOfPagers(uid);
                 }
             });
@@ -195,7 +215,7 @@ IMBedding = (function() {
                 url: tables[uid].prevLink,
                 callbackParameter: "callback",
                 success: function(data) {
-                    fillInTable(uid, data);
+                    fillInTable(uid, data, options);
                     updateVisibilityOfPagers(uid);
                 }
             });
@@ -206,21 +226,33 @@ IMBedding = (function() {
             $(prevLink).hide();
         }
         jQuery(target).empty().append(container);
-        jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
+        if (options.onTitleClick == "collapse") {
+            jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
+        } else if (options.onTitleClick == "mine") {
+            title.href = localiseUrl(data.mineResultsLink, options);
+        }
+        jQuery(title).hover(
+            function(event) {
+                showIMTooltip(event.pageX, event.pageY, data.description);
+            },
+            function(event) {
+                jQuery('.imbedded-table-tooltip').remove();
+            }
+        );
     };
 
-    var getNextUrl =function(basePath, count, start, size) {
+    var getNextUrl =function(basePath, count, start, size, options) {
         var nextStart = (count != null) ? Math.min(count, (start + size)) : (start + size);
-        var ret = localiseUrl(basePath) + "&start=" + nextStart;
+        var ret = localiseUrl(basePath, options) + "&start=" + nextStart;
         return ret;
     }
         
-    var getPrevUrl = function(basePath, start, size) {
+    var getPrevUrl = function(basePath, start, size, options) {
         var nextStart = Math.max(0, (start - size));
-        return localiseUrl(basePath) + "&start=" + nextStart;
+        return localiseUrl(basePath, options) + "&start=" + nextStart;
     }
 
-    var fillInTable = function(uid, resultSet) {
+    var fillInTable = function(uid, resultSet, options) {
         var table = jQuery("#imbedded-table-" + uid);
         // Remove any data this table already contains
         table.children('tbody').detach();
@@ -242,7 +274,8 @@ IMBedding = (function() {
                 tableCell.setAttribute("class", "imbedded-cell " + getColumnClass(j));
                 if (cell.value) {
                     var a = document.createElement("a");
-                    a.href = localiseUrl(cell.url);
+                    a.target = "_blank";
+                    a.href = localiseUrl(cell.url, options);
                     a.innerHTML = cell.value;
                     tableCell.appendChild(a);
                 } else {
@@ -254,17 +287,27 @@ IMBedding = (function() {
         }
         tables[uid].start = resultSet.start;
         tables[uid].lastRow = resultCount + resultSet.start;
+        IMBedding.afterBuildTable(uid, resultSet);
     };
 
-    var localiseUrl = function(url) {
-        return baseUrl + '/' + url;
+    var localiseUrl = function(url, options) {
+        var ret;
+        if (options && "baseUrl" in options) {
+            ret = options.baseUrl;
+        } else {
+            ret = baseUrl;
+        }
+        if ((! ret.match(/\/$/)) && (! url.match(/^\//))) {
+            ret += "/";
+        }
+        return ret + url;
     }
 
-    var getCallback = function(target) {
+    var getCallback = function(target, options) {
         if (target instanceof Function) {
             return target;
         } else {
-            return function(data) {buildTable(data, target)};
+            return function(data) {buildTable(data, target, options)};
         }
     };
     var handleError = function(options, textStatus) {
@@ -278,8 +321,8 @@ IMBedding = (function() {
             url += "&format=jsonptable";
             return getResults(url, {}, target);
     };
-    var getResults = function(url, data, target) {
-        var callback = getCallback(target);
+    var getResults = function(url, data, target, options) {
+        var callback = getCallback(target, options);
         if (! data.format) {
             data.format = "jsonptable";
         }
@@ -374,6 +417,7 @@ IMBedding = (function() {
     };
 
     return {
+        afterBuildTable: function(uid, data) {},
         makeQueryXML: getXML,
         setBaseUrl: function(url) {
             baseUrl = url;
@@ -382,20 +426,17 @@ IMBedding = (function() {
         getBaseUrl: function() {
             return baseUrl;
         },
-        loadTemplate: function(data, target) {
-            if (! baseUrl) {
-                throw("baseUrl is null");
+        loadTemplate: function(data, target, options) {
+            if ("baseUrl" in data) {
+                baseUrl = data.baseUrl;
             }
-            var url = baseUrl + templateResultsPath; 
-            return getResults(url, data, target);
+            var url = localiseUrl(templateResultsPath, options); 
+            return getResults(url, data, target, options);
         },
-        loadQuery: function(query, data, target) {
+        loadQuery: function(query, data, target, options) {
             data.query = getXML(query);
-            if (! baseUrl) {
-                throw("baseUrl is null");
-            }
-            var url = baseUrl + queryResultsPath;
-            return getResults(url, data, target);
+            var url = localiseUrl(queryResultsPath, options);
+            return getResults(url, data, target, options);
         }
     };
 })();

@@ -1,3 +1,14 @@
+div.imbedded-table-tooltip {
+    border: 1px solid #DDD;
+    width:              500px;
+    padding:            5px;
+    background-color:   #FF0084;
+    color:              white;
+    opacity:            0.90;
+    font-family: "Cuprum", "Arial", sans-serif;
+    font-weight: bold;
+}
+
 .imbedded-table-container {
     margin: 20px;
     border: 1px solid #DDD;
@@ -14,11 +25,11 @@
 }
 
 .imbedded-table-title {
-    font-family: "Cabin", "Arial", sans-serif;
+    font-family: "Cuprum", "Arial", sans-serif;
 }
 
 .imbedded-column-header-row {
-    font-family: "Cabin", "Arial", sans-serif;
+    font-family: "Cuprum", "Arial", sans-serif;
     font-weight: bold;
     background: #FF0084;
     color: white;
@@ -35,7 +46,7 @@
 
 .imbedded-data-row {
     font-size: 16px;
-    font-family: "Cabin", "Arial", sans-serif;
+    font-family: "Cuprum", "Arial", sans-serif;
 }
 
 .imbedded-cell {
@@ -85,7 +96,7 @@
 }
 
 .imbedded-table-container > a {
-    font-family: "Cabin", "Arial", sans-serif;
+    font-family: "Cuprum", "Arial", sans-serif;
     text-decoration: none;
 }
 

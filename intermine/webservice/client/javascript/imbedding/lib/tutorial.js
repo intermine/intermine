@@ -1,6 +1,7 @@
 availableTemplates = null;
 var model = {};
 var baseUrl = "http://squirrel.flymine.org/intermine-test";
+var flyMineBase = "http://preview.flymine.org/preview";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";
@@ -20,6 +21,7 @@ $(function() {
     });
     $('#showGraphAreaContainer').hide();
     loadTable4();
+    $('#faq').accordion({collapsible: true, autoHeight: false});
 });
 
 function setActiveStyleSheet(title) {
@@ -90,10 +92,11 @@ function loadTable4() {
     IMBedding.loadTemplate(
         {
             name:           "ManagerLookup",
+            size:           10,
         
             constraint1:    "Manager",
             op1:            "LOOKUP",
-            value1:         "M.",
+            value1:         "*",
             code1:          "A",
         },
         '#placeholder1'
@@ -342,7 +345,6 @@ function loadDepartmentSummary(departmentName) {
                 depSelect.appendChild(depOption);
             }
             title.appendChild(depSelect);
-            console.log(depSelect);
             $(depSelect).change(function() {
                 loadDepartmentSummary($(depSelect).val());
             });
@@ -422,8 +424,7 @@ var firstline = "/* Below is the Javascript to load this table using ajax:\n"
 + "You can cut and paste this into a page to get started.\n"
 + "Don't forget you need to include the imbedding.js library"
 + " in your head */\n\n"
-+ '/* You only need to do the following once */' + "\n"
-+ "IMBedding.setBaseUrl('" + baseUrl + "');\n\n";
++ '/* You only need to do the following once */' + "\n";
 
 var JSON = JSON || {};
 // implement JSON.stringify serialization
@@ -582,6 +583,7 @@ var makeQueryDisplayStrings = function(query) {
 
 function loadUserQuery() {
     var source = $('input:radio[name=query]:checked').val();
+    var modelSource = $('input:radio[name=model-source]:checked').val();
     var query;
     if (source == "querybuilder") {
         query = getQueryFromForm();
@@ -597,7 +599,17 @@ function loadUserQuery() {
     }
 
     var data = {size: 10};
-    var newValue = firstline;
+    var newValue = firstline + "IMBedding.setBaseUrl('";
+
+    var urlToQuery;
+    if (modelSource == "testmodel") {
+        urlToQuery = baseUrl;
+    } else if (modelSource == "flymine") {
+        urlToQuery = flyMineBase;
+    }
+    newValue += urlToQuery + "');\n\n";
+    var opts = {baseUrl: urlToQuery};
+
     if (displayStrings[0]) {
         newValue 
             += "/*You can define the query as a regular javascript object*/\n"
@@ -631,7 +643,7 @@ function loadUserQuery() {
         root: "lib/jquery-syntax/"
     });
     try {
-        IMBedding.loadQuery(query, data, "#placeholder2");
+        IMBedding.loadQuery(query, data, "#placeholder2", opts);
     } catch(err) {
         alert("There was something wrong with your query:\n" + err);
     }
@@ -657,6 +669,7 @@ function complainAboutName(problem) {
 
 function loadUserTemplate() {
     var formValues = $('#template-form').serializeArray();
+    var tempSource = $('input:radio[name=template-source]:checked').val();
     if (! formValues[0].value) {
         complainAboutName("Please enter a template name first");
         return;
@@ -667,7 +680,18 @@ function loadUserTemplate() {
     }
 
     var data = {size: 10};
-    var newValue = firstline + "IMBedding.loadTemplate(\n\t{\n\t";
+    var newValue = firstline + "IMBedding.setBaseUrl('";
+
+    var urlToQuery;
+    if (tempSource == "testmodel") {
+        urlToQuery = baseUrl;
+    } else if (tempSource == "flymine") {
+        urlToQuery = flyMineBase;
+    }
+    newValue += urlToQuery + "');\n\n";
+    var opts = {baseUrl: urlToQuery};
+    newValue += "IMBedding.loadTemplate(\n\t{\n\t";
+
     for (x in formValues) {
         name = formValues[x].name;
         value = formValues[x].value;
@@ -701,7 +725,7 @@ function loadUserTemplate() {
         root: "lib/jquery-syntax/"
     });
 
-    IMBedding.loadTemplate(data, '#placeholder3');
+    IMBedding.loadTemplate(data, '#placeholder3', opts);
 };
 
 $(function() {
@@ -749,7 +773,26 @@ $(function() {
             }
         });
     });
-
+    $('#source-radios-t').buttonset();
+    $('.sourcer').click(function () {
+        if (this.value == "testmodel") {
+            loadTemplateInfo(
+                "http://squirrel.flymine.org/intermine-test/service/templates");
+        } else if (this.value == "flymine") {
+            loadTemplateInfo(
+                "http://preview.flymine.org/preview/service/templates");
+        }
+    });
+    $('#source-radios-q').buttonset();
+    $('.model-sourcer').click(function () {
+        if (this.value == "testmodel") {
+            loadModel(
+                "http://squirrel.flymine.org/intermine-test/service/model");
+        } else if (this.value == "flymine") {
+            loadModel(
+                "http://preview.flymine.org/preview/service/model");
+        }
+    });
     $('#sortOrderSelector').button();
     $('#sortDirectionDiv').buttonset();
     $('#boxselector').change(function() {
@@ -760,7 +803,7 @@ $(function() {
     $('#radio').buttonset();
     $('#graph-radios').buttonset();
     $('#query-radios').buttonset();
-    $('#styles').buttonset();
+    $('.styles').buttonset();
     $('#querybuilder-opt').click(function() {
         $('#querybuilder').slideDown('fast', function() {});
         $('#cutandpaste').slideUp('fast', function() {});
@@ -782,7 +825,7 @@ $(function() {
         $('#codeContainer').slideToggle('fast', function() {});
     });
     $('input.styler').click(function() {
-        setActiveStyleSheet(this.id);
+        setActiveStyleSheet(this.value);
     });
     $('input.templater').click(function() {
         if (this.id.match(/1/)) {
@@ -961,7 +1004,7 @@ var getPossibleConsPathsFor = function(rootClass) {
 
 var getPathsFor = function(rootClass, excludedAttr, level, includeClass) {
     level = level || 0;
-    if (level > 4) {
+    if (level > 3) {
         return [];
     }
     level++;
@@ -1229,9 +1272,9 @@ getSelectHandler = function(templates) {
     };
 };
 
-$(function() {
+var loadTemplateInfo = function(url) {
     $.jsonp({
-        url: "http://squirrel.flymine.org/intermine-test/service/templates",
+        url: url,
         callbackParameter: "callback",
         data: {
             format: "jsonp"
@@ -1263,16 +1306,23 @@ $(function() {
             };
         }
     });
+};
+
+var loadModel = function(url) {
     $.jsonp({
-        url: "http://squirrel.flymine.org/intermine-test/service/model",
+        url: url,
         callbackParameter: "callback",
         data: {format: "jsonp"},
         success: function( data ) {
             model = data;
+            $("#root-class").children('option').remove();
+            var names = [];
             for (name in data.classes) {
-                if (data.classes[name].isInterface) {
-                    continue;
-                }
+                names.push(name);
+            };
+            names = names.sort();
+            for (var i = 0; i < names.length; i++) {
+                var name = names[i];
                 var option = document.createElement("option");
                 option.value = name;
                 var displayName = name;
@@ -1285,4 +1335,11 @@ $(function() {
             }
         }
     });
+};
+
+
+$(function() {
+    loadTemplateInfo(
+        "http://squirrel.flymine.org/intermine-test/service/templates");
+    loadModel("http://squirrel.flymine.org/intermine-test/service/model");
 });
