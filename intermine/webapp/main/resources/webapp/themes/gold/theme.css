@@ -201,17 +201,20 @@ table.results tr td.highlightObject {
   border:1px solid #362923;
 }
 
-ul#button_bar li a {
+#tool_bar_div ul#button_bar li a {
+    color:#FFF;
+}
+div.heading.results #tool_bar_div ul#button_bar li a {
     color:#000;
 }
-.tb_button:hover {
+/*.tb_button:hover {
   margin-right:0;
   border-bottom:1px solid #6ECCF8;
   border-right:1px solid #6ECCF8;
 }
 .tb_button_active {
   border:1px solid #6ECCF8;
-}
+}*/
 
 /* =WIDGET
 --------------------------*/
