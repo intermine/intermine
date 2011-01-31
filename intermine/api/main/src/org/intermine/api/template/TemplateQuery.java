@@ -541,6 +541,10 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         return sw.toString();
     }
 
+    /**
+     * Returns a JSON string representation of the template query.
+     * @return A string representation of the template query.
+     */
     public synchronized String toJSON() {
         StringWriter sw = new StringWriter();
         sw.append("{name:\"" + name + "\",");
