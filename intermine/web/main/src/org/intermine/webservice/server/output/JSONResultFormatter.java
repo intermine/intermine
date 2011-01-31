@@ -67,9 +67,12 @@ public abstract class JSONResultFormatter extends JSONFormatter
         sb.append("'results':[");
         return sb.toString();
     }
-    
+
     private boolean attrNeedsQuotes(String attr) {
-        return !attr.startsWith("{") // it is a javascript object 
+        if (attr == null) {
+            return false;
+        }
+        return !attr.startsWith("{") // it is a javascript object
                 && !attr.startsWith("[") // it is a javascript array
                 && !attr.matches("[-+]?\\d+(\\.\\d+)?"); // it is numeric
     }
