@@ -1,3 +1,19 @@
+div.imbedded-table-tooltip {
+    border-width:       4px;
+    width:              500px;
+    border-style:       solid;
+    border-color:       #333;
+    padding:            5px;
+    border-radius:      7px;
+    -moz-border-radius: 7px;
+    opacity:            0.90;
+    font-family: "Cuprum", "Helvetica", "sans-serif";
+    font-size: 16px;
+    font-weight: bold;
+    background: #333;
+    color: white;
+}
+
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
@@ -17,12 +33,12 @@
 }
 
 a.imbedded-table-title {
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Cuprum", "Helvetica", "sans-serif";
     color: white;
 }
 
 .imbedded-column-header-row {
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Cuprum", "Helvetica", "sans-serif";
     font-size: 16px;
     font-weight: bold;
     background: #666;
@@ -40,7 +56,7 @@ a.imbedded-table-title {
 
 .imbedded-cell {
     font-size: 16px;
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Cuprum", "Helvetica", "sans-serif";
     padding: 4px;
 }
 
@@ -66,7 +82,7 @@ a.imbedded-table-title {
 }
 
 .imbedded-exportlink, .imbedded-pagelink {
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Cuprum", "Helvetica", "sans-serif";
     text-decoration: none;
     color: white ! important;
     font-size: 13px;

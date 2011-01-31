@@ -10,21 +10,22 @@
 
         <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
         <script src="src/imbedding.js" type="text/javascript"></script>
-        <script src="lib/jquery-ui-1.8.8.custom.min.js" type="text/javascript"></script>
+        <script src="lib/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
         <script src="lib/tutorial.js" type="text/javascript"></script>
-        <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Cabin:bold' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css" />
         <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.layout.list.css" />
         <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.core.css" />
-        <link rel="alternate stylesheet" type="text/css" title="dark" href="style/style.css" />
+        <link rel="alternate stylesheet" type="text/css" title="dark" href="style/dark.css" />
         <link rel="alternate stylesheet" type="text/css" title="light" href="style/light.css" />
-        <link rel="stylesheet" type="text/css" title="integrated" href="style/integrated.css" />
+        <link rel="stylesheet" type="text/css" title="bold" href="style/bold.css" />
         <link rel="stylesheet" type"text/css" href="style/tutorial.css"/>
-    <head>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+    </head>
     <body>
         <div id="page">
         <h1 style="text-align: center;" >InterMine Mashup Tutorial</h1>
@@ -36,32 +37,23 @@
     </div>
 
 <div id="tabs">
-    <form>
-        <div id="styles" style="float: right;">
-            <input class="styler" type="radio" id="integrated" name="style"checked="true"/>
-                <label for="integrated">Bold</label>
-            <input class="styler" type="radio" id="dark" name="style" />
-                <label for="dark">Dark</label>
-            <input class="styler" type="radio" id="light" name="style"/>
-                <label for="light">Light</label>
-        </div>
-    </form>
     <ul>
         <li><a href="#tabs-1">The Basics</a></li>
         <li><a href="#tabs-3">Templates</a></li>
         <li><a href="#tabs-2">Arbitrary Queries</a></li>
         <li><a href="#tabs-4">Doing Other Things with Results</a></li>
         <li><a href="#tabs-5">Resources</a></li>
+        <li><a href="#tabs-6">FAQ</a></li>
     </ul>
 
 
     <div id="tabs-1">
         <h2>The basics</h2>
         <p>
-        Here you can find out what the new Webservice fatures are,
-        and how you can go about setting it up yourself. You can also see some
+        Here you can find out what the new Webservice features are,
+        and how you can go about employing them yourself. We have prepared
         full code samples that demonstrate how to load the queries you see on
-        this tab.
+        this page.
         </p>
         <input type="checkbox" id="explanationCB" onclick="$('#explanation').slideToggle('fast', function(){});"/><label for="explanationCB">Show me what all this is about</label>
         <input type="checkbox" id="requirementsCD" onclick="$('#requirements').slideToggle('fast', function(){});"/><label for="requirementsCD">Show me how to set this up</label>
@@ -74,17 +66,22 @@
         requests for data in a range of formats. These facilities will become 
         generally available with <strong>InterMine 0.96</strong>, which provides
         the version 3 <a href="http://intermine.org/wiki/WebService">Webservice.</a>
-        </p><p>
+        </p>
+        <h3>How things are done at the moment</h3>
+        <p>
         Up to now, the standard ways of linking to information contained in an 
         InterMine has been the use of external links (such as 
-        <a href="templink">Employees Between 30 and 35</a>) and IFrames. Both of these facilities
-        will continue to be available in the future. External links break the content
+        <a href="http://squirrel.flymine.org/intermine-test/loadTemplate.do?name=employeesOfACertainAge&constraint1=Employee.age&op1=ge&value1=30&code1=A&constraint2=Employee.age&op2=lt&value2=35&code2=B&method=results">Employees Between 30 and 35</a>) and IFrames. Both of these facilities
+        will continue to be available in the future. These two methods are not 
+        without their issues, however: external links break the content
         integrity of a page, and users may not be inclined to click on a link
-        on the off-chance of finding useful information. IFrames resolve these
+        on the off-chance of finding useful information; IFrames resolve these
         problems by including the data into the requesting page, but are not
         natively styled, and thus break page appearance, and they have limited
         flexibility.
-        </p><p>
+        </p>
+        <h3>Solving these problems with JSON</h3>
+        <p>
         The new approach is to return data in <a href="http://json.org">JSON</a> 
         format using asynchronous ajax calls. This approach comes at a slight cost, 
         which we have tried to minimise. Whereas IFrames can be cut-and-pasted 
@@ -126,10 +123,12 @@
             JSON representations of:
             </p>
             <ul>
-                <li>The model<code style="float: right;">baseUrl + /service/model?format=json(p)</code></li>
-                <li>Template descriptions<code style="float: right;">baseUrl + /service/templates?format=json(p)</code></li>
-                <li>Query and template results<code style="float: right;">baseUrl + /service/[query|template]/results? + Params + format=[json(p)table|json(p)rows|json(p)objects]</code></li>
-                <li>Query result counts<code style="float: right;">baseUrl + /service/[query|template]/results? + Params + format=json(p)count</code></li>
+                <li>The model
+                 <p><code>baseUrl + /service/model?format=json(p)</code></p>
+                </li>
+                <li>Template descriptions<p><code >baseUrl + /service/templates?format=json(p)</code></p></li>
+                <li>Query result counts<p><code >baseUrl + /service/[query|template]/results? + Params + format=json(p)count</code></p></li>
+                <li>Query and template results<p><code >baseUrl + /service/[query|template]/results? + Params + format=[json(p)table|json(p)rows|json(p)objects]</code></p></li>
             </ul>
             <p>
             Clearly, these can be accessed like any other webservice, as long as you have the
@@ -154,8 +153,8 @@
     <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
         type="text/javascript">
     </script>
-    <!-- InterMine similarly hosts imbedding -->
-    <script src="http://www.intermine.org/ajax/libs/imbedding/0.1/imbedding.min.js" 
+    <!-- Similarly imbedding.js is hosted on intermine.org -->
+    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.min.js" 
         type="text/javascript">
     </script>
 </head>
@@ -198,11 +197,11 @@
         type="text/javascript">
     </script>
     <!-- InterMine similarly hosts imbedding -->
-    <script src="http://www.intermine.org/ajax/libs/imbedding/0.1/imbedding.min.js" 
+    <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" 
         type="text/javascript">
     </script>
     <link rel="stylesheet" type="text/css" 
-        href="http://www.intermine.org/ajax/libs/imbedding/0.1/style/dark.css" />
+        href="http://intermine.org/download/imbedding/0.1/style/dark.css" />
 </head>
 
 <body>
@@ -330,7 +329,17 @@ function loadTable4() {
 </textarea>
         </div>
         </div>
-        <div id="placeholder1"><p>This will be where the table goes</p></div>
+    <form>
+        <div class="styles" style="float: right;">
+            <input class="styler" type="radio" value="bold" id="bold-b" name="style"checked="true"/>
+                <label for="bold-b">Bold</label>
+            <input class="styler" type="radio" value="dark" id="dark-b" name="style" />
+                <label for="dark-b">Dark</label>
+            <input class="styler" type="radio" value="light" id="light-b" name="style"/>
+                <label for="light-b">Light</label>
+        </div>
+    </form>
+    <div id="placeholder1"><p>This will be where the table goes</p></div>
     </div>
 
     <div id="tabs-2">
@@ -350,6 +359,10 @@ function loadTable4() {
         <div id="query-radios" style="display: inline">
             <input class="querier" type="radio" checked="true" value="querybuilder" id="querybuilder-opt" name="query"/><label for="querybuilder-opt">Build A Query</label>
             <input class="querier" type="radio" value="cutandpaste" id="cutandpaste-opt" name="query"/><label for="cutandpaste-opt">Paste in some XML/JSON</label>
+        </div>
+        <div id="source-radios-q" style="display: inline">
+            <input class="model-sourcer" type="radio" checked="true" value="testmodel" id="source-opt-m" name="model-source"/><label for="source-opt-m">Point at Testmodel</label>
+            <input class="model-sourcer" type="radio" value="flymine" id="source-flymine-m" name="model-source"/><label for="source-flymine-m">Point at FlyMine</label>
         </div>
         <div id="formatDetails" style="display: none;">
             <p>
@@ -460,6 +473,16 @@ function loadTable4() {
         <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet. Just load a query and the corresponding code will be generated and displayed in this box</p>
     </div>
     </div>
+    <form>
+        <div class="styles" style="float: right;">
+            <input class="styler" type="radio" value="bold" id="bold-q" name="style"checked="true"/>
+                <label for="bold-q">Bold</label>
+            <input class="styler" type="radio" value="dark" id="dark-q" name="style" />
+                <label for="dark-q">Dark</label>
+            <input class="styler" type="radio" value="light" id="light-q" name="style"/>
+                <label for="light-q">Light</label>
+        </div>
+    </form>
     <div id="placeholder2"><p>The query defined above will go here</p></div>
     </div>
 
@@ -475,6 +498,10 @@ function loadTable4() {
         the parameters that this template expects. 
         </p>
         <input type="checkbox" id="templateDetailsCB" onclick="$('#templateDetails').slideToggle('fast', function(){});"/><label for="templateDetailsCB">see information about templates</label>
+        <div id="source-radios-t" style="display: inline">
+            <input class="sourcer" type="radio" checked="true" value="testmodel" id="source-opt-t" name="template-source"/><label for="source-opt-t">Point at Testmodel</label>
+            <input class="sourcer" type="radio" value="flymine" id="source-flymine-t" name="template-source"/><label for="source-flymine-t">Point at FlyMine</label>
+        </div>
         <div id="templateDetails" style="display: none;">
             <p>
             Templates are predefined queries with a fixed number of parameters. 
@@ -493,10 +520,10 @@ function loadTable4() {
         <div class="option-box">
             <form id="template-form">
                 <p><label for="templateName">Template Name: </label>
-                <input spellcheck="false" size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" ></input></p>
+                <input spellcheck="false" size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" /></p>
                 <div id="templateSpecific"></div>
                 <br/>
-                <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()"></input>
+                <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()" />
                 <input type="checkbox" id="showTemplateCode"/><label for="showTemplateCode">Show the code</label>
             </form>
             <div id="templateCodeContainer" style="display: none">
@@ -505,6 +532,16 @@ function loadTable4() {
             </div>
             </div>
         </div>
+    <form>
+        <div class="styles" style="float: right;">
+            <input class="styler" type="radio" value="bold" id="bold-t" name="style"checked="true"/>
+                <label for="bold-t">Bold</label>
+            <input class="styler" type="radio" value="dark" id="dark-t" name="style" />
+                <label for="dark-t">Dark</label>
+            <input class="styler" type="radio" value="light" id="light-t" name="style"/>
+                <label for="light-t">Light</label>
+        </div>
+    </form>
         <div id="placeholder3"><p>The template results will go here</p></div>
     </div>
 
@@ -775,6 +812,50 @@ function loadGraph2() {
             </li>
         </ul>
     </div>
+    <div id="tabs-6">
+        <h2>Questions You Might Reasonably Ask</h2>
+        <p>
+        Nobody's asked any questions yet, but if they had, I would think these
+        would be the top of the list:
+        <div id="faq">
+        <h3><a href="#">Can anyone use these features?</a></h3>
+        <div>
+            <p>
+            Anyone on any server can access these embedding features. There were
+            principally designed for use by groups that have mines in addition to
+            other sites, which wanted better sharing of data and functionality
+            between the two webapps they run, and to help with interconnections
+            between different mines - but you do not have to have a mine yourself
+            to make use of these features. They are as accessible as any webservice 
+            request; ie: they are open to the public, and not rate-limited.
+            </p>
+        </div>
+        <h3><a href="#">What if I don't want the opening/closing behaviour?</a></h3>
+        <div>
+            <p>
+            The simplest way is to pass an option to the loader method:
+            </p>
+            <textarea rows="5" cols="20" class="coder js-snippet">
+IMBedding.loadQuery(query, data, placeholder, {onTitleClick: null});</textarea>
+            <p> 
+            Possible values for this are "collapse" (the default) and "mine" 
+            (request the title be a link to the same results table in the 
+            originating mine). Entering "null" means neither behaviour would 
+            occur. If you choose "mine", then the then redundant "View in Mine"
+            link would not be inserted.
+            </p>
+        </div>
+        <h3><a href="#">What if don't want the export urls?</a></h3>
+        <div>
+            <p> 
+            As above, this can be specified by option. In this case you use the option
+            "showExportLinks", which expects a boolean value.
+            </p>
+            <textarea rows="5" cols="20" class="coder js-snippet">
+IMBedding.loadQuery(query, data, placeholder, {showExportLinks: false});</textarea>
+        </div>
+        </div>
+    </div>
 </div>
         <div id="xml-string" style="display: none;">
             <query name="employeesOfACertainAge" model="testmodel" 
@@ -782,7 +863,7 @@ function loadGraph2() {
                 <constraint path="Employee.age" code="A" editable="true" 
                 description="First age constraint" op="&gt;" value="30"></constraint>
                 <constraint path="Employee.age" code="B" editable="true" 
-                    description="Second age constraint" op="&lt;=" value="60"/></constraint>
+                    description="Second age constraint" op="&lt;=" value="60"></constraint>
             </query>
         </div>
     </div>

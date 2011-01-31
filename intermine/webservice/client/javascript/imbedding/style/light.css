@@ -1,13 +1,14 @@
-.option-box {
-    border-style: inset; 
-    border-width: 1px;
-    margin: 5px;
-    padding:10px;
-}
-
-textarea.coder {
-    font-size: 14px;
-    font-family: "Lucida Console", Monaco, monospace;
+div.imbedded-table-tooltip {
+    border-width:       2px;
+    width:              500px;
+    border-style:       solid;
+    border-color:       #365252;
+    padding:            5px;
+    color:              white;
+    background:         #666;
+    opacity:            0.90;
+    font-family: "Neuton", "Times", "serif";
+    font-weight: bold;
 }
 
 .imbedded-table-container {
@@ -27,11 +28,11 @@ textarea.coder {
 }
 
 .imbedded-table-title {
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Neuton", "Times", "serif";
 }
 
 .imbedded-column-header-row {
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Neuton", "Times", "serif";
     font-weight: bold;
     background: #666;
     color: white;
@@ -42,13 +43,9 @@ textarea.coder {
     width: 100%;
 }
 
-.firstpage {
-    display: none;
-}
-
 .imbedded-cell {
     font-size: 14px;
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Neuton", "Times", "serif";
     padding: 4px;
 }
 
@@ -66,7 +63,7 @@ textarea.coder {
 }
 
 .imbedded-exportlink, .imbedded-pagelink {
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Neuton", "Times", "serif";
     text-decoration: none;
     color: black ! important;
     font-size: 12px;
