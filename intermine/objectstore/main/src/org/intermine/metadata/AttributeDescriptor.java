@@ -103,7 +103,7 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     @Override
     public String toJSONString() {
-        return "{name:'" + name + "',type:'" + type + "'}";
+        return "{name:\"" + name + "\",type:\"" + type + "\"}";
     }
 
     /**

@@ -286,14 +286,14 @@ public class Model
 
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("name:'" + modelName + "',classes:{");
+        sb.append("name:\"" + modelName + "\"," + ENDL + "classes:{" + ENDL);
         Iterator<ClassDescriptor> iter = getClassDescriptors().iterator();
         boolean needsComma = false;
         while (iter.hasNext()) {
             ClassDescriptor cld = iter.next();
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 if (needsComma) {
-                    sb.append(",");
+                    sb.append("," + ENDL);
                 }
                 sb.append(cld.toJSONString());
                 needsComma = true;

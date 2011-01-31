@@ -11,9 +11,9 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -731,6 +731,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(ClassDescriptor cld) {
         int retval = className.compareTo(cld.className);
         if (retval == 0) {
@@ -790,22 +791,22 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
         String name = className.substring(className.lastIndexOf(".") + 1);
-        sb.append(name + ":{name:'" + name + "',extends:[");
+        sb.append(name + ":{\"name\":\"" + name + "\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
-            sb.append("'");
+            sb.append("\"");
             String superClassName = supersIter.next();
             if ("java.lang.Object".equals(superClassName)) {
                 sb.append(superClassName);
             } else {
                 sb.append(superClassName.substring(superClassName.lastIndexOf(".") + 1));
             }
-            sb.append("'");
+            sb.append("\"");
             if (supersIter.hasNext()) {
                 sb.append(",");
             }
         }
-        sb.append("],isInterface:" + isInterface + ",attributes:[");
+        sb.append("],\"isInterface\":" + isInterface + ",\"attributes\":[");
         Iterator<AttributeDescriptor> attrIter = getAllAttributeDescriptors().iterator();
         while (attrIter.hasNext()) {
             sb.append(attrIter.next().toJSONString());
@@ -813,7 +814,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 sb.append(",");
             }
         }
-        sb.append("],references:[");
+        sb.append("],\"references\":[");
         Iterator<ReferenceDescriptor> refIter = getAllReferenceDescriptors().iterator();
         while (refIter.hasNext()) {
             sb.append(refIter.next().toJSONString());
@@ -821,7 +822,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 sb.append(",");
             }
         }
-        sb.append("],collections:[");
+        sb.append("],\"collections\":[");
         Iterator<CollectionDescriptor> colIter = getAllCollectionDescriptors().iterator();
         while (colIter.hasNext()) {
             sb.append(colIter.next().toJSONString());
