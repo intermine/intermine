@@ -41,12 +41,13 @@ function toggleForm(matchCount) {
     </c:choose>
 
     <div id="list-progress">
-      <div class="gray"><strong>1</strong> <span>Upload list of identifiers</span></div
-      ><div class="gray-to-white">&nbsp;</div
-      ><div class="white"><strong>2</strong> <span>Verify identifier matches</span></div><div class="white-to-gray">&nbsp;</div
-      ><div class="gray"><img src="images/icons/lists-16.png" alt="list" /> <span
-      <c:if test="${(totalIdCount - fn:length(unresolved)) == 0}">style="text-decoration: line-through;"</c:if>>List analysis</span></div>
+        <div class="gray"><strong>1</strong> <span>Upload list of identifiers</span></div
+        ><div class="gray-to-white">&nbsp;</div
+        ><div class="white"><strong>2</strong> <span>Verify identifier matches</span></div><div class="white-to-gray">&nbsp;</div
+        ><div class="gray"><img src="images/icons/lists-16.png" alt="list" /> <span
+        <c:if test="${(totalIdCount - fn:length(unresolved)) == 0}">style="text-decoration: line-through;"</c:if>>List analysis</span></div>
     </div>
+    <div class="clear">&nbsp;</div>
 
     <div id="uploadConfirmMessage">
       <strong>
