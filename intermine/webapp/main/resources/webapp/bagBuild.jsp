@@ -59,11 +59,14 @@
 </script>
 
 <div id="list-progress">
-  <div class="white-start">&nbsp;</div><div class="white"><strong>1</strong> <span>Upload list of identifiers</span></div
-  ><div class="white-to-gray">&nbsp;</div
-  ><div class="gray"><strong>2</strong> <span>Verify identifier matches</span></div><div class="gray-to-gray">&nbsp;</div
-  ><div class="gray"><img src="images/icons/lists-16.png" alt="list" /> <span>List analysis</span></div>
+  <div class="wrap" align="center">
+    <div class="white-start">&nbsp;</div><div class="white"><strong>1</strong> <span>Upload list of identifiers</span></div
+    ><div class="white-to-gray">&nbsp;</div
+    ><div class="gray"><strong>2</strong> <span>Verify identifier matches</span></div><div class="gray-to-gray">&nbsp;</div
+    ><div class="gray"><img src="images/icons/lists-16.png" alt="list" /> <span>List analysis</span></div>
+  </div>
 </div>
+<div class="clear">&nbsp;</div>
 
 <im:boxarea titleImage="lists-64.png" titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="body">
