@@ -1,5 +1,15 @@
 package org.intermine.api.template;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,9 +47,8 @@ import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 
-public class TemplatePopulatorTest extends TestCase {
-
-
+public class TemplatePopulatorTest extends TestCase
+{
     private TemplateQuery simple;
     private TemplateQuery simpleWithOptionalCon;
     private TemplateQuery twoConstraints;
@@ -56,16 +65,17 @@ public class TemplatePopulatorTest extends TestCase {
         PathConstraint nameCon = Constraints.eq("Employee.name", "Marmaduke");
         simple.addConstraint(nameCon);
         simple.setEditable(nameCon, true);
-        
-        simpleWithOptionalCon = new TemplateQuery("simpleWithOtionalCon", 
-        		"Simple, But with an optional rather than required constraint", "", 
-        		new PathQuery(model));
+
+        simpleWithOptionalCon = new TemplateQuery("simpleWithOtionalCon",
+            "Simple, But with an optional rather than required constraint", "",
+             new PathQuery(model));
         simpleWithOptionalCon.addViews("Employee.name", "Employee.age");
         simpleWithOptionalCon.addConstraint(nameCon);
         simpleWithOptionalCon.setEditable(nameCon, true);
-        simpleWithOptionalCon.setSwitchOffAbility(nameCon, SwitchOffAbility.ON);        
+        simpleWithOptionalCon.setSwitchOffAbility(nameCon, SwitchOffAbility.ON);
 
-        twoConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "", new PathQuery(model));
+        twoConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "",
+                                           new PathQuery(model));
         twoConstraints.addViews("Employee.name", "Employee.age");
         PathConstraint ageCon = Constraints.greaterThan("Employee.age", "30");
         twoConstraints.addConstraint(ageCon);
@@ -74,8 +84,9 @@ public class TemplatePopulatorTest extends TestCase {
         twoConstraints.addConstraint(depCon);
         twoConstraints.setEditable(depCon, true);
         twoConstraints.setSwitchOffAbility(depCon, SwitchOffAbility.ON);
-        
-        threeConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "", new PathQuery(model));
+
+        threeConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "",
+                                             new PathQuery(model));
         threeConstraints.addViews("Employee.name", "Employee.age");
         threeConstraints.addConstraint(ageCon);
         threeConstraints.setEditable(ageCon, true);
@@ -93,7 +104,7 @@ public class TemplatePopulatorTest extends TestCase {
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
 
-        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(), 
+        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(),
                 new HashMap(), new HashMap());
         pm.createProfile(profile);
         return profile;
@@ -104,29 +115,29 @@ public class TemplatePopulatorTest extends TestCase {
             TemplatePopulator.getPopulatedTemplate(simple, values);
             fail("Expected a TemplatePopulationException.");
         } catch (TemplatePopulatorException e) {
-        	assertEquals("No value provided for required constraint Employee.name = Marmaduke", 
-        			e.getMessage());
+            assertEquals("No value provided for required constraint Employee.name = Marmaduke",
+                         e.getMessage());
         }
     }
-    
+
     public void testNoValuesForOptionalNode() throws Exception {
-    	TemplateQuery tq = TemplatePopulator.getPopulatedTemplate(simpleWithOptionalCon, values);
-    	assertEquals(Collections.EMPTY_SET, tq.getConstraints().keySet());
-    	assertEquals(Collections.EMPTY_SET, tq.getConstraintCodes());
-    	
+        TemplateQuery tq = TemplatePopulator.getPopulatedTemplate(simpleWithOptionalCon, values);
+        assertEquals(Collections.EMPTY_SET, tq.getConstraints().keySet());
+        assertEquals(Collections.EMPTY_SET, tq.getConstraintCodes());
+
         TemplateValue value = new TemplateValue(
-        		twoConstraints.getEditableConstraints().get(0), ConstraintOp.EQUALS, "21", 
+                twoConstraints.getEditableConstraints().get(0), ConstraintOp.EQUALS, "21",
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
         values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
-    	TemplateQuery tq2 = TemplatePopulator.getPopulatedTemplate(twoConstraints, values);
-    	assertEquals(new HashSet<String>(Arrays.asList("A")), 
-    			new HashSet<String>(tq2.getConstraints().values()));
-    	assertEquals(new HashSet<String>(Arrays.asList("A")), tq2.getConstraintCodes());
+        TemplateQuery tq2 = TemplatePopulator.getPopulatedTemplate(twoConstraints, values);
+        assertEquals(new HashSet<String>(Arrays.asList("A")),
+                     new HashSet<String>(tq2.getConstraints().values()));
+        assertEquals(new HashSet<String>(Arrays.asList("A")), tq2.getConstraintCodes());
     }
 
     public void testValueForNonExistentNode() throws Exception {
         PathConstraint age = new PathConstraintAttribute("Employee.age", ConstraintOp.EQUALS, "30");
-        TemplateValue value = new TemplateValue(age, ConstraintOp.EQUALS, "21", 
+        TemplateValue value = new TemplateValue(age, ConstraintOp.EQUALS, "21",
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
         values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
         try {
@@ -135,12 +146,12 @@ public class TemplatePopulatorTest extends TestCase {
         } catch (TemplatePopulatorException e) {
         }
     }
-    
+
     public void testTooManyValuesForNode() throws Exception {
         PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
-        TemplateValue value1 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "name", 
+        TemplateValue value1 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "name",
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
-        TemplateValue value2 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "other name", 
+        TemplateValue value2 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "other name",
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
         values.put("Employee.name", Arrays.asList(new TemplateValue[] {value1, value2}));
         try {
@@ -184,10 +195,9 @@ public class TemplatePopulatorTest extends TestCase {
         // constraint should now be on parent node
         assertEquals(1, res.getEditableConstraints("Employee").size());
         assertEquals(0, res.getEditableConstraints("Employee.name").size());
-        
+
         PathConstraint resCon = res.getEditableConstraints().get(0);
         assertEquals(ConstraintOp.IN, resCon.getOp());
-        
         assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
     }
 
@@ -239,7 +249,8 @@ public class TemplatePopulatorTest extends TestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         QueryField qf = new QueryField(qc, "username");
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                              new QueryValue(username));
         q.setConstraint(sc);
         SingletonResults res = uosw.executeSingleton(q);
         Iterator resIter = res.iterator();
@@ -248,9 +259,9 @@ public class TemplatePopulatorTest extends TestCase {
             uosw.delete(o);
         }
     }
-    
+
     public void testPopulateTemplateWithObject() throws Exception {
-        InterMineObject obj = 
+        InterMineObject obj =
             (InterMineObject) DynamicUtil.createObject(Employee.class);
         obj.setId(101);
         TemplateQuery res = TemplatePopulator.populateTemplateWithObject(simple, obj);
@@ -262,20 +273,20 @@ public class TemplatePopulatorTest extends TestCase {
         assertEquals(ConstraintOp.EQUALS, resCon.getOp());
         assertEquals("101", ((PathConstraintAttribute) resCon).getValue());
     }
-    
+
     public void testPopulateTemplateWithObjectNotOneConstraint() throws Exception {
-        InterMineObject obj = 
+        InterMineObject obj =
             (InterMineObject) DynamicUtil.createObject(Employee.class);
         obj.setId(101);
         try {
             TemplatePopulator.populateTemplateWithObject(twoConstraints, obj);
             fail("Expected a TemplatePopulatorException");
-        } catch (TemplatePopulatorException e) {            
+        } catch (TemplatePopulatorException e) {
         }
     }
-    
+
     public void testPopulateTemplateWithObjectWrongType() throws Exception {
-        InterMineObject obj = 
+        InterMineObject obj =
             (InterMineObject) DynamicUtil.createObject(Department.class);
         obj.setId(101);
         try {
@@ -293,7 +304,7 @@ public class TemplatePopulatorTest extends TestCase {
         try {
             TemplatePopulator.getPopulatedTemplate(simple, values);
             fail("Expected an exception.");
-        } catch (IllegalArgumentException e) {    		
+        } catch (IllegalArgumentException e) {
         }
     }
 }
