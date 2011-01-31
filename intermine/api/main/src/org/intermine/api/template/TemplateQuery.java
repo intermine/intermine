@@ -430,6 +430,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -462,6 +463,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -541,18 +543,18 @@ public class TemplateQuery extends PathQuery implements WebSearchable
 
     public synchronized String toJSON() {
         StringWriter sw = new StringWriter();
-        sw.append("{name:'" + name + "',");
-        sw.append("title:'" + title + "',");
+        sw.append("{name:\"" + name + "\",");
+        sw.append("title:\"" + title + "\",");
         sw.append("constraints:[");
         Iterator<PathConstraint> iter = getEditableConstraints().iterator();
         Map<PathConstraint, String> codeForConstraint = getConstraints();
         while (iter.hasNext()) {
             PathConstraint pc = iter.next();
-            sw.append("{path:'" + pc.getPath() + "',");
+            sw.append("{path:\"" + pc.getPath() + "\",");
             sw.append("op:'" + pc.getOp().toString() + "'");
             String value = PathConstraint.getValue(pc);
             if (value != null) {
-                sw.append(",value:'" + value + "'");
+                sw.append(",value:\"" + value + "\"");
             }
             sw.append(",code:'" + codeForConstraint.get(pc) + "'}");
             if (iter.hasNext()) {
