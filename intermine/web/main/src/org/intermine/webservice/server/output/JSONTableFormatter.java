@@ -20,6 +20,11 @@ public class JSONTableFormatter extends JSONResultFormatter {
      * The key for setting the header attributes for the title.
      */
     public static final String KEY_TITLE = "title";
+    
+    /**
+     * The key for setting the header attributes for the description.
+     */
+    public static final String KEY_DESCRIPTION = "description";
 
     /**
      * The key for setting the header attributes for the title.
