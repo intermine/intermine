@@ -33,7 +33,6 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.WebService;
@@ -79,10 +78,8 @@ public class QueryResultService extends WebService {
     /**
      * Executes service specific logic.
      *
-     * @param request
-     *            request
-     * @param response
-     *            response
+     * @param request request
+     * @param response response
      */
     @Override
     protected void execute(HttpServletRequest request,
@@ -121,11 +118,28 @@ public class QueryResultService extends WebService {
     }
 
     /**
+     * Returns the path portion of the link to the results for this query in
+     * its originating mine.
+     * @param pq The query
+     * @return The path section of the link
+     */
+    protected String getMineResultsLinkPath(PathQuery pq) {
+        QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
+        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
+        return linkGen.getMineResultsPath(xml);
+    }
+
+    /**
      * Set the header attributes of the output based on the values of the PathQuery
      *
      * @param pq The path query to be run
+     * @param start The beginning of this set of results
+     * @param size The size of this set of results
+     * @param title The title of this query
+     * @param description A description of this query
      */
-    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size, String title) {
+    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size,
+            String title) {
         Map<String, String> attributes = new HashMap<String, String>();
         if (formatIsJSON()) {
             // These attributes are always needed
@@ -149,17 +163,26 @@ public class QueryResultService extends WebService {
             String pageUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW);
             pageUrl += "&size=" + size;
             String countUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT);
-            
+            String mineResLink = getMineResultsLinkPath(pq);
+
             if (title == null) {
                 title = "Query Results";
             }
+            String description;
+            if (pq.getDescription() == null) {
+                description = pq.toString();
+            } else {
+                description = pq.getDescription();
+            }
             attributes.put("size", String.valueOf(size));
             attributes.put("pagePath", pageUrl);
+            attributes.put("mineResultsLink", mineResLink);
             attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, columnNames.toString());
             attributes.put(JSONTableFormatter.KEY_CURRENT_PAGE, pageUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_CSV_URL, csvUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
             attributes.put(JSONTableFormatter.KEY_TITLE, title);
+            attributes.put(JSONTableFormatter.KEY_DESCRIPTION, description);
             attributes.put(JSONTableFormatter.KEY_COUNT, countUrl);
         }
         if (formatIsJSONP()) {
