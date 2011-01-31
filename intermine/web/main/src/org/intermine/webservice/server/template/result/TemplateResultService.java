@@ -150,6 +150,18 @@ public class TemplateResultService extends QueryResultService
         return linkGen.getLinkPath(template, format);
     }
 
+    @Override
+    protected String getMineResultsLinkPath(PathQuery pq) {
+        if (!(pq instanceof TemplateQuery)) {
+            throw new IllegalArgumentException(
+                    "The template results service only handles "
+                    + "TemplateQuerys, I got: " + pq.getClass());
+        }
+        TemplateQuery template = (TemplateQuery) pq;
+        TemplateResultLinkGenerator linkGen = new TemplateResultLinkGenerator();
+        return linkGen.getMineResultsPath(template, false);
+    }
+
     private ConstraintInput getCorrespondingInput(TemplateQuery template, PathConstraint con,
             TemplateResultInput input) {
         List<ConstraintInput> conInputs = input.getConstraints().get(con.getPath());
