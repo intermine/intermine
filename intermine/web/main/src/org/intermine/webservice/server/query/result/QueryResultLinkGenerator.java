@@ -35,11 +35,23 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
         }
         return baseUrl + getLinkPath(queryXml, resultFormat);
     }
-    
+
     public String getLinkPath(String queryXml, String resultFormat) {
          return WebServiceConstants.MODULE_NAME + "/query/results"
             + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&"
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
+    }
+
+    public String getMineResultsLink(String baseUrl, String queryXml) {
+        return baseUrl + getMineResultsPath(queryXml);
+    }
+
+    public String getMineResultsPath(String queryXml) {
+        String ret = "/loadQuery.do?";
+        ret += "skipBuilder=true";
+        ret += "&" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml);
+        ret += "&method=xml";
+        return ret;
     }
 
 }
