@@ -68,20 +68,20 @@ public final class MetadataCache
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     private static Map<String, DisplayExperiment> experimentCache = null;
-    private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
+    private static Map<String, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<String, Map<String, Long>> experimentFeatureCounts = null;
     private static Map<String, Map<String, Long>> experimentUniqueFeatureCounts = null;
-    private static Map<Integer, Map<String, Long>> submissionFeatureExpressionLevelCounts = null;
+    private static Map<String, Map<String, Long>> submissionFeatureExpressionLevelCounts = null;
     private static Map<String, Map<String, Long>> experimentFeatureExpressionLevelCounts = null;
-    private static Map<Integer, Integer> submissionExpressionLevelCounts = null;
-    private static Map<Integer, Integer> submissionIdCache = null;
+    private static Map<String, Integer> submissionExpressionLevelCounts = null;
+    private static Map<String, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
 
-    private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
-    private static Map<Integer, Integer> filesPerSubmissionCache = null;
-    private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
-    private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
-    private static Map<Integer, List<String[]>> submissionRepositedCache = null;
+    private static Map<String, Set<ResultFile>> submissionFilesCache = null;
+    private static Map<String, Integer> filesPerSubmissionCache = null;
+    private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
+    private static Map<String, List<String>> submissionUnlocatedFeatureTypes = null;
+    private static Map<String, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
     private static Map<String, List<DisplayExperiment>> categoryExperiments = null;
@@ -174,7 +174,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map of unlocated feature types
      */
-    public static synchronized Map<Integer, List<String>> getLocatedFeatureTypes(ObjectStore os) {
+    public static synchronized Map<String, List<String>> getLocatedFeatureTypes(ObjectStore os) {
         if (submissionLocatedFeatureTypes == null) {
             readSubmissionLocatedFeature(os);
         }
@@ -186,7 +186,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map of unlocated feature types
      */
-    public static synchronized Map<Integer, List<String>> getUnlocatedFeatureTypes(ObjectStore os) {
+    public static synchronized Map<String, List<String>> getUnlocatedFeatureTypes(ObjectStore os) {
         if (submissionUnlocatedFeatureTypes == null) {
             readUnlocatedFeatureTypes(os);
         }
@@ -213,7 +213,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
+    public static synchronized Map<String, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -225,7 +225,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Integer>
+    public static synchronized Map<String, Integer>
     getSubmissionExpressionLevelCounts(ObjectStore os) {
         if (submissionExpressionLevelCounts == null) {
             readSubmissionExpressionLevelCounts(os);
@@ -238,7 +238,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Map<String, Long>>
+    public static synchronized Map<String, Map<String, Long>>
     getSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
         if (submissionFeatureExpressionLevelCounts == null) {
             readSubmissionFeatureExpressionLevelCounts(os);
@@ -264,15 +264,15 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Integer> getFilesPerSubmission(ObjectStore os) {
+    public static synchronized Map<String, Integer> getFilesPerSubmission(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
-        filesPerSubmissionCache = new HashMap<Integer, Integer>();
+        filesPerSubmissionCache = new HashMap<String, Integer>();
 
-        Iterator<Integer> dccId = submissionFilesCache.keySet().iterator();
+        Iterator<String> dccId = submissionFilesCache.keySet().iterator();
         while (dccId.hasNext()) {
-            Integer thisSub = dccId.next();
+            String thisSub = dccId.next();
             Integer nrFiles = submissionFilesCache.get(thisSub).size();
             filesPerSubmissionCache.put(thisSub, nrFiles);
         }
@@ -287,7 +287,7 @@ public final class MetadataCache
      * @return a list of file names
      */
     public static synchronized List<ResultFile> getFilesByDccId(ObjectStore os,
-            Integer dccId) {
+            String dccId) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -302,7 +302,7 @@ public final class MetadataCache
      * @param dccId the modENCODE submission id
      * @return a list of file names
      */
-    public static synchronized List<GBrowseTrack> getTracksByDccId(Integer dccId) {
+    public static synchronized List<GBrowseTrack> getTracksByDccId(String dccId) {
         Map<Integer, List<GBrowseTrack>> tracks = getGBrowseTracks();
         if (tracks.get(dccId) != null) {
             return new ArrayList<GBrowseTrack>(tracks.get(dccId));
@@ -331,7 +331,7 @@ public final class MetadataCache
      * @return a map from feature type to count
      */
     public static synchronized Map<String, Long> getSubmissionFeatureCounts(ObjectStore os,
-            Integer dccId) {
+            String dccId) {
         if (submissionFeatureCounts == null) {
             readSubmissionFeatureCounts(os);
         }
@@ -345,7 +345,7 @@ public final class MetadataCache
      * @return the requested submission
      * @throws ObjectStoreException if error reading database
      */
-    public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
+    public static synchronized Submission getSubmissionByDccId(ObjectStore os, String dccId)
     throws ObjectStoreException {
         if (submissionIdCache == null) {
             readSubmissionIds(os);
@@ -376,7 +376,7 @@ public final class MetadataCache
     public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
         Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
 
-        Map<Integer, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
+        Map<String, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
             Integer expCount = 0;
@@ -400,7 +400,7 @@ public final class MetadataCache
     public static Map<String, Set<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
         Map<String, Set<String[]>> reposited = new HashMap<String, Set<String[]>>();
 
-        Map<Integer, List<String[]>> subRepositedMap = getRepositoryEntries(os);
+        Map<String, List<String[]>> subRepositedMap = getRepositoryEntries(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
             Set<String[]> expReps = new HashSet<String[]>();
@@ -476,13 +476,13 @@ public final class MetadataCache
      * @param os the objectStore
      * @return submissionUnlocatedFeatureTypes
      */
-    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
+    private static Map<String, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         try {
             if (submissionUnlocatedFeatureTypes != null) {
                 return submissionUnlocatedFeatureTypes;
             }
-            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
+            submissionUnlocatedFeatureTypes = new HashMap<String, List<String>>();
             if (submissionLocatedFeatureTypes == null) {
                 readSubmissionLocatedFeature(os);
             }
@@ -490,7 +490,7 @@ public final class MetadataCache
                 readSubmissionFeatureCounts(os);
             }
 
-            for (Integer subId : submissionFeatureCounts.keySet()) {
+            for (String subId : submissionFeatureCounts.keySet()) {
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
                 Set<String> difference = new HashSet<String>(allFeatures);
                 if (submissionLocatedFeatureTypes.get(subId) != null) {
@@ -808,14 +808,14 @@ public final class MetadataCache
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
-        submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
+        submissionFeatureCounts = new LinkedHashMap<String, Map<String, Long>>();
         Properties props = extractProperties(os, ModMineCacheKeys.SUB_FEATURE_COUNT);
 
         for (Object key : props.keySet()) {
             String keyString = (String) key;
 
             String[] token = keyString.split("\\.");
-            Integer dccId = Integer.parseInt(token[0]);
+            String dccId = token[0];
             String feature = token[1];
             Long count = Long.parseLong((String) props.get(key));
 
@@ -833,7 +833,7 @@ public final class MetadataCache
 
     private static void readSubmissionIds(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        submissionIdCache = new HashMap<Integer, Integer>();
+        submissionIdCache = new HashMap<String, Integer>();
 
         Query q = new Query();
         q.setDistinct(false);
@@ -858,7 +858,7 @@ public final class MetadataCache
 
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        submissionFeatureExpressionLevelCounts = new LinkedHashMap<Integer, Map<String, Long>>();
+        submissionFeatureExpressionLevelCounts = new LinkedHashMap<String, Map<String, Long>>();
         Properties props =
             extractProperties(os, ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT);
 
@@ -866,7 +866,7 @@ public final class MetadataCache
             String keyString = (String) key;
 
             String[] token = keyString.split("\\.");
-            Integer dccId = Integer.parseInt(token[0]);
+            String dccId = token[0];
             String feature = token[1];
             Long count = Long.parseLong((String) props.get(key));
 
@@ -919,7 +919,7 @@ public final class MetadataCache
 
     private static void readSubmissionExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
+        submissionExpressionLevelCounts = new HashMap<String, Integer>();
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
@@ -928,7 +928,7 @@ public final class MetadataCache
             readSubmissionFeatureExpressionLevelCounts(os);
         }
 
-        for (Integer dccId : submissionIdCache.keySet()) {
+        for (String dccId : submissionIdCache.keySet()) {
             Integer count = 0;
             Map<String, Long> featureCounts =
                 submissionFeatureExpressionLevelCounts.get(dccId);
@@ -975,7 +975,7 @@ public final class MetadataCache
 
             Results results = os.execute(q);
 
-            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+            submissionFilesCache = new HashMap<String, Set<ResultFile>>();
 
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
@@ -983,7 +983,7 @@ public final class MetadataCache
             while (iter.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-                Integer dccId = (Integer) row.get(0);
+                String dccId = (String) row.get(0);
                 ResultFile file = (ResultFile) row.get(1);
 
                 addToMap(submissionFilesCache, dccId, file);
@@ -1000,14 +1000,14 @@ public final class MetadataCache
 
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
+        submissionLocatedFeatureTypes = new LinkedHashMap<String, List<String>>();
         Properties props = extractProperties(os, ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE);
 
         for (Object key : props.keySet()) {
             String keyString = (String) key;
 
             String[] token = keyString.split("\\.");
-            Integer dccId = Integer.parseInt(token[0]);
+            String dccId = token[0];
             String feature = (String) props.get(key);
 
             addToMap(submissionLocatedFeatureTypes, dccId, feature);
@@ -1023,7 +1023,7 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, List<String[]>> getRepositoryEntries(ObjectStore os) {
+    public static synchronized Map<String, List<String[]>> getRepositoryEntries(ObjectStore os) {
         if (submissionRepositedCache == null) {
             readSubmissionRepositoryEntries(os);
         }
@@ -1062,25 +1062,26 @@ public final class MetadataCache
 
             Results results = os.execute(q);
 
-            submissionRepositedCache = new HashMap<Integer, List<String[]>>();
+            submissionRepositedCache = new HashMap<String, List<String[]>>();
 
             Integer counter = 0;
 
-            Integer prevSub = new Integer(-1);
+//            Integer prevSub = new Integer(-1);
+            String prevSub = null;
             List<String[]> subRep = new ArrayList<String[]>();
             Iterator<?> i = results.iterator();
             while (i.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) i.next();
 
                 counter++;
-                Integer dccId = (Integer) row.get(0);
+                String dccId = (String) row.get(0);
                 String db = (String) row.get(1);
                 String acc = (String) row.get(2);
                 String url = (String) row.get(3);
                 String[] thisRecord = {db, acc, url};
 
                 if (!dccId.equals(prevSub) || counter.equals(results.size())) {
-                    if (prevSub > 0) {
+                    if (prevSub != null) {
                         if (counter.equals(results.size())) {
                             prevSub = dccId;
                             subRep.add(thisRecord);
@@ -1123,12 +1124,32 @@ public final class MetadataCache
     }
 
     /**
+     * adds an element to a list which is the value of a map
+     * @param m       the map (<String, List<String>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private static void addToMap(Map<String, List<String>> m, String key, String value) {
+
+        List<String> ids = new ArrayList<String>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
+
+
+    /**
      * adds an element to a set of ResultFile which is the value of a map
      * @param m       the map (<Integer, Set<ResultFile>>)
      * @param key     the key for the map
      * @param value   the list
      */
-    private static void addToMap(Map<Integer, Set<ResultFile>> m, Integer key, ResultFile value) {
+    private static void addToMap(Map<String, Set<ResultFile>> m, String key, ResultFile value) {
 
         Set<ResultFile> files = new HashSet<ResultFile>();
 
@@ -1271,7 +1292,7 @@ public final class MetadataCache
 
             Results results = os.execute(q);
 
-            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+            submissionFilesCache = new HashMap<String, Set<ResultFile>>();
 
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
@@ -1279,7 +1300,7 @@ public final class MetadataCache
             while (iter.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-                Integer dccId = (Integer) row.get(0);
+                String dccId = (String) row.get(0);
                 ResultFile file = (ResultFile) row.get(1);
 
                 addToMap(submissionFilesCache, dccId, file);

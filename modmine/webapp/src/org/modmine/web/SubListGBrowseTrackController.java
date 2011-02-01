@@ -71,7 +71,7 @@ public class SubListGBrowseTrackController extends TilesAction
 
         Set<Submission> subs = ModMineUtil.getSubmissions(im.getObjectStore(), bag);
 
-        Set<Integer> subDCCids = new LinkedHashSet<Integer>();
+        Set<String> subDCCids = new LinkedHashSet<String>();
         for (Submission sub : subs) {
             subDCCids.add(sub.getdCCid());
         }
