@@ -87,8 +87,10 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
-        String[] wrongSubs = new String[]{"2753", "2754", "2755", "2783", "2979", "3247", "3251",
-            "3253"};
+        final String DCC_PREFIX = "modENCODE_";        
+        String[] wrongSubs = new String[]{DCC_PREFIX + "2753", DCC_PREFIX + "2754",
+                DCC_PREFIX + "2755", DCC_PREFIX + "2783", DCC_PREFIX + "2979",
+                DCC_PREFIX + "3247", DCC_PREFIX + "3251", DCC_PREFIX + "3253"};
 
         final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
 
@@ -176,7 +178,7 @@ public class FeaturesAction extends InterMineAction
             dccId = request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
-                MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
+                MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
 
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
