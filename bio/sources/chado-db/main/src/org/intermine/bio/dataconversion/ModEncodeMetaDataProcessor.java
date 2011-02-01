@@ -3015,7 +3015,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
-            //***NNNN
+            // note: on ftp site submission directories are named with the digits only
             String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
             url = FILE_URL + dccId + "/extracted/" + fileName;
         }
