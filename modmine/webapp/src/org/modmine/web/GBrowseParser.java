@@ -37,6 +37,7 @@ public class GBrowseParser
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
     private static final String GBROWSE_DEFAULT_URL =
         "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+    private static final String DCC_PREFIX = "modENCODE_";
 
     /**
      * A GBrowse track, identified by
@@ -50,7 +51,7 @@ public class GBrowseParser
         private String organism; // {fly,worm}
         private String track;    // e.g. Snyder_PHA4_GFP_COMB
         private String subTrack; // e.g. PHA4_L2_GFP
-        private Integer DCCid;
+        private String DCCid;
 
         /**
          * Instantiates a GBrowseTrack only to track level.
@@ -72,7 +73,7 @@ public class GBrowseParser
          * @param subTrack     e.g. PHA4_L2_GFP
          * @param DCCid
          */
-        public GBrowseTrack(String organism, String track, String subTrack, Integer DCCid) {
+        public GBrowseTrack(String organism, String track, String subTrack, String DCCid) {
             this.organism  = organism;
             this.track = track;
             this.subTrack = subTrack;
@@ -103,7 +104,7 @@ public class GBrowseParser
         /**
          * @return the DCCid
          */
-        public Integer getDCCid() {
+        public String getDCCid() {
             return DCCid;
         }
     }
@@ -114,9 +115,9 @@ public class GBrowseParser
      * @param organism (i.e. fly or worm)
      * @return submissionTracksCache
      */
-    public static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
-        Map<Integer, List<GBrowseTrack>> submissionsToTracks =
-            new HashMap<Integer, List<GBrowseTrack>>();
+    public static Map<String, List<GBrowseTrack>> readTracks(String organism) {
+        Map<String, List<GBrowseTrack>> submissionsToTracks =
+            new HashMap<String, List<GBrowseTrack>>();
         try {
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -167,7 +168,7 @@ public class GBrowseParser
                                         + dcc);
                                 continue;
                             }
-                            Integer dccId = Integer.parseInt(dcc);
+                            String dccId = DCC_PREFIX + dcc;
                             LOG.debug("SUBTRACK: " + subTrack + "|" + dccId);
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack =
@@ -185,14 +186,34 @@ public class GBrowseParser
     }
 
 
+//    /**
+//     * This method adds a GBrowse track to a map with
+//     * key = dccId
+//     * value = list of associated GBrowse tracks
+//     */
+//    private static void addToGBMap(
+//            Map<Integer, List<GBrowseTrack>> m,
+//            Integer key, GBrowseTrack value) {
+//        //
+//        List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
+//
+//        if (m.containsKey(key)) {
+//            gbs = m.get(key);
+//        }
+//        if (!gbs.contains(value)) {
+//            gbs.add(value);
+//            m.put(key, gbs);
+//        }
+//    }
+
     /**
      * This method adds a GBrowse track to a map with
      * key = dccId
      * value = list of associated GBrowse tracks
      */
     private static void addToGBMap(
-            Map<Integer, List<GBrowseTrack>> m,
-            Integer key, GBrowseTrack value) {
+            Map<String, List<GBrowseTrack>> m,
+            String key, GBrowseTrack value) {
         //
         List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
 
@@ -205,7 +226,7 @@ public class GBrowseParser
         }
     }
 
-
+    
     /**
      * This method get the GBrowse base URL from the properties
      * or default to one

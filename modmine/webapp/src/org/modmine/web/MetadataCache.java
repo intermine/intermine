@@ -75,13 +75,14 @@ public final class MetadataCache
     private static Map<String, Map<String, Long>> experimentFeatureExpressionLevelCounts = null;
     private static Map<String, Integer> submissionExpressionLevelCounts = null;
     private static Map<String, Integer> submissionIdCache = null;
-    private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
+    private static Map<String, List<GBrowseTrack>> submissionTracksCache = null;
 
     private static Map<String, Set<ResultFile>> submissionFilesCache = null;
     private static Map<String, Integer> filesPerSubmissionCache = null;
     private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<String, List<String>> submissionUnlocatedFeatureTypes = null;
     private static Map<String, List<String[]>> submissionRepositedCache = null;
+    
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
     private static Map<String, List<DisplayExperiment>> categoryExperiments = null;
@@ -157,7 +158,7 @@ public final class MetadataCache
      * list of tracks of tracks are preserved.
      * @return map from submission id to list of GBrowse tracks
      */
-    public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
+    public static synchronized Map<String, List<GBrowseTrack>> getGBrowseTracks() {
         fetchGBrowseTracks();
         while (submissionTracksCache == null) {
             try {
@@ -303,7 +304,7 @@ public final class MetadataCache
      * @return a list of file names
      */
     public static synchronized List<GBrowseTrack> getTracksByDccId(String dccId) {
-        Map<Integer, List<GBrowseTrack>> tracks = getGBrowseTracks();
+        Map<String, List<GBrowseTrack>> tracks = getGBrowseTracks();
         if (tracks.get(dccId) != null) {
             return new ArrayList<GBrowseTrack>(tracks.get(dccId));
         } else {
@@ -427,7 +428,7 @@ public final class MetadataCache
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
 
-        Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
+        Map<String, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
 
         for (DisplayExperiment exp : getExperiments(os)) {
             List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
@@ -453,7 +454,7 @@ public final class MetadataCache
      *
      * @param tracks map of dccId:GBrowse tracks
      */
-    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
+    public static synchronized void setGBrowseTracks(Map<String, List<GBrowseTrack>> tracks) {
         MetadataCache.class.notifyAll();
         submissionTracksCache = tracks;
     }
@@ -1188,9 +1189,9 @@ public final class MetadataCache
     private static void threadedReadGBrowseTracks() {
         long startTime = System.currentTimeMillis();
 
-        Map<Integer, List<GBrowseTrack>> tracks = new HashMap<Integer, List<GBrowseTrack>>();
-        Map<Integer, List<GBrowseTrack>> flyTracks = null;
-        Map<Integer, List<GBrowseTrack>> wormTracks = null;
+        Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
+        Map<String, List<GBrowseTrack>> flyTracks = null;
+        Map<String, List<GBrowseTrack>> wormTracks = null;
         try {
             flyTracks = GBrowseParser.readTracks("fly");
             wormTracks = GBrowseParser.readTracks("worm");
