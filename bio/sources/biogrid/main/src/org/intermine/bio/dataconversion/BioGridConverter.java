@@ -132,7 +132,7 @@ public class BioGridConverter extends BioFileConverter
                 Map<String, String> configs = new HashMap<String, String>();
                 config.put(taxonId, configs);
             }
-            if (attributes[1].equals("xref")) {
+            if ("xref".equals(attributes[1])) {
                 config.get(taxonId).put(attributes[2], value.toLowerCase());
             } else {
                 // attributes[1] is the identifierType, eg. primaryIdentifier
@@ -180,23 +180,23 @@ public class BioGridConverter extends BioFileConverter
             /********************************* EXPERIMENT **********************************/
 
             // <experimentList><experimentDescription>
-            if (qName.equals("experimentDescription")) {
+            if ("experimentDescription".equals(qName)) {
                 experimentHolder = getExperimentHolder(attrs.getValue("id"));
             // <entry><source release="2.0.37" releaseDate="2008-01-25"><names><shortLabel>
             // Interactions for BIOGRID-ORGANISM-7227</shortLabel>
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
+            } else if ("shortLabel".equals(qName) && "names".equals(stack.peek())
                             && stack.search("source") == 2) {
                 attName = "organismTaxonId";
             //  <experimentList><experimentDescription id="2"><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
+            } else if ("shortLabel".equals(qName) && "names".equals(stack.peek())
                             && stack.search("experimentDescription") == 2) {
                 attName = "experimentName";
             //  <experimentList><experimentDescription id="2"><names><fullName>
-            } else if (qName.equals("fullName") && stack.peek().equals("names")
+            } else if ("fullName".equals(qName) && "names".equals(stack.peek())
                             && stack.search("experimentDescription") == 2) {
                 attName = "experimentDescr";
             //<experimentList><experimentDescription><bibref><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
+            } else if ("primaryRef".equals(qName) && "xref".equals(stack.peek())
                             && stack.search("bibref") == 2
                             && stack.search("experimentDescription") == 3) {
                 String pubMedId = attrs.getValue("id");
@@ -204,7 +204,7 @@ public class BioGridConverter extends BioFileConverter
                     experimentHolder.setPublication(getPub(pubMedId));
                 }
             //<experimentList><experimentDescription><interactionDetectionMethod><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
+            } else if ("primaryRef".equals(qName) && "xref".equals(stack.peek())
                     && stack.search("interactionDetectionMethod") == 2) {
                 String term = attrs.getValue("id");
                 experimentHolder.setMethod(getTerm(term));
@@ -212,14 +212,14 @@ public class BioGridConverter extends BioFileConverter
             /*********************************** GENES ***********************************/
 
             // <interactorList><interactor id="4">
-            } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
+            } else if ("interactor".equals(qName) && "interactorList".equals(stack.peek())) {
                 String interactorId = attrs.getValue("id");
                 interactorHolder = new InteractorHolder(interactorId);
                 interactors.put(interactorId, interactorHolder);
 
             // <interactorList><interactor id="4"><xref>
             // <secondaryRef db="SGD"  id="S000006331" secondary="YPR127W"/>
-            } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
+            } else if (("primaryRef".equals(qName) || "secondaryRef".equals(qName))
                             && stack.search("interactor") == 2) {
                 String db = attrs.getValue("db");
                 if (db != null) {
@@ -228,10 +228,10 @@ public class BioGridConverter extends BioFileConverter
                 }
 
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
-            } else if (qName.equals("shortLabel") && stack.search("interactor") == 2) {
+            } else if ("shortLabel".equals(qName) && stack.search("interactor") == 2) {
                 attName = "shortLabel";
            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
-            } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
+            } else if ("organism".equals(qName) && "interactor".equals(stack.peek())) {
                 String taxId = attrs.getValue("ncbiTaxId");
 
                 if ((taxonIds == null || taxonIds.isEmpty()) || taxonIds.contains(taxId))  {
@@ -262,15 +262,15 @@ public class BioGridConverter extends BioFileConverter
             /*********************************** INTERACTIONS ***********************************/
 
             //<interactionList><interaction><experimentList><experimentRef>
-            } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
+            } else if ("experimentRef".equals(qName) && "experimentList".equals(stack.peek())) {
                 attName = "experimentRef";
                 holder = new InteractionHolder();
            //<interactionList><interaction>   <participantList><participant id="68259">
                 // <interactorRef>
-            } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
+            } else if ("interactorRef".equals(qName) && "participant".equals(stack.peek())) {
                 attName = "participant";
             //<interactionList><interaction><interactionType><xref><primaryRef>
-            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
+            } else if ("primaryRef".equals(qName) && "xref".equals(stack.peek())
                             && stack.search("interactionType") == 2) {
                 String termIdentifier = attrs.getValue("id");
                 holder.methodRefId = getTerm(termIdentifier);
@@ -281,7 +281,7 @@ public class BioGridConverter extends BioFileConverter
                 holder.interactionType = interactionType;
             // <participant id="62692"><interactorRef>62692</interactorRef>
             // <experimentalRoleList><experimentalRole><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
+            } else if ("shortLabel".equals(qName) && stack.search("experimentalRole") == 2) {
                 attName = "role";
             }
             super.startElement(uri, localName, qName, attrs);
@@ -317,30 +317,29 @@ public class BioGridConverter extends BioFileConverter
             /********************************* EXPERIMENTS ***********************************/
 
             // <experimentList><experimentDescription id="13022"><names><shortLabel>
-            if (attName != null && attName.equals("experimentName")
-                            && qName.equals("shortLabel")) {
+            if (attName != null && "experimentName".equals(attName) && "shortLabel".equals(qName)) {
                 String shortName = attValue.toString();
                 if (shortName != null) {
                     experimentHolder.shortName = shortName;
                 }
             //  <experimentList><experimentDescription id="13022"><names><fullName>
-            } else if (attName != null && attName.equals("experimentDescr")
-                            && qName.equals("fullName")) {
+            } else if (attName != null && "experimentDescr".equals(attName)
+                            && "fullName".equals(qName)) {
                 String descr = attValue.toString();
                 if (descr != null) {
                     experimentHolder.setDescription(descr);
                 }
-            } else if (qName.equals("experimentDescription")) {
+            } else if ("experimentDescription".equals(qName)) {
                 setExperiment(experimentHolder);
-            } else if (qName.equals("entrySet")) {
+            } else if ("entrySet".equals(qName)) {
                 storeExperiments();
 
             /********************************* GENES ***********************************/
 
 
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
-            } else if (attName != null && attName.equals("shortLabel")
-                            && qName.equals("shortLabel") && stack.search("interactor") == 2) {
+            } else if (attName != null && "shortLabel".equals(attName)
+                            && "shortLabel".equals(qName) && stack.search("interactor") == 2) {
 
                 String shortLabel = attValue.toString();
                 if (shortLabel.startsWith("Dmel")) {
@@ -352,8 +351,8 @@ public class BioGridConverter extends BioFileConverter
             /******************* INTERACTIONS ***************************************************/
                 //<interactionList><interaction>   <participantList><participant id="68259">
                 //<interactorRef>1</interactorRef>
-            } else if (attName != null && attName.equals("participant")
-                    && qName.equals("interactorRef")) {
+            } else if (attName != null && "participant".equals(attName)
+                    && "interactorRef".equals(qName)) {
                 participantId = attValue.toString();
                 InteractorHolder ih = interactors.get(participantId);
                 if (ih == null) {
@@ -374,7 +373,7 @@ public class BioGridConverter extends BioFileConverter
                 }
             //<participant><interactorRef>
             //<experimentalRoleList><experimentalRole><names><shortLabel>
-            } else if (attName != null && attName.equals("role") && qName.equals("shortLabel")
+            } else if (attName != null && "role".equals(attName) && "shortLabel".equals(qName)
                             && stack.search("experimentalRole") == 2) {
                 String role = attValue.toString();
                 if (role != null) {
@@ -386,13 +385,13 @@ public class BioGridConverter extends BioFileConverter
                     }
                 }
             //<interactionList><interaction><experimentList><experimentRef>
-            } else if (attName != null && attName.equals("experimentRef")
-                            && qName.equals("experimentRef")
-                            && stack.peek().equals("experimentList")) {
+            } else if (attName != null && "experimentRef".equals(attName)
+                            && "experimentRef".equals(qName)
+                            && "experimentList".equals(stack.peek())) {
                 holder.setExperimentHolder(experiments.get(attValue.toString()));
 
                 //</interaction>
-            } else if (qName.equals("interaction") && holder != null && holder.validActors) {
+            } else if ("interaction".equals(qName) && holder != null && holder.validActors) {
                 storeInteraction(holder);
                 holder = null;
             }
@@ -449,20 +448,20 @@ public class BioGridConverter extends BioFileConverter
 
         private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
                                 String db)
-            throws ObjectStoreException, SAXException {
+            throws ObjectStoreException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
             String identifier = null;
             String label = identifierField;
 
-            if (db.equals("shortLabel")) {
+            if ("shortLabel".equals(db)) {
                 identifier = ih.shortLabel;
             } else {
                 identifier = ih.xrefs.get(db);
             }
 
-            if (taxonId.equals("7227") && resolver != null) {
+            if ("7227".equals(taxonId) && resolver != null) {
                 identifier = resolveGene(resolver, taxonId, identifier);
                 label = "primaryIdentifier";
             }
@@ -496,7 +495,7 @@ public class BioGridConverter extends BioFileConverter
          */
         private String resolveGene(IdResolver resolver, String taxonId, String identifier) {
             String id = identifier;
-            if (taxonId.equals("7227") && resolver != null) {
+            if ("7227".equals(taxonId) && resolver != null) {
                 int resCount = resolver.countResolutions(taxonId, identifier);
                 if (resCount != 1) {
                     LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
