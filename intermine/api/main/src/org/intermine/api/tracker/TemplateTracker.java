@@ -124,7 +124,7 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the number of executions for each template
+     * Return the number of executions for each public template
      * @return map with key the template name and executions number
      */
     public Map<String, Integer> getAccessCounter() {
@@ -152,7 +152,7 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the rank for each template. The rank represents a relationship between the templates
+     * Return the rank for each public template. The rank represents a relationship between the templates
      * executions; a template with rank 1 has been executed more than a template with rank 2. The
      * rank is calculated by summing the logarithm of the templates executions launched by the
      * single users, if the user is logged in, or otherwise, by summing the logarithm of the
