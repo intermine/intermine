@@ -19,7 +19,7 @@ public class GBrowseTrackInfo
     private String organism; // {fly,worm}
     private String track;    // e.g. Snyder_PHA4_GFP_COMB
     private String subTrack; // e.g. PHA4_L2_GFP
-    private Integer DCCid;
+    private String DCCid;
 
     /**
      * Instantiates a GBrowse track fully.
@@ -31,7 +31,7 @@ public class GBrowseTrackInfo
      * @return
      *
      */
-    public GBrowseTrackInfo(String organism, String track, String subTrack, Integer DCCid) {
+    public GBrowseTrackInfo(String organism, String track, String subTrack, String DCCid) {
         this.organism  = organism;
         this.track = track;
         this.subTrack = subTrack;
@@ -62,7 +62,7 @@ public class GBrowseTrackInfo
     /**
      * @return the DCCid
      */
-    public Integer getDCCid() {
+    public String getDCCid() {
         return DCCid;
     }
 }

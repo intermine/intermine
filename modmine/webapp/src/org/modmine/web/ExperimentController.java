@@ -64,7 +64,7 @@ public class ExperimentController extends TilesAction
         Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
         request.setAttribute("tracks", tracks);
 
-        Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
+        Map<String, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
         request.setAttribute("subTracks", subTracks);
 
         Map<String, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
