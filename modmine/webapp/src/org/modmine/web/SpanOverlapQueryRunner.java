@@ -328,7 +328,7 @@ public final class SpanOverlapQueryRunner
                         aRow.setChr((String) row.get(2));
                         aRow.setStart((Integer) row.get(3));
                         aRow.setEnd((Integer) row.get(4));
-                        aRow.setSubDCCid((Integer) row.get(5));
+                        aRow.setSubDCCid((String) row.get(5));
                         aRow.setSubTitle((String) row.get(6));
 
                         spanResults.add(aRow);

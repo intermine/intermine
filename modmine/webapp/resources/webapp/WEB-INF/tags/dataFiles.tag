@@ -1,6 +1,6 @@
 <%@ tag body-content="empty" import="java.util.Set, java.util.List"%>
 <%@ attribute name="files" required="true" type="java.lang.Object" %>
-<%@ attribute name="dccId" required="true" type="java.lang.Integer" %>
+<%@ attribute name="dccId" required="true" type="java.lang.String" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 

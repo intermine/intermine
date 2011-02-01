@@ -53,6 +53,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static final String DATA_IDS_TABLE_NAME = "data_ids";
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
     private static final String FILE_URL = "http://submit.modencode.org/submit/public/get_file/";
+    private static final String DCC_PREFIX = "modENCODE_";
     private static final Set<String> DB_RECORD_TYPES =
         Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
                 "GEO_record",
@@ -1160,7 +1161,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             if ("DCCid".equals(fieldName)) {
-                LOG.info("DCC: " + submissionId + ", " + value);
+                value = DCC_PREFIX + value;
+                LOG.debug("DCC: " + submissionId + ", " + value);
                 dccIdMap.put(submissionId, value);
             }
 
@@ -1740,7 +1742,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             int attRank = res.getInt("att_rank");
 
             Integer submissionId = dataSubmissionMap.get(dataId);
-            LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
+            LOG.info("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
 
             writer.write(dccId + comma + dataHeading + comma + dataName + comma
@@ -1757,7 +1759,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
                 if (attValue.indexOf(":") > 0) {
-                    attValue = attValue.substring(0, attValue.indexOf(":"));
+                    attValue = DCC_PREFIX + attValue.substring(0, attValue.indexOf(":"));
                 }
                 Integer referencedSubId = getSubmissionIdFromDccId(attValue);
                 if (referencedSubId != null) {
@@ -2127,7 +2129,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         
         for (Map.Entry<Integer, List<SubmissionReference>> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
-            
+
             List<SubmissionReference> lref = entry.getValue();
             Iterator<SubmissionReference> i = lref.iterator();
             while (i.hasNext()) {
@@ -2143,7 +2145,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
-   
+
     private List<AppliedData> findAppliedDataFromReferencedSubmission(SubmissionReference subRef) {
         List<AppliedData> foundAppliedData = new ArrayList<AppliedData>();
         findAppliedProtocolsAndDataFromReferencedSubmission(subRef, foundAppliedData, null);
@@ -3013,7 +3015,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
-            String dccId = dccIdMap.get(submissionId);
+            //***NNNN
+            String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
             url = FILE_URL + dccId + "/extracted/" + fileName;
         }
         resultFile.setAttribute("url", url);
@@ -3124,7 +3127,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + " processSubmissionProperties");
         }
         
-        List<SubmissionReference> refs = submissionRefs.get(submissionId);        
+        List<SubmissionReference> refs = submissionRefs.get(submissionId);
         for (SubmissionReference subRef : refs) {
             LOG.info("RRSSprot: " + subRef.referencedSubmissionId
                     + "|" + subRef.dataValue);

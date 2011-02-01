@@ -67,17 +67,17 @@ public class ExperimentController extends TilesAction
         Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
         request.setAttribute("subTracks", subTracks);
 
-        Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
+        Map<String, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
         request.setAttribute("files", files);
 
-        Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
+        Map<String, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
         request.setAttribute("filesPerSub", filesPerSub);
 
-        Map<Integer, List<String[]>> submissionRepositoryEntries =
+        Map<String, List<String[]>> submissionRepositoryEntries =
             MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-        Map<Integer, List<String>> unlocatedFeatureTypes =
+        Map<String, List<String>> unlocatedFeatureTypes =
             MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
 
@@ -85,7 +85,7 @@ public class ExperimentController extends TilesAction
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
 
-        Map<Integer, Map<String, Long>> subFeatEL =
+        Map<String, Map<String, Long>> subFeatEL =
             MetadataCache.getSubmissionFeatureExpressionLevelCounts(os);
         request.setAttribute("subFeatEL", subFeatEL);
 

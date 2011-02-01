@@ -89,7 +89,7 @@ public class SpanUploadOptionsController extends TilesAction
         }
 
         // Submission(DCCid)-LocatedFeatureTypes(Class) Map
-        Map<Integer, List<String>> subFTMap = MetadataCache.getLocatedFeatureTypes(os);
+        Map<String, List<String>> subFTMap = MetadataCache.getLocatedFeatureTypes(os);
 
         // Experiment(name) - LocatedFeatureTypes(Class) Map
         Map<String, List<String>> expFTMap = new HashMap<String, List<String>>();
@@ -126,22 +126,22 @@ public class SpanUploadOptionsController extends TilesAction
 
         // Make a complex data structure
         //[org [cag [exp [sub {ft}]]]], [] for Map, {} for List
-        Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> orgMap =
-            new HashMap<String, Map<String, Map<DisplayExperiment, Map<Integer,
+        Map<String, Map<String, Map<DisplayExperiment, Map<String, List<String>>>>> orgMap =
+            new HashMap<String, Map<String, Map<DisplayExperiment, Map<String,
                 List<String>>>>>();
         for (String org : orgSet) {
-            Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>> cagMap =
-                new LinkedHashMap<String, Map<DisplayExperiment, Map<Integer, List<String>>>>();
+            Map<String, Map<DisplayExperiment, Map<String, List<String>>>> cagMap =
+                new LinkedHashMap<String, Map<DisplayExperiment, Map<String, List<String>>>>();
             for (String cag : cagExpMap.keySet()) {
-                Map<DisplayExperiment, Map<Integer, List<String>>> expMap =
-                     new LinkedHashMap<DisplayExperiment, Map<Integer, List<String>>>();
+                Map<DisplayExperiment, Map<String, List<String>>> expMap =
+                     new LinkedHashMap<DisplayExperiment, Map<String, List<String>>>();
 //                for (DisplayExperiment exp : expSet) {
                 // Show only experiments with feature types
                 for (DisplayExperiment exp : expWithFtSet) {
                     if (exp.getOrganisms().contains(org) // DisplayExperiment uses org short name
                             && (new HashSet<String>(expCagMap.get(exp)).contains(cag))) {
-                        Map<Integer, List<String>> subMap =
-                            new HashMap<Integer, List<String>>();
+                        Map<String, List<String>> subMap =
+                            new HashMap<String, List<String>>();
                         for (Submission sub : exp.getSubmissions()) {
                             if (subFTMap.containsKey(sub.getdCCid())) {
                                 // [sub {ft}]

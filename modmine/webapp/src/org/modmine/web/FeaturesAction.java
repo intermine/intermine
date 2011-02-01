@@ -174,7 +174,7 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
-            Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
+            Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
 

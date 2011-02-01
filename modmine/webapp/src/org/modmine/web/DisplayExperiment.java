@@ -304,7 +304,7 @@ public class DisplayExperiment
      * @return a map of unlocated features for this experiment
      */
     public Set<String> getUnlocated() {
-        Map<Integer, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
+        Map<String, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
 
         Set<String> unloc = new HashSet<String>();
         for (Submission s : submissions) {
