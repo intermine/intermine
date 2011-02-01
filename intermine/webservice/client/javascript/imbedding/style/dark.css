@@ -35,6 +35,7 @@ div.imbedded-table-tooltip {
 a.imbedded-table-title {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     color: white;
+    color: #444;
 }
 
 .imbedded-column-header-row {
@@ -59,6 +60,9 @@ a.imbedded-table-title {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     padding: 4px;
 }
+.imbedded-data-row {
+    color: #444;
+}
 
 .imbedded-cell > a:hover {
     color: white;
@@ -81,7 +85,7 @@ a.imbedded-table-title {
     background: #A7E1C3;
 }
 
-.imbedded-exportlink, .imbedded-pagelink {
+.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     text-decoration: none;
     color: white ! important;
@@ -89,7 +93,7 @@ a.imbedded-table-title {
     padding-right: 10px;
 }
 
-.imbedded-pagelink {
+.imbedded-pagelink, .imbedded-mineresultslink {
     float: right;
 }
 

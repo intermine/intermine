@@ -29,6 +29,7 @@ div.imbedded-table-tooltip {
 
 .imbedded-table-title {
     font-family: "Neuton", "Times", "serif";
+    color: #444;
 }
 
 .imbedded-column-header-row {
@@ -48,6 +49,9 @@ div.imbedded-table-tooltip {
     font-family: "Neuton", "Times", "serif";
     padding: 4px;
 }
+.imbedded-data-row {
+    color: #444;
+}
 
 .imbedded-cell > a:hover {
     color: black;
@@ -62,13 +66,17 @@ div.imbedded-table-tooltip {
     background: white;
 }
 
-.imbedded-exportlink, .imbedded-pagelink {
+.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
     font-family: "Neuton", "Times", "serif";
     text-decoration: none;
     color: black ! important;
     font-size: 12px;
     padding-right: 5px;
     padding-left: 5px;
+}
+
+.imbedded-exportlink {
+    float: right;
 }
 
 .imbedded-pagelink {

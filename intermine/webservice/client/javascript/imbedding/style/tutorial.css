@@ -5,6 +5,10 @@
     padding:10px;
 }
 
+.normal-color {
+    color: black;
+}
+
 h1, h2, h3, h4 {
     font-family: "Cuprum", "Arial", sans-serif;
 }
