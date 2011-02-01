@@ -26,6 +26,7 @@ div.imbedded-table-tooltip {
 
 .imbedded-table-title {
     font-family: "Cuprum", "Arial", sans-serif;
+    color: #444;
 }
 
 .imbedded-column-header-row {
@@ -40,13 +41,10 @@ div.imbedded-table-tooltip {
     width: 100%;
 }
 
-.imbedded-initial-state {
-    display: none;
-}
-
 .imbedded-data-row {
     font-size: 16px;
     font-family: "Cuprum", "Arial", sans-serif;
+    color: #444;
 }
 
 .imbedded-cell {
@@ -83,8 +81,7 @@ div.imbedded-table-tooltip {
     color: white ! important;
 }
 
-.imbedded-exportlink, .imbedded-pagelink {
-    display: none;
+.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
     color: black ! important;
     font-size: 13px;
     padding-right: 5px;

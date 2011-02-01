@@ -42,6 +42,7 @@
         <li><a href="#tabs-3">Templates</a></li>
         <li><a href="#tabs-2">Arbitrary Queries</a></li>
         <li><a href="#tabs-4">Doing Other Things with Results</a></li>
+        <li><a href="#tabs-7">Styling Tables</a></li>
         <li><a href="#tabs-5">Resources</a></li>
         <li><a href="#tabs-6">FAQ</a></li>
     </ul>
@@ -50,136 +51,47 @@
     <div id="tabs-1">
         <h2>The basics</h2>
         <p>
-        Here you can find out what the new Webservice features are,
-        and how you can go about employing them yourself. We have prepared
-        full code samples that demonstrate how to load the queries you see on
-        this page.
+        You can now embed results from InterMine queries directly into your own web pages.
+        All you need for this is a little knowledge of javascript - and there is a 
+        JavaScript client library available so you really do need only a little. If you 
+        want to do more, the techniques shown here are flexible and powerful enough
+        to present information in any way you choose.
         </p>
-        <input type="checkbox" id="explanationCB" onclick="$('#explanation').slideToggle('fast', function(){});"/><label for="explanationCB">Show me what all this is about</label>
-        <input type="checkbox" id="requirementsCD" onclick="$('#requirements').slideToggle('fast', function(){});"/><label for="requirementsCD">Show me how to set this up</label>
-        <input type="checkbox" id="minimalCB" onclick="$('#minimal').slideToggle('fast', function(){});"/><label for="minimalCB">Show me a complete minimal example</label>
-        <div id="explanation" style="display: none;">
-        <p> 
-        The purpose of this page is to demonstrate ways of including data from an
-        InterMine implementation on your webpage. In particular it focusses on some
-        new facilities for seemlessly embedding tables, and making asynchronous
-        requests for data in a range of formats. These facilities will become 
-        generally available with <strong>InterMine 0.96</strong>, which provides
-        the version 3 <a href="http://intermine.org/wiki/WebService">Webservice.</a>
-        </p>
-        <h3>How things are done at the moment</h3>
+        <h2>Example</h2>
         <p>
-        Up to now, the standard ways of linking to information contained in an 
-        InterMine has been the use of external links (such as 
-        <a href="http://squirrel.flymine.org/intermine-test/loadTemplate.do?name=employeesOfACertainAge&constraint1=Employee.age&op1=ge&value1=30&code1=A&constraint2=Employee.age&op2=lt&value2=35&code2=B&method=results">Employees Between 30 and 35</a>) and IFrames. Both of these facilities
-        will continue to be available in the future. These two methods are not 
-        without their issues, however: external links break the content
-        integrity of a page, and users may not be inclined to click on a link
-        on the off-chance of finding useful information; IFrames resolve these
-        problems by including the data into the requesting page, but are not
-        natively styled, and thus break page appearance, and they have limited
-        flexibility.
+        Below you can see a table with results from the FlyMine preview site. On page
+        ready the table structure was loaded in and the mine was queried for the count.
+        The default behaviour is for results to be loaded into tables with only the title and 
+        count showing. Clicking the table will expand it, causing it to fetch data rows
+        from the mine and insert them into itself, allowing you to see its contents. 
         </p>
-        <h3>Solving these problems with JSON</h3>
+        <div id="placeholder1"><p>This will be where the table goes</p></div>
         <p>
-        The new approach is to return data in <a href="http://json.org">JSON</a> 
-        format using asynchronous ajax calls. This approach comes at a slight cost, 
-        which we have tried to minimise. Whereas IFrames can be cut-and-pasted 
-        into an html page, an ajax led approach requires some use of javascript. 
-        We have written a library to take the leg work out of composing queries
-        and inserting tables, and we hope that this page demonstrates the superior
-        results that an ajax-led approach can achieve.
-        </p><p>
-        Data from mines can be requested in a number of ways, and unlike
-        IFrames, the page has control over when, whether, and how the data should
-        be displayed. 
-        </p>
-        <h4>When and Whether it is displayed</h4>
+        As you can see, you do not need a lot of code to get this effect:
         <p>
-        Below you should see a table already loaded 
-        (titled <em>Search for Managers</em>). This table was loaded automatically 
-        after the page was ready in the browser. Just above the table are three 
-        buttons which load other query data on demand. Data can be loaded 
-        (or hidden) on any other scriptable event. 
-        </p>
-        <h4>How it is displayed</h4>
-        <p>
-        In the top right corner there are three buttons (<em>bold,dark,light</em>).
-        Pressing these changes the style of the table without reloading the page,
-        demonstrating that the table is totally integrated into the page, and the
-        degree of control that is available over the data's appearabce. Whether
-        the table is loaded minimised (with just title and count visible) or fully
-        opened, is determined by css style properties (specifically the 
-        <code>imbedded-initial-state</code> class). Here, the <em>dark</em>
-        and <em>light</em> styles open tables fully open, while the <em>bold</em>
-        style opens tables minimised. You can view the <a href='#'>css files</a>
-        to see how this is achieved.
-        </p>
-        </div>
-        <div id="requirements" style="display: none;">
-            <p>
-            The functionality described on this page is accessed through ajax calls to 
-            the webservice of a compatible mine (version &gt;= 3). Such mines provide 
-            JSON representations of:
-            </p>
-            <ul>
-                <li>The model
-                 <p><code>baseUrl + /service/model?format=json(p)</code></p>
-                </li>
-                <li>Template descriptions<p><code >baseUrl + /service/templates?format=json(p)</code></p></li>
-                <li>Query result counts<p><code >baseUrl + /service/[query|template]/results? + Params + format=json(p)count</code></p></li>
-                <li>Query and template results<p><code >baseUrl + /service/[query|template]/results? + Params + format=[json(p)table|json(p)rows|json(p)objects]</code></p></li>
-            </ul>
-            <p>
-            Clearly, these can be accessed like any other webservice, as long as you have the
-            appropriate urls. We also provide a convenience library to simplify 
-            requests and to provide a default behaviour for inserting inline tables.
-            </p><p>
-            To use the InterMine Embedding library (imbedding.js), you will need to 
-            include the following scripts into your page: 
-            <a href="www.jquery.com">jQuery</a>,
-            <a href="http://code.google.com/p/jquery-jsonp/">jQuery-JSONP</a> and 
-            <a href="#">imbedding.js library</a>.
-            You do not need to download them, just add the following lines to the 
-            head of the page:
-            </p>
             <textarea rows="20" cols="80" class="coder html-snippet">
-<head>
-    <!-- jQuery is hosted by Google -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- jquery-jsonp is likewise available from an online repository -->
-    <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- Similarly imbedding.js is hosted on intermine.org -->
-    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.min.js" 
-        type="text/javascript">
-    </script>
-</head>
-            </textarea>
+<div id="placeholder1"></div>
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_RegionOverlappingTFbindingsite",
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG2328",
+            code1:          "A",
+        },            
+        '#placeholder1',
+    );
+</script></textarea>
             <p>
-            To style the tables, you will also need to include some css with the appropriate 
-            classes. These classes are:
-            <ul>
-                <li>.imbedded-table-container: The outer container that holds the table</li>
-                <li>.imbedded-table-titlebox: The box that holds the title and count</li>
-                <li>.imbedded-table-title: The text with the actual title</li>
-                <li>.imbedded-table: The table element</li>
-                <li>.imbedded-column-header-row: The row with the column headings</li>
-                <li>.imbedded-initial-state: The opening state of the table</li>
-                <li>.imbedded-cell: Each cell of the table</li>
-                <li>.imbedded-row-odd: Odd numbered table rows</li>
-                <li>.imbedded-row-even: Even numbered table rows</li>
-                <li>.imbedded-exportlink: The CSV and TSV export links</li>
-                <li>.imbedded-pagelink: The previous/next paging links</li>
-            </ul>
+            Go <a href="demo.html" target="_blank" >here</a> to see a very simple demo of 
+            the techniques shown on this page.
             <p>
-            The three example styles used on this page are included in the download as examples.
-            </p>
-        </div>
-        <div id="minimal" style="display: none;">
+            <input type="checkbox" id="demoSourceCB" onclick="$('#demo').slideToggle();"/><label for="demoSourceCB">View The Source For a Complete Working Example</label>
+
+        <div id="demo" style="display: none;">
             <textarea rows="20" cols="80" class="coder html-snippet">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -201,149 +113,333 @@
         type="text/javascript">
     </script>
     <link rel="stylesheet" type="text/css" 
-        href="http://intermine.org/download/imbedding/0.1/style/dark.css" />
+        href="http://intermine.org/download/imbedding/0.1/style/bold.css" />
 </head>
 
 <body>
-
     <div id="placeholder"></div>
-    <script type="text/javascript">
-        IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
-        IMBedding.loadTemplate(
-            {
-                name: "employeesOverACertainAgeFromDepartmentA",
-                size: 10,
-
-                constraint1: "Employee.age",
-                op1: ">=",
-                value1: 25,
-
-                constraint2: "Employee.department.name",
-                op2: "=",
-                value2: "DepartmentB1"
-            },
-            "#placeholder"
-        );
-    </script>
-
 </body>
-</html></textarea>
-        </div>
-        <div class="option-box">
-        <form>
-            <span style="float: right"><input type="checkbox" id="showMe" /><label for="showMe">Show the code</label></span>
-            <div id="radio">
-                <input class="templater" type="radio" id="template1" name="template"/><label for="template1">Template 1</label>
-                <input class="templater" type="radio" id="template2" name="template"/><label for="template2">Template 2</label>
-                <input class="templater" type="radio" id="template3" name="template"/><label for="template3">Template 3</label>
-            </div>
-        </form>
-        <div id="showMeAreaContainer" style="display: none;">
-        <textarea rows="20" cols="80" id="showMeArea" class="coder js-snippet">
-// The base url must be set before any calls to are made:
 
-var baseUrl = "http://squirrel.flymine.org/intermine-test";
-IMBedding.setBaseUrl(baseUrl);
-
-// for page load: 
-$(function() {loadTemplate();}); 
-
-// for button click
-$('#button').click(function() {loadTemplate();});
-
-// nb: the imbedding.js library requires jquery, hence
-// we assume that you will have jQuery functionality available 
-// (ie, $() and $.click())
-
-// The functions:
-
-function loadTable1() {
-    IMBedding.loadTemplate(
-        {
-            name: "employeesOverACertainAgeFromDepartmentA",
-            size: 10,
-
-            constraint1: "Employee.age",
-            op1: "&gt;=",
-            value1: 25,
-
-            constraint2: "Employee.department.name",
-            op2: "=",
-            value2: "DepartmentB1"
-        },
-        "#placeholder1"
-    );
-}
-
-function loadTable2() {
-    IMBedding.loadTemplate(
-        {
-            name: "employeesFromCompanyAndDepartment",
-            size: 10,
-
-            constraint1: "Employee.department.company.name",
-            op1: "LIKE",
-            value1: "Company*",
-
-            constraint2: "Employee.department.name",
-            op2: "LIKE",
-            value2: "Department*"
-        },
-        "#placeholder1"
-    );
-}
-
-function loadTable3() {
-    IMBedding.loadTemplate(
-        {
-            name: "employeesOfACertainAge",
-            size: 10,
-
-            constraint1: "Employee.age",
-            code1: "A",
-            op1: "&gt;",
-            value1: 30,
-
-            constraint2: "Employee.age",
-            code2: "B",
-            op2: "&lt;=",
-            value2: "60"
-        },
-        "#placeholder1"
-    );
-}
-
-function loadTable4() {
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
     IMBedding.loadTemplate(
         {
             name:           "ManagerLookup",
+            size:           10,
         
             constraint1:    "Manager",
             op1:            "LOOKUP",
-            value1:         "M.",
+            value1:         "*",
+            code1:          "A",
+        },
+        '#placeholder'
+    );
+</script>
+
+</html></textarea>
+</div>
+        <h2 id="boilerplate">How To Set This Up</h2>
+        <p>
+        We have tried to keep the boilerplate you need to put into your code to a minimum, but
+        there are a few things you need:
+        <ul>
+            <li class="resource"><h3>Some javascript libraries.</h3>
+            <p>
+            To use the InterMine Embedding library (imbedding.js), you will need to <a 
+            href="#boilerplate" onclick="$('#librariesHead').slideToggle();">include</a>
+            the following scripts into your page: 
+            <a href="www.jquery.com">jQuery</a>,
+            <a href="http://code.google.com/p/jquery-jsonp/">jQuery-JSONP</a> and 
+            <a href="http://intermine.org/download/imbedding/">imbedding.js library</a>.
+            </p>
+            <div id="librariesHead" style="display: none;">
+                <p>
+                You do not need to download them, just add the following lines to the 
+                head of the page:
+                </p>
+                <textarea rows="20" cols="80" class="coder html-snippet">
+<head>
+    <!-- jQuery is hosted by Google -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
+        type="text/javascript">
+    </script>
+    <!-- jquery-jsonp is likewise available from an online repository -->
+    <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
+        type="text/javascript">
+    </script>
+    <!-- Similarly imbedding.js is hosted on intermine.org -->
+    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.min.js" 
+        type="text/javascript">
+    </script>
+</head>
+                </textarea>
+            </div>
+            </li>
+            <li class="resource"><h3>Some css styles</h3>
+            <p>
+            To style the tables, you will also need to include some css with the <a 
+            href="#boilerplate" onclick="$('#classlist').slideToggle();">appropriate classes.</a>
+            <div id="classlist" style="display: none;">
+            <span class="normal-color">Classes you can style in an embedded table:</a>
+            <ul>
+                <li class="resource">.imbedded-table-container: <span class="normal-color">The outer container that holds the table</span></li>
+                <li class="resource">.imbedded-table-titlebox: <span class="normal-color">The box that holds the title and count</span></li>
+                <li class="resource">.imbedded-table-title: <span class="normal-color">The text with the actual title</span></li>
+                <li class="resource">.imbedded-table: <span class="normal-color">The table element</span></li>
+                <li class="resource">.imbedded-column-header-row: <span class="normal-color">The row with the column headings</span></li>
+                <li class="resource">.imbedded-cell: <span class="normal-color">Each cell of the table</span></li>
+                <li class="resource">.imbedded-row-odd: <span class="normal-color">Odd numbered table rows</span></li>
+                <li class="resource">.imbedded-row-even: <span class="normal-color">Even numbered table rows</span></li>
+            <li class="resource">.imbedded-column-odd: <span class="normal-color">Odd numbered table columns</span></li>
+            <li class="resource">.imbedded-column-even: <span class="normal-color">Even numbered table columns</span></li>
+                <li class="resource">.imbedded-exportlink: <span class="normal-color">The CSV and TSV export links</span></li>
+                <li class="resource">.imbedded-pagelink: <span class="normal-color">The previous/next paging links</span></li>
+                <li class="resource">.imbedded-mineresultslink: <span class="normal-color">The link to the results in the originating mine</span></li>
+                <li class="resource">.imbedded-prev: <span class="normal-color">The previous paging link</span></li>
+                <li class="resource">.imbedded-next: <span class="normal-color">The next paging link</span></li>
+            </ul>
+            <p>
+            There are some stylesheets available (all the ones used on this page) via the 
+            web-hosting interface as well.
+            </p>
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<head>
+    <!-- You are welcome to fetch these styles from the intermine host -->
+    <link rel="stylesheet" href="http://www.intermine.org/download/imbedding/0.1/style/bold.css" />
+</head>
+            </textarea>
+            </div>
+            </li>
+            <li class="resource"><h3>A placeholder (or several) on the page</h3>
+            <p>
+            You will need to include <a href="#boilerplate" onclick="$('#placeholder-snippet').slideToggle();">an element</a> to tell the table where to go.
+            </p>
+            <div id="placeholder-snippet" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<body>
+    <div id="placeholder">The content of this div will be replaced by the table</div>
+</body>
+            </textarea>
+            <p>
+            Using placeholders means you can be precise about where you want your tables to
+            appear on the page, and have as many of them as you want, without interference
+            between them.
+            </p><p>
+            Placeholders also mean graceful fallback - simply supply alternative fallback
+            material within the placeholder element: it will be overwritten when the table goes
+            in.
+            </p>
+            <button id="positionExButton">Replace the placeholder element below with a table</button>
+            </p>
+            <div id="positionExample">
+                <div style="border: solid 3px #0073EA;">
+                <p>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+                Terribly sorry there is no pretty table to see here. Maybe you
+                don't have JavaScript enabled? No worries, just go through to
+                <a href="http://www.flymine.org">FlyMine</a> for all the data you can eat
+                </p>
+                </div>
+            </div>
+        </div>
+            <li class="resource"><h3>A Script to load the table in</h3>
+            <p>
+            You can either write your own separate library of functions and include it in your 
+            head, or you can insert <a href="#boilerplate" 
+            onclick="$('#scriptElem').slideToggle();">a script element</a> directly into the page:
+            </p>
+            <div id="scriptElem" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
+    IMBedding.loadTemplate(
+        {
+            name:           "ManagerLookup",
+            size:           10,
+        
+            constraint1:    "Manager",
+            op1:            "LOOKUP",
+            value1:         "*",
             code1:          "A",
         },
         '#placeholder1'
     );
-}
+</script>
 </textarea>
+</div>
+            </li>
+        </ul>
+        <h2>Showing Contents on Load</h2>
+        <p>
+        Various features of the table are configurable via options. The table below was loaded 
+        with the option "openOnLoad" set to true. Clicking on the titlebar of this
+        table will collapse it.
+        </p>
+        <div id="placeholderEx2"><p>This will be where the table goes</p></div>
+        <input type="checkbox" id="example2CB" onclick="$('#example2').slideToggle();"/><label for="example2CB">View Source</label>
+        <div id="example2" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_Identifiers",
+
+            constraint1:    "Gene.secondaryIdentifier",
+            op1:            "<",
+            value1:         "CG1046",
+            code1:          "A",
+        },
+        "#placeholderEx2",
+        {openOnLoad: true}
+    );
+</script></textarea>
         </div>
+        <h2>Changing Title Click Behaviour</h2>
+        <p>
+        The default behaviour for a click on the title is to expand/collapse the table. 
+        You can choose other behaviours:
+        </p>
+        <h3>Click Through to Mine</h3>
+        <div id="placeholderEx3a"><p>This will be where the table goes</p></div>
+        <h3>No Behaviour</h3>
+        <div id="placeholderEx3b"><p>This will be where the table goes</p></div>
+        <input type="checkbox" id="example3CB" onclick="$('#example3').slideToggle();"/><label for="example3CB">View Source</label>
+        <div id="example3" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A",
+        },
+        "#placeholderEx3a",
+        {onTitleClick: "mine"}
+    );
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+            size: 10,
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A",
+        },
+        "#placeholderEx3b",
+        {onTitleClick: "none"}
+    );
+</script></textarea>
         </div>
-    <form>
-        <div class="styles" style="float: right;">
-            <input class="styler" type="radio" value="bold" id="bold-b" name="style"checked="true"/>
-                <label for="bold-b">Bold</label>
-            <input class="styler" type="radio" value="dark" id="dark-b" name="style" />
-                <label for="dark-b">Dark</label>
-            <input class="styler" type="radio" value="light" id="light-b" name="style"/>
-                <label for="light-b">Light</label>
+        <h2>Configuring What is Shown</h2>
+        <p>
+        As well as the title, by default the table will also contain export links,
+        a link to the results in the originating mine, a count of the total results, and
+        pages with 10 rows of results. The tables below show adjustments to these features.
+        </p>
+        <h3>No Export Links</h3>
+        <div id="placeholderEx4a"><p>This will be where the table goes</p></div>
+        <h3>No Count</h3>
+        <div id="placeholderEx4b"><p>This will be where the table goes</p></div>
+        <h3>No Mine Link</h3>
+        <div id="placeholderEx4c"><p>This will be where the table goes</p></div>
+        <h3>A Different Number of Rows</h3>
+        <div id="placeholderEx4d"><p>This will be where the table goes</p></div>
+        <input type="checkbox" id="example4CB" onclick="$('#example4').slideToggle();"/><label for="example4CB">View Source</label>
+        <div id="example4" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet">
+<script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B",
+        },
+        "#placeholderEx4a",
+        {showExportLinks: false, baseUrl: flyMineBase}
+    );
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B",
+        },
+        "#placeholderEx4b",
+        {showCount: false, baseUrl: flyMineBase}
+    );
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B",
+        },
+        "#placeholderEx4c",
+        {showMineLink: false, baseUrl: flyMineBase}
+    );
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 15,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B",
+        },
+        "#placeholderEx4d",
+        {baseUrl: flyMineBase}
+    );
+</script></textarea>
         </div>
-    </form>
-    <div id="placeholder1"><p>This will be where the table goes</p></div>
+
     </div>
 
     <div id="tabs-2">
         <h2>Loading an Arbitrary Query</h2>
+        <p>
+        This tool is designed to help you write javascript functions for your pages
+        by generating the code for you. You can paste in xml, experiment with 
+        JSON, or build a query from scratch. You can then see the generated code, 
+        and cut and paste it into your own page.
+        </p>
         <p> 
         Queries can be passed to the loading function as either an xml text string,
         or as a json object. The loading module must be prepared with the base url
@@ -356,13 +452,9 @@ function loadTable4() {
         <em>"Show the code"</em> button.)
         </p>
         <input type="checkbox" id="formatDetailsCB" onclick="$('#formatDetails').slideToggle('fast', function(){});"/><label for="formatDetailsCB">see information about the formats</label>
-        <div id="query-radios" style="display: inline">
-            <input class="querier" type="radio" checked="true" value="querybuilder" id="querybuilder-opt" name="query"/><label for="querybuilder-opt">Build A Query</label>
-            <input class="querier" type="radio" value="cutandpaste" id="cutandpaste-opt" name="query"/><label for="cutandpaste-opt">Paste in some XML/JSON</label>
-        </div>
-        <div id="source-radios-q" style="display: inline">
-            <input class="model-sourcer" type="radio" checked="true" value="testmodel" id="source-opt-m" name="model-source"/><label for="source-opt-m">Point at Testmodel</label>
-            <input class="model-sourcer" type="radio" value="flymine" id="source-flymine-m" name="model-source"/><label for="source-flymine-m">Point at FlyMine</label>
+        <div id="query-radios" style="display: inline; float: right;">
+            <input class="querier" type="radio" value="querybuilder" id="querybuilder-opt" name="query"/><label for="querybuilder-opt">Build A Query</label>
+            <input class="querier" type="radio" checked="true" value="cutandpaste" id="cutandpaste-opt" name="query"/><label for="cutandpaste-opt">Paste in some XML/JSON</label>
         </div>
         <div id="formatDetails" style="display: none;">
             <p>
@@ -387,7 +479,7 @@ function loadTable4() {
             detailed information on the query webservice api.
             </p>
         </div>
-        <div id="cutandpaste" style="display: none;">
+        <div id="cutandpaste">
             <p>
             You can simply paste in xml or json into the appropriate box below, press
             load, and see the results, and the generating code for them.
@@ -401,24 +493,32 @@ function loadTable4() {
                 <tr>
                     <td>
                         <textarea class="coder" id="xmlarea" rows="15"  cols="60">
-<query view="Employee.name Employee.age Employee.department.name" model="testmodel">
-    <constraint path="Employee.age" op="&amp;lt;" value="50"/>
+<query name="" model="genomic" view="Gene.homologues.type Gene.homologues.gene.primaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.organism.shortName" sortOrder="Gene.homologues.type asc">
+  <constraint path="Gene.primaryIdentifier" op="&amp;lt;" value="D"/>
+  <constraint path="Gene.primaryIdentifier" op="&amp;gt;" value="C"/>
 </query></textarea>
                     </td>
                     <td>
                         <textarea disabled="true" class="coder" id="jsonarea" rows="15" cols="60">
 {
-    select: ["Employee.name", "Employee.age", "Employee.department.name"],
-    from: "testmodel",
+    select: [
+        "Gene.homologues.type", 
+        "Gene.homologues.gene.primaryIdentifier", 
+        "Gene.homologues.inParanoidScore", 
+        "Gene.homologues.homologue.primaryIdentifier", 
+        "Gene.homologues.homologue.organism.shortName"
+    ],
+    from: "genomic",
     where: [
-        {path: "Employee.age", op: "<", value: 50}
+        {path: "Gene.primaryIdentifier", op: "&lt;", value: "D"},
+        {path: "Gene.primaryIdentifier", op: "&gt;", value: "C"}
     ]
 }</textarea>
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="option-box" id="querybuilder">
+        <div class="option-box" id="querybuilder" style="display: none;">
             
     <form id="root-class-form">
         <p><label for "root-class"><em>Construct a query for</em></label>
@@ -467,7 +567,7 @@ function loadTable4() {
     </div>
     </div>
     <button id="query-loader">Load Query</button>
-    <input type="checkbox" id="showQueryCode"/><label for="showQueryCode">Show the code</label>
+    <input type="checkbox" id="showQueryCode"/><label for="showQueryCode">View Generated Code</label>
     <div id="codeContainer" style="display: none">
     <div id="codeDisplay" class="ui-state-highlight ui-corner-all">
         <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet. Just load a query and the corresponding code will be generated and displayed in this box</p>
@@ -489,19 +589,16 @@ function loadTable4() {
     <div id="tabs-3">
         <h2>Loading a Template</h2>
         <p>
-        In most cases, the easiest way to automate queries is to use templates. This
-        saves having to write out the query again and again, and has the advantage
-        of enabling the results to be precomputed for quicker access.
+        This tool is designed to help you write javascript functions to load desired
+        query results. It will generate code you can cut and paste into your web page
+        to embed query results. Press <em>"Show Source"</em> to see the code generated 
+        for each query.
         <p>
         Enter a template name to see the list of templates for this mine. 
         Selecting one will bring up a form for you to enter the values for 
         the parameters that this template expects. 
         </p>
         <input type="checkbox" id="templateDetailsCB" onclick="$('#templateDetails').slideToggle('fast', function(){});"/><label for="templateDetailsCB">see information about templates</label>
-        <div id="source-radios-t" style="display: inline">
-            <input class="sourcer" type="radio" checked="true" value="testmodel" id="source-opt-t" name="template-source"/><label for="source-opt-t">Point at Testmodel</label>
-            <input class="sourcer" type="radio" value="flymine" id="source-flymine-t" name="template-source"/><label for="source-flymine-t">Point at FlyMine</label>
-        </div>
         <div id="templateDetails" style="display: none;">
             <p>
             Templates are predefined queries with a fixed number of parameters. 
@@ -524,7 +621,7 @@ function loadTable4() {
                 <div id="templateSpecific"></div>
                 <br/>
                 <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()" />
-                <input type="checkbox" id="showTemplateCode"/><label for="showTemplateCode">Show the code</label>
+                <input type="checkbox" id="showTemplateCode"/><label for="showTemplateCode">View Generated Code</label>
             </form>
             <div id="templateCodeContainer" style="display: none">
                 <div id="templateCodeDisplay"  class="ui-state-highlight ui-corner-all">
@@ -631,77 +728,11 @@ function loadGraph1() {
     );
 }
 
-function showTooltip(x, y, name) {
-     $('<div id="tooltip">' + name + '</div>').css( {
-           position: 'absolute',
-           display: 'none',
-           top: y + 10,
-           left: x + 10,
-           border: '1px solid #fdd',
-           padding: '2px',
-          'background-color': '#FF0084',
-          color: "white",
-           opacity: 0.80
-      }).appendTo("body").fadeIn(200);
-}
-
-function findLineByLeastSquares(datapoints) {
-    var sum_x = 0;
-    var sum_y = 0;
-    var sum_xy = 0;
-    var sum_xx = 0;
-    var count = 0;
-    
-    /*
-     * Prevent multipe calls to length
-     */
-    var values_length = datapoints.length;
-    
-    /*
-     * Nothing to do.
-     */
-    if (values_length === 0) {
-        return [ ];
-    }
-    
-    /*
-     * Calculate the sum for each of the parts necessary.
-     */
-    for (var i = 0; i < values_length; i++) {
-        var x = datapoints[i][0];
-        var y = datapoints[i][1];
-        sum_x += x;
-        sum_y += y;
-        sum_xx += x*x;
-        sum_xy += x*y;
-        count++;
-    }
-    
-    /*
-     * Calculate m and b for the formula:
-     * y = x * m + b
-     */
-    var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
-    var b = (sum_y/count) - (m*sum_x)/count;
-    
-    /*
-     * We will make the x and y result line now
-     */
-    var data = [];
-    
-    for (var i = 0; i < values_length; i++) {
-        x = datapoints[i][0];
-        y = x * m + b;
-        data.push([x, y]);
-    }
-    
-    return data;
-}
-
 function loadGraph2() {
     IMBedding.loadQuery(
         {
             select: ["Manager.age", "Manager.seniority", "Manager.name"],
+            where: [{path: "Manager.age", op: ">", value: 30}],
             from: "testmodel"
         },
         {size: 1000, format: "jsonpobjects"},
@@ -762,10 +793,128 @@ function loadGraph2() {
         }
     );
 }
+
+function loadDepartmentSummary(departmentName) {
+    departmentName = departmentName || "Sales";
+    IMBedding.loadQuery(
+        {
+            select: [
+                "Department.name", "Department.company.name", 
+                "Department.employees.name", 
+                "Department.employees.age", 
+                "Department.employees.address.address", 
+                "Department.manager.name",
+                "Department.company.departments.name"
+            ],
+            where: [
+                {
+                    path: "Department.name", 
+                    op: "=", value: departmentName
+                },
+                {
+                    path: "Department.company.name", 
+                    op: "=", value: "Wernham-Hogg"
+                }
+            ],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonpobjects"},
+        function(resultSet) {
+            var department = resultSet.results[0];
+            var summary = $('<div></div>').addClass("department-summary");
+            var title = document.createElement("h2");
+            title.appendChild(document.createTextNode(
+                        department.company.name + ": "));
+            var depSelect = document.createElement("select");
+            $(depSelect).button();
+            var noOfDeps = department.company.departments.length;
+            for (var i = 0; i < noOfDeps; i++) {
+                var dep = department.company.departments[i];
+                var depOption = document.createElement("option");
+                if (dep.objectId == department.objectId) {
+                    depOption.selected = true;
+                }
+                depOption.innerHTML = dep.name;
+                depSelect.appendChild(depOption);
+            }
+            title.appendChild(depSelect);
+            $(depSelect).change(function() {
+                loadDepartmentSummary($(depSelect).val());
+            });
+            summary.append(title);
+            var subtitle = document.createElement("h3");
+            subtitle.innerHTML = "Manager: " + department.manager.name;
+            summary.append(subtitle);
+            var employeeCount = department.employees.length;
+            var list = document.createElement("ul");
+            for (var i = 0; i < employeeCount; i++) {
+                var employee = department.employees[i];
+                if (employee.objectId == department.manager.objectId) {
+                    continue;
+                }
+                var item = document.createElement("li");
+                var link = document.createElement("a");
+                link.href = baseUrl + "/objectDetails.do?id=" 
+                                    + employee.objectId;
+                link.innerHTML = employee.name;
+                item.appendChild(link);
+                $(link).hover(
+                    getEmployeeTooltipper(employee),
+                    function(event) {
+                        $('.tooltip').remove();
+                    }
+                );
+                list.appendChild(item);
+            }
+            summary.append(list);
+            $('#graph').empty().append(summary);
+        }
+    );
+};
 </textarea>
         </div>
         </div>
         <div id="graph" style="width: 600px; height: 300px;"><p>This will be where the graph goes</p></div>
+    </div>
+    <div id="tabs-7">
+        <h2>Styling The Tables</h2>
+        <p> 
+        The tables produced with the imbedding.js library are designed to be easily stylable. 
+        Customisation is possible by using the classes that the elements are decorated with:
+        </p>
+        <span class="normal-color">Classes you can style in an embedded table:</a>
+        <ul>
+            <li class="resource">.imbedded-table-container: <span class="normal-color">The outer container that holds the table</span></li>
+            <li class="resource">.imbedded-table-titlebox: <span class="normal-color">The box that holds the title and count</span></li>
+            <li class="resource">.imbedded-table-title: <span class="normal-color">The text with the actual title</span></li>
+            <li class="resource">.imbedded-table: <span class="normal-color">The table element</span></li>
+            <li class="resource">.imbedded-column-header-row: <span class="normal-color">The row with the column headings</span></li>
+            <li class="resource">.imbedded-cell: <span class="normal-color">Each cell of the table</span></li>
+            <li class="resource">.imbedded-row-odd: <span class="normal-color">Odd numbered table rows</span></li>
+            <li class="resource">.imbedded-row-even: <span class="normal-color">Even numbered table rows</span></li>
+            <li class="resource">.imbedded-column-odd: <span class="normal-color">Odd numbered table columns</span></li>
+            <li class="resource">.imbedded-column-even: <span class="normal-color">Even numbered table columns</span></li>
+            <li class="resource">.imbedded-exportlink: <span class="normal-color">The CSV and TSV export links</span></li>
+            <li class="resource">.imbedded-pagelink: <span class="normal-color">The previous/next paging links</span></li>
+            <li class="resource">.imbedded-mineresultslink: <span class="normal-color">The link to the results in the originating mine</span></li>
+            <li class="resource">.imbedded-prev: <span class="normal-color">The previous paging link</span></li>
+            <li class="resource">.imbedded-next: <span class="normal-color">The next paging link</span></li>
+        </ul>
+        <p>
+        There are three styles supplied here with the tutorial, and you can see how changing them
+        changes the appearance of the table below:
+        </p>
+        <form>
+            <div class="styles" style="float: right">
+                <input class="styler" type="radio" value="bold" id="bold-style" name="style"checked="true"/>
+                <label for="bold-style">Bold</label>
+                <input class="styler" type="radio" value="dark" id="dark-style" name="style" />
+                    <label for="dark-style">Dark</label>
+                <input class="styler" type="radio" value="light" id="light-style" name="style"/>
+                    <label for="light-style">Light</label>
+            </div>
+        </form>
+        <div id="styleDemo" ></div>
     </div>
     <div id="tabs-5">
         <h2>You May Be Interested In</h2>

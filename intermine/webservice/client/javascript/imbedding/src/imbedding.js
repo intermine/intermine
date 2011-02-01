@@ -1,6 +1,7 @@
 IMBedding = (function() {
     var baseUrl = null;
     var tables = {};
+    var defaultTableSize = 10;
     var placeholder = '#placeholder';
     var templateResultsPath = "/service/template/results";
     var queryResultsPath = "/service/query/results";
@@ -13,8 +14,13 @@ IMBedding = (function() {
     };
 
     var defaultOptions = {
+        openOnLoad: false,
+        throbberSrc: "images/throbber.gif",
         onTitleClick: "collapse",
         showExportLinks: true,
+        showCount: true,
+        previousText: "Previous",
+        nextText: "Next",
         showMineLink: true
     };
 
@@ -22,7 +28,9 @@ IMBedding = (function() {
         var table = document.getElementById(tableId);
         var container = document.getElementById(containerId);
         if (table.offsetWidth > container.offsetWidth) {
-            container.defaultWidth = container.offsetWidth;
+            if (! container.defaultWidth) {
+                container.defaultWidth = container.offsetWidth;
+            }
             container.style.width = (table.offsetWidth + 1) + 'px';
         } else if (table.offsetWidth == 0) {
             if (container.defaultWidth) {
@@ -33,13 +41,28 @@ IMBedding = (function() {
 
     var getTableResizer = function(tableId, containerId, uid) {
         return function() {
-            $('#imbedded-csvlink-' + uid).toggle();
-            $('#imbedded-tsvlink-' + uid).toggle();
-            $('#imbedded-mineresultslink-' + uid).toggle();
-            $('#' + tableId).fadeToggle('slow', function() {
-                fitContainerToTable(tableId, containerId);
-                updateVisibilityOfPagers(uid);
-            });
+            var table = tables[uid];
+            var action = function() {
+                $('#imbedded-csvlink-' + uid).toggle();
+                $('#imbedded-tsvlink-' + uid).toggle();
+                $('#imbedded-mineresultslink-' + uid).toggle();
+                $('#' + tableId).fadeToggle('slow', function() {
+                    fitContainerToTable(tableId, containerId);
+                    updateVisibilityOfPagers(uid);
+                });
+            };
+            if (! table.isFilledIn) {
+                $.jsonp({
+                    url: localiseUrl(table.pagePath, table.options),
+                    success: function(data) {
+                        fillInTable(uid, data, table.options);
+                        action();
+                    },
+                    callbackParameter: "callback"
+                });
+            } else {
+                action();
+            }
         };
     };
 
@@ -83,7 +106,7 @@ IMBedding = (function() {
         position:             'absolute',
         display:              'none',
         top:                  y + 10,
-        left:                 x + 10,
+        left:                 x + 10
       }).fadeIn(200);
      var tt = document.getElementById("imtooltip");
     };
@@ -102,14 +125,65 @@ IMBedding = (function() {
         titlebox.setAttribute("class", "imbedded-table-titlebox");
         var title = document.createElement("a");
         title.className = "imbedded-table-title";
-        title.href = '#';
-        title.appendChild(document.createTextNode(data.title + " ("));
-        var countDisplayer = document.createElement("span");
-        countDisplayer.id = "imbedded-count-displayer-" + uid;
-        title.appendChild(countDisplayer);
-        title.appendChild(document.createTextNode(")"));
+        title.appendChild(document.createTextNode(data.title));
+        if (options.showCount) {
+            var countDisplayer = document.createElement("span");
+            countDisplayer.id = "imbedded-count-displayer-" + uid;
+            title.appendChild(countDisplayer);
+        }
         titlebox.appendChild(title);
         container.appendChild(titlebox);
+        var nextLink = document.createElement("a");
+        nextLink.id = "imbedded-nextlink-" + uid;
+        nextLink.setAttribute("class", 
+                "imbedded-pagelink imbedded-next");
+        nextLink.href = target;
+        tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size, options);
+        $(nextLink).click(function() {
+            /*$(table).children('tbody').detach();
+            var throbber = document.createElement("img");
+            throbber.src = options.throbberSrc;
+            $(table).append(throbber);*/
+            $.jsonp({
+                url: tables[uid].nextLink,
+                callbackParameter: "callback",
+                success: function(data) {
+                    fillInTable(uid, data, options);
+                    updateVisibilityOfPagers(uid);
+                    fitContainerToTable(table.id, container.id);
+                }
+            });
+        });
+        nextLink.innerHTML = options.nextText;;
+        container.appendChild(nextLink);
+        var prevLink = document.createElement("a");
+        prevLink.id = "imbedded-prevlink-" + uid;
+        prevLink.setAttribute("class", "imbedded-pagelink imbedded-prev");
+        if (! options.openOnLoad) {
+            prevLink.style.display = "none";
+            nextLink.style.display = "none";
+        }
+        prevLink.href = target;
+        $(prevLink).click(function() {
+            /*$(table).children('tbody').detach();
+            var throbber = document.createElement("img");
+            throbber.src = options.throbberSrc;
+            $(table).append(throbber);*/
+            $.jsonp({
+                url: tables[uid].prevLink,
+                callbackParameter: "callback",
+                success: function(data) {
+                    fillInTable(uid, data, options);
+                    updateVisibilityOfPagers(uid);
+                    fitContainerToTable(table.id, container.id);
+                }
+            });
+        });
+        prevLink.innerHTML = options.previousText;
+        container.appendChild(prevLink);
+        if (data.start <= 0) {
+            $(prevLink).hide();
+        }
         var table = document.createElement("table");
         table.setAttribute("start", data.start);
         tables[uid].start = data.start;
@@ -118,11 +192,14 @@ IMBedding = (function() {
         table.setAttribute("lastrow", data.size);
         table.setAttribute("size", data.size);
         table.id = "imbedded-table-" + uid;
+        title.href = '#' + table.id;
         $.jsonp({
             url: localiseUrl(data.count, options),
             success: function(countData) {
-                countDisplayer.innerHTML = countData.count + " results";
-                countDisplayer.setAttribute("count", countData.count);
+                if (options.showCount) {
+                    $("#imbedded-count-displayer-" + uid).html(
+                        " (" + countData.count + " results)");
+                }
                 tables[uid].count = countData.count;
                 updateVisibilityOfPagers(uid);
             }, 
@@ -130,11 +207,9 @@ IMBedding = (function() {
         });
 
         var tableClasses = "imbedded-table";
-        if (data.start == 0) {
-            tableClasses += " imbedded-initial-state";
-        }
         table.className = tableClasses;
         tables[uid].pagePath = data.current + "&size=" + data.size;
+        tables[uid].isFilledIn = false;
 
         var colHeaderRow = document.createElement("tr");
         colHeaderRow.setAttribute("class", "imbedded-table-row imbedded-column-header-row");
@@ -150,11 +225,7 @@ IMBedding = (function() {
             colHeaderRow.appendChild(cell);
         }
         table.appendChild(colHeaderRow);
-        $.jsonp({
-            url: localiseUrl(tables[uid].pagePath, options),
-            success: function(data) {fillInTable(uid, data, options);},
-            callbackParameter: "callback"
-        });
+
 
         container.appendChild(table);
         if (options.showExportLinks) {
@@ -170,66 +241,46 @@ IMBedding = (function() {
             tsvLink.href = localiseUrl(data.tsv_url, options);
             tsvLink.innerHTML = "Export as TSV file";
             container.appendChild(tsvLink);
+            if (!options.openOnLoad) {
+                csvLink.style.display = "none";
+                tsvLink.style.display = "none";
+            }
         }
         if (options.showMineLink && options.onTitleClick != "mine") {
             var mineResultsLink = document.createElement("a");
             mineResultsLink.target = "_blank";
             mineResultsLink.id = "imbedded-mineresultslink-" + uid;
-            mineResultsLink.setAttribute("class", "imbedded-exportlink");
+            mineResultsLink.setAttribute("class", "imbedded-mineresultslink");
             mineResultsLink.href = localiseUrl(data.mineResultsLink, options);
             mineResultsLink.innerHTML = "View in Mine";
             container.appendChild(mineResultsLink);
+            if (!options.openOnLoad) {
+                mineResultsLink.style.display = "none";
+            }
         }
-        var nextLink = document.createElement("a");
-        nextLink.id = "imbedded-nextlink-" + uid;
-        nextLink.setAttribute("class", 
-                "imbedded-pagelink next imbedded-initial-state");
-        nextLink.href = target;
-        tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size, options);
-        $(nextLink).click(function() {
-            // It is difficult to tell what the throbber looks like until we 
-            // have some queries that take some time
-            /*$(table).children('tbody').detach();
-            var throbber = document.createElement("img");
-            throbber.src = "images/throbber.gif";
-            $(table).append(throbber);*/
-            $.jsonp({
-                url: tables[uid].nextLink,
-                callbackParameter: "callback",
-                success: function(data) {
-                    /*$(throbber).detach();*/
-                    fillInTable(uid, data, options);
-                    updateVisibilityOfPagers(uid);
-                }
-            });
-        });
-        nextLink.innerHTML = "Next";
-        container.appendChild(nextLink);
-        var prevLink = document.createElement("a");
-        prevLink.id = "imbedded-prevlink-" + uid;
-        prevLink.setAttribute("class", 
-                "imbedded-pagelink prev imbedded-initial-state");
-        prevLink.href = target;
-        $(prevLink).click(function() {
-            $.jsonp({
-                url: tables[uid].prevLink,
-                callbackParameter: "callback",
-                success: function(data) {
-                    fillInTable(uid, data, options);
-                    updateVisibilityOfPagers(uid);
-                }
-            });
-        });
-        prevLink.innerHTML = "Previous";
-        container.appendChild(prevLink);
-        if (data.start <= 0) {
-            $(prevLink).hide();
-        }
+        table.style.display = "none";
         jQuery(target).empty().append(container);
+        if (options.openOnLoad) {
+            $.jsonp({
+                url: localiseUrl(tables[uid].pagePath, options),
+                success: function(data) {
+                    fillInTable(uid, data, options);
+                    $(table).fadeToggle();
+                    fitContainerToTable(table.id, container.id);
+                    updateVisibilityOfPagers(uid);
+                },
+                callbackParameter: "callback"
+            });
+        } else {
+            var throbber = document.createElement("img");
+            throbber.src = options.throbberSrc;
+            $(table).append(throbber);
+        }
         if (options.onTitleClick == "collapse") {
             jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
         } else if (options.onTitleClick == "mine") {
             title.href = localiseUrl(data.mineResultsLink, options);
+            title.target = "_blank";
         }
         jQuery(title).hover(
             function(event) {
@@ -256,6 +307,8 @@ IMBedding = (function() {
         var table = jQuery("#imbedded-table-" + uid);
         // Remove any data this table already contains
         table.children('tbody').detach();
+        // Remove the throbber
+        table.children('img').detach();
 
         var resultCount = resultSet.results.length;
         for (var i = 0; i < resultCount; i++) {
@@ -287,6 +340,7 @@ IMBedding = (function() {
         }
         tables[uid].start = resultSet.start;
         tables[uid].lastRow = resultCount + resultSet.start;
+        tables[uid].isFilledIn = true;
         IMBedding.afterBuildTable(uid, resultSet);
     };
 
@@ -325,6 +379,9 @@ IMBedding = (function() {
         var callback = getCallback(target, options);
         if (! data.format) {
             data.format = "jsonptable";
+        }
+        if (! data.size && data.format == "jsonptable") {
+            data.size = defaultTableSize;
         }
         $.jsonp({
             url: url, 

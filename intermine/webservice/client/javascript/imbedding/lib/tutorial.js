@@ -20,7 +20,15 @@ $(function() {
         root: "lib/jquery-syntax/"
     });
     $('#showGraphAreaContainer').hide();
+    loadTable1();
+    loadTable3a();
+    loadTable3b();
+    loadTable4a();
+    loadTable4b();
+    loadTable4c();
+    loadTable4d();
     loadTable4();
+    loadTable5();
     $('#faq').accordion({collapsible: true, autoHeight: false});
 });
 
@@ -38,68 +46,180 @@ function setActiveStyleSheet(title) {
 function loadTable1() {
     IMBedding.loadTemplate(
         {
-            name: "employeesOverACertainAgeFromDepartmentA",
-            size: 10,
+            name:           "Gene_Identifiers",
 
-            constraint1: "Employee.age",
-            op1: ">=",
-            value1: 25,
-
-            constraint2: "Employee.department.name",
-            op2: "=",
-            value2: "DepartmentB1"
+            constraint1:    "Gene.secondaryIdentifier",
+            op1:            "<",
+            value1:         "CG1046",
+            code1:          "A"
         },
-        "#placeholder1"
+        "#placeholderEx2",
+        {openOnLoad: true, baseUrl: flyMineBase}
     );
 }
 function loadTable2() {
     IMBedding.loadTemplate(
         {
-            name: "employeesFromCompanyAndDepartment",
-            size: 10,
+            name:           "Gene_upstreamRegulatoryRegions",
 
-            constraint1: "Employee.department.company.name",
-            op1: "LIKE",
-            value1: "Company*",
-
-            constraint2: "Employee.department.name",
-            op2: "LIKE",
-            value2: "Department*"
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "eve",
+            code1:          "A"
         },
-        "#placeholder1"
+        "#positionExample",
+        {baseUrl: flyMineBase}
     );
 }
-function loadTable3() {
+function loadTable3a() {
     IMBedding.loadTemplate(
         {
-            name: "employeesOfACertainAge",
+            name:           "Gene_allGOTerms2",
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
+        },
+        "#placeholderEx3a",
+        {onTitleClick: "mine", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable3b() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
             size: 10,
 
-            constraint1: "Employee.age",
-            code1: "A",
-            op1: ">",
-            value1: 30,
-
-            constraint2: "Employee.age",
-            code2: "B",
-            op2: "<=",
-            value2: "60"
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
         },
-        "#placeholder1"
+        "#placeholderEx3b",
+        {onTitleClick: "none", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable4a() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4a",
+        {showExportLinks: false, baseUrl: flyMineBase}
+    );
+}
+
+function loadTable4b() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4b",
+        {showCount: false, baseUrl: flyMineBase}
+    );
+}
+function loadTable4c() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 10,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4c",
+        {showMineLink: false, baseUrl: flyMineBase}
+    );
+}
+function loadTable4d() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 15,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4d",
+        {baseUrl: flyMineBase}
     );
 }
 function loadTable4() {
     IMBedding.loadTemplate(
         {
-            name:           "ManagerLookup",
-            size:           10,
+            name:           "Chromosome_Gene",
         
-            constraint1:    "Manager",
-            op1:            "LOOKUP",
-            value1:         "*",
+            constraint1:    "Gene.chromosome.primaryIdentifier",
+            op1:            "=",
+            value1:         "2L",
             code1:          "A",
+        
+            constraint2:    "Gene.organism.name",
+            op2:            "=",
+            value2:         "Drosophila melanogaster",
+            code2:          "B"
         },
-        '#placeholder1'
+        '#placeholder1',
+        {baseUrl: flyMineBase}
+    );
+}
+
+function loadTable5() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Chromosome_Gene",
+        
+            constraint1:    "Gene.chromosome.primaryIdentifier",
+            op1:            "=",
+            value1:         "2L",
+            code1:          "A",
+        
+            constraint2:    "Gene.organism.name",
+            op2:            "=",
+            value2:         "Drosophila melanogaster",
+            code2:          "B"
+        },
+        '#styleDemo',
+        {baseUrl: flyMineBase}
     );
 }
 
@@ -150,7 +270,7 @@ function loadGraph1() {
                 series: {
                     stack: true,
                     lines: {show: false},
-                    bars: {show: true, barWidth: 0.9},
+                    bars: {show: true, barWidth: 0.9}
                 },
                 legend: {position: "nw"}
             };
@@ -255,7 +375,7 @@ function loadGraph2() {
             var trendLine = {
                 label: "Trend Line",
                 color: "rgb(255, 0, 132)",
-                lines: {show: true},
+                lines: {show: true}
             };
             for (i in resultSet.results) {
                 var manager = resultSet.results[i];
@@ -554,7 +674,12 @@ var getQueryFromBox = function() {
 var makeQueryDisplayStrings = function(query) {
     if (! jQuery.isPlainObject(query)) {
         // assume it is xml
-        return [null, query];
+        var xmlString = query
+                            .replace(/&gt;/g, "&amp;gt;")
+                            .replace(/&lt;/g, "&amp;lt;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;");
+        return [null, xmlString];
     }
     // Make the displayed json string
     // It needs munging to prettify it as well
@@ -577,13 +702,14 @@ var makeQueryDisplayStrings = function(query) {
                             .replace(/\t\{/g, "\t\t{");
     var xmlString = IMBedding.makeQueryXML(query)
                             .replace(/&gt;/g, "&amp;gt;")
-                            .replace(/&lt;/g, "&amp;lt;"); 
+                            .replace(/&lt;/g, "&amp;lt;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;");
     return [jsonString, xmlString];
 };
 
 function loadUserQuery() {
     var source = $('input:radio[name=query]:checked').val();
-    var modelSource = $('input:radio[name=model-source]:checked').val();
     var query;
     if (source == "querybuilder") {
         query = getQueryFromForm();
@@ -601,12 +727,7 @@ function loadUserQuery() {
     var data = {size: 10};
     var newValue = firstline + "IMBedding.setBaseUrl('";
 
-    var urlToQuery;
-    if (modelSource == "testmodel") {
-        urlToQuery = baseUrl;
-    } else if (modelSource == "flymine") {
-        urlToQuery = flyMineBase;
-    }
+    var urlToQuery = flyMineBase;
     newValue += urlToQuery + "');\n\n";
     var opts = {baseUrl: urlToQuery};
 
@@ -655,7 +776,7 @@ function complainAboutName(problem) {
     error.className = "ui-state-error ui-corner-all";
     var icon = document.createElement("span");
     icon.className = "ui-icon ui-icon-alert";
-    icon.style.float = "left";
+    icon.style["float"] = "left";
     icon.style["margin-right"] = ".3em";
     error.appendChild(icon);
     var strong = document.createElement("strong");
@@ -669,7 +790,6 @@ function complainAboutName(problem) {
 
 function loadUserTemplate() {
     var formValues = $('#template-form').serializeArray();
-    var tempSource = $('input:radio[name=template-source]:checked').val();
     if (! formValues[0].value) {
         complainAboutName("Please enter a template name first");
         return;
@@ -683,11 +803,7 @@ function loadUserTemplate() {
     var newValue = firstline + "IMBedding.setBaseUrl('";
 
     var urlToQuery;
-    if (tempSource == "testmodel") {
-        urlToQuery = baseUrl;
-    } else if (tempSource == "flymine") {
-        urlToQuery = flyMineBase;
-    }
+    urlToQuery = flyMineBase;
     newValue += urlToQuery + "');\n\n";
     var opts = {baseUrl: urlToQuery};
     newValue += "IMBedding.loadTemplate(\n\t{\n\t";
@@ -735,6 +851,13 @@ var oldRootClass = "Employee";
 $(function() {
     $("input:button").button();
     $("button").button();
+    $("#positionExButton").click(function() {
+        loadTable2();
+        $(this).hide();
+    });
+    $('#librHeadButton').click(function() {
+        $('#librariesHead').slideToggle();
+    });
     $("#query-loader").click(function() {
         loadUserQuery();
     });
@@ -1160,7 +1283,7 @@ var addJoinLine = function(rootClass) {
     $(styleDiv).buttonset();
     $(textBox).autocomplete({
         source: getJoinPathSuggester(rootClass),
-        minLength: 2,
+        minLength: 2
     });
     var deleteCell = document.createElement("td");
     var deleteButton = document.createElement("button");
@@ -1340,6 +1463,6 @@ var loadModel = function(url) {
 
 $(function() {
     loadTemplateInfo(
-        "http://squirrel.flymine.org/intermine-test/service/templates");
-    loadModel("http://squirrel.flymine.org/intermine-test/service/model");
+        "http://preview.flymine.org/preview/service/templates");
+    loadModel("http://preview.flymine.org/preview/service/model");
 });
