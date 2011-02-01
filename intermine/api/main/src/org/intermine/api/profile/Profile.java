@@ -24,6 +24,7 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -199,10 +200,12 @@ public class Profile
     }
 
     /**
-     * Delete a template and its tags
+     * Delete a template and its tags, rename the template tracks adding the prefix "deleted_"
+     * to the previous name. If trackerDelegate is null, the template tracks are not renamed
      * @param name the template name
+     * @param trackerDelegate used to rename the template tracks. 
      */
-    public void deleteTemplate(String name) {
+    public void deleteTemplate(String name, TrackerDelegate trackerDelegate) {
         savedTemplates.remove(name);
         if (manager != null) {
             if (!savingDisabled) {
@@ -212,6 +215,9 @@ public class Profile
         }
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
+        if (trackerDelegate != null) {
+            trackerDelegate.updateTemplateName(name, "deleted_" + name);
+        }
     }
 
     /**
