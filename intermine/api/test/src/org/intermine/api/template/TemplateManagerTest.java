@@ -85,7 +85,7 @@ public class TemplateManagerTest extends TestCase {
         for (Profile user : users) {
             Set<String> templateNames = new HashSet<String>(user.getSavedTemplates().keySet());
 ;            for (String templateName : templateNames) {
-                user.deleteTemplate(templateName);
+                user.deleteTemplate(templateName, null);
             }
             for (Tag tag : tagManager.getUserTags(user.getName())) {
                 tagManager.deleteTag(tag);
