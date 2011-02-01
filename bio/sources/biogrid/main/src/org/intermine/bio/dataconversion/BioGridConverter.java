@@ -468,12 +468,14 @@ public class BioGridConverter extends BioFileConverter
                 ih.valid = false;
                 return false;
             }
-            ih.participant = storeGene(label, identifier, taxonId);
+            ih.participant = storeGene(label, identifier, ih, taxonId);
+
             ih.valid = true;
             return true;
         }
 
-        private Participant storeGene(String label, String identifier, String taxonId)
+        private Participant storeGene(String label, String identifier, InteractorHolder ih,
+                String taxonId)
             throws SAXException {
             Participant p = genes.get(identifier);
             if (p == null) {
@@ -485,8 +487,13 @@ public class BioGridConverter extends BioFileConverter
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-                p = new Participant(identifier, item.getIdentifier());
+                p = new Participant(identifier, ih, item.getIdentifier());
                 genes.put(identifier, p);
+            } else {
+                // we've seen this gene before, discard current holder object - replace with
+                // holder object already used
+                String interactorId = ih.biogridId;
+                interactors.put(interactorId, p.ih);
             }
             return p;
         }
@@ -643,11 +650,13 @@ public class BioGridConverter extends BioFileConverter
              * Constructor.
              *
              * @param identifier eg. FBgn
+             * @param ih holder object for this interacting gene
              * @param refId ID representing stored gene object
              */
-            protected Participant(String identifier, String refId) {
+            protected Participant(String identifier, InteractorHolder ih, String refId) {
                 this.identifier = identifier;
                 this.refId = refId;
+                this.ih = ih;
             }
         }
 
