@@ -67,7 +67,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
-    private Map<String, String> genes = new HashMap<String, String>();
+
     private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
@@ -156,10 +156,11 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
+        // identifier to [refId|BioGRID_id]
+        private Map<String, Participant> genes = new HashMap<String, Participant>();
+        // BioGRID_ID to holder - one holder object can have multiple BioGRID_ids (proteins, genes)
         private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
-        // id to temporary holding object
         private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
-        // id to intermine object representing experiment
         private Map<MultiKey, Item> idsToExperiments = new HashMap<MultiKey, Item>();
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
@@ -245,16 +246,12 @@ public class BioGridConverter extends BioFileConverter
 
                     if (identifierConfigs != null) {
                         for (Map.Entry<String, String> entry : identifierConfigs.entrySet()) {
-                            try {
-                                boolean validGene = setGene(taxId, interactorHolder, entry.getKey(),
-                                        entry.getValue());
-                                if (validGene) {
-                                    break;
-                                }
-                            } catch (ObjectStoreException e) {
-                                String msg = "couldn't store gene for organism:" + taxId;
-                                LOG.error(msg);
-                                throw new RuntimeException(msg, e);
+                            boolean validGene = setGene(taxId, interactorHolder, entry.getKey(),
+                                    entry.getValue());
+                            // try all configs until we get a good one to make it more likely to
+                            // find a match
+                            if (validGene) {
+                                break;
                             }
                         }
                     }
@@ -362,12 +359,13 @@ public class BioGridConverter extends BioFileConverter
                     // TODO make sure this is necessary.  interactor id is reused?
                     ih.role = null;
                     // resolver didn't return valid identifier
-                    if (ih.refId == null) {
+                    Participant p = ih.participant;
+                    if (p == null) {
                         ih.valid = false;
                         holder.validActors = false;
                     } else {
-                        holder.refIds.add(ih.refId);
-                        holder.identifiers.add(ih.identifier);
+                        holder.refIds.add(p.refId);
+                        holder.identifiers.add(p.identifier);
                         holder.addInteractor(participantId, ih);
                     }
                 }
@@ -399,7 +397,7 @@ public class BioGridConverter extends BioFileConverter
 
         private void storeInteraction(InteractionHolder h) throws SAXException  {
             for (InteractorHolder ih: h.ihs.values()) {
-                String refId = ih.refId;
+                String refId = ih.participant.refId;
                 Item interaction = null;
                 interaction = createItem("Interaction");
                 if (ih.role != null) {
@@ -412,7 +410,7 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setReference("experiment", h.eh.experimentRefId);
                 String interactionName = "";
                 for (String identifier : h.identifiers) {
-                    if (!identifier.equals(ih.identifier)) {
+                    if (!identifier.equals(ih.participant.identifier)) {
                         interactionName += "_" + identifier;
                     } else {
                         interactionName = "BioGRID:" + identifier + interactionName;
@@ -447,8 +445,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
-                                String db)
-            throws ObjectStoreException {
+                                String db) throws SAXException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
@@ -471,20 +468,27 @@ public class BioGridConverter extends BioFileConverter
                 ih.valid = false;
                 return false;
             }
-
-            String refId = genes.get(identifier);
-            if (refId == null) {
-                Item item = createItem("Gene");
-                item.setAttribute(label, identifier);
-                item.setReference("organism", getOrganism(taxonId));
-                store(item);
-                refId = item.getIdentifier();
-                genes.put(identifier, refId);
-            }
-            ih.identifier = identifier;
-            ih.refId = refId;
+            ih.participant = storeGene(label, identifier, taxonId);
             ih.valid = true;
             return true;
+        }
+
+        private Participant storeGene(String label, String identifier, String taxonId)
+            throws SAXException {
+            Participant p = genes.get(identifier);
+            if (p == null) {
+                Item item = createItem("Gene");
+                item.setAttribute(label, identifier);
+                try {
+                    item.setReference("organism", getOrganism(taxonId));
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
+                }
+                p = new Participant(identifier, item.getIdentifier());
+                genes.put(identifier, p);
+            }
+            return p;
         }
 
         /**
@@ -627,17 +631,41 @@ public class BioGridConverter extends BioFileConverter
         }
 
         /**
-         * Holder object for GeneInteractor. Holds id and identifier for gene until the experiment
-         * is verified as a gene interaction and not a protein interaction
-         * @author Julie Sullivan
+         * Represents a "participant" in BioGRID XML
+         */
+        protected class Participant
+        {
+            protected String identifier;
+            protected InteractorHolder ih;
+            protected String refId;
+
+            /**
+             * Constructor.
+             *
+             * @param identifier eg. FBgn
+             * @param refId ID representing stored gene object
+             */
+            protected Participant(String identifier, String refId) {
+                this.identifier = identifier;
+                this.refId = refId;
+            }
+        }
+
+        /**
+         * Holder object for Interactor.
          */
         protected class InteractorHolder
         {
+            // bait or prey
             protected String role;
+            // <interactorList><interactor id="1">
+            // <interactorRef>1</interactorRef>
             protected String biogridId;
-            protected String identifier;
-            protected String refId;
+            // refId and identifier, eg. FBgn
+            protected Participant participant = null;
+            // db to identifier, eg. FlyBase --> FBgn
             protected Map<String, String> xrefs = new HashMap<String, String>();
+            // symbol
             protected String shortLabel;
             protected boolean valid = true;
             protected String organismRefId;
