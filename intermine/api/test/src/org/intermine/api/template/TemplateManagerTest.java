@@ -1,104 +1,52 @@
 package org.intermine.api.template;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-import junit.framework.TestCase;
-
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 
-public class TemplateManagerTest extends TestCase {
+public class TemplateManagerTest extends InterMineAPITestCase {
 
-    private ProfileManager pm;
-    private ObjectStore os;
-    private ObjectStoreWriter uosw;
     private Profile superUser, testUser, emptyUser;
-    private TemplateManager templateManager;
-    private TagManager tagManager;
-    private Model model;
     private TemplateQuery global1, private1, user1, overrideGlobal;
+    private TemplateManager templateManager;
+
+    public TemplateManagerTest() throws Exception {
+        super();
+    }
 
     public void setUp() throws Exception {
         super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-        model = os.getModel();
 
-        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        templateManager = im.getTemplateManager();
 
-        //clearUserProfile();
+        ProfileManager pm = im.getProfileManager();
 
-        pm = new ProfileManager(os, uosw);
-
-        superUser = new Profile(pm, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
-        pm.createProfile(superUser);
-        pm.setSuperuser("superUser");
+        // superUser profile already exists
+        superUser = pm.getSuperuserProfile();
 
         testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(testUser);
 
         emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(emptyUser);
-
-        tagManager = new TagManagerFactory(pm).getTagManager();
-        templateManager = new TemplateManager(superUser, os.getModel());
-
         setUpTemplatesAndTags();
     }
 
-    private void clearUserProfile() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(UserProfile.class);
-        q.addToSelect(qc);
-        q.addFrom(qc);
-
-        SingletonResults res = uosw.getObjectStore().executeSingleton(q);
-        Iterator resIter = res.iterator();
-        while (resIter.hasNext()) {
-            InterMineObject o = (InterMineObject) resIter.next();
-            uosw.delete(o);
-        }
-    }
-
-    public void tearDown() throws Exception {
-        Profile[] users = new Profile[] {superUser, testUser, emptyUser};
-        for (Profile user : users) {
-            Set<String> templateNames = new HashSet<String>(user.getSavedTemplates().keySet());
-;            for (String templateName : templateNames) {
-                user.deleteTemplate(templateName, null);
-            }
-            for (Tag tag : tagManager.getUserTags(user.getName())) {
-                tagManager.deleteTag(tag);
-            }
-            uosw.delete(pm.getUserProfile(user.getName()));
-        }
-        uosw.close();
-    }
-
     private void setUpTemplatesAndTags() {
-        PathQuery q = new PathQuery(model);
+        TagManager tagManager = im.getTagManager();
+
+        PathQuery q = new PathQuery(im.getModel());
         global1 = new TemplateQuery("global1", "", "", q);
         superUser.saveTemplate(global1.getName(), global1);
+
         tagManager.addTag(TagNames.IM_PUBLIC, global1.getName(), TagTypes.TEMPLATE, "superUser");
 
         private1 = new TemplateQuery("private1", "", "", q);
@@ -107,7 +55,7 @@ public class TemplateManagerTest extends TestCase {
         user1 = new TemplateQuery("user1", "", "", q);
         testUser.saveTemplate(user1.getName(), user1);
 
-        overrideGlobal = new TemplateQuery("global1", "", "", new PathQuery(model));
+        overrideGlobal = new TemplateQuery("global1", "", "", new PathQuery(im.getModel()));
     }
 
     public void testGetGlobalTemplate() throws Exception {
@@ -189,6 +137,4 @@ public class TemplateManagerTest extends TestCase {
             // expected
         }
     }
-
-
 }

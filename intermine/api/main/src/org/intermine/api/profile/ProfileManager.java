@@ -390,6 +390,8 @@ public class ProfileManager
         }
     }
 
+
+
     /**
      * Creates a profile in the userprofile database.
      *
@@ -453,7 +455,7 @@ public class ProfileManager
      *
      * @return the usernames
      */
-    public synchronized List getProfileUserNames() {
+    public synchronized List<String> getProfileUserNames() {
         Query q = new Query();
         QueryClass qcUserProfile = new QueryClass(UserProfile.class);
         QueryField qfUserName = new QueryField(qcUserProfile, "username");
@@ -464,7 +466,11 @@ public class ProfileManager
 
         // TODO: We copy the data here in order to avoid any future ConcurrentModificationException
         // in the SingletonResults
-        return new ArrayList(res);
+        List<String> userNames = new ArrayList<String>();
+        for (Object userName : res) {
+            userNames.add((String) userName);
+        }
+        return userNames;
     }
 
     /**
