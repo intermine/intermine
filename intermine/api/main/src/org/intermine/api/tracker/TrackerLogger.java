@@ -36,7 +36,8 @@ public class TrackerLogger implements Runnable
      * @param colNames the names of the columns
      * @param values the values to be saved
      */
-    public TrackerLogger(Connection connection, String tableName, String[] colNames, Object[] values) {
+    public TrackerLogger(Connection connection, String tableName, String[] colNames,
+                         Object[] values) {
         this.connection = connection;
         this.tableName = tableName;
         this.colNames = colNames;
