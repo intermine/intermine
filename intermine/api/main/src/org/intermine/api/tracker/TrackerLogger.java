@@ -44,15 +44,6 @@ public class TrackerLogger implements Runnable
         this.values = values;
     }
 
-    /**
-     * Set the values to insert into the database.
-     * The values have to be in the same order as colNames
-     * @param values an array of Objects to be saved into the database
-     */
-    public synchronized void setValues(Object[] values) {
-        this.values = values;
-    }
-
     public void run() {
         Statement stm = null;
         StringBuffer colNamesBuffer = new StringBuffer();
