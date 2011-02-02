@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 33;
+use Test::More tests => 39;
 use Test::Exception;
 
 my $do_live_tests = $ENV{RELEASE_TESTING};
@@ -24,7 +24,7 @@ SKIP: {
 
     isa_ok($module->get_service, 'Webservice::InterMine::Service', "The service it makes");
 
-    is($module->get_service->version, 2, "Service version is correct");
+    is($module->get_service->version, 3, "Service version is correct");
     isa_ok($module->get_service->model, 'InterMine::Model', "The model the service makes");
     my $q;
     lives_ok(sub {$q = $module->new_query}, "Makes a new query ok");
@@ -93,8 +93,8 @@ SKIP: {
     is($q->sub_class_constraints, 1, "And one of them is a sub-class constraint");
 
     lives_ok(
-	sub {$q->set_sort_order('Employee.age', 'desc')},
-	"Sets sort order",
+        sub {$q->set_sort_order('Employee.age', 'desc')},
+        "Sets sort order",
     );
 
     is($q->sort_order, "Employee.age desc", "And it is correct");
@@ -103,12 +103,17 @@ SKIP: {
 
     $q = $module->new_query;
     $q->add_view(@view);
+    $q->add_constraint(
+        path => "Employee.department.company",
+        op => "LOOKUP",
+        value => "CompanyA"
+    );
 
     #diag($q2->url, "=>\n" , $q2->results(as => 'string'));
 
     lives_ok(
-	sub {$res = $q->results},
-	"Queries for results",
+        sub {$res = $q->results},
+        "Queries for results",
     ) or diag($q->url);
 
     is(ref $res, 'ARRAY', "And it is an arrayref");
@@ -119,24 +124,33 @@ SKIP: {
     is($res->[1][3], "Employee Street, AVille", "With the right fields - Str") or diag(explain $res);;
 
     $q->add_constraint(
-	path  => 'Employee.age',
-	op    => '<',
-	value => 35,
+        path  => 'Employee.age',
+        op    => '<',
+        value => 35,
     );
 
     lives_ok(
-	sub {$res = $q->results(as => 'hashrefs')},
-	"Queries for results as hashes",
+        sub {$res = $q->results(as => 'hashrefs')},
+        "Queries for results as hashes",
     );
 
     is(@$res, 3, "Gets the right number of records");
     is($res->[1]->{'Employee.age'}, "20", "with the right fields - Int");
     is($res->[1]->{'Employee.address.address'}, "Employee Street, AVille", "with the right fields - Str");
 
+    lives_ok(
+        sub {$res = $q->results(as => 'jsonobjects', inflate => 1)},
+        "Queries for results as inflated objects",
+    );
+
+    is(@$res, 3, "Gets the right number of records");
+    is($res->[1]->age, 20, "with the right fields - Int");
+    is($res->[1]->address->address, "Employee Street, AVille", "with the right fields - Str");
+
     my $t;
     lives_ok(
-	sub {$t = $module->template('employeesOfACertainAge');},
-	"Gets a template ok",
+        sub {$t = $module->template('employeesFromCompanyAndDepartment');},
+        "Gets a template ok",
     );
 
     isa_ok($t, 'Webservice::InterMine::Query::Template', "The template");
@@ -144,19 +158,11 @@ SKIP: {
     is($t->editable_constraints, 2, "And it has 2 editable constraints");
 
     lives_ok(
-	sub {$res = $t->results_with(valueA => 10);},
-	"Runs results with ok",
+        sub {$res = $t->results_with(valueA => "CompanyB");},
+        "Runs results with ok",
     ) or diag($t->url);
 
     my $exp_res = [
-	[
-	    'EmployeeA2',
-	    '20'
-	],
-	[
-	    'EmployeeA3',
-	    '30'
-	],
 	[
 	    'EmployeeB1',
 	    '40'
@@ -172,22 +178,47 @@ SKIP: {
     ];
 
     is_deeply($res, $exp_res, "With the right fields")
-	or diag($t->url, explain $res), diag $t->show_constraints;
+        or diag($t->url, explain $res), diag $t->show_constraints;
 
     $exp_res = [
 	[
-	    'EmployeeB1',
-	    '40'
+	    'EmployeeA1',
+	    '10'
 	],
 	[
-	    'EmployeeB2',
-	    '50'
+	    'EmployeeA2',
+	    '20'
 	],
 	[
-	    'EmployeeB3',
-	    '60'
+	    'EmployeeA3',
+	    '30'
 	]
     ];
 
     is_deeply($t->results,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
+
+    $exp_res = [
+        {
+            'age' => 10,
+            'class' => 'Employee',
+            'name' => 'EmployeeA1',
+            'objectId' => 13000015
+        },
+        {
+            'age' => 20,
+            'class' => 'Employee',
+            'name' => 'EmployeeA2',
+            'objectId' => 13000020
+        },
+        {
+            'age' => 30,
+            'class' => 'Employee',
+            'name' => 'EmployeeA3',
+            'objectId' => 13000021
+        }
+    ];
+    $res = $t->results(as => "jsonobjects");
+    is_deeply($res, $exp_res, "And for complex formats") or diag(explain $res);
+    $res = $t->results(as => "jsonobjects", inflate => 1);
+    is($res->[0]->name, "EmployeeA1", "Can access inflated columns ok");
 }

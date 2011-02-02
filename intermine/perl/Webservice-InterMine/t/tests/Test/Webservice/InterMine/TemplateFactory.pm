@@ -79,7 +79,7 @@ sub construction : Test(7) {
 	]
     );
     my $missing_source_error = qr/source xml must be passed to a TemplateFactory as either a string or a file/;
-    my $bad_arg_error = qr/does not pass the type constraint because: Validation failed/;
+    my $bad_arg_error = qr/does not pass the type constraint because:.*should be a file/;
     my $bad_xml_error = qr/Can't find any template strings in the xml I was passed/;
     throws_ok(
 	sub {$test->class->new(

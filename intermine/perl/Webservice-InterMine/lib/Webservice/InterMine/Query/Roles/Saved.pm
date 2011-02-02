@@ -14,7 +14,10 @@ sub type { 'saved-query' }
 
 sub head {
     my $self = shift;
-    return { name => $self->name, 'date-created' => $self->date };
+    my $head = {name => $self->name};
+    $head->{'date-created'} = $self->date  if ($self->date);
+
+    return $head;
 }
 
 sub insertion { }
