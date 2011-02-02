@@ -9,10 +9,10 @@
         <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.stack.js"></script>
 
         <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
-        <script src="src/imbedding.js" type="text/javascript"></script>
+        <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" type="text/javascript"></script>
         <script src="lib/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
-        <script src="lib/tutorial.js" type="text/javascript"></script>
+        <script src="lib/tutorial.min.js" type="text/javascript"></script>
         <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
@@ -28,7 +28,7 @@
     </head>
     <body>
         <div id="page">
-        <h1 style="text-align: center;" >InterMine Mashup Tutorial</h1>
+        <h1 style="text-align: center;" >InterMine Ajax Embedding Tutorial</h1>
     <div id="dialog-confirm" title="Delete the current query?">
         <p>
         <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
@@ -109,11 +109,11 @@
         type="text/javascript">
     </script>
     <!-- InterMine similarly hosts imbedding -->
-    <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" 
+    <script src="http://intermine.org/download/imbedding/0.1/imbedding.js" 
         type="text/javascript">
     </script>
     <link rel="stylesheet" type="text/css" 
-        href="http://intermine.org/download/imbedding/0.1/style/bold.css" />
+        href="http://intermine.org/download/imbedding/0.1/style/light.css" />
 </head>
 
 <body>
@@ -130,7 +130,7 @@
             constraint1:    "Manager",
             op1:            "LOOKUP",
             value1:         "*",
-            code1:          "A",
+            code1:          "A"
         },
         '#placeholder'
     );
@@ -168,7 +168,7 @@
         type="text/javascript">
     </script>
     <!-- Similarly imbedding.js is hosted on intermine.org -->
-    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.min.js" 
+    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.js" 
         type="text/javascript">
     </script>
 </head>
@@ -309,6 +309,8 @@
             <textarea rows="20" cols="80" class="coder html-snippet">
 <script type="text/javascript">
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    // Load a template where clicking on the title
+    // takes you to the mine.
     IMBedding.loadTemplate(
         {
             name:           "Gene_allGOTerms2",
@@ -321,6 +323,8 @@
         "#placeholderEx3a",
         {onTitleClick: "mine"}
     );
+    // Load a template where clicking on the title
+    // does nothing at all.
     IMBedding.loadTemplate(
         {
             name:           "Gene_allGOTerms2",
@@ -355,6 +359,7 @@
             <textarea rows="20" cols="80" class="coder html-snippet">
 <script type="text/javascript">
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    // Load a table without export links
     IMBedding.loadTemplate(
         {
             name:           "Organism_GeneDomain_new",
@@ -371,8 +376,9 @@
             code2:          "B",
         },
         "#placeholderEx4a",
-        {showExportLinks: false, baseUrl: flyMineBase}
+        {showExportLinks: false}
     );
+    // Load a table without a count
     IMBedding.loadTemplate(
         {
             name:           "Organism_GeneDomain_new",
@@ -386,11 +392,12 @@
             constraint2:    "ProteinDomain.shortName",
             op2:            "=",
             value2:         "*homeo*",
-            code2:          "B",
+            code2:          "B"
         },
         "#placeholderEx4b",
-        {showCount: false, baseUrl: flyMineBase}
+        {showCount: false}
     );
+    // Load a tavle without a mine-link
     IMBedding.loadTemplate(
         {
             name:           "Organism_GeneDomain_new",
@@ -407,8 +414,9 @@
             code2:          "B",
         },
         "#placeholderEx4c",
-        {showMineLink: false, baseUrl: flyMineBase}
+        {showMineLink: false}
     );
+    // Load a table with a page size of 15
     IMBedding.loadTemplate(
         {
             name:           "Organism_GeneDomain_new",
@@ -425,7 +433,6 @@
             code2:          "B",
         },
         "#placeholderEx4d",
-        {baseUrl: flyMineBase}
     );
 </script></textarea>
         </div>
