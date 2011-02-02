@@ -10,6 +10,12 @@
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
+<action path="/initGalaxyExportOptions"
+        type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
+
+<action path="/galaxyExportAction" name="galaxyExportForm"
+        type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
+
 <action path="/initUniProtCommentsDisplayer"
         type="org.metabolicmine.web.struts.UniProtCommentsDisplayerController"/>
 
