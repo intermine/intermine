@@ -166,6 +166,7 @@ public class BioGridConverter extends BioFileConverter
         private ExperimentHolder experimentHolder;
         private InteractorHolder interactorHolder;
         private String participantId = null;
+        private Set<String> interactions = new HashSet<String>();
 
         private Stack<String> stack = new Stack<String>();
         private String attName = null;
@@ -398,6 +399,7 @@ public class BioGridConverter extends BioFileConverter
         private void storeInteraction(InteractionHolder h) throws SAXException  {
             for (InteractorHolder ih: h.ihs.values()) {
                 String refId = ih.participant.refId;
+                String key = null;
                 Item interaction = null;
                 interaction = createItem("Interaction");
                 if (ih.role != null) {
@@ -419,11 +421,19 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
+                key = interactionName + " " + h.eh.experimentRefId + " " + ih.role;
+                if (interactions.contains(key)) {
+                    // TODO BioGRID now contains protein and genetic interactions thus creating
+                    // duplicates.  We need to handle this better but in the meantime we'll just
+                    // ignore.  See #2117
+                    return;
+                }
                 try {
                     store(interaction);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
+                interactions.add(key);
             }
         }
 
