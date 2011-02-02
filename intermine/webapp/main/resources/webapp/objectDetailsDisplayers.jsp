@@ -16,27 +16,21 @@
 <tiles:importAttribute name="showOnLeft" ignore="true"/>
 
 <c:forEach items="${displayObject.clds}" var="cld">
+
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
     <c:if test="${heading == true}">
-      <div class="heading">
-        <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
-      </div>
-      <div class="body">
+        <h3>Further information for this ${cld.unqualifiedName}</h3>
     </c:if>
+
     <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[placement]}" var="displayer">
-
-    <c:if test="${(empty showOnLeft && displayer.showOnLeft == 'false') || (showOnLeft == displayer.showOnLeft)}">
-      <c:set var="object_bk" value="${object}"/>
-      <c:set var="object" value="${displayObject.object}" scope="request"/>
-      <c:set var="cld" value="${cld}" scope="request"/>
-      <tiles:insert beanName="displayer" beanProperty="src"/>
-      <c:set var="object" value="${object_bk}" scope="request"/>
-  </c:if>
-
+      <c:if test="${(empty showOnLeft && displayer.showOnLeft == 'false') || (showOnLeft == displayer.showOnLeft)}">
+        <c:set var="object_bk" value="${object}"/>
+        <c:set var="object" value="${displayObject.object}" scope="request"/>
+        <c:set var="cld" value="${cld}" scope="request"/>
+        <tiles:insert beanName="displayer" beanProperty="src"/>
+        <c:set var="object" value="${object_bk}" scope="request"/>
+      </c:if>
     </c:forEach>
-    <c:if test="${heading == true}">
-      </div>
-    </c:if>
   </c:if>
 </c:forEach>
 

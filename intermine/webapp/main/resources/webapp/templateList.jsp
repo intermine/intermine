@@ -20,20 +20,6 @@
   <c:set var="interMineObject" value="${displayObject.object}"/>
 </c:if>
 
-<c:forEach items="${templates}" var="templateQuery" varStatus="status">
-  <tiles:insert name="objectDetailsTemplate.jsp">
-    <tiles:put name="displayObject" beanName="displayObject"/>
-    <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
-    <tiles:put name="templateQuery" beanName="templateQuery"/>
-    <tiles:put name="placement" value="${placement}"/>
-    <tiles:put name="scope" value="${scope}"/>
-    <tiles:put name="trail" value="${trail}"/>
-  </tiles:insert>
-  <c:if test="${!status.last}">
-    <hr class="seperator"/>
-  </c:if>
-</c:forEach>
-
 <c:if test="${empty templates && !empty noTemplatesMsgKey}">
   <div class="altmessage"><fmt:message key="${noTemplatesMsgKey}"/></div>
 </c:if>

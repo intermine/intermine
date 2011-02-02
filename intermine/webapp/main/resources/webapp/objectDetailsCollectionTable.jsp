@@ -15,12 +15,6 @@
 
 <html:xhtml/>
 
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-  <tr>
-    <td width="15">
-      <img border="0" src="images/blank.gif" width="15" height="11"/>
-    </td>
-    <td>
     <table border="0" cellspacing="0" class="refSummary" align="right">
       <thead style="text-align: center">
         <tr>
@@ -51,7 +45,7 @@
           <c:set var="thisRowObject" value="${thisRowObject}" />
           <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
 
-          <tr>
+          <tr class="<c:if test="${status.count % 2 == 0}">even</c:if>">
             <td width="1%" nowrap>
 
               <%-- class name of object being displayed on this row --%>
@@ -110,11 +104,10 @@
         </c:forEach>
       </tbody>
     </table>
-  </td></tr>
-</table>
 <%-- if field isn't in webconfig, we don't know how to build the summary query --%>
 <c:choose>
     <c:when test="${!empty collection.table.fieldConfigs}">
+    <%--
         <div class="refSummary">
           [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
             <c:choose>
@@ -127,6 +120,7 @@
             </c:choose>
           </html:link>]
         </div>
+        --%>
     </c:when>
     <c:otherwise>
         <!-- class not configured in webconfig-model.xml -->

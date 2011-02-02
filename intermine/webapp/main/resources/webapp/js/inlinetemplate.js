@@ -39,6 +39,41 @@ function loadInlineTemplate(i) {
   });
 }
 
+/* load report page table (jQuery) */
+function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
+
+  // element to modify, replacing ":" as these are jQuery selectors albeit valid in div id value
+  var e = '#coll_'+placement.replace(/:/g, '_')+field+'_inner';
+
+  // is the target table empty?
+  if (jQuery(e).is(":empty")) {
+    // need to fetch
+    jQuery.ajax({
+        url: modifyDetailsURL,
+        dataType: 'html',
+        data: 'method=ajaxVerbosify&placement=' + placement + '&field=' + field + '&id=' + object_id + '&trail=' + trail,
+        success: function(result) {
+          // place result in div
+          jQuery(e).append(result);
+          // remove any fail messages
+          if (jQuery(e).parent().find('p.fail').length !== 0) {
+            jQuery(e).parent().find('p.fail').remove();
+          }
+        },
+        error: function(jXHR, textStatus) {
+          // on fail append a retry to the parent if not present
+          if (jQuery(e).parent().find('p.fail').length == 0) {
+            jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
+            toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
+          }
+        }
+    });
+  }
+
+  return false;
+}
+
+/* load report page table (Prototype) */
 function toggleCollectionVisibility(placement, field, object_id, trail) {
   if ($('coll_'+placement+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
