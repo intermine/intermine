@@ -72,14 +72,14 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Genome annotation - Release 5.1</td>
+    <td> Genome annotation - Release ${WEB_PROPERTIES['genomeVersion.fly']} </td>
     <td><a href="http://www.flybase.org" target="_new">FlyBase</a> - FB2010_02</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
   <tr>
   <td> <i>C. elegans</i> </td>
-    <td> Genome annotation </td>
+    <td> Genome annotation - Release ${WEB_PROPERTIES['genomeVersion.worm']} </td>
     <td><a href="http://www.wormbase.org" target="_new">WormBase</a> - WS190</td>
     <td> - </td>
     <td> &nbsp;</td>
