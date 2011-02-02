@@ -23,10 +23,10 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.mines.HomologueMapping;
+import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.OrthologueLinkManager;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.bio.logic.HomologueMapping;
-import org.intermine.bio.logic.Mine;
-import org.intermine.bio.logic.OrthologueLinkManager;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.BagHelper;
@@ -46,9 +46,7 @@ public class OrthologueLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            ActionMapping mapping,
-            ActionForm form,
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());

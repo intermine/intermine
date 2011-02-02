@@ -1,4 +1,4 @@
-package org.intermine.bio.logic;
+package org.intermine.api.mines;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -27,9 +27,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -99,6 +96,40 @@ public class OrthologueLinkManager
             primeCache();
         }
         return orthologueLinkManager;
+    }
+
+    /**
+     * Return a list of Mines listed in config.  Used for intermine links on report pages.
+     *
+     * @return Collection of all friendly mines listed in config
+     */
+    public static Collection<Mine> getFriendlyMines() {
+        return mines.values();
+    }
+
+    /**
+     * Returns list of friendly mines that have genes from the organism of interest.  Used for
+     * the orthologue links on the gene report page.
+     *
+     * @param organismName list of organisms from our bag
+     * @return the list of valid mines for the given list
+     */
+    public Set<Mine> getMines(String organismName) {
+
+        // list of mines for genes in our list
+        Set<Mine> filteredMines = new HashSet<Mine>();
+
+        // remote mines
+        for (Mine mine : mines.values()) {
+            if (!mine.hasGenes()) {
+                LOG.info(mine.getName() + " has no genes");
+                continue;
+            }
+            if (mine.getOrganisms().contains(organismName)) {
+                filteredMines.add(mine);
+            }
+        }
+        return filteredMines;
     }
 
     /**
@@ -266,16 +297,26 @@ public class OrthologueLinkManager
 
         Query q = new Query();
 
-        QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcGene = null;
+        QueryClass qcOrganism = null;
         QueryClass qcHomologue = null;
-        QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
-        QueryClass qcDataset = new QueryClass(DataSet.class);
-        QueryClass qcGeneHomologue = new QueryClass(Gene.class);
+        QueryClass qcHomologueOrganism = null;
+        QueryClass qcDataset = null;
+        QueryClass qcGeneHomologue = null;
 
         try {
             qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName()
                     + ".Homologue"));
+            qcGene = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".Gene"));
+            qcOrganism = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".Organism"));
+            qcHomologueOrganism = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".Organism"));
+            qcDataset = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".DataSet.class"));
+            qcGeneHomologue = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".Gene"));
         } catch (ClassNotFoundException e) {
             LOG.info("No orthologues found.", e);
             return;
@@ -436,6 +477,7 @@ public class OrthologueLinkManager
         }
         return filteredMines;
     }
+
 
     /*
     * gene   --> homologue      -- > datasets
