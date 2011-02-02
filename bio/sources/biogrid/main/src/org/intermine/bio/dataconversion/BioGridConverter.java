@@ -67,7 +67,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
-
+    private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
@@ -157,7 +157,7 @@ public class BioGridConverter extends BioFileConverter
     class BioGridHandler extends DefaultHandler
     {
         // identifier to [refId|BioGRID_id]
-        private Map<String, Participant> genes = new HashMap<String, Participant>();
+        private Map<String, Participant> participants = new HashMap<String, Participant>();
         // BioGRID_ID to holder - one holder object can have multiple BioGRID_ids (proteins, genes)
         private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
         private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
@@ -426,7 +426,7 @@ public class BioGridConverter extends BioFileConverter
                     // TODO BioGRID now contains protein and genetic interactions thus creating
                     // duplicates.  We need to handle this better but in the meantime we'll just
                     // ignore.  See #2117
-                    return;
+                    continue;
                 }
                 try {
                     store(interaction);
@@ -487,8 +487,9 @@ public class BioGridConverter extends BioFileConverter
         private Participant storeGene(String label, String identifier, InteractorHolder ih,
                 String taxonId)
             throws SAXException {
-            Participant p = genes.get(identifier);
-            if (p == null) {
+            // genes can be in different XML files
+            String refId = genes.get(identifier);
+            if (refId == null) {
                 Item item = createItem("Gene");
                 item.setAttribute(label, identifier);
                 try {
@@ -497,8 +498,14 @@ public class BioGridConverter extends BioFileConverter
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-                p = new Participant(identifier, ih, item.getIdentifier());
-                genes.put(identifier, p);
+                refId = item.getIdentifier();
+                genes.put(identifier, refId);
+            }
+            // participants are specific to an XML file, includes BioGRID id
+            Participant p = participants.get(identifier);
+            if (p == null) {
+                p = new Participant(identifier, ih, refId);
+                participants.put(identifier, p);
             } else {
                 // we've seen this gene before, discard current holder object - replace with
                 // holder object already used
