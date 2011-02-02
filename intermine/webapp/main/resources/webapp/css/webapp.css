@@ -486,6 +486,10 @@ div#navtrail a:link, div#navtrail a:visited {
     color: #864;
 }
 
+.typeSelected {
+    color: blue;
+}
+
 .modelBrowser .type {
     color: blue;
 }
