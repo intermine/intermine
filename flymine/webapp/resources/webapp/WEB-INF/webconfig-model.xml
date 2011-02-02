@@ -197,6 +197,7 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="cytoscapeNetworkDisplayer.tile"/>
+      <displayer src="/model/interMineLinkDisplayer.jsp"/>
     </longdisplayers>
     <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />

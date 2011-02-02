@@ -658,11 +658,20 @@ function setWsNamesMap(wsNames, wsListId, type) {
    1;
 }
 
+// used on list analysis page
 function getConvertCountForBag(bagName, type, idname) {
     AjaxServices.getConvertCountForBag(bagName, type, function(count) {
         dwr.util.setValue(type + '_convertcount_'+idname, count)
     });
 }
+
+function getURL(bagName, type, idname) {
+    AjaxServices.getConvertCountForBag(bagName, type, function(count) {
+        dwr.util.setValue(type + '_convertcount_'+idname, count)
+    });
+}
+
+
 
 function saveToggleState(elementId) {
     var display = document.getElementById(elementId).style.display;

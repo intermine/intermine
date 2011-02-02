@@ -50,6 +50,9 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.mines.HomologueMapping;
+import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.OrthologueLinkManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -620,6 +623,46 @@ public class AjaxServices
         } catch (RuntimeException e) {
             processException(e);
             return 0;
+        }
+    }
+
+    /**
+     * For a given bag type, return links to friendly intermines.
+     *
+     * @param organismName the type of object
+     * @param primaryIdentifier identifier for gene
+     * @return the links to friendly intermines
+     */
+    public static String getInterMineLinks(String organismName, String primaryIdentifier) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            Properties webProperties = SessionMethods.getWebProperties(servletContext);
+            OrthologueLinkManager olm = OrthologueLinkManager.getInstance(im, webProperties);
+
+            // mines with orthologues
+            Map<Mine, Map<String, HomologueMapping>> minesWithOrthologues
+                = olm.getMines(Arrays.asList(organismName));
+            // mines with genes
+//            Set<Mine> minesWithGenes = olm.getMines(organismName);
+
+            if (minesWithOrthologues.isEmpty()) {
+                return null;
+            }
+            StringBuffer sb = new StringBuffer("Orthologues in other mines:<br/>");
+            for (Mine mine : minesWithOrthologues.keySet()) {
+                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
+                    + primaryIdentifier;
+                sb.append("<a href=\"" + href + "\">");
+                sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
+                sb.append("</a><br/>");
+
+            }
+            return sb.toString();
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
         }
     }
 
