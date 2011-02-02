@@ -22,7 +22,6 @@ sub setup :Test(setup) {
 
     # Set up all the mock stuff
 
-
     my $model = InterMine::Model->new(file => 't/data/testmodel_model.xml');
     $test->{model} = $model;
 
@@ -139,7 +138,7 @@ sub _new : Test(6) {
     my $test = shift;
     use_ok($test->class);
     my @args = (
-	root => $test->fake_queryurl,
+        root => $test->fake_queryurl,
     );
     my $service = new_ok($test->class, [@args]);
     is($service->root, $test->{uri},
@@ -203,16 +202,17 @@ sub get_results_iterator : Test(4) {
 sub fetch : Test(2) {
     my $test = shift;
     my $url      = $test->fake_queryurl;
-    my $response = $test->class->fetch($url);
+    my $service = $test->class->new(root => $test->fake_queryurl);
+    my $response = $service->fetch($url);
     is(
-	$response,  $test->user_agent . $url,
-	"... handles url and agent correctly",
+        $response,  $test->user_agent . $url,
+        "... handles url and agent correctly",
     );
     $test->{Res}->set_true('is_error');
     throws_ok(
-	sub {$test->class->fetch('foo')},
-	qr/Hello, I'm a status line/,
-	'... Catches response errors correctly',
+        sub {$service->fetch('foo')},
+        qr/Hello, I'm a status line/,
+        '... Catches response errors correctly',
     );
 }
 

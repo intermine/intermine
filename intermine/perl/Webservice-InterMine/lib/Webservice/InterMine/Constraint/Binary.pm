@@ -16,6 +16,11 @@ has 'value' => (
     writer   => 'set_value',
 );
 
+has 'extra_value' => (
+    is       => 'ro',
+    isa      => Str,
+);
+
 override to_string => sub {
     my $self = shift;
     return join( ' ', super(), $self->op, '"' . $self->value . '"' );
