@@ -2,12 +2,12 @@ Build.PL
 Changes
 ignore.txt
 lib/InterMine/TypeLibrary.pm
+Makefile.PL
 MANIFEST
+META.yml
 README
 t/00-load.t
 t/boilerplate.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
-Makefile.PL
-META.yml
