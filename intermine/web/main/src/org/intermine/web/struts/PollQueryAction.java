@@ -120,7 +120,7 @@ public class PollQueryAction extends InterMineAction
                         } else {
                             trail = "|" + forwardId;
                         }
-                        String url = "/report.do?id=" + forwardId + "&trail=" + trail;
+                        String url = "/objectDetails.do?id=" + forwardId + "&trail=" + trail;
                         return new ActionForward(url, true);
                     }
                 }

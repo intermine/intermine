@@ -1,2 +1,99 @@
-table.objSummary td{
-	padding:5px;}
+/* override default InterMine here */
+.attributeField { color:inherit; }
+table.refSummary thead tr td { background-color:inherit; border-bottom:inherit; border-right:inherit; }
+table.refSummary { border-left:inherit; border-top:inherit; width:inherit; }
+table.refSummary tbody tr td { background-color:inherit; border-bottom:inherit; border-right:inherit; padding:inherit; }
+.value { font-family:inherit; font-size:inherit; }
+table.results tfoot tr td { background-color:#FFF !important; }
+table.results tr.odd td { border-bottom:inherit !important; border-right:inherit !important; }
+table.results th { color:inherit !important; border-right:inherit !important; }
+div.refSummary { font-size:12px; padding-left:6px; }
+div.refSummary a { color:#5C0075; }
+table.refSummary td { text-align:left !important; }
+div.content li { margin-left:inherit !important; }
+div.table h3 a { color:inherit !important; }
+div.table h3 a:hover { text-decoration:none; }
+div.table h3 a span.collectionField { color:inherit !important; }
+div.table h3 a img { padding-right:4px; }
+div.table h3 a { cursor:auto !important; }
+
+/* body */
+html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
+
+/* header wrapper */
+#header_wrap { background:#F4EEF7 url(../model/images/report_page/header-bg.png) repeat-x scroll left top; border-bottom:1px solid #D3BCDB; }
+
+/* header */
+#object_header {background:url(../model/images/report_page/header-bg.png) repeat-x scroll left bottom; width:92%; margin-left:4%; margin-right:4%; }
+    #object_header h1.title {font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif; font-size:24px;
+        font-weight:normal; position:relative; }
+    #object_header h1.title span { color:#5c0075; }
+    #object_header p.description { margin:0; padding-bottom:10px; }
+
+/* tabbed menu */
+table#menu {border:0 none;font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif;text-transform:uppercase;
+    width:92%; margin-left:4%; margin-right:4%; margin-bottom:-1px; }
+table#menu td {background:url(../model/images/report_page/tabs-gradient-bottom.png) repeat-x scroll center bottom #f4eef7;border-right:0 none;
+    font-size:13px;text-align:center;border-color:#F4EEF7;border-style:solid none none; border-width:6px 0 0; margin:0;
+    padding:0; text-decoration:underline; color:#5C0075; }
+table#menu td div.container {position:relative;}
+table#menu td:hover {cursor:pointer;}
+table#menu td.active {background:url(../model/images/report_page/tabs-gradient-top.png) repeat-x scroll center top #FFF;border:0 none;
+    position:relative; font-weight:bold; color:#292727; text-decoration:none; }
+table#menu td.active span.left {background:url(../model/images/report_page/tabs-gradient-left.png) no-repeat scroll left top transparent;
+    display:inline-block;height:45px;left:0;position:absolute;top:0;width:10px;}
+table#menu td.active span.right {background:url(../model/images/report_page/tabs-gradient-right.png) no-repeat scroll right top transparent;
+    display:inline-block;height:45px;position:absolute;right:0;top:0;width:10px;}
+table#menu td span {display:inline-block;line-height:39px;}
+table#menu td span { color:#5C0075; }
+table#menu td.active span {color:#292727;}
+table#menu td.active span,x:-moz-any-link {line-height:44px;}
+table#menu td:hover span {color:#000;text-decoration:underline;}
+table#menu td.active span,table#menu td.active span,x:-moz-any-link,x:default {display:inline-block;line-height:39px;
+    padding-top:6px;}
+
+/* content */
+#content p.description { font-size:13px; line-height:19px; margin:20px 0; }
+    #content p.description img { vertical-align:bottom; padding:0 6px 0 0; }
+
+/* generic box */
+div.box { font-size:12px; }
+div.box div.inner { padding:0 6px; }
+div.box h3 { border-top:1px solid #5c0075; background:#f4eef7; font-size:14px; padding:2px 6px; margin-bottom:10px; }
+div.box a { color:#5c0075; }
+div.box ul { list-style-type:none; padding:0; }
+
+/* quick links */
+ul.quick_links { width:100%; }
+ul.quick_links li { display:inline-block; text-align:center; margin:0 10px 10px 0 !important; }
+ul.quick_links li a { text-decoration:none; background:url('../model/images/report_page/button-border.png') repeat-x top left;
+    display:inline-block; height:40px; vertical-align:middle; position:relative; line-height:0px; }
+ul.quick_links li a:hover { text-decoration:none; }
+ul.quick_links li a span.left { background:url('../model/images/report_page/button-left-border.png') no-repeat top left; position:absolute;
+    top:0; left:0; width:2px; height:40px; }
+ul.quick_links li a span.right { background:url('../model/images/report_page/button-right-border.png') no-repeat top left; position:absolute;
+    top:0; right:0; width:2px; height:40px; }
+ul.quick_links li a strong { display:block; padding:0 10px; line-height:30px; }
+
+/* table */
+div.table h3 { border-top:1px solid #5c0075; background:#f4eef7; font-size:14px; padding:2px 6px; margin-bottom:0; margin-top:30px; }
+div.table td[width="15"] { display:none; } /* ridicurous */
+div.table p { text-align:center; font-size:12px; background:#FFF3D3; padding:2px; }
+  div.table p a { text-decoration:underline; color:#5C0075; }
+
+/* "normal" tables */
+div.table table.refSummary { font-size:12px; }
+div.table table.refSummary a { color:#5c0075; }
+div.table table.refSummary td { padding:6px; }
+div.table table.refSummary thead td { border-bottom:1px solid #decce3; background:#f4eef7; padding:0 0 0 6px;
+    text-transform:capitalize; font-size:13px; }
+div.table table.refSummary tr.even td { background:#fcfafd; border-top:1px solid #dcc8e2; border-bottom:1px solid #dcc8e2; }
+
+/* "templates" tables */
+div.table table.results { font-size:12px; }
+div.table table.results a { color:#5c0075; }
+div.table table.results td { padding:6px; }
+div.table table.results em { font-style:normal; } /* normal is the new emphasis */
+div.table table.results thead th { border-bottom:1px solid #decce3; background:#f4eef7; padding:0; text-align:left;
+    text-transform:capitalize; font-size:13px; font-weight:normal; }
+div.table table.results tr.even td { background:#fcfafd; border-top:1px solid #dcc8e2; border-bottom:1px solid #dcc8e2; }

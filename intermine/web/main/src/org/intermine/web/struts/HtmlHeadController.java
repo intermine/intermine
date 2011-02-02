@@ -107,7 +107,7 @@ public class HtmlHeadController extends TilesAction
             htmlPageTitle = htmlPageTitle + templateTitle;
 
         /* object */
-        } else if ("report".equals(pageName) && objectId != null) {
+        } else if ("objectDetails".equals(pageName) && objectId != null) {
 
             Integer id = new Integer(Integer.parseInt(objectId));
             InterMineObject object = os.getObjectById(id);

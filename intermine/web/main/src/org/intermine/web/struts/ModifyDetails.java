@@ -196,7 +196,7 @@ public class ModifyDetails extends DispatchAction
         request.setAttribute("fieldName", fieldName);
 
         if (object.isVerbose(key)) {
-            return mapping.findForward("reportCollectionTable");
+            return mapping.findForward("objectDetailsCollectionTable");
         }
         return null;
     }

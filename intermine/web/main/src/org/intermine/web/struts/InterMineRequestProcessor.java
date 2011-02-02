@@ -57,7 +57,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     // TODO note that 'experiment' and 'features' are modMine specific.  We should make this
     // configurable by properties
     public static final List<String> START_PATHS =
-        Arrays.asList(LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/report",
+        Arrays.asList(LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/objectDetails",
                 "/examples", "/browseAction", "/collectionDetails", "/iqlQuery", "/login",
                 "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
                 "/ping", "/standalone", "/quickStart", "/importQuery", "/tree", "/headMenu",

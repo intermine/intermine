@@ -61,7 +61,7 @@
     </action>
     <action path="/help" forward="help.page">
     </action>
-    <action path="/report" forward="report.page">
+    <action path="/objectDetails" forward="objectDetails.page">
     </action>
     <action path="/classDescription" forward="classDescription.page">
     </action>
@@ -141,6 +141,11 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
+    <action path="/loadTemplate" type="org.intermine.web.struts.LoadTemplateAction" parameter="method">
+      <forward name="template" path="/template.do"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+    </action>
     <action path="/begin" type="org.intermine.web.struts.BeginAction">
       <forward name="begin" path="begin.page"/>
     </action>
@@ -174,7 +179,10 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/modifyDetails" type="org.intermine.web.struts.ModifyDetails" parameter="method">
-      <forward name="report" redirect="true" path="/report.do"/>
+      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
+      <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
     <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
@@ -188,7 +196,7 @@
       <forward name="success" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
-      <forward name="report" redirect="true" path="/report.do"/>
+      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
     </action>
     <action path="/queryForGraphAction" type="org.intermine.web.struts.QueryForGraphAction">
       <forward name="results" redirect="true" path="/results.do"/>
@@ -339,7 +347,7 @@
     </action>
     <action path="/portal" type="org.intermine.web.struts.PortalQueryAction">
       <forward name="failure" path="error.page"/>
-      <forward name="report" path="/report.do"/>
+      <forward name="objectDetails" path="/objectDetails.do"/>
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="results" path="/results.do"/>
@@ -377,6 +385,8 @@
     </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>
+    <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
+    </action>
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
     </action>
     <action path="/initWebSearchableList" type="org.intermine.web.struts.WebSearchableListController">
@@ -387,7 +397,9 @@
     </action>
     <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
     </action>
-    <action path="/initReport" type="org.intermine.web.struts.ReportController">
+    <action path="/initObjectDetails" type="org.intermine.web.struts.ObjectDetailsController">
+    </action>
+    <action path="/initObjectDetailsAspect" type="org.intermine.web.struts.ObjectDetailsAspectController">
     </action>
     <action path="/initTree" type="org.intermine.web.struts.TreeController">
     </action>
@@ -424,6 +436,7 @@
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
+    <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <!-- <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/> -->
