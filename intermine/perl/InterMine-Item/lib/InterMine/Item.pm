@@ -1,6 +1,6 @@
 package InterMine::Item;
 
-our $VERSION = 0.944;
+our $VERSION = 0.950;
 
 =head1 NAME
 
@@ -376,8 +376,22 @@ sub all_class_descriptors
            object according to the model
 
 =cut
-sub valid_field
-{
+
+sub valid_field { # deprecated name
+    my $self = shift;
+    return $self->has_field_called(@_);
+}
+
+=head2 has_field_called
+
+ Title   : has_field_called
+ Usage   : if ($item->has_field_called('someFieldName')) { ... };
+ Function: return true if the item has a field slot of the given name.
+           This is the new and recommended name for "valid_field".
+
+=cut
+
+sub has_field_called {
   my $self = shift;
   my $field = shift;
 
