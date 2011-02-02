@@ -192,7 +192,6 @@ IMBedding = (function() {
         table.setAttribute("lastrow", data.size);
         table.setAttribute("size", data.size);
         table.id = "imbedded-table-" + uid;
-        title.href = '#' + table.id;
         $.jsonp({
             url: localiseUrl(data.count, options),
             success: function(countData) {
@@ -277,6 +276,7 @@ IMBedding = (function() {
             $(table).append(throbber);
         }
         if (options.onTitleClick == "collapse") {
+            title.href = "#" + container.id;
             jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
         } else if (options.onTitleClick == "mine") {
             title.href = localiseUrl(data.mineResultsLink, options);
