@@ -11,4 +11,4 @@
   <fmt:message var="text" key="${key}"/>
 </c:if>
 
-<c:if test="${!empty text}"><im:help text="${text}"><img class="tinyQuestionMark" src="images/tiny_question_mark.png" alt="?"></im:help></c:if>
+<c:if test="${!empty text}"><im:help text="${text}"><img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?"></im:help></c:if>
