@@ -1,4 +1,4 @@
-package org.intermine.bio.logic;
+package org.intermine.api.mines;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -318,7 +318,7 @@ public class Mine
     private Map<String, HomologueMapping> newMap(String geneOrganism,
             HomologueMapping newMapping) {
         newMapping.setOrganism(geneOrganism);
-        Map<String, HomologueMapping> newMap = new HashMap<String, HomologueMapping>();
+        Map<String, HomologueMapping> newMap = new HashMap();
         newMap.put(geneOrganism, newMapping);
         return newMap;
     }

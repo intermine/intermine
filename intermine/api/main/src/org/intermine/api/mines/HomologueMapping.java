@@ -1,4 +1,4 @@
-package org.intermine.bio.logic;
+package org.intermine.api.mines;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
