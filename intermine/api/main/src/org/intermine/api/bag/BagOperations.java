@@ -30,6 +30,7 @@ import org.intermine.objectstore.query.Query;
 public final class BagOperations
 {
     private BagOperations() {
+        // don't
     }
 
     /**

@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,9 +36,11 @@ public class TemplateTracker extends TrackerAbstract
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static TemplateTracker templateTracker = null;
-    private static final String TRACKER_NAME = "TemplateTracker";
+    /**
+     * TRACKER_NAME the tracker name
+     */
+    public static final String TRACKER_NAME = "TemplateTracker";
     private static TemplatesExecutionMap templatesExecutionCache;
-    private TemplateManager templateManager;
 
     /**
      * Build a template tracker
@@ -101,14 +102,6 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Set the TemplateManager used to retrieve the global templates
-     * @param templateManager the template manager
-     */
-    public void setTemplateManager(TemplateManager templateManager) {
-        this.templateManager = templateManager;
-    }
-
-    /**
      * Store into the database the template execution by the user or if the user is not logged
      * during a specific http session. Update the cache.
      * @param templateName the template name
@@ -131,51 +124,7 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the template name associated to the public template with the highest rank
-     * @return String the template name
-     */
-    public String getMostPopularTemplate() {
-        List<String> templateListOrdered = getMostPopularTemplateOrder();
-        if (!templateListOrdered.isEmpty()) {
-            return templateListOrdered.get(0);
-        }
-        return null;
-    }
-
-    /**
-     * Return the list of public templates ordered by rank descendant.
-     * @return List of template names
-     */
-    public List<String> getMostPopularTemplateOrder() {
-        return getMostPopularTemplateOrder(null, null);
-    }
-
-    /**
-     * Return the template list ordered by rank descendant for the user/sessionid specified
-     * in the input
-     * @param userName the user name
-     * @param sessionId the session id
-     * @return List of template names
-     */
-    public List<String> getMostPopularTemplateOrder(String userName, String sessionId) {
-        List<String> mostPopularTemplateOrder = new ArrayList<String>();
-        Map<String, Double> templateLnRank = getLogarithmMap(userName, sessionId);
-        //create an entry list ordered
-        List<Entry<String, Double>> listOrdered =
-            new LinkedList<Entry<String, Double>>(templateLnRank.entrySet());
-        Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
-            public int compare (Entry<String, Double> e1, Entry<String, Double> e2) {
-                return -e1.getValue().compareTo(e2.getValue());
-            }
-        });
-        for (Entry<String, Double> entry : listOrdered) {
-            mostPopularTemplateOrder.add(entry.getKey());
-        }
-        return mostPopularTemplateOrder;
-    }
-
-    /**
-     * Return the number of executions for each template
+     * Return the number of executions for each public template
      * @return map with key the template name and executions number
      */
     public Map<String, Integer> getAccessCounter() {
@@ -203,15 +152,16 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the rank for each template. The rank represents a relationship between the templates
+     * Return the rank for each public template. The rank represents a relationship between the templates
      * executions; a template with rank 1 has been executed more than a template with rank 2. The
      * rank is calculated by summing the logarithm of the templates executions launched by the
      * single users, if the user is logged in, or otherwise, by summing the logarithm of the
      * templates executions during the same http session. The function is called only by the
      * super user
+     * @param templateManager the template manager used to retrieve the global templates
      * @return map with key the template name and rank
      */
-    public Map<String, Integer> getRank() {
+    public Map<String, Integer> getRank(TemplateManager templateManager) {
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
         Map<String, Double> templateMergedRank = templatesExecutionCache.getLogarithmMap(null,
                                                                               templateManager);
@@ -245,9 +195,11 @@ public class TemplateTracker extends TrackerAbstract
      * accesses for the single sessions
      * @param userName the user name
      * @param sessionId the http session identifier
+     * @param templateManager the template manager used to retrieve the global templates
      * @return map of logarithm of accesses
      */
-    public Map<String, Double> getLogarithmMap(String userName, String sessionId) {
+    public Map<String, Double> getLogarithmMap(String userName, String sessionId,
+                                               TemplateManager templateManager) {
         Map<String, Double> logarithmMap;
         if (userName == null && sessionId == null) {
             logarithmMap = templatesExecutionCache.getLogarithmMap(null, templateManager);
@@ -358,14 +310,6 @@ public class TemplateTracker extends TrackerAbstract
         } else {
             return null;
         }
-    }
-
-    /**
-     * Return the tracker's name
-     * @return String tracker's name
-     */
-    public static String getTrackerName() {
-        return TRACKER_NAME;
     }
 
     /**

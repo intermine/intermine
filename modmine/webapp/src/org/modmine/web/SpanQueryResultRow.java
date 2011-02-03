@@ -23,7 +23,7 @@ public class SpanQueryResultRow
     private String chr;
     private Integer start;
     private Integer end;
-    private Integer subDCCid;
+    private String subDCCid;
     private String subTitle;
 
     /**
@@ -101,14 +101,14 @@ public class SpanQueryResultRow
     /**
      * @return submission DCCid
      */
-    public Integer getSubDCCid() {
+    public String getSubDCCid() {
         return subDCCid;
     }
 
     /**
      * @param subDCCid submission DCCid
      */
-    public void setSubDCCid(Integer subDCCid) {
+    public void setSubDCCid(String subDCCid) {
         this.subDCCid = subDCCid;
     }
 

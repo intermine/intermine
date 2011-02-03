@@ -28,6 +28,7 @@ import org.intermine.util.TypeUtil;
 public final class PathUtil
 {
     private PathUtil() {
+        // don't instantitate
     }
 
     /**
@@ -49,9 +50,7 @@ public final class PathUtil
                         + o, path.toString());
             }
         }
-
         Object current = o;
-
         for (String fieldName : path.getElements()) {
             try {
                 if (current == null) {
@@ -69,10 +68,8 @@ public final class PathUtil
                                            + "field \"" + fieldName + "\" in object: " + o, e);
             }
         }
-
         return current;
     }
-
 
     /**
      * Return true if given type (of a constraint) can be assigned to the InterMineObject - i.e.

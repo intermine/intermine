@@ -59,27 +59,11 @@ public class TemplateTrack implements Track
     }
 
     /**
-     * Set the user name
-     * @param userName the user name
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    /**
      * Return the template name
      * @return String template name
      */
     public String getTemplateName() {
         return templateName;
-    }
-
-    /**
-     * Set the template name
-     * @param templateName the template name
-     */
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
     }
 
     /**
@@ -91,14 +75,6 @@ public class TemplateTrack implements Track
     }
 
     /**
-     * Set the time of access to the template
-     * @param timestamp the time of access
-     */
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    /**
      * Return the session id
      * @return String session id
      */
@@ -107,19 +83,13 @@ public class TemplateTrack implements Track
     }
 
     /**
-     * Set the session id
-     * @param sessionIdentifier the session id
-     */
-    public void setSessionIdentifier(String sessionIdentifier) {
-        this.sessionIdentifier = sessionIdentifier;
-    }
-
-    /**
-     * Validate the template track before saving into the database
+     * Validate the template track before saving into the database.
+     * A track is valid if has a template name and a session identifier
      * @return true if the template track is valid
      */
     public boolean validate() {
-        if (templateName != null && !"".equals(templateName) && sessionIdentifier != null) {
+        if (templateName != null && !"".equals(templateName)
+            && sessionIdentifier != null && !"".equals(sessionIdentifier)) {
             return true;
         }
         return false;

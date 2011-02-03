@@ -54,6 +54,7 @@ lib/Webservice/InterMine/Query/Template.pm
 lib/Webservice/InterMine/Query/TemplateHandler.pm
 lib/Webservice/InterMine/ResultIterator.pm
 lib/Webservice/InterMine/ResultIterator/Role/HTMLTableRow.pm
+lib/Webservice/InterMine/ResultObject.pm
 lib/Webservice/InterMine/Role/Described.pm
 lib/Webservice/InterMine/Role/Logical.pm
 lib/Webservice/InterMine/Role/ModelOwner.pm
@@ -81,6 +82,7 @@ t/04_query/05_good_and_bad_templates.t
 t/05_template/01_factory.t
 t/06_service/01_service.t
 t/06_service/02_result_iterator.t
+t/06_service/03_result_objects.t
 t/07_intermine/01_integration.t
 t/10_acceptance/01_live_test.t
 t/data/bad_templates.xml

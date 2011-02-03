@@ -271,12 +271,12 @@ public class SpanUploadAction extends InterMineAction
 
         // ------------ GBrowse tracks ------------ //
         // first key - Span; second key - DCCid
-        LinkedHashMap<Span, LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>> track =
-            new LinkedHashMap<Span, LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>>();
+        LinkedHashMap<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> track =
+            new LinkedHashMap<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>>();
         for (Map.Entry<Span, List<SpanQueryResultRow>> entry : spanOverlapResultMap
                 .entrySet()) {
-            LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>> subGTrack =
-                new LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>();
+            LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>> subGTrack =
+                new LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>();
             if (entry.getValue() != null) {
                 for (SpanQueryResultRow aRow : entry.getValue()) {
                     if (MetadataCache.getTracksByDccId(aRow.getSubDCCid()).size() > 0) {

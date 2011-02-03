@@ -115,7 +115,7 @@ public class SubmissionProtocolsController extends TilesAction
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
 
-        Integer dccId = 0;
+        String dccId = null;
         Set<Protocol> pt = new HashSet<Protocol>();
 
         Iterator i = result.iterator();

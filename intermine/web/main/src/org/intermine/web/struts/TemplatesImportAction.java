@@ -31,7 +31,6 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
@@ -73,7 +72,7 @@ public class TemplatesImportAction extends InterMineAction
             Set<String> templateNames = new HashSet<String>(profile.getSavedTemplates().keySet());
             if (tif.isOverwriting() && templateNames.size() > 0) {
                 for (String templateName : templateNames) {
-                    profile.deleteTemplate(templateName);
+                    profile.deleteTemplate(templateName, im.getTrackerDelegate());
                     deleted++;
                 }
             }

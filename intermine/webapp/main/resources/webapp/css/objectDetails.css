@@ -1,2 +1,7 @@
 table.objSummary td{
-	padding:5px;}
+  padding:5px;
+}
+
+img.tinyQuestionMark {
+  padding-bottom:4px;
+}

@@ -10,6 +10,12 @@
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
+<action path="/initGalaxyExportOptions"
+        type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
+
+<action path="/galaxyExportAction" name="galaxyExportForm"
+        type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
+
 <action path="/initUniProtCommentsDisplayer"
         type="org.metabolicmine.web.struts.UniProtCommentsDisplayerController"/>
 
@@ -24,6 +30,15 @@
 
 <action path="/initSnpToGeneFormDisplayer"
   type="org.metabolicmine.web.SnpToGeneFormDisplayerController" />
+
+<action path="/initCytoscapeNetworkDisplayer"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
+
+<action path="/cytoscapeNetworkExport"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
+
+<action path="/cytoscapeNetworkAjax"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 
 <action path="/snpToGeneAction" name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneAction" input="objectDetails">
   <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>

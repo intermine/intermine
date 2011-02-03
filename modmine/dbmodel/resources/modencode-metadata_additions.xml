@@ -257,7 +257,7 @@
   <attribute name="experimentDate" type="java.util.Date" />
   <attribute name="publicReleaseDate" type="java.util.Date" />
   <attribute name="embargoDate" type="java.util.Date" />
-  <attribute name="DCCid" type="java.lang.Integer" />
+  <attribute name="DCCid" type="java.lang.String" />
   <attribute name="experimentType" type="java.lang.String" />
   <attribute name="totalReadCount" type="java.lang.Integer" />
   <attribute name="multiplyMappedReadCount" type="java.lang.Integer" />

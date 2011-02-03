@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -30,9 +32,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import junit.framework.TestCase;
 
 /**
  * @author alex
@@ -67,6 +66,7 @@ public class JSONRowIteratorTest extends TestCase {
     private Address address2;
 
 
+    @Override
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
 
@@ -183,7 +183,6 @@ public class JSONRowIteratorTest extends TestCase {
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
-    private final String baseUrl = "http://the.base.url";
 
     /**
      * Empty constructor
@@ -204,8 +203,8 @@ public class JSONRowIteratorTest extends TestCase {
         os.setResultsSize(1);
 
         String jsonString = "[" +
-                "{value: 'David Brent', url: 'http://the.base.url/objectdetails.do?id=3'}," +
-                "{value: '39', url: 'http://the.base.url/objectdetails.do?id=3'}" +
+                "{value: 'David Brent', url: '/objectDetails.do?id=3'}," +
+                "{value: '39', url: '/objectDetails.do?id=3'}" +
                 "]";
         JSONArray expected = new JSONArray(jsonString);
 
@@ -224,7 +223,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter, baseUrl);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -241,24 +240,24 @@ public class JSONRowIteratorTest extends TestCase {
 
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add("[" +
-                "{url: 'http://the.base.url/objectdetails.do?id=5', value:30}," +
-                "{url: 'http://the.base.url/objectdetails.do?id=5', value:'Tim Canterbury'}" +
+                "{url: '/objectDetails.do?id=5', value:30}," +
+                "{url: '/objectDetails.do?id=5', value:'Tim Canterbury'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: 'http://the.base.url/objectdetails.do?id=6', value:32}," +
-                "{url: 'http://the.base.url/objectdetails.do?id=6', value:'Gareth Keenan'}" +
+                "{url: '/objectDetails.do?id=6', value:32}," +
+                "{url: '/objectDetails.do?id=6', value:'Gareth Keenan'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: 'http://the.base.url/objectdetails.do?id=7', value:26}," +
-                "{url: 'http://the.base.url/objectdetails.do?id=7', value:'Dawn Tinsley'}" +
+                "{url: '/objectDetails.do?id=7', value:26}," +
+                "{url: '/objectDetails.do?id=7', value:'Dawn Tinsley'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: 'http://the.base.url/objectdetails.do?id=8', value:41}," +
-                "{url: 'http://the.base.url/objectdetails.do?id=8', value:'Keith Bishop'}" +
+                "{url: '/objectDetails.do?id=8', value:41}," +
+                "{url: '/objectDetails.do?id=8', value:'Keith Bishop'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: 'http://the.base.url/objectdetails.do?id=9', value:28}," +
-                "{url: 'http://the.base.url/objectdetails.do?id=9', value:'Lee'}" +
+                "{url: '/objectDetails.do?id=9', value:28}," +
+                "{url: '/objectDetails.do?id=9', value:'Lee'}" +
                 "]");
 
         ResultsRow row1 = new ResultsRow();
@@ -288,7 +287,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter, baseUrl);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -346,7 +345,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter, baseUrl);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -357,31 +356,31 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Sales',url:'http://the.base.url/objectdetails.do?id=11'}," +
-                "{value:'Tim Canterbury',url:'http://the.base.url/objectdetails.do?id=5'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
+                "{value:'Tim Canterbury',url:'/objectDetails.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Sales',url:'http://the.base.url/objectdetails.do?id=11'}," +
-                "{value:'Gareth Keenan',url:'http://the.base.url/objectdetails.do?id=6'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
+                "{value:'Gareth Keenan',url:'/objectDetails.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Warehouse',url:'http://the.base.url/objectdetails.do?id=13'}," +
-                "{value:'Lee',url:'http://the.base.url/objectdetails.do?id=9'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
+                "{value:'Lee',url:'/objectDetails.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Warehouse',url:'http://the.base.url/objectdetails.do?id=13'}," +
-                "{value:'Alex',url:'http://the.base.url/objectdetails.do?id=10'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
+                "{value:'Alex',url:'/objectDetails.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
@@ -389,6 +388,36 @@ public class JSONRowIteratorTest extends TestCase {
             assertEquals(null, JSONObjTester.getProblemsComparing(ja, got.get(index)));
         }
     }
+    
+	// Should be ok with a result set of size 0, and produce no objects
+	public void testZeroResults() throws ObjectStoreException {
+        
+        PathQuery pq = new PathQuery(model);
+        pq.addViews(
+        		"Employee.age", "Employee.name", 
+        		"Employee.department.name", 
+        		"Employee.department.manager.name", 
+        		"Employee.department.manager.address.address", 
+        		"Employee.department.manager.department.name", 
+        		"Employee.department.company.id", 
+        		"Employee.department.company.contractors.id", 
+        		"Employee.department.company.contractors.companys.name", 
+        		"Employee.department.company.contractors.companys.vatNumber", 
+        		"Employee.department.manager.department.company.name", 
+        		"Employee.department.company.contractors.companys.address.address");
+        
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = new ArrayList(); // empty results
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        
+        assert(!jsonIter.hasNext());
+	    
+	}
 
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
         os.setResultsSize(1);
@@ -436,7 +465,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter, baseUrl);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -447,35 +476,35 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Sales',url:'http://the.base.url/objectdetails.do?id=11'}," +
-                "{value:'Tim Canterbury',url:'http://the.base.url/objectdetails.do?id=5'}," +
-                "{value:'30',url:'http://the.base.url/objectdetails.do?id=5'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
+                "{value:'Tim Canterbury',url:'/objectDetails.do?id=5'}," +
+                "{value:'30',url:'/objectDetails.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Sales',url:'http://the.base.url/objectdetails.do?id=11'}," +
-                "{value:'Gareth Keenan',url:'http://the.base.url/objectdetails.do?id=6'}," +
-                "{value:'32',url:'http://the.base.url/objectdetails.do?id=6'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
+                "{value:'Gareth Keenan',url:'/objectDetails.do?id=6'}," +
+                "{value:'32',url:'/objectDetails.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Warehouse',url:'http://the.base.url/objectdetails.do?id=13'}," +
-                "{value:'Lee',url:'http://the.base.url/objectdetails.do?id=9'}," +
-                "{value:'28',url:'http://the.base.url/objectdetails.do?id=9'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
+                "{value:'Lee',url:'/objectDetails.do?id=9'}," +
+                "{value:'28',url:'/objectDetails.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:101,url:'http://the.base.url/objectdetails.do?id=1'}," +
-                "{value:'Warehouse',url:'http://the.base.url/objectdetails.do?id=13'}," +
-                "{value:'Alex',url:'http://the.base.url/objectdetails.do?id=10'}," +
-                "{value:'24',url:'http://the.base.url/objectdetails.do?id=10'}" +
+                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
+                "{value:101,url:'/objectDetails.do?id=1'}," +
+                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
+                "{value:'Alex',url:'/objectDetails.do?id=10'}," +
+                "{value:'24',url:'/objectDetails.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
@@ -498,7 +527,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter, baseUrl);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter);
 
         try {
             jsonIter.remove();

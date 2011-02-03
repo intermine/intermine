@@ -42,7 +42,7 @@ public class NcbiGeneInfoParser
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
+            String[] line = lineIter.next();
 
             String taxonId = line[0];
             String entrez = line[1];

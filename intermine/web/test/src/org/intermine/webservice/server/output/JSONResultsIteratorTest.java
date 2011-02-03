@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.TreeMap;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -38,12 +36,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 /**
  * Tests for the JSONResultsIterator class
@@ -80,6 +73,7 @@ public class JSONResultsIteratorTest extends TestCase {
 	private Address address2;
 	
 
+    @Override
     protected void setUp() {
     	os = new ObjectStoreDummyImpl();
     	
@@ -935,6 +929,36 @@ public class JSONResultsIteratorTest extends TestCase {
         assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
 
     }
+	
+	// Should be ok with a result set of size 0, and produce no objects
+	public void testZeroResults() throws ObjectStoreException {
+        
+        PathQuery pq = new PathQuery(model);
+        pq.addViews(
+        		"Employee.age", "Employee.name", 
+        		"Employee.department.name", 
+        		"Employee.department.manager.name", 
+        		"Employee.department.manager.address.address", 
+        		"Employee.department.manager.department.name", 
+        		"Employee.department.company.id", 
+        		"Employee.department.company.contractors.id", 
+        		"Employee.department.company.contractors.companys.name", 
+        		"Employee.department.company.contractors.companys.vatNumber", 
+        		"Employee.department.manager.department.company.name", 
+        		"Employee.department.company.contractors.companys.address.address");
+        
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = new ArrayList(); // empty results
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONResultsIterator jsonIter = new JSONResultsIterator(iter);
+        
+        assert(!jsonIter.hasNext());
+	    
+	}
 
 	public void testReferencesOnCollection() throws Exception {
         os.setResultsSize(4);

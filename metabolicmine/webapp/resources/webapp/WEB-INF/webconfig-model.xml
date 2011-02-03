@@ -146,7 +146,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="uniProtCommentsDisplayer.tile"/>
       <displayer src="/model/jBrowse.jsp"/>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
@@ -161,7 +161,7 @@
         <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <longdisplayers>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <displayer src="cytoscapeNetworkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -183,6 +183,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
       <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
   </class>
@@ -270,6 +271,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
@@ -351,6 +353,8 @@
   <class className="org.intermine.model.bio.SNP">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="alleles"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
@@ -362,7 +366,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="snpToGeneDisplayer.tile"/>
       <displayer src="/model/jBrowse.jsp"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
     <bagdisplayers>
       <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
@@ -478,7 +481,7 @@
         pathStrings="Gene.interactions.interactingGenes"
         link="org.intermine.bio.web.widget.InteractionURLQuery"
         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-        displayFields="primaryIdentifier"
+        displayFields="primaryIdentifier,symbol"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.Gene"
         columnTitle="Interactions"
@@ -486,8 +489,8 @@
     />
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
-        pathStrings="SNP.consequences"
-        link="org.intermine.bio.web.widget.InteractionURLQuery"
+        pathStrings="SNP.consequences.type"
+        link="org.metabolicmine.web.widget.SNPConsequenceTypesURLQuery"
         description="Consequence types for SNPs in this list"
         displayFields="type"
         exportField="primaryIdentifier"

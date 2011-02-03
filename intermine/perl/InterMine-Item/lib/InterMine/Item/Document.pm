@@ -138,6 +138,38 @@ sub writer {
     return $self->{writer};
 }
 
+
+=head2 add_default_fields(key => value, key => value)
+
+ Function : add the given key value pairs to the default fields list
+            that will be appplied to every item made. If a default field
+            is not valid for a particular item, it will not be set.
+
+=cut
+
+sub add_default_fields {
+    my $self = shift;
+    my %new_defaults = @_;
+    my @keys = keys %new_defaults;
+    @{$self->{defaults}}{@keys} = @new_defaults{@keys};
+}
+
+=head2 get_default_fields() 
+
+ Function : get the current default fields
+ Returns  : a hash in list context, or a hash-reference in scalar context
+
+=cut
+
+sub get_default_fields {
+    my $self = shift;
+    if (wantarray) {
+        return %{$self->{defaults}};
+    } else {
+        return $self->{defaults};
+    }
+}
+
 =head2 write
 
  Function : write all unwritten items to the xml output. This is 
@@ -224,6 +256,13 @@ sub make_item {
 
     while ( my ( $k, $v ) = each %attr ) {
         $item->set( $k, $v );
+    }
+    if ($self->get_default_fields) {
+        while ( my ( $k, $v ) = each %{$self->get_default_fields} ) {
+            if ($item->has_field_called($k)) {
+                $item->set($k, $v);
+            }
+        }
     }
     return $item;
 }

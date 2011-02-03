@@ -99,6 +99,14 @@ public class AttributeDescriptor extends FieldDescriptor
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toJSONString() {
+        return "{name:\"" + name + "\",type:\"" + type + "\"}";
+    }
+
+    /**
      * Returns true if the type of the attribute is a primitive type (rather than object).
      *
      * @return true or false

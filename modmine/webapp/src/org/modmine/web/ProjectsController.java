@@ -67,15 +67,15 @@ public class ProjectsController extends TilesAction
             request.setAttribute("experiments", experiments);
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
-            Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
+            Map<String, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
 
 
-            Map<Integer, List<String[]>> submissionRepositoryEntries =
+            Map<String, List<String[]>> submissionRepositoryEntries =
                 MetadataCache.getRepositoryEntries(os);
             request.setAttribute("subRep", submissionRepositoryEntries);
 
-            Map<Integer, List<String>> unlocatedFeatureTypes =
+            Map<String, List<String>> unlocatedFeatureTypes =
                 MetadataCache.getUnlocatedFeatureTypes(os);
             request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
 

@@ -28,6 +28,7 @@ import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
+import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 
 /**
@@ -43,6 +44,18 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     public static final int DEFAULT_RESULT_SIZE = 10;
 
     private String error;
+
+
+    public String getMineResultsLink(String baseUrl, TemplateQuery tq) {
+        return baseUrl + getMineResultsPath(tq, false);
+    }
+
+    public String getMineResultsPath(TemplateQuery tq, boolean highlighted) {
+        String ret = "/loadTemplate.do?";
+        ret += getTemplateParameterQueryString(tq, highlighted);
+        ret += "&method=results";
+        return ret;
+    }
 
     /**
      * Generates TemplateResultService web service link.
@@ -80,6 +93,81 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     }
 
     /**
+     * Returns the path section of the link for this template. When passing just the
+     * template, the format defaults to tab.
+     * @param template The template to get the link for.
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
+     */
+    public String getLinkPath(TemplateQuery template) {
+        return getLinkPath(template, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
+    }
+
+    /**
+     * Returns the path section of the link for this template. The format parameter is set to
+     * the value of the format argument.
+     * @param template The template to get the link for.
+     * @param format The output format to use (xml, jsonobjects, count, etc)
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
+     */
+    public String getLinkPath(TemplateQuery template, String format) {
+        return getLinkPath(template, format, false);
+    }
+
+    private String getTemplateParameterQueryString(TemplateQuery tq, boolean highlighted) {
+        String ret = "name=" + tq.getName();
+
+        // Splits the long result url to 2 parts -> so it is less probable,
+        // that the url will overflow the div
+        if (highlighted) {
+            ret += "<br />";
+        }
+        int index = 1;
+        Map<String, List<PathConstraint>> consMap = getConstraints(tq);
+        for (String path : consMap.keySet()) {
+            List<PathConstraint> constraints = consMap.get(path);
+            for (PathConstraint con : constraints) {
+                // We don't want to include optional constraints that are switched off
+                if (SwitchOffAbility.OFF.equals(tq.getSwitchOffAbility(con))) {
+                    continue;
+                }
+                ret += "&" + pathToString(path, index);
+                // if there are more constraints with the some path, codes must be added
+                if (constraints.size() > 1) {
+                    String code = tq.getConstraints().get(con);
+                    ret += "&" + codeToString(code, index);
+                }
+                ret += "&" + operationToString(con.getOp(), index , highlighted);
+                ret += "&" + valueToString(getConstraintValue(con), index, highlighted);
+                if (con instanceof PathConstraintLookup) {
+                    PathConstraintLookup conLookup = (PathConstraintLookup) con;
+                    ret += "&" + extraToString(conLookup.getExtraValue(), index, highlighted);
+                }
+                if (highlighted) {
+                    ret += "<br />";
+                }
+                index++;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Returns the path section of the link for this template. The format parameter is set to
+     * the value of the format argument, and if the url is to be highlighted, then it will have
+     * the appropriate formatting.
+     * @param template The template to get the link for.
+     * @param format The output format to use (xml, jsonobjects, count, etc)
+     * @param highlighted Whether or not we are highlighting this url.
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
+     */
+    public String getLinkPath(TemplateQuery template, String format, boolean highlighted) {
+        String ret = "/" + WebServiceConstants.MODULE_NAME + "/template/results?";
+        ret += getTemplateParameterQueryString(template, highlighted);
+        ret += "&format=" + format;
+        return ret;
+    }
+
+    /**
      * Returns html formatted link in which are highlighted parameters that
      * are to be replaced. * @see #getLink(String, TemplateQuery)
      * @param baseUrl base url
@@ -97,45 +185,8 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                 + "special template is not implemented yet. Solution: Don't use list contraint.";
             return null;
         }
-        String ret = baseUrl;
-        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name="
-            + template.getName() + "&";
-        // Splits the long result url to 2 parts -> so it is less probable,
-        // that the url will overflow the div
-        if (highlighted) {
-            ret += "<br />";
-        }
-        Map<String, List<PathConstraint>> consMap = getConstraints(template);
-        int i = 0;
-        for (String path : consMap.keySet()) {
-            List<PathConstraint> constraints = consMap.get(path);
-            for (PathConstraint con : constraints) {
-                // We don't want to include optional constraints that are switched off
-                if (SwitchOffAbility.OFF.equals(template.getSwitchOffAbility(con))) {
-                    continue;
-                }
-                if (i != 0) {
-                    ret += "&";
-                }
-                int index = i + 1;
-                ret += pathToString(path, index);
-                // if there are more constraints with the some path, codes must be added
-                if (constraints.size() > 1) {
-                    String code = template.getConstraints().get(con);
-                    ret += "&" + codeToString(code, index);
-                }
-                ret += "&" + operationToString(con.getOp(), index , highlighted);
-                ret += "&" + valueToString(getConstraintValue(con), index, highlighted);
-                if (con instanceof PathConstraintLookup) {
-                    PathConstraintLookup conLookup = (PathConstraintLookup) con;
-                    ret += "&" + extraToString(conLookup.getExtraValue(), index, highlighted);
-                }
-                if (highlighted) {
-                    ret += "<br />";
-                }
-                i++;
-            }
-        }
+        String ret = baseUrl + getLinkPath(template,
+                WebServiceRequestParser.FORMAT_PARAMETER_TAB, highlighted);
         return ret;
     }
 

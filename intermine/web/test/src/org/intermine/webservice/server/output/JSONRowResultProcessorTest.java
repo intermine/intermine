@@ -3,10 +3,14 @@
  */
 package org.intermine.webservice.server.output;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -20,8 +24,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 
-import junit.framework.TestCase;
-
 /**
  * @author alex
  *
@@ -34,9 +36,9 @@ public class JSONRowResultProcessorTest extends TestCase {
     private Employee dawn;
     private Employee keith;
     private Employee lee;
-    private final String baseUrl = "http://the.base.url";
 
     private ExportResultsIterator iterator;
+    private ExportResultsIterator emptyIterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
 
@@ -50,6 +52,7 @@ public class JSONRowResultProcessorTest extends TestCase {
     /**
      * @see junit.framework.TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         os = new ObjectStoreDummyImpl();
@@ -109,6 +112,11 @@ public class JSONRowResultProcessorTest extends TestCase {
             List resultList = os.execute(q, 0, 5, true, true, new HashMap());
             Results results = new DummyResults(q, resultList);
             iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
+            
+            List emptyList = new ArrayList();
+            Results emptyResults = new DummyResults(q, emptyList);
+            emptyIterator = new ExportResultsIterator(pq, emptyResults, pathToQueryNode);
+            
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
@@ -117,42 +125,54 @@ public class JSONRowResultProcessorTest extends TestCase {
     /**
      * @see junit.framework.TestCase#tearDown()
      */
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
 
     public void testJSONRowResultProcessor() {
-        JSONRowResultProcessor processor = new JSONRowResultProcessor(baseUrl);
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
         assertTrue(processor != null);
+    }
+    
+    public void testZeroResults() {
+        List<String> inner = new ArrayList<String>();
+        List<List<String>> expected = Arrays.asList(inner);
+        
+        MemoryOutput out  = new MemoryOutput();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        processor.write(emptyIterator, out);
+
+        assertEquals(expected.toString(), out.getResults().toString());
     }
 
     @SuppressWarnings("unchecked")
     public void testWrite() {
         List<List<String>> expected = Arrays.asList(
         Arrays.asList("[" +
-                "{\"value\":30,\"url\":\"http://the.base.url/objectdetails.do?id=5\"}," +
-                "{\"value\":\"Tim Canterbury\",\"url\":\"http://the.base.url/objectdetails.do?id=5\"}" +
+                "{\"value\":30,\"url\":\"/objectDetails.do?id=5\"}," +
+                "{\"value\":\"Tim Canterbury\",\"url\":\"/objectDetails.do?id=5\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":32,\"url\":\"http://the.base.url/objectdetails.do?id=6\"}," +
-                "{\"value\":\"Gareth Keenan\",\"url\":\"http://the.base.url/objectdetails.do?id=6\"}" +
+                "{\"value\":32,\"url\":\"/objectDetails.do?id=6\"}," +
+                "{\"value\":\"Gareth Keenan\",\"url\":\"/objectDetails.do?id=6\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":26,\"url\":\"http://the.base.url/objectdetails.do?id=7\"}," +
-                "{\"value\":\"Dawn Tinsley\",\"url\":\"http://the.base.url/objectdetails.do?id=7\"}" +
+                "{\"value\":26,\"url\":\"/objectDetails.do?id=7\"}," +
+                "{\"value\":\"Dawn Tinsley\",\"url\":\"/objectDetails.do?id=7\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":41,\"url\":\"http://the.base.url/objectdetails.do?id=8\"}," +
-                "{\"value\":\"Keith Bishop\",\"url\":\"http://the.base.url/objectdetails.do?id=8\"}" +
+                "{\"value\":41,\"url\":\"/objectDetails.do?id=8\"}," +
+                "{\"value\":\"Keith Bishop\",\"url\":\"/objectDetails.do?id=8\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":28,\"url\":\"http://the.base.url/objectdetails.do?id=9\"}," +
-                "{\"value\":\"Lee\",\"url\":\"http://the.base.url/objectdetails.do?id=9\"}" +
+                "{\"value\":28,\"url\":\"/objectDetails.do?id=9\"}," +
+                "{\"value\":\"Lee\",\"url\":\"/objectDetails.do?id=9\"}" +
                 "]")
         );
 
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor(baseUrl);
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
         processor.write(iterator, out);
 
         assertEquals(expected.toString(), out.getResults().toString());

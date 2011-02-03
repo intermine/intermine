@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -429,6 +430,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -461,6 +463,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -535,6 +538,34 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             throw new RuntimeException(e);
         }
 
+        return sw.toString();
+    }
+
+    /**
+     * Returns a JSON string representation of the template query.
+     * @return A string representation of the template query.
+     */
+    public synchronized String toJSON() {
+        StringWriter sw = new StringWriter();
+        sw.append("{name:\"" + name + "\",");
+        sw.append("title:\"" + title + "\",");
+        sw.append("constraints:[");
+        Iterator<PathConstraint> iter = getEditableConstraints().iterator();
+        Map<PathConstraint, String> codeForConstraint = getConstraints();
+        while (iter.hasNext()) {
+            PathConstraint pc = iter.next();
+            sw.append("{path:\"" + pc.getPath() + "\",");
+            sw.append("op:'" + pc.getOp().toString() + "'");
+            String value = PathConstraint.getValue(pc);
+            if (value != null) {
+                sw.append(",value:\"" + value + "\"");
+            }
+            sw.append(",code:'" + codeForConstraint.get(pc) + "'}");
+            if (iter.hasNext()) {
+                sw.append(",");
+            }
+        }
+        sw.append("]}");
         return sw.toString();
     }
 

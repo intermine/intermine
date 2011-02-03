@@ -18,12 +18,9 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source> 
     <source name="ensembl-human" type="ensembl" dump="true">
-     <property name="src.data.dir" location="/shared/data/ensembl/metabolic/current"/>
+     <property name="src.data.dir" location="/shared/data/ensembl/metabolic/human/current"/>
     </source>
     <source name="ensembl-gwas-db-human" type="ensembl-gwas-db">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
-    </source>
-    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
     <source name="uniprot" type="uniprot">
@@ -31,7 +28,7 @@
       <property name="createinterpro" value="true"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split/"/>
     </source>
-    <source name="uniprot-fasta" type="fasta" dump="true">
+<!--    <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
@@ -42,7 +39,7 @@
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
-    </source>
+    </source>-->
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
@@ -87,11 +84,11 @@
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
-    <source name="omim" type="omim" dump="true">
+    <source name="omim" type="omim">
       <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
-      <property name="src.data.dir" location="/shared/data/ensembl/current"/>     
+      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/mouse/current"/>     
       <property name="src.data.dir.includes" value="10090.xml"/>
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
@@ -120,6 +117,9 @@
       <property name="treefam.organisms" value="9606 10090 10116"/>
       <!-- will only load gene if it is a homologue for human, rat or mouse -->
       <property name="treefam.homologues" value="9606 10090 10116"/>
+    </source>
+    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
+     <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>

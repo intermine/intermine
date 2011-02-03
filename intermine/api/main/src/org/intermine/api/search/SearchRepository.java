@@ -471,7 +471,15 @@ public class SearchRepository
                 throw new RuntimeException("unknown WebSearchable: " + name);
             }
 
-            hitMap.put(webSearchable, new Float(topDocs.scoreDocs[i].score));
+            Float luceneScore = new Float(topDocs.scoreDocs[i].score);
+            // different versions of Lucene return not-/normalized results, see:
+            //  http://stackoverflow.com/questions/4642160/
+            //  cap the top hits
+            if (luceneScore > 1) {
+                hitMap.put(webSearchable, new Float(1));
+            } else {
+                hitMap.put(webSearchable, luceneScore);
+            }
             //scopeMap.put(webSearchable, docScope);
 
             try {

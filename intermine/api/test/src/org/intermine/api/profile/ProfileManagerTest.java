@@ -178,10 +178,10 @@ public class ProfileManagerTest extends StoreDataTestCase
     public void tearDown() throws Exception {
         if (bobProfile != null) {
             for (String name : bobProfile.getSavedQueries().keySet()) {
-               bobProfile.deleteQuery(name);
+                bobProfile.deleteQuery(name);
             }
             for (String name : bobProfile.getSavedTemplates().keySet()) {
-                bobProfile.deleteTemplate(name);
+                bobProfile.deleteTemplate(name, null);
             }
             for (String name : bobProfile.getSavedBags().keySet()) {
                 bobProfile.deleteBag(name);
@@ -192,7 +192,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                 sallyProfile.deleteQuery(name);
             }
             for (String name : sallyProfile.getSavedTemplates().keySet()) {
-                sallyProfile.deleteTemplate(name);
+                sallyProfile.deleteTemplate(name, null);
             }
             for (String name : sallyProfile.getSavedBags().keySet()) {
                 sallyProfile.deleteBag(name);

@@ -10,8 +10,7 @@ package org.intermine.bio.web.struts;
  *
  */
 
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletInputStream;
@@ -26,10 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
@@ -60,8 +56,9 @@ public class CytoscapeNetworkExportAction extends Action
                                  HttpServletResponse response)
         throws Exception {
 
-        String type = (String) request.getParameter("type");
-        String hub = (String) request.getParameter("hub");
+        String type = (String) request.getParameter("type"); // tab or csv
+        // A comma delimited string of ids
+        String fullInteractingGeneSetStr = (String) request.getParameter("fullInteractingGeneSet");
 
         if ("sif".equals(type)) {
             response.setContentType("text/plain");
@@ -88,11 +85,11 @@ public class CytoscapeNetworkExportAction extends Action
             response.setHeader("Content-Disposition", "attachment; filename=\"network.pdf\"");
         }
         if ("tab".equals(type)) {
-            toExportNetworkAsList(type, hub, request, response);
+            toExportNetworkAsList(type, fullInteractingGeneSetStr, request, response);
             return null;
         }
         if ("csv".equals(type)) {
-            toExportNetworkAsList(type, hub, request, response);
+            toExportNetworkAsList(type, fullInteractingGeneSetStr, request, response);
             return null;
         }
 
@@ -121,37 +118,23 @@ public class CytoscapeNetworkExportAction extends Action
      * @param response http response
      * @throws Exception
      */
-    private void toExportNetworkAsList(String format, String hub,
+    private void toExportNetworkAsList(String format, String fullInteractingGeneSetStr,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         Profile profile = SessionMethods.getProfile(session);
-        PathQuery q = new PathQuery(model);
 
-        // Query all interacting genes and make a bag
-        Set<String> interactingGenes = new LinkedHashSet<String>();
-        interactingGenes.add(hub);
-
-        q.addView("Gene.interactions.interactingGenes.primaryIdentifier");
-        q.addOrderBy("Gene.interactions.interactingGenes.primaryIdentifier", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", hub, ""));
-
-        PathQueryExecutor pqExecutor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator result = pqExecutor.execute(q);
-
-        while (result.hasNext()) {
-            List<ResultElement> row = result.next();
-
-            String interactingGene = (String) row.get(0).getField();
-            interactingGenes.add(interactingGene);
+        //=== Parse string to a set of integer of ids ===
+        Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
+        String[] fullInteractingGeneSetStrArr = StringUtil.split(fullInteractingGeneSetStr, ",");
+        for (String s : fullInteractingGeneSetStrArr) {
+            fullInteractingGeneSet.add(Integer.valueOf(s));
         }
 
-        String bag = StringUtil.join(interactingGenes, ",");
-
-        // Query all interaction between the genes in the bag
-        q = new PathQuery(model);
+        //=== Create and run a query ===
+        PathQuery q = new PathQuery(model);
         q.addViews("Gene.primaryIdentifier",
                 "Gene.symbol",
                 "Gene.interactions.interactionType",
@@ -161,9 +144,10 @@ public class CytoscapeNetworkExportAction extends Action
                 "Gene.interactions.experiment.publication.title",
                 "Gene.interactions.experiment.publication.pubMedId");
 
-        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", bag, ""), "B");
-        q.addConstraint(Constraints.lookup("Gene.interactions.interactingGenes", bag, ""), "A");
+        q.addOrderBy("Gene.symbol", OrderDirection.ASC);
+        q.addConstraint(Constraints.inIds("Gene", fullInteractingGeneSet), "B");
+        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes",
+                fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 
         WebResultsExecutor wrExecutor = im.getWebResultsExecutor(profile);
@@ -173,6 +157,7 @@ public class CytoscapeNetworkExportAction extends Action
             ((WebResults) pt.getWebTable()).goFaster();
         }
 
+        //=== Export data ===
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         TableExporterFactory factory = new TableExporterFactory(webConfig);
 

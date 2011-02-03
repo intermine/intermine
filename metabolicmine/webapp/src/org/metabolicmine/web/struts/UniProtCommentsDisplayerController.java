@@ -10,7 +10,6 @@ package org.metabolicmine.web.struts;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,8 +34,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Comment;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.SNP;
-import org.intermine.objectstore.query.Constraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -83,7 +80,7 @@ public class UniProtCommentsDisplayerController extends TilesAction {
             if (object instanceof Gene) {
                 // cast me Gene
                 Gene gene = (Gene)object;
-                String geneID = gene.getPrimaryIdentifier();
+                String geneID = String.valueOf(gene.getId());
                 query = geneCommentsQuery(geneID, query);
 
                 Profile profile = SessionMethods.getProfile(session);
@@ -96,7 +93,7 @@ public class UniProtCommentsDisplayerController extends TilesAction {
             } else if (object instanceof Protein) {
                 // cast me Protein
                 Protein protein = (Protein)object;
-                String proteinID = protein.getPrimaryIdentifier();
+                String proteinID = String.valueOf(protein.getId());
                 query = proteinCommentsQuery(proteinID, query);
 
                 Profile profile = SessionMethods.getProfile(session);
@@ -212,7 +209,7 @@ public class UniProtCommentsDisplayerController extends TilesAction {
                 "Gene.primaryIdentifier"
                 );
         query.addOrderBy("Gene.proteins.comments.type", OrderDirection.ASC);
-        query.addConstraint(Constraints.eq("Gene.primaryIdentifier", geneID));
+        query.addConstraint(Constraints.eq("Gene.id", geneID));
         query.addConstraint(Constraints.oneOfValues("Gene.proteins.comments.type", Arrays.asList(allowedCommentTypes)));
 
         return query;
@@ -233,7 +230,7 @@ public class UniProtCommentsDisplayerController extends TilesAction {
                 "Protein.primaryIdentifier"
                 );
         query.addOrderBy("Protein.comments.type", OrderDirection.ASC);
-        query.addConstraint(Constraints.eq("Protein.primaryIdentifier", proteinID));
+        query.addConstraint(Constraints.eq("Protein.id", proteinID));
         query.addConstraint(Constraints.oneOfValues("Protein.comments.type", Arrays.asList(allowedCommentTypes)));
 
         return query;

@@ -46,6 +46,9 @@
       <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>
       <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
+
+    <link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico">
+
   </head>
   <body>
 
