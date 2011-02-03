@@ -21,9 +21,22 @@
       <c:forEach items="${object.fieldExprs}" var="expr">
         <c:choose>
           <c:when test="${object.fieldConfigMap[expr].showInSummary}">
-            <c:if test="${!empty object.fieldValues[expr]}">
-              ${expr}: <strong>${object.fieldValues[expr]}</strong>
-            </c:if>
+            <c:choose>
+              <c:when test="${!empty object.fieldConfigMap[expr].displayer}">
+                <c:set var="interMineObject" value="${object.object}" scope="request"/>
+                ${expr}:
+                <strong>
+                  <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
+                    <tiles:put name="expr" value="${expr}" />
+                  </tiles:insert>
+                </strong>
+              </c:when>
+              <c:otherwise>
+                <c:if test="${!empty object.fieldValues[expr]}">
+                  ${expr}: <strong>${object.fieldValues[expr]}</strong>
+                </c:if>
+              </c:otherwise>
+            </c:choose>
           </c:when>
         </c:choose>
       </c:forEach>

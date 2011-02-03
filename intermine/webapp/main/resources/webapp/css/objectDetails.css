@@ -29,6 +29,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
         font-weight:normal; position:relative; }
     #object_header h1.title span { color:#5c0075; }
     #object_header p.description { margin:0; padding-bottom:10px; }
+      #object_header p.description img { vertical-align:top; }
 
 /* tabbed menu */
 table#menu {border:0 none;font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif;text-transform:uppercase;
