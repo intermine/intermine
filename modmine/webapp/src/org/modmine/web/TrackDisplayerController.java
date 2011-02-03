@@ -44,7 +44,7 @@ public class TrackDisplayerController extends TilesAction
         ObjectStore os = im.getObjectStore();
         InterMineObject o = (InterMineObject) request.getAttribute("object");
 
-        Integer dccId = ((Submission) o).getdCCid();
+        String dccId = ((Submission) o).getdCCid();
 
         List<GBrowseTrack> subTracks = MetadataCache.getTracksByDccId(dccId);
         request.setAttribute("subTracks", subTracks);

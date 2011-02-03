@@ -1,7 +1,7 @@
 package org.intermine.bio.web.model;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,25 +21,26 @@ import java.util.Map;
  */
 public class CytoscapeNetworkNodeData
 {
+    private Integer interMineId;
     private String soureceId; // TODO change to id
     private String sourceLabel; // sometimes no values
     private String featueType; //e.g. miRNA/TF
-    private String canonicalName;
     private String position;
     private String organism;
     private Map<String, String> extraInfo;
 
     /**
-     * Contructor
+     * @return the interMineId
      */
-    public CytoscapeNetworkNodeData() {
-        soureceId = null;
-        sourceLabel = null;
-        featueType = null;
-        canonicalName = null;
-        position = null;
-        organism = null;
-        extraInfo = null;
+    public Integer getInterMineId() {
+        return interMineId;
+    }
+
+    /**
+     * @param interMineId the interMineId to set
+     */
+    public void setInterMineId(Integer interMineId) {
+        this.interMineId = interMineId;
     }
 
     /**
@@ -82,20 +83,6 @@ public class CytoscapeNetworkNodeData
      */
     public void setFeatueType(String featueType) {
         this.featueType = featueType;
-    }
-
-    /**
-     * @return the canonicalName
-     */
-    public String getCanonicalName() {
-        return canonicalName;
-    }
-
-    /**
-     * @param canonicalName the canonicalName to set
-     */
-    public void setCanonicalName(String canonicalName) {
-        this.canonicalName = canonicalName;
     }
 
     /**
@@ -148,7 +135,7 @@ public class CytoscapeNetworkNodeData
     public boolean equals(Object obj) {
         if (obj instanceof CytoscapeNetworkNodeData) {
             CytoscapeNetworkNodeData m = (CytoscapeNetworkNodeData) obj;
-            return (soureceId.equals(m.getSoureceId()));
+            return (interMineId.equals(m.getInterMineId()));
         }
         return false;
     }
@@ -158,6 +145,6 @@ public class CytoscapeNetworkNodeData
      */
     @Override
     public int hashCode() {
-        return soureceId.hashCode();
+        return interMineId.hashCode();
     }
 }

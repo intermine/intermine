@@ -30,7 +30,8 @@ div.description #bagDescriptionDiv { padding:4px !important; color:#1F7492; heig
 div.description #emptyDesc { margin:0 !important; position:relative !important; left:auto; }
 
 
-/* gray boxes */div.bochs { border:1px solid #DFDFDF; color:#333; padding:0 6px 6px 6px; width:29%; float:left; margin-right:2%; margin-bottom:10px; }
+/* gray boxes */div.bochs { border:1px solid #DFDFDF; color:#333; width:29%; float:left; margin-right:2%; margin-bottom:10px; }
+  div.bochs div.inner { padding:0 6px 6px 6px; }
   div.bochs.last { margin-right:0 !important; }
   div.bochs a { color:#1F7492; }
     div.bochs a:hover { color:#000; }
@@ -80,9 +81,10 @@ div.bochs.wide h1 span, div.bochs.wide h1 small { font-weight:normal; }
 div.bochs.wide h1 small { font-size:12px; }
 
 /* toolbox bochs box */
-#toolbox { padding:6px; background:#FFF; }
+#toolbox { background:#FFF; }
+  #toolbox div.inner { padding:6px; }
   #toolbox h5 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:14px; line-height:24px; margin-bottom:4px; }
-  #toolbox div.tool { float:left; padding-right:20px; *padding-right:6px; /* IE7 only */ }
+  #toolbox div.tool { float:left; margin-bottom: 10px; padding-right:20px; *padding-right:6px; /* IE7 only */ }
 
 /* results */
 #results { *margin-top:90px; /* IE7 only */; }

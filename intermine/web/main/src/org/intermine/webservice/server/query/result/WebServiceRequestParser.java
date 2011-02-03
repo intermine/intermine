@@ -18,28 +18,23 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Base request parser that is used by advanced web service parsers.
+ *
  * @author Jakub Kulaviak
  **/
 public class WebServiceRequestParser
 {
-    /**
-     * Name of start parameter that determines index of first returned result.
-     */
+    /** Name of start parameter that determines index of first returned result. */
     public static final String START_PARAMETER = "start";
 
-    /**
-     * Name of size parameter that determines number of returned results.
-     */
+    /** Name of size parameter that determines number of returned results. */
     public static final String LIMIT_PARAMETER = "size";
 
-    private static final int DEFAULT_START = 0;
+    private static final Integer DEFAULT_START = new Integer(0);
 
-    /**
-     * 10 000 000 default size actually means that web service will return all results
-     */
-    private static final int DEFAULT_MAX_COUNT = 10000000;
+    /** 10 000 000 default size actually means that web service will return all results */
+    private static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
 
-    private static final int MAX_COUNT_LIMIT = 10000000;
+    private static final Integer MAX_COUNT_LIMIT = new Integer(10000000);
 
     /** Value of parameter when user wants xml output to be returned. **/
     public static final String FORMAT_PARAMETER_XML = "xml";
@@ -52,36 +47,71 @@ public class WebServiceRequestParser
 
     /** Value of parameter when user wants comma separated output to be returned. **/
     public static final String FORMAT_PARAMETER_CSV = "csv";
-    
-    /** 
-     * Value of parameter when user wants json data as 
+
+    /** Value of parameter when user wants comma separated output to be returned. **/
+    public static final String FORMAT_PARAMETER_COUNT = "count";
+
+    /**
+     * Value of parameter when user wants json data
+    **/
+    public static final String FORMAT_PARAMETER_JSON = "json";
+
+    /**
+     * Value of parameter when user wants jsonp data
+    **/
+    public static final String FORMAT_PARAMETER_JSONP = "jsonp";
+
+    /**
+     * Value of parameter when user wants json data as
      * nested objects representing records
     **/
     public static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
-    
-    /** 
-     * Value of parameter when user wants json data as above, 
+
+    /**
+     * Value of parameter when user wants json data as above,
      * but in a format suitable for cross site ajax calls
      **/
     public static final String FORMAT_PARAMETER_JSONP_OBJ = "jsonpobjects";
-    
-    /** 
+
+    /**
      * Value of parameter when user wants json data suitable
      * for using to construct tables with
      **/
     public static final String FORMAT_PARAMETER_JSON_TABLE = "jsontable";
 
-    /** 
+    /**
      * Value of parameter when user wants json data as above
      * but in a format suitable for cross site ajax calls
      **/
     public static final String FORMAT_PARAMETER_JSONP_TABLE = "jsonptable";
-    
+
     /**
-     * Name of format parameter that specifies format of returned results.
-     */
+     * Value of parameter when user wants json data suitable
+     * for using to construct tables with - this returns the rows of the table
+     **/
+    public static final String FORMAT_PARAMETER_JSON_ROW = "jsonrows";
+
+    /**
+     * Value of parameter when user wants json data as above
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_ROW = "jsonprows";
+
+    /**
+     * Value of parameter when user wants json data suitable
+     * for using to construct tables with - this returns the rows of the table
+     **/
+    public static final String FORMAT_PARAMETER_JSON_COUNT = "jsoncount";
+
+    /**
+     * Value of parameter when user wants json data as above
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_COUNT = "jsonpcount";
+
+    /**Name of format parameter that specifies format of returned results. */
     public static final String OUTPUT_PARAMETER = "format";
-    
+
     /** The callback to be supplied for jsonp calls **/
     public static final String CALLBACK_PARAMETER = "callback";
 
@@ -96,25 +126,24 @@ public class WebServiceRequestParser
         input.setStart(DEFAULT_START);
 
         Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 0,
-                Integer.MAX_VALUE, input);
+                Integer.MAX_VALUE);
         if (start != null) {
             input.setStart(start);
         }
 
         Integer maxCount = parseInteger(request.getParameter(LIMIT_PARAMETER),
-                LIMIT_PARAMETER, 1, MAX_COUNT_LIMIT, input);
+                LIMIT_PARAMETER, 1, MAX_COUNT_LIMIT.intValue());
         if (maxCount != null) {
             input.setMaxCount(maxCount);
         }
     }
 
-    private Integer parseInteger(String stringValue, String name, int minValue, int maxValue,
-            WebServiceInput input) {
+    private Integer parseInteger(String stringValue, String name, int minValue, int maxValue) {
         Integer ret = null;
         if (stringValue != null && !"".equals(stringValue)) {
             try {
                 ret = new Integer(stringValue);
-                if (ret < minValue || ret > maxValue) {
+                if (ret.intValue() < minValue || ret.intValue() > maxValue) {
                     throw new BadRequestException("Invalid value of " + name + " parameter: " + ret
                             + " Parameter should have value from " + minValue + " to "
                             + maxValue + ".");

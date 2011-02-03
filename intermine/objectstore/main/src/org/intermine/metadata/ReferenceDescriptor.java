@@ -171,4 +171,20 @@ public class ReferenceDescriptor extends FieldDescriptor
             .append("/>");
         return sb.toString();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toJSONString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("{name:\"" + name + "\","
+            + "referencedType:\"" + referencedType.substring(referencedType.lastIndexOf(".") + 1)
+            + "\"");
+        if (reverseRefName != null) {
+            sb.append(",reverseReference:\"" + reverseRefName + "\"");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

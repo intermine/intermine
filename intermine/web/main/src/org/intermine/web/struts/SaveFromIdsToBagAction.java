@@ -53,12 +53,11 @@ public class SaveFromIdsToBagAction extends InterMineAction
         try {
             String type = (String) request.getParameter("type");
 
-            String[] idArray = request.getParameter("ids").toString()
-                    .split(",");
+            String[] idArray = request.getParameter("ids").split(","); // ids are comma delimited
 
             Set<Integer> idSet = new LinkedHashSet<Integer>();
             for (String id : idArray) {
-                idSet.add(Integer.parseInt(id));
+                idSet.add(Integer.valueOf(id));
             }
 
             String bagName = request.getParameter("newBagName");

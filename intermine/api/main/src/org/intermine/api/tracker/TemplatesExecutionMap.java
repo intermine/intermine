@@ -23,7 +23,7 @@ import org.intermine.api.template.TemplateQuery;
  */
 public class TemplatesExecutionMap
 {
-    private Map<String, Map<String, Integer>> templateExecutions =
+    protected Map<String, Map<String, Integer>> templateExecutions =
                                               new HashMap<String, Map<String, Integer>>();
 
     /**
@@ -31,8 +31,8 @@ public class TemplatesExecutionMap
      * @param templateTrack the template track to add
      */
     public void addExecution(TemplateTrack templateTrack) {
-        String executionKey = (templateTrack.getUserName() != null &&
-                              !"".equals(templateTrack.getUserName()))
+        String executionKey = (templateTrack.getUserName() != null
+                              && !"".equals(templateTrack.getUserName()))
                               ? templateTrack.getUserName()
                               : templateTrack.getSessionIdentifier();
         String templateName = templateTrack.getTemplateName();

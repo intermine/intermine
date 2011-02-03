@@ -1,0 +1,18 @@
+//	This file is part of the "jQuery.Syntax" project, and is licensed under the GNU AGPLv3.
+//	Copyright 2010 Samuel Williams. All rights reserved.
+//	See <jquery.syntax.js> for licensing details.
+
+@mixin pre-wrap {
+	/* CSS2.1 */
+	white-space: pre-wrap;
+	
+	/* Mozilla, since 1999 */
+	white-space: -moz-pre-wrap;
+	
+	/* Opera 7 */
+	white-space: -o-pre-wrap;
+
+	/* Internet Explorer 5.5+ */
+	word-wrap: break-word;
+	_white-space: pre;
+}

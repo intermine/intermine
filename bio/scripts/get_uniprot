@@ -152,10 +152,9 @@ if (&checkdir_exists($split_dir)==0) {
                'trembl'  => { 'filename' => "$download_dir/uniprot_trembl.xml",
                               'fname_end' => '_uniprot_trembl.xml'},
               );
-
   #open file to get taxonIDs from the config file
   my %taxons = &config_species($config_file,"uniprot");
-
+  
   # set to 1 while we are inside an <organism>...</organism>
   my $in_organism = 0;
 
@@ -176,7 +175,7 @@ if (&checkdir_exists($split_dir)==0) {
         $keep = "true";
         #is this a taxon Id line?
       } elsif ($newline && $in_organism && 
-               $newline=~/dbReference type="NCBI Taxonomy".*id="(\d+)"/) {
+               $newline=~/dbReference/ && $newline=~/type="NCBI Taxonomy"/ && $newline=~/id="(\d+)"/) {
         #get the taxon Id only if we are in an <organism>...</organism> to avoid <organismHost>
         $taxon = $1;
         #is this the end of the entry?

@@ -38,3 +38,5 @@ override to_hash => sub {
 sub _build_element_name {
     return 'join';
 }
+
+1;

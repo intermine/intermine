@@ -141,6 +141,11 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
+    <action path="/loadTemplate" type="org.intermine.web.struts.LoadTemplateAction" parameter="method">
+      <forward name="template" path="/template.do"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+    </action>
     <action path="/begin" type="org.intermine.web.struts.BeginAction">
       <forward name="begin" path="begin.page"/>
     </action>

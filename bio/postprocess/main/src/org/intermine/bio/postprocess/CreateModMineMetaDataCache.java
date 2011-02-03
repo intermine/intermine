@@ -126,7 +126,7 @@ public final class CreateModMineMetaDataCache
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            Integer dccId = (Integer) row.get(0);
+            String dccId = (String) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
@@ -277,7 +277,7 @@ public final class CreateModMineMetaDataCache
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            Integer dccId = (Integer) row.get(0);
+            String dccId = (String) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
@@ -422,7 +422,7 @@ public final class CreateModMineMetaDataCache
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            Integer dccId = (Integer) row.get(0);
+            String dccId = (String) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
 
             String key = ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE

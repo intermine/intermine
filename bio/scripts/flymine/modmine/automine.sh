@@ -16,7 +16,7 @@
 
 # see after argument parsing for all envs related to the release
 
-SUBDIR=/shared/data/modmine/subs
+SUBDIR=/micklem/data/modmine/subs
 DATADIR=$SUBDIR/chado
 
 MIRROR=$DATADIR/mirror 
@@ -193,7 +193,7 @@ else
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
 
-
+#***
 LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
@@ -374,6 +374,8 @@ do
     # unzip and rename dowloaded file
     DCCID=`echo $sub | cut -f 1 -d.`
     echo "unzipping $1 file $DCCID"
+    echo "unzipping $1 file $DCCID" | cat >> $LOGDIR/downloaded.log$WLOGDATE
+         
     gzip -S .chadoxml -d $sub
     mv $DCCID $MIRROR/$1/$sub
   	FOUND=y
@@ -618,23 +620,21 @@ function getFiles {
 #---------------------------------------
 # getting the chadoxml from ftp site 
 #---------------------------------------
-echo
-echo "Getting data from $FTPURL. Log in $LOGDIR/wget.log"
-echo
 
 # this for confirmation the program runs and to avoid to grep on a non-existent file
 touch $LOG
 
-# copy of last wget.log
-mv $LOGDIR/wget.log $LOGDIR/wget.log.bup
-
 WLOGDATE=
-
 if [ "$FULL" = "y" ]
 then
-# we want to keep a copy of the wget load in case
+# we want to keep a copy of the wget log
 WLOGDATE=`date "+%y%m%d.%H%M"`
 fi
+# otherwise a log wget.log is kept (until next wget). 
+
+echo
+echo "Getting data from $FTPURL. Log in $LOGDIR/wget.log$WLOGDATE"
+echo
 
 
 #FTPURL=http://submit.modencode.org/submit/public/

@@ -53,10 +53,8 @@ public class LoadQueryAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward xml(ActionMapping mapping,
-                             @SuppressWarnings("unused") ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
+    public ActionForward xml(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -65,8 +63,6 @@ public class LoadQueryAction extends DispatchAction
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         String exportFormat = request.getParameter("exportFormat");
-
-
         PathQuery query = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
                 PathQuery.USERPROFILE_VERSION);
         BagManager bagManager = im.getBagManager();

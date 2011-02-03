@@ -53,6 +53,7 @@ public class GWASEnrichmentURLQuery implements WidgetURLQuery
         q.addViews(prefix + ".primaryIdentifier",
                 prefix + ".symbol",
                 prefix + ".organism.name",
+                prefix + ".GWASResults.study.firstAuthor",
                 prefix + ".GWASResults.phenotype",
                 prefix + ".GWASResults.pValue",
                 prefix + ".GWASResults.associatedVariantRiskAllele",

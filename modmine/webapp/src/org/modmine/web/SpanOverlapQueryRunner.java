@@ -188,6 +188,9 @@ public final class SpanOverlapQueryRunner
         try {
             Query q;
             for (Span aSpan: spanList) {
+
+                LOG.info("Span >>>>> " + aSpan.getChr() + "  " + aSpan.getStart() + "  " + aSpan.getEnd());
+
                 q = new Query();
                 q.setDistinct(true);
 
@@ -295,7 +298,14 @@ public final class SpanOverlapQueryRunner
                         ConstraintOp.OVERLAPS, overlapFeature);
                 constraints.addConstraint(oc);
 
+
+                long queryStartTime = System.currentTimeMillis();
+
                 Results results = im.getObjectStore().execute(q);
+
+                long queryEndTime = System.currentTimeMillis();
+                long queryRunTime = queryEndTime - queryStartTime;
+                LOG.info("Query Run Time >>>>> " + queryRunTime);
 
                 //>>>>> TEST CODE <<<<<
 //                LOG.info("Query: " + q.toString());
@@ -305,6 +315,7 @@ public final class SpanOverlapQueryRunner
 
                 List<SpanQueryResultRow> spanResults = new ArrayList<SpanQueryResultRow>();
                 if (results == null || results.isEmpty()) {
+                    LOG.info("Overlapped feature size >>>>> Null");
                     spanOverlapResultDisplayMap.put(aSpan, null);
                 }
                 else {
@@ -317,12 +328,13 @@ public final class SpanOverlapQueryRunner
                         aRow.setChr((String) row.get(2));
                         aRow.setStart((Integer) row.get(3));
                         aRow.setEnd((Integer) row.get(4));
-                        aRow.setSubDCCid((Integer) row.get(5));
+                        aRow.setSubDCCid((String) row.get(5));
                         aRow.setSubTitle((String) row.get(6));
 
                         spanResults.add(aRow);
                     }
 
+                    LOG.info("Overlapped feature size >>>>> " + spanResults.size());
                     spanOverlapResultDisplayMap.put(aSpan, spanResults);
                 }
 

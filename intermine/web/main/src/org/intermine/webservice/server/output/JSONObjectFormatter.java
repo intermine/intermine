@@ -14,7 +14,7 @@ package org.intermine.webservice.server.output;
  * @author Alexis Kalderimis
  *
  */
-public class JSONObjectFormatter extends JSONFormatter
+public class JSONObjectFormatter extends JSONResultFormatter
 {
 
     /**

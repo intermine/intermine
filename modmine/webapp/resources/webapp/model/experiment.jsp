@@ -589,13 +589,13 @@ All GBrowse tracks generated for this experiment:
       <td class="sorting"><input type="checkbox" class="aSub" value="${subCounts.key.id}" onclick="updateCheckStatus(this.checked)"/></td>
       <td class="sorting">
       <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
-      <c:out value="modENCODE_${sub.dCCid}"></c:out></html:link>
+      <c:out value="${sub.dCCid}"></c:out></html:link>
       <p>
         <c:forEach items="${sub.relatedSubmissions}" var="relSubs" varStatus="rstatus">
         <br>
         <c:if test="${rstatus.first}">Related to: </c:if>
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${relSubs.id}">
-<c:out value="modENCODE_${relSubs.dCCid}"></c:out></html:link>
+<c:out value="${relSubs.dCCid}"></c:out></html:link>
         <c:if test="${rstatus.last}"></c:if>
         </c:forEach>
 

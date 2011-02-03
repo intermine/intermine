@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = 0.9401;
+    our $VERSION = 0.9500;
 
 =head1 NAME
 
@@ -69,9 +69,11 @@ under the same terms as Perl itself.
           Query QueryType QueryName QueryHandler IllegalQueryName
           SavedQuery SavedQueryFactory
           ListFactory
-          TextCSVXS
+          TextCSVXS TextCSV
           ClassDescriptor ClassDescriptorList MaybeClassDescriptor
           Field FieldList MaybeField FieldHash
+          LogHandler
+          DirName PathClassDir
           )
     ];
 
@@ -109,7 +111,7 @@ under the same terms as Perl itself.
     subtype ConstraintList, as ArrayRef [Constraint];
     class_type ConstraintFactory,
       { class => 'Webservice::InterMine::ConstraintFactory', };
-    subtype File, as Str, where { -f $_ };
+    subtype File, as Str, where { -f $_ }, message {"'$_' should be a file"};
     class_type Uri, { class => 'URI' };
     subtype HTTPCode, as Str, where { /^\d{3}$/ };
     class_type NetHTTP, { class => 'Net::HTTP', };
@@ -137,6 +139,7 @@ under the same terms as Perl itself.
     class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
     class_type Template,    { class => 'Webservice::InterMine::Query::Template', };
     class_type TextCSVXS,   { class => 'Text::CSV_XS', };
+    class_type TextCSV,   { class => 'Text::CSV', };
     class_type ClassDescriptor,
       { class => 'InterMine::Model::ClassDescriptor', };
     subtype MaybeClassDescriptor, as Maybe    [ClassDescriptor];
@@ -145,6 +148,10 @@ under the same terms as Perl itself.
     subtype MaybeField, as Maybe[Field];
     subtype FieldList,  as ArrayRef[Field];
     subtype FieldHash,  as HashRef[Field];
+
+    subtype DirName, as Str, where {-d $_}, 
+        message {"'$_' should be the name of an existing directory"};
+    class_type PathClassDir, { class => 'Path::Class::Dir'};
 
     # Type coercions
     coerce QueryName, from IllegalQueryName, 
@@ -170,7 +177,7 @@ under the same terms as Perl itself.
     coerce PathString, from JoinedPathString,
       via { ( split /[\s]+/ )[0] };
     coerce Uri, from Str, via {
-        my $prefix = (m!^http://!) ? '' : 'http://';
+        my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
         URI->new( $prefix . $_ );
     };
     coerce Model, from Str, via {
@@ -193,6 +200,7 @@ under the same terms as Perl itself.
         require Webservice::InterMine::SavedQueryFactory;
         Webservice::InterMine::SavedQueryFactory->new( string => $_ );
     };
+    coerce DirName, from PathClassDir, via {$_->stringify};
 }
 __PACKAGE__->meta->make_immutable;
 

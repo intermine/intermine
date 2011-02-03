@@ -87,9 +87,9 @@
 </style>
 
 <div align="center" style="padding-top: 20px;">
-    <h3 class="interactions">Drosophila Physical Regulartory Network</h3>
+    <h3 class="interactions">Hierarchical View Of Drosophila Physical Regulatory Network</h3>
     <br/>
-    <div id="cytoscapeweb" style="text-align: center;">Please wait while the network data loads</div>
+    <div id="cytoscapeweb" style="text-align: center; width: 100%;">Please wait while the network data loads</div>
     <div id="menu">
     <!-- jQuery will add stuff here -->
     </div>
@@ -106,7 +106,7 @@
     <div class="description"></div>
 </div>
 
-<div class="sidecontent" title="Help">
+<div class="sidecontent" title="About the network...">
     <br/>
     <p class="title">How to interact with the network?</p>
     <br/>

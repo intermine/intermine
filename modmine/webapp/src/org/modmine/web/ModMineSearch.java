@@ -204,7 +204,7 @@ public class ModMineSearch
             for (Submission sub : exp.getSubmissions()) {
 
                 Integer subId = sub.getId();
-                Integer dccId = sub.getdCCid();
+                String dccId = sub.getdCCid();
 
                 Document doc = new Document();
                 doc.add(new Field("name", subId.toString(), Field.Store.YES, Field.Index.ANALYZED));

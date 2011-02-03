@@ -205,12 +205,13 @@
      <div class="text">
        <span style="width:71px; height:20px; float:left;">&nbsp;</span>
        <p>
-         <img src="model/images/genome_region.png" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
-         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project. Find modENCODE data in
-         given regions of the genome.
+         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
+         <img src="themes/modmine/genome_region.jpg" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
+         </a>
+         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project.
        </p>
        <br />
-       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a>
+       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a>
      </div>
    </div>
    </div>
@@ -228,13 +229,22 @@
            <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                <select name="type">
                  <c:forEach var="bag" items="${preferredBags}">
-                   <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                    <c:choose>
+                      <c:when test="${bag == 'Gene'}">
+                        <option value="Gene" selected="selected">Gene</option>
+                      </c:when>
+                      <c:otherwise>
+                        <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                      </c:otherwise>
+                    </c:choose>
                  </c:forEach>
                </select>
-               <textarea id="listInput" name="text"></textarea>
+               <textarea id="listInput" name="text"><c:out
+               value="${WEB_PROPERTIES['bag.example.identifiers']}"
+                    default="zen, eve, CG4807, FBgn0000099" /></textarea>
                <br /><br />
                 <center>
-                  <a href="${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
+                  <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
                   <br />
                   <input type="submit" value="upload"/>
                 </center>
@@ -265,7 +275,7 @@
      <div class="text">
        <span style="height: 25px; float: left; width:100px;">&nbsp;</span>
        <p>
-         <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
+         <img src="themes/modmine/widget-charts.jpg" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
          <strong>Explore</strong> and <strong>Analyze</strong>. Upload lists of identifiers to use in queries and discover relationshops in our analysis widgets.
          See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.
        </p>
@@ -280,38 +290,44 @@
    <div class="span-14">
    <div id="bochs">
      <h3>Fly Gene Expression</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="themes/modmine/fly_heatmap.jpg" alt="Fly expression heatmap"/></div></a></center>
      <div class="text">
        <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
+       <p></p>
+     <p>To upload your own list of genes, use the form above or go to the 'Lists' tab and click on
+     <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">'Upload'</a> to create and name
+the new list. You can also use any of modMine's queries to create a list.
+     </p>
      </div>
+
    </div>
    </div>
 
    <div class="span-14">
    <div id="bochs">
      <h3>Fly Chromatin states</h3>
-     <div class="text">
-       <center>
-       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="heatmap"/>FlyScore</a>
-       </center>
-       <p>Some text goes here Sergio ...</p>
+     <div class="text" >
+       <left>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.jpg" alt="flyscore"/><span>GBrowse Ideograms</span></a>
+       </left>
        <br />
-       <center>
-       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.png" alt="heatmap"/>ParkLab</a>
-       </center>
-       <p>Some text goes here Sergio ...</p>
+<p></p>
+       <left>
+       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.jpg" alt="parklabviewer"/><span>Park Lab Viewer</span></a>
+       </left>
+       <p>Includes folded view and also data about DHS, TSS, replication, etc.</p>
      </div>
    </div>
    </div>
 
    <div class="span-14 last">
    <div id="bochs">
-     <h3>Genomic Region Search</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Genome Region Search"/></div></a>
+     <h3>Fly Regulatory Network</h3>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="themes/modmine/fly-network-detail.jpg" alt="Fly Regulatory Network"/></div></a></center>
      <div class="text">
-       <p>Find modENCODE data in given regions of the genome.
+       <p><strong>Explore</strong> an hierarchical view of the physical regulatory network.
        </p>
-       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a></div>
+       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly Regulatory Network</a></div>
      </div>
    </div>
    </div>

@@ -101,7 +101,6 @@
      }
 
     </style>
-
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -172,13 +171,21 @@
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
         </c:if>
         <span class="collectionDescription ${isNull ? 'nullReferenceField' : ''}">
+        <c:choose>
+        <c:when test="${node.pathString == path}">
+            <c:set var="type" value="typeSelected"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="type" value="type"/>
+        </c:otherwise>
+        </c:choose>
           <c:if test="${node.type != 'String'}">
             <c:choose>
               <c:when test="${node.reverseReference && node.reference}">
                 <span class="reverseReference"><c:out value="${node.type}"/></span>
               </c:when>
               <c:when test="${node.origType != null}">
-                <span class="type"><c:out value="${node.origType}"/></span>
+                <span class="${type}"><c:out value="${node.origType}"/></span>
                 <fmt:message key="query.usingSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.origType}"/>
                   <fmt:param value="${node.type}"/>
@@ -187,14 +194,14 @@
                 <span class="subclass"><c:out value="${node.type}"/></span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
               </c:when>
               <c:when test="${node.hasSubclasses}">
-                <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
                 <fmt:message key="query.hasSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/hasSubclasses.png" title="${tooltipSubclasses}"/>
               </c:when>
               <c:otherwise>
-                <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
               </c:otherwise>
             </c:choose>
           </c:if>

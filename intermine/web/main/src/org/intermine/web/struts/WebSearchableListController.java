@@ -39,7 +39,7 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
@@ -187,16 +187,16 @@ public class WebSearchableListController extends TilesAction
     }
 
     private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
-    filteredWebSearchables, HttpSession session) {
+        filteredWebSearchables, HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        TrackerDelegate td = im.getTrackerDelegate();
-        td.setTemplateManager(im.getTemplateManager());
+        TemplateManager tm = im.getTemplateManager();
         Profile profile = SessionMethods.getProfile(session);
         List<String> mostPopulareTemplateNames;
-        if (SessionMethods.getProfile(session).isLoggedIn()) {
-            mostPopulareTemplateNames = td.getMostPopularTemplateOrder(profile, session.getId());
+        if (profile.isLoggedIn()) {
+            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder(profile.getUsername(),
+                                                                       session.getId(), null);
         } else {
-            mostPopulareTemplateNames = td.getMostPopularTemplateOrder();
+            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder(null);
         }
         if (mostPopulareTemplateNames == null) {
             return sortList(filteredWebSearchables);

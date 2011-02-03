@@ -16,3 +16,11 @@ Revision history for Webservice-InterMine
 0.9408  Mon Oct 11 13:08:42 BST 2010
         * Perl::Tidy and YAML::Syck now recommendations.
         * Changed WriteOutYaml role to dump to string rather than file
+0.9412  Thu Nov 25 18:58:14 GMT 2010
+        * Fixed errors in documentation
+        * Fixed bug with template queries and extra values
+0.9500  Wed Feb  2 17:01:19 GMT 2011
+        * Added support for authenticated requests
+        * Fixed bug in ResultIterator due to loose quotes. Thanks Kim.
+        * Added support for new JSON formats, including inflation
+        * Added bug in Join.pm which was preventing builds.

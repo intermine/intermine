@@ -79,8 +79,8 @@ public class EnrichmentWidget extends Widget
 
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
                 .newInstance(new Object[] {bag, os, filter});
-
-            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
+            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max),
+                    errorCorrection);
             int analysedTotal = 0;
             if (!resultMaps.isEmpty()) {
                 analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();

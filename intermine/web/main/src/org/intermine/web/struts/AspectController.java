@@ -49,10 +49,10 @@ public class AspectController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
@@ -72,7 +72,7 @@ public class AspectController extends TilesAction
         String tagName = TagNames.IM_ASPECT_PREFIX + request.getParameter("name");
         List<Tag> tags = tagManager.getTags(tagName, null, "class",
                                             im.getProfileManager().getSuperuser());
-        List<String> startingPoints = new ArrayList();
+        List<String> startingPoints = new ArrayList<String>();
         for (Tag tag : tags) {
             startingPoints.add(tag.getObjectIdentifier());
         }

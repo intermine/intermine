@@ -141,4 +141,11 @@ public abstract class FieldDescriptor
     public boolean isCollection() {
         return (relationType() == ONE_N_RELATION) || (relationType() == M_N_RELATION);
     }
+
+    /**
+     * Return the JSON representation of this object.
+     *
+     * @return a string containing JSON 
+     */
+    public abstract String toJSONString();
 }

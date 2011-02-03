@@ -1,54 +1,34 @@
-package org.intermine.webservice.server.output;
-
-/*
- * Copyright (C) 2002-2011 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
+/**
  *
  */
+package org.intermine.webservice.server.output;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author Alexis Kalderimis
+ * @author alex
  *
  */
-public abstract class JSONFormatter extends Formatter
-{
-    /**
-     * The key for the views
-     */
-    public static final String KEY_VIEWS = "views";
-    /**
-     * The key for the root class
-     */
-    public static final String KEY_ROOT_CLASS = "rootClass";
-    /**
-     * The key for the model name
-     */
-    public static final String KEY_MODEL_NAME = "modelName";
-    /**
-     * The key for the execution time
-     */
-    public static final String KEY_TIME = "executionTime";
+public class JSONFormatter extends Formatter {
+
+    private boolean hasCallback = false;
+
     /**
      * The key for the callback
      */
     public static final String KEY_CALLBACK = "callback";
 
-    private boolean hasCallback = false;
+    /**
+     * Constructor
+     */
+    public JSONFormatter() {
+        //empty constructor
+    }
 
     /**
-     * Starts the result set object, and sets the attributes given into it
+     * Add the opening brace, and a call-back if any
      * @see org.intermine.webservice.server.output.Formatter#formatHeader(java.util.Map)
      * @return the header
      * @param attributes the attributes passed in from the containing output
@@ -61,21 +41,6 @@ public abstract class JSONFormatter extends Formatter
             sb.append(attributes.get(KEY_CALLBACK)).append("(");
         }
         sb.append("{");
-        for (String key : attributes.keySet()) {
-            if (KEY_CALLBACK.equals(key)) { continue; }
-            sb.append("'" + key + "':");
-            String attr = attributes.get(key);
-            boolean shouldQuoteAttr = !attr.startsWith("{") && !attr.startsWith("[");
-            if (shouldQuoteAttr) {
-                sb.append("'");
-            }
-            sb.append(attr);
-            if (shouldQuoteAttr) {
-                sb.append("'");
-            }
-            sb.append(",");
-        }
-        sb.append("'results':[");
         return sb.toString();
     }
 
@@ -101,23 +66,18 @@ public abstract class JSONFormatter extends Formatter
     }
 
     /**
-     * Closes the remaining open brackets (the root class array, and the
-     * overall result set object), and adds an execution time property.
+     * Put on the final brace, and close the call-back bracket if needed
      * @see org.intermine.webservice.server.output.Formatter#formatFooter()
      * @return The formatted footer string.
      */
     @Override
     public String formatFooter() {
         StringBuilder sb = new StringBuilder();
-        sb.append("],");
-        Date now = Calendar.getInstance().getTime();
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
-        String executionTime = dateFormatter.format(now);
-        sb.append("'" + JSONFormatter.KEY_TIME + "':'" + executionTime + "'");
         sb.append("}");
         if (hasCallback) {
             sb.append(");");
         }
         return sb.toString();
     }
+
 }

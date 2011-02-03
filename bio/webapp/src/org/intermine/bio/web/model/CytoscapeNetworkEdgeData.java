@@ -1,7 +1,7 @@
 package org.intermine.bio.web.model;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,68 +30,20 @@ public class CytoscapeNetworkEdgeData
     private String direction; // both or one
     /** key - datasource name, value - interaction short name **/
     private Map<String, Set<String>> dataSources;
-    private String canonicalName;
     private Map<String, String> extraInfo; // such as color, etc.
-
-    /**
-     * Constructor
-     */
-    public CytoscapeNetworkEdgeData() {
-        soureceId = null;
-        sourceLabel = null;
-        targetId = null;
-        targetLabel = null;
-        interactionType = null;
-        direction = null;
-        dataSources = null;
-        canonicalName = null;
-        extraInfo = null;
-    }
 
     /**
      * @return interactionString a record in format of "source<tab>interactionType<tab>target"
      */
     public String generateInteractionString() {
-        String interactionString = new String();
-
-        // Symbol of gene or others will be missing sometime from the database (null or no value)
-        if (sourceLabel == null && targetLabel != null) {
-            interactionString =  soureceId + "\\t" + interactionType + "\\t" + targetLabel;
-        }
-        if (sourceLabel != null && targetLabel == null) {
-            interactionString =  sourceLabel + "\\t" + interactionType + "\\t" + targetId;
-        }
-        if (sourceLabel == null && targetLabel == null) {
-            interactionString =  soureceId + "\\t" + interactionType + "\\t" + targetId;
-        }
-        if (sourceLabel != null && targetLabel != null) {
-            interactionString =  sourceLabel + "\\t" + interactionType + "\\t" + targetLabel;
-        }
-
-        return interactionString;
+        return soureceId + "\\t" + interactionType + "\\t" + targetId;
     }
 
     /**
      * @return interactionString a record in format of "target<tab>interactionType<tab>source"
      */
     public String generateReverseInteractionString() {
-        String interactionString = new String();
-
-        // Symbol of gene or others will be missing sometime from the database (null or no value)
-        if (sourceLabel == null && targetLabel != null) {
-            interactionString =  targetLabel + "\\t" + interactionType + "\\t" + soureceId;
-        }
-        if (sourceLabel != null && targetLabel == null) {
-            interactionString =  targetId + "\\t" + interactionType + "\\t" + sourceLabel;
-        }
-        if (sourceLabel == null && targetLabel == null) {
-            interactionString =  targetId + "\\t" + interactionType + "\\t" + soureceId;
-        }
-        if (sourceLabel != null && targetLabel != null) {
-            interactionString =  targetLabel + "\\t" + interactionType + "\\t" + sourceLabel;
-        }
-
-        return interactionString;
+        return targetId + "\\t" + interactionType + "\\t" + soureceId;
     }
 
     /**
@@ -190,20 +142,6 @@ public class CytoscapeNetworkEdgeData
      */
     public void setDataSources(Map<String, Set<String>> dataSources) {
         this.dataSources = dataSources;
-    }
-
-    /**
-     * @return the canonicalName
-     */
-    public String getCanonicalName() {
-        return canonicalName;
-    }
-
-    /**
-     * @param canonicalName the canonicalName to set
-     */
-    public void setCanonicalName(String canonicalName) {
-        this.canonicalName = canonicalName;
     }
 
     /**

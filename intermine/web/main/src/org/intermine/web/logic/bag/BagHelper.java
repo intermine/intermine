@@ -16,7 +16,6 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
@@ -45,6 +44,7 @@ import org.intermine.util.StringUtil;
 public final class BagHelper
 {
     private BagHelper() {
+        // don't instantiate
     }
 
     /** When generating new bag names, this is used as a prefix. */
@@ -52,14 +52,17 @@ public final class BagHelper
 
 
     /**
-     * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must
-     * select only the id field from the type the bag is to be created from.  The name will be
-     * made unique with "_n" if it already exists in the profile.
+     * Create a bag for the given profile and bag name from a PathQuery.
+     *
+     * The PathQuery must select only the id field from the type the bag is to be created from or
+     * else provide a path.
+     *
+     * The name will be made unique with "_n" if it already exists in the profile.
      *
      * @param pathQuery the query to create the bag from
      * @param bagName name of new bag
      * @param bagDescription a description for the new bag
-     * @param bagType the class of object in the bag
+     * @param pathString path used to create list
      * @param profile bag will be created in this profile
      * @param im InterMineAPI that will give us BagManager
      *
@@ -67,28 +70,29 @@ public final class BagHelper
      * @throws ObjectStoreException if persistence problem
      */
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
-            String bagDescription, String bagType, Profile profile, InterMineAPI im) throws ObjectStoreException {
-        if (pathQuery.getView().size() != 1) {
-            throw new RuntimeException("Can only create bags from a PathQuery that selects just "
-                    + "id");
-        }
+            String bagDescription, String pathString, Profile profile, InterMineAPI im)
+        throws ObjectStoreException {
+        String bagType = pathString;
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
-            if (!"id".equals(idPath.getLastElement())) {
-                throw new RuntimeException("Can only create bags from a PathQuery that selects"
-                        + " just id");
+            if (!"id".equals(idPath.getLastElement()) || pathString.contains(".")) {
+                pathQuery.clearView();
+                pathQuery.clearDescriptions();
+                pathQuery.addView(pathString + ".id");
+                Path path = new Path(im.getModel(), pathString);
+                bagType = path.getLastClassDescriptor().getUnqualifiedName();
             }
         } catch (PathException e) {
-            throw new RuntimeException("Bag creation query has invalid path in view: "
-                    + pathQuery.getView(), e);
+            throw new RuntimeException("Query has invalid path: " + pathQuery.getView(), e);
         }
 
-        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl)im.getObjectStore();
+        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
         ObjectStoreWriterInterMineImpl osw = os.getNewWriter();
 
         BagManager bagManager = im.getBagManager();
 
-        Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null, im.getBagQueryRunner(), null);
+        Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null,
+                im.getBagQueryRunner(), null);
 
         InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), true, os,
                 profile.getUserId(), profile.getProfileManager().getProfileObjectStoreWriter());
