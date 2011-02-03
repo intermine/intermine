@@ -131,6 +131,13 @@
               <tiles:put name="fieldName" value="${fieldName}" />
             </tiles:insert>
           </c:if></div>
+
+          <p class="in_table" style="display:none;">
+            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+              Show all in a table
+            </html:link>
+          </p>
+
           </div>
           </div>
           <div class="clear"></div>
@@ -140,6 +147,13 @@
           <%-- ############# --%>
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner"></div>
+
+          <p class="in_table" style="display:none;">
+            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+              Show all in a table
+            </html:link>
+          </p>
+
           </div>
           </div>
           <div class="clear"></div>

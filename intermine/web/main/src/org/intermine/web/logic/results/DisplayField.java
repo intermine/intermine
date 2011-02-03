@@ -67,6 +67,7 @@ public class DisplayField
         if (table == null && collection.size() > 0) {
             // default
             int maxInlineTableSize = 30;
+
             String maxInlineTableSizeString =
                 (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
 
