@@ -19,14 +19,13 @@
 <%-- editorId is id specific for each InlineTagEditor - used for creating unique javascript ids --%>
 <span id="tags-${editorId}" style="${!show?'display:none':''}">
   <span id="currentTags-${editorId}">
-    <tiles:insert page="/currentTags.jsp">
-    </tiles:insert>
+    <tiles:insert page="/currentTags.jsp"></tiles:insert>
   </span>
   <span id="addLink-${editorId}">
     <a class="addTagLink" onclick="javascript:startEditingTag('${editorId}')" >Add tags</a>
   </span>
   <span>
-    <a  class="addTagLink" onclick="javascript:switchTagInput('${editorId}')" style="display:none;" id="switchLink-${editorId}">New tag</a>
+    <a class="addTagLink" onclick="javascript:switchTagInput('${editorId}')" style="display:none;" id="switchLink-${editorId}">New tag</a>
   </span>
   <span id="tagsEdit-${editorId}" style="display:none; white-space:nowrap">
     <c:if test="${vertical}">

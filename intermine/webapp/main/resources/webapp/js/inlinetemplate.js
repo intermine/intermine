@@ -47,14 +47,16 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
 
   // is the target table empty?
   if (jQuery(e).is(":empty")) {
+    // append a loading message and thus set the element as not empty
+    jQuery(e).append("<p class='loading'>&nbsp;</p>");
     // need to fetch
     jQuery.ajax({
         url: modifyDetailsURL,
         dataType: 'html',
         data: 'method=ajaxVerbosify&placement=' + placement + '&field=' + field + '&id=' + object_id + '&trail=' + trail,
         success: function(result) {
-          // place result in div
-          jQuery(e).append(result);
+          // place result in div with a fade
+          jQuery(e).append(result).find('table.refSummary').toggle().fadeIn();
           // remove any fail messages
           if (jQuery(e).parent().find('p.fail').length !== 0) {
             jQuery(e).parent().find('p.fail').remove();
@@ -66,6 +68,10 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
             jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
             toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
           }
+        },
+        complete: function(jXHR, textStatus) {
+          // get rid of the loading message
+          jQuery(e).parent().find('p.loading').remove();
         }
     });
   }

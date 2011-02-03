@@ -26,12 +26,23 @@
       <c:when test="${verbose && collection.size > 0}">
         <%-- ############# --%>
         <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3><html:link
+        <h3>
+          <c:if test="${IS_SUPERUSER}">
+            <span class="tag-editor">
+              <c:set var="descriptor" value="${collection.descriptor}" />
+              <tiles:insert name="inlineTagEditor.tile">
+                <tiles:put name="taggable" beanName="descriptor" />
+                <tiles:put name="show" value="true" />
+              </tiles:insert>
+            </span>
+          </c:if>
+        <html:link
+          styleClass="getTable"
           linkName="${placement}_${fieldName}"
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
           <span class="collectionField">
-            ${collection.size} ${collection.descriptor.referencedClassDescriptor.unqualifiedName}<c:if test="${collection.size != 1}">s</c:if>
+            ${collection.size} ${fieldName} of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}
           </span>
           <c:forEach items="${object.clds}" var="cld">
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
@@ -42,12 +53,23 @@
       <c:when test="${collection.size > 0}">
         <%-- ############# --%>
         <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3><html:link
+        <h3>
+          <c:if test="${IS_SUPERUSER}">
+            <span class="tag-editor">
+              <c:set var="descriptor" value="${collection.descriptor}" />
+              <tiles:insert name="inlineTagEditor.tile">
+                <tiles:put name="taggable" beanName="descriptor" />
+                <tiles:put name="show" value="true" />
+              </tiles:insert>
+            </span>
+          </c:if>
+        <html:link
+          styleClass="getTable"
           linkName="${placement}_${fieldName}"
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
           <span class="collectionField">
-            ${collection.size} ${collection.descriptor.referencedClassDescriptor.unqualifiedName}<c:if test="${collection.size != 1}">s</c:if>
+            ${collection.size} ${fieldName} of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}
           </span>
           <c:forEach items="${object.clds}" var="cld">
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
@@ -95,16 +117,6 @@
             </span>
           </c:if> &nbsp; <c:choose>
           --%>
-      <c:when test="${IS_SUPERUSER}">
-        <c:set var="descriptor" value="${collection.descriptor}" />
-        <tiles:insert name="inlineTagEditor.tile">
-          <tiles:put name="taggable" beanName="descriptor" />
-          <tiles:put name="show" value="true" />
-        </tiles:insert>
-      </c:when>
-      <c:otherwise>
-              &nbsp;
-            </c:otherwise>
     </c:choose>
     <c:if test="${collection.size > 0}">
       <c:choose>
@@ -157,8 +169,8 @@ function loadInView() {
       var id = jQuery(this).attr("id")
       // can we see the element?
       if (isElementInView("#" + id)) {
-        // find our link
-        var a = jQuery(this).find('a');
+        // find our SPECIFIC link
+        var a = jQuery(this).find('a.getTable');
         if (a.length !== 0) {
           // trigger the associated onlick handler
           a.triggerHandler("click");
