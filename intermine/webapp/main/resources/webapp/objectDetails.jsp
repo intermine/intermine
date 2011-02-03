@@ -17,6 +17,7 @@
 <div id="object_header">
     <h1 class="title">${htmlPageTitle}<!-- <span>FBgn0004053 - zerknullt</span> --></h1>
     <p class="description">
+      <%-- show in summary fields --%>
       <c:forEach items="${object.fieldExprs}" var="expr">
         <c:choose>
           <c:when test="${object.fieldConfigMap[expr].showInSummary}">
@@ -25,6 +26,29 @@
             </c:if>
           </c:when>
         </c:choose>
+      </c:forEach>
+
+      <%-- all other fields --%>
+      <c:forEach items="${object.attributes}" var="entry">
+        <c:if test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
+          ${entry.key}
+          <c:forEach items="${object.clds}" var="cld">
+            <strong><im:typehelp type="${cld.unqualifiedName}.${entry.key}"/></strong>
+          </c:forEach>
+          <c:choose>
+            <c:when test="${object.longAttributes[entry.key] != null}">
+              ${object.longAttributes[entry.key]}
+              <c:if test="${object.longAttributesTruncated[entry.key] != null}">
+                <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                  <fmt:message key="objectDetails.viewall"/>
+                </html:link>
+              </c:if>
+            </c:when>
+            <c:otherwise>
+              <strong><im:value>${entry.value}</im:value></strong>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
       </c:forEach>
     </p>
 </div>
@@ -104,19 +128,32 @@
       </script>
     <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-    <div class="box grid_9">
-      <tiles:insert page="/objectDetailsRefsCols.jsp">
-        <tiles:put name="object" beanName="object"/>
-        <tiles:put name="placement" value="im:aspect:Miscellaneous"/>
-      </tiles:insert>
-    </div>
-
-    <div class="box grid_3" style="margin-top:30px;">
+    <div class="box grid_3" style="margin-top:30px;float:right;">
         <tiles:insert page="/objectDetailsDisplayers.jsp">
           <tiles:put name="placement" value=""/>
           <tiles:put name="displayObject" beanName="object"/>
           <tiles:put name="heading" value="true"/>
         </tiles:insert>
+    </div>
+
+    <div class="box grid_9">
+      <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+        <tiles:insert name="objectDetailsAspect.tile">
+          <tiles:put name="placement" value="im:aspect:${aspect}"/>
+          <tiles:put name="displayObject" beanName="object"/>
+          <tiles:put name="trail" value="${request.trail}"/>
+          <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+          <tiles:put name="opened" value="${status.index == 0}" />
+        </tiles:insert>
+      </c:forEach>
+    </div>
+
+    <div class="box grid_9">
+      <h2>Miscellaneous</h2>
+      <tiles:insert page="/objectDetailsRefsCols.jsp">
+        <tiles:put name="object" beanName="object"/>
+        <tiles:put name="placement" value="im:aspect:Miscellaneous"/>
+      </tiles:insert>
     </div>
 
 </div>

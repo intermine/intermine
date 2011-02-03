@@ -26,7 +26,7 @@
 
 <c:choose>
   <c:when test="${!empty onChangeFunction}">
-    <select id="${selectId}" onchange="javacript:callOnChangeFunction('${selectId}', '${onChangeFunction}')">
+    <select id="${selectId}" onchange="javascript:callOnChangeFunction('${selectId}', '${onChangeFunction}')">
   </c:when>
   <c:otherwise>
     <select id="${selectId}">

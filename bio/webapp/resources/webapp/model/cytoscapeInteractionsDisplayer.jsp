@@ -78,7 +78,8 @@
         }
         </script>
 
-        <h3 class="interactions">Interaction Network</h3>
+    <div class="inner">
+        <h4>Interaction Network</h4>
         <div id="caption" style="font-size:12px; font-style:italic">
         <!-- jQuery will add stuff here -->
         </div>
@@ -94,5 +95,6 @@
             <a href="http://tdccbr.med.utoronto.ca" rel="external" target="_blank">Donnelly CCBR</a>
             , &copy; 2009-2010 Cytoscape Consortium
         </p>
+    </div>
 
     <!-- /cytoscapeInteractionsDisplayer.jsp -->
