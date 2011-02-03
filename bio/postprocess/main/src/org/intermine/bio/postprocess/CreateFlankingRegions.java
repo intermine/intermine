@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.ClassDescriptor;
@@ -141,7 +140,7 @@ public class CreateFlankingRegions
                 // This shouldn't happen
                 return;
             }
-            if (!("FlyBase".equals(source) || source.equals("WormBase"))) {
+            if (!("FlyBase".equals(source) || "WormBase".equals(source))) {
                 return;
             }
 
@@ -173,7 +172,7 @@ public class CreateFlankingRegions
                     region.setDirection(direction);
                     try {
                         PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
-                                "inlcudeGene", "Not setting");
+                                "includeGene", "Not setting");
                         region.setFieldValue("includeGene", includeGene);
                     } catch (MetaDataException e) {
                         // GeneFlankingRegion.includeGene not in model so do nothing
