@@ -113,6 +113,34 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
   return false;
 }
 
+
+/**
+ * The purpose of this function is to display max 10 rows in a "verbose" table (= cached...)
+ * @param e
+ * @return
+ */
+function trimTable(e) {
+  // find our table
+  var table = jQuery(e).find('table.refSummary');
+
+  // do we have more than 10 rows? XXX: hardcoded value
+  var rows = table.find('tbody tr')
+  if (rows.length > 10) {
+      var count = 10;
+      rows.each(function(index) {
+        if (count > 0) {
+          count--;
+        } else {
+          // hide rows 10+
+          jQuery(this).css('display', 'none');
+        }
+      });
+      // add a toggler for more rows
+      table.parent().append('<p class="toggle"><a href="#" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+  }
+
+}
+
 /**
  * Toggle upto 10 rows in a table above that are currently hidden
  * @param e
