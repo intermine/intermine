@@ -130,6 +130,9 @@
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
             </tiles:insert>
+
+            <script type="text/javascript">trimTable('#coll_${fn:replace(placement, ":", "_")}${fieldName}_inner');</script>
+
           </c:if></div>
 
           <p class="in_table" style="display:none;">
