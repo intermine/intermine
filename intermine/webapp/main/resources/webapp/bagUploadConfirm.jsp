@@ -81,7 +81,7 @@
     </c:when>
     <c:otherwise>
     <input type="hidden" name="upgradeBagName" value="${bagName}"/>
-    <input type="button" name="saveNewBag" value="Upgrade list" onclick="submit();"/>
+    <input type="button" name="saveNewBag" value="Upgrade a list of ${matchCount} ${bagUploadConfirmForm.bagType}(s)" onclick="submit();"/>
     </c:otherwise>
     </c:choose>
       <script type="text/javascript">
