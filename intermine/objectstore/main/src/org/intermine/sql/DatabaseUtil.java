@@ -500,8 +500,7 @@ public final class DatabaseUtil
 
         while (res.next()) {
             if (res.getString(3).equals(tableName)
-                && res.getString(4).equals(columnName)
-                && res.getInt(5) == Types.BOOLEAN) {
+                && res.getString(4).equals(columnName)) {
                 return true;
             }
         }
