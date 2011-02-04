@@ -66,20 +66,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // submission maps
     // ---------------
-
     private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
     // maps from chado identifier to lab/project details
     private Map<Integer, SubmissionDetails> submissionMap =
         new HashMap<Integer, SubmissionDetails>();
     // chado submission id to list of top level attributes, e.g. dev stage, organism_part
-    private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
-
     private Map<Integer, ExperimentalFactor> submissionEFMap =
         new HashMap<Integer, ExperimentalFactor>();
+    // subId to dcc id
+    private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
 
     // applied_protocol/data/attribute maps
     // -------------------
-
     // chado submission id to chado data_id
     private Map<Integer, List<Integer>> submissionDataMap = new HashMap<Integer, List<Integer>>();
     // chado data id to chado submission id
@@ -2857,6 +2855,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 + (System.currentTimeMillis() - bT) + " ms");
     }
 
+
+    
+    /**
+     * =====================
+     *    DATABASE RECORDS
+     * =====================
+     */
     private void createDatabaseRecords(Connection connection)
         throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
@@ -2886,30 +2891,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME creating DatabaseRecord objects: "
                 + (System.currentTimeMillis() - bT) + " ms");
     }
-
-    private void createResultFiles(Connection connection)
-        throws ObjectStoreException {
-        long bT = System.currentTimeMillis(); // to monitor time spent in the process
-
-        for (Integer submissionId : submissionDataMap.keySet()) {
-            // the applied data is repeated for each protocol
-            // so we want to uniquefy the created object
-            Set<String> subFiles = new HashSet<String>();
-            for (Integer dataId : submissionDataMap.get(submissionId)) {
-                AppliedData ad = appliedDataMap.get(dataId);
-                if (StringUtils.containsIgnoreCase(ad.type, "result")
-                        && StringUtils.containsIgnoreCase(ad.type, "file")) {
-                    if (!StringUtils.isBlank(ad.value)
-                            && !subFiles.contains(ad.value)) {
-                        createResultFile(ad.value, ad.name, submissionId);
-                        subFiles.add(ad.value);
-                    }
-                }
-            }
-        }
-        LOG.info("TIME creating ResultFile objects: " + (System.currentTimeMillis() - bT) + " ms");
-    }
-
 
     private List<String> createDatabaseRecords(String accession, DatabaseRecordConfig config)
         throws ObjectStoreException {
@@ -3007,8 +2988,40 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+
+
+    /**
+     * =====================
+     *    RESULT FILES
+     * =====================
+     */
+    private void createResultFiles(Connection connection)
+    throws ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
+        
+        for (Integer submissionId : submissionDataMap.keySet()) {
+            // the applied data is repeated for each protocol
+            // so we want to uniquefy the created object
+            LOG.info("RRFF: " + submissionId);
+            Set<String> subFiles = new HashSet<String>();
+            for (Integer dataId : submissionDataMap.get(submissionId)) {
+                AppliedData ad = appliedDataMap.get(dataId);
+                if (StringUtils.containsIgnoreCase(ad.type, "result")
+                        && StringUtils.containsIgnoreCase(ad.type, "file")) {
+                    if (!StringUtils.isBlank(ad.value)
+                            && !subFiles.contains(ad.value)) {
+                        createResultFile(ad.value, ad.name, submissionId);
+                        subFiles.add(ad.value);
+                    }
+                }
+            }
+        }
+        LOG.info("TIME creating ResultFile objects: " + (System.currentTimeMillis() - bT) + " ms");
+    }
+    
     private void createResultFile(String fileName, String type, Integer submissionId)
         throws ObjectStoreException {
+        // LOG.info("RRFFin: " + submissionId + "|" + type + "|" + fileName);
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
@@ -3016,6 +3029,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             url = fileName;
         } else {
             // note: on ftp site submission directories are named with the digits only
+            LOG.info("RRFFin: " + submissionId + "->" + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
             url = FILE_URL + dccId + "/extracted/" + fileName;
         }
@@ -3087,12 +3101,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             getChadoDBConverter().store(collection, storedSubmissionId);
 
             // TODO use Item?
-            // why is looking for Assay type? TODO check
+            // if the experiment type is not set in the db, check protocols
             if (!submissionWithExpTypeSet.contains(thisSubmissionId)) {
-                LOG.info("RRSSprotoprot: " + thisSubmissionId);
+                LOG.warn("EXPERIMENT TYPE NOT SET in chado for submission: " +
+                        dccIdMap.get(thisSubmissionId));
                 // may need protocols from referenced submissions to work out experiment type
-                protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
-
+                List<Integer> relatedSubsProtocolIds =
+                    new ArrayList<Integer>(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
+                if (relatedSubsProtocolIds != null) {
+                    protocolChadoIds.addAll(relatedSubsProtocolIds);
+                }
                 String piName = submissionProjectMap.get(thisSubmissionId);
                 setSubmissionExperimentType(storedSubmissionId, protocolChadoIds, piName);
             }
@@ -3126,8 +3144,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + " populated, this method needs to be called after"
                     + " processSubmissionProperties");
         }
-        
+       
         List<SubmissionReference> refs = submissionRefs.get(submissionId);
+        if (refs == null) {
+            return protocolIds;
+        }
         for (SubmissionReference subRef : refs) {
             LOG.info("RRSSprot: " + subRef.referencedSubmissionId
                     + "|" + subRef.dataValue);
