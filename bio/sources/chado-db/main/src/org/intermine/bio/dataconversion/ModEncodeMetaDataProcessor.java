@@ -788,7 +788,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
             submissionOrganismMap.put(submissionId, value);
-            LOG.info("TAXID " + submissionId + "|" + value);
+            LOG.debug("TAXID " + submissionId + "|" + value);
             count++;
         }
         res.close();
@@ -1740,7 +1740,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             int attRank = res.getInt("att_rank");
 
             Integer submissionId = dataSubmissionMap.get(dataId);
-            LOG.info("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
 
             writer.write(dccId + comma + dataHeading + comma + dataName + comma
@@ -1816,7 +1815,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);
-            LOG.info("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());
+            LOG.debug("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());
 
             List<Item> allPropertyItems = new ArrayList<Item>();
 
@@ -2389,6 +2388,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private String getTargetGeneItemIdentfier(String geneTargetIdText, String dccId)
         throws ObjectStoreException {
+        // TODO check: why not using only the else?
+        
         String taxonId = "";
         String originalId = null;
 
@@ -2405,7 +2406,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // attempt to work out the organism from the submission
             taxonId = getTaxonIdForSubmission(dccId);
             originalId = geneTargetIdText;
-            LOG.info("RESOLVER: found taxon " + taxonId + " for submission " + dccId);
+            LOG.debug("RESOLVER: found taxon " + taxonId + " for submission " + dccId);
         }
 
         IdResolver resolver = null;
@@ -2415,7 +2416,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             resolver = wormResolverFactory.getIdResolver();
         } else {
             LOG.info("RESOLVER: unable to work out organism for target id text: "
-                    + geneTargetIdText);
+                    + geneTargetIdText + " in submission " + dccId);
         }
 
         String geneItemId = null;
@@ -3002,7 +3003,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (Integer submissionId : submissionDataMap.keySet()) {
             // the applied data is repeated for each protocol
             // so we want to uniquefy the created object
-            LOG.info("RRFF: " + submissionId);
             Set<String> subFiles = new HashSet<String>();
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
@@ -3021,7 +3021,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     private void createResultFile(String fileName, String type, Integer submissionId)
         throws ObjectStoreException {
-        // LOG.info("RRFFin: " + submissionId + "|" + type + "|" + fileName);
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
@@ -3029,7 +3028,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             url = fileName;
         } else {
             // note: on ftp site submission directories are named with the digits only
-            LOG.info("RRFFin: " + submissionId + "->" + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
             url = FILE_URL + dccId + "/extracted/" + fileName;
         }
@@ -3387,9 +3385,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Data Type", "category");
         FIELD_NAME_MAP.put("Assay Type", "experimentType");
         // these are names in name/value couples for ReadCount
-        FIELD_NAME_MAP.put("Total Read Count", "Total Read Count");
-        FIELD_NAME_MAP.put("Multiply Mapped Read Count", "Multiply Mapped Read Count");
-        FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "Uniquely Mapped Read Count");
+        FIELD_NAME_MAP.put("Total Read Count", "totalReadCount");
+        FIELD_NAME_MAP.put("Multiply Mapped Read Count", "multiplyMappedReadCount");
+        FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "uniquelyMappedReadCount");
 
         // data: parameter values
         FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
