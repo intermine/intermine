@@ -650,15 +650,16 @@ public class AjaxServices
             if (minesWithOrthologues.isEmpty()) {
                 return null;
             }
-            StringBuffer sb = new StringBuffer("Orthologues in other mines:<br/>");
+            StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other mines:</h3><ul>");
             for (Mine mine : minesWithOrthologues.keySet()) {
                 String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
                     + primaryIdentifier;
-                sb.append("<a href=\"" + href + "\">");
+                sb.append("<li><a href=\"" + href + "\">");
                 sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
-                sb.append("</a><br/>");
+                sb.append("</a></li>");
 
             }
+            sb.append("</ul></div>");
             return sb.toString();
         } catch (RuntimeException e) {
             processException(e);
