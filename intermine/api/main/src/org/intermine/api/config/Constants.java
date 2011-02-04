@@ -18,6 +18,7 @@ package org.intermine.api.config;
 public final class Constants
 {
     private Constants() {
+        // don't instantiate
     }
 
     /**

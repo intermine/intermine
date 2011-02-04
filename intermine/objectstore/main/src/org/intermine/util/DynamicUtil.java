@@ -43,6 +43,7 @@ public final class DynamicUtil
      * Cannot construct
      */
     private DynamicUtil() {
+        // don't instantiate
     }
 
     /**
