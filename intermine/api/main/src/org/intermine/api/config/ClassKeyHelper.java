@@ -12,11 +12,9 @@ package org.intermine.api.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
@@ -36,6 +34,7 @@ import org.intermine.util.TypeUtil;
 public final class ClassKeyHelper
 {
     private ClassKeyHelper() {
+        // don't instantiate
     }
 
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
