@@ -231,7 +231,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         processSubmissionOrganism(connection);
         processSubmission(connection);
-        processExperimentProps(connection);
+        processSubmissionAttributes(connection);
         processProtocolTable(connection);
         processProtocolAttributes(connection);
         processAppliedProtocolTable(connection);
@@ -1134,7 +1134,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processExperimentProps(Connection connection)
+    private void processSubmissionAttributes(Connection connection)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
@@ -1206,9 +1206,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             setAttribute(submissionMap.get(submissionId).interMineObjectId, fieldName, value);
             count++;
         }
-        LOG.info("created " + count + " submission properties");
+        LOG.info("created " + count + " submissions attributes");
         res.close();
-        LOG.info("PROCESS TIME submission properties: "
+        LOG.info("PROCESS TIME submissions attributes: "
                 + (System.currentTimeMillis() - bT) + " ms");
     }
 
@@ -2167,7 +2167,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String currentDataValue = aData.value;
             Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
 
-            if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)) {
+            // added check that referenced and referring are not the same.
+            // TODO check 
+            if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)
+                    && !refSubId.equals(currentDataSubId)) {
                 LOG.info("Found a matching data value: " + currentDataValue + " in sub "
                         + dccIdMap.get(currentDataSubId) + " for referenced sub "
                         + dccIdMap.get(refSubId));
@@ -2870,6 +2873,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Set<DatabaseRecordConfig> configs = initDatabaseRecordConfigs();
 
         for (Integer submissionId : submissionDataMap.keySet()) {
+            LOG.info("DB RECORD for sub " + dccIdMap.get(submissionId) + "...");
             List<String> submissionDbRecords = new ArrayList<String>();
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
