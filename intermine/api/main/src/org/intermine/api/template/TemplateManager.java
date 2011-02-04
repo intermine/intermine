@@ -151,20 +151,14 @@ public class TemplateManager
      * Get a list of template queries that should appear on report pages for the given type
      * under the specified aspect.
      * @param aspect the aspect to fetch templates for
-     * @param type the type of report page
+     * @param allClasses the type of report page and superclasses
      * @return a list of template queries
      */
-    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect, String type) {
+    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect,
+            Set<String> allClasses) {
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
 
         List<TemplateQuery> aspectTemplates = getAspectTemplates(aspect);
-
-        Set<String> allClasses;
-        if (type.contains(",")) {
-            allClasses = new HashSet<String>(Arrays.asList(type.split(",")));
-        } else {
-            allClasses = Collections.singleton(type);
-        }
 
         for (TemplateQuery template : aspectTemplates) {
             if (isValidReportTemplate(template, allClasses)) {
@@ -181,7 +175,7 @@ public class TemplateManager
      * Return true if a template should appear on a report page.  All logic should be contained
      * in this method.
      * @param template the template to check
-     * @param classes the class of the report page and it's superclasses
+     * @param classes the class of the report page and its superclasses
      * @return true if template should be displayed on the report page
      */
     private boolean isValidReportTemplate(TemplateQuery template, Collection<String> classes) {
