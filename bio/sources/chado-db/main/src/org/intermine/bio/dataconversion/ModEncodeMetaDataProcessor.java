@@ -2168,8 +2168,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
 
             if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)) {
-                LOG.info("REFSUBS found a matching data value: " + currentDataValue + " in sub "
-                        + dccIdMap.get(currentDataSubId) + " ref sub = "
+                LOG.info("Found a matching data value: " + currentDataValue + " in sub "
+                        + dccIdMap.get(currentDataSubId) + " for referenced sub "
                         + dccIdMap.get(refSubId));
 
                 Integer foundDataId = aData.dataId;
@@ -3384,8 +3384,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         FIELD_NAME_MAP.put("Data Type", "category");
         FIELD_NAME_MAP.put("Assay Type", "experimentType");
+        FIELD_NAME_MAP.put("RNAsize", "RNAsize");
         // these are names in name/value couples for ReadCount
         FIELD_NAME_MAP.put("Total Read Count", "totalReadCount");
+        FIELD_NAME_MAP.put("Total Mapped Read Count", "totalMappedReadCount");
         FIELD_NAME_MAP.put("Multiply Mapped Read Count", "multiplyMappedReadCount");
         FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "uniquelyMappedReadCount");
 

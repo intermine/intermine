@@ -260,8 +260,10 @@
   <attribute name="DCCid" type="java.lang.String" />
   <attribute name="experimentType" type="java.lang.String" />
   <attribute name="totalReadCount" type="java.lang.Integer" />
+  <attribute name="totalMappedReadCount" type="java.lang.Integer" />
   <attribute name="multiplyMappedReadCount" type="java.lang.Integer" />
   <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" />
+  <attribute name="RNAsize" type="java.lang.String" />
 
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
