@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +30,8 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -47,7 +52,7 @@ public class TemplateListController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-
+        Model model = im.getModel();
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
@@ -59,14 +64,18 @@ public class TemplateListController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
-
+        Set<String> allClasses = new HashSet<String>();
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
-                templates = templateManager.getReportPageTemplatesForAspect(aspect,
-                        interMineIdBag.getType());
+                allClasses.add(interMineIdBag.getType());
+                templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else if (object != null) {
-                templates = templateManager.getReportPageTemplatesForAspect(aspect,
+                ClassDescriptor thisCld = model.getClassDescriptorByName(
                         DynamicUtil.getFriendlyName(object.getObject().getClass()));
+                for (ClassDescriptor cld : model.getClassDescriptorsForClass(thisCld.getType())) {
+                    allClasses.add(cld.getUnqualifiedName());
+                }
+                templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else {
                 templates = templateManager.getAspectTemplates(aspect);
             }
