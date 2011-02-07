@@ -128,6 +128,8 @@
     </intro-text>
     <tile-name>model/pathways.jsp</tile-name>
     <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html"/>
+    <aspect-source name="Reactome" url="http://www.reactome.org/"/>
+    <aspect-source name="FlyReactome" url="http://www.fly.reactome.org/"/>
   </aspect>
 
   <aspect name="Disease">
