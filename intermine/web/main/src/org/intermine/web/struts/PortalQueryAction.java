@@ -41,7 +41,6 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -116,7 +115,7 @@ public class PortalQueryAction extends InterMineAction
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-            = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
@@ -132,7 +131,7 @@ public class PortalQueryAction extends InterMineAction
             for (Map.Entry<Integer, List> entry : matches.entrySet()) {
                 String id = entry.getKey().toString();
                 return new ForwardParameters(mapping.findForward("objectDetails"))
-                .addParameter("id", id).forward();
+                    .addParameter("id", id).forward();
             }
 
             // and if there are none check the issues
@@ -143,7 +142,7 @@ public class PortalQueryAction extends InterMineAction
                     Object obj = issue.getValue().get(qt).get(idList[0]).get(0);
 
                     // parse the string representation of the object
-                    String ob = obj.toString().substring(obj.toString().indexOf('[')+1);
+                    String ob = obj.toString().substring(obj.toString().indexOf('[') + 1);
                     String id = null;
                     String[] result = ob.split(", ");
                     for (String token : result) {
@@ -151,7 +150,7 @@ public class PortalQueryAction extends InterMineAction
                         if (pair[0].equalsIgnoreCase("id")) {
                             id = pair[1].replaceAll("\"", "").replaceAll("]", "");
                             return new ForwardParameters(mapping.findForward("objectDetails"))
-                            .addParameter("id", id).forward();
+                                .addParameter("id", id).forward();
                         }
                         continue;
                     }
