@@ -37,11 +37,11 @@
           </p>
          <ul>
          <li>
-              <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
+              <i>Drosophila melanogaster</i> - Genome version Release ${WEB_PROPERTIES['genomeVersion.fly']} from <a href="http://www.flybase.org" target="_new">
                 <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" />FlyBase</a>.
     </ul>
 
-            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org" target="_new">WormBase</a>
+            <ul><li><i>Caenorhabditis elegans</i> - Genome version Release ${WEB_PROPERTIES['genomeVersion.worm']} from <a href="http://www.wormbase.org" target="_new">WormBase</a>
             </li></ul>
         </div>
 
@@ -102,7 +102,7 @@
               </query>
             </im:querylink>
           </li>
-<%--
+
           <li>
             <im:querylink text="All <i> Drosophila pseudoobscura</i> gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
@@ -117,59 +117,39 @@
               </query>
             </im:querylink>
           </li>
+ 
+          <li>
+          <im:querylink text="All <i> Drosophila mojavensis</i> gene identifiers and chromosomal positions " skipBuilder="true">
+          <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+            <node path="Gene" type="Gene">
+            </node>
+            <node path="Gene.organism" type="Organism">
+            </node>
+            <node path="Gene.organism.name" type="String">
+              <constraint op="=" value="Drosophila mojavensis" description="" identifier="" code="A">
+              </constraint>
+            </node>
+          </query>
+        </im:querylink>
+      </li>
 
           <li>
-            <im:querylink text="All <i>Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
+          <im:querylink text="All <i>Caenorhabditis elegans</i> gene identifiers and chromosomal positions " skipBuilder="true">
+            <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <node path="Gene" type="Gene">
+              </node>
+              <node path="Gene.organism" type="Organism">
+              </node>
+              <node path="Gene.organism.name" type="String">
+                <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+                </constraint>
+              </node>
+            </query>
+          </im:querylink>
+        </li>
 
-          <li>
-            <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-
-          <li>
-            <im:querylink text="All <i>A. gambiae</i> EST clusters from Imperial College" skipBuilder="true">
-              <query name="" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.length ESTCluster.chromosome.primaryIdentifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
-                <pathDescription pathString="ESTCluster.chromosomeLocation" description="Chromosome location">
-                </pathDescription>
-                <pathDescription pathString="ESTCluster.chromosome" description="Chromosome">
-                </pathDescription>
-                <pathDescription pathString="ESTCluster" description="EST cluster">
-                </pathDescription>
-                <node path="ESTCluster" type="ESTCluster">
-                </node>
-                <node path="ESTCluster.organism" type="Organism">
-                </node>
-                <node path="ESTCluster.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
---%>
-
+          
+          
     </ul>
       </div>
     </td>
