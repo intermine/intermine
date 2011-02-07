@@ -70,13 +70,13 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     }
 
     public PathQuery getQuery() {
-    	return originatingQuery;
+        return originatingQuery;
     }
-    
+
     public List<Path> getViewPaths() {
-    	return Collections.unmodifiableList(paths);
+        return Collections.unmodifiableList(paths);
     }
-    
+
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
@@ -87,14 +87,15 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
                 path = pq.makePath(pathString);
                 paths.add(path);
             } catch (PathException e) {
-                throw new RuntimeException("Path " + pathString + " in view of PathQuery is invalid", e);
+                throw new RuntimeException("Path " + pathString
+                        + " in view of PathQuery is invalid", e);
             }
         }
         columns = convertColumnTypes(results.getQuery().getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
-    
-    
+
+
 
     /**
      * {@inheritDoc}
@@ -239,7 +240,6 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollections(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
-        	System.err.println("breaking");
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
@@ -292,7 +292,6 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollectionsJustOneRow(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
-        
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
