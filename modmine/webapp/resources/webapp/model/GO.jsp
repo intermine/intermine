@@ -105,44 +105,28 @@
       <div class="body">
         <ul>
 
-          <li>
-            <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-             <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name">
-              <node path="Gene" type="Gene">
-               </node>
-              <node path="Gene.organism" type="Organism">
-               </node>
-              <node path="Gene.organism.name" type="String">
-              <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-             </constraint>
-              </node>
-           </query>
-          </im:querylink>
-         </li>
-<%--
-         <li>
-           <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.annotations.identifier Gene.annotations.name">
-             <node path="Gene" type="Gene">
-              </node>
-             <node path="Gene.organism" type="Organism">
-              </node>
-             <node path="Gene.organism.name" type="String">
-             <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-            </constraint>
-           </node>
-            <node path="Gene.annotations" type="GOAnnotation">
-           </node>
-          </query>
-         </im:querylink>
-        </li>
---%>
         <li>
-         <im:querylink text="All GO Term identifiers with names and descriptions " skipBuilder="true">
-          <query name="" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description">
-           </query>
-         </im:querylink>
-        </li>
+        <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
+<constraint path="Gene.organism.shortName" op="=" value="D. melanogaster"/>
+</query>
+</im:querylink>
+     </li>
+
+     <li>
+     <im:querylink text="All gene/GO annotation pairs from <i>C. elegans</i> " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
+<constraint path="Gene.organism.shortName" op="=" value="C. elegans"/>
+</query>
+</im:querylink>
+  </li>
+
+  <li>
+  <im:querylink text="All GO Term identifiers with names and descriptions " skipBuilder="true">
+<query name="" model="genomic" view="GOTerm.identifier GOTerm.namespace GOTerm.name GOTerm.description" sortOrder="GOTerm.identifier asc">
+</query>
+  </im:querylink>
+ </li>
 
        </ul>
       </div>
