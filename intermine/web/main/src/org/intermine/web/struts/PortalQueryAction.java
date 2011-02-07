@@ -119,10 +119,6 @@ public class PortalQueryAction extends InterMineAction
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
-
-            LOG.debug("XXXa: " + matches);
-            LOG.debug("XXXb: " + issues);
-
             if (matches.isEmpty() && issues.isEmpty()) {
                 return new ForwardParameters(mapping.findForward("noResults")).forward();
             }
