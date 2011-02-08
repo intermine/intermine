@@ -31,6 +31,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.bio.web.struts.GFF3ExportForm;
+import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -87,7 +88,7 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
-        final String DCC_PREFIX = "modENCODE_";        
+        final String DCC_PREFIX = "modENCODE_";
         String[] wrongSubs = new String[]{DCC_PREFIX + "2753", DCC_PREFIX + "2754",
                 DCC_PREFIX + "2755", DCC_PREFIX + "2783", DCC_PREFIX + "2979",
                 DCC_PREFIX + "3247", DCC_PREFIX + "3251", DCC_PREFIX + "3253"};
@@ -326,6 +327,11 @@ public class FeaturesAction extends InterMineAction
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
+            }
+
+            if ("sequence".equals(format)) {
+                exportForm = new SequenceExportForm();
+                exportForm.setDoGzip(doGzip);
             }
 
             exporter.export(pt, request, response, exportForm);
