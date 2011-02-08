@@ -11,6 +11,8 @@ package org.intermine.web.struts;
  */
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.AbstractMap;
@@ -35,6 +37,7 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
@@ -45,8 +48,8 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
-import org.intermine.api.tracker.TrackerFactory;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.tracker.TrackerFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -100,8 +103,7 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
-    public void init(ActionServlet servlet,
-                     @SuppressWarnings("unused") ModuleConfig config) throws ServletException {
+    public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
         // webapp to fail to deploy with no error message.
@@ -114,6 +116,9 @@ public class InitialiserPlugin implements PlugIn
         Properties webProperties = loadWebProperties(servletContext);
         SessionMethods.setWebProperties(servletContext, webProperties);
 
+        // get link redirector
+        LinkRedirectManager redirect = getLinkRedirector(webProperties);
+
         // set up core InterMine application
         ObjectStore os = getProductionObjectStore(webProperties);
 
@@ -123,7 +128,7 @@ public class InitialiserPlugin implements PlugIn
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
         TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss, trackerDelegate);
+                oss, trackerDelegate, redirect);
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
@@ -317,6 +322,39 @@ public class InitialiserPlugin implements PlugIn
             }
         }
         return webProperties;
+    }
+
+    private LinkRedirectManager getLinkRedirector(Properties webProperties) {
+        final String err = "Initialisation of link redirector failed: ";
+        String linkRedirector = (String) webProperties.get("webapp.linkRedirect");
+        if (linkRedirector == null) {
+            return null;
+        }
+        Class<?> c = TypeUtil.instantiate(linkRedirector);
+        Constructor<?> constr = null;
+        try {
+            constr = c.getConstructor(new Class[] {Properties.class});
+        } catch (NoSuchMethodException e) {
+            LOG.error(err, e);
+            return null;
+        }
+        LinkRedirectManager redirector = null;
+        try {
+            redirector = (LinkRedirectManager) constr.newInstance(
+                    new Object[] {webProperties});
+        } catch (IllegalArgumentException e) {
+            LOG.error(err, e);
+        } catch (InstantiationException e) {
+            LOG.error(err, e);
+            return null;
+        } catch (IllegalAccessException e) {
+            LOG.error(err, e);
+            return null;
+        } catch (InvocationTargetException e) {
+            LOG.error(err, e);
+            return null;
+        }
+        return redirector;
     }
 
     /**

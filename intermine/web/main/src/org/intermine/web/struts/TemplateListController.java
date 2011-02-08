@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +69,8 @@ public class TemplateListController extends TilesAction
                 allClasses.add(interMineIdBag.getType());
                 templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else if (object != null) {
-                ClassDescriptor thisCld = model.getClassDescriptorByName(
-                        DynamicUtil.getFriendlyName(object.getObject().getClass()));
+                ClassDescriptor thisCld = model.getClassDescriptorByName(DynamicUtil
+                        .getFriendlyName(object.getObject().getClass()));
                 for (ClassDescriptor cld : model.getClassDescriptorsForClass(thisCld.getType())) {
                     allClasses.add(cld.getUnqualifiedName());
                 }

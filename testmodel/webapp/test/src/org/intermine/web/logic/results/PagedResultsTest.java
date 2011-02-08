@@ -23,6 +23,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
@@ -58,8 +59,10 @@ public class PagedResultsTest extends TestCase
     private Map pathToQueryNode;
     private Map classKeys;
     private PathQuery pathQuery;
+    private InterMineAPI im;
 
     public void setUp() throws Exception {
+
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
         fq = new IqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
@@ -76,6 +79,7 @@ public class PagedResultsTest extends TestCase
         classKeys.put("Department", defaultClassKeys);
         classKeys.put("Company", defaultClassKeys);
         pathQuery = new PathQuery(model);
+        im = new InterMineAPI(os, null, null, null, null, null, null);
     }
 
     private PagedTable getEmptyResults() throws Exception {
@@ -85,7 +89,7 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode, null);
         return new PagedTable(webResults);
     }
 
@@ -93,21 +97,21 @@ public class PagedResultsTest extends TestCase
         Results results = os.execute(fq.toQuery(), 20, true, true, true);
         // Make sure we definitely know the end
         results.get(0);
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode, null);
         return new PagedTable(webResults);
     }
 
     private PagedTable getEstimateTooHighResults() throws Exception {
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery(), 1, true, true, true);
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode, null);
         return new PagedTable(webResults);
     }
 
     private PagedTable getEstimateTooLowResults() throws Exception {
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery(), 1, true, true, true);
-        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode, null);
         return new PagedTable(webResults);
     }
 
@@ -190,7 +194,7 @@ public class PagedResultsTest extends TestCase
             Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
 //            ((Object) pq).setViewPaths((List) headers.get(queryName));
-            WebResults webResults = new WebResults(pq,r, model, pathToQueryNode, classKeys, null);
+            WebResults webResults = new WebResults(im, pq, r, pathToQueryNode, null);
             PagedTable pr = new PagedTable(webResults);
             assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
          }

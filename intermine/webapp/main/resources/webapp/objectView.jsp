@@ -12,10 +12,19 @@
 <html:xhtml/>
 <c:set var="object" value="${resultElement.field}"/>
 <c:set var="doNotTruncate" value="${doNotTruncate}"/>
-
+<c:set var="extlink" value=" class=\\"value extlink\\""/>
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
-<c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
+<%-- link in results should go to object details unless other link is in config --%>
+<c:choose>
+ <c:when test="${!empty resultElement.linkRedirect}">
+   <c:set var="detailsLink" value="${resultElement.linkRedirect}" scope="request"/>
+   <c:set var="extlink" value=""/>
+ </c:when>
+ <c:otherwise>
+   <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
+ </c:otherwise>
+</c:choose>
 
   <c:choose>
     <c:when test="${empty leafClds}">
@@ -46,9 +55,7 @@
         </c:when>
         <c:when test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
            <%-- key field, truncate --%>
-           <html:link action="${detailsLink}">
-             <im:abbreviate value="${object}" length="${maxLength}"/>
-           </html:link>
+           <a href="${detailsLink}" ${extlink}><im:abbreviate value="${object}" length="${maxLength}"/></a>
         </c:when>
         <c:when test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
           <%-- NON key field, truncate --%>
@@ -56,9 +63,7 @@
         </c:when>
         <c:when test="${resultElement.keyField}">
           <%-- key field --%>
-          <html:link action="${detailsLink}">
-            <c:out value="${object}" default="${nullFieldText}"/>
-          </html:link>
+          <a href="${detailsLink}" ${extlink}><c:out value="${object}" default="${nullFieldText}"/></a>
           <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
              [<c:out value="${resultElement.type}" />]
           </c:if>
@@ -74,9 +79,7 @@
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
         </c:forEach>
-        [<html:link action="${detailsLink}">
-          <fmt:message key="results.details"/>
-        </html:link>]
+        [<a href="${detailsLink}" ${extlink}><fmt:message key="results.details"/></a>]
       </span>
       <br/>
       <div style="margin-left: 8px">

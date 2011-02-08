@@ -20,8 +20,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
- * Cell of results table containing information
- * for the parent Object
+ * Cell of results table containing information for the parent Object
  *
  * @author Xavier Watkins
  */
@@ -32,6 +31,7 @@ public class ResultElement implements Serializable
     protected String htmlId;
     private final boolean keyField;
     private final Path path;
+    private String linkRedirect;
 
 
     /**
@@ -131,6 +131,20 @@ public class ResultElement implements Serializable
     }
 
     /**
+     * @param linkRedirect the linkRedirect to set
+     */
+    public void setLinkRedirect(String linkRedirect) {
+        this.linkRedirect = linkRedirect;
+    }
+
+    /**
+     * @return the linkRedirect
+     */
+    public String getLinkRedirect() {
+        return linkRedirect;
+    }
+
+    /**
      * Returns a String representation of the ResultElement.
      *
      * @return a String
@@ -166,5 +180,6 @@ public class ResultElement implements Serializable
         return (field == null ? 0 : field.hashCode())
             + (imObj == null ? 0 : 3 * imObj.hashCode());
     }
+
 
 }

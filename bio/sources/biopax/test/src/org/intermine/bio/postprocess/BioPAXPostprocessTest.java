@@ -17,14 +17,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.Pathway;
-
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Pathway;
+import org.intermine.model.bio.Protein;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -34,7 +32,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 
 /**
- * Tests for the GoPostprocess class.
+ * Tests for the BioPAXPostprocess class.
  */
 public class BioPAXPostprocessTest extends XMLTestCase {
 

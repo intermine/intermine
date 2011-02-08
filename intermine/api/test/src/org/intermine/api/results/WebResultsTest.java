@@ -19,6 +19,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
@@ -63,6 +64,7 @@ public class WebResultsTest extends TestCase
     private ObjectStoreDummyImpl os;
     private final Model model = Model.getInstanceByName("testmodel");
     private Map classKeys;
+    private InterMineAPI im;
 
     public WebResultsTest (String arg) {
         super(arg);
@@ -72,6 +74,7 @@ public class WebResultsTest extends TestCase
         super.setUp();
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
+        im = new InterMineAPI(os, null, null, null, null, null, null);
 
         // Set up some known objects in the first 3 results rows
         department1 = new Department();
@@ -156,7 +159,7 @@ public class WebResultsTest extends TestCase
          pathToQueryNode.put("Department.employees.name", empName);
 
          Query query = MainHelper.makeQuery(pathQuery , new HashMap(), pathToQueryNode, null, null);
-         WebResults webResults = new WebResults(pathQuery, os.execute(query), os.getModel(), pathToQueryNode, new HashMap(), null);
+         WebResults webResults = new WebResults(im, pathQuery, os.execute(query), pathToQueryNode, new HashMap());
          LinkedHashMap<String, Integer> actual = webResults.pathToIndex;
          LinkedHashMap<String, Integer> expected = new LinkedHashMap<String, Integer>();
          expected.put("Department.employees.name", 2);
@@ -178,7 +181,7 @@ public class WebResultsTest extends TestCase
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
         Results results = os.execute(query);
-        WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pq, results, pathToQueryNode, classKeys);
         List<Column> expectedColumns = new ArrayList<Column>();
         Column col1 = new Column("description 1 > name",0 ,Company.class);
         Column col2 = new Column("description 1 > vatNumber",1 ,Company.class);
@@ -199,19 +202,19 @@ public class WebResultsTest extends TestCase
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
         Results results = os.execute(query);
-        WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pq, results, pathToQueryNode, classKeys);
         List row1 = webResults.getResultElements(0);
 
         Department dept1 = new Department();
         dept1.setId(new Integer(4));
         dept1.setName("Department1");
         ResultElement res1 = new ResultElement(dept1, new Path(model, "Department.name"), false);
-       
+
         Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
         c1.setId(new Integer(1));
         c1.setName("Company1");
         ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);
-        
+
         Manager m1 = new Manager();
         m1.setId(new Integer(1));
         m1.setSeniority(new Integer(100));
@@ -257,8 +260,7 @@ public class WebResultsTest extends TestCase
         pathToQueryNode.put("Department.employees", manQC);
         QueryField manSeniority = new QueryField(manQC, "seniority");
         pathToQueryNode.put("Department.employees.seniority", manSeniority);
-        WebResults webResults =
-            new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode, null);
 
         assertEquals("Department1", webResults.get(0).get(0).get(0).getValue().getField());
         assertEquals("Company1", webResults.get(0).get(0).get(1).getValue().getField());

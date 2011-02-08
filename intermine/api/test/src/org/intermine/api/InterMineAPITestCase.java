@@ -68,7 +68,7 @@ public class InterMineAPITestCase extends TestCase {
         Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pmTmp.createProfile(superUser);
 
-        im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate);
+        im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
 
     public void tearDown() throws Exception {
