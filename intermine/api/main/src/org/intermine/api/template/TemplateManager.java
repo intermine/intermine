@@ -11,12 +11,10 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -157,15 +155,12 @@ public class TemplateManager
     public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect,
             Set<String> allClasses) {
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
-
         List<TemplateQuery> aspectTemplates = getAspectTemplates(aspect);
-
         for (TemplateQuery template : aspectTemplates) {
             if (isValidReportTemplate(template, allClasses)) {
                 templates.add(template);
             }
         }
-
         Collections.sort(templates, TEMPLATE_COMPARATOR);
         return templates;
     }

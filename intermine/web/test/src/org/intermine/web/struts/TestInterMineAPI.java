@@ -39,7 +39,7 @@ public class TestInterMineAPI extends InterMineAPI
     public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
-        super();
+        super(objectStore, null, classKeys, bagQueryConfig, oss, null, null);
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;

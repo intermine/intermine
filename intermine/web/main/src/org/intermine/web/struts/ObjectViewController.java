@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.config.FieldConfig;
@@ -70,12 +71,14 @@ public class ObjectViewController extends TilesAction
 
         DisplayObject dobj = displayObjects.get(object);
         FieldConfig fc = dobj.getFieldConfigMap().get(fieldName);
+
+
         // truncate fields by default, unless it says otherwise in config
         boolean doNotTruncate = false;
         if (fc != null) {
             doNotTruncate = fc.getDoNotTruncate();
         }
-        request.setAttribute("doNotTruncate", doNotTruncate);
+        request.setAttribute("doNotTruncate", Boolean.valueOf(doNotTruncate));
         request.setAttribute("fieldName", fieldName);
         return null;
     }
