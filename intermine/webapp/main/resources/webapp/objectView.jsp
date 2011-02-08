@@ -12,14 +12,15 @@
 <html:xhtml/>
 <c:set var="object" value="${resultElement.field}"/>
 <c:set var="doNotTruncate" value="${doNotTruncate}"/>
-<c:set var="extlink" value=" class=\\"value extlink\\""/>
+   <c:set var="extlink" value=""/>
+
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
 <%-- link in results should go to object details unless other link is in config --%>
 <c:choose>
  <c:when test="${!empty resultElement.linkRedirect}">
    <c:set var="detailsLink" value="${resultElement.linkRedirect}" scope="request"/>
-   <c:set var="extlink" value=""/>
+   <c:set var="extlink" value=" class=\"value extlink\""/>
  </c:when>
  <c:otherwise>
    <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
