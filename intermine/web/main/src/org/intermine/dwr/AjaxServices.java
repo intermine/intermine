@@ -650,10 +650,14 @@ public class AjaxServices
             if (minesWithOrthologues.isEmpty()) {
                 return null;
             }
-            StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other mines:</h3><ul>");
-            for (Mine mine : minesWithOrthologues.keySet()) {
+            StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other"
+                    + " mines:</h3><ul>");
+            for (Map.Entry<Mine, Map<String, HomologueMapping>> entry
+                    : minesWithOrthologues.entrySet()) {
+                Mine mine = entry.getKey();
+                Map<String, HomologueMapping> homologueMap = entry.getValue();
                 String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                    + primaryIdentifier;
+                    + primaryIdentifier + "&orthologue=" + organismName;
                 sb.append("<li><a href=\"" + href + "\">");
                 sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
                 sb.append("</a></li>");
