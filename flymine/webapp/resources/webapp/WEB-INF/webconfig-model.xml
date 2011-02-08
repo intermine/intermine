@@ -180,6 +180,10 @@
   </class>
 
   <class className="org.intermine.model.bio.Gene">
+    <inlinelist>
+      <table path="synonyms.value" />
+      <table path="probeSets.primaryIdentifier" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -206,8 +210,8 @@
   <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
       <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-	<fieldconfig fieldExpr="subject.name"/>
-	<fieldconfig fieldExpr="subject.symbol"/>
+  <fieldconfig fieldExpr="subject.name"/>
+  <fieldconfig fieldExpr="subject.symbol"/>
       <fieldconfig fieldExpr="ontologyTerm.identifier" />
       <fieldconfig fieldExpr="ontologyTerm.name" />
     </fields>

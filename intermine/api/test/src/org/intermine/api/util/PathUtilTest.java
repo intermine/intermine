@@ -17,13 +17,12 @@ import org.intermine.util.DynamicUtil;
 public class PathUtilTest extends TestCase {
 
     private Model model;
-    
+
     protected void setUp() throws Exception {
         super.setUp();
         model = Model.getInstanceByName("testmodel");
     }
 
-    
     public void testResolveShort() throws Exception {
         Path path = new Path(model, "Department.name");
         Department department =
@@ -32,7 +31,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("department name", PathUtil.resolvePath(path, department));
     }
 
-    
+
     public void testResolve() throws Exception {
         Path path = new Path(model, "Department.company.name");
         Department department =
@@ -102,7 +101,7 @@ public class PathUtilTest extends TestCase {
         department.setId(10);
         assertEquals(department.getId(), ((Department) PathUtil.resolvePath(path, department)).getId());
     }
-    
+
     public void testNotSuperclass() throws Exception {
         Path path = new Path(model, "Department.name");
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -130,14 +129,14 @@ public class PathUtilTest extends TestCase {
             // Fine
         }
     }
-    
+
     public void testCanAssignObjectToType() throws Exception {
         Employee e = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         assertTrue(PathUtil.canAssignObjectToType(Employee.class, e));
-        
+
         Manager m = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
         assertTrue(PathUtil.canAssignObjectToType(Employee.class, m));
-        
+
         assertFalse(PathUtil.canAssignObjectToType(Manager.class, e));
         assertFalse(PathUtil.canAssignObjectToType(Department.class, e));
     }

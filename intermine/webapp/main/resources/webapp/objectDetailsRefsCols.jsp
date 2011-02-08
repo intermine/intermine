@@ -13,7 +13,6 @@
 
 <tiles:importAttribute name="object" />
 <tiles:importAttribute name="placement" />
-
 <c:if test="${!empty placementRefsAndCollections[placement]}">
   <c:forEach items="${placementRefsAndCollections[placement]}"
     var="entry">
@@ -75,7 +74,8 @@
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
           </c:forEach>
         </html:link></h3>
-        <%-- ############# --%> <c:if test="${collection.size == 1}">
+        <%-- ############# --%>
+        <c:if test="${collection.size == 1}">
           <c:forEach
             items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}"
             var="cld2">
@@ -84,9 +84,7 @@
               <c:set var="backup" value="${object}" />
               <c:set var="object" value="${collection.table.rowObjects[0]}"
                 scope="request" />
-              <%--
-              <tiles:insert
-                page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}" />--%>
+              <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}" />
               <c:set var="object" value="${backup}" scope="request" />
             </c:if>
           </c:forEach>
@@ -164,6 +162,7 @@
         </c:otherwise>
       </c:choose>
     </c:if>
+
   </c:forEach>
 </c:if>
 

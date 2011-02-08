@@ -9,10 +9,13 @@ package org.intermine.web.logic.results;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,6 +41,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.InlineList;
+import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
@@ -67,7 +72,11 @@ public class DisplayObject
     private Map<String, FieldConfig> fieldConfigMap = null;
     private List<String> fieldExprs = null;
     private Map<String, String> verbosity = new HashMap<String, String>();
+    private Map<String, String> showTableAsInlineList = new HashMap<String, String>();
     private final Map<String, List<FieldDescriptor>> classKeys;
+
+    /* @Map inline lists (used to be tables) */
+    private List<InlineList> inlineLists = null;
 
     /**
      * Create a new DisplayObject.
@@ -139,6 +148,13 @@ public class DisplayObject
      */
     public int getId() {
         return object.getId().intValue();
+    }
+
+    public List<InlineList> getInlineLists() {
+        if (inlineLists == null) {
+            initialise();
+        }
+        return inlineLists;
     }
 
     /**
@@ -300,55 +316,88 @@ public class DisplayObject
         attributeDescriptors = new HashMap<String, FieldDescriptor>();
         longAttributes = new HashMap<String, String>();
         longAttributesTruncated = new HashMap<String, Object>();
+        inlineLists = new ArrayList<InlineList>();
 
         try {
             for (ClassDescriptor cld : clds) {
+
+                // InlineLists
+                Type type = webConfig.getTypes().get(cld.getName());
+                // init lists from WebConfig Type
+                inlineLists = type.getInlineLists();
+                // a map of inlineList object names so we do not include them elsewhere
+                HashMap<String, Boolean> bagOfInlineListNames = new HashMap<String, Boolean>();
+                // fill up
+                for (int i=0; i < inlineLists.size(); i++) {
+                    InlineList list = inlineLists.get(i);
+                    // soon to be list of values
+                    Object obj = null;
+                    try {
+                        // create a new path to the collection of objects
+                        Path path = new Path(model, DynamicUtil.getSimpleClass(object.getClass()).getSimpleName() + '.' + list.getPath());
+                        // resolve path to a collection and save into a list
+                        obj = PathUtil.resolveCollectionPath(path, object);
+                        list.setObject(obj);
+                    } catch (PathException e) {
+                        throw new RuntimeException("Your collections of inline lists are failing you", e);
+                    }
+                    // save back
+                    inlineLists.set(i, list);
+                    // save name of the collection
+                    String path = list.getPath();
+                    bagOfInlineListNames.put(path.substring(0, path.indexOf('.')), true);
+                }
+
                 for (FieldDescriptor fd : cld.getAllFieldDescriptors()) {
-                    if (fd.isAttribute() && !"id".equals(fd.getName())) {
-                        Object fieldValue = object.getFieldValue(fd.getName());
-                        if (fieldValue != null) {
-                            if (fieldValue instanceof ClobAccess) {
-                                ClobAccess fieldClob = (ClobAccess) fieldValue;
-                                if (fieldClob.length() > 200) {
-                                    fieldValue = fieldClob.subSequence(0, 200).toString();
-                                } else {
-                                    fieldValue = fieldClob.toString();
+                    // only continue if we have not included this object in an inline list
+                    if (bagOfInlineListNames.get(fd.getName()) == null) {
+                        if (fd.isAttribute() && !"id".equals(fd.getName())) {
+                            Object fieldValue = object.getFieldValue(fd.getName());
+                            if (fieldValue != null) {
+                                if (fieldValue instanceof ClobAccess) {
+                                    ClobAccess fieldClob = (ClobAccess) fieldValue;
+                                    if (fieldClob.length() > 200) {
+                                        fieldValue = fieldClob.subSequence(0, 200).toString();
+                                    } else {
+                                        fieldValue = fieldClob.toString();
+                                    }
                                 }
-                            }
-                            attributes.put(fd.getName(), fieldValue);
-                            attributeDescriptors.put(fd.getName(), fd);
-                            if (fieldValue instanceof String) {
-                                String fieldString = (String) fieldValue;
-                                if (fieldString.length() > 30) {
-                                    StringUtil.LineWrappedString lws = StringUtil.wrapLines(
-                                            fieldString, 50, 3, 11);
-                                    longAttributes.put(fd.getName(), lws.getString()
-                                            .replace("\n", "<BR>"));
-                                    if (lws.isTruncated()) {
-                                        longAttributesTruncated.put(fd.getName(), Boolean.TRUE);
+                                attributes.put(fd.getName(), fieldValue);
+                                attributeDescriptors.put(fd.getName(), fd);
+                                if (fieldValue instanceof String) {
+                                    String fieldString = (String) fieldValue;
+                                    if (fieldString.length() > 30) {
+                                        StringUtil.LineWrappedString lws = StringUtil.wrapLines(
+                                                fieldString, 50, 3, 11);
+                                        longAttributes.put(fd.getName(), lws.getString()
+                                                .replace("\n", "<BR>"));
+                                        if (lws.isTruncated()) {
+                                            longAttributesTruncated.put(fd.getName(), Boolean.TRUE);
+                                        }
                                     }
                                 }
                             }
+                        } else if (fd.isReference()) {
+                            ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                            //check whether reference is null without dereferencing
+                            ProxyReference proxy =
+                                (ProxyReference) object.getFieldProxy(ref.getName());
+                            DisplayReference newReference = new DisplayReference(proxy, ref, webConfig,
+                                    webProperties, classKeys);
+                            references.put(fd.getName(), newReference);
+                        } else if (fd.isCollection()) {
+                            Object fieldValue = object.getFieldValue(fd.getName());
+                            DisplayCollection newCollection =
+                                new DisplayCollection((Collection) fieldValue,
+                                        (CollectionDescriptor) fd, webConfig, webProperties, classKeys);
+                            //if (newCollection.getSize() > 0) {
+                            collections.put(fd.getName(), newCollection);
+                            //}
                         }
-                    } else if (fd.isReference()) {
-                        ReferenceDescriptor ref = (ReferenceDescriptor) fd;
-                        //check whether reference is null without dereferencing
-                        ProxyReference proxy =
-                            (ProxyReference) object.getFieldProxy(ref.getName());
-                        DisplayReference newReference = new DisplayReference(proxy, ref, webConfig,
-                                webProperties, classKeys);
-                        references.put(fd.getName(), newReference);
-                    } else if (fd.isCollection()) {
-                        Object fieldValue = object.getFieldValue(fd.getName());
-                        DisplayCollection newCollection =
-                            new DisplayCollection((Collection) fieldValue,
-                                    (CollectionDescriptor) fd, webConfig, webProperties, classKeys);
-                        //if (newCollection.getSize() > 0) {
-                        collections.put(fd.getName(), newCollection);
-                        //}
                     }
                 }
             }
+
         } catch (Exception e) {
             throw new RuntimeException("Exception while creating a DisplayObject", e);
         }
