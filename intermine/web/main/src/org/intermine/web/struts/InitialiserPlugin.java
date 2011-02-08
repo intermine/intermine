@@ -123,7 +123,7 @@ public class InitialiserPlugin implements PlugIn
         ObjectStore os = getProductionObjectStore(webProperties);
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
-        final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
+        final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
         TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
@@ -346,13 +346,10 @@ public class InitialiserPlugin implements PlugIn
             LOG.error(err, e);
         } catch (InstantiationException e) {
             LOG.error(err, e);
-            return null;
         } catch (IllegalAccessException e) {
             LOG.error(err, e);
-            return null;
         } catch (InvocationTargetException e) {
             LOG.error(err, e);
-            return null;
         }
         return redirector;
     }
@@ -360,8 +357,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private ObjectStoreSummary summariseObjectStore(ServletContext servletContext,
-            final ObjectStore os)
+    private ObjectStoreSummary summariseObjectStore(ServletContext servletContext)
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
@@ -402,7 +398,7 @@ public class InitialiserPlugin implements PlugIn
         for (ClassDescriptor cld : model.getClassDescriptors()) {
             ArrayList<String> subclasses = new ArrayList<String>();
             for (String thisClassName : new TreeSet<String>(getChildren(cld))) {
-                if (((Integer) classCounts.get(thisClassName)).intValue() > 0) {
+                if (classCounts.get(thisClassName).intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }

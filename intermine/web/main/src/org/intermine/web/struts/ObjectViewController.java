@@ -22,7 +22,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.LinkRedirectManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.config.FieldConfig;
