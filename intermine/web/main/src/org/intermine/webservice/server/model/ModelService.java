@@ -33,8 +33,8 @@ public class ModelService extends WebService
 {
     private static final String DEFAULT_CALLBACK = "parseModel";
 
-    private static final String FILE_BASE_NAME= "model";
-    
+    private static final String FILE_BASE_NAME = "model";
+
     public ModelService(InterMineAPI im) {
         super(im);
     }
