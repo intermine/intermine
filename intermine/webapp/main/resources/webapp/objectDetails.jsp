@@ -15,8 +15,22 @@
 <div id="header_wrap">
 
 <div id="object_header">
-    <h1 class="title">${htmlPageTitle}<!-- <span>FBgn0004053 - zerknullt</span> --></h1>
-    <p class="description">
+<tiles:get name="objectTrail.tile"/>
+    <h1 class="title">
+      <!-- KEEP THIS! ${object.fieldExprs} -->
+
+      <c:forEach items="${object.clds}" var="cld">${cld.unqualifiedName}</c:forEach>:
+      <c:if test="${object.fieldConfigMap['symbol'] != null && !empty object.fieldValues['symbol']}">
+        <strong>${object.fieldValues['symbol']}</strong>
+      </c:if>
+      <c:if test="${object.fieldConfigMap['primaryIdentifier'] != null && !empty object.fieldValues['primaryIdentifier']}">
+        <strong>${object.fieldValues['primaryIdentifier']}</strong>
+      </c:if>
+      <c:if test="${object.fieldConfigMap['organism.shortName'] != null && !empty object.fieldValues['organism.shortName']}">
+        ${object.fieldValues['organism.shortName']}
+      </c:if>
+    </h1>
+    <table class="description">
       <%-- show in summary fields --%>
       <c:forEach items="${object.fieldExprs}" var="expr">
         <c:choose>
@@ -24,16 +38,17 @@
             <c:choose>
               <c:when test="${!empty object.fieldConfigMap[expr].displayer}">
                 <c:set var="interMineObject" value="${object.object}" scope="request"/>
-                ${expr}:
-                <strong>
+                <tr><td>${expr}:</td>
+                <td><strong>
                   <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
                     <tiles:put name="expr" value="${expr}" />
                   </tiles:insert>
-                </strong>
+                </strong></td>
+                </tr>
               </c:when>
               <c:otherwise>
                 <c:if test="${!empty object.fieldValues[expr]}">
-                  ${expr}: <strong>${object.fieldValues[expr]}</strong>
+                  <tr><td>${expr}:</td><td><strong>${object.fieldValues[expr]}</strong></td></tr>
                 </c:if>
               </c:otherwise>
             </c:choose>
@@ -44,10 +59,12 @@
       <%-- all other fields --%>
       <c:forEach items="${object.attributes}" var="entry">
         <c:if test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
-          ${entry.key}
+          <tr>
+          <td>${entry.key}</td>
           <c:forEach items="${object.clds}" var="cld">
             <strong><im:typehelp type="${cld.unqualifiedName}.${entry.key}"/></strong>
           </c:forEach>
+          <td>
           <c:choose>
             <c:when test="${object.longAttributes[entry.key] != null}">
               ${object.longAttributes[entry.key]}
@@ -61,9 +78,11 @@
               <strong><im:value>${entry.value}</im:value></strong>
             </c:otherwise>
           </c:choose>
+          </td>
+          </tr>
         </c:if>
       </c:forEach>
-    </p>
+    </table>
 </div>
 
 <%--
@@ -150,6 +169,20 @@
     </div>
 
     <div class="box grid_9">
+
+      <h2>Inline Lists</h2>
+      <div>
+      <c:forEach items="${object.inlineLists}" var="list">
+        <div class="box grid_12">
+          <h3>${list.size} ${list.path}</h3>
+          <c:forEach items="${list.object}" var="item" varStatus="status">
+            ${item}<c:if test="${status.count < list.size}">, </c:if>
+          </c:forEach>
+        </div>
+        <div style="clear:both;">&nbsp;</div>
+      </c:forEach>
+      </div>
+
       <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
         <tiles:insert name="objectDetailsAspect.tile">
           <tiles:put name="placement" value="im:aspect:${aspect}"/>

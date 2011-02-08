@@ -45,6 +45,8 @@ public class Type
     private Displayer tableDisplayer;
     private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
+    private LinkedList<InlineList> inlineLists = new LinkedList<InlineList>();
+
     /**
      * Set the fully-qualified class name for this Type
      * @param className the name of the Type
@@ -111,6 +113,10 @@ public class Type
         }
     }
 
+    public void addInlineList(InlineList list) {
+        inlineLists.add(list);
+    }
+
     /**
      * Add a bag displayer for this Type
      * @param disp the Displayer to add
@@ -155,6 +161,10 @@ public class Type
      */
     public Set getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
+    }
+
+    public List<InlineList> getInlineLists() {
+        return inlineLists;
     }
 
     /**

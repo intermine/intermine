@@ -24,7 +24,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #header_wrap { background:#F4EEF7 url(../model/images/report_page/header-bg.png) repeat-x scroll left top; border-bottom:1px solid #D3BCDB; }
 
 /* header */
-#object_header {background:url(../model/images/report_page/header-bg.png) repeat-x scroll left bottom; width:92%; margin-left:4%; margin-right:4%; }
+#object_header {/*background:url(../model/images/report_page/header-bg.png) repeat-x scroll left bottom;*/ width:92%; margin-left:4%; margin-right:4%; }
     #object_header h1.title {font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif; font-size:24px;
         font-weight:normal; position:relative; }
     #object_header h1.title span { color:#5c0075; }

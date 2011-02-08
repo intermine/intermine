@@ -93,6 +93,12 @@ public class WebConfig
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
+        /* display inline tables as inline lists instead */
+        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineList.class);
+        digester.addSetProperties("webconfig/class/inlinelist/table");
+        digester.addSetNext("webconfig/class/inlinelist/table", "addInlineList");
+        digester.addSetProperties("webconfig/class/inlinelist/table", "path", "path");
+
         digester.addObjectCreate("webconfig/class/bagdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/displayer");
         digester.addSetNext("webconfig/class/bagdisplayers/displayer", "addBagDisplayer");
