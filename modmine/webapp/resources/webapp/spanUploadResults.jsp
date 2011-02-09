@@ -56,7 +56,7 @@
        });
    });
 
-    function export(formId, format) {
+    function exporta(formId, format) {
       // if form is "exportForm_all"
       if (formId.split("_")[1] == "all") {
             if (jQuery("#" + formId).html() == "") {
@@ -189,13 +189,13 @@
     <div style="display: inline; padding: 0px 0px 0px 23px; line-height: 22px;">
       <c:set var="allFeaturePIDs" value=""/>
       Export all features:&nbsp;
-      <a href="javascript: export('exportForm_all', 'tab');" class="ext_link">TAB</a>
+      <a href="javascript: exporta('exportForm_all', 'tab');" class="ext_link">TAB</a>
       &nbsp;|&nbsp;
-      <a href="javascript: export('exportForm_all', 'csv');" class="ext_link">CSV</a>
+      <a href="javascript: exporta('exportForm_all', 'csv');" class="ext_link">CSV</a>
       &nbsp;|&nbsp;
-      <a href="javascript: export('exportForm_all', 'gff3');" class="ext_link">GFF3</a>
+      <a href="javascript: exporta('exportForm_all', 'gff3');" class="ext_link">GFF3</a>
       &nbsp;|&nbsp;
-      <a href="javascript: export('exportForm_all', 'sequence');" class="ext_link">SEQ</a>
+      <a href="javascript: exporta('exportForm_all', 'sequence');" class="ext_link">SEQ</a>
     </div>
     <%-- /Export links --%>
 <div>
@@ -309,10 +309,10 @@
                     </span>
                     <img class="exportDiv" style="position:relative; top:3px;" border="0" src="model/images/download.png" title="export data" height="18" width="18"/>
                     <ul class="contextMenu">
-                      <li class="tab"><a href="#javascript: export('exportForm_${formIdTail}', 'tab');" class="ext_link">TAB</a></li>
-                      <li class="csv"><a href="#javascript: export('exportForm_${formIdTail}', 'csv');" class="ext_link">CSV</a></li>
-                      <li class="gff"><a href="#javascript: export('exportForm_${formIdTail}', 'gff3');" class="ext_link">GFF3</a></li>
-                      <li class="seq"><a href="#javascript: export('exportForm_${formIdTail}', 'sequence');" class="ext_link">SEQ</a></li>
+                      <li class="tab"><a href="#javascript: exporta('exportForm_${formIdTail}', 'tab');" class="ext_link">TAB</a></li>
+                      <li class="csv"><a href="#javascript: exporta('exportForm_${formIdTail}', 'csv');" class="ext_link">CSV</a></li>
+                      <li class="gff"><a href="#javascript: exporta('exportForm_${formIdTail}', 'gff3');" class="ext_link">GFF3</a></li>
+                      <li class="seq"><a href="#javascript: exporta('exportForm_${formIdTail}', 'sequence');" class="ext_link">SEQ</a></li>
                     </ul>
                   </div>
                 <%-- /Export links --%>
