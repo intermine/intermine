@@ -11,6 +11,7 @@ package org.intermine.api.util;
  */
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,11 +46,6 @@ public final class PathUtil
      * @throws PathException if the path does not match the object type
      */
     public static Object resolvePath(Path path, Object o) throws PathException {
-        // to avoid an exception later on...
-        if (path.containsCollections()) {
-            return resolveCollectionPath(path, o);
-        }
-
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
             Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());
@@ -94,10 +90,11 @@ public final class PathUtil
      * @throws PathException if the path does not match the object type
      */
     @SuppressWarnings("unchecked")
-    public static Object resolveCollectionPath(Path path, Object o) throws PathException {
+    public static Set<Object> resolveCollectionPath(Path path, Object o) throws PathException {
         // early bath for him
         if (!path.containsCollections()) {
-            return resolvePath(path, o);
+            // return result as a Set
+            return new HashSet<Object>(Collections.singleton(resolvePath(path, o)));
         }
 
         Model model = path.getModel();
@@ -168,7 +165,8 @@ public final class PathUtil
             }
         }
 
-        return current;
+        // we will never reach this point
+        return new HashSet<Object>(Collections.singleton(null));
     }
 
     /**
