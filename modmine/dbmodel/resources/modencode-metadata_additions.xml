@@ -294,7 +294,6 @@
   <attribute name="type" type="java.lang.String" />
   <attribute name="value" type="java.lang.String" />
   <collection name="dataAttributes" referenced-type="SubmissionDataAttribute" reverse-reference="submissionData" />
-  <collection name="features" referenced-type="SequenceFeature" />
   <collection name="nextAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="inputs" />
   <collection name="previousAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="outputs" />
   <reference name="submission" referenced-type="Submission" reverse-reference="submissionData" />
