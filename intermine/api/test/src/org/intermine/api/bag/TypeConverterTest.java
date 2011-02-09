@@ -62,7 +62,7 @@ public class TypeConverterTest extends StoreDataTestCase
     ObjectStoreWriter uosw;
     ObjectStore os;
     Profile profile;
-    
+
     public TypeConverterTest(String arg1) {
         super(arg1);
     }
@@ -74,7 +74,7 @@ public class TypeConverterTest extends StoreDataTestCase
         ProfileManager pm = new ProfileManager(os, uosw);
         profile = new Profile(pm, "test", null, "test", null, null, null);
         pm.createProfile(profile);
-        
+
         TemplateQuery template = new TemplateQuery("convertEmployeesToAddresses", "", "", new PathQuery(os.getModel()));
         template.addViews("Employee.id", "Employee.address.id");
         PathConstraint employeeId = Constraints.eq("Employee.id", "0");
@@ -82,12 +82,12 @@ public class TypeConverterTest extends StoreDataTestCase
         template.setEditable(employeeId, true);
         conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(template));
     }
-    
+
     public void tearDown() throws Exception {
         removeUserProfile(profile.getUsername());
         uosw.close();
     }
-    
+
     private void removeUserProfile(String username) throws ObjectStoreException {
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
@@ -104,22 +104,22 @@ public class TypeConverterTest extends StoreDataTestCase
             uosw.delete(o);
         }
     }
-    
+
     public void executeTest(String type) {
     }
 
     public void testQueries() throws Throwable {
         // We don't want to run the standard queries, just load the test data
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
-    
+
     public static Test suite() {
         return buildSuite(TypeConverterTest.class);
     }
-    
+
     public void testGetConvertedObjectMap() throws Exception {
 
         Results r = getEmployeesAndAddresses();
@@ -135,7 +135,7 @@ public class TypeConverterTest extends StoreDataTestCase
 
         assertEquals(expected, got);
     }
-    
+
     private Results getEmployeesAndAddresses() throws Exception {
         List<String> names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
         Query q = new Query();
@@ -152,7 +152,7 @@ public class TypeConverterTest extends StoreDataTestCase
                     ConstraintOp.CONTAINS, qc2));
         return os.execute(q);
     }
-    
+
     public void testGetConversionMapQuery() throws Exception {
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery resQuery = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
@@ -163,7 +163,7 @@ public class TypeConverterTest extends StoreDataTestCase
         assertEquals(ConstraintOp.IN, resCon.getOp());
         assertEquals(bag.getName(), resCon.getBag());
     }
-    
+
     public void testGetConversionQuery() throws Exception {
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery resQuery = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
