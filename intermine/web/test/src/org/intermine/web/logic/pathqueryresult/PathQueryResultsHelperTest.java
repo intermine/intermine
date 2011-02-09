@@ -90,6 +90,10 @@ public class PathQueryResultsHelperTest extends TestCase
 
     }
 
+    protected void tearDown() throws Exception{
+        uosw.close();
+    }
+
     public void testGetDefaultView() throws Exception {
         List<String> view = PathQueryResultHelper.getDefaultViewForClass("Employee", os.getModel(), webConfig, null);
         assertTrue(view.size() == 3);
