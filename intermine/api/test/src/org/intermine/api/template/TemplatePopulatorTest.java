@@ -193,29 +193,29 @@ public class TemplatePopulatorTest extends InterMineAPITestCase
     }
 
     public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
-        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        InterMineBag bag = testUser.createBag("bag1", "Company", "");
         try {
             TemplatePopulator.populateTemplateWithBag(twoConstraints, bag);
             fail("Expected a TemplatePopulatorException.");
         } catch (TemplatePopulatorException e) {
         } finally {
-            profile.deleteBag("bag1");
+            testUser.deleteBag("bag1");
        }
     }
 
     public void testPopulateTemplateWithBagWrongType() throws Exception {
-        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        InterMineBag bag = testUser.createBag("bag1", "Company", "");
         try {
             TemplatePopulator.populateTemplateWithBag(simple, bag);
             fail("Expected a TemplatePopulatorException.");
         } catch (TemplatePopulatorException e) {
         } finally {
-            profile.deleteBag("bag1");
+            testUser.deleteBag("bag1");
         }
     }
 
     public void testPopulateTemplateWithBag() throws Exception {
-        InterMineBag bag = profile.createBag("bag1", "Employee", "");
+        InterMineBag bag = testUser.createBag("bag1", "Employee", "");
         TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simple, bag);
         assertEquals(1, res.getEditableConstraints().size());
         // constraint should now be on parent node
@@ -225,7 +225,7 @@ public class TemplatePopulatorTest extends InterMineAPITestCase
         PathConstraint resCon = res.getEditableConstraints().get(0);
         assertEquals(ConstraintOp.IN, resCon.getOp());
         assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
-        profile.deleteBag("bag1");
+        testUser.deleteBag("bag1");
     }
 
     public void testPopulateTemplateWithObject() throws Exception {
