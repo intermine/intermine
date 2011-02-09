@@ -1,6 +1,7 @@
 package org.intermine.api.util;
 
 import java.util.Collections;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -139,5 +140,29 @@ public class PathUtilTest extends TestCase {
 
         assertFalse(PathUtil.canAssignObjectToType(Manager.class, e));
         assertFalse(PathUtil.canAssignObjectToType(Department.class, e));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testResolveCollections() throws Exception {
+        Path path = new Path(model, "Company.departments.name");
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company.setName("company name");
+
+        Department department1 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        department1.setName("department name 1");
+        Department department2 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        department2.setName("department name 2");
+
+        company.addDepartments(department1);
+        company.addDepartments(department2);
+
+        // PathUtil return set of objects, assert with a set of objects
+        HashSet<String> departmentsSet = new HashSet<String>();
+        departmentsSet.add("department name 1");
+        departmentsSet.add("department name 2");
+        assertEquals(departmentsSet, PathUtil.resolveCollectionPath(path, company));
     }
 }
