@@ -142,7 +142,6 @@ public class PathUtilTest extends TestCase {
         assertFalse(PathUtil.canAssignObjectToType(Department.class, e));
     }
 
-    @SuppressWarnings("unchecked")
     public void testResolveCollections() throws Exception {
         Path path = new Path(model, "Company.departments.name");
         Company company =
@@ -166,6 +165,10 @@ public class PathUtilTest extends TestCase {
         assertEquals(departmentsSet, PathUtil.resolveCollectionPath(path, company));
     }
 
+    /**
+     * This test contains a collection inside a collection, expect one level deep Set
+     * @throws Exception
+     */
     public void testResolveCollectionOfCollections() throws Exception {
         Path path = new Path(model, "Company.departments.employees.name");
         Company company =
@@ -220,8 +223,13 @@ public class PathUtilTest extends TestCase {
         assertEquals(employeesSet, PathUtil.resolveCollectionPath(path, company));
     }
 
+    /**
+     * This test makes use of collections (departments, employees) and reverse references (department, company)
+     * @throws Exception
+     */
     public void testResolveCollectionOfCollectionsWithReverseReferences() throws Exception {
-        Path path = new Path(model, "Company.departments.company.departments.name");
+        Path path = new Path(model, "Company.departments.employees.department.company.departments.employees.name");
+
         Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setName("Initech");
@@ -236,14 +244,42 @@ public class PathUtilTest extends TestCase {
         department2.setName("Storage Room B");
         department2.setCompany(company);
 
+        Employee employee1 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee1.setName("Peter Gibbons");
+        employee1.setDepartment(department1);
+
+        Employee employee2 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee2.setName("Michael Bolton");
+        employee2.setDepartment(department1);
+
+        Employee employee3 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee3.setName("Samir Nagheenanajar");
+        employee3.setDepartment(department2);
+
+        Employee employee4 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee4.setName("Tom Smykowski");
+        employee4.setDepartment(department2);
+
+        department1.addEmployees(employee1);
+        department1.addEmployees(employee2);
+
+        department2.addEmployees(employee3);
+        department2.addEmployees(employee4);
+
         company.addDepartments(department1);
         company.addDepartments(department2);
 
         // PathUtil return set of objects, assert with a set of objects
-        HashSet<String> departmentsSet = new HashSet<String>();
-        departmentsSet.add("Office Space");
-        departmentsSet.add("Storage Room B");
-        assertEquals(departmentsSet, PathUtil.resolveCollectionPath(path, company));
+        HashSet<String> employeesSet = new HashSet<String>();
+        employeesSet.add("Peter Gibbons");
+        employeesSet.add("Michael Bolton");
+        employeesSet.add("Samir Nagheenanajar");
+        employeesSet.add("Tom Smykowski");
+        assertEquals(employeesSet, PathUtil.resolveCollectionPath(path, company));
     }
 
 }

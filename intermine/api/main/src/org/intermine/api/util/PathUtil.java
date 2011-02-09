@@ -45,6 +45,11 @@ public final class PathUtil
      * @throws PathException if the path does not match the object type
      */
     public static Object resolvePath(Path path, Object o) throws PathException {
+        // to avoid an exception later on...
+        if (path.containsCollections()) {
+            return resolveCollectionPath(path, o);
+        }
+
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
             Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());
@@ -80,8 +85,8 @@ public final class PathUtil
     }
 
     /**
-     * Return the object at the end of a given path, starting from the given object. Works even with
-     * Collections of objects
+     * Return the object at the end of a given path, starting from the given object. Works with
+     * Collections of objects and reverse references.
      *
      * @param path the path to resolve
      * @param o the start object
@@ -90,6 +95,11 @@ public final class PathUtil
      */
     @SuppressWarnings("unchecked")
     public static Object resolveCollectionPath(Path path, Object o) throws PathException {
+        // early bath for him
+        if (!path.containsCollections()) {
+            return resolvePath(path, o);
+        }
+
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
             Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());
@@ -103,36 +113,50 @@ public final class PathUtil
 
         Object current = o;
 
-        List<String> pathElements = path.getElements();
-        for (int i=0; i < pathElements.size(); i++) {
-            String fieldName = pathElements.get(i);
+        // elements in a path we will abuse on collection retrieval
+        List<String> pathStrings = path.getElements();
+        // traverse all elements in a Path
+        for (int i = 0; i < path.getElements().size(); i++) {
+
+            // fetch the field
+            String fieldName = pathStrings.get(i);
 
             try {
                 if (current == null) {
                     return null;
                 }
                 current = TypeUtil.getFieldValue(current, fieldName);
+
+                // do we have a Collection?
                 if (current instanceof Collection<?>) {
-                    // form a path string leaving out the first ("now to be root") element
-                    pathElements.remove(0);
-                    String pathString = "";
-                    for (String element : path.getElements()) pathString += '.' + element;
 
                     // traverse all of the objects and resolve path in them
                     HashSet<Object> resultList = new HashSet<Object>();
-                    for (Object element : (Collection<?>)current) {
+                    for (Object element : (Collection<?>) current) {
+
                         // what is the class type?
-                        String objectClass = DynamicUtil.getSimpleClass((Class<? extends FastPathObject>) element.getClass()).getSimpleName();
-                        // form a new path string
+                        String objectClass = DynamicUtil.getSimpleClass(
+                                (Class<? extends FastPathObject>) element.getClass())
+                                .getSimpleName();
+
+                        // form a new path string starting with the next element
+                        //  in the path, separated by a '.'
+                        String pathString = "";
+                        for (int k = i + 1; k < pathStrings.size(); k++) {
+                            pathString += '.' + pathStrings.get(k);
+                        }
+
+                        // form a new path
                         path = new Path(model, objectClass + pathString);
 
                         // add resolved result
                         Object resultObject = resolveCollectionPath(path, element);
                         if (resultObject instanceof HashSet<?>) { // sets of sets
-                            for (Object innerElement : (HashSet<?>)resultObject) {
+                            for (Object innerElement : (HashSet<?>) resultObject) {
                                 resultList.add(innerElement);
                             }
                         } else {
+                            // add the object
                             resultList.add(resultObject);
                         }
                     }
