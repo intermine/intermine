@@ -11,6 +11,7 @@ package org.intermine.api.util;
  */
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -86,6 +88,7 @@ public final class PathUtil
      * @return the attribute, object or collection at the end of the path
      * @throws PathException if the path does not match the object type
      */
+    @SuppressWarnings("unchecked")
     public static Object resolveCollectionPath(Path path, Object o) throws PathException {
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
@@ -114,17 +117,24 @@ public final class PathUtil
                     for (String element : path.getElements()) pathString += '.' + element;
 
                     // return the collection as a list
-                    Collection currentList = ((ProxyCollection<?>) current).asList();
-                    // fetch the first object and determine its type
-                    // TODO will we always get an object?
-                    Object currentListObject = ((List<?>) currentList).get(0);
+                    //Collection currentList = null;
+                    //if (current instanceof ProxyCollection<?>) {
+                    //    currentList = ((ProxyCollection<?>) current).asList();
+                    //} else if (current instanceof HashSet<?>) {
+                    //    currentList = new ArrayList<Object>((Set<?>) current);
+                    //} else {
+                    //    throw new RuntimeException("Unrecognized collection type.");
+                    //}
+
+                    // fetch an object from the collection and determine its type
+                    Object currentListObject = ((Collection<?>) current).iterator().next();
                     String objectClass = DynamicUtil.getSimpleClass((Class<? extends FastPathObject>) currentListObject.getClass()).getSimpleName();
                     // form a new path string
                     path = new Path(model, objectClass + pathString);
 
                     // traverse all of the objects and resolve path in them
-                    List<Object> resultList = new ArrayList<Object>();
-                    for (Object element : currentList) {
+                    HashSet<Object> resultList = new HashSet<Object>();
+                    for (Object element : (Collection<?>)current) {
                         Object stuff = resolveCollectionPath(path, element);
                         resultList.add(stuff);
                     }
