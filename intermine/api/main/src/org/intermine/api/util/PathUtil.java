@@ -103,7 +103,10 @@ public final class PathUtil
 
         Object current = o;
 
-        for (String fieldName : path.getElements()) {
+        List<String> pathElements = path.getElements();
+        for (int i=0; i < pathElements.size(); i++) {
+            String fieldName = pathElements.get(i);
+
             try {
                 if (current == null) {
                     return null;
@@ -111,32 +114,27 @@ public final class PathUtil
                 current = TypeUtil.getFieldValue(current, fieldName);
                 if (current instanceof Collection<?>) {
                     // form a path string leaving out the first ("now to be root") element
-                    List<String> pathElements = path.getElements();
                     pathElements.remove(0);
                     String pathString = "";
                     for (String element : path.getElements()) pathString += '.' + element;
 
-                    // return the collection as a list
-                    //Collection currentList = null;
-                    //if (current instanceof ProxyCollection<?>) {
-                    //    currentList = ((ProxyCollection<?>) current).asList();
-                    //} else if (current instanceof HashSet<?>) {
-                    //    currentList = new ArrayList<Object>((Set<?>) current);
-                    //} else {
-                    //    throw new RuntimeException("Unrecognized collection type.");
-                    //}
-
-                    // fetch an object from the collection and determine its type
-                    Object currentListObject = ((Collection<?>) current).iterator().next();
-                    String objectClass = DynamicUtil.getSimpleClass((Class<? extends FastPathObject>) currentListObject.getClass()).getSimpleName();
-                    // form a new path string
-                    path = new Path(model, objectClass + pathString);
-
                     // traverse all of the objects and resolve path in them
                     HashSet<Object> resultList = new HashSet<Object>();
                     for (Object element : (Collection<?>)current) {
-                        Object stuff = resolveCollectionPath(path, element);
-                        resultList.add(stuff);
+                        // what is the class type?
+                        String objectClass = DynamicUtil.getSimpleClass((Class<? extends FastPathObject>) element.getClass()).getSimpleName();
+                        // form a new path string
+                        path = new Path(model, objectClass + pathString);
+
+                        // add resolved result
+                        Object resultObject = resolveCollectionPath(path, element);
+                        if (resultObject instanceof HashSet<?>) { // sets of sets
+                            for (Object innerElement : (HashSet<?>)resultObject) {
+                                resultList.add(innerElement);
+                            }
+                        } else {
+                            resultList.add(resultObject);
+                        }
                     }
                     return resultList;
                 }
