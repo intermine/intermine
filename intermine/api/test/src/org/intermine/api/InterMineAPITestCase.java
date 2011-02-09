@@ -44,6 +44,7 @@ public class InterMineAPITestCase extends TestCase {
     protected InterMineAPI im;
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
+    protected Profile profile;
 
     public void setUp() throws Exception {
         os = ObjectStoreFactory.getObjectStore("os.unittest");
@@ -67,6 +68,9 @@ public class InterMineAPITestCase extends TestCase {
         ProfileManager pmTmp = new ProfileManager(os, uosw);
         Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pmTmp.createProfile(superUser);
+
+        profile = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        pmTmp.createProfile(profile);
 
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
