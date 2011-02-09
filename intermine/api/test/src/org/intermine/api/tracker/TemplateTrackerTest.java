@@ -88,6 +88,7 @@ public class TemplateTrackerTest extends TestCase
         user.deleteTemplate("template2", null);
         removeUserProfile("superuser");
         removeUserProfile("user");
+        uosw.close();
     }
 
     private void createTemplates() {
@@ -161,7 +162,5 @@ public class TemplateTrackerTest extends TestCase
         assertNull(templateTracker.getRank(templateManager).get("template2"));
     }
 
-    /*public void testUpdateTemplateName() {
-    	
-    }*/
 }
+
