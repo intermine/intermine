@@ -144,6 +144,7 @@ public class NcbiGeneInfoParser
         }
         return duplicates;
     }
+
     private Set<String> parseXrefs(String xrefs, String prefix) {
         if (!prefix.endsWith(":")) {
             prefix = prefix + ":";

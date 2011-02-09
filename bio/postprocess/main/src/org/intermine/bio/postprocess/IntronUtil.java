@@ -348,7 +348,7 @@ public class IntronUtil
         }
         return intronCount;
     }
-    
+
     private void addToIntronTranscripts(SequenceFeature intron, SequenceFeature transcript) {
         Set<SequenceFeature> transcripts = intronTranscripts.get(intron);
         if (transcripts == null) {
