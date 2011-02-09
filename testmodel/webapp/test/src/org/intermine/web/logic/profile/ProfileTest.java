@@ -62,6 +62,7 @@ public class ProfileTest extends TestCase
 
     public void tearDown() throws Exception {
         profileManager.close();
+        userprofileOS.close();
     }
 
     public void testModifySavedMaps() throws Exception {
@@ -167,12 +168,10 @@ public class ProfileTest extends TestCase
 
     class DummyProfileManager extends ProfileManager
     {
-        public DummyProfileManager(ObjectStore os)
+        public DummyProfileManager()
             throws ObjectStoreException {
-
-            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"));
+            super(objectstoreOS, userprofileOS);
         }
-
         public void saveProfile(Profile profile) {
             throw new UnsupportedOperationException();
         }
