@@ -76,7 +76,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
         twoConstraints.setEditable(depCon, true);
         profile.saveTemplate("template", twoConstraints);
     }
-    
+
     public void tearDown() throws Exception {
         profile.deleteTemplate("template", null);
         removeUserProfile(profile.getUsername());
