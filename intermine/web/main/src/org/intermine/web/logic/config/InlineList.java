@@ -1,6 +1,6 @@
 package org.intermine.web.logic.config;
 
-import java.util.List;
+import java.util.Collection;
 
 public class InlineList {
 
@@ -24,7 +24,7 @@ public class InlineList {
     }
 
     public int getSize() {
-        return ((List<?>) object).size();
+        return ((Collection<?>) object).size();
     }
 
 }
