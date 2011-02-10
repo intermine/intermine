@@ -26,6 +26,7 @@ public class InlineList
     private String path;
     private Boolean showLinksToObjects = false;
     private Set<InlineListObject> listOfObjects;
+    private Boolean showInHeader = false;
 
     /**
      * Path set from WebConfig, ie "probeSets.primaryIdentifier"
@@ -41,6 +42,14 @@ public class InlineList
      */
     public void setShowLinksToObjects(Boolean showLinksToObjects) {
         this.showLinksToObjects = showLinksToObjects;
+    }
+
+    /**
+     * Shall we show this inline list in the header of the report page (and nowhere else?)
+     * @param showInHeader set from WebConfig
+     */
+    public void setShowInHeader(Boolean showInHeader) {
+        this.showInHeader  = showInHeader;
     }
 
     /**
@@ -104,6 +113,14 @@ public class InlineList
      */
     public Boolean getShowLinksToObjects() {
         return showLinksToObjects;
+    }
+
+    /**
+     *
+     * @return are we to show this inline list in the header of the report page?
+     */
+    public Boolean getShowInHeader() {
+        return showInHeader;
     }
 
 }

@@ -85,6 +85,15 @@
     </c:if>
   </c:forEach>
 </table>
+
+<div class="box">
+  <c:set var="isThisHeader" value="true" scope="request" />
+  <tiles:insert page="/objectDetailsInlineLists.jsp">
+    <tiles:put name="object" beanName="object" />
+    <tiles:put name="isThisHeader" beanName="isThisHeader" />
+  </tiles:insert>
+</div>
+
 </div>
 
 <%--
@@ -165,10 +174,14 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
   <tiles:put name="heading" value="true" />
 </tiles:insert></div>
 
-<div class="box grid_9"><tiles:insert
-  page="/objectDetailsInlineLists.jsp">
-  <tiles:put name="object" beanName="object" />
-</tiles:insert> <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+<div class="box grid_9">
+  <c:set var="isThisHeader" value="false" scope="request" />
+  <tiles:insert page="/objectDetailsInlineLists.jsp">
+    <tiles:put name="object" beanName="object" />
+    <tiles:put name="isThisHeader" beanName="isThisHeader" />
+  </tiles:insert>
+
+  <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <tiles:insert name="objectDetailsAspect.tile">
     <tiles:put name="placement" value="im:aspect:${aspect}" />
     <tiles:put name="displayObject" beanName="object" />
@@ -176,7 +189,8 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
     <tiles:put name="opened" value="${status.index == 0}" />
   </tiles:insert>
-</c:forEach></div>
+  </c:forEach>
+</div>
 
 <div class="box grid_9">
 <h2>Miscellaneous</h2>
