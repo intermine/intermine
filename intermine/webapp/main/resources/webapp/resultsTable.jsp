@@ -217,9 +217,7 @@
     </tbody>
   </c:if>
 
-  <tfoot>
-  <tr>
-  <td colspan="${colcount}">
+  <div>
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
   <c:choose>
     <c:when test="${empty inlineTable}">
@@ -240,6 +238,7 @@
     <c:otherwise>
       <c:set var="numRows" value="${pagedResults.exactSize}"/>
 
+      <%--
       <c:choose>
         <c:when test="${pagedResults.pageSize >= numRows}">
           <c:choose>
@@ -255,12 +254,12 @@
           <b>Showing first <span><c:out value="${pagedResults.pageSize}"/></span> of <span><c:out value="${numRows}"/></span> rows.</b>
         </c:otherwise>
       </c:choose>
+      --%>
     </c:otherwise>
   </c:choose>
 
-  </td>
-  </tr>
-  </tfoot>
+  </div>
+
     <c:if test="${! pagedResults.emptySelection}">
     <script type="text/javascript" charset="utf-8">
     if (jQuery('#newBagName')) {

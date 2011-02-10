@@ -75,6 +75,7 @@
           </c:forEach>
         </html:link></h3>
         <%-- ############# --%>
+        <%--
         <c:if test="${collection.size == 1}">
           <c:forEach
             items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}"
@@ -89,6 +90,7 @@
             </c:if>
           </c:forEach>
         </c:if>
+        --%>
       </c:when>
       <%--
       <c:otherwise>
