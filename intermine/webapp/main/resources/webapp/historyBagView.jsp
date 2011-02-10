@@ -33,16 +33,6 @@
     <c:otherwise>
 
     <table>
-    <c:if test="${PROFILE.loggedIn}">
-        <tr><td align="right">
-            Filter:&nbsp;
-            <tiles:insert name="tagSelect.tile">
-                    <tiles:put name="type" value="bag" />
-                    <tiles:put name="selectId" value="mainSelect" />
-                    <tiles:put name="onChangeFunction" value="filterByTag" />
-            </tiles:insert>
-        </td></tr>
-    </c:if>
     <tr><td>
 
       <html:form action="/modifyBag">
