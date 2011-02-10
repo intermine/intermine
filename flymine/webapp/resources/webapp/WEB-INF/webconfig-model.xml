@@ -181,7 +181,7 @@
 
   <class className="org.intermine.model.bio.Gene">
     <inlinelist>
-      <table path="synonyms.value" />
+      <table path="synonyms.value" showLinksToObjects="true" />
       <table path="probeSets.primaryIdentifier" />
     </inlinelist>
     <fields>

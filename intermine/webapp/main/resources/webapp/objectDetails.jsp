@@ -170,18 +170,9 @@
 
     <div class="box grid_9">
 
-      <h2>Inline Lists</h2>
-      <div>
-      <c:forEach items="${object.inlineLists}" var="list">
-        <div class="box grid_12">
-          <h3>${list.size} ${list.path}</h3>
-          <c:forEach items="${list.object}" var="item" varStatus="status">
-            ${item}<c:if test="${status.count < list.size}">, </c:if>
-          </c:forEach>
-        </div>
-        <div style="clear:both;">&nbsp;</div>
-      </c:forEach>
-      </div>
+      <tiles:insert page="/objectDetailsInlineLists.jsp">
+        <tiles:put name="object" beanName="object"/>
+      </tiles:insert>
 
       <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
         <tiles:insert name="objectDetailsAspect.tile">
