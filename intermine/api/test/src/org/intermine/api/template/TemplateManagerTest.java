@@ -19,7 +19,7 @@ public class TemplateManagerTest extends InterMineAPITestCase {
     private TemplateManager templateManager;
 
     public TemplateManagerTest() throws Exception {
-        super();
+        super(null);
     }
 
     public void setUp() throws Exception {
