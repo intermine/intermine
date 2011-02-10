@@ -15,16 +15,16 @@
 
 <html:xhtml/>
 
-<div style="overflow: auto; padding: 3px">
+<div>
   <c:if test="${(displayObject != null || interMineIdBag !=null) && resultsTable != null}">
-    
+
     <%-- Results table --%>
   <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="resultsTable" />
      <tiles:put name="inlineTable" value="true" />
      <tiles:put name="currentPage" value="objectDetails" />
   </tiles:insert>
-    
+
   </c:if>
 </div>
 
@@ -39,9 +39,11 @@
      <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />
   </c:otherwise>
   </c:choose>
-[<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
-  Show in results table...
-</html:link>]
+<p class="in_table">
+<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
+  Show all in a table
+</html:link>
+</p>
 
 <%-- Update ui given results of this template --%>
 
@@ -62,9 +64,9 @@
         $('count_'+id).innerHTML='no results';
         $('img_'+id).parentNode.href='#';
         $('img_'+id).parentNode.onclick = function(){return false;};
-      } else {
-        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}\" title=\"View results of this template in a table\">${resultsTable.exactSize} results</a>';
-      }
+      } //else {
+        //$('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}\" title=\"View results of this template in a table\">${resultsTable.exactSize} results</a>';
+      //}
     </script>
   </c:otherwise>
 </c:choose>

@@ -11,7 +11,65 @@ function loadInlineTemplates() {
   loadInlineTemplate(0);
 }
 
+/**
+ * Load report page template (jQuery)
+ * @param i
+ * @return
+ */
 function loadInlineTemplate(i) {
+  if (i >= queue.length) {
+    return;
+  }
+
+  var placement = queue[i][0];
+  var templateName = queue[i][1];
+  var id = queue[i][2];
+  var trail = queue[i][3];
+  var uid = placement.replace(/ /, '_') + '_' + templateName;
+
+  // element to modify, replacing ":" as these are jQuery selectors albeit valid in div id value
+  var e = '#table_' + uid.replace(/:/g, '_') + '_int';
+
+  jQuery(e).show();
+  jQuery(e).innerHTML = placement + templateName + id;
+
+  jQuery.ajax({
+    url: modifyDetailsURL,
+    dataType: 'html',
+    data: 'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType+'&trail='+trail,
+    success: function(result) {
+      jQuery(e).hide();
+      jQuery(e).html(result);
+      jQuery(e).fadeIn();
+
+      // remove any fail messages
+      if (jQuery(e).parent().find('p.fail').length !== 0) {
+        jQuery(e).parent().find('p.fail').remove();
+      }
+
+      loadInlineTemplate(i+1);
+    },
+    error: function(jXHR, textStatus) {
+      // on fail append a retry to the parent if not present
+      if (jQuery(e).parent().find('p.fail').length == 0) {
+        jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
+        toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
+      }
+    },
+    complete: function(jXHR, textStatus) {
+        // get rid of the loading message
+        jQuery(e).parent().find('p.loading').remove();
+    }
+  });
+
+}
+
+/**
+ * Load report page template (Prototype)
+ * @param i
+ * @return
+ */
+function loadInlineTemplatePrototype(i) {
   if (i >= queue.length) {
     return;
   }

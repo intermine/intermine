@@ -323,7 +323,7 @@ public class DisplayObject
         try {
             for (ClassDescriptor cld : clds) {
 
-                // InlineLists
+                /** InlineLists **/
                 Type type = webConfig.getTypes().get(cld.getName());
                 // init lists from WebConfig Type
                 inlineLists = type.getInlineLists();
