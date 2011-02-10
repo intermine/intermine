@@ -1205,28 +1205,6 @@ public class AjaxServices
     //*****************************************************************************
 
     /**
-     * Returns all objects names tagged with specified tag type and tag name.
-     * @param type tag type
-     * @param tag tag name
-     * @return objects names
-     */
-    public static Set<String> filterByTag(String type, String tag) {
-        Profile profile = getProfile(getRequest());
-
-        SearchRepository searchRepository = profile.getSearchRepository();
-        Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.
-            getWebSearchableMap(type);
-        if (map == null) {
-            return null;
-        }
-        Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
-        List<String> tagList = new ArrayList<String>();
-        tagList.add(tag);
-        filteredMap.putAll(new SearchFilterEngine().filterByTags(map, tagList, type,
-                profile.getUsername(), getTagManager()));
-        return filteredMap.keySet();
-    }
-    /**
      * Adds tag and assures that there is only one tag for this combination of tag name, tagged
      * Object and type.
      * @param tag tag name
