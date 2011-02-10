@@ -8,12 +8,13 @@
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
 <tiles:importAttribute name="object" />
+<tiles:importAttribute name="isThisHeader" />
 
 <c:if test="${!empty object.inlineLists}">
   <h2>Inline Lists</h2>
   <div>
   <c:forEach items="${object.inlineLists}" var="list">
-    <c:if test="${list.size > 0}">
+    <c:if test="${list.size > 0 && isThisHeader == list.showInHeader}">
       <div class="box grid_12">
         <h3>${list.size} ${list.path}</h3>
         <c:choose>

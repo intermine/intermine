@@ -98,7 +98,10 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/inlinelist/table");
         digester.addSetNext("webconfig/class/inlinelist/table", "addInlineList");
         digester.addSetProperties("webconfig/class/inlinelist/table", "path", "path");
-        digester.addSetProperties("webconfig/class/inlinelist/table", "showLinksToObjects", "showLinksToObjects");
+        digester.addSetProperties("webconfig/class/inlinelist/table",
+                "showLinksToObjects", "showLinksToObjects");
+        digester.addSetProperties("webconfig/class/inlinelist/table",
+                "showInHeader", "showInHeader");
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/displayer");

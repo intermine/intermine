@@ -183,6 +183,7 @@
     <inlinelist>
       <table path="synonyms.value" showLinksToObjects="true" />
       <table path="probeSets.primaryIdentifier" />
+      <table path="organism.name" showLinksToObjects="true" showInHeader="true" />
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
