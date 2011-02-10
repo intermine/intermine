@@ -62,6 +62,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR", "origin_of_replication",
             "binding_site", "protein_binding_site", "TF_binding_site",
+            "insulator_binding_site",
             "transcript_region", "histone_binding_site", "copy_number_variation",
             "natural_transposable_element", "start_codon", "stop_codon"
             , "cDNA", "cDNA_match", "miRNA"
