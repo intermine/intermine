@@ -189,6 +189,7 @@ if [ -n "$P" ]
 then
 CHADODB="modchado-$P"
 echo "- Single project: $P"
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep metadata.datasource.serverName  | grep -w $P | awk -F "=" '{print $2}'`
 else
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
@@ -216,6 +217,7 @@ echo "==================================="
 echo "Building modmine-$REL on $MINEHOST."
 echo "==================================="
 echo "current directory: $MINEDIR"
+echo "modencode data sources on: *** $DBHOST ***"
 echo "Log: $LOG"
 if [ "$FULL" = "n" ]
 then
