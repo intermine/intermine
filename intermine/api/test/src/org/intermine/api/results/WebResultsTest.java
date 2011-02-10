@@ -17,9 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
@@ -30,6 +29,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -50,7 +50,7 @@ import org.intermine.util.DynamicUtil;
  * @author Xavier Watkins
  */
 
-public class WebResultsTest extends TestCase
+public class WebResultsTest extends InterMineAPITestCase
 {
     private Company company1;
     private Company company2;
@@ -61,10 +61,10 @@ public class WebResultsTest extends TestCase
     private Manager man1;
     private Manager man2;
     private CEO man3;
-    private ObjectStoreDummyImpl os;
+    private ObjectStoreDummyImpl osd;
     private final Model model = Model.getInstanceByName("testmodel");
     private Map classKeys;
-    private InterMineAPI im;
+
 
     public WebResultsTest (String arg) {
         super(arg);
@@ -72,9 +72,8 @@ public class WebResultsTest extends TestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        os = new ObjectStoreDummyImpl();
-        os.setResultsSize(15);
-        im = new InterMineAPI(os, null, null, null, null, null, null);
+        osd = new ObjectStoreDummyImpl();
+        osd.setResultsSize(15);
 
         // Set up some known objects in the first 3 results rows
         department1 = new Department();
@@ -118,17 +117,17 @@ public class WebResultsTest extends TestCase
         row.add(department1);
         row.add(company1);
         row.add(man1);
-        os.addRow(row);
+        osd.addRow(row);
         row = new ResultsRow();
         row.add(department2);
         row.add(company2);
         row.add(man2);
-        os.addRow(row);
+        osd.addRow(row);
         row = new ResultsRow();
         row.add(department3);
         row.add(company3);
         row.add(man3);
-        os.addRow(row);
+        osd.addRow(row);
         classKeys = new HashMap();
         FieldDescriptor fd = model.getClassDescriptorByName("org.intermine.model.testmodel.Company").getFieldDescriptorByName("name");
         ArrayList<FieldDescriptor> keys = new ArrayList();
@@ -159,7 +158,7 @@ public class WebResultsTest extends TestCase
          pathToQueryNode.put("Department.employees.name", empName);
 
          Query query = MainHelper.makeQuery(pathQuery , new HashMap(), pathToQueryNode, null, null);
-         WebResults webResults = new WebResults(im, pathQuery, os.execute(query), pathToQueryNode, new HashMap());
+         WebResults webResults = new WebResults(im, pathQuery, osd.execute(query), pathToQueryNode, new HashMap());
          LinkedHashMap<String, Integer> actual = webResults.pathToIndex;
          LinkedHashMap<String, Integer> expected = new LinkedHashMap<String, Integer>();
          expected.put("Department.employees.name", 2);
@@ -180,7 +179,7 @@ public class WebResultsTest extends TestCase
         pq.setDescription("Company", "description 1");
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
-        Results results = os.execute(query);
+        Results results = osd.execute(query);
         WebResults webResults = new WebResults(im, pq, results, pathToQueryNode, classKeys);
         List<Column> expectedColumns = new ArrayList<Column>();
         Column col1 = new Column("description 1 > name",0 ,Company.class);
@@ -201,7 +200,7 @@ public class WebResultsTest extends TestCase
         pq.addViews("Department.name", "Department.company.name", "Department.manager.name");
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
-        Results results = os.execute(query);
+        Results results = osd.execute(query);
         WebResults webResults = new WebResults(im, pq, results, pathToQueryNode, classKeys);
         List row1 = webResults.getResultElements(0);
 
@@ -237,7 +236,7 @@ public class WebResultsTest extends TestCase
                     "AND a1_.employees CONTAINS a4_)",
                     "org.intermine.model.testmodel");
         Query query = fq.toQuery();
-        Results results = os.execute(query);
+        Results results = osd.execute(query);
 
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.addViews("Department.name", "Department.manager.company.name", "Department.manager.company.vatNumber", "Department.employees.seniority");
