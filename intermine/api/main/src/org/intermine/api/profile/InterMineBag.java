@@ -159,7 +159,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         q.addToSelect(osb);
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-        return (List<Integer>) ((List) res);
+        return ((List) res);
     }
 
     /**

@@ -19,6 +19,7 @@ package org.intermine.api.tag;
 public final class AspectTagUtil
 {
     private AspectTagUtil() {
+        // don't instantiate
     }
 
     /**

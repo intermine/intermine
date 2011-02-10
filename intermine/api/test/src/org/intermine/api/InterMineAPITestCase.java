@@ -46,7 +46,15 @@ public class InterMineAPITestCase extends TestCase {
     protected ObjectStoreWriter uosw;
     protected Profile testUser;
 
+    /**
+     * @param arg
+     */
+    public InterMineAPITestCase(String arg) {
+        super(arg);
+    }
+
     public void setUp() throws Exception {
+
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
@@ -73,6 +81,7 @@ public class InterMineAPITestCase extends TestCase {
         pmTmp.createProfile(testUser);
 
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
+
     }
 
     public void tearDown() throws Exception {
