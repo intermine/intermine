@@ -50,7 +50,8 @@ import com.browseengine.bobo.api.BrowseResult;
 import com.browseengine.bobo.api.FacetAccessible;
 
 /**
- * controller for keyword search
+ * Controller for keyword search.
+ *
  * @author nils
  */
 public class KeywordSearchResultsController extends TilesAction
@@ -61,7 +62,6 @@ public class KeywordSearchResultsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -106,6 +106,7 @@ public class KeywordSearchResultsController extends TilesAction
 
         // term
         String searchTerm = request.getParameter("searchTerm");
+        searchTerm = stripTerm(searchTerm);
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
 
         // search in bag (list)
@@ -334,5 +335,13 @@ public class KeywordSearchResultsController extends TilesAction
         LOG.debug("--> TOTAL: " + (System.currentTimeMillis() - time) + " ms");
 
         return null;
+    }
+
+    // replace special characters with *
+    private String stripTerm(String str) {
+        String cleanString = str;
+        String pattern = "[^A-Z]";
+        String strippedString = cleanString.replaceAll(pattern, "*");
+        return cleanString;
     }
 }
