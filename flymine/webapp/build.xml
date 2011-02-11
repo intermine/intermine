@@ -5,22 +5,22 @@
 
   <target name="-pre-jar"
           depends="application.-pre-jar, -add-struts-config"/>
- 
-  <!-- it's hacky to override do-generate, but it gets run at the right time --> 
-  <target name="do-generate"> 
-    <mkdir dir="${build.dir}/webapp"/> 
-    <mkdir dir="${build.dir}/webapp/sitemaps"/>     
+
+  <!-- it's hacky to override do-generate, but it gets run at the right time -->
+  <target name="do-generate">
+    <mkdir dir="${build.dir}/webapp"/>
+    <mkdir dir="${build.dir}/webapp/sitemaps"/>
     <ant antfile="build.xml" dir="../sitemap" target="generate-sitemap" inheritAll="false">
-      <property name="sitemap.output" value="${build.dir}/webapp/sitemaps"/> 
-    </ant> 
-  </target> 
+      <property name="sitemap.output" value="${build.dir}/webapp/sitemaps"/>
+    </ant>
+  </target>
 
   <target name="-add-struts-config"
           description="Append the struts config modifications to the webapp"
-  	  depends="-pre-init">
+      depends="-pre-init">
     <unwar src="${dist.war}" dest="${build.dir}/webapp/">
       <patternset>
-  	<include name="WEB-INF/struts-config.xml"/>
+    <include name="WEB-INF/struts-config.xml"/>
         <include name="WEB-INF/tiles-defs.xml"/>
         <include name="WEB-INF/classes/InterMineWebApp.properties"/>
         <include name="WEB-INF/classes/model.properties"/>
@@ -34,7 +34,7 @@
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
 
-    <loadfile property="model.struts.form.config" 
+    <loadfile property="model.struts.form.config"
               srcFile="./resources/struts-config-form-model.xml"/>
 
     <replace file="${build.dir}/webapp/WEB-INF/struts-config.xml"
@@ -57,7 +57,7 @@
 
     <war destfile="${dist.war}" update="true" >
       <webinf dir="${build.dir}/webapp/WEB-INF/">
-  	<filename name="struts-config.xml" />
+    <filename name="struts-config.xml" />
         <filename name="tiles-defs.xml" />
       </webinf>
     </war>

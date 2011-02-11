@@ -1,4 +1,4 @@
-<!--//<![CDATA[
+<!--// <![CDATA[
 
 queue = [];
 
@@ -12,7 +12,28 @@ function loadInlineTemplates() {
 }
 
 /**
+ * jQuery function extension performing a 'scroll to target'
+ */
+jQuery.fn.extend({
+  /**
+   * @speed A string or number determining how long the animation will run
+   * @easing A string indicating which easing function to use for the transition (linear or swing).
+   * @val Extra offset in px
+   * @onComplete A function to call once the animation is complete
+   */
+    scrollTo : function(speed, easing, val, onComplete) {
+        return this.each(function() {
+            var targetOffset = jQuery(this).offset().top + val;
+            jQuery('html,body').animate({
+                scrollTop: targetOffset
+            }, speed, easing, onComplete);
+        });
+    }
+});
+
+/**
  * Load report page template (jQuery)
+ *
  * @param i
  * @return
  */
@@ -27,7 +48,8 @@ function loadInlineTemplate(i) {
   var trail = queue[i][3];
   var uid = placement.replace(/ /, '_') + '_' + templateName;
 
-  // element to modify, replacing ":" as these are jQuery selectors albeit valid in div id value
+  // element to modify, replacing ":" as these are jQuery selectors albeit
+  // valid in div id value
   var e = '#table_' + uid.replace(/:/g, '_') + '_int';
 
   jQuery(e).show();
@@ -66,6 +88,7 @@ function loadInlineTemplate(i) {
 
 /**
  * Load report page template (Prototype)
+ *
  * @param i
  * @return
  */
@@ -99,6 +122,7 @@ function loadInlineTemplatePrototype(i) {
 
 /**
  * Load report page table (jQuery)
+ *
  * @param placement
  * @param field
  * @param object_id
@@ -107,7 +131,8 @@ function loadInlineTemplatePrototype(i) {
  */
 function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
 
-  // element to modify, replacing ":" as these are jQuery selectors albeit valid in div id value
+  // element to modify, replacing ":" as these are jQuery selectors albeit
+  // valid in div id value
   var e = '#coll_'+placement.replace(/:/g, '_')+field+'_inner';
 
   // is the target table empty?
@@ -173,7 +198,9 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
 
 
 /**
- * The purpose of this function is to display max 10 rows in a "verbose" table (= cached...)
+ * The purpose of this function is to display max 10 rows in a "verbose" table (=
+ * cached...)
+ *
  * @param e
  * @return
  */
@@ -201,6 +228,7 @@ function trimTable(e) {
 
 /**
  * Toggle upto 10 rows in a table above that are currently hidden
+ *
  * @param e
  * @return
  */
@@ -221,7 +249,11 @@ function showMoreRows(e, round) {
     }
   });
 
-  // if the count is > 0 (< 30 entries) or 3rd round (30+ entries) at this point, show a link to table instead
+  // scroll to
+  jQuery(e + ' table').parent().find('p.toggle').scrollTo('slow', 'swing', -20);
+
+  // if the count is > 0 (< 30 entries) or 3rd round (30+ entries) at this
+  // point, show a link to table instead
   if (count > 0 || round == 2) {
     table.parent().find('p.toggle').css('display', 'none');
     table.parent().parent().find('p.in_table').css('display', '');
@@ -255,7 +287,8 @@ function toggleCollectionVisibility(placement, field, object_id, trail) {
 function toggleSlide(placement, field) {
   var img = $('img_'+placement+'_'+field).src;
   $('img_'+placement+'_'+field).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
-  Element.toggle('coll_'+placement+'_'+field);//, 'blind');//, {duration: 0.2});
+  Element.toggle('coll_'+placement+'_'+field);// , 'blind');//, {duration:
+                        // 0.2});
 }
 
 function toggleTemplateList(placement, template) {
@@ -267,4 +300,4 @@ function toggleTemplateList(placement, template) {
 
 Event.observe(window, 'load', loadInlineTemplates, false);
 
-//]]>-->
+// ]]>-->

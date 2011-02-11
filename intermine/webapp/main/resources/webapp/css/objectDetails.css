@@ -17,6 +17,7 @@ div.table h3 a span.collectionField { color:inherit !important; }
 div.table h3 a img { padding-right:4px; }
 div.table h3 a { cursor:text; }
 div.templateDetails { height:auto !important; margin-left:auto !important; }
+.body, .disclosure { margin:auto !important; }
 
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
@@ -31,6 +32,9 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
     #object_header h1.title span { color:#5c0075; }
     #object_header p.description { margin:0; padding-bottom:10px; }
       #object_header p.description img { vertical-align:top; }
+
+    /* header items */
+    #object_header table.fields { width:50%; }
 
     /* header inline lists */
     #object_header h2 { font-size:16px; margin:10px 0; !important; }
