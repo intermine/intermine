@@ -991,7 +991,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String category =  null;
             for (Integer ii : expSubMap.get(name)) {
                 category = submissionExpCatMap.get(ii);
-                if (category != null) {
+                if (category != null && !category.isEmpty()) {
                     exp.setAttribute("category", category);
                     break;
                 }
