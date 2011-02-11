@@ -186,10 +186,9 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
                       </table>';
         if (summaryRowsCount > 10) {
-            content += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
-        } else {
-            content += '</div>';
-        }
+            content += '<div><p>Note: showing only the first 10 rows of summary.</p></div>';
+       }
+       content += '<p><a href="columnSummary.do?tableName=' + tableName + '&summaryPath=' + columnName + '">View all</a></p></div>';
 
         dialog.setContent(content);
         setTimeout("updateCountInColumnSummary()", 200);
