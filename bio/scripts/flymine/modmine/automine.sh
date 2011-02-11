@@ -90,7 +90,7 @@ $progname [-F] [-M] [-R] [-V] [-P] [-T] [-f file_name] [-g] [-i] [-r release] [-
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
   -P project_name: as -M, but restricted to a project.
-  -T list of projects: as -M, but using a (comma separated) list of projects.
+  -L list of projects: as -M, but using a (comma separated) list of projects.
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -141,7 +141,7 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:T:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -151,7 +151,7 @@ while getopts ":FMRQVP:T:abf:gipr:stvwx" opt; do
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
-	T )  PLIST=$OPTARG;echo "- Test build (metadata only) with projects $PLIST"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
+	L )  L=$OPTARG;echo "- Test build (metadata only) with projects $L"; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -200,9 +200,9 @@ LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations +
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
-elif [ -n "$PLIST" ]
+elif [ -n "$L" ]
 then
-SOURCES=modmine-static,"$PLIST"
+SOURCES=modmine-static,"$L"
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
@@ -882,6 +882,14 @@ loadChadoSubs waterston
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
+elif [ -n "$L" ]
+then
+IFS=","
+for p in $L
+do 
+echo "$p"
+loadChadoSubs $p
+done
 else
 loadChadoSubs
 fi
