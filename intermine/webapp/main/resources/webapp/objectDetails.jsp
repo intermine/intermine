@@ -26,29 +26,41 @@
   test="${object.fieldConfigMap['organism.shortName'] != null && !empty object.fieldValues['organism.shortName']}">
         ${object.fieldValues['organism.shortName']}
       </c:if></h1>
-<table class="description">
+
+<table class="fields">
+  <c:set var="tableCount" value="0" scope="page" />
+
   <%-- show in summary fields --%>
   <c:forEach items="${object.fieldExprs}" var="expr">
     <c:choose>
       <c:when test="${object.fieldConfigMap[expr].showInSummary}">
+
+        <c:if test="${tableCount %2 == 0}">
+          <c:choose>
+            <c:when test="${tableCount == 0}">
+              <tr>
+            </c:when>
+            <c:otherwise>
+              </tr><tr>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
+        <c:set var="tableCount" value="${tableCount+1}" scope="page" />
+
         <c:choose>
           <c:when test="${!empty object.fieldConfigMap[expr].displayer}">
             <c:set var="interMineObject" value="${object.object}"
               scope="request" />
-            <tr>
               <td>${expr}:</td>
               <td><strong> <tiles:insert
                 page="${object.fieldConfigMap[expr].displayer}">
                 <tiles:put name="expr" value="${expr}" />
               </tiles:insert> </strong></td>
-            </tr>
           </c:when>
           <c:otherwise>
             <c:if test="${!empty object.fieldValues[expr]}">
-              <tr>
                 <td>${expr}:</td>
                 <td><strong>${object.fieldValues[expr]}</strong></td>
-              </tr>
             </c:if>
           </c:otherwise>
         </c:choose>
@@ -58,9 +70,20 @@
 
   <%-- all other fields --%>
   <c:forEach items="${object.attributes}" var="entry">
-    <c:if
-      test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
-      <tr>
+    <c:if test="${!object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
+
+        <c:if test="${tableCount %2 == 0}">
+          <c:choose>
+            <c:when test="${tableCount == 0}">
+              <tr>
+            </c:when>
+            <c:otherwise>
+              </tr><tr>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
+        <c:set var="tableCount" value="${tableCount+1}" scope="page" />
+
         <td>${entry.key}</td>
         <c:forEach items="${object.clds}" var="cld">
           <strong><im:typehelp
@@ -81,7 +104,6 @@
             <strong><im:value>${entry.value}</im:value></strong>
           </c:otherwise>
         </c:choose></td>
-      </tr>
     </c:if>
   </c:forEach>
 </table>
@@ -193,10 +215,10 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 </div>
 
 <div class="box grid_9">
-<h2>Miscellaneous</h2>
 <tiles:insert page="/objectDetailsRefsCols.jsp">
   <tiles:put name="object" beanName="object" />
   <tiles:put name="placement" value="im:aspect:Miscellaneous" />
+  <tiles:put name="showTitle" value="Miscellaneous" />
 </tiles:insert></div>
 
 </div>

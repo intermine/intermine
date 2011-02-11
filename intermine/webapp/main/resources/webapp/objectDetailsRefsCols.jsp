@@ -13,9 +13,12 @@
 
 <tiles:importAttribute name="object" />
 <tiles:importAttribute name="placement" />
+<tiles:importAttribute name="showTitle" ignore="true" />
 <c:if test="${!empty placementRefsAndCollections[placement]}">
-  <c:forEach items="${placementRefsAndCollections[placement]}"
-    var="entry">
+
+  <c:if test="${!empty showTitle}"><h2>${showTitle}</h2></c:if>
+
+  <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
     <c:set var="placementAndField" value="${placement}_${fieldName}" />

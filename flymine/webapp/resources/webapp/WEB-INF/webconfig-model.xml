@@ -476,6 +476,9 @@
   </class>
 
   <class className="org.intermine.model.bio.Protein">
+    <inlinelist>
+      <table path="synonyms.value" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>

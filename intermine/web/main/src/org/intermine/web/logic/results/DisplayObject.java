@@ -263,6 +263,24 @@ public class DisplayObject
     }
 
     /**
+     * (uses different method than in JSP as that one does not work)
+     * @return a count of fields in the header
+     */
+    public int getHeaderFieldsSize() {
+        Set<String> set = new LinkedHashSet<String>();
+
+        for (String fx : getFieldExprs()) {
+            if (getFieldConfigMap().get(fx).getShowInSummary()) {
+                set.add(fx);
+            }
+        }
+
+        set.addAll(getAttributes().keySet());
+
+        return set.size();
+    }
+
+    /**
      * Get map from field expr to FieldConfig.
      * @return map from field expr to FieldConfig
      */
@@ -379,6 +397,7 @@ public class DisplayObject
                                         fieldValue = fieldClob.toString();
                                     }
                                 }
+
                                 attributes.put(fd.getName(), fieldValue);
                                 attributeDescriptors.put(fd.getName(), fd);
                                 if (fieldValue instanceof String) {

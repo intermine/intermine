@@ -10,11 +10,15 @@
 <tiles:importAttribute name="object" />
 <tiles:importAttribute name="isThisHeader" />
 
+<c:set var="haveWeShownTheHeaderYetWhyIsThisSoLong" value="false" scope="page" />
+
 <c:if test="${!empty object.inlineLists}">
-  <h2>Inline Lists</h2>
-  <div>
-  <c:forEach items="${object.inlineLists}" var="list">
+  <c:forEach items="${object.inlineLists}" var="list" varStatus="status">
     <c:if test="${list.size > 0 && isThisHeader == list.showInHeader}">
+      <c:if test="${!haveWeShownTheHeaderYetWhyIsThisSoLong}">
+        <h2>Inline Lists</h2>
+        <c:set var="haveWeShownTheHeaderYetWhyIsThisSoLong" value="true" scope="page" />
+      </c:if>
       <div class="box grid_12">
         <h3>${list.size} ${list.path}</h3>
         <c:choose>
@@ -34,5 +38,4 @@
       <div style="clear:both;">&nbsp;</div>
     </c:if>
   </c:forEach>
-  </div>
 </c:if>
