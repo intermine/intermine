@@ -63,7 +63,7 @@ public class TemplateTrackerTest extends TestCase
         if (uosw instanceof ObjectStoreWriterInterMineImpl) {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
         }
-        templateTracker = templateTracker.getInstance(conn);
+        templateTracker = TemplateTracker.getInstance(conn);
         Map<String, Tracker> trackers = new HashMap<String, Tracker>();
         trackers.put(templateTracker.getName(), templateTracker);
         trackerDelegate = new TrackerDelegate(trackers);
@@ -88,7 +88,8 @@ public class TemplateTrackerTest extends TestCase
         user.deleteTemplate("template2", null);
         removeUserProfile("superuser");
         removeUserProfile("user");
-        uosw.close();
+        templateTracker = null;
+        ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
     }
 
     private void createTemplates() {
@@ -154,7 +155,6 @@ public class TemplateTrackerTest extends TestCase
         Statement stm = conn.createStatement();
         stm.executeUpdate(sql);
         stm.close();
-        ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
     }
 
     public void testGetRank() {
