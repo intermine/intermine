@@ -277,12 +277,11 @@ public class WebSearchableListController extends TilesAction
         filteredWebSearchables = webSearchables;
 
         if (tags != null) {
-            // filter by tag if there are any otherwise return all
             if (tags.length() > 0) {
                 final List<String> tagList = Arrays.asList(StringUtil.split(tags.trim(), " "));
                 filteredWebSearchables =
                     new SearchFilterEngine().filterByTags(filteredWebSearchables, tagList, type,
-                                                          profile.getUsername(), tagManager);
+                                                          profile.getUsername(), tagManager, false);
             }
         }
 
