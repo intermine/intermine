@@ -69,6 +69,14 @@ public class TemplateTracker extends TrackerAbstract
                 LOG.error("Error creating the table associated to the TemplateTracker" + e);
             }
             templateTracker.loadTemplatesExecutionCache();
+        } else {
+            try {
+                if (templateTracker.connection.isClosed()) {
+                    templateTracker.connection = con;
+                }
+            } catch (SQLException sqle) {
+                LOG.error("Error restriving connection status of the template tracker", sqle);
+            }
         }
         return templateTracker;
     }
@@ -152,7 +160,7 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the rank for each public template. The rank represents a relationship between the templates
+     * Return the rank for each public template.It represents a relationship between the templates
      * executions; a template with rank 1 has been executed more than a template with rank 2. The
      * rank is calculated by summing the logarithm of the templates executions launched by the
      * single users, if the user is logged in, or otherwise, by summing the logarithm of the
