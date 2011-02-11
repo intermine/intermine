@@ -18,6 +18,7 @@
 
 SUBDIR=/micklem/data/modmine/subs
 DATADIR=$SUBDIR/chado
+REPORTS=$SUBDIR/reports
 
 MIRROR=$DATADIR/mirror 
 LOADDIR=$DATADIR/load
@@ -27,8 +28,6 @@ FTPARK=$DATADIR/ark
 PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
-SUBDIR=/shared/data/modmine/subs
-REPORTS=$SUBDIR/reports
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../bio/scripts/flymine/modmine/
 
