@@ -14,17 +14,32 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -82,6 +97,19 @@ public class TemplatePopulatorTest extends TestCase
         threeConstraints.setEditable(nameCon, true);
     }
 
+
+    private Profile setUpProfile() throws Exception {
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        ProfileManager pm = new ProfileManager(os, uosw);
+
+        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(),
+                new HashMap(), new HashMap());
+        pm.createProfile(profile);
+        return profile;
+    }
+
     public void testNoValuesForRequiredNode() throws Exception {
         try {
             TemplatePopulator.getPopulatedTemplate(simple, values);
@@ -107,48 +135,43 @@ public class TemplatePopulatorTest extends TestCase
         assertEquals(new HashSet<String>(Arrays.asList("A")), tq2.getConstraintCodes());
     }
 
-    /** FIXME these tests never complete **/
+    public void testValueForNonExistentNode() throws Exception {
+        PathConstraint age = new PathConstraintAttribute("Employee.age", ConstraintOp.EQUALS, "30");
+        TemplateValue value = new TemplateValue(age, ConstraintOp.EQUALS, "21",
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
+        values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
+        try {
+            TemplatePopulator.getPopulatedTemplate(simple, values);
+            fail("Expected a TemplatePopulationException.");
+        } catch (TemplatePopulatorException e) {
+        }
+    }
 
-//    public void testValueForNonExistentNode() throws Exception {
-//        PathConstraint age = new PathConstraintAttribute("Employee.age", ConstraintOp.EQUALS, "30");
-//        TemplateValue value = new TemplateValue(age, ConstraintOp.EQUALS, "21",
-//                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
-//        values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
-//        try {
-//            TemplatePopulator.getPopulatedTemplate(simple, values);
-//            fail("Expected a TemplatePopulationException.");
-//        } catch (TemplatePopulatorException e) {
-//            return;
-//        }
-//    }
-//
-//    public void testTooManyValuesForNode() throws Exception {
-//        PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
-//        TemplateValue value1 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "name",
-//                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
-//        TemplateValue value2 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "other name",
-//                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
-//        values.put("Employee.name", Arrays.asList(new TemplateValue[] {value1, value2}));
-//        try {
-//            TemplatePopulator.getPopulatedTemplate(simple, values);
-//            fail("Expected a TemplatePopulationException.");
-//        } catch (TemplatePopulatorException e) {
-//            return;
-//        }
-//    }
-//
-//    public void testTooFewValuesForNode() throws Exception {
-//        PathConstraint ageCon = threeConstraints.getEditableConstraints("Employee.age").get(0);
-//        TemplateValue value = new TemplateValue(ageCon, ConstraintOp.EQUALS, "21",
-//                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
-//        values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
-//        try {
-//            TemplatePopulator.getPopulatedTemplate(threeConstraints, values);
-//            fail("Expected a TemplatePopulationException.");
-//        } catch (TemplatePopulatorException e) {
-//            return;
-//        }
-//    }
+    public void testTooManyValuesForNode() throws Exception {
+        PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
+        TemplateValue value1 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "name",
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
+        TemplateValue value2 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "other name",
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
+        values.put("Employee.name", Arrays.asList(new TemplateValue[] {value1, value2}));
+        try {
+            TemplatePopulator.getPopulatedTemplate(simple, values);
+            fail("Expected a TemplatePopulationException.");
+        } catch (TemplatePopulatorException e) {
+        }
+    }
+
+    public void testTooFewValuesForNode() throws Exception {
+        PathConstraint ageCon = threeConstraints.getEditableConstraints("Employee.age").get(0);
+        TemplateValue value = new TemplateValue(ageCon, ConstraintOp.EQUALS, "21",
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
+        values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
+        try {
+            TemplatePopulator.getPopulatedTemplate(threeConstraints, values);
+            fail("Expected a TemplatePopulationException.");
+        } catch (TemplatePopulatorException e) {
+        }
+    }
 
     public void testOneConstraint() throws Exception {
         PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
@@ -178,42 +201,64 @@ public class TemplatePopulatorTest extends TestCase
         assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
     }
 
-    /** FIXME these tests never complete **/
-//    public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
-//        InterMineBag bag = testUser.createBag("bag1", "Company", "");
-//        try {
-//            TemplatePopulator.populateTemplateWithBag(twoConstraints, bag);
-//            fail("Expected a TemplatePopulatorException.");
-//        } catch (TemplatePopulatorException e) {
-//        } finally {
-//            testUser.deleteBag("bag1");
-//       }
-//    }
-//
-//    public void testPopulateTemplateWithBagWrongType() throws Exception {
-//        InterMineBag bag = testUser.createBag("bag1", "Company", "");
-//        try {
-//            TemplatePopulator.populateTemplateWithBag(simple, bag);
-//            fail("Expected a TemplatePopulatorException.");
-//        } catch (TemplatePopulatorException e) {
-//        } finally {
-//            testUser.deleteBag("bag1");
-//        }
-//    }
-//
-//    public void testPopulateTemplateWithBag() throws Exception {
-//        InterMineBag bag = testUser.createBag("bag1", "Employee", "");
-//        TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simple, bag);
-//        assertEquals(1, res.getEditableConstraints().size());
-//        // constraint should now be on parent node
-//        assertEquals(1, res.getEditableConstraints("Employee").size());
-//        assertEquals(0, res.getEditableConstraints("Employee.name").size());
-//
-//        PathConstraint resCon = res.getEditableConstraints().get(0);
-//        assertEquals(ConstraintOp.IN, resCon.getOp());
-//        assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
-//        testUser.deleteBag("bag1");
-//    }
+    public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
+        Profile profile = setUpProfile();
+        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        try {
+            TemplatePopulator.populateTemplateWithBag(twoConstraints, bag);
+            fail("Expected a TemplatePopulatorException.");
+        } catch (TemplatePopulatorException e) {
+        } finally {
+            profile.deleteBag("bag1");
+            removeUserProfile(profile.getUsername());
+        }
+    }
+
+    public void testPopulateTemplateWithBagWrongType() throws Exception {
+        Profile profile = setUpProfile();
+        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        try {
+            TemplatePopulator.populateTemplateWithBag(simple, bag);
+            fail("Expected a TemplatePopulatorException.");
+        } catch (TemplatePopulatorException e) {
+        } finally {
+            profile.deleteBag("bag1");
+            removeUserProfile(profile.getUsername());
+        }
+    }
+
+    public void testPopulateTemplateWithBag() throws Exception {
+        Profile profile = setUpProfile();
+        InterMineBag bag = profile.createBag("bag1", "Employee", "");
+        TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simple, bag);
+        assertEquals(1, res.getEditableConstraints().size());
+        // constraint should now be on parent node
+        assertEquals(1, res.getEditableConstraints("Employee").size());
+        assertEquals(0, res.getEditableConstraints("Employee.name").size());
+
+        PathConstraint resCon = res.getEditableConstraints().get(0);
+        assertEquals(ConstraintOp.IN, resCon.getOp());
+        assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
+        profile.deleteBag("bag1");
+        removeUserProfile(profile.getUsername());
+    }
+
+    private void removeUserProfile(String username) throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "username");
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                              new QueryValue(username));
+        q.setConstraint(sc);
+        SingletonResults res = uosw.executeSingleton(q);
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            uosw.delete(o);
+        }
+    }
 
     public void testPopulateTemplateWithObject() throws Exception {
         InterMineObject obj =
@@ -230,41 +275,36 @@ public class TemplatePopulatorTest extends TestCase
     }
 
     public void testPopulateTemplateWithObjectNotOneConstraint() throws Exception {
-        fail("Test never completes");
-//        InterMineObject obj =
-//            (InterMineObject) DynamicUtil.createObject(Employee.class);
-//        obj.setId(101);
-//        try {
-//            TemplatePopulator.populateTemplateWithObject(twoConstraints, obj);
-//            fail("Expected a TemplatePopulatorException");
-//        } catch (TemplatePopulatorException e) {
-//        }
-    }
-
-    public void testSetConstraintWrongBagOp() throws Exception {
-        fail("Test never completes");
-//        PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
-//        TemplateValue value = new TemplateValue(nameCon, ConstraintOp.GREATER_THAN, "bag1",
-//                TemplateValue.ValueType.BAG_VALUE, SwitchOffAbility.LOCKED);
-//        values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
-//        try {
-//            TemplatePopulator.getPopulatedTemplate(simple, values);
-//            fail("Expected an exception.");
-//        } catch (IllegalArgumentException e) {
-//        }
+        InterMineObject obj =
+            (InterMineObject) DynamicUtil.createObject(Employee.class);
+        obj.setId(101);
+        try {
+            TemplatePopulator.populateTemplateWithObject(twoConstraints, obj);
+            fail("Expected a TemplatePopulatorException");
+        } catch (TemplatePopulatorException e) {
+        }
     }
 
     public void testPopulateTemplateWithObjectWrongType() throws Exception {
-        fail("Test never completes");
-//        InterMineObject obj =
-//            (InterMineObject) DynamicUtil.createObject(Department.class);
-//        obj.setId(101);
-//        try {
-//            TemplatePopulator.populateTemplateWithObject(simple, obj);
-//            fail("Expected a TemplatePopulatorException");
-//        } catch (TemplatePopulatorException e) {
-//        }
+        InterMineObject obj =
+            (InterMineObject) DynamicUtil.createObject(Department.class);
+        obj.setId(101);
+        try {
+            TemplatePopulator.populateTemplateWithObject(simple, obj);
+            fail("Expected a TemplatePopulatorException");
+        } catch (TemplatePopulatorException e) {
+        }
     }
 
-
+    public void testSetConstraintWrongBagOp() throws Exception {
+        PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
+        TemplateValue value = new TemplateValue(nameCon, ConstraintOp.GREATER_THAN, "bag1",
+                TemplateValue.ValueType.BAG_VALUE, SwitchOffAbility.LOCKED);
+        values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
+        try {
+            TemplatePopulator.getPopulatedTemplate(simple, values);
+            fail("Expected an exception.");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 }
