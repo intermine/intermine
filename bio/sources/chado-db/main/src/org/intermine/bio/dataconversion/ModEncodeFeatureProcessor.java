@@ -69,7 +69,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
-            , "transcription_end_site", "TSS"
+            , "transcription_end_site", "TSS", "under-replicated-region"
     );
 
     // the FB name for the mitochondrial genome
