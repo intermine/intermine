@@ -119,6 +119,12 @@
   <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
 </class>
 
+<class name="UnderReplicatedRegion" extends="SequenceFeature" is-interface="true">
+</class>
+
+
+
+
 <!-- OTHER modENCODE classes -->
 
   <class name="Antibody" extends="SubmissionProperty" is-interface="true">
