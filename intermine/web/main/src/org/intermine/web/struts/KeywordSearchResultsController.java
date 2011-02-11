@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -106,7 +108,6 @@ public class KeywordSearchResultsController extends TilesAction
 
         // term
         String searchTerm = request.getParameter("searchTerm");
-        searchTerm = stripTerm(searchTerm);
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
 
         // search in bag (list)
@@ -335,13 +336,5 @@ public class KeywordSearchResultsController extends TilesAction
         LOG.debug("--> TOTAL: " + (System.currentTimeMillis() - time) + " ms");
 
         return null;
-    }
-
-    // replace special characters with *
-    private String stripTerm(String str) {
-        String cleanString = str;
-        String pattern = "[^A-Z]";
-        String strippedString = cleanString.replaceAll(pattern, "*");
-        return cleanString;
     }
 }
