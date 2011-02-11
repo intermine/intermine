@@ -17,7 +17,7 @@ sub usage {
     my $message = 
 qq{$0: Compare templates from two versions of the same webservice
 
-usage: $0 "url.to.release/A" "url.to.release/A" "email\@to.send.results.to" "email\@to.set.as.reply.to"
+usage: $0 "www.flymine.org/query/service" "beta.flymine.org/beta/service" "email\@to.send.results.to" "email\@to.set.as.reply.to"
 
 };
     die $message;
