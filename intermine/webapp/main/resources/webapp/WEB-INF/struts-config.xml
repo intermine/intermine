@@ -342,6 +342,11 @@
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
     </action>
+    <action path="/columnSummary" type="org.intermine.web.struts.ColumnSummaryAction" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="results" redirect="true" path="/results.do"/>
+    </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
