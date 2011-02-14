@@ -149,10 +149,10 @@ public class FeaturesAction extends InterMineAction
                 q.setDescription(description);
 
                 for (String subId : expSubsIds) {
-                    if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(new Integer(subId)))
+                    if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(subId))
                     {
                         allUnlocated.addAll(
-                                MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
+                                MetadataCache.getUnlocatedFeatureTypes(os).get(subId));
                     }
                 }
 
