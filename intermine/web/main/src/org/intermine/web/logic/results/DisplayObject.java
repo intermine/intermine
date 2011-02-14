@@ -49,6 +49,7 @@ import org.intermine.web.logic.config.WebConfig;
  * Anything dynamic is computed in ObjectDetailsController.
  *
  * @author Mark Woodbridge
+ * @author Radek Stepan
  */
 public class DisplayObject
 {
