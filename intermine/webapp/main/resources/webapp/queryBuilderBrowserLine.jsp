@@ -229,7 +229,7 @@
       <c:if test="${!(node.reverseReference && node.reference)}">
         <c:choose>
           <c:when test="${!node.selected && !isNull && summary && KEYLESS_CLASSES_MAP[node.type] == null}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#${node.pathString}" title="${selectNodeTitle}">
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
               <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
             </html:link>
           </c:when>
@@ -237,7 +237,7 @@
               <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
           </c:when>
           <c:when test="${!node.selected && !isNull}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#${node.pathString}" title="${selectNodeTitle}">
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
               <img class="arrow" src="images/show.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
             </html:link>
           </c:when>
