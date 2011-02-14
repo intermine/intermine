@@ -15,7 +15,7 @@
 
 <html:xhtml/>
 
-    <table border="0" cellspacing="0" class="refSummary" align="right">
+    <table border="0" cellspacing="0" class="refSummary" align="left">
       <thead style="text-align: center">
         <tr>
           <td width="10">

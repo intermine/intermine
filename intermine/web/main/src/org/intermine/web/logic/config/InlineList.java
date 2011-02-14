@@ -11,6 +11,7 @@ package org.intermine.web.logic.config;
  */
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.intermine.model.InterMineObject;
@@ -58,6 +59,15 @@ public class InlineList
      */
     public String getPath() {
         return path;
+    }
+
+    /**
+     *
+     * @return String of everything before the first dot
+     */
+    public String getPrefix() {
+        String[] parts = path.split("\\.");
+        return parts[0];
     }
 
     /**

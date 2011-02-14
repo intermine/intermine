@@ -38,6 +38,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 
     /* header inline lists */
     #object_header h2 { font-size:16px; margin:10px 0; !important; }
+    #object_header div.box { margin-left:3px; }
     #object_header div.box h3 { background:#F0E3F7; }
     #object_header div.box.grid_12 { margin:auto !important; width:50%; }
 
