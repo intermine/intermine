@@ -207,3 +207,8 @@ h3.interactions { color:#4896B2; font-size:13px; margin:10px 0 10px; }
 
 /* object details further information tables */
 table.results tr th.columnHeader { font-size:16px; background:#F5F5F5 !important; color:#4B3F4B !important; }
+
+/* submenu */
+#submenufixed, #submenu { background-image:url('img/submenu-bottom-border.png'); background-repeat:repeat-x; background-position:bottom; }
+#submenufixed ul#submenulist li div, #submenu ul#submenulist li div { text-transform:uppercase; }
+#submenufixed ul#submenulist li div a, #submenu ul#submenulist li div a { text-decoration:underline; }
