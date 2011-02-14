@@ -98,41 +98,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         processHits(reader);
     }
 
-    /**
-     * Check that we have seen the same screen names in the hits and details files.
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws Exception {
-
-        Set<String> noDetails = new HashSet<String>();
-        for (String screenName : hitScreenNames) {
-            if (screenMap.get(screenName) == null) {
-                noDetails.add(screenName);
-            }
-        }
-
-        Set<String> noHits = new HashSet<String>();
-        for (String screenName : screenMap.keySet()) {
-            if (!hitScreenNames.contains(screenName)) {
-                noHits.add(screenName);
-            }
-        }
-
-        if (!noDetails.isEmpty()) {
-            String msg = "Screen names from hits file and details file did not match."
-                    + "  No hits found for screen detail: '" + noHits + "'";
-            throw new RuntimeException(msg);
-        }
-
-        if (!noHits.isEmpty()) {
-            String msg = "Screen names from hits file and details file did not match."
-                    + "  No details found for screen hit: '" + noDetails + "'";
-            LOG.error(msg);
-        }
-        super.close();
-    }
-
     private void processHits(Reader reader)
         throws ObjectStoreException {
 
@@ -155,7 +120,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     for (int i = 2; i < line.length; i++) {
                         // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        if (StringUtils.isEmpty(screenName) || screenMap.get(screenName) == null) {
+                        if (StringUtils.isEmpty(screenName)) {
                             continue;
                         }
                         hitScreenNames.add(screenName);
@@ -198,7 +163,10 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                         throw new RuntimeException("Unrecogised result symbol '" + line[i + 1]
                             + "' in line: " + Arrays.asList(line));
                     }
-
+                    if (screenMap.get(screenName) == null) {
+                        // we don't have details for all screens
+                        continue;
+                    }
                     if (genes.isEmpty()) {
                         // create a hit that doesn't reference a gene
                         storeScreen(screenName, amplicon.getIdentifier(), resultValue, null);
