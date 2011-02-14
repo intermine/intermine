@@ -7,11 +7,12 @@
 ARKDIR=/micklem/releases/modmine
 DBHOST=modprod1
 DBUSER=modmine
-DATADIR=/shared/data/modmine/subs/chado
+DATADIR=/micklem/data/modmine/subs/chado
 LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
+#PRO="celniker waterston"
 #PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
 PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 
