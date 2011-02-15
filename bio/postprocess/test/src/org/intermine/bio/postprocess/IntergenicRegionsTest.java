@@ -24,7 +24,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
@@ -33,7 +32,6 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.IntergenicRegion;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Synonym;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -42,6 +40,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.Util;
 
 /**
  * Tests for the IntergenicRegionUtil class.
@@ -283,8 +282,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
-            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
+            Util.addToSetMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
+            Util.addToSetMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
@@ -338,8 +337,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
-            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
+            Util.addToSetMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
+            Util.addToSetMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
