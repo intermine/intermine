@@ -47,6 +47,7 @@ import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
+import org.jfree.util.Log;
 import org.json.JSONArray;
 
 /**
@@ -61,7 +62,8 @@ import org.json.JSONArray;
  * @author Jakub Kulaviak
  */
 
-public class QueryResultService extends WebService {
+public class QueryResultService extends WebService
+{
 
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
 
@@ -161,7 +163,6 @@ public class QueryResultService extends WebService {
             String csvUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_CSV);
             String tsvUrl =  getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
             String pageUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW);
-            pageUrl += "&size=" + size;
             String countUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT);
             String mineResLink = getMineResultsLinkPath(pq);
 
@@ -174,6 +175,7 @@ public class QueryResultService extends WebService {
             } else {
                 description = pq.getDescription();
             }
+            Log.info("base url is: " + pageUrl);
             attributes.put("size", String.valueOf(size));
             attributes.put("pagePath", pageUrl);
             attributes.put("mineResultsLink", mineResLink);
