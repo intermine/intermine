@@ -31,7 +31,6 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.bio.constants.ModMineCacheKeys;
-import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.CellLine;
 import org.intermine.model.bio.DatabaseRecord;
@@ -55,6 +54,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.Util;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 
@@ -82,7 +82,7 @@ public final class MetadataCache
     private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<String, List<String>> submissionUnlocatedFeatureTypes = null;
     private static Map<String, List<String[]>> submissionRepositedCache = null;
-    
+
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
     private static Map<String, List<DisplayExperiment>> categoryExperiments = null;
@@ -143,7 +143,7 @@ public final class MetadataCache
      * @throws IOException exception
      */
     public static synchronized Properties getProperties(ObjectStore os)
-    throws SQLException, IOException {
+        throws SQLException, IOException {
         if (metadataProperties == null) {
             readProperties(os);
         }
@@ -164,6 +164,7 @@ public final class MetadataCache
             try {
                 MetadataCache.class.wait();
             } catch (InterruptedException e) {
+                // do nothing
             }
         }
         return submissionTracksCache;
@@ -274,7 +275,7 @@ public final class MetadataCache
         Iterator<String> dccId = submissionFilesCache.keySet().iterator();
         while (dccId.hasNext()) {
             String thisSub = dccId.next();
-            Integer nrFiles = submissionFilesCache.get(thisSub).size();
+            Integer nrFiles = new Integer(submissionFilesCache.get(thisSub).size());
             filesPerSubmissionCache.put(thisSub, nrFiles);
         }
         return filesPerSubmissionCache;
@@ -347,7 +348,7 @@ public final class MetadataCache
      * @throws ObjectStoreException if error reading database
      */
     public static synchronized Submission getSubmissionByDccId(ObjectStore os, String dccId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
@@ -362,7 +363,7 @@ public final class MetadataCache
      * @throws ObjectStoreException if error reading database
      */
     public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (experimentCache == null) {
             readExperiments(os);
         }
@@ -380,7 +381,7 @@ public final class MetadataCache
         Map<String, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
-            Integer expCount = 0;
+            Integer expCount = new Integer(0);
             for (Submission sub : exp.getSubmissions()) {
                 Integer subCount = subELevelMap.get(sub.getdCCid());
                 if (subCount != null) {
@@ -593,7 +594,7 @@ public final class MetadataCache
         for (List<DisplayExperiment> expList : projectExperiments.values()) {
             for (DisplayExperiment exp : expList) {
                 String cat = adaptCategory(exp);
-                BioConverterUtil.addToListMap(categoryExperiments, cat, exp);
+                Util.addToListMap(categoryExperiments, cat, exp);
             }
         }
         long totalTime = System.currentTimeMillis() - startTime;
@@ -643,7 +644,7 @@ public final class MetadataCache
             q.addToSelect(qcExperiment);
 
             QueryCollectionReference projExperiments = new QueryCollectionReference(qcProject,
-            "experiments");
+                "experiments");
             ContainsConstraint cc = new ContainsConstraint(projExperiments, ConstraintOp.CONTAINS,
                     qcExperiment);
             q.setConstraint(cc);
@@ -967,7 +968,7 @@ public final class MetadataCache
             q.addToSelect(qcFile);
 
             QueryCollectionReference subFiles = new QueryCollectionReference(qcSubmission,
-            "resultFiles");
+                "resultFiles");
             ContainsConstraint cc = new ContainsConstraint(subFiles, ConstraintOp.CONTAINS,
                     qcFile);
 
@@ -1223,7 +1224,7 @@ public final class MetadataCache
         Properties props = new Properties();
 
         InputStream is
-        = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
+            = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, "
                     + "there will be no feature type descriptions");
