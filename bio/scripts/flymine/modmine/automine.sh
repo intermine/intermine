@@ -141,7 +141,7 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -150,8 +150,8 @@ while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
 	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
-	L )  L=$OPTARG;echo "- Test build (metadata only) with projects $L"; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`";;
+	P )  P=$OPTARG; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with project $P";;
+#	L )  L=$OPTARG; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -194,15 +194,15 @@ CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.dataso
 fi
 
 #***
-LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
+LOG="$LOGDIR/$USER.$REL.$P"`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
-elif [ -n "$L" ]
-then
-SOURCES=modmine-static,"$L"
+#elif [ -n "$L" ]
+#then
+#SOURCES=modmine-static,"$L"
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
@@ -286,10 +286,10 @@ function initChado {
 # will build modchado-celniker
 #
 
-if [ -n "$1" ]
-then
-CHADODB="modchado-$1"
-fi
+#if [ -n "$1" ]
+#then
+#CHADODB="modchado-$1"
+#fi
 
 RETURNDIR=$PWD
 
@@ -882,14 +882,15 @@ loadChadoSubs waterston
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
-elif [ -n "$L" ]
-then
-IFS=","
-for p in $L
-do 
-echo "$p"
-loadChadoSubs $p
-done
+#elif [ -n "$L" ]
+#then
+#IFS=","
+#for p in "$L"
+#do 
+#echo "$p"
+#interact
+#loadChadoSubs "$p"
+#done
 else
 loadChadoSubs
 fi
@@ -984,7 +985,12 @@ interact
 #---------------------------------------
 if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
 then
+if [ -n "$P" ]
+then
+NAMESTAMP="$P"_`date "+%y%m%d"`
+else
 NAMESTAMP="$REL"_`date "+%y%m%d.%H%M"`
+fi
 runTest $NAMESTAMP
 fi
 
