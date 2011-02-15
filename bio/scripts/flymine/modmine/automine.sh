@@ -141,7 +141,7 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -151,7 +151,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	P )  P=$OPTARG; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with project $P";;
-#	L )  L=$OPTARG; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
+	L )  L=$OPTARG; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -200,9 +200,16 @@ LOG="$LOGDIR/$USER.$REL.$P"`date "+%y%m%d.%H%M"`  # timestamp of stag operations
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
-#elif [ -n "$L" ]
-#then
-#SOURCES=modmine-static,"$L"
+elif [ -n "$L" ]
+then
+SOURCES=modmine-static
+IFS=$','
+for p in $L
+do 
+echo "---> $p"
+SOURCES="$SOURCES",modencode-"$p"-metadata
+done
+IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
@@ -286,10 +293,10 @@ function initChado {
 # will build modchado-celniker
 #
 
-#if [ -n "$1" ]
-#then
-#CHADODB="modchado-$1"
-#fi
+if [ -n "$1" ]
+then
+CHADODB="modchado-$1"
+fi
 
 RETURNDIR=$PWD
 
@@ -506,9 +513,9 @@ cd $MIRROR/$1
 # if it is a symbolic link and this is not the given input
 # we skip that file
 if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
- then
+then
  continue
- fi
+fi
 echo
 echo "================"
 echo "$sub..."
@@ -882,15 +889,20 @@ loadChadoSubs waterston
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
-#elif [ -n "$L" ]
-#then
-#IFS=","
-#for p in "$L"
-#do 
-#echo "$p"
-#interact
-#loadChadoSubs "$p"
-#done
+elif [ -n "$L" ]
+then
+echo "*********$IFS**"
+IFS=$','
+echo "*********$IFS**"
+for p in $L
+do 
+echo "---> $p"
+IFS=$'\t\n'
+loadChadoSubs $p
+IFS=$','
+done
+IFS=$'\t\n'
+echo "*********$IFS**"
 else
 loadChadoSubs
 fi
