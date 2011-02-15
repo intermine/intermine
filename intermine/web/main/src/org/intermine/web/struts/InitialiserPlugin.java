@@ -103,6 +103,7 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
+    @Override
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
@@ -168,8 +169,14 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
 
         setupClassSummaryInformation(servletContext, oss, os.getModel());
+
+        doRegistration(webProperties);
     }
 
+    private void doRegistration(Properties webProperties) {
+        Registrar reg = new Registrar(webProperties);
+        reg.start();
+    }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) throws ServletException {
         ObjectStore os;
@@ -421,9 +428,11 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.EMPTY_FIELD_MAP, emptyFields);
         // Build map interface that takes an object and returns set of leaf class descriptors
         Map leafDescriptorsMap = new AbstractMap() {
+            @Override
             public Set entrySet() {
                 return null;
             }
+            @Override
             public Object get(Object key) {
                 if (key == null) {
                     return Collections.EMPTY_SET;
@@ -454,6 +463,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Destroy method called at Servlet destroy
      */
+    @Override
     public void destroy() {
         try {
             profileManager.close();
