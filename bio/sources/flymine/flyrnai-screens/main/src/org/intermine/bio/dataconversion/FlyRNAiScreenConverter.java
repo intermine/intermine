@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     private Map<String, String> screenMap = new HashMap<String, String>();
     private static final String TAXON_ID = "7227";
     private File screenDetailsFile;
-    private Set<String> hitScreenNames = new HashSet<String>();
+    private String[] hitScreenNames;
     protected IdResolverFactory resolverFactory;
 
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
@@ -117,13 +116,12 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 if ("Amplicon".equals(line[0].trim())) {
                     readingData = true;
                     headerLength = line.length;
+                    hitScreenNames = new String[headerLength];
                     for (int i = 2; i < line.length; i++) {
-                        // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        if (StringUtils.isEmpty(screenName)) {
-                            continue;
+                        if (!StringUtils.isEmpty(screenName)) {
+                            hitScreenNames[i] = screenName;
                         }
-                        hitScreenNames.add(screenName);
                     }
                 }
             } else {
@@ -155,12 +153,15 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                         }
                     }
                 }
-                int i = 1;
+
+                // column 0 : screen identifier
+                // column 1 : genes
                 // loop over screens to create results
-                for (String screenName : hitScreenNames) {
-                    String resultValue = RESULTS_KEY.get(line[i + 1].trim());
+                for (int i = 2; i < hitScreenNames.length; i++) {
+                    String resultValue = RESULTS_KEY.get(line[i].trim());
+                    String screenName = hitScreenNames[i];
                     if (resultValue == null) {
-                        throw new RuntimeException("Unrecogised result symbol '" + line[i + 1]
+                        throw new RuntimeException("Unrecogised result symbol '" + line[i]
                             + "' in line: " + Arrays.asList(line));
                     }
                     if (screenMap.get(screenName) == null) {
