@@ -177,7 +177,6 @@ shift $(($OPTIND - 1))
 # -m1 to grep only the first occurrence (multiple modencode sources)
 #
 
-DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
 MINEHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 production.datasource.serverName | awk -F "=" '{print $2}'`
 DBUSER=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.user | awk -F "=" '{print $2}'`
 DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.password | awk -F "=" '{print $2}'`
@@ -190,6 +189,7 @@ CHADODB="modchado-$P"
 echo "- Single project: $P"
 DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep metadata.datasource.serverName  | grep -w $P | awk -F "=" '{print $2}'`
 else
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
 
