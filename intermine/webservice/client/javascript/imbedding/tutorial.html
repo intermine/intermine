@@ -9,10 +9,12 @@
         <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.stack.js"></script>
 
         <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
-        <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" type="text/javascript"></script>
+        <!-- <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" type="text/javascript"></script> -->
+        <script src="http://squirrel.flymine.org/imbedding/src/imbedding.js" type="text/javascript"></script>
         <script src="lib/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
-        <script src="lib/tutorial.min.js" type="text/javascript"></script>
+        <!-- <script src="lib/tutorial.min.js" type="text/javascript"></script> -->
+        <script src="lib/tutorial.js" type="text/javascript"></script>
         <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
@@ -69,8 +71,7 @@
         <p>
         As you can see, you do not need a lot of code to get this effect:
         <p>
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<div id="placeholder1"></div>
+            <textarea rows="20" cols="80" class="coder html-snippet"><div id="placeholder1"></div>
 <script type="text/javascript">
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
     IMBedding.loadTemplate(
@@ -92,8 +93,7 @@
             <input type="checkbox" id="demoSourceCB" onclick="$('#demo').slideToggle();"/><label for="demoSourceCB">View The Source For a Complete Working Example</label>
 
         <div id="demo" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+            <textarea rows="20" cols="80" class="coder html-snippet"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -157,8 +157,7 @@
                 You do not need to download them, just add the following lines to the 
                 head of the page:
                 </p>
-                <textarea rows="20" cols="80" class="coder html-snippet">
-<head>
+                <textarea rows="20" cols="80" class="coder html-snippet"><head>
     <!-- jQuery is hosted by Google -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
         type="text/javascript">
@@ -202,8 +201,7 @@
             There are some stylesheets available (all the ones used on this page) via the 
             web-hosting interface as well.
             </p>
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<head>
+            <textarea rows="20" cols="80" class="coder html-snippet"><head>
     <!-- You are welcome to fetch these styles from the intermine host -->
     <link rel="stylesheet" href="http://www.intermine.org/download/imbedding/0.1/style/bold.css" />
 </head>
@@ -215,8 +213,7 @@
             You will need to include <a href="#boilerplate" onclick="$('#placeholder-snippet').slideToggle();">an element</a> to tell the table where to go.
             </p>
             <div id="placeholder-snippet" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<body>
+            <textarea rows="20" cols="80" class="coder html-snippet"><body>
     <div id="placeholder">The content of this div will be replaced by the table</div>
 </body>
             </textarea>
@@ -249,8 +246,7 @@
             onclick="$('#scriptElem').slideToggle();">a script element</a> directly into the page:
             </p>
             <div id="scriptElem" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<script type="text/javascript">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
     IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
     IMBedding.loadTemplate(
         {
@@ -278,8 +274,7 @@
         <div id="placeholderEx2"><p>This will be where the table goes</p></div>
         <input type="checkbox" id="example2CB" onclick="$('#example2').slideToggle();"/><label for="example2CB">View Source</label>
         <div id="example2" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<script type="text/javascript">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
     IMBedding.loadTemplate(
         {
@@ -304,40 +299,39 @@
         <div id="placeholderEx3a"><p>This will be where the table goes</p></div>
         <h3>No Behaviour</h3>
         <div id="placeholderEx3b"><p>This will be where the table goes</p></div>
+        <h3>Arbitrary Behaviour</h3>
+        <div id="placeholderEx3c"><p>This will be where the table goes</p></div>
         <input type="checkbox" id="example3CB" onclick="$('#example3').slideToggle();"/><label for="example3CB">View Source</label>
         <div id="example3" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<script type="text/javascript">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
+    // Common arguments
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    var data = {
+        name:           "Gene_allGOTerms2",
+
+        constraint1:    "Gene",
+        op1:            "LOOKUP",
+        value1:         "CG11348",
+        code1:          "A",
+    };
+    var ph = "#placeholderEx3";
+    var options = {};
+
     // Load a template where clicking on the title
     // takes you to the mine.
-    IMBedding.loadTemplate(
-        {
-            name:           "Gene_allGOTerms2",
-
-            constraint1:    "Gene",
-            op1:            "LOOKUP",
-            value1:         "CG11348",
-            code1:          "A",
-        },
-        "#placeholderEx3a",
-        {onTitleClick: "mine"}
-    );
+    options.onTitleClick = "mine";
+    IMBedding.loadTemplate(data, ph + "a", options);
     // Load a template where clicking on the title
     // does nothing at all.
-    IMBedding.loadTemplate(
-        {
-            name:           "Gene_allGOTerms2",
-            size: 10,
-
-            constraint1:    "Gene",
-            op1:            "LOOKUP",
-            value1:         "CG11348",
-            code1:          "A",
-        },
-        "#placeholderEx3b",
-        {onTitleClick: "none"}
-    );
+    options.onTitleClick = "none";
+    IMBedding.loadTemplate(data, ph + "b", options);
+    // Load a template where clicking on the title
+    // does something completely different
+    options.onTitleClick = function() {
+        alert( "You clicked on:\n" + $(this).text());
+    };
+    options.titleHoverCursor = "help";
+    IMBedding.loadTemplate(data, ph + "c", options);
 </script></textarea>
         </div>
         <h2>Configuring What is Shown</h2>
@@ -347,93 +341,47 @@
         pages with 10 rows of results. The tables below show adjustments to these features.
         </p>
         <h3>No Export Links</h3>
+        <textarea rows="20" cols="80" class="coder js-snippet">options.showExportLinks = false;</textarea>
         <div id="placeholderEx4a"><p>This will be where the table goes</p></div>
         <h3>No Count</h3>
+        <textarea rows="20" cols="80" class="coder js-snippet">options.showCount = false;</textarea>
         <div id="placeholderEx4b"><p>This will be where the table goes</p></div>
         <h3>No Mine Link</h3>
+        <textarea rows="20" cols="80" class="coder js-snippet">options.showMineLink = false;</textarea>
         <div id="placeholderEx4c"><p>This will be where the table goes</p></div>
         <h3>A Different Number of Rows</h3>
+        <textarea rows="20" cols="80" class="coder js-snippet">data.size = 15;</textarea>
         <div id="placeholderEx4d"><p>This will be where the table goes</p></div>
         <input type="checkbox" id="example4CB" onclick="$('#example4').slideToggle();"/><label for="example4CB">View Source</label>
         <div id="example4" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet">
-<script type="text/javascript">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    var data = {
+        name:        "Organism_GeneDomain_new",
+
+        constraint1: "ProteinDomain.proteins.genes.organism.name",
+        op1:         "=",
+        value1:      "Drosophila melanogaster",
+        code1:       "A",
+
+        constraint2: "ProteinDomain.shortName",
+        op2:         "=",
+        value2:      "*homeo*",
+        code2:       "B"
+    };
+    var ph = '#placeholderEx4';
     // Load a table without export links
-    IMBedding.loadTemplate(
-        {
-            name:           "Organism_GeneDomain_new",
-            size: 10,
+    IMBedding.loadTemplate(data, ph + "a", {showExportLinks: false});
 
-            constraint1:    "ProteinDomain.proteins.genes.organism.name",
-            op1:            "=",
-            value1:         "Drosophila melanogaster",
-            code1:          "A",
-
-            constraint2:    "ProteinDomain.shortName",
-            op2:            "=",
-            value2:         "*homeo*",
-            code2:          "B",
-        },
-        "#placeholderEx4a",
-        {showExportLinks: false}
-    );
     // Load a table without a count
-    IMBedding.loadTemplate(
-        {
-            name:           "Organism_GeneDomain_new",
-            size: 10,
+    IMBedding.loadTemplate(data, ph + "b", {showCount: false});
 
-            constraint1:    "ProteinDomain.proteins.genes.organism.name",
-            op1:            "=",
-            value1:         "Drosophila melanogaster",
-            code1:          "A",
-
-            constraint2:    "ProteinDomain.shortName",
-            op2:            "=",
-            value2:         "*homeo*",
-            code2:          "B"
-        },
-        "#placeholderEx4b",
-        {showCount: false}
-    );
     // Load a tavle without a mine-link
-    IMBedding.loadTemplate(
-        {
-            name:           "Organism_GeneDomain_new",
-            size: 10,
+    IMBedding.loadTemplate(data, ph + "c", {showMineLink: false});
 
-            constraint1:    "ProteinDomain.proteins.genes.organism.name",
-            op1:            "=",
-            value1:         "Drosophila melanogaster",
-            code1:          "A",
-
-            constraint2:    "ProteinDomain.shortName",
-            op2:            "=",
-            value2:         "*homeo*",
-            code2:          "B",
-        },
-        "#placeholderEx4c",
-        {showMineLink: false}
-    );
     // Load a table with a page size of 15
-    IMBedding.loadTemplate(
-        {
-            name:           "Organism_GeneDomain_new",
-            size: 15,
-
-            constraint1:    "ProteinDomain.proteins.genes.organism.name",
-            op1:            "=",
-            value1:         "Drosophila melanogaster",
-            code1:          "A",
-
-            constraint2:    "ProteinDomain.shortName",
-            op2:            "=",
-            value2:         "*homeo*",
-            code2:          "B",
-        },
-        "#placeholderEx4d",
-    );
+    data.size = 15;
+    IMBedding.loadTemplate(data, ph + "d");
 </script></textarea>
         </div>
 
@@ -675,8 +623,7 @@
             </div>
         </form>
         <div id="showGraphAreaContainer" style="display: none;">
-        <textarea rows="20" cols="80" id="showGraphArea" class="coder js-snippet">
-function loadGraph1() {
+        <textarea rows="20" cols="80" id="showGraphArea" class="coder js-snippet">function loadGraph1() {
     IMBedding.loadQuery(
         {
             select: ["Employee.age", "Employee.department.company.name"],
@@ -991,8 +938,7 @@ function loadDepartmentSummary(departmentName) {
             <p>
             The simplest way is to pass an option to the loader method:
             </p>
-            <textarea rows="5" cols="20" class="coder js-snippet">
-IMBedding.loadQuery(query, data, placeholder, {onTitleClick: null});</textarea>
+            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.loadQuery(query, data, placeholder, {onTitleClick: null});</textarea>
             <p> 
             Possible values for this are "collapse" (the default) and "mine" 
             (request the title be a link to the same results table in the 
@@ -1007,8 +953,7 @@ IMBedding.loadQuery(query, data, placeholder, {onTitleClick: null});</textarea>
             As above, this can be specified by option. In this case you use the option
             "showExportLinks", which expects a boolean value.
             </p>
-            <textarea rows="5" cols="20" class="coder js-snippet">
-IMBedding.loadQuery(query, data, placeholder, {showExportLinks: false});</textarea>
+            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.loadQuery(query, data, placeholder, {showExportLinks: false});</textarea>
         </div>
         </div>
     </div>
