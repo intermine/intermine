@@ -2365,7 +2365,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
-                LOG.error(source + " has more than 1 value for '"
+                LOG.error(source + " (" + prop.wikiPageUrl + ") has more than 1 value for '"
                         + targetType + "' field: " + prop.details.get(targetType));
                 //throw new RuntimeException(source + " should only have one value for '"
                 //        + targetType + "' field: " + prop.details.get(targetType));
@@ -3437,6 +3437,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // protocol
         FIELD_NAME_MAP.put("Protocol Type", "type");
         FIELD_NAME_MAP.put("url protocol", "url");
+        FIELD_NAME_MAP.put("Characteristics", "characteristics");
         FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
