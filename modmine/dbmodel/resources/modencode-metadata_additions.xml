@@ -227,6 +227,7 @@
   <attribute name="url" type="java.lang.String" />
   <attribute name="wikiLink" type="java.lang.String" />
   <attribute name="version" type="java.lang.Integer" />
+  <attribute name="characteristics" type="java.lang.String" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="protocols" />
   <collection name="appliedProtocols" referenced-type="AppliedProtocol" reverse-reference="protocol" />
 </class>
