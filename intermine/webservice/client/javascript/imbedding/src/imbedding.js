@@ -24,6 +24,7 @@ IMBedding = (function() {
         showMineLink: true,
         showAdditionsLink: true,
         showAllLink: true,
+        titleHoverCursor: "pointer",
         showAllCeiling: 75
     };
 
@@ -195,6 +196,11 @@ IMBedding = (function() {
                           .mouseover(function() { jQuery(this).css({cursor: "row-resize"}) });
             } else if (this.options.onTitleClick == "mine") {
                 this.title.attr({href: this.localiseUrl(data.mineResultsLink), target: "_blank"});
+            } else if (this.options.onTitleClick instanceof Function) {
+                this.title.click(this.options.onTitleClick)
+                          .mouseover(function() { 
+                            jQuery(this).css({cursor: outer.options.titleHoverCursor}) 
+                          });
             }
 
             this.titlebox.hover(
