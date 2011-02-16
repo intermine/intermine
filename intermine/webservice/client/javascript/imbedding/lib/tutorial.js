@@ -23,6 +23,7 @@ $(function() {
     loadTable1();
     loadTable3a();
     loadTable3b();
+    loadTable3c();
     loadTable4a();
     loadTable4b();
     loadTable4c();
@@ -51,7 +52,7 @@ function loadTable1() {
             constraint1:    "Gene.secondaryIdentifier",
             op1:            "<",
             value1:         "CG1046",
-            code1:          "A"
+            code1:          "A" 
         },
         "#placeholderEx2",
         {openOnLoad: true, baseUrl: flyMineBase}
@@ -99,6 +100,25 @@ function loadTable3b() {
         },
         "#placeholderEx3b",
         {onTitleClick: "none", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable3c() {
+    var callback = function() {
+        alert( "You clicked on:\n" + $(this).text());
+    };
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+            size: 10,
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
+        },
+        "#placeholderEx3c",
+        {onTitleClick: callback, titleHoverCursor: "help", baseUrl: flyMineBase}
     );
 }
 
@@ -727,7 +747,7 @@ function loadUserQuery() {
     var data = {size: 10};
     var newValue = firstline + "IMBedding.setBaseUrl('";
 
-    var urlToQuery = flyMineBase;
+    var urlToQuery = flyMineBase;
     newValue += urlToQuery + "');\n\n";
     var opts = {baseUrl: urlToQuery};
 
