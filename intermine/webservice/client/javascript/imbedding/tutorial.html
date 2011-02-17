@@ -389,6 +389,21 @@
     // Load a table with a page size of 15
     data.size = 15;
     IMBedding.loadTemplate(data, ph + "d");
+
+    //Load a table in Italian
+    var options = {
+        nextText: "avanti", 
+        previousText: "indietro",
+        additionText: "carica altre x righe",
+        allRowsText: "carica tutte righe",
+        emptyCellText: "[NIENTE]",
+        collapseHelpText: "chiudi tabella",
+        expandHelpText: "mostra tabella",
+        exportCSVText: "Esporta il risultato in formato CSV", 
+        exportTSVText: "Esporta il risultato in formato TSV", 
+        mineLinkText: "Guarda in Mine"
+    };
+    IMBedding.loadTemplate(data, ph + "e", options);
 </script></textarea>
         </div>
 
@@ -1086,16 +1101,22 @@ function loadDepartmentSummary(departmentName) {
             emptyCellText: "[KEINS]",
             collapseHelpText: "Tafel ausblenden",
             expandHelpText: "Tafel anzeigen"
+            exportCSVText: "Als CSV herunterladen",
+            exportTSVText: "Als TSV herunterladen",
+            mineLinkText: "Tafel im Mine anschauen"
         });
     } else if (code == "it") {
-        IMBedding.setDefaultOptions({
+            IMBedding.setDefaultOptions({
             nextText: "avanti", 
             previousText: "indietro",
-            additionText: "carica x righe di pi&ampugrave",
+            additionText: "carica altre x righe",
             allRowsText: "carica tutte righe",
             emptyCellText: "[NIENTE]",
-            collapseHelpText: "chiudi tavola",
-            expandHelpText: "mostra tavola"
+            collapseHelpText: "chiudi tabella",
+            expandHelpText: "mostra tabella",
+            exportCSVText: "Esporta il risultato in formato CSV", 
+            exportTSVText: "Esporta il risultato in formato TSV", 
+            mineLinkText: "Guarda in Mine"
         });
     } else // and so on ...</textarea>
             <p>
