@@ -212,3 +212,12 @@ table.results tr th.columnHeader { font-size:16px; background:#F5F5F5 !important
 #submenufixed, #submenu { background-image:url('img/submenu-bottom-border.png'); background-repeat:repeat-x; background-position:bottom; }
 #submenufixed ul#submenulist li div, #submenu ul#submenulist li div { text-transform:uppercase; }
 #submenufixed ul#submenulist li div a, #submenu ul#submenulist li div a { text-decoration:underline; }
+
+/* handwritten messages */
+#pagecontentcontainer.bag-page p#contactUsLink, #pagecontentcontainer.bagupload-page p#contactUsLink,
+  #pagecontentcontainer.bagview-page p#contactUsLink { display:none; }
+#pagecontentcontainer.bagupload-page #pagecontent, #pagecontentcontainer.bag-page #pagecontent { background-image:url('img/arrowtip-view-lists.png');
+  background-repeat:no-repeat; background-position:45px 10px; }
+#pagecontentcontainer.bagview-page #pagecontent { background-image:url('img/arrowtip-upload-list.png'); background-repeat:no-repeat;
+  background-position:16px 6px; }
+#pagecontentcontainer.bagview-page #pagecontent div.body { margin-top:40px; }
