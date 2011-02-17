@@ -51,6 +51,10 @@ div.imbedded-table-tooltip {
     padding: 4px;
 }
 
+.imbedded-cell > a {
+    color: #444;
+}
+
 .imbedded-cell > a:hover {
     color: white;
 }
@@ -81,7 +85,7 @@ div.imbedded-table-tooltip {
     color: white ! important;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
+.imbedded-exportlink, .imbedded-pagelink {
     color: black ! important;
     font-size: 13px;
     padding-right: 5px;
@@ -99,4 +103,14 @@ div.imbedded-table-tooltip {
 
 .imbedded-table-container > a:hover {
     color: #FF0084 ! important;
+}
+
+.imbedded-table-expand-help {
+    color: #888;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }
