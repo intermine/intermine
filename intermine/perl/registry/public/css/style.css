@@ -1,0 +1,252 @@
+h1, h2, h3, h4, h5 {
+margin: 1.2em 0 0.6em 0;
+}
+
+body {
+    font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
+    margin: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: top left;
+    font-family: "Lucida Grande", "Bitstream Vera Sans", "Verdana";
+    font-size: 13px;
+    color: #333;
+}
+
+h1 {
+font-size: 40px;
+color: #000;
+}
+
+a  {color: #03c}
+
+a:hover {
+    background-color: #03c;
+    color: white;
+    text-decoration: none;
+}
+
+
+#page {
+background-color: #eee;
+width: 750px;
+margin: auto;
+margin-left: auto;
+padding-left: 0px;
+margin-right: auto;
+}
+
+#content {
+background-color: white;
+border: 3px solid #aaa;
+border-top: none;
+padding: 25px;
+width: 550px;
+}
+
+#content li {
+    font-family: 'Cantarell', 'arial', sans-serif;
+    border-top: solid 1px #ccc;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+#content li table {
+    border: solid 1px #ccc;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+a.subtle {
+    float: right;
+    color: #bbb;
+    padding: 10px;
+    font-family: 'Orbitron', 'arial', sans-serif;
+}
+
+a.mine-name {
+    color: #777;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 1px;
+    padding-right: 1px;
+    text-decoration: none;
+}
+
+a.subtle:hover, a.mine-name:hover {
+    color: white;
+    background: #BDD73C;
+}
+
+#header {
+padding-left: 30px;
+}
+
+
+#header {
+background-repeat: no-repeat;
+background-position: top right;
+height: 64px;
+margin-bottom: 25px;
+}
+
+#header h1, #header h2 {
+    margin: 8px;
+    font-family: 'Orbitron', 'arial', sans-serif;
+}
+#header h2 {
+color: #777;
+font-weight: normal;
+font-size: 16px;
+padding-top: 10px;
+}
+
+span.version {
+    color: #aaa;
+    font-size: 80%;
+}
+
+#about-content, #content table {
+margin-top: 10px;
+margin-bottom: 10px;
+font-size: 11px;
+border-collapse: collapse;
+}
+#about-content, #content td {
+padding: 10px;
+padding-top: 3px;
+padding-bottom: 3px;
+}
+#about-content, #content td.name  {color: #555}
+#about-content, #content td.value {color: #000}
+
+#about-content.failure {
+background-color: #fcc;
+border: 1px solid #f00;
+}
+#about-content.failure p {
+margin: 0;
+padding: 10px;
+}
+
+
+#getting-started {
+border-top: 1px solid #ccc;
+margin-top: 25px;
+padding-top: 15px;
+}
+#getting-started h1 {
+margin: 0;
+font-size: 40px;
+}
+#getting-started h2 {
+margin: 0;
+font-size: 14px;
+font-weight: normal;
+color: #333;
+margin-bottom: 25px;
+}
+#getting-started ol {
+margin-left: 0;
+padding-left: 0;
+}
+#getting-started li {
+font-size: 18px;
+color: #888;
+margin-bottom: 25px;
+}
+#getting-started li h2 {
+margin: 0;
+font-weight: normal;
+font-size: 18px;
+color: #333;
+}
+#getting-started li p {
+color: #555;
+font-size: 13px;
+}
+
+
+#search {
+margin: 0;
+padding-top: 10px;
+padding-bottom: 10px;
+font-size: 11px;
+}
+#search input {
+font-size: 11px;
+margin: 2px;
+}
+#search-text {width: 170px}
+
+
+#sidebar ul {
+margin-left: 0;
+padding-left: 0;
+}
+#sidebar ul h3 {
+margin-top: 25px;
+font-size: 16px;
+padding-bottom: 10px;
+border-bottom: 1px solid #ccc;
+}
+#sidebar li {
+list-style-type: none;
+}
+#sidebar ul.links li {
+margin-bottom: 5px;
+}
+
+
+
+p {
+line-height: 1.5em;
+margin: 1.6em 0;
+}
+
+code, tt {
+    font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
+}
+
+#footer {
+clear: both;
+padding-top: 2em;
+text-align: center;
+padding-right: 160px;
+font-family: sans-serif;
+font-size: 10px;
+}
+
+#register-form {
+    font-family: 'Cantarell', 'arial', sans-serif;
+}
+
+#login-box {
+    border-top: solid 1px #ccc;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 25px;
+}
+
+p.failed-login-message {
+    background: #D52F68;
+    color: white;
+    font-family: 'Cantarell', 'arial', sans-serif;
+    border: 3px solid #ccc;
+    margin: 25px;
+    padding: 15px;
+}
+
+label, input { display:block; }
+input { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:25px; }
+.ui-dialog .ui-state-error { padding: .3em; }
+.validateTips { border: 1px solid transparent; padding: 0.3em; }
+.problem {background: #E47E43; color: white;}
+
+.deleter {
+    color: #aaa;
+}
+

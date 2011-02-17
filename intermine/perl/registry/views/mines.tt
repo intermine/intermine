@@ -1,0 +1,96 @@
+<div id="page">
+<div id="content">
+<div id="header" style="background-image: url('<% proxy.uri_for('/images/intermine_logo_header.png') %>');repeat: no-repeat;position: top right">
+<h1>Mines</h1>
+<a class="subtle" href="#" onclick="$('div.mine-details').slideToggle();">expand all</a>
+<h2>A list of registered <a title="Visit InterMine" class="mine-name" href="http://www.intermine.org">InterMine</a> implementations</h2>
+</div>
+<div id="minelist-container">
+<ul id="minelist">
+<% FOREACH mine IN mines %>
+    <li id="<% mine.name %>">
+    <% IF mine.logo %>
+        <a title="Visit <% mine.name %>" href="<% mine.homeUrl %>"><img src="<% mine.logo %>" style="float: right; height: 45px; width: 45px;" /></a>
+    <% END %>
+        <h3><a title="See details" class="mine-name" href='#<% mine.name %>' onclick="$('#<% mine.name %>-details').slideToggle();"><% mine.name %></a>
+        <% IF mine.version %>
+            <span class="version"><% mine.version %></span>
+        <% END %>
+        </h3>
+        <div id="<% mine.name %>-details" class="mine-details">
+        <p><% mine.description %></p>
+        <table>
+            <tr>
+            <td class="name">URL:</td><td class="value"><a href="<% mine.homeUrl %>"><% mine.homeUrl %></a></td>
+            </tr>
+            <% IF mine.primaryOrganism %>
+                <tr>
+                <td class="name">PRIMARY ORGANISM:</td><td class="value"><% mine.primaryOrganism %></td>
+                </tr>
+            <% END %>
+            <% IF mine.organisms.size %>
+                <tr>
+                <td class="name">ORGANISMS:</td><td class="value"><% mine.organisms.join(", ") %></td>
+                </tr>
+            <% END %>
+            <% IF mine.dataSources.size %>
+                <tr>
+                <td class="name">DATA SOURCES:</td><td class="value"><% mine.dataSources.join(", ") %></td>
+                </tr>
+            <% END %>
+        </table>
+        </div>
+    </li>
+<% END %>
+</ul>
+</div>
+</div>
+<a style="margin-right: 175px; margin-top: 25px;" id="register-button" class="subtle" href="#register-popup">Register a Mine</a>
+</div>
+<div id="register-popup" title="Register Your Mine" style="display: none;">
+        <p class="validateTips">
+        You can register your InterMine implementation using the form below -
+        but there is an even easier way: 
+        simply set up your mine to automatically
+        register with us as part of your deployment cycle. <a href="http://intermine.org/wiki/RegisteringYourMine#automatically"
+        >Click here</a> to see how to set this up.
+        </p>
+        <form id="register-form" action="javascript:registerMine();">
+        <fieldset>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" spellcheck="false" placeholder="The name of your mine" class="text ui-widget-content ui-corner-all" />
+            <label for="description">Description</label>
+            <input type="text" name="description" id="description" placeholder="A short description of your mine" value="" class="text ui-widget-content ui-corner-all" />
+            <label for="url">Home URL</label>
+            <input type="text" name="url" id="url" value="" spellcheck="false" placeholder="The URL for the webapp" class="text ui-widget-content ui-corner-all" />
+            <label for="organisms">Organisms</label>
+            <input type="text" name="organisms" id="organisms" spellcheck="false" placeholder="Primary Organism, Secondary Organisms, ..." class="text ui-widget-content ui-corner-all" />
+            <label for="dataSources">Data Sources</label>
+            <input type="text" name="dataSources" id="dataSources" spellcheck="false" placeholder="Data Source 1, Data Source 2, ..." class="text ui-widget-content ui-corner-all" />
+            <label for="authtoken">Authorization Token</label>
+            <input type="password" name="authtoken" id="authtoken" class="text ui-widget-content ui-corner-all" />
+        </fieldset>
+        </form>
+</div>
+<div id="success-popup" title="Success" style="display: none;">
+    <p id="created-successfully">
+    Thanks for registering <span id="new-mine-name"></span>. Your registration key is
+    <span id="reg-key"></span>. Please remember it - you will need it to make any 
+    future updates.
+    </p>
+    <p id="updated-successfully" style="display: none;">
+    </p>
+</div>
+<div id="error-popup" title="Failure" style="display: none;">
+    <p id="failure-reason">
+    The request failed - sorry.
+    </p>
+</div>
+<div id="submitted-popup" title="Thanks" style="display: none;">
+    <p>
+    Thanks for submitting - Your entry is currently being processed. 
+    Your mine will show up in the list when the processing is complete.
+    </p>
+</div>
+<div id="register-address" style="display: none"><% proxy.uri_for('/register') %></div>
+<div id="my-address" style="display: none"><% proxy.uri_for() %></div>
