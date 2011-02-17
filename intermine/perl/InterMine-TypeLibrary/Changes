@@ -3,3 +3,6 @@ Revision history for InterMine-TypeLibrary
 0.9500  Wed Feb  2 16:57:51 GMT 2011
         Added TextCSV
 
+0.9501  Tue Feb  8 11:45:25 GMT 2011
+        Added ServiceRootUri and associated coercions.
+

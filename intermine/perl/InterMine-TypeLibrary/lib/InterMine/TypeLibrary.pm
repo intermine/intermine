@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = 0.9500;
+    our $VERSION = 0.9501;
 
 =head1 NAME
 
@@ -65,6 +65,7 @@ under the same terms as Perl itself.
           Model
           Template TemplateFactory TemplateHash
           Uri HTTPCode NetHTTP
+          ServiceRootUri ServiceRoot NotServiceRoot
           NotAllLowerCase
           Query QueryType QueryName QueryHandler IllegalQueryName
           SavedQuery SavedQueryFactory
@@ -74,11 +75,12 @@ under the same terms as Perl itself.
           Field FieldList MaybeField FieldHash
           LogHandler
           DirName PathClassDir
+          VersionNumber
           )
     ];
 
     # Import built-in Moose types
-    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe/;
+    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int/;
 
     # Type definitions
     enum ConstraintCode, [ 'A' .. 'ZZ' ];
@@ -113,6 +115,10 @@ under the same terms as Perl itself.
       { class => 'Webservice::InterMine::ConstraintFactory', };
     subtype File, as Str, where { -f $_ }, message {"'$_' should be a file"};
     class_type Uri, { class => 'URI' };
+    subtype ServiceRootUri, as Uri, where {$_->path =~ m|/service$| && $_->scheme},
+        message { "Uri does not look like a service url: got $_" };
+    subtype ServiceRoot, as Str, where {m|^https?://.*/service$|};
+    subtype NotServiceRoot, as Str, where {! m|^http.*/service$|};
     subtype HTTPCode, as Str, where { /^\d{3}$/ };
     class_type NetHTTP, { class => 'Net::HTTP', };
     enum SortDirection, [ 'asc', 'desc', ];
@@ -152,6 +158,8 @@ under the same terms as Perl itself.
     subtype DirName, as Str, where {-d $_}, 
         message {"'$_' should be the name of an existing directory"};
     class_type PathClassDir, { class => 'Path::Class::Dir'};
+    subtype VersionNumber, as Int, where {$_ > 0}, 
+        message {'I could not get the version number for this service - please check the url and make sure the service is available'};
 
     # Type coercions
     coerce QueryName, from IllegalQueryName, 
@@ -176,6 +184,23 @@ under the same terms as Perl itself.
     coerce PathList, from JoinedPathString, via { [ split /[,\s]+/ ] };
     coerce PathString, from JoinedPathString,
       via { ( split /[\s]+/ )[0] };
+    coerce ServiceRootUri, from Uri, via {
+        if ($_->path !~ m|/service$|) {
+            $_->path($_->path . '/service');
+        }
+        unless ($_->scheme) {
+            $_->scheme("http");
+        }
+        return $_;
+    };
+    coerce ServiceRootUri, from ServiceRoot, via {
+        URI->new($_);
+    };
+    coerce ServiceRootUri, from NotServiceRoot, via {
+        my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
+        my $suffix = (m|/service$|) ? '' : '/service';
+        URI->new($prefix . $_ . $suffix);
+    };
     coerce Uri, from Str, via {
         my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
         URI->new( $prefix . $_ );
