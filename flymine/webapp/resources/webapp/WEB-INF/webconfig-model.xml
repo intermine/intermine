@@ -100,12 +100,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Clone">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
