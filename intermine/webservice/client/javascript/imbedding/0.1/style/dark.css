@@ -35,7 +35,6 @@ div.imbedded-table-tooltip {
 a.imbedded-table-title {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     color: white;
-    color: #444;
 }
 
 .imbedded-column-header-row {
@@ -69,6 +68,10 @@ a.imbedded-table-title {
     font-style: bold;
 }
 
+.imbedded-cell > a {
+    color: #444;
+}
+
 .imbedded-row-odd {
     background: white;
 }
@@ -85,7 +88,7 @@ a.imbedded-table-title {
     background: #A7E1C3;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
+.imbedded-exportlink, .imbedded-pagelink {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     text-decoration: none;
     color: white ! important;
@@ -99,4 +102,14 @@ a.imbedded-table-title {
 
 .imbedded-table-container > a:hover {
     text-decoration: underline;
+}
+
+.imbedded-table-expand-help {
+    color: #666;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }
