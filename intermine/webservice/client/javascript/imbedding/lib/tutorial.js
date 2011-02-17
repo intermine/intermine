@@ -234,14 +234,14 @@ function loadTable4e() {
         baseUrl: flyMineBase,
         nextText: "avanti", 
         previousText: "indietro",
-        additionText: "carica x righe di pi&ugrave",
+        additionText: "carica altre x righe",
         allRowsText: "carica tutte righe",
         emptyCellText: "[NIENTE]",
         collapseHelpText: "chiudi tabella",
         expandHelpText: "mostra tabella",
-        exportCSVText: "scarica resulte come dato CSV", 
-        exportTSVText: "scarica resulte come dato TSV", 
-        mineLinkText: "Vidi nel Mine"
+        exportCSVText: "Esporta il risultato in formato CSV", 
+        exportTSVText: "Esporta il risultato in formato TSV", 
+        mineLinkText: "Guarda in Mine"
     };
     IMBedding.loadTemplate(
         {
