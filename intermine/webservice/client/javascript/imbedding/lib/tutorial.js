@@ -24,10 +24,12 @@ $(function() {
     loadTable3a();
     loadTable3b();
     loadTable3c();
+    loadTable3d();
     loadTable4a();
     loadTable4b();
     loadTable4c();
     loadTable4d();
+    loadTable4e();
     loadTable4();
     loadTable5();
     $('#faq').accordion({collapsible: true, autoHeight: false});
@@ -47,12 +49,20 @@ function setActiveStyleSheet(title) {
 function loadTable1() {
     IMBedding.loadTemplate(
         {
-            name:           "Gene_Identifiers",
+//            name:           "Gene_Identifiers",
 
-            constraint1:    "Gene.secondaryIdentifier",
-            op1:            "<",
-            value1:         "CG1046",
-            code1:          "A" 
+//            constraint1:    "Gene.secondaryIdentifier",
+//            op1:            "<",
+//            value1:         "CG1046",
+//            code1:          "A" 
+              name: "AnatomyTerm_Alleles",
+              constraint1: "Gene.alleles.alleleClass",
+              op1: "=",
+              value1: "*loss of function*",
+              constraint2: "Gene.alleles.phenotypeAnnotations.description",
+              op2: "=",
+              value2: "*eye disc*"
+
         },
         "#placeholderEx2",
         {openOnLoad: true, baseUrl: flyMineBase}
@@ -119,6 +129,22 @@ function loadTable3c() {
         },
         "#placeholderEx3c",
         {onTitleClick: callback, titleHoverCursor: "help", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable3d() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+            size: 10,
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
+        },
+        "#placeholderEx3d",
+        {baseUrl: flyMineBase}
     );
 }
 
@@ -201,6 +227,38 @@ function loadTable4d() {
         },
         "#placeholderEx4d",
         {baseUrl: flyMineBase}
+    );
+}
+function loadTable4e() {
+    var ops = {
+        baseUrl: flyMineBase,
+        nextText: "avanti", 
+        previousText: "indietro",
+        additionText: "carica x righe di pi&ugrave",
+        allRowsText: "carica tutte righe",
+        emptyCellText: "[NIENTE]",
+        collapseHelpText: "chiudi tavola",
+        expandHelpText: "mostra tavola",
+        exportCSVText: "scarica resulte come dato CSV", 
+        exportTSVText: "scarica resulte come dato TSV", 
+        mineLinkText: "Vidi nel Mine"
+    };
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 15,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4e", ops
     );
 }
 function loadTable4() {

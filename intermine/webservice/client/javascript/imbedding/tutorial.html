@@ -25,7 +25,7 @@
         <link rel="alternate stylesheet" type="text/css" title="dark" href="style/dark.css" />
         <link rel="alternate stylesheet" type="text/css" title="light" href="style/light.css" />
         <link rel="stylesheet" type="text/css" title="bold" href="style/bold.css" />
-        <link rel="stylesheet" type"text/css" href="style/tutorial.css"/>
+        <link rel="stylesheet" type="text/css" href="style/tutorial.css"/>
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     </head>
     <body>
@@ -295,6 +295,8 @@
         The default behaviour for a click on the title is to expand/collapse the table. 
         You can choose other behaviours:
         </p>
+        <h3>Default Behaviour</h3>
+        <div id="placeholderEx3d"><p>This will be where the table goes</p></div>
         <h3>Click Through to Mine</h3>
         <div id="placeholderEx3a"><p>This will be where the table goes</p></div>
         <h3>No Behaviour</h3>
@@ -317,6 +319,8 @@
     var ph = "#placeholderEx3";
     var options = {};
 
+    // Load a template with the default dehaviour
+    IMBedding.loadTemplate(data, ph + "a", options);
     // Load a template where clicking on the title
     // takes you to the mine.
     options.onTitleClick = "mine";
@@ -352,6 +356,9 @@
         <h3>A Different Number of Rows</h3>
         <textarea rows="20" cols="80" class="coder js-snippet">data.size = 15;</textarea>
         <div id="placeholderEx4d"><p>This will be where the table goes</p></div>
+        <h3>A Different Language</h3>
+        <textarea rows="20" cols="80" class="coder js-snippet">data.nextText = "avanti"; // and others</textarea>
+        <div id="placeholderEx4e"><p>This will be where the table goes</p></div>
         <input type="checkbox" id="example4CB" onclick="$('#example4').slideToggle();"/><label for="example4CB">View Source</label>
         <div id="example4" style="display: none;">
             <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
@@ -463,7 +470,6 @@
         "Gene.homologues.homologue.primaryIdentifier", 
         "Gene.homologues.homologue.organism.shortName"
     ],
-    from: "genomic",
     where: [
         {path: "Gene.primaryIdentifier", op: "&lt;", value: "D"},
         {path: "Gene.primaryIdentifier", op: "&gt;", value: "C"}
@@ -933,27 +939,191 @@ function loadDepartmentSummary(departmentName) {
             request; ie: they are open to the public, and not rate-limited.
             </p>
         </div>
-        <h3><a href="#">What if I don't want the opening/closing behaviour?</a></h3>
+        <h3><a href="#">What properties can I configure, and what are the defaults?</a></h3>
         <div>
             <p>
-            The simplest way is to pass an option to the loader method:
+            There are lots of user configurable properties, and they all have sane defaults. 
+            Below you can see a list of values you can pass into the options object
+            of any loadQuery and loadTemplate call, and their default values:
             </p>
-            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.loadQuery(query, data, placeholder, {onTitleClick: null});</textarea>
-            <p> 
-            Possible values for this are "collapse" (the default) and "mine" 
-            (request the title be a link to the same results table in the 
-            originating mine). Entering "null" means neither behaviour would 
-            occur. If you choose "mine", then the then redundant "View in Mine"
-            link would not be inserted.
+            <table class="info-table">
+                <tr>
+                    <th>property</th>
+                    <th>description</th>
+                    <th>takes</th>
+                    <th>default value</th>
+                </tr>
+                <tbody>
+                    <tr>
+                        <td>additionText</td>
+                        <td>the text to display in the "load x more rows" links</td>
+                        <td><code>string</code></td>
+                        <td><code>"Load x more rows"</code></td>
+                    </tr>
+                    <tr>
+                        <td>afterBuildTable</td>
+                        <td>a function to call after the table is built</td>
+                        <td><code>function</code></td>
+                        <td><code>function(table) {}</code></td>
+                    </tr>
+                    <tr>
+                        <td>afterTableUpdate</td>
+                        <td>a function to call after the table is updated with new data</td>
+                        <td><code>function</code></td>
+                        <td><code>function(table, resultSet) {}</code></td>
+                    </tr>
+                    <tr>
+                        <td>allRowsText</td>
+                        <td>the text to display in the links offering to show the remaining rows</td>
+                        <td><code>string</code></td>
+                        <td><code>"Show remaining rows"</code></td>
+                    </tr>
+                    <tr>
+                        <td>collapseHelpText</td>
+                        <td>the text to display in the "hide table" links</td>
+                        <td><code>string</code></td>
+                        <td><code>"hide table"</code></td>
+                    </tr>
+                    <tr>
+                        <td>emptyCellText</td>
+                        <td>the text to display in cells that have no value</td>
+                        <td><code>string</code></td>
+                        <td><code>"[NONE]"</code></td>
+                    </tr>
+                    <tr>
+                        <td>expandHelpText</td>
+                        <td>the text to display in the "show table" links</td>
+                        <td><code>string</code></td>
+                        <td><code>"show table"</code></td>
+                    </tr>
+                    <tr>
+                        <td>nextText</td>
+                        <td>the text to display in the "next page" links</td>
+                        <td><code>string</code></td>
+                        <td><code>"Next"</code></td>
+                    </tr>
+                    <tr>
+                        <td>onTitleClick</td>
+                        <td>what to do when the user clicks the table title</td>
+                        <td><code>"collapse", "mine", "none", or function</code></td>
+                        <td><code>"collapse"</code></td>
+                    </tr>
+                    <tr>
+                        <td>openOnLoad</td>
+                        <td>whether the table should be loaded open or not</td>
+                        <td><code>boolean</code></td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td>previousText</td>
+                        <td>the text to display in the "previous page" links</td>
+                        <td><code>string</code></td>
+                        <td><code>"Previous"</code></td>
+                    </tr>
+                    <tr>
+                        <td>showAdditionsLink</td>
+                        <td>whether to show the links offering "x more rows"</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td>showAllCeiling</td>
+                        <td>The maximum number of rows a query can return and still have the table offer to show all rows</td>
+                        <td><code>int</code></td>
+                        <td><code>75</code></td>
+                    </tr>
+                    <tr>
+                        <td>showAllLink</td>
+                        <td>whether to show the links offering "show remaining rows"</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td>showCount</td>
+                        <td>whether to show the count or not</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td>showExportLinks</td>
+                        <td>whether to show the export links (csv, tsv) or not</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td>showMineLink</td>
+                        <td>whether to show the mine links</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td>throbberSrc</td>
+                        <td>the location of a throbber to show when the table is first loaded</td>
+                        <td><code>location</code></td>
+                        <td><code>"images/throbber.gif"</code></td>
+                    </tr>
+                    <tr>
+                        <td>titleHoverCursor</td>
+                        <td>the cursor to show when the mouse is held over the title (unless its behaviour is "none"</td>
+                        <td><code>string</code></td>
+                        <td><code>"pointer"</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+            If you want all your tables to share the same set of options, you can specify that
+            globally; the example below shows how this can be used for internationalisation:
             </p>
-        </div>
-        <h3><a href="#">What if don't want the export urls?</a></h3>
-        <div>
-            <p> 
-            As above, this can be specified by option. In this case you use the option
-            "showExportLinks", which expects a boolean value.
+            <textarea rows="5" cols="20" class="coder js-snippet">function setLang(code) {
+    if (code == "en") {
+        return;
+    } else if (code == "de") {
+        IMBedding.setDefaultOptions({
+            nextText: "Weiter", 
+            previousText: "Zur&ampuumlck", 
+            additionText: " x Mehr Zeilen Anzeigen", 
+            allRowsText: "Alle Zeilen Anzeigen", 
+            emptyCellText: "[KEINS]",
+            collapseHelpText: "Tafel ausblenden",
+            expandHelpText: "Tafel anzeigen"
+        });
+    } else if (code == "it") {
+        IMBedding.setDefaultOptions({
+            nextText: "avanti", 
+            previousText: "indietro",
+            additionText: "carica x righe di pi&ampugrave",
+            allRowsText: "carica tutte righe",
+            emptyCellText: "[NIENTE]",
+            collapseHelpText: "chiudi tavola",
+            expandHelpText: "mostra tavola"
+        });
+    } else // and so on ...</textarea>
+            <p>
+            Furthermore, the table itself is an object of type "Table", and upon production 
+            and and updates it is passed to the (no-op) functions 
+            <code>IMBedding.afterBuildTable(table)</code>
+            and <code>IMBedding.afterTableUpdate(table, resultSet)</code> respectively. 
+            To get access to the table automatically, simply replace the no-op versions with 
+            your own code:
             </p>
-            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.loadQuery(query, data, placeholder, {showExportLinks: false});</textarea>
+            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.afterBuildTable = function(table) {doSomethingWith(table)};</textarea>
+            <p>
+            The table object provides you with deep low level access to many aspects, including
+            all the elements (which are attributes of it, as jQuery objects) and many
+            methods. For example if you load a template but don't want one of the columns, 
+            you could do something like this:
+            <p>
+            <textarea rows="5" cols="20" class="coder js-snippet">IMBedding.afterTableUpdate = function(table) {
+    table.table.children('tr').each(function() {
+        $(this.children[unwantedColIndex]).remove();
+    });
+};</textarea>
+            <p>
+            The above code will then apply to <em>all</em> tables built by IMBedding. To alter
+            the behaviour for just one table, supply a value for the <code>afterBuildTable</code>
+            and <code>afterTableUpdate</code> options values. Both the table specific function, 
+            and the global one will be run.
+            </p>
         </div>
         </div>
     </div>
