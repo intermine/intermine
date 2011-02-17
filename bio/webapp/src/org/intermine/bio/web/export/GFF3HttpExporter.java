@@ -86,7 +86,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         }
 
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
-        SequenceFeature.class);
+                SequenceFeature.class);
 
         // get the project title to be written in GFF3 records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
