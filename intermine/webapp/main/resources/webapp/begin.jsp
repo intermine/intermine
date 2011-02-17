@@ -57,17 +57,46 @@
         </div>
         <div id="welcome-bochs">
             <div class="inner">
-                <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
+              <c:choose>
+                <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
+                  <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedTitle']}" /></h3>
+                </c:when>
+                <c:otherwise>
+                  <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
+                </c:otherwise>
+              </c:choose>
                 <br />
-                <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
+                <c:choose>
+                  <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
+                    <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedDescription']}" escapeXml="false" /></p>
+                  </c:when>
+                  <c:otherwise>
+                    <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
+                  </c:otherwise>
+                </c:choose>
                 <c:if test="${!empty WEB_PROPERTIES['begin.thirdBox.linkTitle']}">
                   <div class="bottom">
                       <center>
-                          <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
-                          onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                        <c:choose>
+                          <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedLink'])}">
+                            <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />"
+                            onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                          </c:when>
+                          <c:otherwise>
+                            <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
+                            onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                          </c:otherwise>
+                        </c:choose>
                             <div>
                               <span>
-                                <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
+                                <c:choose>
+                                  <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle'])}">
+                                    <c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle']}" />
+                                  </c:when>
+                                  <c:otherwise>
+                                    <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
+                                  </c:otherwise>
+                                </c:choose>
                               </span>
                             </div>
                           </a>
