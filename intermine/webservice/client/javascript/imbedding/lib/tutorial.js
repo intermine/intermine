@@ -20,7 +20,6 @@ $(function() {
         root: "lib/jquery-syntax/"
     });
     $('#showGraphAreaContainer').hide();
-    loadTable1();
     loadTable3a();
     loadTable3b();
     loadTable3c();
@@ -32,7 +31,7 @@ $(function() {
     loadTable4e();
     loadTable4();
     loadTable5();
-    $('#faq').accordion({collapsible: true, autoHeight: false});
+    $('#faq').accordion({collapsible: true, autoHeight: false, active: false});
 });
 
 function setActiveStyleSheet(title) {
@@ -997,8 +996,13 @@ $(function() {
     $('#sortOrderSelector').button();
     $('#sortDirectionDiv').buttonset();
     $('#boxselector').change(function() {
-        document.getElementById('jsonarea').disabled = ($(this).val() == "xml");
-        document.getElementById('xmlarea').disabled = ($(this).val() == "json");
+        if ($(this).val() == "xml") {
+            $('#xmlarea').show();
+            $('#jsonarea').hide();
+        } else {
+            $('#xmlarea').hide();
+            $('#jsonarea').show();
+        }
     });
     $("input:checkbox").button();
     $('#radio').buttonset();

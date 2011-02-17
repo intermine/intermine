@@ -23,7 +23,7 @@
         <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css" />
 
         <!-- javascript for this page -->
-        <script src="lib/tutorial.min.js" type="text/javascript"></script>
+        <script src="lib/tutorial.js" type="text/javascript"></script>
 
         <!-- Grab fonts from Google -->
         <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
@@ -52,12 +52,12 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">The Basics</a></li>
+        <li><a href="#tabs-6">Customisation</a></li>
         <li><a href="#tabs-3">Templates</a></li>
         <li><a href="#tabs-2">Arbitrary Queries</a></li>
         <li><a href="#tabs-4">Doing Other Things with Results</a></li>
         <li><a href="#tabs-7">Styling Tables</a></li>
         <li><a href="#tabs-5">Resources</a></li>
-        <li><a href="#tabs-6">FAQ</a></li>
     </ul>
 
 
@@ -120,7 +120,7 @@
         type="text/javascript">
     </script>
     <!-- InterMine similarly hosts imbedding -->
-    <script src="http://intermine.org/download/imbedding/0.1/imbedding.js" 
+    <script src="http://intermine.org/download/imbedding/0.1/imbedding.min.js" 
         type="text/javascript">
     </script>
     <link rel="stylesheet" type="text/css" 
@@ -276,147 +276,6 @@
 </div>
             </li>
         </ul>
-        <h2>Showing Contents on Load</h2>
-        <p>
-        Various features of the table are configurable via options. The table below was loaded 
-        with the option "openOnLoad" set to true. Clicking on the titlebar of this
-        table will collapse it.
-        </p>
-        <div id="placeholderEx2"><p>This will be where the table goes</p></div>
-        <input type="checkbox" id="example2CB" onclick="$('#example2').slideToggle();"/><label for="example2CB">View Source</label>
-        <div id="example2" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
-    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
-    IMBedding.loadTemplate(
-        {
-            name:           "Gene_Identifiers",
-
-            constraint1:    "Gene.secondaryIdentifier",
-            op1:            "<",
-            value1:         "CG1046",
-            code1:          "A",
-        },
-        "#placeholderEx2",
-        {openOnLoad: true}
-    );
-</script></textarea>
-        </div>
-        <h2>Changing Title Click Behaviour</h2>
-        <p>
-        The default behaviour for a click on the title is to expand/collapse the table. 
-        You can choose other behaviours:
-        </p>
-        <h3>Default Behaviour</h3>
-        <div id="placeholderEx3d"><p>This will be where the table goes</p></div>
-        <h3>Click Through to Mine</h3>
-        <div id="placeholderEx3a"><p>This will be where the table goes</p></div>
-        <h3>No Behaviour</h3>
-        <div id="placeholderEx3b"><p>This will be where the table goes</p></div>
-        <h3>Arbitrary Behaviour</h3>
-        <div id="placeholderEx3c"><p>This will be where the table goes</p></div>
-        <input type="checkbox" id="example3CB" onclick="$('#example3').slideToggle();"/><label for="example3CB">View Source</label>
-        <div id="example3" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
-    // Common arguments
-    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
-    var data = {
-        name:           "Gene_allGOTerms2",
-
-        constraint1:    "Gene",
-        op1:            "LOOKUP",
-        value1:         "CG11348",
-        code1:          "A",
-    };
-    var ph = "#placeholderEx3";
-    var options = {};
-
-    // Load a template with the default dehaviour
-    IMBedding.loadTemplate(data, ph + "a", options);
-    // Load a template where clicking on the title
-    // takes you to the mine.
-    options.onTitleClick = "mine";
-    IMBedding.loadTemplate(data, ph + "a", options);
-    // Load a template where clicking on the title
-    // does nothing at all.
-    options.onTitleClick = "none";
-    IMBedding.loadTemplate(data, ph + "b", options);
-    // Load a template where clicking on the title
-    // does something completely different
-    options.onTitleClick = function() {
-        alert( "You clicked on:\n" + $(this).text());
-    };
-    options.titleHoverCursor = "help";
-    IMBedding.loadTemplate(data, ph + "c", options);
-</script></textarea>
-        </div>
-        <h2>Configuring What is Shown</h2>
-        <p>
-        As well as the title, by default the table will also contain export links,
-        a link to the results in the originating mine, a count of the total results, and
-        pages with 10 rows of results. The tables below show adjustments to these features.
-        </p>
-        <h3>No Export Links</h3>
-        <textarea rows="20" cols="80" class="coder js-snippet">options.showExportLinks = false;</textarea>
-        <div id="placeholderEx4a"><p>This will be where the table goes</p></div>
-        <h3>No Count</h3>
-        <textarea rows="20" cols="80" class="coder js-snippet">options.showCount = false;</textarea>
-        <div id="placeholderEx4b"><p>This will be where the table goes</p></div>
-        <h3>No Mine Link</h3>
-        <textarea rows="20" cols="80" class="coder js-snippet">options.showMineLink = false;</textarea>
-        <div id="placeholderEx4c"><p>This will be where the table goes</p></div>
-        <h3>A Different Number of Rows</h3>
-        <textarea rows="20" cols="80" class="coder js-snippet">data.size = 15;</textarea>
-        <div id="placeholderEx4d"><p>This will be where the table goes</p></div>
-        <h3>A Different Language</h3>
-        <textarea rows="20" cols="80" class="coder js-snippet">data.nextText = "avanti"; // and others</textarea>
-        <div id="placeholderEx4e"><p>This will be where the table goes</p></div>
-        <input type="checkbox" id="example4CB" onclick="$('#example4').slideToggle();"/><label for="example4CB">View Source</label>
-        <div id="example4" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
-    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
-    var data = {
-        name:        "Organism_GeneDomain_new",
-
-        constraint1: "ProteinDomain.proteins.genes.organism.name",
-        op1:         "=",
-        value1:      "Drosophila melanogaster",
-        code1:       "A",
-
-        constraint2: "ProteinDomain.shortName",
-        op2:         "=",
-        value2:      "*homeo*",
-        code2:       "B"
-    };
-    var ph = '#placeholderEx4';
-    // Load a table without export links
-    IMBedding.loadTemplate(data, ph + "a", {showExportLinks: false});
-
-    // Load a table without a count
-    IMBedding.loadTemplate(data, ph + "b", {showCount: false});
-
-    // Load a tavle without a mine-link
-    IMBedding.loadTemplate(data, ph + "c", {showMineLink: false});
-
-    // Load a table with a page size of 15
-    data.size = 15;
-    IMBedding.loadTemplate(data, ph + "d");
-
-    //Load a table in Italian
-    var options = {
-        nextText: "avanti", 
-        previousText: "indietro",
-        additionText: "carica altre x righe",
-        allRowsText: "carica tutte righe",
-        emptyCellText: "[NIENTE]",
-        collapseHelpText: "chiudi tabella",
-        expandHelpText: "mostra tabella",
-        exportCSVText: "Esporta il risultato in formato CSV", 
-        exportTSVText: "Esporta il risultato in formato TSV", 
-        mineLinkText: "Guarda in Mine"
-    };
-    IMBedding.loadTemplate(data, ph + "e", options);
-</script></textarea>
-        </div>
 
     </div>
 
@@ -487,7 +346,7 @@
 </query></textarea>
                     </td>
                     <td>
-                        <textarea disabled="true" class="coder" id="jsonarea" rows="15" cols="60">
+                        <textarea style="display: none;" class="coder" id="jsonarea" rows="15" cols="60">
 {
     select: [
         "Gene.homologues.type", 
@@ -948,11 +807,9 @@ function loadDepartmentSummary(departmentName) {
         </ul>
     </div>
     <div id="tabs-6">
-        <h2>Questions You Might Reasonably Ask</h2>
-        <p>
-        Nobody's asked any questions yet, but if they had, I would think these
-        would be the top of the list:
+        <h2>Customising the Tables</h2>
         <div id="faq">
+            <!--
         <h3><a href="#">Can anyone use these features?</a></h3>
         <div>
             <p>
@@ -965,7 +822,8 @@ function loadDepartmentSummary(departmentName) {
             request; ie: they are open to the public, and not rate-limited.
             </p>
         </div>
-        <h3><a href="#">What properties can I configure, and what are the defaults?</a></h3>
+        -->
+        <h3><a style="cursor: pointer">What properties can I configure, and what are the defaults?</a></h3>
         <div>
             <p>
             There are lots of user configurable properties, and they all have sane defaults. 
@@ -1157,18 +1015,156 @@ function loadDepartmentSummary(departmentName) {
             and the global one will be run.
             </p>
         </div>
+        <h3><a style="cursor: pointer">Showing Contents on Load</a></h3>
+        <div>
+        <p>
+        Setting <code>openOnLoad</code> to true loads the table pre-opened. Clicking on the titlebar of this
+        table will collapse it.
+        </p>
+        <div id="placeholderEx2"><button onclick="loadTable1()">Load a pre-opened table</button></div>
+        <input type="checkbox" id="example2CB" onclick="$('#example2').slideToggle();"/><label for="example2CB">View Source</label>
+        <div id="example2" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_Identifiers",
+
+            constraint1:    "Gene.secondaryIdentifier",
+            op1:            "<",
+            value1:         "CG1046",
+            code1:          "A",
+        },
+        "#placeholderEx2",
+        {openOnLoad: true}
+    );
+</script></textarea>
+        </div>
+    </div>
+    <h3><a style="cursor: pointer">Changing Title Click Behaviour</a></h3>
+    <div>
+        <p>
+        The default behaviour for a click on the title is to expand/collapse the table. 
+        You can choose other behaviours:
+        </p>
+        <h3>Default Behaviour</h3>
+        <div id="placeholderEx3d"><p>This will be where the table goes</p></div>
+        <h3>Click Through to Mine</h3>
+        <div id="placeholderEx3a"><p>This will be where the table goes</p></div>
+        <h3>No Behaviour</h3>
+        <div id="placeholderEx3b"><p>This will be where the table goes</p></div>
+        <h3>Arbitrary Behaviour</h3>
+        <div id="placeholderEx3c"><p>This will be where the table goes</p></div>
+        <input type="checkbox" id="example3CB" onclick="$('#example3').slideToggle();"/><label for="example3CB">View Source</label>
+        <div id="example3" style="display: none;">
+        <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
+    // Common arguments
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    var data = {
+        name:           "Gene_allGOTerms2",
+
+        constraint1:    "Gene",
+        op1:            "LOOKUP",
+        value1:         "CG11348",
+        code1:          "A",
+    };
+    var ph = "#placeholderEx3";
+    var options = {};
+
+    // Load a template with the default dehaviour
+    IMBedding.loadTemplate(data, ph + "a", options);
+    // Load a template where clicking on the title
+    // takes you to the mine.
+    options.onTitleClick = "mine";
+    IMBedding.loadTemplate(data, ph + "a", options);
+    // Load a template where clicking on the title
+    // does nothing at all.
+    options.onTitleClick = "none";
+    IMBedding.loadTemplate(data, ph + "b", options);
+    // Load a template where clicking on the title
+    // does something completely different
+    options.onTitleClick = function() {
+        alert( "You clicked on:\n" + $(this).text());
+    };
+    options.titleHoverCursor = "help";
+    IMBedding.loadTemplate(data, ph + "c", options);
+</script></textarea></div>
+        </div>
+        <h3><a style="cursor: pointer">Configuring What is Shown</a></h3>
+        <div>
+            <p>
+            As well as the title, by default the table will also contain export links,
+            a link to the results in the originating mine, a count of the total results, and
+            pages with 10 rows of results. The tables below show adjustments to these features.
+            </p>
+            <h3>No Export Links</h3>
+            <textarea rows="20" cols="80" class="coder js-snippet">options.showExportLinks = false;</textarea>
+            <div id="placeholderEx4a"><p>This will be where the table goes</p></div>
+            <h3>No Count</h3>
+            <textarea rows="20" cols="80" class="coder js-snippet">options.showCount = false;</textarea>
+            <div id="placeholderEx4b"><p>This will be where the table goes</p></div>
+            <h3>No Mine Link</h3>
+            <textarea rows="20" cols="80" class="coder js-snippet">options.showMineLink = false;</textarea>
+            <div id="placeholderEx4c"><p>This will be where the table goes</p></div>
+            <h3>A Different Number of Rows</h3>
+            <textarea rows="20" cols="80" class="coder js-snippet">data.size = 15;</textarea>
+            <div id="placeholderEx4d"><p>This will be where the table goes</p></div>
+            <h3>A Different Language</h3>
+            <textarea rows="20" cols="80" class="coder js-snippet">data.nextText = "avanti"; // and others</textarea>
+            <div id="placeholderEx4e"><p>This will be where the table goes</p></div>
+            <input type="checkbox" id="example4CB" onclick="$('#example4').slideToggle();"/><label for="example4CB">View Source</label>
+            <div id="example4" style="display: none;">
+            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
+    IMBedding.setBaseUrl("http://preview.flymine.org/preview");
+    var data = {
+        name:        "Organism_GeneDomain_new",
+
+        constraint1: "ProteinDomain.proteins.genes.organism.name",
+        op1:         "=",
+        value1:      "Drosophila melanogaster",
+        code1:       "A",
+
+        constraint2: "ProteinDomain.shortName",
+        op2:         "=",
+        value2:      "*homeo*",
+        code2:       "B"
+    };
+    var ph = '#placeholderEx4';
+    // Load a table without export links
+    IMBedding.loadTemplate(data, ph + "a", {showExportLinks: false});
+
+    // Load a table without a count
+    IMBedding.loadTemplate(data, ph + "b", {showCount: false});
+
+    // Load a tavle without a mine-link
+    IMBedding.loadTemplate(data, ph + "c", {showMineLink: false});
+
+    // Load a table with a page size of 15
+    data.size = 15;
+    IMBedding.loadTemplate(data, ph + "d");
+
+    //Load a table in Italian
+    var options = {
+        nextText: "avanti", 
+        previousText: "indietro",
+        additionText: "carica altre x righe",
+        allRowsText: "carica tutte righe",
+        emptyCellText: "[NIENTE]",
+        collapseHelpText: "chiudi tabella",
+        expandHelpText: "mostra tabella",
+        exportCSVText: "Esporta il risultato in formato CSV", 
+        exportTSVText: "Esporta il risultato in formato TSV", 
+        mineLinkText: "Guarda in Mine"
+    };
+    IMBedding.loadTemplate(data, ph + "e", options);
+</script></textarea>
+        </div>
+        </div>
+      </div>
+    </div>
         </div>
     </div>
 </div>
-        <div id="xml-string" style="display: none;">
-            <query name="employeesOfACertainAge" model="testmodel" 
-                view="Employee.name Employee.age" >
-                <constraint path="Employee.age" code="A" editable="true" 
-                description="First age constraint" op="&gt;" value="30"></constraint>
-                <constraint path="Employee.age" code="B" editable="true" 
-                    description="Second age constraint" op="&lt;=" value="60"></constraint>
-            </query>
-        </div>
     </div>
     </body>
 </html>
