@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Pathway;
 import org.intermine.model.bio.Protein;
@@ -75,6 +76,8 @@ public class BioPAXPostprocessTest extends XMLTestCase {
 
     // Store a gene with two proteins, each protein has a pathway
     private void setUpData() throws Exception {
+        DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        dataset.setName("Reactome data set");
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene);
@@ -83,10 +86,12 @@ public class BioPAXPostprocessTest extends XMLTestCase {
 
         Pathway pathway1 = (Pathway) DynamicUtil.createObject(Collections.singleton(Pathway.class));
         protein1.addPathways(pathway1);
+        pathway1.addDataSets(dataset);
         Pathway pathway2 = (Pathway) DynamicUtil.createObject(Collections.singleton(Pathway.class));
         protein2.addPathways(pathway2);
+        pathway2.addDataSets(dataset);
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2, pathway1, pathway2}));
+        List toStore = new ArrayList(Arrays.asList(new Object[] {dataset, gene, protein1, protein2, pathway1, pathway2}));
 
         osw.beginTransaction();
         Iterator i = toStore.iterator();

@@ -87,6 +87,7 @@ public class BioPAXPostProcess extends PostProcessor
 
         if (reactomeDataSet == null) {
             LOG.error("Failed to find reactome DataSet object");
+            return;
         }
 
         Results results = findProteinPathways(osw.getObjectStore());
