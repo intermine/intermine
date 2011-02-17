@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -167,6 +168,49 @@ public class BeginAction extends InterMineAction
         }
         request.setAttribute("preferredBags", preferredBags);
 
+        // cookie business
+        if (!hasUserVisited(request)) {
+            // set cookie
+            setUserVisitedCookie(response);
+            // first visit
+            request.setAttribute("isNewUser", true);
+        } else {
+            request.setAttribute("isNewUser", false);
+        }
+
         return mapping.findForward("begin");
     }
+
+    /**
+     * Determine if this page has been visited before using a cookie
+     * @param request HTTP Servlet Request
+     * @return true if page has been visited
+     */
+    private Boolean hasUserVisited(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        for(int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if (cookie.getName().equals("visited")) {
+                // early bath for him
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Set a cookie by visiting this page
+     * @param response HTTP Servlet Response
+     * @return response HTTP Servlet Response
+     */
+    private HttpServletResponse setUserVisitedCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("visited", "at some point...");
+        // see you in a year
+        cookie.setMaxAge(365*24*60*60);
+        response.addCookie(cookie);
+
+        return response;
+    }
+
 }
