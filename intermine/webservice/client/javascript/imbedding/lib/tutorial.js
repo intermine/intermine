@@ -237,8 +237,8 @@ function loadTable4e() {
         additionText: "carica x righe di pi&ugrave",
         allRowsText: "carica tutte righe",
         emptyCellText: "[NIENTE]",
-        collapseHelpText: "chiudi tavola",
-        expandHelpText: "mostra tavola",
+        collapseHelpText: "chiudi tabella",
+        expandHelpText: "mostra tabella",
         exportCSVText: "scarica resulte come dato CSV", 
         exportTSVText: "scarica resulte come dato TSV", 
         mineLinkText: "Vidi nel Mine"
