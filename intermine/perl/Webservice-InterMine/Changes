@@ -24,3 +24,5 @@ Revision history for Webservice-InterMine
         * Fixed bug in ResultIterator due to loose quotes. Thanks Kim.
         * Added support for new JSON formats, including inflation
         * Added bug in Join.pm which was preventing builds.
+0.9501  Thu Feb  3 13:36:04 GMT 2011
+        * Added bug due to mis-matching test counts in acceptance test
