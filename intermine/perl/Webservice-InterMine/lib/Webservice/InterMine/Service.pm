@@ -37,9 +37,9 @@ use Net::HTTP;
 use URI;
 use LWP::UserAgent;
 use MIME::Base64;
-use MooseX::Types::Moose qw/Str/;
+use MooseX::Types::Moose qw/Str Int/;
 use InterMine::TypeLibrary
-  qw(Uri Model TemplateFactory SavedQueryFactory ListFactory);
+  qw(VersionNumber ServiceRootUri Model TemplateFactory SavedQueryFactory ListFactory);
 
 
 =head2 new( $url, [$user, $pass] )
@@ -90,7 +90,7 @@ a scheme added if none was provided.
 
 has root => (
     is       => 'ro',
-    isa      => Uri,
+    isa      => ServiceRootUri,
     required => 1,
     coerce   => 1,
     handles  => { host => 'host', },
@@ -198,15 +198,16 @@ sub _build_model {
 =head2 version
 
 Returns the version of the webservice - used for determining
-compatibility with different query formats
+compatibility with different query formats. The version is always
+an integer. An attempt to get the version is made on instantiation, 
+which serves to validate the webservice.
 
 =cut
 
 has version => (
     is       => 'ro',
-    isa      => Str,
+    isa      => VersionNumber,
     required => 1,
-    lazy     => 1,
     default  => sub {
         my $self = shift;
         $self->fetch( $self->root . VERSION_PATH );
