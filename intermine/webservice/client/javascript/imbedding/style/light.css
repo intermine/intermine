@@ -2,7 +2,7 @@ div.imbedded-table-tooltip {
     border-width:       2px;
     width:              500px;
     border-style:       solid;
-    border-color:       #365252;
+    border-color:       white;
     padding:            5px;
     color:              white;
     background:         #666;
@@ -49,6 +49,11 @@ div.imbedded-table-tooltip {
     font-family: "Neuton", "Times", "serif";
     padding: 4px;
 }
+
+.imbedded-cell > a {
+    color: #444;
+}
+
 .imbedded-data-row {
     color: #444;
 }
@@ -66,7 +71,7 @@ div.imbedded-table-tooltip {
     background: white;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
+.imbedded-exportlink, .imbedded-pagelink {
     font-family: "Neuton", "Times", "serif";
     text-decoration: none;
     color: black ! important;
@@ -79,10 +84,20 @@ div.imbedded-table-tooltip {
     float: right;
 }
 
-.imbedded-pagelink {
+.imbedded-next {
     float: right;
 }
 
 .imbedded-table-container > a:hover {
     font-style: italic;
+}
+
+.imbedded-table-expand-help {
+    color: #666;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }
