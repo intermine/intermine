@@ -2,6 +2,7 @@ IMBedding = (function() {
     var baseUrl = null;
     var tables = {};
     var defaultTableSize = 10;
+    var defaultQuery = {from: "genomic"};
     var placeholder = '#placeholder';
     var templateResultsPath = "/service/template/results";
     var queryResultsPath = "/service/query/results";
@@ -14,18 +15,28 @@ IMBedding = (function() {
     };
 
     var defaultOptions = {
-        openOnLoad: false,
-        throbberSrc: "images/throbber.gif",
-        onTitleClick: "collapse",
-        showExportLinks: true,
-        showCount: true,
-        previousText: "Previous",
+        additionText: "Load x more rows",
+        afterBuildTable: function(table) {},
+        afterTableUpdate: function(table, resultSet) {},
+        allRowsText: "Show remaining rows",
+        collapseHelpText: "hide table",
+        emptyCellText: "[NONE]",
+        expandHelpText: "show table",
+        exportCSVText: "Export as CSV file",
+        exportTSVText: "Export as TSV file",
+        mineLinkText: "View in Mine",
         nextText: "Next",
-        showMineLink: true,
+        onTitleClick: "collapse",
+        openOnLoad: false,
+        previousText: "Previous",
         showAdditionsLink: true,
+        showAllCeiling: 75,
         showAllLink: true,
-        titleHoverCursor: "pointer",
-        showAllCeiling: 75
+        showCount: true,
+        showExportLinks: true,
+        showMineLink: true,
+        throbberSrc: "images/throbber.gif",
+        titleHoverCursor: "pointer"
     };
 
     var localiseUrl = function(url, options) {
@@ -71,41 +82,44 @@ IMBedding = (function() {
             this.isFilledIn = false;
             this.count = null;
 
-            this.container = jQuery('<div id="imbedded-table-container-' + this.uid + '" class="imbedded-table-container"></div>');
-            this.titlebox = jQuery('<div id="imbedded-table-titlebox-' + this.uid + '" class="imbedded-table-titlebox"></div>');
-            this.title = jQuery('<a class="imbedded-table-title-' + this.uid + '" class="imbedded-table-title">' + data.title + '</a>');
-            this.countDisplayer = jQuery('<span id="imbedded-count-displayer-' + this.uid + '" class="imbedded-count-displayer"></span>');
-
-            this.nextLink = jQuery('<a id="imbedded-nextlink-' + this.uid + '" class="imbedded-pagelink imbedded-next">' + this.options.nextText + '</a>');
-            this.nextLink.mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
+            this.container = jQuery('<div id="imbedded-table-container-' 
+                    + this.uid + '" class="imbedded-table-container"></div>');
+            this.titlebox = jQuery('<div id="imbedded-table-titlebox-' 
+                    + this.uid + '" class="imbedded-table-titlebox"></div>');
+            this.title = jQuery('<a id="imbedded-table-title-' 
+                    + this.uid + '" class="imbedded-table-title">' + data.title + '</a>');
+            this.expandHelp = jQuery('<span id="imbedded-table-expand-help-' 
+                    + this.uid + '" class="imbedded-table-expand-help">' 
+                    + this.options.expandHelpText + '</span>');
+            this.countDisplayer = jQuery('<span id="imbedded-count-displayer-' 
+                    + this.uid + '" class="imbedded-count-displayer"></span>');
             this.nextUrl = this.getNextUrl();
-            this.nextLink.click(function() {
-                $.jsonp({
-                    url: outer.nextUrl,
-                    callbackParameter: "callback",
-                    success: function(data) {
-                        outer.fillInTable(data);
-                        outer.updateVisibilityOfPagers();
-                        outer.fitContainerToTable();
-                    }
-                });
-            });
+            this.nextLink = jQuery('<a id="imbedded-nextlink-' 
+                    + this.uid + '" class="imbedded-pagelink imbedded-next">' 
+                    + this.options.nextText + '</a>')
+                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
+                    .click(function() {
+                        $.jsonp({
+                            url: outer.nextUrl,
+                            callbackParameter: "callback",
+                            success: function(data) {outer.changePage(data)}
+                        });
+                    });
 
-            this.prevLink = jQuery('<a id="imbedded-prevlink-' + this.uid + '" class="imbedded-pagelink imbedded-prev">' + this.options.previousText + '</a>');
-            this.nextLink.mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
+            this.prevLink = jQuery('<a id="imbedded-prevlink-' 
+                    + this.uid + '" class="imbedded-pagelink imbedded-prev">' 
+                    + this.options.previousText + '</a>')
+                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
             this.prevLink.click(function() {
                 $.jsonp({
                     url: outer.prevUrl,
                     callbackParameter: "callback",
-                    success: function(data) {
-                        outer.fillInTable(data);
-                        outer.updateVisibilityOfPagers();
-                        outer.fitContainerToTable();
-                    }
+                    success: function(data) {outer.changePage(data)}
                 });
             });
 
-            this.table = jQuery('<table style="display: none;" id="imbedded-table-' + this.uid + '" class="imbedded-table"></table>');
+            this.table = jQuery('<table style="display: none;" id="imbedded-table-' 
+                    + this.uid + '" class="imbedded-table"></table>');
 
             this.colHeaderRow = jQuery('<tr class="imbedded-table-row imbedded-column-header-row"></tr>');
             this.colHeaderRow.append('<td class="imbedded-cell imbedded-column-header"></td>');
@@ -117,24 +131,29 @@ IMBedding = (function() {
             }
 
             this.csvLink = jQuery('<a id="imbedded-csvlink-' + this.uid 
-                    + '" class="imbedded-exportlink">Export as CSV file</a>')
+                    + '" class="imbedded-exportlink">'
+                    + this.options.exportCSVText + '</a>')
                     .attr("href", this.localiseUrl(data.csv_url));
 
             this.tsvLink = jQuery('<a id="imbedded-tsvlink-' + this.uid 
-                    + '" class="imbedded-exportlink">Export as TSV file</a>')
+                    + '" class="imbedded-exportlink">' 
+                    + this.options.exportTSVText + '</a>')
                     .attr("href", this.localiseUrl(data.tsv_url));
 
             this.mineLink = jQuery('<a id="imbedded-mineresultslink-' + this.uid 
-                    + '" class="imbedded-exportlink imbedded-mineresultslink">View in Mine</a>')
+                    + '" class="imbedded-exportlink imbedded-mineresultslink">'
+                    + this.options.mineLinkText + '</a>')
                     .attr("href", this.localiseUrl(data.mineResultsLink));
 
+            var additionInner = this.options.additionText.replace(" x ", " " + data.size + " ");
             this.additionLink = jQuery('<a id="imbedded-adder-' + this.uid 
-                    + '" class="imbedded-addition-link imbedded-pagelink">Load ' 
-                    + data.size + ' more rows</a>')
-                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
-                    .click(function() {outer.loadMoreRows()});
+                + '" class="imbedded-addition-link imbedded-pagelink">' + additionInner + '</a>')
+                .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
+                .click(function() {outer.loadMoreRows()});
 
-            this.showAllLink = jQuery('<a id="imbedded-showall-' + this.uid + '" class="imbedded-showall-link imbedded-pagelink">Show remaining rows</a>')
+            this.showAllLink = jQuery('<a id="imbedded-showall-' 
+                    + this.uid + '" class="imbedded-showall-link imbedded-pagelink">'
+                    + this.options.allRowsText + '</a>')
                     .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
                     .click(function() {outer.loadMoreRows(true)});
 
@@ -162,7 +181,12 @@ IMBedding = (function() {
             }
 
             if (! this.options.openOnLoad) {
-                jQuery().add(this.prevLink).add(this.nextLink).add(this.csvLink).add(this.tsvLink).add(this.mineLink).hide();
+                jQuery().add(this.prevLink)
+                        .add(this.nextLink)
+                        .add(this.csvLink)
+                        .add(this.tsvLink)
+                        .add(this.mineLink)
+                        .hide();
             }
 
             if (this.options.showCount) {
@@ -192,6 +216,7 @@ IMBedding = (function() {
             }
 
             if (this.options.onTitleClick == "collapse") {
+                this.title.append(this.expandHelp);
                 this.title.click(function() {outer.resizeTable()})
                           .mouseover(function() { jQuery(this).css({cursor: "row-resize"}) });
             } else if (this.options.onTitleClick == "mine") {
@@ -213,20 +238,25 @@ IMBedding = (function() {
             );
 
             if (this.options.openOnLoad) {
-                $.jsonp({
-                    url: outer.localiseUrl(outer.getPageUrl()),
-                    success: function(data) {
-                        outer.fillInTable(data);
-                        outer.table.fadeToggle();
-                        outer.fitContainerToTable();
-                        outer.updateVisibilityOfPagers();
-                    },
-                    callbackParameter: "callback"
-                });
+                this.resizeTable();
             } else {
                 var throbber = document.createElement("img");
                 throbber.src = this.options.throbberSrc;
                 this.table.append(throbber);
+            }
+        };
+
+        this.changePage = function(data, append) {
+            this.fillInTable(data, append);
+            this.updateVisibilityOfPagers();
+            this.fitContainerToTable();
+        };
+
+        this.toggleExpandHelpText = function() {
+            if (this.expandHelp.text() === this.options.expandHelpText) {
+                this.expandHelp.text(this.options.collapseHelpText);
+            } else {
+                this.expandHelp.text(this.options.expandHelpText);
             }
         };
 
@@ -235,6 +265,7 @@ IMBedding = (function() {
         this.resizeTable = function() {
             var outer = this;
             var action = function() {
+                outer.toggleExpandHelpText();
                 outer.csvLink.toggle();
                 outer.tsvLink.toggle();
                 outer.mineLink.toggle();
@@ -297,17 +328,15 @@ IMBedding = (function() {
             $.jsonp({
                 url: url,
                 success: function(data) {
-                    outer.fillInTable(data, append);
                     outer.size += noOfRowsToGet;
-                    outer.updateVisibilityOfPagers();
-                    outer.fitContainerToTable();
+                    outer.changePage(data, append);
                 },
                 callbackParameter: "callback"
             });
         };
 
         this.containerNeedsExpanding = function() {
-            return this.table.attr("offsetWidth") > this.container.attr("offsetWidth");
+            return this.table.attr("offsetWidth") >= this.container.attr("offsetWidth");
         };
 
         this.expandContainer = function() {
@@ -375,14 +404,13 @@ IMBedding = (function() {
         // either appending them, or replacing the 
         // current ones
         this.fillInTable = function(resultSet, append) {
-            var table = jQuery("#imbedded-table-" + this.uid);
             // Remove any data this table already contains
             if (! append) {
-                table.children('tbody').detach();
+                this.table.children('tbody').detach();
                 this.table.append(this.colHeaderRow);
             }
             // Remove the throbber
-            table.children('img').detach();
+            this.table.children('img').detach();
 
 
             var resultCount = resultSet.results.length;
@@ -409,18 +437,22 @@ IMBedding = (function() {
                         a.innerHTML = cell.value;
                         tableCell.appendChild(a);
                     } else {
-                        tableCell.innerHTML = "[NONE]";
+                        tableCell.innerHTML = this.options.emptyCellText;
+                        jQuery(tableCell).addClass("imbedded-null");
                     }
                     dataRow.appendChild(tableCell);
                 }
-                table.append(dataRow);
+                this.table.append(dataRow);
             }
             if (! append) {
                 this.start = resultSet.start;
             }
             this.lastRow = resultCount + resultSet.start;
             this.isFilledIn = true;
-            IMBedding.afterTableUpdate(table, resultSet);
+            if (this.options.afterTableUpdate) {
+                this.options.afterTableUpdate(this.table, resultSet);
+            }
+            IMBedding.afterTableUpdate(this.table, resultSet);
         };
 
         this._constructor(data, passedOpts);
@@ -432,6 +464,9 @@ IMBedding = (function() {
         tables[table.uid] = table;
 
         jQuery(target).empty().append(table.container);
+        if (table.options.afterBuildTable) {
+            table.options.afterBuildTable(table);
+        }
         IMBedding.afterBuildTable(table);
     };
         
@@ -489,34 +524,35 @@ IMBedding = (function() {
         if (typeof(source) == "string") {
             return source;
         } else if (source instanceof Object) {
+            var query = jQuery.extend({}, defaultQuery, source);
             var xmlString = '<query model="';
-            if ("model" in source) {
-                xmlString += source.model;
-            } else if ("from" in source) {
-                xmlString += source.from;
+            if ("model" in query) {
+                xmlString += query.model;
+            } else if ("from" in query) {
+                xmlString += query.from;
             } else {
                 throw("No model in query");
             }
 
             xmlString += '" view="';
-            if ("view" in source) {
-                xmlString += source.view.join(" ");
-            } else if ("select" in source) {
-                xmlString += source.select.join(" ");
+            if ("view" in query) {
+                xmlString += query.view.join(" ");
+            } else if ("select" in query) {
+                xmlString += query.select.join(" ");
             } else {
-                throw("No view in source");
+                throw("No view in query");
             }
             xmlString += '" ';
-            if ("constraintLogic" in source) {
-                xmlString += 'constraintLogic="' + source.constraintLogic + '" ';
+            if ("constraintLogic" in query) {
+                xmlString += 'constraintLogic="' + query.constraintLogic + '" ';
             }
-            if ("sortOrder" in source) {
-                xmlString += 'sortOrder="' + source.sortOrder + '" ';
+            if ("sortOrder" in query) {
+                xmlString += 'sortOrder="' + query.sortOrder + '" ';
             }
             xmlString += ">";
-            if ("joins" in source) {
-                for (var i = 0; i < source.joins.length; i++) {
-                    var join = source.joins[i];
+            if ("joins" in query) {
+                for (var i = 0; i < query.joins.length; i++) {
+                    var join = query.joins[i];
                     var joinString = '<join ';
                     
                     for (attr in join) {
@@ -526,11 +562,11 @@ IMBedding = (function() {
                     xmlString += joinString;
                 }
             }
-            if ("where" in source) {
-                xmlString += getConstraints(source.where);
+            if ("where" in query) {
+                xmlString += getConstraints(query.where);
             }
-            if ("constraints" in source) {
-                xmlString += getConstraints(source.constraints);
+            if ("constraints" in query) {
+                xmlString += getConstraints(query.constraints);
             }
             xmlString += '</query>';
             return xmlString;
@@ -559,6 +595,14 @@ IMBedding = (function() {
         afterTableUpdate: function(table, data) {},
         afterBuildTable: function(table) {},
         makeQueryXML: getXML,
+        setDefaultQuery: function(obj) {
+            defaultQuery = obj;
+            return defaultQuery;
+        },
+        setDefaultOptions: function(obj) {
+            jQuery.extend(defaultOptions, obj);
+            return defaultOptions;
+        },
         setBaseUrl: function(url) {
             baseUrl = url;
             return baseUrl;
