@@ -88,3 +88,19 @@ td.summary-cell {
     padding: 10px;
     border-color: white;
 }
+
+table.info-table {
+    border-collapse: collapse;
+    border: 3px solid #DDD;
+}
+
+table.info-table th {
+    font-family: "Cuprum", "Arial", sans-serif;
+}
+
+table.info-table tbody td {
+    border: 1px solid #DDD;
+    font-family: "Neuton", "Arial", sans-serif ! important;
+    font-size: 75%;
+    padding: 8px;
+}
