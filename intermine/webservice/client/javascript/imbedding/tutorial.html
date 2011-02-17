@@ -23,7 +23,7 @@
         <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css" />
 
         <!-- javascript for this page -->
-        <script src="lib/tutorial.js" type="text/javascript"></script>
+        <script src="lib/tutorial.min.js" type="text/javascript"></script>
 
         <!-- Grab fonts from Google -->
         <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
@@ -178,7 +178,7 @@
         type="text/javascript">
     </script>
     <!-- Similarly imbedding.js is hosted on intermine.org -->
-    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.js" 
+    <script src="http://www.intermine.org/download/imbedding/0.1/imbedding.min.js" 
         type="text/javascript">
     </script>
 </head>
@@ -197,16 +197,20 @@
                 <li class="resource">.imbedded-table-title: <span class="normal-color">The text with the actual title</span></li>
                 <li class="resource">.imbedded-table: <span class="normal-color">The table element</span></li>
                 <li class="resource">.imbedded-column-header-row: <span class="normal-color">The row with the column headings</span></li>
+                <li class="resource">.imbedded-column-data-row: <span class="normal-color">The rows with the data</span></li>
                 <li class="resource">.imbedded-cell: <span class="normal-color">Each cell of the table</span></li>
                 <li class="resource">.imbedded-row-odd: <span class="normal-color">Odd numbered table rows</span></li>
                 <li class="resource">.imbedded-row-even: <span class="normal-color">Even numbered table rows</span></li>
-            <li class="resource">.imbedded-column-odd: <span class="normal-color">Odd numbered table columns</span></li>
-            <li class="resource">.imbedded-column-even: <span class="normal-color">Even numbered table columns</span></li>
+                <li class="resource">.imbedded-column-odd: <span class="normal-color">Odd numbered table columns</span></li>
+                <li class="resource">.imbedded-column-even: <span class="normal-color">Even numbered table columns</span></li>
                 <li class="resource">.imbedded-exportlink: <span class="normal-color">The CSV and TSV export links</span></li>
-                <li class="resource">.imbedded-pagelink: <span class="normal-color">The previous/next paging links</span></li>
+                <li class="resource">.imbedded-pagelink: <span class="normal-color">The previous/next/more/all paging links</span></li>
                 <li class="resource">.imbedded-mineresultslink: <span class="normal-color">The link to the results in the originating mine</span></li>
                 <li class="resource">.imbedded-prev: <span class="normal-color">The previous paging link</span></li>
                 <li class="resource">.imbedded-next: <span class="normal-color">The next paging link</span></li>
+                <li class="resource">.imbedded-table-tooltip: <span class="normal-color">The tooltip that contains the template description</span></li>
+                <li class="resource">.imbedded-table-expand-help: <span class="normal-color">The link that says "show/hide table"</span></li>
+                <li class="resource">.imbedded-null: <span class="normal-color">Cells that have no value</span></li>
             </ul>
             <p>
             There are some stylesheets available (all the ones used on this page) via the 
@@ -217,6 +221,9 @@
     <link rel="stylesheet" href="http://www.intermine.org/download/imbedding/0.1/style/bold.css" />
 </head>
             </textarea>
+            <p>
+            Go <a href="http://www.intermine.org/download/imbedding/0.1/style/bold.css" target="_blank">here</a> to see an example of a stylesheet
+            <p>
             </div>
             </li>
             <li class="resource"><h3>A placeholder (or several) on the page</h3>
