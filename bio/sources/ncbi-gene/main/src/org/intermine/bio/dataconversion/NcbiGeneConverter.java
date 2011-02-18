@@ -66,6 +66,7 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader);
+        LOG.info("DUPLICATE symbols: " + parser.findDuplicateSymbols("9606"));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
         for (String taxonId : records.keySet()) {
             if (!taxonIds.contains(taxonId)) {
@@ -81,7 +82,7 @@ public class NcbiGeneConverter extends BioFileConverter
                 if (record.officialSymbol != null) {
                     gene.setAttribute("symbol", record.officialSymbol);
                     // if NCBI symbol is different add it as a synonym
-                    if (record.defaultName != null &&
+                    if (record.defaultSymbol != null &&
                             !record.officialSymbol.equals(record.defaultSymbol)) {
                         createSynonym(gene, record.defaultSymbol, true);
                         LOG.info("GENE official symbol " + record.officialSymbol
@@ -111,16 +112,30 @@ public class NcbiGeneConverter extends BioFileConverter
                 }
 
                 // ENSEMBL ID become primaryIdentifier or CrossReference
-                if (record.ensemblIds.size() == 1) {
-                    String ensemblId = record.ensemblIds.iterator().next();
-                    if (parser.isUniquelyMappedEnsemblId(taxonId, ensemblId)) {
-                        gene.setAttribute("primaryIdentifier", ensemblId);
+                // TODO this currently doesn't load any Ensembl ids.
+                boolean loadEnsembl = false;
+                if (loadEnsembl) {
+                    if (record.ensemblIds.size() == 1) {
+                        String ensemblId = record.ensemblIds.iterator().next();
+                        if (parser.isUniquelyMappedEnsemblId(taxonId, ensemblId)) {
+                            LOG.info("EnsemblId " + ensemblId + " is assigned to multiple genes, "
+                                    + "observed for: " + record.entrez + ", "
+                                    + gene.getAttribute("symbol").getValue());
+                            gene.setAttribute("primaryIdentifier", ensemblId);
+                        } else {
+                            createCrossReference(gene, ensemblId, "Ensembl");
+                        }
                     } else {
-                        createCrossReference(gene, ensemblId, "Ensembl");
-                    }
-                } else {
-                    for (String ensemblId : record.ensemblIds) {
-                        createCrossReference(gene, ensemblId, "Ensembl");
+                        // TODO this doesn't check for uniquely mapped ensembl ids, needs to log
+                        if (record.ensemblIds.size() > 0) {
+                            LOG.info("E2 Gene " + record.entrez + ", "
+                                    + gene.getAttribute("symbol").getValue()
+                                    + " is assigned more than one Ensembl id: "
+                                    + record.ensemblIds);
+                        }
+                        for (String ensemblId : record.ensemblIds) {
+                            createCrossReference(gene, ensemblId, "Ensembl");
+                        }
                     }
                 }
 
