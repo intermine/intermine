@@ -1,4 +1,4 @@
-package registry;
+package Registry;
 
 use perl5i::2;
 use Dancer ':syntax';
@@ -71,6 +71,14 @@ get '/mines/admin:format?' => sub {
     return format_output( mines_admin => $data, "html" );
 };
 
+func can_administer($mine) {
+    my $administrators = get_admins;
+    return true if ($administrators->{session('user')});
+    my $secrets = get_secrets;
+    my $secret_key = params->{authToken};
+    return $secret_key and $secret_key eq $secrets->{$mine};
+}
+
 post '/register' => sub {
     no warnings 'uninitialized';
     my $mines = get_minehash;
@@ -85,15 +93,13 @@ post '/register' => sub {
     my $mine_is_new = $mines->{$storage_name} ? false : true;
     my $entry = $mines->{$storage_name} || { name => $name };
 
-    my $secrets = get_secrets;
     if ($mine_is_new) {
+        my $secrets = get_secrets;
         $secrets->{$storage_name} = params->{authToken} || generate_secret();
         update_secrets($secrets);
         $response->{authToken} = $secrets->{$storage_name};
-    }
-    else {
-        my $secret_key = params->{authToken};
-        if ( not $secret_key or $secret_key ne $secrets->{$storage_name} ) {
+    } else {
+        unless (can_administer($storage_name)) {
             $response->{status} = 'forbidden';
             $response->{text} = sprintf( setting("forbidden_message"), $name );
         }
@@ -131,7 +137,7 @@ post '/register' => sub {
             if ($mine_is_new) {
                 $response->{status} = 'created';
                 $response->{text}   = sprintf( setting("creation_message"),
-                    $name, $secrets->{name} );
+                    $name, get_secrets->{name} );
             }
             else {
                 $response->{status} = 'success';
@@ -160,14 +166,12 @@ del '/:name' => sub {
         $response->{text}   = "The requested resource is not in this registry";
         return handle_response($response);
     }
-    my $secrets    = get_secrets;
-    my $secret_key = params->{authToken};
-    #if ( not $secret_key or $secret_key ne $secrets->{$storage_name} ) {
-    #    $response->{status} = "forbidden";
-    #    $response->{text} =
-    #      "$name not updated: you do not have sufficient permissions";
-    #    return handle_response($response);
-    # }
+    unless (can_administer($storage_name)) {
+        $response->{status} = "forbidden";
+        $response->{text} =
+          "$name not updated: you do not have sufficient permissions";
+        return handle_response($response);
+    }
     update_minelist($mines);
     $response->{status} = "success",
     $response->{text} = "$name deleted from registry";
