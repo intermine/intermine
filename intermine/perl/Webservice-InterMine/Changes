@@ -26,3 +26,6 @@ Revision history for Webservice-InterMine
         * Added bug in Join.pm which was preventing builds.
 0.9501  Thu Feb  3 13:36:04 GMT 2011
         * Added bug due to mis-matching test counts in acceptance test
+0.9600  Fri Feb 18 16:37:38 GMT 2011
+        * Better verification of version strings, and better coercion
+        of urls
