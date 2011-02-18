@@ -40,6 +40,9 @@ IMBedding = (function() {
     };
 
     var localiseUrl = function(url, options) {
+        if (url.match(/^(http|https|ftp):\/\//)) {
+            return url;
+        }
         var ret;
         if (options && "baseUrl" in options) {
             ret = options.baseUrl;
