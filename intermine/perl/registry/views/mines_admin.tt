@@ -15,7 +15,7 @@
     <% IF mine.logo %>
         <a title="Visit <% mine.name %>" href="<% mine.homeUrl %>"><img src="<% mine.logo %>" style="float: right; height: 45px; width: 45px;" /></a>
     <% END %>
-        <h3><a title="See details" class="mine-name" href='#<% mine.name %>' onclick="$('#<% mine.name %>-details').slideToggle();" ><% mine.name %></a>
+        <h3><a title="See details" class="mine-name" onclick="$('#<% mine.name %>-details').slideToggle();" ><% mine.name %></a>
         <% IF mine.version %>
             <span class="version"><% mine.version %></span>
         <% END %>
@@ -53,9 +53,9 @@
 <td class="value"><% log.allUpdates.size %><a onclick="jQuery('#last-ten-updates-for-<% storagename %>').slideToggle();" class="subtle">show last ten</a>
 <div id="last-ten-updates-for-<% storagename %>" style="display: none;">
 <ul>
-<% FOREACH update IN log.allUpdates %>
+<% FOREACH update IN log.allUpdates.sort.reverse %>
     <% LAST IF loop.count > 10 %>
-    <li><% update.replace("T", " ") %> 
+    <li class="update-list"><% update.replace("T", " ") %> 
     <% versionThen = log.versionAtUpdate.$update %>
     <% IF versionThen %>(<% versionThen %>)<% END %>
     </li>
@@ -66,7 +66,21 @@
 <% versNo = log.versionAtUpdate.values.unique.size %>
 <% IF versNo %>
 <tr>
-<td class="name">NO OF VERSIONS:</td><td class="value"><% versNo %></td>
+<td class="name">NO OF VERSIONS:</td><td class="value"><% versNo %>
+<a onclick="jQuery('#last-ten-versions-for-<% storagename %>').slideToggle();" class="subtle">show last ten</a>
+<div id="last-ten-versions-for-<% storagename %>" style="display: none;">
+<ul>
+<% versions = [] %>
+<% FOREACH update IN log.allUpdates.sort.reverse %>
+<% versions.push(log.versionAtUpdate.$update) %>
+<% END %>
+<% FOREACH version IN versions.unique %>
+    <% LAST IF loop.count > 10 %>
+    <li class="update-list"><% version %></li>
+<% END %>
+</ul>
+</div>
+</td>
 </tr>
 <% END %>
             <% END %>

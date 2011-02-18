@@ -12,7 +12,7 @@
     <% IF mine.logo %>
         <a title="Visit <% mine.name %>" href="<% mine.homeUrl %>"><img src="<% mine.logo %>" style="float: right; height: 45px; width: 45px;" /></a>
     <% END %>
-        <h3><a title="See details" class="mine-name" href='#<% mine.name %>' onclick="$('#<% mine.name %>-details').slideToggle();"><% mine.name %></a>
+        <h3><a title="See details" class="mine-name" onclick="$('#<% mine.name %>-details').slideToggle();"><% mine.name %></a>
         <% IF mine.version %>
             <span class="version"><% mine.version %></span>
         <% END %>
