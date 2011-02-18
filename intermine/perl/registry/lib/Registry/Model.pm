@@ -83,7 +83,7 @@ sub get_admins {
 
 func get_data($settings_key) {
     my $content = try{slurp( setting($settings_key) )};
-    return from_yaml($content) || {} ;
+    return try{ from_yaml($content) } catch { {} };
 }
 
 sub update_minelist {
