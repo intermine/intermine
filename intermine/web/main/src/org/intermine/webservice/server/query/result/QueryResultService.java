@@ -337,10 +337,10 @@ public class QueryResultService extends WebService
                 processor = new JSONTableResultProcessor();
                 break;
             case WebService.JSON_ROW_FORMAT:
-                processor = new JSONRowResultProcessor();
+                processor = new JSONRowResultProcessor(im);
                 break;
             case WebService.JSONP_ROW_FORMAT:
-                processor = new JSONRowResultProcessor();
+                processor = new JSONRowResultProcessor(im);
                 break;
             default:
                 processor = new ResultProcessor();

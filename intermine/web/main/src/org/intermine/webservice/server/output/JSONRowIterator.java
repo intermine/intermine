@@ -16,8 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.PortalHelper;
 import org.json.JSONArray;
@@ -32,6 +34,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
+    private final InterMineAPI im;
 
     private static final String CELL_KEY_URL = "url";
     private static final String CELL_KEY_VALUE = "value";
@@ -40,8 +43,9 @@ public class JSONRowIterator implements Iterator<JSONArray>
      * Constructor
      * @param it An ExportResultsIterator that will be used internally to process the data.
      */
-    public JSONRowIterator(ExportResultsIterator it) {
+    public JSONRowIterator(ExportResultsIterator it, InterMineAPI im) {
         this.subIter = it;
+        this.im = im;
         init();
     }
 
@@ -49,6 +53,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
+    @Override
     public boolean hasNext() {
         return subIter.hasNext();
     }
@@ -65,13 +70,19 @@ public class JSONRowIterator implements Iterator<JSONArray>
             mapping.put(CELL_KEY_URL, null);
             mapping.put(CELL_KEY_VALUE, null);
         } else {
-            mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsPath(cell));
+            if (im.getLinkRedirector() != null) {
+                mapping.put(CELL_KEY_URL,
+                    im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject()));
+            } else {
+                mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsPath(cell));
+            }
             mapping.put(CELL_KEY_VALUE, cell.getField());
         }
         JSONObject ret = new JSONObject(mapping);
         return ret;
     }
 
+    @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
         List<JSONObject> jsonRow = new ArrayList<JSONObject>();
@@ -84,6 +95,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return next;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported for this implementation");
     }
