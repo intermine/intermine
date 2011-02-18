@@ -73,7 +73,7 @@ public class SearchFilterEngine
                 if (tags.size() == 0) {
                     returnMap.remove(webSearchableName);
                 } else if (!showHidden) {
-                    tags = tagManager.getTags(TagNames.IM_HIDDEN, webSearchableName, tagType,
+                    tags = tagManager.getTags(TagNames.IM_ADMIN, webSearchableName, tagType,
                             userName);
                     if (tags.size() > 0) {
                         returnMap.remove(webSearchableName);
