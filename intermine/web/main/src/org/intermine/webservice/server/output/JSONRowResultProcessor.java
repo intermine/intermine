@@ -13,23 +13,24 @@ package org.intermine.webservice.server.output;
 
 import java.util.Iterator;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 
-public class JSONRowResultProcessor extends JSONResultProcessor 
+public class JSONRowResultProcessor extends JSONResultProcessor
 {
-    
+    private final InterMineAPI im;
     /**
      * Constructor.
      * @param baseUrl The base URL to be used for constructing links with.
      */
-    public JSONRowResultProcessor() {
-        super();
+    public JSONRowResultProcessor(InterMineAPI im) {
+        this.im = im;
     }
 
     @Override
     protected Iterator<? extends Object> getResultsIterator(ExportResultsIterator it) {
-        JSONRowIterator jsonIter = new JSONRowIterator(it);
+        JSONRowIterator jsonIter = new JSONRowIterator(it, im);
         return jsonIter;
     }
-    
+
 }
