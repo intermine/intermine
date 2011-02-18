@@ -218,7 +218,7 @@ IMBedding = (function() {
             if (this.options.onTitleClick == "collapse") {
                 this.title.append(this.expandHelp);
                 this.title.click(function() {outer.resizeTable()})
-                          .mouseover(function() { jQuery(this).css({cursor: "row-resize"}) });
+                          .mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
             } else if (this.options.onTitleClick == "mine") {
                 this.title.attr({href: this.localiseUrl(data.mineResultsLink), target: "_blank"});
             } else if (this.options.onTitleClick instanceof Function) {
