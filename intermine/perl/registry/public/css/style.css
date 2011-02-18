@@ -64,6 +64,7 @@ a.subtle {
     color: #bbb;
     padding: 10px;
     font-family: 'Orbitron', 'arial', sans-serif;
+    cursor: pointer;
 }
 
 a.mine-name {
@@ -73,6 +74,7 @@ a.mine-name {
     padding-left: 1px;
     padding-right: 1px;
     text-decoration: none;
+    cursor: pointer;
 }
 
 a.subtle:hover, a.mine-name:hover {
@@ -199,8 +201,6 @@ list-style-type: none;
 margin-bottom: 5px;
 }
 
-
-
 p {
 line-height: 1.5em;
 margin: 1.6em 0;
@@ -250,3 +250,11 @@ fieldset { padding:0; border:0; margin-top:25px; }
     color: #aaa;
 }
 
+li.update-list {
+    border-style: none ! important;
+    list-style-type: decimal;
+}
+
+#content td {
+    border: 1px solid #CCC;
+}
