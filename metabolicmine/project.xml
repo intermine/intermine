@@ -7,6 +7,12 @@
 
 
   <sources>
+    <source name="ensembl-hgnc" type="ensembl-hgnc">
+     <property name="src.data.dir" location="/shared/data/metabolic/ensembl-ids/data"/>
+    </source>
+    <source name="hgnc" type="hgnc">
+     <property name="src.data.dir" location="/shared/data/metabolic/hgnc"/>
+    </source>
     <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
      <property name="organisms" value="9606"/>
@@ -17,6 +23,9 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source> 
+    <source name="protein-atlas" type="protein-atlas">
+     <property name="src.data.dir" location="/shared/data/metabolic/protein-atlas"/>
+    </source>
     <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/human/current"/>
     </source>
