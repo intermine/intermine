@@ -16,7 +16,6 @@
 <tiles:importAttribute name="showOnLeft" ignore="true"/>
 
 <c:forEach items="${displayObject.clds}" var="cld">
-
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
     <c:if test="${heading == true}">
         <h3>Further information for this ${cld.unqualifiedName}</h3>

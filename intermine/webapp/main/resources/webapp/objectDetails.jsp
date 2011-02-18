@@ -117,25 +117,39 @@
 </div>
 
 </div>
+</div>
 
-<%--
-<table id="menu" border="0" cellspacing="0">
-    <tr>
-        <td class="active">
-            <div class="container">
-                <span id="tab1">Summary</span><span class="right"></span><span class="left"></span>
-            </div>
-        </td>
-        <td><div class="container"><span id="tab2">Function</span></div></td>
-        <td><div class="container"><span id="tab3">Genome</span></div></td>
-        <td><div class="container"><span id="tab4">Disease</span></div></td>
-        <td><div class="container"><span id="tab5">Interactions</span></div></td>
-        <td><div class="container"><span id="tab6">Reactions</span></div></td>
-    </tr>
-</table>
---%></div>
+<div id="content">
 
-<div id="content" class="container_12">
+<div id="toc-menu-wrap">
+<div class="wrap">
+  <span>Quick Links:</span>
+  <ul class="menu">
+    <li><a href="#">Summary</a></li>
+    <li><a href="#">Function</a></li>
+    <li><a href="#">Genome</a></li>
+    <li><a href="#">Disease</a></li>
+    <li><a href="#">Interactions</a></li>
+    <li><a class="last" href="#">Reactions</a></li>
+  </ul>
+</div>
+</div>
+<div id="fixed-menu">
+<div class="wrap">
+  <span>Quick Links:</span>
+  <ul class="menu">
+    <li><a href="#">Summary</a></li>
+    <li><a href="#">Function</a></li>
+    <li><a href="#">Genome</a></li>
+    <li><a href="#">Disease</a></li>
+    <li><a href="#">Interactions</a></li>
+    <li><a class="last" href="#">Reactions</a></li>
+  </ul>
+</div>
+</div>
+
+<div class="container_12">
+
 <p class="description grid_12"><img
   src="model/images/report_page/question-mark.png" alt="info">Summary
 represents a lorem ipsum dolor sit amet nunc eros felis, porta quis
@@ -189,14 +203,14 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
       //]]>-->
       </script> <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div class="box grid_3" style="margin-top: 30px; float: right;"><tiles:insert
-  page="/objectDetailsDisplayers.jsp">
-  <tiles:put name="placement" value="" />
-  <tiles:put name="displayObject" beanName="object" />
-  <tiles:put name="heading" value="true" />
-</tiles:insert></div>
+<div class="box grid_12">
+  <tiles:insert
+    page="/objectDetailsDisplayers.jsp">
+    <tiles:put name="placement" value="" />
+    <tiles:put name="displayObject" beanName="object" />
+    <tiles:put name="heading" value="true" />
+  </tiles:insert>
 
-<div class="box grid_9">
   <c:set var="isThisHeader" value="false" scope="request" />
   <tiles:insert page="/objectDetailsInlineLists.jsp">
     <tiles:put name="object" beanName="object" />
@@ -212,14 +226,15 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="opened" value="${status.index == 0}" />
   </tiles:insert>
   </c:forEach>
+
+  <tiles:insert page="/objectDetailsRefsCols.jsp">
+    <tiles:put name="object" beanName="object" />
+    <tiles:put name="placement" value="im:aspect:Miscellaneous" />
+    <tiles:put name="showTitle" value="Miscellaneous" />
+  </tiles:insert>
 </div>
 
-<div class="box grid_9">
-<tiles:insert page="/objectDetailsRefsCols.jsp">
-  <tiles:put name="object" beanName="object" />
-  <tiles:put name="placement" value="im:aspect:Miscellaneous" />
-  <tiles:put name="showTitle" value="Miscellaneous" />
-</tiles:insert></div>
+</div>
 
 </div>
 
