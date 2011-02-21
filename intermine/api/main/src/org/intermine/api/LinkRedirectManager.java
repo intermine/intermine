@@ -11,6 +11,7 @@ package org.intermine.api;
  */
 
 import java.util.Properties;
+
 import org.intermine.model.InterMineObject;
 
 
@@ -38,7 +39,7 @@ public class LinkRedirectManager
      * @param im intermine API object to retrieve model
      * @return URL to link to
      */
-    public String generateLink(InterMineAPI im, InterMineObject imo) {
+    public String generateLink(API im, InterMineObject imo) {
         return null;
     }
 
