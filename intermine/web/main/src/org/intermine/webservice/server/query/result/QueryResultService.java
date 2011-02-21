@@ -113,6 +113,13 @@ public class QueryResultService extends WebService
         }
     }
 
+    /**
+     * Returns the path portion of a link to the results for
+     * this query in its originating mine, in the given format.
+     * @param pq The PathQuery
+     * @param format The desired format
+     * @return The path portion of the link.
+     */
     protected String getLinkPath(PathQuery pq, String format) {
         QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
         String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
