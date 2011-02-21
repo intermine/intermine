@@ -1,7 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
     <head>
+        <title>InterMine Embedding Tutorial</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <!-- These are the three required libraries -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
             type="text/javascript"></script>
@@ -15,12 +16,12 @@
 
         <!-- The syntax highlighting library -->
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.layout.list.css" />
-        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.core.css" />
+        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.layout.list.css">
+        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.core.css">
 
         <!-- The ui library -->
         <script src="lib/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css" />
+        <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css">
 
         <!-- javascript for this page -->
         <script src="lib/tutorial.min.js" type="text/javascript"></script>
@@ -32,12 +33,12 @@
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
 
         <!-- The three publically hosted table styles -->
-        <link rel="alternate stylesheet" type="text/css" title="dark" href="http://intermine.org/lib/imbedding/0.1/style/dark.css" />
-        <link rel="alternate stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.1/style/light.css" />
-        <link rel="stylesheet" type="text/css" title="bold" href="http://intermine.org/lib/imbedding/0.1/style/bold.css" />
+        <link rel="alternate stylesheet" type="text/css" title="dark" href="http://intermine.org/lib/imbedding/0.1/style/dark.css">
+        <link rel="alternate stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.1/style/light.css">
+        <link rel="stylesheet" type="text/css" title="bold" href="http://intermine.org/lib/imbedding/0.1/style/bold.css">
 
         <!-- style for this page -->
-        <link rel="stylesheet" type="text/css" href="style/tutorial.css"/>
+        <link rel="stylesheet" type="text/css" href="style/tutorial.css">
     </head>
     <body>
         <div id="page">
@@ -82,8 +83,8 @@
         <p>
         As you can see, you do not need a lot of code to get this effect:
         <p>
-            <textarea rows="20" cols="80" class="coder html-snippet"><div id="placeholder1"></div>
-<script type="text/javascript">
+        <textarea rows="20" cols="80" class="coder html-snippet">&lt;div id="some-placeholder"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
     IMBedding.setBaseUrl("http://preview.flymine.org/preview");
     IMBedding.loadTemplate(
         {
@@ -94,44 +95,44 @@
             value1:         "CG2328",
             code1:          "A",
         },            
-        '#placeholder1',
+        '#some-placeholder',
     );
-</script></textarea>
+&lt;/script&gt;</textarea>
             <p>
             Go <a href="demo.html" target="_blank" >here</a> to see a very simple demo of 
             the techniques shown on this page.
             <p>
-            <input type="checkbox" id="demoSourceCB" onclick="$('#demo').slideToggle();"/><label for="demoSourceCB">View The Source For a Complete Working Example</label>
+            <input type="checkbox" id="demoSourceCB" onclick="$('#demo').slideToggle();"><label for="demoSourceCB">View The Source For a Complete Working Example</label>
 
         <div id="demo" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+            <textarea rows="20" cols="80" class="coder html-snippet">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
 
-<head>
-    <title>A Minimal Example Page</title>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-    <!-- jQuery is hosted by Google -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- jquery-jsonp is likewise available from an online repository -->
-    <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- InterMine similarly hosts imbedding -->
-    <script src="http://intermine.org/lib/imbedding/0.1/imbedding.min.js" 
-        type="text/javascript">
-    </script>
-    <link rel="stylesheet" type="text/css" 
-        href="http://intermine.org/lib/imbedding/0.1/style/light.css" />
-</head>
+&lt;head&gt;
+    &lt;title&gt;A Minimal Example Page&lt;/title&gt;
+    &lt;meta http-equiv="content-type" content="text/html;charset=utf-8" /&gt;
+    &lt;!-- jQuery is hosted by Google --&gt;
+    &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+    &lt;!-- jquery-jsonp is likewise available from an online repository --&gt;
+    &lt;script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+    &lt;!-- InterMine similarly hosts imbedding --&gt;
+    &lt;script src="http://intermine.org/lib/imbedding/0.1/imbedding.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+    &lt;link rel="stylesheet" type="text/css" 
+        href="http://intermine.org/lib/imbedding/0.1/style/light.css" /&gt;
+&lt;/head&gt;
 
-<body>
-    <div id="placeholder"></div>
-</body>
+&lt;body&gt;
+    &lt;div id="placeholder"&gt;&lt;/div&gt;
+&lt;/body&gt;
 
-<script type="text/javascript">
+&lt;script type="text/javascript"&gt;
     IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
     IMBedding.loadTemplate(
         {
@@ -145,9 +146,9 @@
         },
         '#placeholder'
     );
-</script>
+&lt;/script&gt;
 
-</html></textarea>
+&lt;/html&gt;</textarea>
 </div>
         <h2 id="boilerplate">How To Set This Up</h2>
         <p>
@@ -168,20 +169,21 @@
                 You do not need to download them, just add the following lines to the 
                 head of the page:
                 </p>
-                <textarea rows="20" cols="80" class="coder html-snippet"><head>
-    <!-- jQuery is hosted by Google -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- jquery-jsonp is likewise available from an online repository -->
-    <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
-        type="text/javascript">
-    </script>
-    <!-- Similarly imbedding.js is hosted on intermine.org -->
-    <script src="http://www.intermine.org/lib/imbedding/0.1/imbedding.min.js" 
-        type="text/javascript">
-    </script>
-</head>
+                <textarea rows="20" cols="80" class="coder html-snippet">
+                    &lt;head&gt;
+    &lt;!-- jQuery is hosted by Google --&gt;
+    &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+    &lt;!-- jquery-jsonp is likewise available from an online repository --&gt;
+    &lt;script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+    &lt;!-- Similarly imbedding.js is hosted on intermine.org --&gt;
+    &lt;script src="http://www.intermine.org/lib/imbedding/0.1/imbedding.min.js" 
+        type="text/javascript"&gt;
+    &lt;/script&gt;
+&lt;/head&gt;
                 </textarea>
             </div>
             </li>
@@ -190,7 +192,7 @@
             To style the tables, you will also need to include some css with the <a 
             href="#boilerplate" onclick="$('#classlist').slideToggle();">appropriate classes.</a>
             <div id="classlist" style="display: none;">
-            <span class="normal-color">Classes you can style in an embedded table:</a>
+            <span class="normal-color">Classes you can style in an embedded table:</span>
             <ul>
                 <li class="resource">.imbedded-table-container: <span class="normal-color">The outer container that holds the table</span></li>
                 <li class="resource">.imbedded-table-titlebox: <span class="normal-color">The box that holds the title and count</span></li>
@@ -216,10 +218,11 @@
             There are some stylesheets available (all the ones used on this page) via the 
             web-hosting interface as well.
             </p>
-            <textarea rows="20" cols="80" class="coder html-snippet"><head>
-    <!-- You are welcome to fetch these styles from the intermine host -->
-    <link rel="stylesheet" href="http://www.intermine.org/lib/imbedding/0.1/style/bold.css" />
-</head>
+            <textarea rows="20" cols="80" class="coder html-snippet">
+&lt;head&gt;
+    &lt;!-- You are welcome to fetch these styles from the intermine host --&gt;
+    &lt;link rel="stylesheet" href="http://www.intermine.org/lib/imbedding/0.1/style/bold.css" /&gt;
+&lt;/head&gt;
             </textarea>
             <p>
             Go <a href="http://www.intermine.org/lib/imbedding/0.1/style/bold.css" target="_blank">here</a> to see an example of a stylesheet
@@ -231,9 +234,10 @@
             You will need to include <a href="#boilerplate" onclick="$('#placeholder-snippet').slideToggle();">an element</a> to tell the table where to go.
             </p>
             <div id="placeholder-snippet" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><body>
-    <div id="placeholder">The content of this div will be replaced by the table</div>
-</body>
+            <textarea rows="20" cols="80" class="coder html-snippet">
+&lt;body&gt;
+    &lt;div id="placeholder"&gt;The content of this div will be replaced by the table&lt;/div&gt;
+&lt;/body&gt;
             </textarea>
             <p>
             Using placeholders means you can be precise about where you want your tables to
@@ -245,7 +249,7 @@
             in.
             </p>
             <button id="positionExButton">Replace the placeholder element below with a table</button>
-            </p>
+
             <div id="positionExample">
                 <div style="border: solid 3px #0073EA;">
                 <p>
@@ -264,7 +268,7 @@
             onclick="$('#scriptElem').slideToggle();">a script element</a> directly into the page:
             </p>
             <div id="scriptElem" style="display: none;">
-            <textarea rows="20" cols="80" class="coder html-snippet"><script type="text/javascript">
+                <textarea rows="20" cols="80" class="coder html-snippet">&lt;script type="text/javascript"&gt;
     IMBedding.setBaseUrl("http://squirrel.flymine.org/intermine-test");
     IMBedding.loadTemplate(
         {
@@ -278,7 +282,7 @@
         },
         '#placeholder1'
     );
-</script>
+&lt;/script&gt;
 </textarea>
 </div>
             </li>
@@ -305,10 +309,10 @@
         for you to cut and paste into your own page (just click on the 
         <em>"Show the code"</em> button.)
         </p>
-        <input type="checkbox" id="formatDetailsCB" onclick="$('#formatDetails').slideToggle('fast', function(){});"/><label for="formatDetailsCB">see information about the formats</label>
+        <input type="checkbox" id="formatDetailsCB" onclick="$('#formatDetails').slideToggle('fast', function(){});"><label for="formatDetailsCB">see information about the formats</label>
         <div id="query-radios" style="display: inline; float: right;">
-            <input class="querier" type="radio" value="querybuilder" id="querybuilder-opt" name="query"/><label for="querybuilder-opt">Build A Query</label>
-            <input class="querier" type="radio" checked="true" value="cutandpaste" id="cutandpaste-opt" name="query"/><label for="cutandpaste-opt">Paste in some XML/JSON</label>
+            <input class="querier" type="radio" value="querybuilder" id="querybuilder-opt" name="query"><label for="querybuilder-opt">Build A Query</label>
+            <input class="querier" type="radio" checked="checked" value="cutandpaste" id="cutandpaste-opt" name="query"><label for="cutandpaste-opt">Paste in some XML/JSON</label>
         </div>
         <div id="formatDetails" style="display: none;">
             <p>
@@ -340,17 +344,17 @@
             </p>
             <label for="boxselector">Use: </label>
             <select id="boxselector">
-                <option value="xml" checked="true">Use XML</option>
+                <option value="xml" selected="selected">Use XML</option>
                 <option value="json" >Use JSON</option>
             </select>
             <table>
                 <tr>
                     <td>
                         <textarea class="coder" id="xmlarea" rows="15"  cols="60">
-<query name="" model="genomic" view="Gene.homologues.type Gene.homologues.gene.primaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.organism.shortName" sortOrder="Gene.homologues.type asc">
-  <constraint path="Gene.primaryIdentifier" op="&amp;lt;" value="D"/>
-  <constraint path="Gene.primaryIdentifier" op="&amp;gt;" value="C"/>
-</query></textarea>
+&lt;query name="" model="genomic" view="Gene.homologues.type Gene.homologues.gene.primaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.organism.shortName" sortOrder="Gene.homologues.type asc"&gt;
+  &lt;constraint path="Gene.primaryIdentifier" op="&amp;lt;" value="D"/&gt;
+  &lt;constraint path="Gene.primaryIdentifier" op="&amp;gt;" value="C"/&gt;
+&lt;/query&gt;</textarea>
                     </td>
                     <td>
                         <textarea style="display: none;" class="coder" id="jsonarea" rows="15" cols="60">
@@ -373,14 +377,14 @@
         </div>
         <div class="option-box" id="querybuilder" style="display: none;">
             
-    <form id="root-class-form">
-        <p><label for "root-class"><em>Construct a query for</em></label>
+    <form id="root-class-form" action="">
+        <p><label for="root-class"><em>Construct a query for</em></label>
         <select id="root-class">
         </select></p>
     </form>
     <div class="option-box">
         <h3 class="querybuilder-section-header">Views</h3>
-        <form id="views-form">
+        <form id="views-form" action="">
             <table id="querybuilder-views">
             </table>
         </form>
@@ -391,9 +395,9 @@
             </select>
             <span id="sortDirectionDiv">
                 <input type="radio" name="sortDirection" value="ASC" id="sortASC"
-                    checked="true"/>
+                    checked="checked">
                 <label for="sortASC">ascending</label>
-                <input type="radio" name="sortDirection" value="DESC" id="sortDESC"/>
+                <input type="radio" name="sortDirection" value="DESC" id="sortDESC">
                 <label for="sortDESC">descending</label>
             </span>
         </span>
@@ -407,7 +411,7 @@
         <button id="constraint-adder">Add a constraint</button>
         <span id="logic-box" style="display: none">
             <label for="logic-text">Logic</label>
-            <input type="text" placeholder="specify logic here" id="logic"/>
+            <input type="text" placeholder="specify logic here" id="logic">
         </span>
     </div>
     <div class="option-box">
@@ -420,7 +424,7 @@
     </div>
     </div>
     <button id="query-loader">Load Query</button>
-    <input type="checkbox" id="showQueryCode"/><label for="showQueryCode">View Generated Code</label>
+    <input type="checkbox" id="showQueryCode"><label for="showQueryCode">View Generated Code</label>
     <div id="codeContainer" style="display: none">
     <div id="codeDisplay" class="ui-state-highlight ui-corner-all">
         <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet. Just load a query and the corresponding code will be generated and displayed in this box</p>
@@ -507,8 +511,8 @@
         </p><p>
         One difference between this and the default behaviour is the fact that you will need
         to specify a result format. The two that will be most useful are 
-        <a href='#'>jsonpobjects</a>, which all these examples use, and 
-        <a href='#'>jsonprows</a>, which is similar but provides less syntactic sugar
+        <a href='http://www.intermine.org/wiki/JSONObjectFormat' target="_blank">jsonpobjects</a>, which all these examples use, and 
+        <a href='http://www.intermine.org/wiki/JSONRowFormat' target="_blank">jsonprows</a>, which is similar but provides less syntactic sugar
         for accessing fields of the result items.
         </p>
         <div class="option-box">
@@ -680,7 +684,7 @@ function loadDepartmentSummary(departmentName) {
             var depSelect = document.createElement("select");
             $(depSelect).button();
             var noOfDeps = department.company.departments.length;
-            for (var i = 0; i < noOfDeps; i++) {
+            for (var i = 0; i &lt; noOfDeps; i++) {
                 var dep = department.company.departments[i];
                 var depOption = document.createElement("option");
                 if (dep.objectId == department.objectId) {
@@ -699,7 +703,7 @@ function loadDepartmentSummary(departmentName) {
             summary.append(subtitle);
             var employeeCount = department.employees.length;
             var list = document.createElement("ul");
-            for (var i = 0; i < employeeCount; i++) {
+            for (var i = 0; i &lt; employeeCount; i++) {
                 var employee = department.employees[i];
                 if (employee.objectId == department.manager.objectId) {
                     continue;
