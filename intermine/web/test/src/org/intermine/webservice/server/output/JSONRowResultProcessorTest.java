@@ -5,13 +5,13 @@ package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.API;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -41,6 +41,8 @@ public class JSONRowResultProcessorTest extends TestCase {
     private ExportResultsIterator emptyIterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
+
+    private final API api = new DummyAPI();
 
     /**
      * @param name
@@ -102,6 +104,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         os.addRow(row4);
         os.addRow(row5);
 
+
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.age", "Employee.name");
 
@@ -112,11 +115,11 @@ public class JSONRowResultProcessorTest extends TestCase {
             List resultList = os.execute(q, 0, 5, true, true, new HashMap());
             Results results = new DummyResults(q, resultList);
             iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-            
+
             List emptyList = new ArrayList();
             Results emptyResults = new DummyResults(q, emptyList);
             emptyIterator = new ExportResultsIterator(pq, emptyResults, pathToQueryNode);
-            
+
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
@@ -131,16 +134,16 @@ public class JSONRowResultProcessorTest extends TestCase {
     }
 
     public void testJSONRowResultProcessor() {
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         assertTrue(processor != null);
     }
-    
+
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
         List<List<String>> expected = Arrays.asList(inner);
-        
+
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         processor.write(emptyIterator, out);
 
         assertEquals(expected.toString(), out.getResults().toString());
@@ -150,29 +153,49 @@ public class JSONRowResultProcessorTest extends TestCase {
     public void testWrite() {
         List<List<String>> expected = Arrays.asList(
         Arrays.asList("[" +
-                "{\"value\":30,\"url\":\"/objectDetails.do?id=5\"}," +
-                "{\"value\":\"Tim Canterbury\",\"url\":\"/objectDetails.do?id=5\"}" +
-                "]", ""),
+                "{\"value\":30,\"url\":\"Link for:Employee [address=null, age=\\\"30\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"5\\\", name=\\\"Tim Canterbury\\\"]\"},"
+                + "{\"value\":\"Tim Canterbury\",\"url\":\"Link for:Employee "
+                +"[address=null, age=\\\"30\\\", department=null, departmentThatRejectedMe=null, "
+                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"5\\\", "
+                + "name=\\\"Tim Canterbury\\\"]\"}"
+                + "]", ""),
         Arrays.asList("[" +
-                "{\"value\":32,\"url\":\"/objectDetails.do?id=6\"}," +
-                "{\"value\":\"Gareth Keenan\",\"url\":\"/objectDetails.do?id=6\"}" +
-                "]", ""),
+                "{\"value\":32,\"url\":\"Link for:Employee [address=null, age=\\\"32\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"6\\\", name=\\\"Gareth Keenan\\\"]\"},"
+                + "{\"value\":\"Gareth Keenan\",\"url\":\"Link for:Employee [address=null, "
+                + "age=\\\"32\\\", department=null, departmentThatRejectedMe=null, "
+                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"6\\\", "
+                + "name=\\\"Gareth Keenan\\\"]\"}]", ""),
+        Arrays.asList(
+                "[{\"value\":26,\"url\":\"Link for:Employee [address=null, age=\\\"26\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"7\\\", name=\\\"Dawn Tinsley\\\"]\"},"
+                + "{\"value\":\"Dawn Tinsley\",\"url\":\"Link for:Employee [address=null, "
+                + "age=\\\"26\\\", department=null, departmentThatRejectedMe=null, "
+                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"7\\\", "
+                + "name=\\\"Dawn Tinsley\\\"]\"}]", ""),
+        Arrays.asList(
+                "[{\"value\":41,\"url\":\"Link for:Employee [address=null, age=\\\"41\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"8\\\", name=\\\"Keith Bishop\\\"]\"},"
+                + "{\"value\":\"Keith Bishop\",\"url\":\"Link for:Employee [address=null, "
+                + "age=\\\"41\\\", department=null, departmentThatRejectedMe=null, "
+                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"8\\\", "
+                + "name=\\\"Keith Bishop\\\"]\"}]", ""),
         Arrays.asList("[" +
-                "{\"value\":26,\"url\":\"/objectDetails.do?id=7\"}," +
-                "{\"value\":\"Dawn Tinsley\",\"url\":\"/objectDetails.do?id=7\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":41,\"url\":\"/objectDetails.do?id=8\"}," +
-                "{\"value\":\"Keith Bishop\",\"url\":\"/objectDetails.do?id=8\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":28,\"url\":\"/objectDetails.do?id=9\"}," +
-                "{\"value\":\"Lee\",\"url\":\"/objectDetails.do?id=9\"}" +
-                "]")
+                "{\"value\":28,\"url\":\"Link for:Employee [address=null, age=\\\"28\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"9\\\", name=\\\"Lee\\\"]\"},"
+                + "{\"value\":\"Lee\",\"url\":\"Link for:Employee [address=null, age=\\\"28\\\", "
+                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
+                + "fullTime=\\\"false\\\", id=\\\"9\\\", name=\\\"Lee\\\"]\"}]")
         );
 
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         processor.write(iterator, out);
 
         assertEquals(expected.toString(), out.getResults().toString());

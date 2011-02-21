@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.API;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -65,6 +66,8 @@ public class JSONRowFormatterTest extends TestCase {
     StringWriter sw;
     PrintWriter pw;
 
+    private final API dummyAPI = new DummyAPI();
+
     Map<String, String> attributes;
 
     JSONRowResultProcessor processor;
@@ -73,8 +76,7 @@ public class JSONRowFormatterTest extends TestCase {
     protected void setUp() throws Exception {
 
         testProps = new Properties();
-        testProps.load(getClass().getResourceAsStream(
-                "JSONRowFormatterTest.properties"));
+        testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
 
         os = new ObjectStoreDummyImpl();
 
@@ -90,6 +92,7 @@ public class JSONRowFormatterTest extends TestCase {
         attributes.put(JSONRowFormatter.KEY_EXPORT_TSV_URL, "some.tsv.url");
         attributes.put(JSONRowFormatter.KEY_PREVIOUS_PAGE, "url.to.previous");
         attributes.put(JSONRowFormatter.KEY_NEXT_PAGE, "url.to.next");
+        attributes.put("SOME_NULL_KEY", null);
 
         tim = new Employee();
         tim.setId(new Integer(5));
@@ -145,7 +148,7 @@ public class JSONRowFormatterTest extends TestCase {
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
         iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-        processor = new JSONRowResultProcessor();
+        processor = new JSONRowResultProcessor(dummyAPI);
     }
 
     /*
@@ -166,6 +169,12 @@ public class JSONRowFormatterTest extends TestCase {
 
         String expected = testProps.getProperty("result.header");
         assertEquals(expected, fmtr.formatHeader(attributes));
+
+        String callback = "user_defined_callback";
+        expected = callback + "(" + expected;
+        attributes.put(JSONRowFormatter.KEY_CALLBACK, callback);
+
+        assertEquals(expected, fmtr.formatHeader(attributes));
     }
 
     public void testFormatResult() {
@@ -185,6 +194,12 @@ public class JSONRowFormatterTest extends TestCase {
         String executionTime = dateFormatter.format(now);
         String expected = "],'executionTime':'" + executionTime + "'}";
         assertEquals(expected, fmtr.formatFooter());
+
+        expected += ");";
+        attributes.put(JSONRowFormatter.KEY_CALLBACK, "should_not_appear_in_footer");
+
+        fmtr.formatHeader(attributes); // needs to be called to set the callback parameter
+        assertEquals(expected, fmtr.formatFooter());
     }
 
     public void testFormatAll() {
@@ -200,6 +215,30 @@ public class JSONRowFormatterTest extends TestCase {
         String executionTime = dateFormatter.format(now);
         String expected = testProps.getProperty("result.all").replace("{0}",
                 executionTime);
+        assertTrue(pw == out.getWriter());
+        assertEquals(5, out.getResultsCount());
+        assertEquals(expected, sw.toString());
+
+    }
+
+    public void testFormatAllWithCB() {
+        JSONRowFormatter fmtr = new JSONRowFormatter();
+        StreamedOutput out = new StreamedOutput(pw, fmtr);
+
+        String callback = "user_defined_callback";
+        attributes.put(JSONRowFormatter.KEY_CALLBACK, callback);
+        out.setHeaderAttributes(attributes);
+
+        // These are the two steps the service must perform to get good JSON.
+        processor.write(iterator, out);
+        out.flush();
+        Date now = Calendar.getInstance().getTime();
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
+        String executionTime = dateFormatter.format(now);
+        String expected = testProps.getProperty("result.all").replace("{0}",
+                executionTime);
+        expected = callback + "(" + expected + ");";
+
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
