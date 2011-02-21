@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.api.InterMineAPI;
+import org.intermine.api.API;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
@@ -34,7 +34,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
-    private final InterMineAPI im;
+    private final API im;
 
     private static final String CELL_KEY_URL = "url";
     private static final String CELL_KEY_VALUE = "value";
@@ -42,8 +42,9 @@ public class JSONRowIterator implements Iterator<JSONArray>
     /**
      * Constructor
      * @param it An ExportResultsIterator that will be used internally to process the data.
+     * @param im A reference to the the API settings bundle.
      */
-    public JSONRowIterator(ExportResultsIterator it, InterMineAPI im) {
+    public JSONRowIterator(ExportResultsIterator it, API im) {
         this.subIter = it;
         this.im = im;
         init();
