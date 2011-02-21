@@ -4,6 +4,7 @@
 package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.API;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -34,12 +36,15 @@ import org.intermine.util.IteratorIterable;
 import org.json.JSONArray;
 
 /**
- * @author alex
+ * A test for the JSONRowIterator
+ * @author Alex Kalderimis
  *
  */
 public class JSONRowIteratorTest extends TestCase {
 
     private ObjectStoreDummyImpl os;
+    private final API apiWithRedirection = new DummyAPI();
+    private final API apiWithoutRedirection = new DummyAPI(false);
     private Company wernhamHogg;
     private CEO jennifer;
     private Manager david;
@@ -223,7 +228,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -233,6 +238,72 @@ public class JSONRowIteratorTest extends TestCase {
         assertEquals(1, got.size());
 
         assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+
+        jsonString = "[" +
+            "{value: 'David Brent', url: 'Link for:Manager [address=null, age=\"39\", department=null, departmentThatRejectedMe=null, end=\"null\", fullTime=\"false\", id=\"3\", name=\"David Brent\", seniority=\"null\", title=\"null\"]'}," +
+            "{value: '39', url: 'Link for:Manager [address=null, age=\"39\", department=null, departmentThatRejectedMe=null, end=\"null\", fullTime=\"false\", id=\"3\", name=\"David Brent\", seniority=\"null\", title=\"null\"]'}," +
+        "]";
+        expected = new JSONArray(jsonString);
+
+        iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        jsonIter = new JSONRowIterator(iter, apiWithRedirection);
+
+        got = new ArrayList<JSONArray>();
+        for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
+            got.add(gotRow);
+        }
+
+        assertEquals(1, got.size());
+
+        assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+    }
+
+    public void testResultsWithNulls() throws Exception {
+        os.setResultsSize(2);
+
+        List<String> jsonStrings = Arrays.asList(
+                "[" +
+                "{value: 'David Brent', url: '/objectDetails.do?id=3'}," +
+                "{value: '39', url: '/objectDetails.do?id=3'}" +
+                "]",
+                "[" +
+                "{value: null, url: null}," +
+                "{value: null, url: null}" +
+                "]");
+
+        ResultsRow row = new ResultsRow();
+        row.add(david);
+
+        ResultsRow emptyRow = new ResultsRow();
+        emptyRow.add(null);
+
+        os.addRow(row);
+        os.addRow(emptyRow);
+
+        PathQuery pq = new PathQuery(model);
+        pq.addViews("Manager.name", "Manager.age");
+
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
+
+        List<JSONArray> got = new ArrayList<JSONArray>();
+        for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
+            got.add(gotRow);
+        }
+
+        assertEquals(2, got.size());
+
+        for (int i = 0; i < got.size(); i++) {
+            JSONArray expected = new JSONArray(jsonStrings.get(i));
+            assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(i)));
+        }
+
     }
 
     public void testMultipleSimpleObjects() throws Exception {
@@ -287,7 +358,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -345,7 +416,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -388,36 +459,36 @@ public class JSONRowIteratorTest extends TestCase {
             assertEquals(null, JSONObjTester.getProblemsComparing(ja, got.get(index)));
         }
     }
-    
-	// Should be ok with a result set of size 0, and produce no objects
-	public void testZeroResults() throws ObjectStoreException {
-        
+
+    // Should be ok with a result set of size 0, and produce no objects
+    public void testZeroResults() throws ObjectStoreException {
+
         PathQuery pq = new PathQuery(model);
         pq.addViews(
-        		"Employee.age", "Employee.name", 
-        		"Employee.department.name", 
-        		"Employee.department.manager.name", 
-        		"Employee.department.manager.address.address", 
-        		"Employee.department.manager.department.name", 
-        		"Employee.department.company.id", 
-        		"Employee.department.company.contractors.id", 
-        		"Employee.department.company.contractors.companys.name", 
-        		"Employee.department.company.contractors.companys.vatNumber", 
-        		"Employee.department.manager.department.company.name", 
-        		"Employee.department.company.contractors.companys.address.address");
-        
+                "Employee.age", "Employee.name",
+                "Employee.department.name",
+                "Employee.department.manager.name",
+                "Employee.department.manager.address.address",
+                "Employee.department.manager.department.name",
+                "Employee.department.company.id",
+                "Employee.department.company.contractors.id",
+                "Employee.department.company.contractors.companys.name",
+                "Employee.department.company.contractors.companys.vatNumber",
+                "Employee.department.manager.department.company.name",
+                "Employee.department.company.contractors.companys.address.address");
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = new ArrayList(); // empty results
         Results results = new DummyResults(q, resultList);
-        
+
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
-        
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
+
         assert(!jsonIter.hasNext());
-	    
-	}
+
+    }
 
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
         os.setResultsSize(1);
@@ -465,7 +536,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -527,7 +598,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         try {
             jsonIter.remove();
