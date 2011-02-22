@@ -11,7 +11,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.API;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -42,7 +42,7 @@ public class JSONRowResultProcessorTest extends TestCase {
 
     private final Model model = Model.getInstanceByName("testmodel");
 
-    private final API api = new DummyAPI();
+    private final InterMineAPI api = new DummyAPI();
 
     /**
      * @param name

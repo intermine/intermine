@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.API;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -66,7 +66,7 @@ public class JSONRowFormatterTest extends TestCase {
     StringWriter sw;
     PrintWriter pw;
 
-    private final API dummyAPI = new DummyAPI();
+    private final InterMineAPI dummyAPI = new DummyAPI();
 
     Map<String, String> attributes;
 

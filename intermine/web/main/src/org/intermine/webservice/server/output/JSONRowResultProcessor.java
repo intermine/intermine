@@ -13,7 +13,7 @@ package org.intermine.webservice.server.output;
 
 import java.util.Iterator;
 
-import org.intermine.api.API;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 
 /**
@@ -23,12 +23,12 @@ import org.intermine.api.results.ExportResultsIterator;
  */
 public class JSONRowResultProcessor extends JSONResultProcessor
 {
-    private final API im;
+    private final InterMineAPI im;
     /**
      * Constructor.
      * @param im The API settings bundle
      */
-    public JSONRowResultProcessor(API im) {
+    public JSONRowResultProcessor(InterMineAPI im) {
         this.im = im;
     }
 

@@ -38,7 +38,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Richard Smith
  */
-public class InterMineAPI implements API
+public class InterMineAPI
 {
     protected ObjectStore objectStore;
     protected Model model;
@@ -58,6 +58,12 @@ public class InterMineAPI implements API
         new IdentityHashMap<Profile, WebResultsExecutor>();
     private final Map<Profile, PathQueryExecutor> pqeCache =
         new IdentityHashMap<Profile, PathQueryExecutor>();
+
+    /**
+     * Protected no-argument constructor only used for building test implementations of this class.
+     */
+    protected InterMineAPI() {
+    }
 
     /**
      * Construct an InterMine API object.
@@ -97,7 +103,6 @@ public class InterMineAPI implements API
     /**
      * @return the objectStore
      */
-    @Override
     public ObjectStore getObjectStore() {
         return objectStore;
     }
@@ -105,28 +110,24 @@ public class InterMineAPI implements API
     /**
      * @return the model
      */
-    @Override
     public Model getModel() {
         return model;
     }
     /**
      * @return the profileManager
      */
-    @Override
     public ProfileManager getProfileManager() {
         return profileManager;
     }
     /**
      * @return the templateManager
      */
-    @Override
     public TemplateManager getTemplateManager() {
         return templateManager;
     }
     /**
      * @return the bagManager
      */
-    @Override
     public BagManager getBagManager() {
         return bagManager;
     }
@@ -134,7 +135,6 @@ public class InterMineAPI implements API
     /**
      * @return the TagManager
      */
-    @Override
     public TagManager getTagManager() {
         return profileManager.getTagManager();
     }
@@ -142,7 +142,6 @@ public class InterMineAPI implements API
     /**
      * @return the templateSummariser
      */
-    @Override
     public TemplateSummariser getTemplateSummariser() {
         return templateSummariser;
     }
@@ -151,7 +150,6 @@ public class InterMineAPI implements API
      * @param profile the user that is executing the query
      * @return the webResultsExecutor
      */
-    @Override
     public WebResultsExecutor getWebResultsExecutor(Profile profile) {
         synchronized (wreCache) {
             WebResultsExecutor retval = wreCache.get(profile);
@@ -167,7 +165,6 @@ public class InterMineAPI implements API
      * @param profile the user that is executing the query
      * @return the pathQueryExecutor
      */
-    @Override
     public PathQueryExecutor getPathQueryExecutor(Profile profile) {
         synchronized (pqeCache) {
             PathQueryExecutor retval = pqeCache.get(profile);
@@ -183,7 +180,6 @@ public class InterMineAPI implements API
     /**
      * @return the bagQueryRunner
      */
-    @Override
     public BagQueryRunner getBagQueryRunner() {
         return bagQueryRunner;
     }
@@ -191,7 +187,6 @@ public class InterMineAPI implements API
     /**
      * @return the oss
      */
-    @Override
     public ObjectStoreSummary getObjectStoreSummary() {
         return oss;
     }
@@ -199,7 +194,6 @@ public class InterMineAPI implements API
     /**
      * @return the classKeys
      */
-    @Override
     public Map<String, List<FieldDescriptor>> getClassKeys() {
         return classKeys;
     }
@@ -207,7 +201,6 @@ public class InterMineAPI implements API
     /**
      * @return the bagQueryConfig
      */
-    @Override
     public BagQueryConfig getBagQueryConfig() {
         return bagQueryConfig;
     }
@@ -215,7 +208,6 @@ public class InterMineAPI implements API
     /**
      * @return the trackers delegate
      */
-    @Override
     public TrackerDelegate getTrackerDelegate() {
         return trackerDelegate;
     }
@@ -223,7 +215,6 @@ public class InterMineAPI implements API
     /**
      * @return the linkRedirector
      */
-    @Override
     public LinkRedirectManager getLinkRedirector() {
         return linkRedirector;
     }
