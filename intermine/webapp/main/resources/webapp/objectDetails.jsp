@@ -203,7 +203,16 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
       //]]>-->
       </script> <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div class="box grid_12">
+<div style="float:right;" class="box grid_3">
+  <div id="in-lists">
+    <tiles:insert name="objectDetailsInList.tile">
+      <tiles:put name="objectid" value="${object.id}"/>
+    </tiles:insert>
+  </div>
+</div>
+
+<div class="box grid_9">
+  <%--
   <tiles:insert
     page="/objectDetailsDisplayers.jsp">
     <tiles:put name="placement" value="" />
@@ -216,6 +225,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="object" beanName="object" />
     <tiles:put name="isThisHeader" beanName="isThisHeader" />
   </tiles:insert>
+  --%>
 
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <tiles:insert name="objectDetailsAspect.tile">

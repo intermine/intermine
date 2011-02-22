@@ -48,4 +48,5 @@ public class DisplayCollection extends DisplayField
     public ReferenceDescriptor getDescriptor() {
         return desc;
     }
+
 }

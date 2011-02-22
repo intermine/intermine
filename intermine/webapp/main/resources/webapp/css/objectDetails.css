@@ -141,3 +141,8 @@ div.table table.results tr.even td { background:#fcfafd; border-top:1px solid #d
 div.table.template div.templateDetails p.description { line-height:auto !important; margin:0 auto !important; background:#F4EEF7;
   text-align:left; padding-left:6px; color:#5C0075; }
 div.table.template div.templateDetails div.favorites img { float:left; padding:4px 4px 4px 6px; }
+
+/* sidebar lists in which this object can be found */
+#in-lists div.heading { margin:0 0 10px 0 !important; background:#F4EEF7 !important; border-width:1px 0 0 0 !important;
+  border-style:solid; border-color:#5C0075; padding:2px 6px !important; color:#5C0075 !important; text-shadow:1px 1px 1px #FFF; }
+#in-lists div.body[style] { border:0 !important; padding:0 0 0 6px !important; }
