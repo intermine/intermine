@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.api.API;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
@@ -38,7 +38,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
  * @author Alex Kalderimis
  *
  */
-public class DummyAPI implements API {
+public class DummyAPI extends InterMineAPI {
 
     boolean returnALinkRedirector = true;
     /**
@@ -155,7 +155,7 @@ public class DummyAPI implements API {
         }
 
         @Override
-        public String generateLink(API im, InterMineObject imo) {
+        public String generateLink(InterMineAPI im, InterMineObject imo) {
             return "Link for:" + imo.toString();
         }
     }

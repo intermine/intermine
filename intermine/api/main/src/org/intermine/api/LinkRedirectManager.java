@@ -39,7 +39,7 @@ public class LinkRedirectManager
      * @param im intermine API object to retrieve model
      * @return URL to link to
      */
-    public String generateLink(API im, InterMineObject imo) {
+    public String generateLink(InterMineAPI im, InterMineObject imo) {
         return null;
     }
 

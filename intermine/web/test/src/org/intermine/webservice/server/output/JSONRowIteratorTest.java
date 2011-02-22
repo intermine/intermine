@@ -12,7 +12,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.API;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -43,8 +43,8 @@ import org.json.JSONArray;
 public class JSONRowIteratorTest extends TestCase {
 
     private ObjectStoreDummyImpl os;
-    private final API apiWithRedirection = new DummyAPI();
-    private final API apiWithoutRedirection = new DummyAPI(false);
+    private final InterMineAPI apiWithRedirection = new DummyAPI();
+    private final InterMineAPI apiWithoutRedirection = new DummyAPI(false);
     private Company wernhamHogg;
     private CEO jennifer;
     private Manager david;
