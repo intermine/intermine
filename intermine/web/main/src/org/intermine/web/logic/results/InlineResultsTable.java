@@ -15,11 +15,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -46,7 +48,7 @@ public class InlineResultsTable
     // just those objects that we will display
     protected List subList;
     private List<FieldConfig> fieldConfigs = null;
-    protected List columnFullNames = null;
+    protected List<List> columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
     protected int size = -1;
@@ -57,6 +59,8 @@ public class InlineResultsTable
     private Map<String, Object> fieldValues;
     private Map<Object, Map<String, Object>> rowFieldValues;
     private boolean ignoreDisplayers;
+
+    private List<String> listOfRowObjects = new ArrayList<String>();
 
     /**
      * Construct a new InlineResultsTable object
@@ -116,7 +120,7 @@ public class InlineResultsTable
      * that is one the follows a reference eg. organism.shortName
      * @return the List of column full names
      */
-    public List getColumnFullNames() {
+    public List<List> getColumnFullNames() {
         if (columnFullNames == null) {
             initialise();
         }
@@ -201,12 +205,16 @@ public class InlineResultsTable
 
             subList.add(o);
 
+            listOfRowObjects.add(o.getClass().toString());
+
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
 
-            // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             fieldValues = new HashMap();
+
+            // is supposed to represent a list of all the columns in one specific row
+            List columnFullRow = new ArrayList();
 
             // loop through each column
             for (FieldConfig fc : getRowFieldConfigs(o)) {
@@ -214,6 +222,7 @@ public class InlineResultsTable
                 if (ignoreDisplayers && fc.getDisplayer() != null) {
                     continue;
                 }
+
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
                 String pathString = className + "." + expr;
@@ -232,17 +241,27 @@ public class InlineResultsTable
 //                    // do nothing
 //                }
 
-                if (!fieldConfigs.contains(fc) && fc.getShowInInlineCollection()) {
-                    fieldConfigs.add(fc);
-                    // only add full column names for simple fieldConfigs - ie. ones that specify a
-                    // field in the current class
-                    columnFullNames.add(className + "." + expr);
+                if (fc.getShowInInlineCollection()) {
+                    if (!fieldConfigs.contains(fc)) {
+                        fieldConfigs.add(fc);
+                    }
+                    columnFullRow.add(className + "." + expr);
                 }
             }
             if (!fieldValues.isEmpty()) {
+                // a HashMap of values retrieved by passing in the Object from getRowObjects()
                 rowFieldValues.put(o, fieldValues);
             }
+            columnFullNames.add(columnFullRow);
         }
+    }
+
+    /**
+     *
+     * @return diagnostically return a list of row objects saved in initialise()
+     */
+    public List<String> getListOfRowObjects() {
+        return listOfRowObjects;
     }
 
     /**
@@ -296,17 +315,22 @@ public class InlineResultsTable
 
     /**
      * Return a List containing the ResultElements for a given row in the table.
+     *
+     * This method works on bag upload
+     *
      * @param rowIndex the index of the row to create the List for
      * @return a List of ResultElements, one for each column returned by getColumnFullNames().  If
      *   a particular column isn't relavent for this row, that element of the List will be null.
      */
     public List getResultElementRow(int rowIndex) {
         Object o = getRowObjects().get(rowIndex);
+
         List retList = new ArrayList();
-        for (int i = 0; i < getColumnFullNames().size(); i++) {
+        for (int i = 0; i < getColumnFullNames().get(0).size(); i++) {
             Path path;
             try {
-                path = new Path(model, (String) getColumnFullNames().get(i));
+                // fetch column names from first "row" as it was before
+                path = new Path(model, (String) getColumnFullNames().get(0).get(i));
                 if (!path.endIsAttribute()) {
                     // the end of the Path is not an attribute
                     retList.add(null);
@@ -319,6 +343,75 @@ public class InlineResultsTable
             }
         }
         return retList;
+    }
+
+    /**
+     *
+     * @return a list of lists of ResultElements
+     */
+    @SuppressWarnings("unchecked")
+    public List<List<ResultElement>> getResultElementRows() {
+        List resultLists = new LinkedList<List>();
+        // for a row object
+        for (int i = 0; i < getRowObjects().size(); i++) {
+            // fetch the object in the row
+            Object o = getRowObjects().get(i);
+            String columnFullName = null;
+            Path path = null;
+            String re = null;
+
+            List columnList = new LinkedList<Object>();
+            // for a column in the row object
+            //  assuming the first row has the same number of rows as the other rows do
+            for (int j = 0; j < columnFullNames.get(0).size(); j++) {
+                try {
+                    columnFullName = (String) getColumnFullNames().get(i).get(j);
+                    path = new Path(model, columnFullName);
+                    re = newCreateResultElement(path, o);
+                } catch (PathException e) {
+                    e.printStackTrace();
+                }
+                columnList.add(re);
+            }
+            resultLists.add(columnList);
+        }
+        return resultLists;
+    }
+
+    /**
+     *
+     * @return the number of columns in each table, taken from the first row
+     */
+    public Integer getColumnWidth() {
+        return columnFullNames.get(0).size();
+    }
+
+    /**
+     *
+     * @param path
+     * @param o
+     * @return an InterMineObject for debugging purposes
+     */
+    private String newCreateResultElement(Path path, Object o) {
+        String endTypeName = path.getLastClassDescriptor().getName();
+        String lastFieldName = path.getEndFieldDescriptor().getName();
+        boolean isKeyField =
+            ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
+        // object = Organism, path = Organism.shortName
+        InterMineObject finalObject = null;
+        try {
+            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
+        } catch (PathException e) {
+            e.printStackTrace();
+        }
+        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." + path.getLastElement();
+        return finalPath;
+        //try {
+        //    ResultElement re = new ResultElement(finalObject, new Path(path.getModel(), finalPath), isKeyField);
+        //} catch (PathException e) {
+        //    throw new Error("There must be a bug", e);
+        //}
+        //return finalObject;
     }
 
     /**
@@ -347,11 +440,11 @@ public class InlineResultsTable
         String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "."
             + path.getLastElement();
         try {
-            return new ResultElement(finalObject, new Path(path.getModel(), finalPath),
-                    isKeyField);
+            ResultElement re = new ResultElement(finalObject, new Path(path.getModel(), finalPath), isKeyField);
         } catch (PathException e) {
             throw new Error("There must be a bug", e);
         }
+        return null;
     }
 
     /**
@@ -368,4 +461,5 @@ public class InlineResultsTable
     public List getResultsAsList() {
         return resultsAsList;
     }
+
 }

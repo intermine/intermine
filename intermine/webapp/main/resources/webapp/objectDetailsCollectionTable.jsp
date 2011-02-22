@@ -31,77 +31,58 @@
               </span>
             </td>
           </c:forEach>
-          <c:if test="${collection.table.ids[0] != null}">
-            <td width="10">
-              &nbsp;<%--for IE--%>
-            </td>
-          </c:if>
         </tr>
       </thead>
       <tbody>
-        <c:forEach items="${collection.table.rowObjects}"
-                   var="thisRowObject" varStatus="status">
 
-          <c:set var="thisRowObject" value="${thisRowObject}" />
-          <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
+      <%-- ########################################################## --%>
+        <tr><td style="background:red;"><code>Number of columns: ${collection.table.columnWidth}</code></td></tr>
 
-          <tr class="<c:if test="${status.count % 2 == 0}">even</c:if>">
-            <td width="1%" nowrap>
-
-              <%-- class name of object being displayed on this row --%>
-              <c:forEach items="${collection.table.types[status.index]}" var="cld">
-                <span class="type">${cld.unqualifiedName}</span>
-              </c:forEach>
-
-              <%-- table displayer --%>
-              <c:forEach items="${LEAF_DESCRIPTORS_MAP[thisRowObject]}" var="cld2">
-                <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-                  <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}">
-                    <tiles:put name="cld" value="${cld2}" />
-                    <tiles:put name="object" value="${thisRowObject}" />
-                 </tiles:insert>
-                </c:if>
-              </c:forEach>
-            </td>
-
-            <%-- print each field configured for this object --%>
-            <c:forEach items="${collection.table.fieldConfigs}" var="fieldConfig">
-              <td>
-                 <c:choose>
-
-                 <%-- print each field configured for this object --%>
-                  <c:when test="${!empty fieldConfig && !empty fieldConfig.displayer}">
-                    <c:set var="interMineObject" value="${thisRowObject}" scope="request"/>
-                    <span class="value">
-                      <tiles:insert page="${fieldConfig.displayer}">
-                        <tiles:put name="expr" value="${fieldConfig.fieldExpr}" />
-                      </tiles:insert>
-                    </span>
-                  </c:when>
-                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
-                    <c:set var="outVal" value="${rowValues[fieldConfig.fieldExpr]}"/>
-                    <span class="value">${outVal}</span>
-                    <c:if test="${empty outVal}">
-                      &nbsp;<%--for IE--%>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    &nbsp;<%--for IE--%>
-                  </c:otherwise>
-                </c:choose>
-              </td>
+        <!-- traverse the columns names for each row -->
+        <c:forEach items="${collection.table.columnFullNames}" var="resultElementRow">
+          <tr>
+            <td style="background:orange;">[Class]</td>
+            <c:forEach items="${resultElementRow}" var="resultElementColumn">
+              <td style="background:orange;">${resultElementColumn}</td>
             </c:forEach>
-
-            <%-- link to report page for this object --%>
-            <c:if test="${collection.table.ids[status.index] != null}">
-              <td width="10px" nowrap>
-                [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}|${collection.table.ids[status.index]}">
-                  <fmt:message key="results.details"/>
-                </html:link>]
-              </td>
-            </c:if>
           </tr>
         </c:forEach>
+
+        <!-- collection of row objects -->
+        <c:forEach items="${collection.table.listOfRowObjects}" var="rowObject">
+          <tr><td style="background:green;">${rowObject}</td></tr>
+        </c:forEach>
+
+        <!-- working old code -->
+        <c:forEach items="${collection.table.rowObjects}" var="thisRowObject">
+
+          <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
+
+          <tr>
+            <td style="background:yellow;">[Class]</td>
+            <c:forEach items="${collection.table.fieldConfigs}" var="fieldConfig">
+              <td style="background:yellow;">
+                <c:if test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
+                  <span class="value">${rowValues[fieldConfig.fieldExpr]}</span>
+                </c:if>
+              </td>
+            </c:forEach>
+          </tr>
+        </c:forEach>
+
+        <%--
+        <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow">
+          <tr>
+            <td>[Class]</td>
+            <c:forEach items="${resultElementRow}" var="resultElementColumn">
+              <td>${resultElementColumn}</td>
+            </c:forEach>
+          </tr>
+        </c:forEach>
+        %-->
+
+        <%-- ########################################################## --%>
+
       </tbody>
     </table>
 <%-- if field isn't in webconfig, we don't know how to build the summary query --%>
