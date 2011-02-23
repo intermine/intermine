@@ -53,6 +53,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
+    private static final String BINDING_SITE_FEATS =
+        "'binding_site', 'protein_binding_site', 'TF_binding_site', 'histone_binding_site'";
 
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
@@ -613,13 +615,26 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     private ResultSet getPeaksSources(Connection connection) throws SQLException {
+        // TODO: better test on which query is better.
+        // also: should we rather do 1 big query and put them in a map?
+        //        String query =
+        //            "SELECT df.feature_id, df.data_id, d.value "
+        //            + "FROM data_feature df, feature f, cvterm c, data d "
+        //            + "WHERE f.feature_id = df.feature_id "
+        //            + "AND c.cvterm_id = f.type_id "
+        //            + "AND d.data_id = df.data_id "
+        //            + "AND c.name in ( " + BINDING_SITE_FEATS + ") "
+        //            + "AND df.feature_id IN "
+        //            + "(select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
         String query =
             "SELECT df.feature_id, df.data_id, d.value "
             + "FROM data_feature df, feature f, cvterm c, data d "
+            + ", " + SUBFEATUREID_TEMP_TABLE_NAME + " sf "
             + "WHERE f.feature_id = df.feature_id "
-            + "AND c.cvterm_id = f.type_id " 
+            + "AND c.cvterm_id = f.type_id "
             + "AND d.data_id = df.data_id "
-            + "AND c.name like '%binding_site' " ;
+            + "AND c.name in ( " + BINDING_SITE_FEATS + ") "
+            + "AND df.feature_id = sf.feature_id ";
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
@@ -628,8 +643,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return res;
     }
 
-    
-    
     
     private void processFeatureScores(Connection connection) throws SQLException,
     ObjectStoreException {
