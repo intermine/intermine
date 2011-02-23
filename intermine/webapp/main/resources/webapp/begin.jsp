@@ -58,7 +58,7 @@
         <div id="welcome-bochs">
             <div class="inner">
               <c:choose>
-                <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
+                <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
                   <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedTitle']}" /></h3>
                 </c:when>
                 <c:otherwise>
@@ -67,7 +67,7 @@
               </c:choose>
                 <br />
                 <c:choose>
-                  <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
+                  <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
                     <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedDescription']}" escapeXml="false" /></p>
                   </c:when>
                   <c:otherwise>
@@ -78,7 +78,7 @@
                   <div class="bottom">
                       <center>
                         <c:choose>
-                          <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedLink'])}">
+                          <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLink'])}">
                             <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />"
                             onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
                           </c:when>
@@ -90,7 +90,7 @@
                             <div>
                               <span>
                                 <c:choose>
-                                  <c:when test="${!isNewUser && !empty(WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle'])}">
+                                  <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle'])}">
                                     <c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle']}" />
                                   </c:when>
                                   <c:otherwise>
