@@ -22,7 +22,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 /**
  * A DirectoryConverter that automatically sets the dataSets collection of
@@ -174,12 +173,10 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param dataSource external database
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createCrossReference(String subjectId, String value, String dataSource,
-            boolean store)
-        throws SAXException, ObjectStoreException {
+            boolean store) throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -206,11 +203,10 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param value the Synonym value
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(String subjectId, String value, boolean store)
-        throws SAXException, ObjectStoreException {
+        throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }

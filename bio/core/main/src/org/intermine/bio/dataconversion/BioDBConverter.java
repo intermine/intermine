@@ -23,7 +23,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 /**
  * A DBConverter with helper methods for bio sources.
@@ -254,11 +253,10 @@ public abstract class BioDBConverter extends DBConverter
      * @param value the Synonym value
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(String subjectId, String value, boolean store)
-        throws SAXException, ObjectStoreException {
+        throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
