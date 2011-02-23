@@ -2064,7 +2064,7 @@ public class SequenceProcessor extends ChadoProcessor
         try {
             returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier,
                     false);
-        } catch (SAXException e) {
+        } catch (ObjectStoreException e) {
             throw new RuntimeException("Couldn't create synonym", e);
         }
         fdat.addExistingSynonym(identifier);
