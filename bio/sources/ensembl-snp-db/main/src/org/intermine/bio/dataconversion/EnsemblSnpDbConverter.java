@@ -32,7 +32,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
 /**
- * Read Ensembl SNP data directly from MySQL variarion database.
+ * Read Ensembl SNP data directly from MySQL variation database.
  * @author Richard Smith
  */
 public class EnsemblSnpDbConverter extends BioDBConverter
@@ -42,10 +42,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private final Map<String, Set<String>> pendingSnpConsequences =
         new HashMap<String, Set<String>>();
     private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
+    private String dbSnpSourceId;
 
     // TODO move this to a parser argument
     int taxonId = 9606;
-
+    // Edit to restrict to loading fewer chromosomes
+    private static final int MIN_CHROMOSOME = 22;
 
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
@@ -73,7 +75,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
 
         List<String> chrNames = new ArrayList<String>();
-        int MIN_CHROMOSOME = 1;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
@@ -119,6 +120,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         String previousRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
         boolean storeSnp = true;
+        Set<String> snpSynonyms = new HashSet<String>();
 
         while (res.next()) {
             counter++;
@@ -157,9 +159,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     if (storeSnp) {
                         snpCounter++;
                         if (uniqueLocation) {
-                            storeSnp(currentSnp, consequenceIdentifiers);
+                            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
                         } else {
-                            Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET);
+                            Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET,
+                                    snpSynonyms);
                             storedSnpIds.put(previousRsNumber, storedSnpId);
                         }
                     }
@@ -178,6 +181,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 previousRsNumber = rsNumber;
                 seenLocsForSnp = new HashSet<String>();
                 consequenceIdentifiers = new HashSet<String>();
+                snpSynonyms = new HashSet<String>();
                 storeSnp = true;
 
                 // map weight is the number of chromosome locations for the SNP, in practice there
@@ -273,6 +277,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 store(consequenceItem);
             }
 
+            // SYNONYMS
+            // we may see the same synonym on multiple row but Set will make them unique
+            String synonym = res.getString("vs.name");
+            if (!StringUtils.isBlank(synonym)) {
+                snpSynonyms.add(synonym);
+            }
             if (counter % 1000 == 0) {
                 LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
                         + chrName);
@@ -280,17 +290,20 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
 
         if (currentSnp != null) {
-            storeSnp(currentSnp, consequenceIdentifiers);
+            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
         }
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
     }
 
 
-    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers)
+    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers, Set<String> synonyms)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
+        }
+        for (String synonym : synonyms) {
+            createSynonym(snp.getIdentifier(), synonym, true);
         }
         return store(snp);
     }
@@ -421,11 +434,15 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " s.name,"
             + " vf.validation_status,"
             + " vf.consequence_type,"
-            + " tv.cdna_start,tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id"
+            + " tv.cdna_start,tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id,"
+            + " vs.name"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
             + "     AND tv.cdna_start is not null)"
+            + " LEFT JOIN (variation_synonym vs)"
+            + " ON (vf.variation_id = vs.variation_id"
+            + "     AND vs.source_id = " + getDbSnpSourceId(connection) + ")"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
@@ -434,6 +451,20 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    private String getDbSnpSourceId(Connection connection) throws SQLException {
+        if (dbSnpSourceId == null) {
+            String query = "SELECT source_id FROM source WHERE name = \"dbSNP\"";
+            Statement stmt = connection.createStatement();
+            ResultSet res = stmt.executeQuery(query);
+            res.next();
+            dbSnpSourceId = res.getString("source_id");
+            if (dbSnpSourceId == null) {
+                throw new RuntimeException("Failed to retrieve source_id for dbSNP source");
+            }
+        }
+        return dbSnpSourceId;
     }
 
     /**
