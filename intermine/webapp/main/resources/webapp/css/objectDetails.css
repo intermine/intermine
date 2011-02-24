@@ -52,6 +52,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #toc-menu-wrap { background:#A16AAF; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; }
 #fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; color:#F4EEF7; }
+#menu-target { height:21px; display:inline-block; }
 
 /* menu of menues menu */
 ul.menu { width:100%; text-align:center; }
@@ -123,7 +124,7 @@ div.table p { text-align:center; font-size:12px; padding:2px; }
   div.table p a { text-decoration:underline; color:#5C0075; }
 
 /* "normal" tables */
-div.table table.refSummary { font-size:12px; }
+div.table table.refSummary { font-size:12px; width:100%; }
 div.table table.refSummary a { color:#5c0075; }
 div.table table.refSummary td { padding:6px; }
 div.table table.refSummary thead td { border-bottom:1px solid #decce3; background:#f4eef7; padding:0 0 0 6px; font-size:13px; }

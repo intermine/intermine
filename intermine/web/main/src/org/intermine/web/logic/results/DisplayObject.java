@@ -30,6 +30,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
@@ -41,6 +42,7 @@ import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * Class to represent an object for display in the webapp. Various maps and collections
@@ -76,6 +78,9 @@ public class DisplayObject
     /* @Map inline lists (used to be tables) */
     private List<InlineList> inlineLists = null;
 
+    /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
+    private ObjectStore os = null;
+
     /**
      * Create a new DisplayObject.
      *
@@ -84,11 +89,15 @@ public class DisplayObject
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @param classKeys map of classname to set of keys
+     * @param os ObjectStore, used when constructing ResultElement of InlineResultTable
      * @throws Exception if an error occurs
      */
     public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
-            Map webProperties, Map<String, List<FieldDescriptor>> classKeys)
+            Map webProperties, Map<String, List<FieldDescriptor>> classKeys, ObjectStore os)
         throws Exception {
+
+        this.os = os;
+
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
@@ -416,19 +425,25 @@ public class DisplayObject
                             }
                         } else if (fd.isReference()) {
                             ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+
                             //check whether reference is null without dereferencing
                             ProxyReference proxy =
                                 (ProxyReference) object.getFieldProxy(ref.getName());
+
                             DisplayReference newReference =
                                 new DisplayReference(proxy, ref, webConfig,
                                     webProperties, classKeys);
                             references.put(fd.getName(), newReference);
                         } else if (fd.isCollection()) {
                             Object fieldValue = object.getFieldValue(fd.getName());
+
+                            // determine the types in the collection
+                            List<Class<?>> listOfTypes = PathQueryResultHelper.queryForTypesInCollection(object, fd.getName(), os);
+
                             DisplayCollection newCollection =
                                 new DisplayCollection((Collection) fieldValue,
                                         (CollectionDescriptor) fd, webConfig, webProperties,
-                                        classKeys);
+                                        classKeys, listOfTypes);
                             //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
                             //}

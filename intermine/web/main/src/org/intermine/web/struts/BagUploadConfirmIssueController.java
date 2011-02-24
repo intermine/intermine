@@ -33,6 +33,7 @@ import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -106,8 +107,9 @@ public class BagUploadConfirmIssueController extends TilesAction
         Map webPropertiesMap = SessionMethods.getWebProperties(servletContext);
         Map classKeys = im.getClassKeys();
 
+        // TODO possible fail as listOfTypes is not provided
         InlineResultsTable table = new InlineResultsTable(objectList, model, webConfig,
-                                                          webPropertiesMap, classKeys, -1, true);
+                                                          webPropertiesMap, classKeys, -1, true, null);
 
         identifierIter = identifierResultElementMap.keySet().iterator();
         while (identifierIter.hasNext()) {

@@ -161,8 +161,14 @@ public final class PathQueryResultHelper
         return makePathQueryForCollectionForClass(webConfig, os.getModel(), object, field, types);
     }
 
-    // find the subclasses that exist in the given collection
-    private static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
+    /**
+     *
+     * @param object
+     * @param field
+     * @param os
+     * @return subclasses that exist in a given Collection
+     */
+    public static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
             ObjectStore os) {
         List<Class<?>> typesInCollection = new ArrayList<Class<?>>();
         Query query = new Query();
