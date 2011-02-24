@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,6 +85,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
+    // list of modelled attributes for expression levels 
+    private static final Set<String> EL_KNOWN_ATTRIBUTES =
+        Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                "dcpm",
+                "dcpm_bases",
+                "prediction_status",
+                "read_count",
+                "transcribed")));
+
+    
     /**
      * Create a new ModEncodeFeatureProcessor.
      * @param chadoDBConverter     the parent converter
@@ -193,8 +204,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         processExpressionLevels(connection);
         
         // adding sources (result files) for binding sites
-        processPeaksSources(connection);        
-        
+        processPeaksSources(connection);
     }
 
     /**
@@ -691,7 +701,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private void processExpressionLevels(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
-
+        
         Integer previousId = -1;
         Item level = null;
 
@@ -734,6 +744,12 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 previousId = id;
                 continue;
             }
+            if (!EL_KNOWN_ATTRIBUTES.contains(property)){
+                LOG.warn("ExpressionLevel " + name + " has unknown attribute " +
+                        property + " (feature_id= " + featureId + ")");
+                continue;
+            }
+            
             level.setAttribute(getPropName(property), propValue);
             previousId = id;
         }
