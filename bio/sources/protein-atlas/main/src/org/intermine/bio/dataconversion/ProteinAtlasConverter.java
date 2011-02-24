@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,6 +66,13 @@ public class ProteinAtlasConverter extends BioFileConverter
         // "Gene","Tissue","Cell type","Level","Expression type","Reliability"
         // "ENSG00000000003","adrenal gland","glandular cells","Negative","Staining","Supportive"
 
+        // APE - two or more antibodies
+        // Staining - one antibody only
+        // 0 - very low/ none
+        // 1 - low/ not supportive
+        // 2 - medium/ unsupportive
+        // 3 - high/ supportive
+
         Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         lineIter.next();  // discard header
 
@@ -85,7 +91,7 @@ public class ProteinAtlasConverter extends BioFileConverter
             Item expression = createItem("ProteinAtlasExpression");
             expression.setAttribute("cellType", cellType);
             expression.setAttribute("level", level);
-            expression.setAttribute("expressionType", expressionType);
+            expression.setAttribute("expressionType", getExpressionType(expressionType));
             expression.setAttribute("reliability", reliability);
             expression.setReference("gene", geneId);
             expression.setReference("tissue", tissueId);
@@ -116,5 +122,15 @@ public class ProteinAtlasConverter extends BioFileConverter
             genes.put(primaryIdentifier, geneId);
         }
         return geneId;
+    }
+
+    private String getExpressionType(String expressionType) {
+        if ("APE".equals(expressionType)) {
+            return "APE - two or more antibodies";
+        } else if ("Staining".equals(expressionType)) {
+            return "Staining - one antibody only";
+        } else {
+            return expressionType;
+        }
     }
 }
