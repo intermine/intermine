@@ -85,7 +85,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
-    // list of modelled attributes for expression levels 
+    // list of modelled attributes for expression levels
     private static final Set<String> EL_KNOWN_ATTRIBUTES =
         Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
                 "dcpm",
@@ -740,13 +740,20 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
             if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
                 // in some cases (~ 60000, waterston) the value for dcpm is
-                // 'nan' or 'na' instead of a decimal number
+                // 'nan' or 'na' instead of a decimal number or .na
                 previousId = id;
                 continue;
             }
-            if (!EL_KNOWN_ATTRIBUTES.contains(property)){
-                LOG.warn("ExpressionLevel " + name + " has unknown attribute " +
-                        property + " (feature_id= " + featureId + ")");
+            if (property.equalsIgnoreCase("dcpm") &&
+                    StringUtils.isNumeric(StringUtils.split(propValue, '.')[1])) {
+                // ... or .na
+                previousId = id;
+                continue;
+            }
+            if (!EL_KNOWN_ATTRIBUTES.contains(property)) {
+                LOG.warn("ExpressionLevel for feature_id = " + featureId
+                        + " has unknown attribute " + property);
+                previousId = id;
                 continue;
             }
             
