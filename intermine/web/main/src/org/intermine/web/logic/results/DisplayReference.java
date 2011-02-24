@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.logic.config.WebConfig;
 
@@ -41,7 +42,7 @@ public class DisplayReference extends DisplayField
                             WebConfig webConfig, Map webProperties,
                             Map<String, List<FieldDescriptor>> classKeys)
         throws Exception {
-        super(getProxyList(proxy), ref, webConfig, webProperties, classKeys);
+        super(getProxyList(proxy), ref, webConfig, webProperties, classKeys, null);
         this.proxy = proxy;
         desc = ref;
     }

@@ -32,6 +32,28 @@ jQuery.fn.extend({
 });
 
 /**
+ * jQuery function extension checking if an element is (fully/partially) visible
+ */
+jQuery.fn.extend({
+  /**
+   * @visibility Full or partial visibility?
+   */
+  isInView : function(visibility) {
+    var pageTop = jQuery(window).scrollTop();
+    var pageBottom = pageTop + jQuery(window).height();
+
+    var elementTop = jQuery(this).offset().top;
+    var elementBottom = elementTop + jQuery(this).height();
+
+    if (visibility == 'partial') {
+      return ((elementBottom >= pageTop) && (elementTop <= pageBottom));
+    } else {
+      return ((elementBottom < pageBottom) && (elementTop > pageTop));
+    }
+  }
+});
+
+/**
  * Load report page template (jQuery)
  *
  * @param i

@@ -147,6 +147,29 @@
   </ul>
 </div>
 </div>
+<script type="text/javascript">
+jQuery(window).scroll(function() {
+  // determine positions of the two menus on the screen
+  normalMenuTop = jQuery("#toc-menu-wrap").offset().top;
+  normalMenuBottom = normalMenuTop + jQuery("#toc-menu-wrap").height();
+  fixedMenuTop = jQuery("#fixed-menu").offset().top;
+  fixedMenuBottom = fixedMenuTop + jQuery("#fixed-menu").height();
+
+  // on scroll when we scroll down and the fixed menu starts to show
+  /*if (fixedMenuBottom >= normalMenuTop && fixedMenuBottom <= normalMenuBottom) {
+      jQuery('html,body').animate({
+          scrollTop: normalMenuBottom
+      }, 'fast', 'linear');
+  }*/
+
+  // on scroll when we scroll up and the normal menu (would) start to show (if it weren't for z-ix)
+  /*if (fixedMenuTop < normalMenuBottom && fixedMenuTop > normalMenuTop) {
+      jQuery('html,body').animate({
+          scrollTop: normalMenuTop - 30
+      }, 'fast', 'linear');
+  }*/
+});
+</script>
 
 <div class="container_12">
 
@@ -212,7 +235,6 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 </div>
 
 <div class="box grid_9">
-  <%--
   <tiles:insert
     page="/objectDetailsDisplayers.jsp">
     <tiles:put name="placement" value="" />
@@ -225,7 +247,6 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="object" beanName="object" />
     <tiles:put name="isThisHeader" beanName="isThisHeader" />
   </tiles:insert>
-  --%>
 
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <tiles:insert name="objectDetailsAspect.tile">

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -70,8 +71,11 @@ public class DisplayObjectFactory extends CacheMap<InterMineObject, DisplayObjec
                 ServletContext servletContext = session.getServletContext();
                 WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
                 Properties webProperties = SessionMethods.getWebProperties(servletContext);
+
+                ObjectStore os = im.getObjectStore();
+
                 displayObject = new DisplayObject(imObj, model, webConfig, webProperties,
-                        classKeys);
+                        classKeys, os);
             } catch (Exception e) {
                 throw new RuntimeException("failed to make a DisplayObject", e);
             }

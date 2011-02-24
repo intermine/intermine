@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.CollectionDescriptor;
@@ -32,12 +33,14 @@ public class DisplayCollection extends DisplayField
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @param classKeys Map of class name to set of keys
+     * @param listOfTypes as determined using PathQueryResultHelper on a Collection
      * @throws Exception if an error occurs
      */
     public DisplayCollection(Collection collection, CollectionDescriptor desc,
-                             WebConfig webConfig, Map webProperties, Map classKeys)
+                             WebConfig webConfig, Map webProperties, Map classKeys,
+                             List<Class<?>> listOfTypes)
         throws Exception {
-        super(collection, desc, webConfig, webProperties, classKeys);
+        super(collection, desc, webConfig, webProperties, classKeys, listOfTypes);
         this.desc = desc;
     }
 

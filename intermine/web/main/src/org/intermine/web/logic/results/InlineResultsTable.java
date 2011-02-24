@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.results.ResultElement;
@@ -27,19 +28,24 @@ import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * An inline table created from a Collection
  * This table has one object per row
  * @author Mark Woodbridge
+ * @author Radek Stepan
  */
 public class InlineResultsTable
 {
@@ -48,7 +54,7 @@ public class InlineResultsTable
     // just those objects that we will display
     protected List subList;
     private List<FieldConfig> fieldConfigs = null;
-    protected List<List> columnFullNames = null;
+    protected List columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
     protected int size = -1;
@@ -62,6 +68,17 @@ public class InlineResultsTable
 
     private List<String> listOfRowObjects = new ArrayList<String>();
 
+    /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
+    private ObjectStore os = null;
+
+    /** @var List of all the types a table will hold, so we can fetch all the FCs */
+    private List<Class<?>> listOfTypes = null;
+
+    /** @var List of merged FieldConfigs for Collections and References alike */
+    private List<FieldConfig> listOfTableFieldConfigs = null;
+
+    protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
+
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -71,12 +88,17 @@ public class InlineResultsTable
      * @param classKeys Map of class name to set of keys
      * @param size the maximum number of rows to list from the collection, or -1 if we should
      * @param ignoreDisplayers if true don't include any columns that have jsp displayers defined
-     *   display all rows
+     * @param listOfTypes resolved using PathQueryResultHelper.queryForTypesInCollection on a
+     *  Collection, a Reference object will have null instead and its Type will be resolved
+     *  using getListOfTypes()
      */
     public InlineResultsTable(Collection results, Model model,
                               WebConfig webConfig, Map webProperties,
                               Map<String, List<FieldDescriptor>> classKeys,
-                              int size, boolean ignoreDisplayers) {
+                              int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
+
+        this.listOfTypes = listOfTypes;
+
         this.results = results;
         this.classKeys = classKeys;
         if (results instanceof List) {
@@ -120,7 +142,7 @@ public class InlineResultsTable
      * that is one the follows a reference eg. organism.shortName
      * @return the List of column full names
      */
-    public List<List> getColumnFullNames() {
+    public List getColumnFullNames() {
         if (columnFullNames == null) {
             initialise();
         }
@@ -180,7 +202,10 @@ public class InlineResultsTable
      * then and the fieldConfigs to display are collected in the tableRows List.  The fields of the
      * rows in the tableRows List will always be in the same order as the elements of the
      * fieldConfigs List.
+     *
+     * @deprecated most of the code is not needed and only used (badly) on ListUpload
      */
+    @java.lang.Deprecated
     protected void initialise() {
         fieldConfigs = new ArrayList<FieldConfig>();
         columnFullNames = new ArrayList();
@@ -207,14 +232,14 @@ public class InlineResultsTable
 
             listOfRowObjects.add(o.getClass().toString());
 
+            // XXX only needed from here on out for ListUpload
+
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
 
+            // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             fieldValues = new HashMap();
-
-            // is supposed to represent a list of all the columns in one specific row
-            List columnFullRow = new ArrayList();
 
             // loop through each column
             for (FieldConfig fc : getRowFieldConfigs(o)) {
@@ -222,7 +247,6 @@ public class InlineResultsTable
                 if (ignoreDisplayers && fc.getDisplayer() != null) {
                     continue;
                 }
-
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
                 String pathString = className + "." + expr;
@@ -241,18 +265,16 @@ public class InlineResultsTable
 //                    // do nothing
 //                }
 
-                if (fc.getShowInInlineCollection()) {
-                    if (!fieldConfigs.contains(fc)) {
-                        fieldConfigs.add(fc);
-                    }
-                    columnFullRow.add(className + "." + expr);
+                if (!fieldConfigs.contains(fc) && fc.getShowInInlineCollection()) {
+                    fieldConfigs.add(fc);
+                    // only add full column names for simple fieldConfigs - ie. ones that specify a
+                    // field in the current class
+                    columnFullNames.add(className + "." + expr);
                 }
             }
             if (!fieldValues.isEmpty()) {
-                // a HashMap of values retrieved by passing in the Object from getRowObjects()
                 rowFieldValues.put(o, fieldValues);
             }
-            columnFullNames.add(columnFullRow);
         }
     }
 
@@ -265,10 +287,59 @@ public class InlineResultsTable
     }
 
     /**
+    * @see the reason for retrieving types for Reference here is that
+    *  PathQueryResultHelper.queryForTypesInCollection() does not work
+    *  for References (obviously)
+    *
+    * @return a list of types in a Collection or a Reference contained in this table
+    */
+    public List<Class<?>> getListOfTypes() {
+        if (listOfTypes == null) { // for uninitialized References
+            InterMineObject o = (InterMineObject) getRowObjects().iterator()
+            .next(); // based on the first object
+            if (o instanceof ProxyReference) {
+                // special case for ProxyReference from DisplayReference objects
+                o = ((ProxyReference) o).getObject();
+            }
+            // init new
+            listOfTypes = new ArrayList<Class<?>>();
+            listOfTypes.add(DynamicUtil.getSimpleClass(o));
+        }
+        return listOfTypes;
+    }
+
+    /**
+     *
+     * @return a list of (all) FieldConfigs/Columns for this table
+     */
+    public List<FieldConfig> getTableFieldConfigs() {
+        if (listOfTableFieldConfigs == null) { // init
+            listOfTableFieldConfigs = new ArrayList<FieldConfig>();
+            // fetch all the object types we have,
+            //  and traverse-add them to a list of FCs
+            for (Class<?> clazz : getListOfTypes()) {
+                for (ClassDescriptor cd : DisplayObject.getLeafClds(clazz, model)) {
+                    for (FieldConfig fc : getClassFieldConfigs(cd)) {
+                        if (fc.getShowInInlineCollection() && !listOfTableFieldConfigs
+                                .contains(fc)) {
+                            listOfTableFieldConfigs.add(fc);
+                        }
+                    }
+                }
+            }
+        }
+        return listOfTableFieldConfigs;
+    }
+
+    /**
      * Find the FieldConfig objects for the the given Object.
      * @param rowObject an Object
      * @return the FieldConfig objects for the the given Object.
+     *
+     * @deprecated as only retrieves FCs for a row, but tables may contain different objects,
+     *  use getTableFieldConfigs() instead
      */
+    @java.lang.Deprecated
     protected List<FieldConfig> getRowFieldConfigs(Object rowObject) {
         List<FieldConfig> returnFieldConfigs = new ArrayList<FieldConfig>();
 
@@ -322,15 +393,16 @@ public class InlineResultsTable
      * @return a List of ResultElements, one for each column returned by getColumnFullNames().  If
      *   a particular column isn't relavent for this row, that element of the List will be null.
      */
+    @SuppressWarnings("unchecked")
     public List getResultElementRow(int rowIndex) {
         Object o = getRowObjects().get(rowIndex);
 
         List retList = new ArrayList();
-        for (int i = 0; i < getColumnFullNames().get(0).size(); i++) {
+        for (int i = 0; i < getColumnFullNames().size(); i++) {
             Path path;
             try {
                 // fetch column names from first "row" as it was before
-                path = new Path(model, (String) getColumnFullNames().get(0).get(i));
+                path = new Path(model, (String) getColumnFullNames().get(i));
                 if (!path.endIsAttribute()) {
                     // the end of the Path is not an attribute
                     retList.add(null);
@@ -346,32 +418,91 @@ public class InlineResultsTable
     }
 
     /**
-     *
+     * Answers the ever pressing question as to whether or not an object of a given Class has this
+     *  FieldConfig (column) defined. As an inline table can have multiple object Types, an instance
+     *  of an object (row) has to be resolved against a bag of FieldConfigs (columns)
+     * @param clazz
+     * @param fc
+     * @return true if a Class has a FieldConfig defined
+     */
+    private Boolean isThisFieldConfigInThisObject(Class<?> clazz, FieldConfig fc) {
+        // for all class descriptors in a DisplayObject
+        for (ClassDescriptor cd : DisplayObject.getLeafClds(clazz, model)) {
+            // traverse FieldConfigs and return true if found
+            if (getClassFieldConfigs(cd).contains(fc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Main method used from objectDetails to resolve a tablefull of ResultElements
      * @return a list of lists of ResultElements
      */
     @SuppressWarnings("unchecked")
-    public List<List<ResultElement>> getResultElementRows() {
+    public List<List<Object>> getResultElementRows() {
         List resultLists = new LinkedList<List>();
+        int columnsSize = getColumnsSize();
         // for a row object
         for (int i = 0; i < getRowObjects().size(); i++) {
             // fetch the object in the row
             Object o = getRowObjects().get(i);
-            String columnFullName = null;
+            String column = null;
             Path path = null;
-            String re = null;
+            ResultElement re = null;
+            String className = null;
 
-            List columnList = new LinkedList<Object>();
-            // for a column in the row object
-            //  assuming the first row has the same number of rows as the other rows do
-            for (int j = 0; j < columnFullNames.get(0).size(); j++) {
+            // create a row of elements
+            List columnList = new ArrayList<Object>();
+            for (int j = 0; j < columnsSize; j++) {
                 try {
-                    columnFullName = (String) getColumnFullNames().get(i).get(j);
-                    path = new Path(model, columnFullName);
-                    re = newCreateResultElement(path, o);
+                    FieldConfig fc = getTableFieldConfigs().get(j);
+                    // column name also known as field expression
+                    column = fc.getFieldExpr();
+                    // determine the class of the object
+                    Class<?> clazz = DynamicUtil.getSimpleClass((InterMineObject) o);
+                    // does THIS row object have THIS column?
+                    if (isThisFieldConfigInThisObject(clazz, fc)) {
+                        // resolve class name
+                        className = DynamicUtil.getSimpleClass((InterMineObject) o).getSimpleName();
+                        // form a new path
+                        path = new Path(model, className + '.' + column);
+
+                        // key field?
+                        String endTypeName = path.getLastClassDescriptor().getName();
+                        String lastFieldName = path.getEndFieldDescriptor().getName();
+                        Boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, endTypeName,
+                                lastFieldName);
+
+                        // finalObject
+                        InterMineObject imObj = null;
+                        try {
+                            imObj = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
+                        } catch (PathException e) {
+                            e.printStackTrace();
+                        }
+
+                        // create new inline result element
+                        String displayer = fc.getDisplayer();
+                        // ...displayer kind
+                        if (displayer != null && displayer.length() > 0) {
+                            re = new InlineTableResultElement(imObj, path, fc, isKeyField);
+                        } else {
+                            String finalPath = path.getLastClassDescriptor().getUnqualifiedName()
+                                + "." + path.getLastElement();
+                            re = new InlineTableResultElement(imObj, new Path(path.getModel(),
+                                    finalPath), fc, isKeyField);
+                        }
+                        // save the ResultElement at a specific index
+                        columnList.add(re);
+                    } else {
+                        columnList.add("");
+                    }
                 } catch (PathException e) {
+                    LOG.error(e);
                     e.printStackTrace();
                 }
-                columnList.add(re);
             }
             resultLists.add(columnList);
         }
@@ -380,38 +511,10 @@ public class InlineResultsTable
 
     /**
      *
-     * @return the number of columns in each table, taken from the first row
+     * @return the number of columns in each table, based on all FieldConfigs for all objects
      */
-    public Integer getColumnWidth() {
-        return columnFullNames.get(0).size();
-    }
-
-    /**
-     *
-     * @param path
-     * @param o
-     * @return an InterMineObject for debugging purposes
-     */
-    private String newCreateResultElement(Path path, Object o) {
-        String endTypeName = path.getLastClassDescriptor().getName();
-        String lastFieldName = path.getEndFieldDescriptor().getName();
-        boolean isKeyField =
-            ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
-        // object = Organism, path = Organism.shortName
-        InterMineObject finalObject = null;
-        try {
-            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
-        } catch (PathException e) {
-            e.printStackTrace();
-        }
-        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." + path.getLastElement();
-        return finalPath;
-        //try {
-        //    ResultElement re = new ResultElement(finalObject, new Path(path.getModel(), finalPath), isKeyField);
-        //} catch (PathException e) {
-        //    throw new Error("There must be a bug", e);
-        //}
-        //return finalObject;
+    public Integer getColumnsSize() {
+        return getTableFieldConfigs().size();
     }
 
     /**
@@ -422,7 +525,10 @@ public class InlineResultsTable
      * @param path
      * @param o
      * @return
+     *
+     * @deprecated as only used on Bag Upload, rewrite
      */
+    @java.lang.Deprecated
     private ResultElement createResultElement(Path path, Object o) {
         String endTypeName = path.getLastClassDescriptor().getName();
         String lastFieldName = path.getEndFieldDescriptor().getName();
@@ -440,11 +546,11 @@ public class InlineResultsTable
         String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "."
             + path.getLastElement();
         try {
-            ResultElement re = new ResultElement(finalObject, new Path(path.getModel(), finalPath), isKeyField);
+            return new ResultElement(finalObject, new Path(path.getModel(), finalPath),
+                    isKeyField);
         } catch (PathException e) {
             throw new Error("There must be a bug", e);
         }
-        return null;
     }
 
     /**
