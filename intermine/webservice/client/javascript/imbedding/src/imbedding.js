@@ -15,11 +15,13 @@ IMBedding = (function() {
     };
 
     var defaultOptions = {
-        additionText: "Load x more rows",
+        additionText: "Load [x] more rows",
         afterBuildTable: function(table) {},
         afterTableUpdate: function(table, resultSet) {},
         allRowsText: "Show remaining rows",
         collapseHelpText: "hide table",
+        countText: "[x] rows",
+        defaultQueryName: "Query Results",
         emptyCellText: "[NONE]",
         expandHelpText: "show table",
         exportCSVText: "Export as CSV file",
@@ -29,6 +31,8 @@ IMBedding = (function() {
         onTitleClick: "collapse",
         openOnLoad: false,
         previousText: "Previous",
+        queryTitleText: null,
+        resultsDescriptionText: null,
         showAdditionsLink: true,
         showAllCeiling: 75,
         showAllLink: true,
@@ -89,8 +93,9 @@ IMBedding = (function() {
                     + this.uid + '" class="imbedded-table-container"></div>');
             this.titlebox = jQuery('<div id="imbedded-table-titlebox-' 
                     + this.uid + '" class="imbedded-table-titlebox"></div>');
+            var queryTitle = this.options.queryTitleText || data.title || this.options.defaultQueryName;
             this.title = jQuery('<a id="imbedded-table-title-' 
-                    + this.uid + '" class="imbedded-table-title">' + data.title + '</a>');
+                    + this.uid + '" class="imbedded-table-title">' + queryTitle + '</a>');
             this.expandHelp = jQuery('<span id="imbedded-table-expand-help-' 
                     + this.uid + '" class="imbedded-table-expand-help">' 
                     + this.options.expandHelpText + '</span>');
@@ -148,7 +153,7 @@ IMBedding = (function() {
                     + this.options.mineLinkText + '</a>')
                     .attr("href", this.localiseUrl(data.mineResultsLink));
 
-            var additionInner = this.options.additionText.replace(" x ", " " + data.size + " ");
+            var additionInner = this.options.additionText.replace("[x]", " " + data.size + " ");
             this.additionLink = jQuery('<a id="imbedded-adder-' + this.uid 
                 + '" class="imbedded-addition-link imbedded-pagelink">' + additionInner + '</a>')
                 .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
@@ -171,7 +176,8 @@ IMBedding = (function() {
                 url: this.localiseUrl(data.count),
                 success: function(countData) {
                     if (outer.options.showCount) {
-                        outer.countDisplayer.text(" (" + countData.count + " results)");
+                        var count = outer.options.countText.replace("[x]", countData.count);
+                        outer.countDisplayer.text("(" + count + ")");
                     }
                     outer.count = countData.count;
                     outer.updateVisibilityOfPagers();
@@ -231,9 +237,10 @@ IMBedding = (function() {
                           });
             }
 
+            var queryDescription = this.options.resultsDescriptionText || data.description;
             this.titlebox.hover(
                 function(event) {
-                    showIMTooltip(event.pageX, event.pageY, data.description);
+                    showIMTooltip(event.pageX, event.pageY, queryDescription);
                 },
                 function(event) {
                     jQuery('.imbedded-table-tooltip').remove();
