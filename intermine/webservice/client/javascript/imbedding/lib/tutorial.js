@@ -233,14 +233,17 @@ function loadTable4e() {
         baseUrl: flyMineBase,
         nextText: "avanti", 
         previousText: "indietro",
-        additionText: "carica altre x righe",
+        additionText: "carica altre [x] righe",
         allRowsText: "carica tutte righe",
         emptyCellText: "[NIENTE]",
         collapseHelpText: "chiudi tabella",
         expandHelpText: "mostra tabella",
         exportCSVText: "Esporta il risultato in formato CSV", 
         exportTSVText: "Esporta il risultato in formato TSV", 
-        mineLinkText: "Guarda in Mine"
+        mineLinkText: "Guarda in Mine",
+        resultsDescriptionText: "il risultato della loro interrogazione",
+        queryTitleText: "Organismo --> Tutti genia con un dominio specifico",
+        countText: "[x] righe"
     };
     IMBedding.loadTemplate(
         {

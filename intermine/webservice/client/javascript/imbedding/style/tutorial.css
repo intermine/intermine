@@ -23,6 +23,7 @@ h3.querybuilder-section-header {
 
 p, .ui-button-text, .ui-button, .ui-tabs {
     font-family: "Cuprum", "Arial", sans-serif ! important;
+    line-height: 120%;
 }
 
 .text-input {

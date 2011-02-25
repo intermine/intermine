@@ -7,7 +7,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
             type="text/javascript"></script>
         <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
-        <script src="http://intermine.org/lib/imbedding/0.1/imbedding.min.js" type="text/javascript"></script>
+        <!--        <script src="http://intermine.org/lib/imbedding/0.1/imbedding.min.js" type="text/javascript"></script> -->
+        <script src="src/imbedding.js" type="text/javascript"></script> -->
 
         <!-- The graphing library -->
         <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
@@ -24,7 +25,7 @@
         <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css">
 
         <!-- javascript for this page -->
-        <script src="lib/tutorial.min.js" type="text/javascript"></script>
+        <script src="lib/tutorial.js" type="text/javascript"></script>
 
         <!-- Grab fonts from Google -->
         <link href='http://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
@@ -35,7 +36,8 @@
         <!-- The three publically hosted table styles -->
         <link rel="alternate stylesheet" type="text/css" title="dark" href="http://intermine.org/lib/imbedding/0.1/style/dark.css">
         <link rel="alternate stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.1/style/light.css">
-        <link rel="stylesheet" type="text/css" title="bold" href="http://intermine.org/lib/imbedding/0.1/style/bold.css">
+        <!--       <link rel="stylesheet" type="text/css" title="bold" href="http://intermine.org/lib/imbedding/0.1/style/bold.css"> -->
+        <link rel="stylesheet" type="text/css" title="bold" href="style/bold.css">
 
         <!-- style for this page -->
         <link rel="stylesheet" type="text/css" href="style/tutorial.css">
@@ -856,7 +858,7 @@ function loadDepartmentSummary(departmentName) {
                         <td>additionText</td>
                         <td>the text to display in the "load x more rows" links</td>
                         <td><code>string</code></td>
-                        <td><code>"Load x more rows"</code></td>
+                        <td><code>"Load [x] more rows"</code></td>
                     </tr>
                     <tr>
                         <td>afterBuildTable</td>
@@ -881,6 +883,18 @@ function loadDepartmentSummary(departmentName) {
                         <td>the text to display in the "hide table" links</td>
                         <td><code>string</code></td>
                         <td><code>"hide table"</code></td>
+                    </tr>
+                    <tr>
+                        <td>countText</td>
+                        <td>the text to display in parentheses beside the title</td>
+                        <td><code>string</code></td>
+                        <td><code>"[x] rows"</code></td>
+                    </tr>
+                    <tr>
+                        <td>defaultQueryName</td>
+                        <td>the text to display in the title box if the query has no name</td>
+                        <td><code>string</code></td>
+                        <td><code>Query Results</code></td>
                     </tr>
                     <tr>
                         <td>emptyCellText</td>
@@ -917,6 +931,18 @@ function loadDepartmentSummary(departmentName) {
                         <td>the text to display in the "previous page" links</td>
                         <td><code>string</code></td>
                         <td><code>"Previous"</code></td>
+                    </tr>
+                    <tr>
+                        <td>queryTitleText</td>
+                        <td>the text to display as the title of the table. If given, this setting overrides any value returned from the server.</td>
+                        <td><code>string</code></td>
+                        <td><code>null</code></td>
+                    </tr>
+                    <tr>
+                        <td>resultsDescriptionText</td>
+                        <td>the text to display in the toolbox. If given, this setting overrides any value returned from the server.</td>
+                        <td><code>string</code></td>
+                        <td><code>null</code></td>
                     </tr>
                     <tr>
                         <td>showAdditionsLink</td>
@@ -969,6 +995,10 @@ function loadDepartmentSummary(departmentName) {
                 </tbody>
             </table>
             <p>
+            Note that options that take a parameter (such as countText) should indicate the 
+            position of the parameter with the string "[x]"
+            </p>
+            <p>
             If you want all your tables to share the same set of options, you can specify that
             globally; the example below shows how this can be used for internationalisation:
             </p>
@@ -977,29 +1007,35 @@ function loadDepartmentSummary(departmentName) {
         return;
     } else if (code == "de") {
         IMBedding.setDefaultOptions({
-            nextText: "Weiter", 
-            previousText: "Zur&ampuumlck", 
-            additionText: " x Mehr Zeilen Anzeigen", 
+            additionText: "[x] Mehr Zeilen Anzeigen", 
             allRowsText: "Alle Zeilen Anzeigen", 
-            emptyCellText: "[KEINS]",
             collapseHelpText: "Tafel ausblenden",
+            countText, "[x] Zeilen",
+            defaultQueryName: "Ergebnisse",
+            emptyCellText: "[KEINS]",
             expandHelpText: "Tafel anzeigen"
             exportCSVText: "Als CSV herunterladen",
             exportTSVText: "Als TSV herunterladen",
-            mineLinkText: "Tafel im Mine anschauen"
+            mineLinkText: "Tafel im Mine anschauen",
+            nextText: "Weiter", 
+            previousText: "Zur&ampuumlck", 
+            resultsDescriptionText: "Ergebnisse Ihrer Abfrage"
         });
     } else if (code == "it") {
-            IMBedding.setDefaultOptions({
-            nextText: "avanti", 
-            previousText: "indietro",
-            additionText: "carica altre x righe",
+        IMBedding.setDefaultOptions({
+            additionText: "carica altre [x] righe",
             allRowsText: "carica tutte righe",
-            emptyCellText: "[NIENTE]",
             collapseHelpText: "chiudi tabella",
+            countText: "[x] righe",
+            defaultQueryName: "Risultato",
+            emptyCellText: "[NIENTE]",
             expandHelpText: "mostra tabella",
             exportCSVText: "Esporta il risultato in formato CSV", 
             exportTSVText: "Esporta il risultato in formato TSV", 
-            mineLinkText: "Guarda in Mine"
+            mineLinkText: "Guarda in Mine",
+            nextText: "avanti", 
+            previousText: "indietro",
+            resultsDescriptionText: "il risultato della loro interrogazione"
         });
     } else // and so on ...</textarea>
             <p>
@@ -1168,7 +1204,11 @@ function loadDepartmentSummary(departmentName) {
         expandHelpText: "mostra tabella",
         exportCSVText: "Esporta il risultato in formato CSV", 
         exportTSVText: "Esporta il risultato in formato TSV", 
-        mineLinkText: "Guarda in Mine"
+        mineLinkText: "Guarda in Mine",
+        resultsDescriptionText: "il risultato della loro interrogazione",
+        queryTitleText: "Organismo --&gt; Tutti genia con un dominio specifico",
+        countText: "[x] righe"
+
     };
     IMBedding.loadTemplate(data, ph + "e", options);
 </script></textarea>
