@@ -121,53 +121,47 @@
 
 <div id="content">
 
+<div id="menu-target">&nbsp;</div>
 <div id="toc-menu-wrap">
 <div class="wrap">
   <span>Quick Links:</span>
-  <ul class="menu">
-    <li><a href="#">Summary</a></li>
-    <li><a href="#">Function</a></li>
-    <li><a href="#">Genome</a></li>
-    <li><a href="#">Disease</a></li>
-    <li><a href="#">Interactions</a></li>
-    <li><a class="last" href="#">Reactions</a></li>
-  </ul>
+  <div class="menu-wrap">
+    <ul class="menu">
+      <li><a href="#">Summary</a></li>
+      <li><a href="#">Function</a></li>
+      <li><a href="#">Genome</a></li>
+      <li><a href="#">Disease</a></li>
+      <li><a href="#">Interactions</a></li>
+      <li><a class="last" href="#">Reactions</a></li>
+    </ul>
+  </div>
+  <div class="clear">&nbsp;</div>
 </div>
 </div>
 <div id="fixed-menu">
 <div class="wrap">
   <span>Quick Links:</span>
-  <ul class="menu">
-    <li><a href="#">Summary</a></li>
-    <li><a href="#">Function</a></li>
-    <li><a href="#">Genome</a></li>
-    <li><a href="#">Disease</a></li>
-    <li><a href="#">Interactions</a></li>
-    <li><a class="last" href="#">Reactions</a></li>
-  </ul>
+  <div class="menu-wrap">
+    <ul class="menu">
+      <li><a href="#">Summary</a></li>
+      <li><a href="#">Function</a></li>
+      <li><a href="#">Genome</a></li>
+      <li><a href="#">Disease</a></li>
+      <li><a href="#">Interactions</a></li>
+      <li><a class="last" href="#">Reactions</a></li>
+    </ul>
+  </div>
+  <div class="clear">&nbsp;</div>
 </div>
 </div>
 <script type="text/javascript">
+jQuery('#fixed-menu').hide(); // hide for IE7
 jQuery(window).scroll(function() {
-  // determine positions of the two menus on the screen
-  normalMenuTop = jQuery("#toc-menu-wrap").offset().top;
-  normalMenuBottom = normalMenuTop + jQuery("#toc-menu-wrap").height();
-  fixedMenuTop = jQuery("#fixed-menu").offset().top;
-  fixedMenuBottom = fixedMenuTop + jQuery("#fixed-menu").height();
-
-  // on scroll when we scroll down and the fixed menu starts to show
-  /*if (fixedMenuBottom >= normalMenuTop && fixedMenuBottom <= normalMenuBottom) {
-      jQuery('html,body').animate({
-          scrollTop: normalMenuBottom
-      }, 'fast', 'linear');
-  }*/
-
-  // on scroll when we scroll up and the normal menu (would) start to show (if it weren't for z-ix)
-  /*if (fixedMenuTop < normalMenuBottom && fixedMenuTop > normalMenuTop) {
-      jQuery('html,body').animate({
-          scrollTop: normalMenuTop - 30
-      }, 'fast', 'linear');
-  }*/
+  if (jQuery('#menu-target').isInView('partial')) {
+    jQuery('#fixed-menu').hide();
+  } else {
+    jQuery('#fixed-menu').show();
+  }
 });
 </script>
 

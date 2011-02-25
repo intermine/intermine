@@ -47,18 +47,22 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
 #navtrail { display:inline-block; float:right; background:inherit; width:100%; }
 #headercontainer { background:inherit; display:inline-block; }
-#fixed-menu { z-index:1; position:fixed; top:0; width:100%; background:#A16AAF; }
+#fixed-menu { z-index:1; position:fixed; top:0; width:100%; background:#A16AAF; height:20px; }
 #content { z-index:0; }
-#toc-menu-wrap { background:#A16AAF; }
+#toc-menu-wrap { background:#A16AAF; line-height:21px; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; }
-#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; color:#F4EEF7; }
-#menu-target { height:21px; display:inline-block; }
+#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; color:#F4EEF7; height:20px;
+    line-height:20px; }
+#menu-target { height:20px; display:inline-block; background:#F4EEF7; width:100%; }
+div.wrap { line-height:21px; }
 
 /* menu of menues menu */
-ul.menu { width:100%; text-align:center; }
-  ul.menu li { display:inline; background:#F4EEF7; }
-    ul.menu li a { color:#5C0075; font-weight:bold; padding:0px 10px; }
-    ul.menu li a.last { border:none; }
+div.menu-wrap { float:left; width:90%; line-height:21px; }
+ul.menu { width:100%; text-align:center; line-height:21px; }
+  ul.menu li { display:inline; padding:0; margin:0; vertical-align:bottom; line-height:21px; }
+    ul.menu li a { color:#5C0075; font-weight:bold; padding:0px 10px; font-size:16px;
+     background:#F4EEF7; line-height:21px; border-width:1px 0; border-style:solid;
+     border-color:#F4EEF7; }
 
 /* tabbed menu */
 table#toc-menu {border:0 none;font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif;text-transform:uppercase;
