@@ -11,6 +11,11 @@ div.imbedded-table-tooltip {
     font-weight: bold;
 }
 
+.imbedded-count-displayer {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
