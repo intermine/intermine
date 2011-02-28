@@ -170,8 +170,10 @@ public class GoConverter extends BioFileConverter
             String taxonId = parseTaxonId(array[12]);
             Config config = configs.get(taxonId);
             if (config == null) {
-                throw new NullPointerException("No entry for organism with taxonId = '"
-                        + taxonId + "' found in config file.");
+                config = new Config("primaryIdentifier", null, "gene");
+                configs.put(taxonId, config);
+                LOG.error("No entry for organism with taxonId = '"
+                        + taxonId + "' found in go-annotation config file.  Using default");
             }
             int readColumn = config.readColumn();
             String productId = array[readColumn];
