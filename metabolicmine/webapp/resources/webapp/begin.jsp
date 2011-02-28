@@ -203,8 +203,8 @@
                 alt="metabolicMine Templates" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>Templates</h2>
-                <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
-                provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
+                <p>Our predefined <strong>template searches</strong> are designed around the common tasks performed by our Biologist Community.
+                Templates provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
                 <p>Templates cover common questions like:</p>
                 <ul>
                     <li>I have a List of SNPs - do any of them affect Genes?</li>
@@ -246,11 +246,11 @@
                 <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of metabolicMine.</p>
                 <p>Its advanced interface lets you:</p>
                 <ul>
-                  <li>Construct your own custom queries
-                  <li>Modify your previous queries
+                  <li>Construct your own custom searches
+                  <li>Modify your previous searches
                   <li>You can even edit our predefined Templates.
                 </ul>
-                <p>The easiest way to get started with QB is by editing one of our pre-existing Template queries.
+                <p>The easiest way to get started with QB is by editing one of our pre-existing Template searches.
                 Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong> to see how to change a Template output or add a filter.</p>
 
                 <p>You can access QueryBuilder from the Tab bar, located at the top of every page.</p>
@@ -366,9 +366,9 @@
                   <div class="image">
                     <img src="images/icons/templates-64.png" alt="Templates" />
                   </div>
-                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
+                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Searches</a></h3>
                   <div style="clear:both;"> </div>
-                  <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
+                  <p>Get started with <strong>powerful searches</strong> using our predefined Templates. These customizable templates have been
                   designed around common tasks performed by our biologist community.</p>
                   <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
               </div>
