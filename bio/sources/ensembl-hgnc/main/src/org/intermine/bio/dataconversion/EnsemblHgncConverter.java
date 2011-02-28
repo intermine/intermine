@@ -93,7 +93,7 @@ public class EnsemblHgncConverter extends BioFileConverter
         if (currentFile.getName().startsWith("ensembl_hgnc")) {
            processHgncSymbols(reader);
         } else if (currentFile.getName().startsWith("ensembl_entrez"))  {
-            processEntrezIds(reader);
+            //processEntrezIds(reader);
         }
         else {
             throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
