@@ -25,8 +25,8 @@
       </thead>
       <tbody>
 
-        <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow">
-          <tr>
+        <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow" varStatus="status">
+          <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if>>
             <c:forEach items="${resultElementRow}" var="resultElementColumn">
               <c:choose>
                 <c:when test="${!empty resultElementColumn}">

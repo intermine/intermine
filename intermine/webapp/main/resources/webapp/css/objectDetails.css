@@ -1,9 +1,9 @@
 /* override default InterMine here */
 .attributeField { color:inherit; }
-table.refSummary thead tr td { background-color:inherit; border-bottom:inherit; border-right:inherit; }
-table.refSummary { border-left:inherit; border-top:inherit; width:inherit; }
-table.refSummary tbody tr td { background-color:inherit; border-bottom:inherit; border-right:inherit; padding:inherit; }
-.value { font-family:inherit; font-size:inherit; }
+table.refSummary thead tr td { background-color:inherit; border-bottom:0; border-right:0; }
+table.refSummary { border:0 !important; width:0; }
+table.refSummary tbody tr td { background-color:#FFF; border-bottom:0; border-right:0; padding:6px; }
+.value { font-family:'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; font-size:12px; }
 table.results tfoot tr td { background-color:#FFF !important; }
 table.results tr.odd td { border-bottom:inherit !important; border-right:inherit !important; }
 table.results th { color:inherit !important; border-right:inherit !important; }
@@ -13,7 +13,7 @@ table.refSummary td { text-align:left !important; }
 #content li { margin-left:0 !important; }
 div.table h3 a { color:inherit !important; }
 div.table h3 a:hover { text-decoration:none; }
-div.table h3 a span.collectionField { color:inherit !important; }
+div.table h3 a span.collectionField { color:#5C0075 !important; }
 div.table h3 a img { padding-right:4px; }
 div.table h3 a { cursor:text; }
 div.templateDetails { height:auto !important; margin-left:auto !important; }
