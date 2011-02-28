@@ -311,6 +311,8 @@ public class InlineResultsTable
     /**
      *
      * @return true if the table has more than one Type of object
+     * @see bear in mind that this method will return true if there are different Types in the
+     *  whole table, not just the "30" odd rows subset!
      */
     public Boolean getHasMoreThanOneType() {
         return (getListOfTypes().size() > 1);
@@ -462,7 +464,7 @@ public class InlineResultsTable
             String className = null;
 
             // create a row of elements
-            List columnList = new ArrayList<Object>();
+            InlineResultsTableRow columnList = new InlineResultsTableRow();
             for (int j = 0; j < columnsSize; j++) {
                 try {
                     FieldConfig fc = getTableFieldConfigs().get(j);
@@ -474,6 +476,7 @@ public class InlineResultsTable
                     if (isThisFieldConfigInThisObject(clazz, fc)) {
                         // resolve class name
                         className = DynamicUtil.getSimpleClass((InterMineObject) o).getSimpleName();
+                        columnList.setClassName(className);
                         // form a new path
                         path = new Path(model, className + '.' + column);
 

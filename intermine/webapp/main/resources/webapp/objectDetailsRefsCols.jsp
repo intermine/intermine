@@ -71,7 +71,7 @@
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
           <span class="collectionField">
-            ${collection.size} ${fieldName} of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}
+            ${collection.size} ${fieldName}<!--  of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
           <c:forEach items="${object.clds}" var="cld">
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
