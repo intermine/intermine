@@ -272,7 +272,7 @@ function showMoreRows(e, round) {
   });
 
   // scroll to
-  jQuery(e + ' table').parent().find('p.toggle').scrollTo('slow', 'swing', -20);
+  //jQuery(e + ' table').parent().find('p.toggle').scrollTo('slow', 'swing', -20);
 
   // if the count is > 0 (< 30 entries) or 3rd round (30+ entries) at this
   // point, show a link to table instead

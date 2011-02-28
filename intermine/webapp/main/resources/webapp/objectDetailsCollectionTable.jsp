@@ -28,8 +28,8 @@
 
         <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow" varStatus="status">
           <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if>>
-            <c:forEach items="${resultElementRow}" var="resultElementColumn" varStatus="rowStatus">
-              <c:if test="${rowStatus.count == 1 && collection.table.hasMoreThanOneType}"><td class="type">${resultElementColumn.className}</td></c:if>
+            <c:forEach items="${resultElementRow.items}" var="resultElementColumn" varStatus="rowStatus">
+              <c:if test="${rowStatus.count == 1 && collection.table.hasMoreThanOneType}"><td class="type">${resultElementRow.className}</td></c:if>
               <c:choose>
                 <c:when test="${!empty resultElementColumn}">
                   <c:choose>
