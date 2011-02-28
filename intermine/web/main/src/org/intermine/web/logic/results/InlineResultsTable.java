@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -368,4 +369,5 @@ public class InlineResultsTable
     public List getResultsAsList() {
         return resultsAsList;
     }
+
 }

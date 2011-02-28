@@ -290,7 +290,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
 #actions div.image { float:left; background:url("../themes/metabolic/icons/shade.png") no-repeat bottom; float:left; margin-top:6px;
   margin-left:14px; z-index:10; position:relative; padding-bottom:18px; }
 #actions p { padding:0 16px 0 24px; margin:20px 0 13px 0; font-size:13px; }
-#actions h3 a { color:#FFF; text-decoration:none; }
+#actions h3 a { color:#FFF; text-decoration:none; letter-spacing:-0.5px; }
 
 #actions div.search h3 { background:#FB641E; }
 #actions div.search h3 a, #actions div.search h3 a:visited { color:#FFF; }

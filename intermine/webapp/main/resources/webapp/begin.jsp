@@ -301,7 +301,7 @@
         var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
     }
 
-    var placeholder = '<c:out value="${WEB_PROPERTIES['quickSearch.identifiers']}" />';
+    var placeholder = '<c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" />';
     var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
     var inputToggleClass = 'eg';
 
