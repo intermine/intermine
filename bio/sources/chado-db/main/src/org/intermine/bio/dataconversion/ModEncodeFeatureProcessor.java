@@ -738,15 +738,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
 
-            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
-                // in some cases (~ 60000, waterston) the value for dcpm is
-                // 'nan' or 'na' instead of a decimal number or .na
-                previousId = id;
-                continue;
-            }
-            if (property.equalsIgnoreCase("dcpm") &&
-                    StringUtils.isNumeric(StringUtils.split(propValue, '.')[1])) {
-                // ... or .na
+//            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
+//                // in some cases (~ 60000, waterston) the value for dcpm is
+//                // 'nan' or 'na' instead of a decimal number or .na
+//                previousId = id;
+//                continue;
+//            }
+            // check if dcpm is a decimal number
+            if (property.equalsIgnoreCase("dcpm")
+                    && !StringUtils.containsOnly(propValue, ".0123456789")) {
+                // in some cases (waterston) the value for dcpm is
+                // 'nan' or 'na' or '.na' instead of a decimal number
                 previousId = id;
                 continue;
             }
