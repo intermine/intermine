@@ -18,6 +18,7 @@
     <table border="0" cellspacing="0" class="refSummary" align="left">
       <thead style="text-align: center">
         <tr>
+          <c:if test="${collection.table.hasMoreThanOneType}"><td>Class</td></c:if>
           <c:forEach items="${collection.table.tableFieldConfigs}" var="fc">
             <td>${fc.fieldExpr}</td>
           </c:forEach>
@@ -27,7 +28,8 @@
 
         <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow" varStatus="status">
           <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if>>
-            <c:forEach items="${resultElementRow}" var="resultElementColumn">
+            <c:forEach items="${resultElementRow}" var="resultElementColumn" varStatus="rowStatus">
+              <c:if test="${rowStatus.count == 1 && collection.table.hasMoreThanOneType}"><td class="type">${resultElementColumn.className}</td></c:if>
               <c:choose>
                 <c:when test="${!empty resultElementColumn}">
                   <c:choose>

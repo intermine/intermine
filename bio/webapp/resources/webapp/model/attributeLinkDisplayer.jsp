@@ -47,24 +47,26 @@
 </div>
 
 <%-- show xrefs --%>
-<div class="inner">
-  <h4>Lookup Report</h4>
-  <ul>
-    <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
-      <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
-       <c:forEach var="xref" items="${xrefCol.value.table.resultsAsList}">
-         <c:forEach var="xrefMapItem" items="${xrefMap}">
-           <c:if test="${xrefMapItem.key == xref.source.name}">
-             <li>
-               <a target="_new" href="${xrefMapItem.value.url}${xref.identifier}">${xref.source.name}: ${xref.identifier}
-                 <img title="${xref.source.name}: ${xref.identifier}" src="images/ext_link.png">
-               </a>
-             </li>
-           </c:if>
+<c:if test="${displayObject.refsAndCollections.count > 0}">
+  <div class="inner">
+    <h4>Lookup Report</h4>
+    <ul>
+      <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
+        <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
+         <c:forEach var="xref" items="${xrefCol.value.table.resultsAsList}">
+           <c:forEach var="xrefMapItem" items="${xrefMap}">
+             <c:if test="${xrefMapItem.key == xref.source.name}">
+               <li>
+                 <a target="_new" href="${xrefMapItem.value.url}${xref.identifier}">${xref.source.name}: ${xref.identifier}
+                   <img title="${xref.source.name}: ${xref.identifier}" src="images/ext_link.png">
+                 </a>
+               </li>
+             </c:if>
+           </c:forEach>
          </c:forEach>
-       </c:forEach>
-      </c:if>
-    </c:forEach>
-  </ul>
-</div>
+        </c:if>
+      </c:forEach>
+    </ul>
+  </div>
+</c:if>
 <!-- /attributeLinkDisplayer.jsp -->

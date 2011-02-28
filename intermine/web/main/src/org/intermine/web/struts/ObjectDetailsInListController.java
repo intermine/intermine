@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.web.logic.results.ObjectDetailsInList;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -45,9 +46,13 @@ public class ObjectDetailsInListController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
+
         Collection<InterMineBag> bagsWithId =
             bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));
-        request.setAttribute("bagsWithId", bagsWithId);
+        // wrap around
+        ObjectDetailsInList odil = new ObjectDetailsInList(bagsWithId);
+
+        request.setAttribute("bagsWithId", odil);
         return null;
     }
 }

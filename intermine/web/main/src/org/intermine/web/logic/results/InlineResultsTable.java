@@ -310,6 +310,14 @@ public class InlineResultsTable
 
     /**
      *
+     * @return true if the table has more than one Type of object
+     */
+    public Boolean getHasMoreThanOneType() {
+        return (getListOfTypes().size() > 1);
+    }
+
+    /**
+     *
      * @return a list of (all) FieldConfigs/Columns for this table
      */
     public List<FieldConfig> getTableFieldConfigs() {

@@ -13,6 +13,7 @@ package org.intermine.web.logic.results;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 
 /**
@@ -60,6 +61,14 @@ public class InlineTableResultElement extends ResultElement
      */
     public Boolean getIsKeyField() {
         return keyField;
+    }
+
+    /**
+     *
+     * @return a class name so we can display what kind of object, in a Collection, this is
+     */
+    public String getClassName() {
+        return DynamicUtil.getSimpleClass((InterMineObject) imObj).getSimpleName();
     }
 
 }

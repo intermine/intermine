@@ -167,6 +167,7 @@ jQuery(window).scroll(function() {
 
 <div class="container_12">
 
+<%--
 <p class="description grid_12"><img
   src="model/images/report_page/question-mark.png" alt="info">Summary
 represents a lorem ipsum dolor sit amet nunc eros felis, porta quis
@@ -177,7 +178,6 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 
 <div class="clear">&nbsp;</div>
 
-<%--
     <div class="box grid_8">
         <h3>Quick Links</h3>
         <div class="inner">
@@ -226,6 +226,13 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
       <tiles:put name="objectid" value="${object.id}"/>
     </tiles:insert>
   </div>
+
+  <h3>Other Mines</h3>
+  <ul>
+    <li><a href="#">RatMine</a></li>
+    <li><a href="#">YeastMine</a></li>
+    <li><a href="#">ZebraMine</a></li>
+  </ul>
 </div>
 
 <div class="box grid_9">
