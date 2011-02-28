@@ -6,19 +6,19 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- objectDetailsInList.jsp -->
-<c:if test="${(!empty bagsWithId) || (! empty PROFILE.savedBags)}">
+<c:if test="${(bagsWithId.count > 0) || (! empty PROFILE.savedBags)}">
   <div class="heading">
     Lists
   </div>
 
 <div class="body" style="padding:10px;border:1px #CCC solid">
-<c:if test="${! empty bagsWithId}">
+<c:if test="${bagsWithId.count > 0}">
 <div>
       Lists in which this
       <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
       </c:forEach> can be found:
-      <c:forEach items="${bagsWithId}" var="interMineBag" varStatus="status">
+      <c:forEach items="${bagsWithId.collection}" var="interMineBag" varStatus="status">
         <c:if test="${status.count > 2}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
       </c:forEach>
 </div>

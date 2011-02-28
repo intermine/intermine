@@ -17,9 +17,11 @@
 
 <c:forEach items="${displayObject.clds}" var="cld">
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
+    <!--
     <c:if test="${heading == true}">
         <h3>Further information for this ${cld.unqualifiedName}</h3>
     </c:if>
+    -->
 
     <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[placement]}" var="displayer">
       <c:if test="${(empty showOnLeft && displayer.showOnLeft == 'false') || (showOnLeft == displayer.showOnLeft)}">

@@ -18,6 +18,7 @@ div.table h3 a img { padding-right:4px; }
 div.table h3 a { cursor:text; }
 div.templateDetails { height:auto !important; margin-left:auto !important; }
 .body, .disclosure { margin:auto !important; }
+#in-lists { margin-bottom:20px; }
 
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
@@ -89,6 +90,7 @@ table#toc-menu td.active span,table#menu td.active span,x:-moz-any-link,x:defaul
 /* content */
 #content p.description { font-size:13px; line-height:19px; margin:20px 0; }
     #content p.description img { vertical-align:bottom; padding:0 6px 0 0; }
+div.container_12 { padding-top:30px; }
 
 /* generic box */
 div.box { font-size:12px; }
