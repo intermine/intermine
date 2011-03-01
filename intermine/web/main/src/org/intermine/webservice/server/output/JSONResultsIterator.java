@@ -41,9 +41,9 @@ public class JSONResultsIterator implements Iterator<JSONObject>
     private static final String ID_KEY = "objectId";
     private static final String ID_FIELD = "id";
 
-    private ExportResultsIterator subIter;
+    private final ExportResultsIterator subIter;
     private List<ResultElement> holdOver;
-    private List<Path> viewPaths = new ArrayList<Path>();
+    private final List<Path> viewPaths = new ArrayList<Path>();
     protected transient Map<String, Object> currentMap;
     protected transient List<Map<String, Object>> currentArray;
     private Model model;
@@ -62,6 +62,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
+    @Override
     public boolean hasNext() {
         if (subIter.hasNext() || holdOver != null) {
             return true;
@@ -69,6 +70,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         return false;
     }
 
+    @Override
     public JSONObject next() {
         Map<String, Object> nextJsonMap = new HashMap<String, Object>();
         Integer lastId = null;
@@ -177,23 +179,44 @@ public class JSONResultsIterator implements Iterator<JSONObject>
     protected void setOrCheckClassAndId(ResultElement cell, Path path,
             Map<String, Object> jsonMap) {
 
+        setOrCheckClass(cell, path, jsonMap);
+        setOrCheckId(cell, jsonMap);
+    }
+
+    /**
+     * Set the class, or if one is already set on the map, check that this one is valid for it.
+     * @param cell The result element
+     * @param path The path it represents
+     * @param jsonMap The map to set it onto
+     */
+    protected void setOrCheckClass(ResultElement cell, Path path, Map<String, Object> jsonMap) {
         String thisType = path.getLastClassDescriptor().getUnqualifiedName();
         if (jsonMap.containsKey(CLASS_KEY)) {
             String storedType = (String) jsonMap.get(CLASS_KEY);
-            if (!aIsaB(thisType, storedType)) {
+            if (!aIsaB(cell.getType(), storedType)) {
                 throw new JSONFormattingException(
                     "This result element (" + cell + ") does not belong on this map (" + jsonMap
                     + ") - classes don't match (" + cell.getType() + " ! isa "
                     + jsonMap.get(CLASS_KEY) + ")");
             }
-        } else if (isCellValidForPath(cell, path)) {
-            jsonMap.put(CLASS_KEY, thisType);
+        }
+
+        if (isCellValidForPath(cell, path)) {
+            jsonMap.put(CLASS_KEY, cell.getType());
         } else {
             throw new JSONFormattingException(
                     "This result element (" + cell + ") does not match its column because: "
                     + "classes not compatible " + "(" + thisType + " is not a superclass of "
                     + cell.getType() + ")");
         }
+    }
+
+    /**
+     * Set the id, or if one is already set, check that it matches the one on the map.
+     * @param cell The result element.
+     * @param jsonMap The map to set it onto,
+     */
+    protected void setOrCheckId(ResultElement cell, Map<String, Object> jsonMap) {
         if (jsonMap.containsKey(ID_KEY)) {
             if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
                 throw new JSONFormattingException(
@@ -204,7 +227,6 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         } else {
             jsonMap.put(ID_KEY, cell.getId());
         }
-
     }
 
     private void addCellToJsonMap(ResultElement cell, Path column,
@@ -413,6 +435,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         currentMap = null;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not implemented in this class");
     }
