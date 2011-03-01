@@ -738,12 +738,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
 
-//            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
-//                // in some cases (~ 60000, waterston) the value for dcpm is
-//                // 'nan' or 'na' instead of a decimal number or .na
-//                previousId = id;
-//                continue;
-//            }
             // check if dcpm is a decimal number
             if (property.equalsIgnoreCase("dcpm")
                     && !StringUtils.containsOnly(propValue, ".0123456789")) {
@@ -753,12 +747,12 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 continue;
             }
             if (!EL_KNOWN_ATTRIBUTES.contains(property)) {
-                LOG.warn("ExpressionLevel for feature_id = " + featureId
+                LOG.debug("ExpressionLevel for feature_id = " + featureId
                         + " has unknown attribute " + property);
                 previousId = id;
                 continue;
             }
-            
+
             level.setAttribute(getPropName(property), propValue);
             previousId = id;
         }
