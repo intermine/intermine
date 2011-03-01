@@ -135,6 +135,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 int chrStart = Math.min(start, end);
                 int chrEnd = Math.max(start, end);
 
+                if (currentSnp == null) {
+                    LOG.error("currentSNP is null.  vf.variation_feature_id: "
+                            + res.getString("variation_feature_id") + " rsNumber: " + rsNumber
+                            + " previousRsNumber: " + previousRsNumber + " storeSnp: " + storeSnp);
+                }
+
                 String chrLocStr = chrName + ":" + chrStart;
                 if (!seenLocsForSnp.contains(chrLocStr)) {
                     seenLocsForSnp.add(chrLocStr);
@@ -428,7 +434,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
 
-        String query = "SELECT vf.variation_name, vf.allele_string, "
+        String query = "SELECT vf.variation_feature_id, vf.variation_name, vf.allele_string, "
             + " sr.name,"
             + " vf.map_weight, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
             + " s.name,"
