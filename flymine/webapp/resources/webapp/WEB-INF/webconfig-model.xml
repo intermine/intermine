@@ -816,7 +816,7 @@
                                  label="Publication"
                                  description="Publications enriched for genes in this list."
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 typeClass="org.intermine.model.bio.Gene"
+                                 typeClass="org.intermine.model.bio.SequenceFeature"
                                  externalLinkLabel="PubMed:" />
 
       <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"

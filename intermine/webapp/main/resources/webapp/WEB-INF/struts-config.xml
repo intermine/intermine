@@ -108,8 +108,6 @@
     </action>
     <action path="/exportQuery" type="org.intermine.web.struts.ExportQueryAction">
     </action>
-    <action path="/tips" forward="tips.page">
-    </action>
     <action path="/aspects" forward="aspects.page">
     </action>
     <action path="/dataCategories" forward="dataCategories.page">
@@ -360,9 +358,6 @@
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
-    <action path="/tip" type="org.intermine.web.struts.TipAction">
-      <forward name="display" path="tip.page"/>
-    </action>
     <action path="/addColumn" type="org.intermine.web.struts.AddColumnAction" name="emptyForm" validate="false">
         <forward name="results" redirect="true" path="/results.do"/>
     </action>
@@ -431,8 +426,6 @@
     <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
-    </action>
-    <action path="/initTip" type="org.intermine.web.struts.TipController">
     </action>
     <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
     </action>

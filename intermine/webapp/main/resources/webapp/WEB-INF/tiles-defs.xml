@@ -127,14 +127,6 @@
     <put name="body" value="bagDetails.tile"/>
     <put name="pageName" value="bagDetails"/>
   </definition>
-  <definition name="tip.page" extends="layout.template">
-    <put name="body" value="tipDisplayer.tile"/>
-    <put name="pageName" value="tip"/>
-  </definition>
-    <definition name="tips.page" extends="layout.template">
-    <put name="body" value="tips.tile"/>
-    <put name="pageName" value="tips"/>
-  </definition>
   <definition name="aspects.page" extends="layout.template">
     <put name="body" value="aspects.tile"/>
     <put name="pageName" value="aspects"/>
