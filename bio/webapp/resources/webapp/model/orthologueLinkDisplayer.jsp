@@ -1,36 +1,105 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
-
-<script type="text/javascript" charset="utf-8">
-function getInterMineOrthologueLinks(mine, organisms) {
-    AjaxServices.getInterMineOrthologueLinks(mine, organisms, function(mines) {
-        jQuery('#intermine_orthologue_links').html(mines);
-        jQuery('#intermine_orthologue_links_' + mine + '_waiting').hide();
-    });
-}
-</script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- orthologueLinkDisplayer.jsp -->
 
-<h2>View orthologues in other InterMines:</h2>
+<form id="orthologueLinkForm" name="orthologueLinkForm" target="_blank">
 
-<tiles:importAttribute />
-
-<form name="intermine_orthologue_links_form" method="post">
+    <input type="hidden" id="originalExternalids" name="originalExternalids" value="${identifierList}"/>
     <input type="hidden" id="externalids" name="externalids" value="${identifierList}"/>
     <input type="hidden" id="class" name="class" value="${bag.type}"/>
-</form>
 
-<c:forEach items="${mines}" var="mine">
-    <div id="intermine_orthologue_links_${mine}_waiting"><img src="images/wait30.gif" title="Searching..."/></div>
-    <div id="intermine_orthologue_links_${mine}"/><br>
-      <script type="text/javascript" charset="utf-8">
-        getInterMineOrthologueLinks('${mine}', '${organisms}');
-      </script>
+<table class="lookupReport" cellspacing="5" cellpadding="0">
+
+
+  <c:forEach var="mineEntry" items="${mines}" varStatus="status">
+
+    <c:set var="mine" value="${mineEntry.key}"/>
+    <c:set var="orthologuesToDatasets" value="${mineEntry.value}"/>
+    <c:set var="imageName" value="${mine.logo}"/>
+    <c:set var="mineName" value="${mine.name}"/>
+
+    <tr>
+    <td align="right">
+        <c:if test="${!empty imageName}">
+         <a href="#orthologue_link_${status.count}" onclick="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');" title="${mineName}" class="boxy" >
+               <html:img src="model/images/${imageName}" title="${mineName}"/>
+         </a>
+        </c:if>
+    </td>
+    <td>
+        <a href="#orthologue_link_${status.count}" onclick="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');" title="${mineName}" class="boxy" >
+            ${mineName}&nbsp;<img src="images/ext_link.png" title="${mineName}"/>
+        </a>
+
+    <%-- orthologue link popup --%>
+
+    <div id="orthologue_link_${status.count}" style="display:none;">
+
+        You are exporting your list to ${mineName}
+        <br/><br/>
+        <table>
+        <tr>
+            <td valign="top"><b>Orthologues</b></td>
+            <td valign="top">
+            <span id="orthologueSelect${status.count}" style="float:left;">
+            <select name="orthologueDatasets${status.count}" id="orthologueDatasets${status.count}" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
+            <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
+                <c:set var="orthologue" value="${entry.key}"/>
+                <c:set var="datasets" value="${entry.value}"/>
+                <c:set var="localMapping" value="${datasets.localDataSetsString}"/>
+                <c:set var="remoteMapping" value="${datasets.remoteDataSetsString}"/>
+                <option value="${localMapping}|${remoteMapping}" <c:if test="${mine.defaultOrganismName == orthologue}">selected</c:if>>${orthologue}</option>
+            </c:forEach>
+            </select>
+            </span>
+            <%-- if there is only one option, just display organism instead of a dropdown select box --%>
+            <span id="orthologueSelectDisplay${status.count}" style="display:none;float:left;">
+            ${mine.defaultOrganismName}
+            </span>
+            </td>
+        </tr>
+        <tr>
+           <td valign="top"><b>Mapping</b></td>
+           <td valign="top">
+
+                <c:set var="remoteChecked" value="false"/>
+                <c:set var="localChecked" value="false"/>
+
+           <c:if test="${mine.defaultMapping == 'remote'}"><c:set var="remoteChecked" value="true"/></c:if>
+           <c:if test="${mine.defaultMapping == 'local'}"><c:set var="localChecked" value="true"/></c:if>
+
+                <span id="orthologueMappingRemoteRadio${status.count}" style="float:left;"><input type="radio" id="orthologueMapping${status.count}Remote" name="orthologueMapping${status.count}" checked="${remoteChecked}" value="remote"></span><span id="orthologueMappingRemoteLabel${status.count}" style="float:left;">${mineName}</span>
+                <span id="orthologueMappingLocalRadio${status.count}" style="float:left;"><input type="radio" id="orthologueMapping${status.count}Local" name="orthologueMapping${status.count}" checked="${localChecked}" value="local"></span><span id="orthologueMappingLocalLabel${status.count}" style="float:left;">${WEB_PROPERTIES['project.title']}</span>
+           </td>
+        </tr>
+        </table>
+        <br/><br/>
+
+        <input type="button" name="submitButton${status.count}" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
+        <input type="hidden" id="orthologue${status.count}" name="orthologue${status.count}" value="${mine.defaultOrganismName}"/>
+        <input type="hidden" id="formAction${status.count}" name="formAction${status.count}" value="${mine.url}/portal.do"/>
+
+    </div>
+    </td>
+    </tr>
 </c:forEach>
+</table>
+ </form>
+
+
+<script type="text/javascript" charset="utf-8">
+<!--//<![CDATA[
+    jQuery(document).ready(function(){
+        jQuery(".boxy").boxy();
+    });
+
+    function newBoxy(index) {
+        new Boxy(jQuery('#orthologue_link_' + index), {title: "Constraint for ", unloadOnHide: true});
+    }
+
+//]]>-->
+</script>
+
 <!-- /orthologueLinkDisplayer.jsp -->
