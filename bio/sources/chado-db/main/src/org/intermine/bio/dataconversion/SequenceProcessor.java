@@ -45,7 +45,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.xml.sax.SAXException;
 
 
 /**
