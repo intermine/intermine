@@ -74,7 +74,8 @@ public class JSONRowIterator implements Iterator<JSONArray>
             if (im.getLinkRedirector() != null) {
                 mapping.put(CELL_KEY_URL,
                     im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject()));
-            } else {
+            }
+            if (mapping.get(CELL_KEY_URL) == null) {
                 mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsPath(cell));
             }
             mapping.put(CELL_KEY_VALUE, cell.getField());
