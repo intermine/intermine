@@ -213,7 +213,7 @@ IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
-#SOURCES=flyrnai-screens
+#SOURCES=worm-network
 fi
 
 
@@ -387,7 +387,13 @@ do
     gzip -S .chadoxml -d $sub
     mv $DCCID $MIRROR/$1/$sub
   	FOUND=y
+    
+    if [ "$sub" = "2745.chadoxml" ]
+    then
+    changeFeatType $MIRROR/$1/$sub > $LOADDIR/$sub
+    else
     dewiggle $MIRROR/$1/$sub > $LOADDIR/$sub
+    fi
 
     if [ -n "$2" ]
     then
@@ -600,6 +606,12 @@ function dewiggle {
 # put the slimmed file in load directory
 sed '/<wiggle_data id/,/<\/wiggle_data>/d' $1 | sed '/<data_wiggle_data/,/<\/data_wiggle_data>/d'
 }
+
+function changeFeatType {
+# needed to deal with piano 2745 (mRNA->transcript)    
+sed 's/<name>mRNA</<name>transcript</g' $1 | sed 's/<accession>0000234</<accession>0000673</g'   
+}
+
 
 function doProjectList {
 #--------------------------------------------------
