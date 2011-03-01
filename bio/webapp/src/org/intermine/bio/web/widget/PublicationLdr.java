@@ -16,9 +16,9 @@ import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Publication;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -65,7 +65,7 @@ public class PublicationLdr extends EnrichmentWidgetLdr
     public Query getQuery(String action, List<String> keys) {
 
         // classes for FROM clause
-        QueryClass qcGene = new QueryClass(SequenceFeature.class);
+        QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPub = new QueryClass(Publication.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
