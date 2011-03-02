@@ -74,12 +74,6 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
-    </fields>
-  </class>
-
  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="feature.primaryIdentifier"/>
