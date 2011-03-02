@@ -24,6 +24,7 @@ public class InlineResultsTableRow
     @SuppressWarnings("unchecked")
     List columnList = new ArrayList<Object>();
     String className = null;
+    Integer imObjId;
 
     /**
      * Add an InlineTableResultElement or an empty String
@@ -57,6 +58,24 @@ public class InlineResultsTableRow
      */
     public String getClassName() {
         return className;
+    }
+
+    /**
+     * Set imObj ID for the object (taken from the first valid imObj id for this row)
+     * @param id imObj id
+     */
+    public void setObjectId(Integer id) {
+        this.imObjId  = id;
+    }
+
+    /**
+     * Used from JSP
+     *
+     * @see getResultElementRows() in InlineResultsTable as to how this is set
+     * @return InterMine Object id
+     */
+    public Object getObjectId() {
+        return (imObjId != null) ? imObjId : "Not implemented";
     }
 
 }
