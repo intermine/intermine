@@ -270,16 +270,17 @@ public abstract class WebService
     }
 
     private void logError(Throwable t, String msg, int code) {
-        if (code == Output.SC_INTERNAL_SERVER_ERROR) {
-            logger.error(
-                    "Service failed by internal error. Request parameters: \n"
-                            + requestParametersToString(), t);
-        } else {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(b);
-            t.printStackTrace(ps);
-            ps.flush();
 
+        // Stack traces for all!
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(b);
+        t.printStackTrace(ps);
+        ps.flush();
+
+        if (!(t instanceof NullPointerException) && (code == Output.SC_INTERNAL_SERVER_ERROR)) {
+            logger.error("Service failed by internal error. Request parameters: \n"
+                            + requestParametersToString() + b.toString());
+        } else {
             logger.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code) + "\n" + b.toString());
         }
@@ -354,7 +355,7 @@ public abstract class WebService
         sb.append(string);
         sb.append("</message>");
     }
- 
+
     /**
      * Returns true if the format requires the count, rather than the full or
      * paged result set.
