@@ -2,85 +2,32 @@
 
 =head1 NAME
 
-Webservice::InterMine::Cookbook::Templates::Recipe2 - Authoring Templates
-
-=head1 NOT IMPLEMENTED YET
-
-The features this section describes have B<not yet been implemented>. Please
-check back regularly at L<http://www.intermine.org> to hear news of when
-we release web-service user authentication.
+Webservice::InterMine::Cookbook::Templates::Recipe2 - Logging in to access your templates
 
 =head1 SYNOPSIS
 
   use Webservice::InterMine ('www.flymine.org/query/service', $user, $pass);
 
-  my $query = Webservice::InterMine->new_query;
-
-  # define query here;
-
-  $query->save_as_template(
-      name  => 'Gene_To_Cure_For_Cancer',
-      title => 'From a Gene Find the Cure for Cancer',
-      description => 'Find the cure for cancer given a specific gene',
-  );
-
+  ## Run your super secret private template gene -> cure for cancer
   my $template = Webservice::InterMine->template('Gene_To_Cure_For_Cancer');
       or die "Could not find template";
-
-  # These methods are only available for templates authored by you
-  $template->get_constraint('B')->hide;   # makes it uneditable, ie. invisible to others
-  $template->get_constraint('C')->unhide; # The converse
-
-  $template->save;
 
   my $results  = $template->results_with(value1 => 'Drosophila melanogaster');
 
 =head1 DESCRIPTION
 
-Any query that you describe in the API can be saved to your userprofile
-at the webservice you are using as a template or saved query (see
-L<Webservice::InterMine::Cookbook::Recipe8>). As long as you have provided your login
+As long as you have provided your login
 information to the service, you will be able to access your saved
-templates, upload new ones, and make changes to the ones you already have.
+templates and lists.
 
-The procedure for saving a query as a template is to call C<save_as_template>
-on it:
-
-  $query->save_as_template;
-
-If there are errors saving the template, an exception will be thrown,
-describing the problem. One potential problem is the name - queries do not
-need one but templates do - if you do not pass one to C<save_as_template>
-the query will attempt to use its own name, and throw an exception if
-it does not have one. If you edit a template and want to 
-
-To edit template specific attributes, such as whether constraints are
-editable or optional, you need to access it as a template, which means
-loading it from the webservice. To change the values for these attributes
-from their default values ('true' for editability and 'locked' for
-switchability) you can call the C<hide> and C<unlock> methods. C<hide>
-makes a constraint un-editable, and C<unlock> means that you can change
-the active state of the constraint. C<unlock> returns the constraint
-object to allow method chaining, as in the example below:
-
-  $template->get_constraint('C')->unlock->switch_off;
-
-The C<unhide> method is available for making a constraint you previously
-set as un-editable editable again.
-
-Any changes you make to the template locally must be updated on the webservice
-by calling C<save> on the template. Again, this will throw an exception if there
-are any issues saving the template.
-
-Once saved, the template can be accessed and used as any other template,
+The template can be accessed and used as any other template,
 both via the API and through the webapp. Don't forget that you can manage your
 templates through the webapp interface, which in many cases might be more
 straightforward than using this programmatic API.
 
 =head1 CONCLUSION
 
-Templates can be uploaded to the web-service, if you have provided your
-login information. This means that these queries will be available
-anywhere that the webservice is.
+If you have set up templates in a webapp, you can access them anywhere by using your login
+details.
 
 =cut

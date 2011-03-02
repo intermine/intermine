@@ -1,4 +1,4 @@
-package Test::Webservice::InterMine::TemplateFactory;
+package Test::Webservice::InterMine::TemplateFactory::TestModel;
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ use base ('Test::Class');
 use Test::More;
 use Test::Exception;
 use Test::MockObject;
-use InterMine::Model;
+use InterMine::Model::TestModel;
 
 sub class {'Webservice::InterMine::TemplateFactory'}
 sub source_file {'t/data/default-template-queries.xml'}
@@ -29,10 +29,7 @@ sub service {
 }
 
 sub model {
-    my $model = InterMine::Model->new(
-	file => 't/data/testmodel_model.xml'
-    );
-    return $model;
+    return InterMine::Model::TestModel->instance;
 }
 
 sub startup : Test(startup => 1) {

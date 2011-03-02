@@ -164,6 +164,36 @@ Returns an arrayref of hashrefs, where the keys are the view columns.
 Returns an arrayref of arrayrefs, where the fields are in the same
 order as the view columns.
 
+=item * jsonobjects
+
+By default returns an arrayref of native perl data structures (hashrefs) which 
+correspond to the data format of InterMine jsonobjects 
+(L<http://www.intermine.org/wiki/JSONObjectFormat>). 
+
+Optionally it can return the jsonobjects processed as:
+
+=over 8
+
+=item * raw: the raw text string
+
+=item * inflate: inflated objects using autoload
+
+The inflated objects allow method access to the internal hash using
+autoloaded accessors, but all objects will be blessed into the same type
+(L<Webservice::InterMine::ResultObject>), so there is no guarantee of 
+interface (other than inspecting the internal hash).
+
+=item * instantiate: real Moose objects
+
+The instantiated objects allow method access to their internal hash using
+true accessors, with type-constraints, inheritance, support for "isa" and 
+"ref", coercion of attributes, delegating collections, 
+and all the other things you would expect from
+a Moose object. Each object will be instantiated as an instance of its
+class (ie. a $gene will be a member of the "Gene" class).
+
+=back
+
 =back
 
 =head2 results_iterator

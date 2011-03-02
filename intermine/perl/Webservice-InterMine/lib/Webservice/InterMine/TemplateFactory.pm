@@ -126,7 +126,7 @@ sub process_xml {
     my $self             = shift;
     my $xml              = shift;
     my @template_strings = $xml =~ m!(<template .*?</template>)!sg;
-    confess "Can't find any template strings in the xml I was passed"
+    confess "Can't find any template strings in the xml I was passed: $xml"
       unless @template_strings;
     for (@template_strings) {
         my $t = eval {

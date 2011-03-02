@@ -6,7 +6,7 @@ use base 'Test::Class';
 use Test::More;
 use Test::Exception;
 use Test::MockObject;
-use InterMine::Model;
+use InterMine::Model::TestModel;
 
 sub class {'Webservice::InterMine::Service'}
 sub fake_queryurl {'fake.url'}
@@ -22,7 +22,7 @@ sub setup :Test(setup) {
 
     # Set up all the mock stuff
 
-    my $model = InterMine::Model->new(file => 't/data/testmodel_model.xml');
+    my $model = InterMine::Model::TestModel->instance;
     $test->{model} = $model;
 
     my $fake_query = Test::MockObject->new;

@@ -5,13 +5,13 @@ NAME
 SYNOPSIS
         use Webservice::InterMine;
 
-        my $service  = Webservice::InterMine->new_service($url);
+        my $service  = Webservice::InterMine->new_service($url, $user, $pass);
         my $template = $service->template($name);
         my $results  = $template->results_with(valueA => 'x', valueB => 'y');
 
       OR
 
-        use Webservice::InterMine 'www.flymine.org';
+        use Webservice::InterMine 'www.flymine.org', $user, $pass;
 
         my $query    = Webservice::InterMine->new_query;
         $query->add_view(@views);
@@ -42,14 +42,34 @@ DESCRIPTION
     recommended.
 
 METHODS
-  new_query( [$url] )
+  new_query( [\@service_args], [%query_args] )
     returns a new query object for you to fill in with constraints before
     being run to get its results. If you pass a url, it constructs a query
     for the specified webservice.
 
     Please see Webservice::InterMine::Query
 
-  template( $name, [$url] )
+  load_query([\@service_args], source_file|source_string => $source, %opts )
+    Returns a query object based on xml you have previously saved, either as
+    a string or as a file. For a file pass:
+
+      load_query(source_file => $file);
+
+    For a string:
+
+      load_query(source_string => $string);
+
+    If you want a specific service, call it thus:
+
+      load_query(service_args => [$name, $user, $pass], source_string => $string);
+
+    OR:
+
+      load_query([$name, $user, $pass], source_string => $string);
+
+    Please see Webservice::InterMine::Query::Saved
+
+  template( $name, [\@service_args], [%opts] )
     returns the named template (if it exists - if not it returns undef). If
     you pass a url, it returns the named template from the specified
     webservice.
@@ -102,7 +122,7 @@ SUPPORT
 
     You can also look for information at:
 
-    *   Webservice::InterMine
+    *   InterMine
 
         <http://www.intermine.org>
 
@@ -111,7 +131,7 @@ SUPPORT
         <http://www.intermine.org/perlapi>
 
 COPYRIGHT AND LICENSE
-    Copyright 2006 - 2010 FlyMine, all rights reserved.
+    Copyright 2006 - 2011 FlyMine, all rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

@@ -7,7 +7,7 @@ with 'Webservice::InterMine::Constraint::Role::Operator';
 use InterMine::TypeLibrary qw(BinaryOperator);
 use MooseX::Types::Moose qw(Str);
 
-has '+op' => ( isa => BinaryOperator, );
+has '+op' => ( isa => BinaryOperator, coerce => 1);
 
 has 'value' => (
     is       => 'ro',
