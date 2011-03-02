@@ -3,11 +3,23 @@ NAME
 
 SYNOPSIS
       use InterMine::Model;
-      use InterMine::ItemFactory;
 
       my $model_file = 'flymine/dbmodel/build/model/genomic_model.xml';
-      my $model = new InterMine::Model(file => $model_file);
-      my $factory = new InterMine::ItemFactory(model => $model);
+      my $model = InterMine::Model->new(file => $model_file);
+      my $gene = $model->make_new(
+        Gene => {
+            primaryIdentifier => "FBgn0004053",
+            secondaryIdentifier => "CG1046",
+            symbol              => "zen",
+            name                => "zerknullt",
+            length              => "3474",
+            organism            => {
+                shortName => "D. melanogaster",
+            }
+            ncbiGeneNumber      => 40828,
+        });
+
+      $gene->getName(); # "zerknullt"
 
       ...
 
@@ -59,6 +71,14 @@ FUNCTIONS
      Function: return the InterMine::Model::ClassDescriptor for the given class or
                undef if the class isn't in the model
      Args    : the classname
+
+  make_new($class_name, [%attributes|$attributes])
+    Return an object of the desired class, with the attributes given
+
+     my $gene = $model->make_new(Gene => {symbol => "zen", organism => {name => 'D. melanogaster}});
+
+     say $gene->get_symbol             # "zen"
+     say $gene->get_organism->get_name # "D. melanogaster"
 
   get_all_classdescriptors
      Title   : get_all_classdescriptors

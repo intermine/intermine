@@ -1,105 +1,16 @@
-package InterMine::Model::Handler;
-
-use Carp qw/confess/;
-use Scalar::Util qw(weaken);
-
-use InterMine::Model::Attribute;
-use InterMine::Model::Reference;
-use InterMine::Model::Collection;
-use InterMine::Model::ClassDescriptor;
-
-sub new {
-    my $class = shift;
-    my $self = ( @_ == 0 ) ? shift : {@_};
-
-    return bless $self, $class;
-}
-
-sub start_element {
-    my $self = shift;
-    my $args = shift;
-
-    $self->{current_element} = $args->{Name};
-
-    my $nameattr = $args->{Attributes}{name};
-
-    if ( $args->{Name} eq "model" ) {
-        $self->{model}{model_name} = $nameattr;
-        my $package_name = $args->{Attributes}{'package'};
-        $self->{model}{package_name} = $package_name;
-    }
-    else {
-        my $model = $self->{model};
-        if ( $args->{Name} eq "class" ) {
-            my @parents = ();
-            if ( exists $args->{Attributes}{extends} ) {
-                @parents = split /\s+/, $args->{Attributes}{extends};
-                @parents = grep { $_ ne 'java.lang.Object' } @parents;
-
-                # strip off any preceding class path (eg. "org.intermine.")
-                map { s/.*\.(.*)/$1/ } @parents;
-            }
-            $self->{current_class} = new InterMine::Model::ClassDescriptor(
-                model   => $model,
-                name    => $nameattr,
-                parents => [@parents]
-            );
-            weaken( $self->{current_class}->{model} );
-        }
-        else {
-            my $field;
-            if ( $args->{Name} eq "attribute" ) {
-                my $type = $args->{Attributes}{type};
-                $field = InterMine::Model::Attribute->new(
-                    name  => $nameattr,
-                    type  => $type,
-                    model => $model
-                );
-            }
-            else {
-                my $referenced_type = $args->{Attributes}{'referenced-type'};
-                my $reverse_reference =
-                  $args->{Attributes}{'reverse-reference'};
-
-                my %args = (
-                    name                 => $nameattr,
-                    referenced_type_name => $referenced_type,
-                    model                => $model
-                );
-                $args{reverse_reference_name} = $reverse_reference
-                  if $reverse_reference;
-
-                if ( $args->{Name} eq "reference" ) {
-                    $field = InterMine::Model::Reference->new(%args);
-                }
-                elsif ( $args->{Name} eq "collection" ) {
-                    $field = InterMine::Model::Collection->new(%args);
-                }
-                else {
-                    confess "unexpected element: ", $args->{Name}, "\n";
-                }
-
-            }
-            $field->field_class( $self->{current_class} );
-            $self->{current_class}->add_field( $field, 'own' );
-        }
-    }
-}
-
-sub end_element {
-    my $self = shift;
-    my $args = shift;
-    if ( $args->{Name} eq 'class' ) {
-        push @{ $self->{classes} }, $self->{current_class};
-        $self->{current_class} = undef;
-    }
-}
-
-1;
-
 package InterMine::Model;
 
-our $VERSION = '0.9401';
+use strict;
+use warnings;
+
+use Carp qw/confess/;
+use Moose::Util::TypeConstraints;
+use XML::Parser::PerlSAX;
+use InterMine::Model::Handler;
+
+use constant TYPE_PREFIX => "InterMine";
+
+our $VERSION = '0.9605';
 
 =head1 NAME
 
@@ -108,97 +19,97 @@ InterMine::Model - the representation of an InterMine model
 =head1 SYNOPSIS
 
   use InterMine::Model;
-  use InterMine::ItemFactory;
 
   my $model_file = 'flymine/dbmodel/build/model/genomic_model.xml';
-  my $model = new InterMine::Model(file => $model_file);
-  my $factory = new InterMine::ItemFactory(model => $model);
+  my $model = InterMine::Model->new(file => $model_file);
+  my $gene = $model->make_new(
+    Gene => {
+        primaryIdentifier => "FBgn0004053",
+        secondaryIdentifier => "CG1046",
+        symbol              => "zen",
+        name                => "zerknullt",
+        length              => "3474",
+        organism            => {
+            shortName => "D. melanogaster",
+        }
+        ncbiGeneNumber      => 40828,
+    });
+
+  $gene->getName(); # "zerknullt"
 
   ...
 
 =head1 DESCRIPTION
 
 The class is the Perl representation of an InterMine data model.  The
-new() method can parse the model file.  The
-get_classdescriptor_by_name() method will return an
+C<new()> method can parse the model file.  The
+C<get_classdescriptor_by_name()> method will return an
 InterMine::Model::ClassDescriptor object for the class with the given
-name.
+name, and the C<make_new()> method will return an instantiated object
+of the given class.
 
 For an example model see:
-http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml
+L<http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml>
 
-=head1 AUTHOR
-
-FlyMine C<< <support@flymine.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<support@flymine.org>.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc InterMine::Model;
-
-You can also look for information at:
-
-=over 4
-
-=item * FlyMine
-
-L<http://www.flymine.org>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=head1 FUNCTIONS
+=head1 CLASS METHODS
 
 =cut
 
-use strict;
-use Carp qw/confess/;
+=head2 new( %options )
 
-=head2 new
+Standard constructor - accepts key/value pairs. Possible options are:
 
- Title   : new
- Usage   : $model = new InterMine::Model(file => $model_file);
-             or
-           $model = new InterMine::Model(string => $model_string);
- Function: return a Model object for the given file
- Args    : file - the InterMine model XML file
+=over 4
+
+=item * source: the source of the xml 
+
+can be a ScalarRef, filehandle, filename, or string (or anything that overloads "")
+(tested in that order)
+
+=item * file: The file to load the model from 
+
+[deprecated - use source instead] 
+
+=item * string: A string containing the xml to load the model from 
+
+[deprecated - use source instead]
+
+=item * origin: Where this model comes from 
+
+usually a mine name - optional
+
+=back
 
 =cut
 
 sub new {
     my $class = shift;
     my %opts  = @_;
+
+    print join('=>', @_) if $ENV{DEBUG};
+
+    my $source = $opts{source} || $opts{file} || $opts{string}
+        or confess "No source passed to $class constructor";
+
     my $self  = {%opts};
 
-    if ( !defined $opts{file} && !defined $opts{string} ) {
-        confess "$class\::new() needs a file or string argument\n";
-    }
-    elsif ( defined $opts{file} && !-f $opts{file} ) {
-        confess "A valid file must be specified: we got $opts{file}\n";
-    }
-
-    $self->{class_hash} = {};
+    $self->{class_hash}   = {};
+    $self->{object_cache} = {};
 
     bless $self, $class;
 
-    #my $self = Object::Destroyer->new($self, 'release');
+    { 
+        no warnings 'newline';
 
-    if ( defined $opts{file} ) {
-        $self->_process( $opts{file}, 0 );
-    }
-    else {
-        $self->_process( $opts{string}, 1 );
+        if      (ref $source eq 'SCALAR') {
+            $self->_process_string($$source);
+        } elsif (ref $source eq 'GLOB') {
+            $self->_process_string(join('', <$source>));
+        } elsif (-r $source || $opts{file}) {
+            $self->_process_file($source);
+        } else {
+            $self->_process_string("$source");
+        }
     }
 
     $self->_fix_class_descriptors();
@@ -206,7 +117,16 @@ sub new {
     return $self;
 }
 
-use XML::Parser::PerlSAX;
+sub _process_string {
+    my ($self, $string) =  @_;
+    return $self->_process($string, 1);
+}
+
+sub _process_file {
+    my ($self, $filename) = @_;
+    -r $filename || confess "Cannot read model source file $filename. Aborting";
+    return $self->_process($filename, 0);
+}
 
 sub _process {
     my $self             = shift;
@@ -227,24 +147,41 @@ sub _process {
 
     $parser->parse( Source => $source );
 
-    $self->{classes} = $handler->{classes};
-
-    for my $class ( @{ $self->{classes} } ) {
-#        my $classname = $class->name();
-        $self->{class_hash}{$class} = $class;
-    }
 }
+
+sub _add_type_constraint_and_coercion {
+    my $self = shift;
+    my $class_name = shift;
+
+    subtype $class_name, as "Object", where {$_->isa($self->{perl_package} . $class_name)};
+    subtype "ArrayOf" . $class_name, as "ArrayRef[$class_name]";
+    coerce $class_name, from 'HashRef', via {
+        $self->make_new(($_->{class} || $class_name), $_);
+    };
+    subtype "ArrayOfHashes", as "ArrayRef[HashRef]";
+
+    coerce "ArrayOf$class_name", from "ArrayOfHashes", 
+        via { [map {$self->make_new(($_->{class} || $class_name), $_)} @$_] };
+}
+
+use Moose::Meta::Class;
 
 # add fields from base classes to sub-classes so that $class_descriptor->fields()
 # returns fields from base classes too
 sub _fix_class_descriptors {
     my $self = shift;
 
+    for my $class_name (keys %{ $self->{class_hash} } ) {
+        $self->_add_type_constraint_and_coercion($class_name);
+    }
+
     while ( my ( $class_name, $cd ) = each %{ $self->{class_hash} } ) {
         my @fields = $self->_get_fields($cd);
         for my $field (@fields) {
             $cd->add_field($field);
         }
+        $cd->_make_fields_into_attributes();
+        $cd->make_immutable;
     }
 }
 
@@ -279,9 +216,12 @@ sub _get_fields {
 sub get_classdescriptor_by_name {
     my $self      = shift;
     my $classname = shift;
+
     if ( !defined $classname ) {
         confess "no classname passed to get_classdescriptor_by_name()\n";
     }
+
+    $classname =~ s/.*:://;
 
     # These are always valid
     if ( $classname eq 'Integer' ) {
@@ -296,6 +236,37 @@ sub get_classdescriptor_by_name {
       || $self->{class_hash}{ $self->{package_name} . $classname };
     confess "$classname not in the model" unless $class;
     return $class;
+}
+
+=head2 make_new($class_name, [%attributes|$attributes])
+
+Return an object of the desired class, with the attributes 
+given
+
+ my $gene = $model->make_new(Gene => {symbol => "zen", organism => {name => 'D. melanogaster}});
+
+ say $gene->get_symbol             # "zen"
+ say $gene->get_organism->get_name # "D. melanogaster"
+
+=cut
+
+sub make_new {
+    my $self = shift;
+    my $name = (ref $_[0] eq 'HASH') ? $_[0]->{class} : shift;
+    my $params = (@_ == 1) ? $_[0] : {@_};
+
+    my $obj = $self->get_classdescriptor_by_name($name)->new_object($params);
+
+    if ($obj->hasObjectId) {
+        if (my $existing = $self->{object_cache}{$obj->getObjectId}) {
+            $existing->merge($obj);
+            return $existing;
+        } else {
+            $self->{object_cache}{$obj->getObjectId} = $obj;
+        }
+    } else {
+        return $obj;
+    }
 }
 
 =head2 get_all_classdescriptors
@@ -336,7 +307,7 @@ sub get_referenced_classdescriptor {
     return undef;
 }
 
-=head2 find_classes_declaring_field
+=head2 find_classes_declaring_field( $name )
 
  Usage    : my @classes = $model->find_classes_declaring_field($str);
  Function : get the class descriptors that declare fields of a certain name  
@@ -385,4 +356,55 @@ sub model_name {
     return $self->{model_name};
 }
 
+=head2 to_xml
+
+Returns a string containing an XML representation of the model.
+
+=cut
+
+sub to_xml {
+    my $self = shift;
+    my $xml = sprintf(qq{<model name="%s" package="%s">\n}, 
+        $self->model_name, $self->package_name);
+
+    for my $cd (sort($self->get_all_classdescriptors())) {
+        $xml .= q[ ] x 2 . $cd->to_xml . "\n";
+    }
+
+    $xml .= "</model>";
+    return $xml;
+}
+
 1;
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::Model
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2006,2007,2008,2009, 2010, 2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+

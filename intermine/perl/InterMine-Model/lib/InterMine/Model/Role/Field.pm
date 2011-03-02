@@ -54,18 +54,32 @@ under the same terms as Perl itself.
            reverse_reference_name - for references and collections, the field
                                     name of the reverse reference
 
-=head2 name
 
- Usage   : $name = $field->name();
- Function: return the name of this field
-
-=cut
+=cut 
 
 package InterMine::Model::Role::Field;
 
 use Moose::Role;
 
 use InterMine::TypeLibrary qw(ClassDescriptor);
+use MooseX::Types::Moose qw(Str);
+use Scalar::Util qw(refaddr);
+
+requires '_get_moose_type';
+
+=head2 name (Str, ro, required)
+
+The name of the descriptor
+
+=cut 
+
+sub name;
+
+has name => (
+    is => 'ro',
+    isa => Str,
+    required => 1,
+);
 
 =head2 field_class
 
@@ -78,7 +92,43 @@ use InterMine::TypeLibrary qw(ClassDescriptor);
 has field_class => (
     is	     => 'rw',
     isa	     => ClassDescriptor,
+    weak_ref => 1,
+    handles => {
+        class_name => 'unqualified_name',
+    },
 );
+
+sub _get_moose_options {
+    my $self = shift;
+    return (isa => $self->_get_moose_type);
+}
+
+sub _type_is {
+    my $self = shift;
+    my $something = shift;
+    if (refaddr($something)) {
+        return (
+            refaddr($self->_get_moose_type)
+            && 
+            refaddr($something) == refaddr($self->_get_moose_type)
+        );
+    } else {
+        return ($something eq $self->_get_moose_type);
+    }
+}
+
+=head1 METHODS 
+
+=head2 to_string
+
+The string representation of a field descriptor, ie. its name
+
+=cut 
+
+sub to_string {
+    my $self = shift;
+    return $self->name;
+}
 
 no Moose;
 
