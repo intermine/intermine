@@ -49,3 +49,6 @@
 
 # Avoid archives of this distribution
 \bInterMine-Model-[\d\.\_]+
+
+# Ignore prove files
+\.prove.*

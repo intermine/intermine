@@ -6,3 +6,32 @@ Revision history for InterMine-Model
 0.9401  Sun Sep 26 13:54:14 BST 2010
         Descriptors now have overloaded string representation: $_->name
 
+0.9600  Tue Feb 22 18:07:12 GMT 2011
+        * ClassDescriptors are now Moose::Meta::Classes too - 
+        allowing direct instantiation of their objects.
+        * The attributes of instantiated objects are type-safe
+0.9601  Wed Feb 23 16:27:05 GMT 2011
+        * Weaken is no longer necessary: it causes warnings.
+        * Finally activated the boilerplate tests
+0.9602  Fri Feb 25 21:00:08 GMT 2011
+        * More documentation
+        * ClassDescriptor->references no longer includes Collections
+        * silenced JSON::Boolean coercion warning with horrible hack
+        * Caching and merging of objects based on objectId - true object identity over graphs
+        * Basic instantiation prototype now an actual class 
+          rather than a bundle of methods (InterMine::Model::Object).
+        * Reimplemented some attributes as methods to save memory
+        * Weakened some circular references to prevent leaks
+0.9603  Mon Feb 28 18:56:16 GMT 2011
+        * Made as much as possible immutable.
+        * Fixed bug with prevented instantiation of more than one model at a time.
+0.9604  Tue Mar  1 11:53:46 GMT 2011
+        * Declared incompatibility with Test::More's 2.0 devel series, until 
+          subtests are deemed safe again
+0.9605  Tue Mar  1 15:12:25 GMT 2011
+        * Misunderstanding about how POD is parsed fixed by putting 
+          the Model::Handler in its own separate file.
+        * Model can now handle more source formats
+        * Supplies a TestModel instance to other consuming packages for testing against
+0.9606  Wed Mar  2 16:36:01 GMT 2011
+        * Models (and their descriptors) can serialise themselves back into xml
