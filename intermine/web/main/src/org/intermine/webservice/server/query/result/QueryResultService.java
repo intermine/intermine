@@ -92,7 +92,7 @@ public class QueryResultService extends WebService
         PathQueryBuilder builder = getQueryBuilder(input.getXml(), request);
 
         PathQuery query = builder.getQuery();
-        setHeaderAttributes(query, input.getStart(), input.getMaxCount(), null);
+        setHeaderAttributes(query, input.getStart(), input.getMaxCount());
         runPathQuery(query, input.getStart(), input.getMaxCount(), null, null,
                 input, null, input.getLayout());
     }
@@ -147,8 +147,7 @@ public class QueryResultService extends WebService
      * @param title The title of this query
      * @param description A description of this query
      */
-    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size,
-            String title) {
+    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         Map<String, String> attributes = new HashMap<String, String>();
         if (formatIsJSON()) {
             // These attributes are always needed
@@ -173,9 +172,7 @@ public class QueryResultService extends WebService
             String countUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT);
             String mineResLink = getMineResultsLinkPath(pq);
 
-            if (title == null) {
-                title = "Query Results";
-            }
+            String title = pq.getTitle();
             String description;
             if (pq.getDescription() == null) {
                 description = pq.toString();
