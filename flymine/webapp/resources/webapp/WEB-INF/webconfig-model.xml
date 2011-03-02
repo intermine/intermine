@@ -56,6 +56,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.CDNAClone">
+    <fields>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.CDS">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -99,6 +106,8 @@
       <fieldconfig fieldExpr="available"/>
     </fields>
   </class>
+
+
 
   <class className="org.intermine.model.bio.Comment">
     <fields>
