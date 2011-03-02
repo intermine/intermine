@@ -76,8 +76,6 @@
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
 
-    var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
-    var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
     var project_title = "${WEB_PROPERTIES['project.title']}";
 
     if (dataNotIncludedMessage != "") {
@@ -98,7 +96,7 @@
           .ajaxError(function(){ jQuery(this).html("ajax error!"); return;});
 
         // use ajax to get network
-        jQuery.post("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/cytoscapeNetworkAjax.do", { fullInteractingGeneSet: '${fullInteractingGeneSet}'}, function(data){
+        jQuery.post("cytoscapeNetworkAjax.do", { fullInteractingGeneSet: '${fullInteractingGeneSet}'}, function(data){
             if (data.match("^"+"No interaction data found from data sources:")) {
                 geneWithNoDatasourceMessage = data; // case: no interaction data found from the data sources
                 jQuery('#cytoWebContent').html(geneWithNoDatasourceMessage)
