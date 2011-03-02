@@ -443,7 +443,9 @@ IMBedding = (function() {
                     if (cell.value) {
                         var a = document.createElement("a");
                         a.target = "_blank";
-                        a.href = this.localiseUrl(cell.url);
+                        if (cell.url) {
+                            a.href = this.localiseUrl(cell.url);
+                        }
                         a.innerHTML = cell.value;
                         tableCell.appendChild(a);
                     } else {

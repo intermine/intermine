@@ -48,12 +48,6 @@ function setActiveStyleSheet(title) {
 function loadTable1() {
     IMBedding.loadTemplate(
         {
-//            name:           "Gene_Identifiers",
-
-//            constraint1:    "Gene.secondaryIdentifier",
-//            op1:            "<",
-//            value1:         "CG1046",
-//            code1:          "A" 
               name: "AnatomyTerm_Alleles",
               constraint1: "Gene.alleles.alleleClass",
               op1: "=",
@@ -78,7 +72,9 @@ function loadTable2() {
             code1:          "A"
         },
         "#positionExample",
-        {baseUrl: flyMineBase}
+        {
+            baseUrl: flyMineBase,
+        }
     );
 }
 function loadTable3a() {
