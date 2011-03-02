@@ -12,7 +12,10 @@ override start_element => sub {
 
     # The extra elements for a template are the head (template)
     if ( $args->{Name} eq 'template' ) {
-        $self->query->name( $args->{Attributes}{name} );
+        $self->query->name( $args->{Attributes}{name} ) 
+            or confess "No name attribute on template node: ", 
+                join(', ', map {"$_ => " . $args->{Attributes}{$_}}
+                    keys %{ $args->{Attributes} });
         $self->query->title( $args->{Attributes}{title} )
           if $args->{Attributes}{title};
         if ( $args->{Attributes}{description} ) {

@@ -6,12 +6,12 @@ use base qw(Test::Class);
 use List::MoreUtils qw(uniq);
 use Test::More;
 use Test::Exception;
-use InterMine::Model;
+use InterMine::Model::TestModel;
 use Webservice::InterMine::ConstraintFactory;
 sub class {'Webservice::InterMine::Query::Core'}
 sub args {my $test = shift; return (model => $test->model);}
 sub service_url {'test.url.string'}
-sub model {return InterMine::Model->new(file => 't/data/testmodel_model.xml');}
+sub model {return InterMine::Model::TestModel->instance};
 sub logic_string1 {'A and B and C'}
 sub logic_string2 {'(A or B) and C'}
 sub extra_constraint_args {}
@@ -22,10 +22,13 @@ sub test_paths {
     );
     return @paths;
 }
-sub startup : Test(startup => 2) {
+sub startup : Test(startup => 3) {
     my $test = shift;
     use_ok($test->class);
-    new_ok($test->class, [$test->args]);
+    my $q;
+    lives_ok {$q = $test->class->new($test->args)} "Can make a query"
+        or diag(explain [$test->args]);
+    isa_ok($q, $test->class);
 }
 
 sub setup : Test(setup) {
@@ -36,7 +39,7 @@ sub setup : Test(setup) {
 
 sub teardown : Test(teardown) {
     my $test = shift;
-    delete $test->{object};
+    undef $test->{object};
 }
 
 sub _methods : Test {
@@ -59,16 +62,15 @@ sub _methods : Test {
 
 sub _attributes : Test(7) {
     my $test   = shift;
-    my $object = $test->{object};
     my @readonly_attrs = (qw/
 	sort_order view constraints joins
 	path_descriptions model constraint_factory
     /);
     for (@readonly_attrs) {
-	dies_ok(
-	    sub {$object->$_('Some.other.value')},
-	    "... dies attempting to change $_",
-	);
+        dies_ok(
+            sub {$test->{object}->$_('Some.other.value')},
+            "... dies attempting to change $_",
+        );
     }
 }
 
@@ -144,7 +146,7 @@ sub add_constraint : Test(20) {
 		$test->extra_constraint_args,
 	    );
 	},
-	"makes a multi constraint without dying",
+	"makes a multi constraint on a subclassed path without dying",
     ) or diag explain $obj->type_dict;
     isa_ok($cons[-1], 'Webservice::InterMine::Constraint::Multi', ".. and it");
     lives_ok(
@@ -203,27 +205,27 @@ sub logic : Test(7) {
 	code => 'C',
     );
     is($obj->logic->code, $test->logic_string1, "Constructs default logic correctly");
-    $obj->logic("A and (B or C)");
+    $obj->set_logic("A and (B or C)");
     is($obj->logic->code, 'A and (B or C)', "Constructs logic correctly from a string");
-    $obj->logic(($a | $b) & $c);
+    $obj->set_logic(($a | $b) & $c);
     is($obj->logic->code, $test->logic_string2, "Constructs logic correctly from objects");
     throws_ok(
-	sub {$obj->logic("A and Z")},
+	sub {$obj->set_logic("A and Z")},
 	qr/No constraint with code Z/,
 	"catches wrong logic codes",
     );
     throws_ok(
-	sub {$obj->logic("A foo B")},
+	sub {$obj->set_logic("A foo B")},
 	qr/unexpected element in logic string: foo/,
 	"catches bad syntax",
     );
     throws_ok(
-	sub {$obj->logic($a + $b)},
+	sub {$obj->set_logic($a + $b)},
 	qr/unexpected element in logic string/,
 	"catches bad object syntax",
     );
     throws_ok(
-	sub {$obj->logic($a | $test)},
+	sub {$obj->set_logic($a | $test)},
 	qr/does not pass the type constraint/,
 	"catches bad objects",
     );

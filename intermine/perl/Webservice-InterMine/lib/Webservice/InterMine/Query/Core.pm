@@ -49,6 +49,7 @@ has _sort_order => (
         sort_orders    => 'elements',
         joined_so      => 'join',
         clear_sort_order => 'clear',
+        sort_order_is_empty =>  'is_empty',
     },
 );
 
@@ -58,16 +59,26 @@ sub add_sort_order {
     my $so = Webservice::InterMine::SortOrder->new(@args);
     $self->push_sort_order($so);
 }
+
 sub sort_order {
     my $self = shift;
     confess "You can't use this method to modify this attribute"
         if shift;
-    return $self->joined_so(' ');
+    if (grep {not defined} $self->sort_orders) {
+        return '';
+    } else {
+        return $self->joined_so(' ');
+    } 
+}
+
+sub DEMOLISH {
+    my $self = shift;
+    $self->suspend_validation;
 }
 
 sub _build__sort_order {
     my $self = shift;
-    ( $self->view )->[0];
+    return $self->get_view(0);
 }
 
 sub set_sort_order {
@@ -86,6 +97,7 @@ has view => (
     handles => {
         views         => 'elements',
         add_view      => 'push',
+        get_view      => 'get',
         joined_view   => 'join',
         view_is_empty => 'is_empty',
         clear_view    => 'clear',
@@ -216,11 +228,33 @@ has joins => (
     }
 );
 
+=head2 add_join( $path )
+
+Specifies the join style of a path on the query. 
+The default join style this method adds is "OUTER", but
+it can be specified with C<path =&gt; $path, style =&gt; $style>.
+Possible join styles are INNER and OUTER.
+
+=cut
+
 sub add_join {
     my $self = shift;
     my $join = Webservice::InterMine::Join->new(@_);
     $self->push_join($join);
     return $self;
+}
+
+=head2 add_outer_join( $path )
+
+specify that this path is to be treated as an outer join.
+
+=cut
+
+sub add_outer_join {
+    my $self = shift;
+    my $path = shift;
+    confess "Too many arguments to 'add_outer_join', 1 expected" if @_;
+    $self->add_join($path);
 }
 
 has path_descriptions => (
@@ -245,7 +279,8 @@ sub add_pathdescription {
     return $self;
 }
 has logic => (
-    is      => 'rw',
+    writer  => 'set_logic',
+    reader  => 'logic',
     isa     => LogicOrStr,
     lazy    => 1,
     clearer => 'clear_logic',
@@ -308,8 +343,21 @@ sub check_logic {
     my ( $self, $value ) = @_;
     unless ( blessed $value) {
         my $new_value = _parse_logic( $value, $self->coded_constraints );
-        $self->logic($new_value);
+        $self->set_logic($new_value);
     }
+}
+
+use Webservice::InterMine::LogicParser;
+
+has logic_parser => (
+    isa => 'Webservice::InterMine::LogicParser',
+    is => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_logic_parser {
+    my $self = shift;
+    return Webservice::InterMine::LogicParser->new(query => $self);
 }
 
 sub _parse_logic {

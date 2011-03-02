@@ -27,5 +27,19 @@ Revision history for Webservice-InterMine
 0.9501  Thu Feb  3 13:36:04 GMT 2011
         * Added bug due to mis-matching test counts in acceptance test
 0.9600  Fri Feb 18 16:37:38 GMT 2011
-        * Better verification of version strings, and better coercion
-        of urls
+        * Better verification of version strings, and better coercion of urls
+        * Load queries from local xml
+        * Support for InterMine xml shortcuts (lt for &lt;, etc.)
+        * Tests in support of json rows format
+0.9601  Fri Feb 25 16:26:39 GMT 2011
+        * Bug fixes (including a couple of useless imports)
+        * Queries stringify to their xml representation
+        * More documentation
+0.9602  Mon Feb 28 19:25:19 GMT 2011
+        * Model bug fix required changes to some tests, and 
+          one or two places in the path logic
+0.9603: Tue Mar  1 15:28:18 GMT 2011
+        * Now using the TestModel instance - big effect on test run speed
+0.9604: Wed Mar  2 17:04:02 GMT 2011
+        * Removed last use of testmodel_model.xml, and removed it from dist
+        * Changed logic writer to set_logic for consistency

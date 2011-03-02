@@ -26,7 +26,9 @@ lib/Webservice/InterMine/Cookbook/Recipe8.pod
 lib/Webservice/InterMine/Cookbook/Templates/Recipe1.pod
 lib/Webservice/InterMine/Cookbook/Templates/Recipe2.pod
 lib/Webservice/InterMine/Join.pm
+lib/Webservice/InterMine/LogicalOperator.pm
 lib/Webservice/InterMine/LogicalSet.pm
+lib/Webservice/InterMine/LogicParser.pm
 lib/Webservice/InterMine/Path.pm
 lib/Webservice/InterMine/PathDescription.pm
 lib/Webservice/InterMine/PathFeature.pm
@@ -83,12 +85,14 @@ t/05_template/01_factory.t
 t/06_service/01_service.t
 t/06_service/02_result_iterator.t
 t/06_service/03_result_objects.t
+t/06_service/04_serviced_queries.t
 t/07_intermine/01_integration.t
 t/10_acceptance/01_live_test.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml
 t/data/good_xml.txt
+t/data/loadable_query.xml
 t/data/mock_bad_results
 t/data/mock_content_results
 t/data/mock_interrupted_results
@@ -97,8 +101,7 @@ t/data/mock_missing_chunk_results
 t/data/mock_results
 t/data/multixml.txt
 t/data/old_style_templates.xml
-t/data/test.properties
-t/data/testmodel_model.xml
+t/data/result.json
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
@@ -126,4 +129,3 @@ t/tests/Test/Webservice/InterMine/SortOrder.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraintFactory.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraints.pm
 t/tests/Test/Webservice/InterMine/TemplateFactory.pm
-META.yml

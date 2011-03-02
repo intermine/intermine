@@ -12,7 +12,7 @@ sub url {
     if ( $self->service->version < 2 ) {
         $xml = $self->to_legacy_xml;
     } else {
-        $xml = $self->to_xml;
+        $xml = $self->to_query_xml;
     }
     my $url        = $self->service->root . $self->query_path;
     my $uri        = URI->new($url);

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9600";
+our $VERSION = "0.9603";
 
 =head1 NAME
 
@@ -14,13 +14,13 @@ Webservice::InterMine - modules for interacting with InterMine datawarehouse web
 
     use Webservice::InterMine;
 
-    my $service  = Webservice::InterMine->new_service($url);
+    my $service  = Webservice::InterMine->new_service($url, $user, $pass);
     my $template = $service->template($name);
     my $results  = $template->results_with(valueA => 'x', valueB => 'y');
 
   OR
 
-    use Webservice::InterMine 'www.flymine.org';
+    use Webservice::InterMine 'www.flymine.org', $user, $pass;
 
     my $query    = Webservice::InterMine->new_query;
     $query->add_view(@views);
@@ -52,6 +52,7 @@ If you call C<use Webservice::InterMine $url>, a default service will be set,
 meaning method calls will not require the webservice url. Unless you are
 intending to access multiple services, the latter form is recommended.
 
+
 =head1 METHODS
 
 =cut
@@ -66,14 +67,14 @@ my %user_for;
 
 sub import {
     my $class = shift;
-    my ($url, $user, $pass) = @_;
+    my ( $url, $user, $pass ) = @_;
     if ($url) {
         $service_url = $url;
-        return $class->get_service($url, $user, $pass);
+        return $class->get_service( $url, $user, $pass );
     }
-};
+}
 
-=head2 new_query( [$url] )
+=head2 new_query( [\@service_args], [%query_args] )
 
 returns a new query object for you to fill in with constraints before
 being run to get its results. If you pass a url, it constructs a query
@@ -85,13 +86,40 @@ Please see L<Webservice::InterMine::Query>
 
 sub new_query {
     my $class = shift;
-    my %args  = @_;
-    my $roles = delete $args{with};
-    return $class->get_service(%args)->new_query(with => $roles);
+    my $service_args = ( ref $_[0] ) ? shift : [];
+    return $class->get_service(@$service_args)->new_query(@_);
 }
 
+=head2 load_query([\@service_args], source_file|source_string => $source, %opts )
 
-=head2 template( $name, [$url] )
+Returns a query object based on xml you have previously saved,
+either as a string or as a file. For a file pass:
+
+  load_query(source_file => $file);
+
+For a string: 
+
+  load_query(source_string => $string);
+
+If you want a specific service, call it thus:
+
+  load_query(service_args => [$name, $user, $pass], source_string => $string);
+
+OR: 
+
+  load_query([$name, $user, $pass], source_string => $string);
+
+Please see L<Webservice::InterMine::Query::Saved>
+
+=cut
+
+sub load_query {
+    my $class = shift;
+    my $service_args = ( ref $_[0] ) ? shift : [];
+    return $class->get_service(@$service_args)->new_from_xml(@_);
+}
+
+=head2 template( $name, [\@service_args], [%opts] )
 
 returns the named template (if it exists - if not it returns undef).
 If you pass a url, it returns the named template from the specified webservice.
@@ -101,11 +129,10 @@ Please see L<Webservice::InterMine::Query::Template>
 =cut
 
 sub template {
-    my $class = shift;
-    my $name  = shift;
-    my %args  = @_;
-    my $roles = delete $args{with};
-    return $class->get_service(%args)->template($name, $roles);
+    my $class        = shift;
+    my $name         = shift;
+    my $service_args = ( ref $_[0] eq 'ARRAY' ) ? shift : [];
+    return $class->get_service(@$service_args)->template( $name, @_ );
 }
 
 =head2 saved_query( $name, [$url] ) B<NOT IMPLEMENTED YET>
@@ -142,18 +169,19 @@ Please see: L<Webservice::InterMine::Service>
 
 sub get_service {
     my $class = shift;
-    my $url   = shift || $service_url;
-    my ($user, $pass) = @_;
+    my $url = shift || $service_url;
+    my ( $user, $pass ) = @_;
     croak "No url provided - either directly or on 'use'"
-        unless $url;
-    if ($services{$url}) {
+      unless $url;
+    if ( $services{$url} ) {
         return $services{$url};
-    } else {
-        if ($user and $pass) {
+    }
+    else {
+        if ( $user and $pass ) {
             $user_for{$url} = $user;
             $pass_for{$url} = $pass;
         }
-        my $service = Webservice::InterMine::Service->new($url, $user, $pass);
+        my $service = Webservice::InterMine::Service->new( $url, $user, $pass );
         $services{$url} = $service;
         return $service;
     }
@@ -193,7 +221,7 @@ You can also look for information at:
 
 =over 4
 
-=item * Webservice::InterMine
+=item * InterMine
 
 L<http://www.intermine.org>
 
@@ -205,7 +233,7 @@ L<http://www.intermine.org/perlapi>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006 - 2010 FlyMine, all rights reserved.
+Copyright 2006 - 2011 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

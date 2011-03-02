@@ -23,8 +23,6 @@ to return results. Generally you won't need to interact with it directly, or
 if you do, the methods you will be most interested in are those that return
 objects you can use for running queries.
 
-=head1 METHODS
-
 =cut
 
 package Webservice::InterMine::Service;
@@ -35,7 +33,7 @@ use Webservice::InterMine::Query;
 use Webservice::InterMine::ResultIterator;
 use Net::HTTP;
 use URI;
-use LWP::UserAgent;
+use LWP;
 use MIME::Base64;
 use MooseX::Types::Moose qw/Str Int/;
 use InterMine::TypeLibrary
@@ -48,7 +46,6 @@ A service can be constructed directly by passing a webservice
 url to the new method. To have access to private data (personal
 templates, saved queries and lists) you also need to provide
 login information in the form of a username and password.
-(B<AUTHENTICATION NOT IMPLEMENTED YET>).
 
 =cut
 
@@ -79,6 +76,25 @@ use constant {
     SAVEDQUERY_PATH    => '/savedqueries/xml',
     RELEASE_PATH       => '/version/release',
 };
+
+=head1 CONSTRUCTION
+
+=head2 Webservice::InterMine->get_service($root, $user, $pass)
+
+Typically as service is most conveniently obtained through the
+L<Webservice::InterMine> interface. 
+
+=head2 new($root, $user, $pass)
+
+It can of course be instantiated directly, with a standard call to new.
+
+=head2 don't!
+
+You do not have to obtain a service object: simply call the methods
+on the Webservice::InterMine factory class to obtain new queries,
+fetch templates and load saved queries.
+
+=head1 METHODS
 
 =head2 root | user | pass
 
@@ -128,6 +144,21 @@ sub new_query {
     return apply_roles( $query, $roles );
 }
 
+sub new_from_xml {
+    my $self = shift;
+    my %args = @_;
+
+    my $roles = delete $args{with};
+
+    require Webservice::InterMine::Query::Saved;
+    my $query = Webservice::InterMine::Query::Saved->new(
+        service => $self,
+        model   => $self->model,
+        %args,
+    );
+    return apply_roles( $query, $roles );
+}
+
 =head2 template( $name [$roles] )
 
 This checks to see if there is a template of this name in the
@@ -154,9 +185,9 @@ has _templates => (
 );
 
 sub template {
-    my ( $self, $name, $roles ) = @_;
+    my ( $self, $name, %args ) = @_;
     my $t = $self->get_template($name) or return;
-    return apply_roles( $t, $roles );
+    return apply_roles( $t, $args{with} );
 }
 
 has _saved_queries => (
@@ -332,7 +363,7 @@ You can also look for information at:
 
 =over 4
 
-=item * Webservice::InterMine
+=item * InterMine
 
 L<http://www.intermine.org>
 
@@ -344,7 +375,7 @@ L<http://www.intermine.org/perlapi>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006 - 2010 FlyMine, all rights reserved.
+Copyright 2006 - 2011 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

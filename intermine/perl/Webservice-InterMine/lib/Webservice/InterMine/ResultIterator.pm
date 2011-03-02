@@ -16,7 +16,9 @@ sub BUILD {
       unless ( $self->has_connection or $self->has_content );
 }
 
-=head1 Webservice::InterMine::ResultIterator - An object for iterating through result rows
+=head1 NAME
+
+Webservice::InterMine::ResultIterator - An object for iterating through result rows
 
 =head1 SYNOPSIS
 
@@ -28,7 +30,8 @@ sub BUILD {
 
 =head1 DESCRIPTION
 
-This package provides objects for iterating through result sets.
+This package provides objects for iterating through result sets, where 
+those result sets are rows from a database query.
 
 =head1 ATTRIBUTES
 
@@ -330,3 +333,55 @@ __PACKAGE__->meta->make_immutable;
 no Moose;
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Webservice::InterMine::Cookbook> for guide on how to use these modules.
+
+=item * L<Webservice::InterMine::Query>
+
+=item * L<Webservice::InterMine::Service>
+
+=item * L<Webservice::InterMine::Query::Template>
+
+=item * L<Webservice::InterMine::Query::Saved>
+
+=back
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::ResultIterator
+
+You can also look for information at:
+
+=over 4
+
+=item * Webservice::InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
