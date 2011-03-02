@@ -15,31 +15,28 @@ public class WidgetUtilTest extends TestCase
     private int[] taggedSample = new int[REFERENCE_SIZE];
     private int[] taggedPopulation = new int[REFERENCE_SIZE];
     private BigDecimal[] expectedResults = new BigDecimal[REFERENCE_SIZE];
-    private int bagsize = 3;
-    private int total = 100;
+    private int bagsize = 100;
+    private int total = 1000;
     public  WidgetUtilTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
 
-        // these numbers are generated via this website:
-        // http://www.quantitativeskills.com/sisa/distributions/hypghlp.htm
-
-        id[1] = "overrepresented";
-        taggedSample[1] = 3;
-        taggedPopulation[1] = 20;
-        expectedResults[1] = new BigDecimal(0.00705009276437847977325734660780653939582407474517822265625);
+        id[1] = "half";
+        taggedSample[1] = 50;
+        taggedPopulation[1] = 500;
+        expectedResults[1] = new BigDecimal(0.54194604604639440292856988889980129897594451904296875);
 
         id[2] = "notEnriched";
         taggedSample[2] = 1;
         taggedPopulation[2] = 10;
-        expectedResults[2] = new BigDecimal(0.273469387755102155690423160194768570363521575927734375);
+        expectedResults[2] = new BigDecimal(0.6530722852079744455977561301551759243011474609375);
 
-        id[3] = "underrepresented";
-        taggedSample[3] = 1;
-        taggedPopulation[3] = 50;
-        expectedResults[3] = new BigDecimal(0.8787878787878777853137535203131847083568572998046875);
+        id[3] = "enriched";
+        taggedSample[3] = 25;
+        taggedPopulation[3] = 100;
+        expectedResults[3] = new BigDecimal(0.0000031931122567314319696078761534607792782480828464031219482421875);
 
         id[4] = "one";
         taggedSample[4] = 3;
