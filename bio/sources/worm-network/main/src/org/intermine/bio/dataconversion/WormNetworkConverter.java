@@ -42,13 +42,10 @@ public class WormNetworkConverter extends BioDirectoryConverter
 {
     private static final Logger LOG = Logger.getLogger(WormNetworkConverter.class);
 
-    private static final String FLY_DATASET_TITLE =
-        "Fly Transcription Factor/microRNA Regulatory Network";
+    private String orgRefId;
     private static final String WORM_DATASET_TITLE =
         "Worm Transcription Factor/microRNA Regulatory Network";
-    private static final String FLY_DATA_SOURCE_NAME = "Manolis Kellis";
     private static final String WORM_DATA_SOURCE_NAME = "Mark Gerstein";
-    private static final String FLY_TAXON_ID = "7227";
     private static final String WORM_TAXON_ID = "6239";
 
     protected IdResolverFactory resolverFactory;
@@ -61,7 +58,6 @@ public class WormNetworkConverter extends BioDirectoryConverter
     private static final String TOPOS_VPOS = "vposition";
     private static final String TOPOS_HPOS = "hposition";
     private static final String TOPOS_TYPE = "TF_type";
-    private static final String TOPO_TYPE_POSITION = "position";
 
     // key:symbol [vpos, type]
     private Map<String, String[]> tfMap = new HashMap<String, String[]>();
@@ -70,7 +66,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
 
     
     // remove duplication when creating gene items
-    // key:primaryId - value:bioentity.identifier
+    // key:primaryId/symbol - value:bioentity.identifier
     private Map<String, String> geneItems = new HashMap<String, String>();
 
     /**
@@ -81,6 +77,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
     public WormNetworkConverter(ItemWriter writer, Model model) {
         super(writer, model, WORM_DATA_SOURCE_NAME, WORM_DATASET_TITLE);
         resolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        orgRefId = getOrganism(WORM_TAXON_ID);
     }
         
 
@@ -202,7 +199,6 @@ public class WormNetworkConverter extends BioDirectoryConverter
     private void processEdgeFile(File file,
             Map<String, String[]> tfMap,
             Map<String, String[]> miRNAMap) {
-
         try {
             Reader reader = new FileReader(file);
             Iterator<?> tsvIter;
@@ -218,7 +214,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                 if (line.length > 1) {
                     String sourceIdentifier = line[0];
                     String targetIdentifier = line[1];
-
+                    LOG.debug("WN edge: " + sourceIdentifier + "->" + targetIdentifier);
                     try {
                         if (tfMap.containsKey(sourceIdentifier)) {
                             String sourceVpos = tfMap.get(sourceIdentifier)[0];
@@ -226,6 +222,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                             // NOTE: identifiers are symbols for worm
                             String sourceGenePid = createGene(null, sourceIdentifier);
 
+                           // if (sourceGenePid != null) {
                             Item sourceNetworkPropertyVpos = addNetworkProperty(TOPOS_VPOS,
                                     sourceVpos, sourceGenePid);
                             Item sourceNetworkPropertyType = addNetworkProperty(TOPOS_TYPE,
@@ -251,7 +248,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
                                 regulation.setReference("target", geneItems.get(targetGenePid));
                                 store(regulation);
-                            } else if (miRNAMap.containsKey(targetIdentifier)) {
+                            }else if (miRNAMap.containsKey(targetIdentifier)) {
                                 // Create regulation for both genes
                                 Item regulation = createRegulation(INTERACTION_TYPE_TF_MIRNA);
 
@@ -271,7 +268,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
                                 regulation.setReference("target", geneItems.get(targetGenePid));
                                 store(regulation);
-                            } else { continue; }
+                            } else { continue; } //}
                         } else if (miRNAMap.containsKey(sourceIdentifier)) {
                             // Create source gene
                             String sourceVpos =
@@ -342,8 +339,9 @@ public class WormNetworkConverter extends BioDirectoryConverter
 
 
     /**
-     * @param sourceVpos
-     * @param sourceGenePid
+     * @param type    the type of property
+     * @param value   the value of property
+     * @param genePid the gene primaryId (if resolved) or symbol (otherwise)
      * @return
      * @throws ObjectStoreException
      */
@@ -355,6 +353,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
         sourceNetworkProperty.setReference("node",
                 geneItems.get(genePid));
         store(sourceNetworkProperty);
+
         return sourceNetworkProperty;
     }
 
@@ -396,18 +395,35 @@ public class WormNetworkConverter extends BioDirectoryConverter
      */
     private String createGene(String primaryId, String symbol) throws ObjectStoreException {
 
-        if (primaryId == null) { // for miRNA case
-//            if ("mlc-c_in1".endsWith(symbol)) {
-//                symbol = "Mlc-c";
-//            }
-//            if ("mir-iab-4as".endsWith(symbol)) {
-//                symbol = "mir-iab-8";
-//            }
+        if (primaryId == null) { 
+            // a few symbols are secondary identifiers for WB, let's use the primary one
+            // TODO improve resolver
+            if ("mir-239a".equalsIgnoreCase(symbol)) {
+                symbol = "mir-239.1";
+            }
+            if ("mir-239b".equalsIgnoreCase(symbol)) {
+                symbol = "mir-239.2";
+            }
+            if ("mir-48".equalsIgnoreCase(symbol)) {
+                symbol = "mir-58";
+            }
+            if ("lin-15b".equalsIgnoreCase(symbol)) {
+                symbol = "lin-15B";
+            }
+            
+            
             IdResolver resolver = resolverFactory.getIdResolver();
             int resCount = resolver.countResolutions(WORM_TAXON_ID, symbol);
+            if (resCount == 0) {
+                LOG.warn("RESOLVER: failed to find existing gene for symbol: " + symbol);
+                if (!geneItems.containsKey(symbol)) {
+                    createBioEntity(symbol);
+                }
+                return symbol;
+            }
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + symbol + " count: " + resCount + " FBgn: "
+                         + symbol + " count: " + resCount + " WBgn: "
                          + resolver.resolveId(WORM_TAXON_ID, symbol));
             }
             primaryId = resolver.resolveId(WORM_TAXON_ID, symbol).iterator().next();
@@ -439,5 +455,28 @@ public class WormNetworkConverter extends BioDirectoryConverter
 
         geneItems.put(primaryId, bioentity.getIdentifier());
     }
+
+    /**
+     * Create and store a BioEntity item on the first time called.
+     *
+     * @param type gene
+     * @param primaryId the gene primaryIdentifier
+     * @param symbol the gene symbol
+     * @throws ObjectStoreException
+     */
+    private void createBioEntity(String symbol)
+        throws ObjectStoreException {
+        Item bioentity = null;
+
+        bioentity = createItem("Gene");
+        bioentity.setReference("organism", orgRefId);
+        bioentity.setAttribute("symbol", symbol);
+        store(bioentity);
+
+        geneItems.put(symbol, bioentity.getIdentifier());
+    }
+
+
+
 }
 
