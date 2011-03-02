@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
-    private Map<String, PathQuery> queries;
+    private final Map<String, PathQuery> queries;
     private String queryName;
     protected PathQuery query;
     protected String constraintLogic = null;
@@ -89,6 +89,10 @@ public class PathQueryHandler extends DefaultHandler
                 throw new SAXException(e);
             }
             query = new PathQuery(model);
+
+            if (attrs.getValue("title") != null && ! attrs.getValue("title").isEmpty()) {
+                query.setTitle(attrs.getValue("title"));
+            }
 
             if (attrs.getValue("longDescription") != null) {
                 query.setDescription(attrs.getValue("longDescription"));
@@ -308,8 +312,8 @@ public class PathQueryHandler extends DefaultHandler
             }
             constraintPath = null;
         } else if ("value".equals(qName)) {
-            if (valueBuffer == null) {
-                throw new NullPointerException("valueBuffer is null while closing value tag");
+            if (valueBuffer == null || valueBuffer.length() < 1) {
+                throw new NullPointerException("No value provided in value tag");
             }
             constraintValues.add(valueBuffer.toString());
             valueBuffer = null;
