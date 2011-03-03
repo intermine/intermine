@@ -40,6 +40,10 @@ Revision history for Webservice-InterMine
           one or two places in the path logic
 0.9603: Tue Mar  1 15:28:18 GMT 2011
         * Now using the TestModel instance - big effect on test run speed
-0.9604: Wed Mar  2 17:04:02 GMT 2011
+0.9604: Thu Mar  3 17:27:14 GMT 2011
         * Removed last use of testmodel_model.xml, and removed it from dist
         * Changed logic writer to set_logic for consistency
+        * Added command line utilities
+        * Added moose hygiene test, and made it pass
+        * More POD (especially in important roles)
+        * Added size and start (paging) capabilities to Runnable queries

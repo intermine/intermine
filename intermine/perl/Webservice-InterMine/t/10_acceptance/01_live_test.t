@@ -17,7 +17,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 57 );
+    plan( tests => 59 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -143,6 +143,18 @@ is(ref $res->[0], 'ARRAY', "An array of arrays in fact");
 is($res->[1][1], "20", "With the right fields - Int") or diag(explain $res);;
 is($res->[1][3], "Employee Street, AVille", "With the right fields - Str") or diag(explain $res);;
 
+my $res_slice = [[
+  'EmployeeA2',
+  '20',
+  'true',
+  'Employee Street, AVille',
+  'DepartmentA1',
+  'CompanyA',
+  'EmployeeA1'
+]];
+
+is_deeply($q->results(size => 1, start => 1), $res_slice, "Can handle start and size");
+
 $q->add_constraint(
     path  => 'Employee.age',
     op    => '<',
@@ -246,6 +258,10 @@ $exp_res = [
 ];
 
 is_deeply($t->results,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
+
+$exp_res = [['EmployeeA2',20]];
+
+is_deeply($t->results(size => 1, start => 1), $exp_res, "And it handles start and size");
 
 $exp_res = [
     {

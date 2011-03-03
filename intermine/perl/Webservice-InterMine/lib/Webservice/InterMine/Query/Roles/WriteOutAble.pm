@@ -9,10 +9,47 @@ requires(
 
 use XML::DOM;
 
+=head1 NAME 
+
+Webservice::InterMine::Query::Roles::WriteOutAble - Composable behaviour for serialisable queries
+
+=head1 DESCRIPTION 
+
+This module provides composable behaviour for serialising queries
+
+=head1 REQUIRES
+
+This module demands its consumer provide the following methods:
+
+=over 4
+
+=item * coded_constraints
+=item * constraints
+=item * joins
+=item * logic
+=item * model_name
+=item * name
+=item * pathdescriptions
+=item * sort_order
+=item * view
+
+=back
+
+=cut
+
 use overload (
     '""' => 'stringify',
     fallback => 1,
 );
+
+=head1 METHODS
+
+=head2 stringify
+
+Returns a string representation of this query. This takes the form 
+of xml. For invalid queries, the string "<query>Invalid</query>" is returned.
+
+=cut
 
 sub stringify {
     my $self = shift;
@@ -83,6 +120,13 @@ after [qw(
     $self->mark_dirty;
 };
 
+=head2 to_xml
+
+Returns an xml representation of the query. If the query is invalid, 
+an error with be thrown.
+
+=cut
+
 sub to_xml {
     my $self = shift;
     if ($self->needs_writing) {
@@ -91,6 +135,13 @@ sub to_xml {
     }
     return $self->retrieve_xml;
 }
+
+=head2 to_query_xml
+
+Returns the xml suitable for passing to query service calls with (stripped of
+any headers in the case of templates and saved queries)
+
+=cut
 
 sub to_query_xml {
     my $self = shift;
@@ -129,3 +180,58 @@ sub to_DOM {
 }
 
 1;
+
+__END__
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Webservice::InterMine::Cookbook> for guide on how to use these modules.
+
+=item * L<Webservice::InterMine::Query>
+
+=item * L<Webservice::InterMine::Service>
+
+=item * L<Webservice::InterMine::Query::Template>
+
+=item * L<Webservice::InterMine::Query::Saved>
+
+=back
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::Query::Roles::WriteOutAble
+
+You can also look for information at:
+
+=over 4
+
+=item * Webservice::InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
