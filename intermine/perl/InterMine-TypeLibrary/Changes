@@ -6,3 +6,10 @@ Revision history for InterMine-TypeLibrary
 0.9501  Tue Feb  8 11:45:25 GMT 2011
         Added ServiceRootUri and associated coercions.
 
+0.9600  Wed Feb 23 13:53:03 GMT 2011
+        * Added BigInt type and associated coercions
+        * Added Version Number and coercions
+        * Added FakeBinaryOperator, and coercions to BinaryOperator
+0.9601  Mon Feb 28 19:49:04 GMT 2011
+        * Made BigInt compatible with lower versions of Perl (back to 5.8.8)
+        by removing "try" call.
