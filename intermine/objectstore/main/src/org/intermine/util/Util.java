@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -283,6 +284,12 @@ public final class Util
      * @param values the set of values
      */
     public static void addToSetMap(Map map, Object key, Set<Object> values) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
         Set valuesList = (Set) map.get(key);
         if (valuesList == null) {
             valuesList = new HashSet();
@@ -301,6 +308,12 @@ public final class Util
      * @param value the value
      */
     public static void addToSetMap(Map map, Object key, Object value) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
         Set valuesList = (Set) map.get(key);
         if (valuesList == null) {
             valuesList = new HashSet();
@@ -318,6 +331,12 @@ public final class Util
      * @param value the value
      */
     public static void addToListMap(Map map, Object key, Object value) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
         List valuesList = (List) map.get(key);
         if (valuesList == null) {
             valuesList = new ArrayList();

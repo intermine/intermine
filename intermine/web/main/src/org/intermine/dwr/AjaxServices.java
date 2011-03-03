@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
@@ -50,9 +50,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.mines.HomologueMapping;
+import org.intermine.api.mines.LinkManager;
 import org.intermine.api.mines.Mine;
-import org.intermine.api.mines.OrthologueLinkManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -627,9 +626,9 @@ public class AjaxServices
     }
 
     /**
-     * For a given bag type, return links to friendly intermines.
+     * For an organism, generate links to other intermines with orthologues
      *
-     * @param organismName the type of object
+     * @param organismName gene.organism
      * @param primaryIdentifier identifier for gene
      * @return the links to friendly intermines
      */
@@ -639,29 +638,24 @@ public class AjaxServices
             HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Properties webProperties = SessionMethods.getWebProperties(servletContext);
-            OrthologueLinkManager olm = OrthologueLinkManager.getInstance(im, webProperties);
+            LinkManager olm = LinkManager.getInstance(im, webProperties);
 
             // mines with orthologues
-            Map<Mine, Map<String, HomologueMapping>> minesWithOrthologues
-                = olm.getMines(Arrays.asList(organismName));
+            Map<Mine, Set<String>> minesWithOrthologues = olm.getMines(Arrays.asList(organismName));
             // mines with genes
-//            Set<Mine> minesWithGenes = olm.getMines(organismName);
+            // Set<Mine> minesWithGenes = olm.getMines(organismName);
 
             if (minesWithOrthologues.isEmpty()) {
                 return null;
             }
             StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other"
                     + " mines:</h3><ul>");
-            for (Map.Entry<Mine, Map<String, HomologueMapping>> entry
-                    : minesWithOrthologues.entrySet()) {
-                Mine mine = entry.getKey();
-                Map<String, HomologueMapping> homologueMap = entry.getValue();
+            for (Mine mine : minesWithOrthologues.keySet()) {
                 String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
                     + primaryIdentifier + "&orthologue=" + organismName;
                 sb.append("<li><a href=\"" + href + "\">");
                 sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
                 sb.append("</a></li>");
-
             }
             sb.append("</ul></div>");
             return sb.toString();
@@ -670,6 +664,63 @@ public class AjaxServices
             return null;
         }
     }
+
+    /**
+     * For a mine, test if that mine has orthologues
+     *
+     * @param mineName name of a friendly mine
+     * @param organisms list of organisms for genes in this list
+     * @param identifierList list of identifiers
+     * @return the links to friendly intermines
+     */
+    public static String getInterMineOrthologueLinks(String mineName, String organisms,
+            String identifierList) {
+        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
+                || StringUtils.isEmpty(identifierList)) {
+            return null;
+        }
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final String errMsg = "No orthologues found in " + mineName;
+        try {
+
+            LinkManager olm = LinkManager.getInstance(im, webProperties);
+            List<String> organismList = StringUtil.tokenize(organisms, ",");
+
+            Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
+            if (mineValues == null || mineValues.isEmpty()) {
+                return errMsg;
+            }
+            Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
+            Mine mine = entry.getKey();
+            Set<String> orthologues = entry.getValue();
+
+            if (mine == null || orthologues.isEmpty()) {
+                return errMsg;
+            }
+
+            StringBuffer sb = new StringBuffer(mineName + "<ul>");
+            for (String orthologue : orthologues) {
+                String encodedOrthologue = null;
+                try {
+                    encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("error while encoding: " + orthologue, e);
+                }
+                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
+                    + identifierList + "&orthologue=" + encodedOrthologue;
+                sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
+            }
+            sb.append("</ul>");
+            return sb.toString();
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
+    }
+
 
     /**
      * Saves information, that some element was toggled - displayed or hidden.
