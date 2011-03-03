@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = 0.9501;
+    our $VERSION = '0.9601';
 
 =head1 NAME
 
@@ -52,7 +52,7 @@ under the same terms as Perl itself.
     # Declare Our Own Types
     use MooseX::Types -declare => [
         qw(
-          ConstraintCode UnaryOperator BinaryOperator
+          ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
           TernaryOperator MultiOperator
           LogicOperator LogicGroup LogicOrStr
           JoinedPathString PathString PathList PathHash
@@ -76,16 +76,29 @@ under the same terms as Perl itself.
           LogHandler
           DirName PathClassDir
           VersionNumber
+          BigInt
           )
     ];
 
     # Import built-in Moose types
-    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int/;
+    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int Value Object/;
+    use Math::BigInt;
+    use Scalar::Util qw(blessed);
+
+    my %fake_to_real_ops = (
+        'eq' => '=',
+        'ne' => '!=',
+        'lt' => '<',
+        'gt' => '>',
+        'ge' => '>=',
+        'le' => '<=',
+    );
 
     # Type definitions
     enum ConstraintCode, [ 'A' .. 'ZZ' ];
     enum UnaryOperator,  [ 'IS NOT NULL', 'IS NULL' ];
     enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=',];
+    enum FakeBinaryOperator, ['eq', 'ne', 'lt', 'gt', 'ge', 'le'];
     enum TernaryOperator, [ 'LOOKUP', 'IN', 'NOT IN'];
     enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
     enum LogicOperator, [ 'and',    'or', ];
@@ -161,7 +174,21 @@ under the same terms as Perl itself.
     subtype VersionNumber, as Int, where {$_ > 0}, 
         message {'I could not get the version number for this service - please check the url and make sure the service is available'};
 
+    class_type BigInt, {class => "Math::BigInt"};
+
     # Type coercions
+
+    coerce BigInt, from Str, via {
+        my $coerced = Math::BigInt->new($_);
+        if ($coerced->is_nan) {
+            return $_; # We almost certainly failed here...
+        } else {
+            return $coerced;
+        }
+    };
+
+
+    coerce BinaryOperator, from FakeBinaryOperator, via {$fake_to_real_ops{$_}};
     coerce QueryName, from IllegalQueryName, 
         via { 
             s/[^a-zA-Z0-9_,. -]/_/g; 
