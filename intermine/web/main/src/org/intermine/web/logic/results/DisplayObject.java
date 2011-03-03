@@ -482,4 +482,51 @@ public class DisplayObject
         }
         return fieldValues;
     }
+
+    /**
+     * Used by JSP
+     * @return a string representing the type of the object in question, i.e.: "Gene"
+     */
+    public String getObjectType() {
+        String result = "";
+        for (Object cld : getClds()) {
+            result += ((ClassDescriptor) cld).getUnqualifiedName() + " ";
+        }
+        return result.substring(0, result.length() - 1);
+    }
+
+    /**
+     * Used by JSP
+     * @return the main title of this object, i.e.: "eve FBgn0000606"
+     */
+    public String getTitleMain() {
+        String result = "";
+
+        String symbol = (String) getFieldValues().get("symbol");
+        if (symbol != null && !symbol.isEmpty()) {
+            result += symbol + " ";
+        }
+        String primaryIdentifier = (String) getFieldValues().get("primaryIdentifier");
+        if (primaryIdentifier != null && !primaryIdentifier.isEmpty()) {
+            result += primaryIdentifier + " ";
+        }
+
+        return result.substring(0, result.length() - 1);
+    }
+
+    /**
+     * Used by JSP
+     * @return the subtitle of this object, i.e.: "D. melanogaster"
+     */
+    public String getTitleSub() {
+        String result = "";
+
+        String organism = (String) getFieldValues().get("organism.shortName");
+        if (organism != null && !organism.isEmpty()) {
+            result += organism + " ";
+        }
+
+        return result.substring(0, result.length() - 1);
+    }
+
 }

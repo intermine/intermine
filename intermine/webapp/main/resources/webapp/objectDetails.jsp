@@ -15,17 +15,8 @@
 <div id="header_wrap">
 
 <div id="object_header"><tiles:get name="objectTrail.tile" />
-<h1 class="title"><!-- KEEP THIS! ${object.fieldExprs} --> <c:forEach
-  items="${object.clds}" var="cld">${cld.unqualifiedName}</c:forEach>: <c:if
-  test="${object.fieldConfigMap['symbol'] != null && !empty object.fieldValues['symbol']}">
-  <strong>${object.fieldValues['symbol']}</strong>
-</c:if> <c:if
-  test="${object.fieldConfigMap['primaryIdentifier'] != null && !empty object.fieldValues['primaryIdentifier']}">
-  <strong>${object.fieldValues['primaryIdentifier']}</strong>
-</c:if> <c:if
-  test="${object.fieldConfigMap['organism.shortName'] != null && !empty object.fieldValues['organism.shortName']}">
-        ${object.fieldValues['organism.shortName']}
-      </c:if></h1>
+<h1 class="title"><!-- KEEP THIS! ${object.fieldExprs} -->
+    ${object.objectType}: <strong>${object.titleMain}</strong> ${object.titleSub}</h1>
 
 <table class="fields">
   <c:set var="tableCount" value="0" scope="page" />
