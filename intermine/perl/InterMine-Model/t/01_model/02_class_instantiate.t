@@ -302,10 +302,10 @@ subtest "Test type coercion" => sub {
         "... and for dept");
     is($emp3->getDepartment->getCompany->getObjectId, 1200025, 
         "... and for company");
-    is($emp3->getDepartment->getCompany->getContractor(0)->getObjectId, 1200026, 
+    is($emp3->getDepartment->getCompany->getContractorByIndex(0)->getObjectId, 1200026, 
         "... and for contractor");
 
     is($emp3->getDepartment->getCompany->getName, "Bar Inc.", "And it was coerced correctly");
-    is($emp3->getDepartment->getCompany->getContractor(1)->getName, "Bernie",
+    is($emp3->getDepartment->getCompany->getContractorByIndex(1)->getName, "Bernie",
         "... including collections");
 };
