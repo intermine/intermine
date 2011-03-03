@@ -345,6 +345,13 @@ sub send_off {
     return $resp;
 }
 
+__PACKAGE__->meta->make_immutable;
+no Moose;
+
+1;
+
+__END__
+
 =head1 AUTHOR
 
 Alex Kalderimis C<dev@intermine.org>
@@ -382,4 +389,3 @@ under the same terms as Perl itself.
 
 =cut
 
-1;

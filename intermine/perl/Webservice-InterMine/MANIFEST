@@ -1,3 +1,5 @@
+bin/run-im-query
+bin/run-im-template
 Build.PL
 Changes
 ignore.txt
@@ -103,6 +105,7 @@ t/data/multixml.txt
 t/data/old_style_templates.xml
 t/data/result.json
 t/manifest.t
+t/moose-hygiene.t
 t/pod-coverage.t
 t/pod.t
 t/tests/Test/Webservice/InterMine/Constraint.pm
@@ -129,3 +132,4 @@ t/tests/Test/Webservice/InterMine/SortOrder.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraintFactory.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraints.pm
 t/tests/Test/Webservice/InterMine/TemplateFactory.pm
+META.yml

@@ -19,11 +19,7 @@ sub _build_json_parser {
     return JSON->new->allow_singlequote->allow_barekey;
 }
 
-has format => (
-    is      => 'rw',
-    isa     => Str,
-    default => 'tab',
-);
+use constant DEFAULT_FORMAT => 'tab';
 
 around BUILDARGS => sub {
     my $orig  = shift;
@@ -41,7 +37,9 @@ around BUILDARGS => sub {
     }
 };
 
-=head1 NAME Webservice::InterMine::Query::Roles::Runnable - Composable behaviour for runnable queries
+=head1 NAME 
+
+Webservice::InterMine::Query::Roles::Runnable - Composable behaviour for runnable queries
 
 =head1 DESCRIPTION 
 
@@ -58,22 +56,50 @@ Returns a results iterator for use with a query.
 sub results_iterator {
     my $self  = shift;
     my %args  = @_;
-    my $roles = $args{with} if ( exists $args{with} );
+    my $roles = delete $args{with};
     return $self->service->get_results_iterator(
-        $self->url( format => $self->format ),
-        $self->view, $roles, );
+        $self->url( %args ),
+        $self->view, $roles, 
+    );
 }
 
 my @json_format = (qw/jsonobjects jsonrows/);
+my @simple_formats = (qw/ string count /);
+my @valid_formats = (qw/ strings arrayref arrayrefs hashref hashrefs /, 
+    @json_format, @simple_formats);
 
-=head2 results(as => $format, json => inflate|instantiate|raw|perl)
+=head2 results( %options )
 
 returns the results from a query in the result format
 specified. 
 
-For json formats, the results can be returned as inflated objects,
+The following options are available:
+
+=over 4
+
+=item * as => $format
+
+Possible values: (string|strings|arrayrefs|hashrefs|jsonobjects|jsonrows|count)
+
+The format to request results in. The default is C<arrayrefs>
+
+=item * size => $size
+
+The number of results to return. Leave undefined for "all" (default).
+
+=item * start => $start 
+
+The first result to return (starting at 0). The default is 0.
+
+=item * json => $json_processor
+
+Possible values: (inflate|instantiate|raw|perl)
+
+What to do with JSON results. The results can be returned as inflated objects,
 full instantiated Moose objects, a raw json string, or as a perl
-data structure. (default is perl).
+data structure. (default is C<perl>).
+
+=back
 
 =cut
 
@@ -81,16 +107,22 @@ sub results {
     my $self   = shift;
     my %args   = @_;
     my $wanted = $args{as} || 'arrayref';    # string and hashref are possible
-    if ( $wanted eq any(@json_format) ) {
-        $self->format($wanted);
+    confess "Invalid format selected" unless ($wanted eq any(@valid_formats));
+
+    my $format = $self->DEFAULT_FORMAT;
+    if ( $wanted eq any(@json_format, 'count') ) {
+        $format = $wanted;
         $wanted = 'string';
     }
+        
     $wanted =~ s/s$//;    # trim trailing 's' on arrayrefs/hashrefs
-    my $i     = $self->results_iterator;
+    my $i     = $self->results_iterator(
+        format => $format,
+        start => $args{start},
+        size  => $args{size},
+    );
     my @lines = $i->all_lines($wanted);
-    if ( $wanted eq 'string' and $args{as} eq 'string' ) {
-
-        #ie. the original wanted was "string"
+    if ( $wanted eq 'string' and $args{as} eq any(@simple_formats) ) {
         return join( "\n", @lines );
     }
     elsif ( $wanted eq 'string' and $args{as} eq any(@json_format) ) {

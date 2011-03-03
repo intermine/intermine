@@ -144,6 +144,13 @@ sub process_xml {
     }
 }
 
+__PACKAGE__->meta->make_immutable;
+no Moose;
+
+1;
+
+__END__
+
 =head1 AUTHOR
 
 Alex Kalderimis C<< <dev@intermine.org> >>
@@ -180,5 +187,3 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
-
-1;

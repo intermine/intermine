@@ -25,6 +25,8 @@ my $build = Module::Build->new(
         'URI'                           => 1.37,
         'XML::Parser::PerlSAX'          => 0.08,
         'XML::DOM'                      => 0,
+        'AppConfig'               => 0,
+        'Pod::Usage'              => 0,
     },
     recommends => {
         'YAML::Syck'              => 1.07,

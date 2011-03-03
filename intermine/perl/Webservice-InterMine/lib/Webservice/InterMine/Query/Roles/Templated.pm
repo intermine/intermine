@@ -110,6 +110,9 @@ sub url {
         format => $format,
         name   => $self->name,
     );
+    for my $opt (qw/start size/) {
+        $query_form{$opt} = $args{$opt} if ($args{$opt});
+    }
 
     my $i = 1;
     for my $constraint ( $self->editable_constraints ) {
