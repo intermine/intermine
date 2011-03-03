@@ -159,6 +159,10 @@ public class RequestImpl implements Request
     public void setMaxCount(int maxCount) {
         setParameter("size", maxCount + "");
     }
+
+    public void setStart(int start) {
+        setParameter("start", start + "");
+    }
     
     public void setFormat(String format) {
     	setParameter("format", format);
