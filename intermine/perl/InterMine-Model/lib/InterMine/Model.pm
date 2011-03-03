@@ -10,7 +10,7 @@ use InterMine::Model::Handler;
 
 use constant TYPE_PREFIX => "InterMine";
 
-our $VERSION = '0.9606';
+our $VERSION = '0.9607';
 
 =head1 NAME
 

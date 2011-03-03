@@ -19,40 +19,8 @@ InterMine::Model::Attribute - represents an attribute of an InterMine class
 Objects of this class describe the attributes of class in an InterMine model.
 Attribute objects are generally part of ClassDescriptor objects.
 
-=head1 AUTHOR
-
-FlyMine C<< <support@flymine.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<support@flymine.org>.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc InterMine::Model::Attribute
-
-You can also look for information at:
-
-=over 4
-
-=item * FlyMine
-
-L<http://www.flymine.org>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=head1 FUNCTIONS
-
 =cut
+
 use Moose;
 with (
     'InterMine::Model::Role::Field',
@@ -63,6 +31,16 @@ use MooseX::Types::Moose qw(Str Int Num Bool Value);
 use InterMine::TypeLibrary qw(BigInt);
 use InterMine::Model::Types qw(ISO8601DateStamp);
 
+=head1 ATTRIBUTES
+
+=head2 type (Str)
+
+=head3 reader: java_type
+
+The java type of the attribute (Integer, java.lang.String, etc...)
+
+=cut
+
 has type => (
     reader   => 'java_type',
     isa	     => Str,
@@ -71,9 +49,8 @@ has type => (
 
 =head2 attribute_type
 
- Usage   : my $type = $field->attribute_type();
- Function: return the (Java) type of this attribute, eg. "String", "Integer",
-           "Date", "Boolean"
+The java_type of the attribute, stripped of any dotted bits 
+(Date, String, int, etc)
 
 =cut
 
@@ -115,6 +92,8 @@ sub _get_moose_options {
     return @options;
 }
 
+=head1 METHODS
+
 =head2 to_xml
 
 The xml representation of the attribute descriptor
@@ -130,3 +109,48 @@ sub to_xml {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
+
+__END__
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<InterMine::Model::ClassDescriptor>
+
+=item L<InterMine::Model::Role::Field>
+
+=item L<InterMine::Model::Role::Descriptor>
+
+=back
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::Model::Attribute
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2006,2007,2008,2009,2010,2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

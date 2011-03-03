@@ -37,3 +37,5 @@ Revision history for InterMine-Model
         * Models (and their descriptors) can serialise themselves back into xml
         * Added ByIndex to collection get handler to avoid cases where a class has both
           "foo" and "foos". 
+0.9607  Thu Mar  3 18:17:20 GMT 2011
+        * Provided POD for constants, as some versions of Pod::Coverage demand it

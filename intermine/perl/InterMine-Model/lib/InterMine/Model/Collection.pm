@@ -21,42 +21,20 @@ Objects of this class describe the collections of a class
 in an InterMine model.  Collection objects are generally part of
 ClassDescriptor objects.
 
-=head1 AUTHOR
-
-FlyMine C<< <support@flymine.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<support@flymine.org>.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc InterMine::Model::Collection
-
-You can also look for information at:
-
-=over 4
-
-=item * FlyMine
-
-L<http://www.flymine.org>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
 package InterMine::Model::Collection;
 
 use Moose;
 extends 'InterMine::Model::Reference';
+
+=head1 CONSTANTS
+
+=head2 TAG_NAME
+
+the name for serialising references to xml
+
+=cut
 
 use constant TAG_NAME => "collection";
 
@@ -89,3 +67,50 @@ override '_get_moose_options' => sub {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
+
+__END__
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<InterMine::Model::ClassDescriptor>
+
+=item L<InterMine::Model::Reference>
+
+=item L<InterMine::Model::Role::Field>
+
+=item L<InterMine::Model::Role::Descriptor>
+
+=back
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::Model::Collection
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2006,2007,2008,2009,2010,2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
