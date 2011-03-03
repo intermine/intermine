@@ -62,7 +62,7 @@
             var="resultElementColumn"
             varStatus="rowStatus">
           <c:if test="${rowStatus.count == 1 && table.hasMoreThanOneType}"><td class="type">${resultElementRow.className}</td></c:if>
-          <td id="row_${issueType}_${status.count -1}">
+          <td class="row_${issueType}_${status.count -1}">
           <c:choose>
             <c:when test="${!empty resultElementColumn}">
               <c:choose>
@@ -95,14 +95,14 @@
           </c:choose>
           </td>
           <c:if test="${rowStatus.count == fn:length(resultElementRow.items)}">
-            <td class="right" id="row_${issueType}_${status.count -1}">
+            <td class="right row_${issueType}_${status.count -1}">
               <span id="add_${issueType}_${resultElementRow.objectId}" class="fakelink"
                   onclick="addId2Bag('${resultElementRow.objectId}','${status.count -1}',
-                                    '${resultElementRow.objectId}','${issueType}');">Add</span>
+                                    '${resultElementRow.identifier}','${issueType}');">Add</span>
               &nbsp;&nbsp;
               <span id="rem_${issueType}_${resultElementRow.objectId}"
                   onclick="removeIdFromBag('${resultElementRow.objectId}','${status.count -1}',
-                                        '${resultElementRow.objectId}','${issueType}');">Remove</span>
+                                        '${resultElementRow.identifier}','${issueType}');">Remove</span>
             </td>
           </c:if>
         </c:forEach>
