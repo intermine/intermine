@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2009 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,8 +33,8 @@ public class ProteinAtlasConverter extends BioFileConverter
     //
     private static final String DATASET_TITLE = "Protein Atlas expression";
     private static final String DATA_SOURCE_NAME = "Protein Atlas";
-    private Map<String,String> genes = new HashMap<String,String>();
-    private Map<String,String> tissues = new HashMap<String,String>();
+    private Map<String, String> genes = new HashMap<String, String>();
+    private Map<String, String> tissues = new HashMap<String, String>();
 
     private String taxonId = "9606";
 
@@ -55,7 +55,7 @@ public class ProteinAtlasConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
         if ("normal_tissue.csv".equals(currentFile.getName())) {
-           processNormalTissue(reader);
+            processNormalTissue(reader);
         } else {
             throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
         }
