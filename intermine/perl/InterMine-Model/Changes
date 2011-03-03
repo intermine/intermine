@@ -33,5 +33,7 @@ Revision history for InterMine-Model
           the Model::Handler in its own separate file.
         * Model can now handle more source formats
         * Supplies a TestModel instance to other consuming packages for testing against
-0.9606  Wed Mar  2 16:36:01 GMT 2011
+0.9606  Thu Mar  3 02:14:48 GMT 2011
         * Models (and their descriptors) can serialise themselves back into xml
+        * Added ByIndex to collection get handler to avoid cases where a class has both
+          "foo" and "foos". 
