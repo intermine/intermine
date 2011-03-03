@@ -12,9 +12,9 @@ package org.intermine.webservice.client.core;
 
 /**
  * Simple class wrapping content type information. At this moment only
- * TEXT_TAB, TEXT_XML, TEXT_PLAIN are useful content types. InterMine decides 
+ * TEXT_TAB, TEXT_XML, TEXT_PLAIN are useful content types. InterMine decides
  * which output format use according to the parameters in request
- * and not according to the content type header.  
+ * and not according to the content type header.
  * @author Jakub Kulaviak
  **/
 public class ContentType
@@ -25,9 +25,9 @@ public class ContentType
     private String subType;
 
     private String charSet;
-    
+
     private static final String UTF8_CHARSET = "UTF-8";
-    
+
     /**
      * A ContentType constant that describes the generic text/xml content type.
      */
@@ -41,13 +41,20 @@ public class ContentType
       new ContentType("text", "tab-separated-values", UTF8_CHARSET);
 
     /**
+     * A ContentType constant that describes the generic text/plain content type
+     * when requesting counts.
+     */
+    public static final ContentType TEXT_COUNT =
+      new ContentType("text", "count", UTF8_CHARSET);
+
+    /**
      * A ContentType constant that describes the generic text/plain content type.
      */
     public static final ContentType TEXT_PLAIN =
       new ContentType("text", "plain", UTF8_CHARSET);
 
-	public static final ContentType APPLICATION_JSON = 
-		new ContentType("application", "json", UTF8_CHARSET);
+    public static final ContentType APPLICATION_JSON =
+        new ContentType("application", "json", UTF8_CHARSET);
 
     private ContentType(String type, String subType, String charSet) {
         this.type = type;
@@ -56,7 +63,7 @@ public class ContentType
     }
 
     /**
-     * @return type 
+     * @return type
      */
     public String getType() {
         return type;
@@ -64,7 +71,7 @@ public class ContentType
 
     /**
      * Sets main content type.
-     * @param type content type 
+     * @param type content type
      */
     public void setType(String type) {
         this.type = type;
