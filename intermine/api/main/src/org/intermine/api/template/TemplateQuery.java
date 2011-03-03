@@ -413,7 +413,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * removed - i.e. a query that will return all possible results of executing
      * the template.  The original template is left unaltered.
      *
-     * @return a clone of the original tempate without editable constraints.
+     * @return a clone of the original template without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
         TemplateQuery clone = clone();
@@ -482,6 +482,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @param title the title
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
