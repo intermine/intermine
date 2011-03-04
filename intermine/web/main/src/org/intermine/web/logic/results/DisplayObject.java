@@ -18,11 +18,13 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -39,6 +41,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.HeaderConfig;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -500,18 +503,7 @@ public class DisplayObject
      * @return the main title of this object, i.e.: "eve FBgn0000606"
      */
     public String getTitleMain() {
-        String result = "";
-
-        String symbol = (String) getFieldValues().get("symbol");
-        if (symbol != null && !symbol.isEmpty()) {
-            result += symbol + " ";
-        }
-        String primaryIdentifier = (String) getFieldValues().get("primaryIdentifier");
-        if (primaryIdentifier != null && !primaryIdentifier.isEmpty()) {
-            result += primaryIdentifier + " ";
-        }
-
-        return result.substring(0, result.length() - 1);
+        return getTitles("main");
     }
 
     /**
@@ -519,14 +511,43 @@ public class DisplayObject
      * @return the subtitle of this object, i.e.: "D. melanogaster"
      */
     public String getTitleSub() {
-        String result = "";
+        return getTitles("sub");
+    }
 
-        String organism = (String) getFieldValues().get("organism.shortName");
-        if (organism != null && !organism.isEmpty()) {
-            result += organism + " ";
+    /**
+     * Get a title based on the type key we pass it
+     * @param key: main|sub
+     * @return the titles string as resolved based on the path(s) under key
+     */
+    private String getTitles(String key) {
+        // for all ClassDescriptors
+        for (ClassDescriptor cld : clds) {
+            // fetch the Type
+            Type type = webConfig.getTypes().get(cld.getName());
+            // retrieve the titles map, HeaderConfig serves as a useless wrapper
+            HeaderConfig hc = type.getHeaderConfig();
+            if (hc != null) {
+                Map<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
+                // if we have something saved
+                if (titles != null && titles.containsKey(key)) {
+                    String result = "";
+                    // concatenate a space delineated title together as resolved from FieldValues
+                    for (String path : titles.get(key).keySet()) {
+                        String symbol = (String) getFieldValues().get(path);
+                        // String.isEmpty() was introduced in Java release 1.6
+                        if (StringUtils.isNotBlank(symbol)) {
+                            result += symbol + " ";
+                        }
+                    }
+                    // trailing space & return
+                    if (!result.isEmpty()) {
+                        return result.substring(0, result.length() - 1);
+                    }
+                }
+            }
         }
 
-        return result.substring(0, result.length() - 1);
+        return null;
     }
 
 }
