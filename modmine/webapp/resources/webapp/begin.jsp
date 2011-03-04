@@ -322,16 +322,18 @@ the new list. You can also use any of modMine's queries to create a list.
 
    <div class="span-14 last">
    <div id="bochs">
-     <h3>Fly Regulatory Network</h3>
-     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="themes/modmine/fly-network-detail.jpg" alt="Fly Regulatory Network"/></div></a></center>
+     <h3>Regulatory Network</h3>
+
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/wormRegulatoryNetwork.do">Worm <div class="heatmap"><img src="themes/modmine/worm-network-detail2.jpg" alt="Worm Regulatory Network"/></div></a></center>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly <div class="heatmap"><img src="themes/modmine/fly-network-detail2.jpg" alt="Fly Regulatory Network"/></div></a></center>    
+
      <div class="text">
-       <p><strong>Explore</strong> an hierarchical view of the physical regulatory network.
+       <p><strong>Explore</strong> an hierarchical view of the physical regulatory networks.
        </p>
-       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly Regulatory Network</a></div>
      </div>
    </div>
    </div>
-
+      
    <div style="clear:both;"></div>
 
 </div>
