@@ -28,6 +28,8 @@ import org.intermine.util.TypeUtil;
 /**
  * Contructs an alternate object details link pointing to an external URL for use in results table.
  *
+ * Returns NULL if there is no config for given object.
+ *
  * @author Julie Sullivan
  */
 public class BioLinkRedirectManager extends LinkRedirectManager
@@ -76,22 +78,13 @@ public class BioLinkRedirectManager extends LinkRedirectManager
         // externalLink.flybaseLink.Gene.7227.primaryIdentifier.url = http://google.com
         final String regexp = "externallink\\.([^.]+)\\." + geneOrgKey
             + "\\.([^.]+)(\\.list)?\\.(url)";
-
         Pattern p = Pattern.compile(regexp);
-
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
             if (matcher.matches()) {
-                String dbName = matcher.group(1);
-                String className = matcher.group(2);
-                String taxId = matcher.group(4);
                 String attrName = matcher.group(5);
-                String imType = matcher.group(6);
-                String propType = matcher.group(7);
-
-
                 Object attrValue = null;
                 try {
                     attrValue = imo.getFieldValue(attrName);
@@ -103,10 +96,8 @@ public class BioLinkRedirectManager extends LinkRedirectManager
                 } else {
                     url = value + attrValue;
                 }
-
             }
         }
-
         return url;
     }
 }
