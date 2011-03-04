@@ -99,13 +99,13 @@
   </c:forEach>
 </table>
 
-<div class="box">
-  <c:set var="isThisHeader" value="true" scope="request" />
-  <tiles:insert page="/objectDetailsInlineLists.jsp">
-    <tiles:put name="object" beanName="object" />
-    <tiles:put name="isThisHeader" beanName="isThisHeader" />
-  </tiles:insert>
-</div>
+<c:if test="${object.hasHeaderInlineLists}">
+  <div class="box">
+    <tiles:insert page="/objectDetailsHeaderInlineLists.jsp">
+      <tiles:put name="object" beanName="object" />
+    </tiles:insert>
+  </div>
+</c:if>
 
 </div>
 </div>
@@ -234,11 +234,11 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="heading" value="true" />
   </tiles:insert>
 
-  <c:set var="isThisHeader" value="false" scope="request" />
-  <tiles:insert page="/objectDetailsInlineLists.jsp">
-    <tiles:put name="object" beanName="object" />
-    <tiles:put name="isThisHeader" beanName="isThisHeader" />
-  </tiles:insert>
+  <c:if test="${object.hasNormalInlineLists}">
+    <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
+      <tiles:put name="object" beanName="object" />
+    </tiles:insert>
+  </c:if>
 
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <tiles:insert name="objectDetailsAspect.tile">

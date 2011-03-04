@@ -162,13 +162,53 @@ public class DisplayObject
 
     /**
      *
-     * @return a list of inline lists associated with this report page object
+     * @param header specifies whether the inlineLists should be of header/normal type
+     * @return InlineLists
      */
-    public List<InlineList> getInlineLists() {
+    private List<InlineList> getInlineLists(Boolean header) {
         if (inlineLists == null) {
             initialise();
         }
-        return inlineLists;
+        List<InlineList> result = new ArrayList<InlineList>();
+        for (InlineList list : inlineLists) {
+            // add only lists of matching display type
+            if (list.getShowInHeader() == header) {
+                result.add(list);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Used from JSP
+     * @return true if the lists of a specified type are not of 0 size
+     */
+    public Boolean getHasHeaderInlineLists() {
+        return (getHeaderInlineLists().size() > 0);
+    }
+
+    /**
+     * Used from JSP
+     * @return true if the lists of a specified type are not of 0 size
+     */
+    public Boolean getHasNormalInlineLists() {
+        return (getNormalInlineLists().size() > 0);
+    }
+
+    /**
+     * Used from JSP
+     * @return InlineList(s)
+     */
+    public List<InlineList> getHeaderInlineLists() {
+        return getInlineLists(true);
+    }
+
+    /**
+     * Used from JSP
+     * @return InlineList(s)
+     */
+    public List<InlineList> getNormalInlineLists() {
+        return getInlineLists(false);
     }
 
     /**
