@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -70,6 +71,16 @@ public class WebConfig
         digester.addObjectCreate("webconfig/class", Type.class);
         digester.addSetProperties("webconfig/class", "className", "className");
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
+
+        /* configure how the "title" of an object is displayed on Type */
+        digester.addObjectCreate("webconfig/class/headerconfig/titles", HeaderConfig.class);
+        digester.addSetProperties("webconfig/class/headerconfig/titles",
+                "mainTitles", "mainTitles");
+        digester.addSetProperties("webconfig/class/headerconfig/titles",
+                "subTitles", "subTitles");
+        digester.addSetProperties("webconfig/class/headerconfig/titles",
+                "appendConfig", "appendConfig");
+        digester.addSetNext("webconfig/class/headerconfig/titles", "addHeaderConfig");
 
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
         digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");
@@ -282,7 +293,7 @@ public class WebConfig
 
     /**
      * For each class/Type mentioned in XML files, copy its displayers and FieldConfigs to all
-     * subclasses that don't already have any configuration.
+     * subclasses that don't already have any configuration and sometimes when they do.
      * This method has package scope so that it can be called from the tests.
      *
      * @param model the Model to use to find sub-classes
@@ -311,6 +322,42 @@ public class WebConfig
                 Type superClassType = types.get(cd.getName());
 
                 if (superClassType != null) {
+                    // set title config, the setter itself only adds configs that have not been set
+                    //  before, see setTitles() in HeaderConfig
+                    HeaderConfig hc = superClassType.getHeaderConfig();
+                    if (hc != null) {
+
+                        // set the HeaderConfig titles as HeaderConfig for thisClassType might have
+                        //  been configured
+                        HashMap<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
+                        if (titles != null) {
+
+                            // new childish HeaderConfig
+                            HeaderConfig newHC = thisClassType.getHeaderConfig();
+                            if (newHC != null) {
+                                // type A behavior: inherit titles from the parent and append
+                                if (newHC.getAppendConfig()) {
+                                    // copy over main titles
+                                    if (titles.get("main") != null) {
+                                        for (Object title : titles.get("main").keySet()) {
+                                            newHC.setMainTitles((String) title);
+                                        }
+                                    }
+                                    // copy over sub titles
+                                    if (titles.get("sub") != null) {
+                                        for (Object title : titles.get("sub").keySet()) {
+                                            newHC.setSubTitles((String) title);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // type B behavior: inherit from parent if we are null
+                                thisClassType.addHeaderConfig(hc);
+                            }
+                        }
+                    }
+
+
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
                         for (FieldConfig fc : superClassType.getFieldConfigs()) {

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,8 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.collections.set.ListOrderedSet;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -45,7 +47,11 @@ public class Type
     private Displayer tableDisplayer;
     private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
+    /** @var inline lists attached to the object type */
     private LinkedList<InlineList> inlineLists = new LinkedList<InlineList>();
+
+    /** @var header configuration having paths to titles to show */
+    private HeaderConfig headerConfig = null;
 
     /**
      * Set the fully-qualified class name for this Type
@@ -113,6 +119,18 @@ public class Type
         }
     }
 
+    /**
+     * Add a header configuration, used from WebConfig
+     * @param headerConfig lalala
+     */
+    public void addHeaderConfig(HeaderConfig headerConfig) {
+        this.headerConfig = headerConfig;
+    }
+
+    /**
+     * Add an InlineList for this object, used from WebConfig
+     * @param list lalala
+     */
     public void addInlineList(InlineList list) {
         inlineLists.add(list);
     }
@@ -163,8 +181,20 @@ public class Type
         return Collections.unmodifiableSet(this.longDisplayers);
     }
 
+    /**
+     *
+     * @return inline lists
+     */
     public List<InlineList> getInlineLists() {
         return inlineLists;
+    }
+
+    /**
+     *
+     * @return header configuration
+     */
+    public HeaderConfig getHeaderConfig() {
+        return headerConfig;
     }
 
     /**
@@ -255,4 +285,20 @@ public class Type
     public void setAspectDisplayers(Map<String, List<Displayer>> aspectDisplayers) {
         this.aspectDisplayers = aspectDisplayers;
     }
+
+    /**
+     * @see unused getter for WebConfig to work
+     * @return null
+     */
+    public String getMainTitles() {
+        return null;
+    }
+    /**
+     * @see unused getter for WebConfig to work
+     * @return null
+     */
+    public String getSubTitles() {
+        return null;
+    }
+
 }
