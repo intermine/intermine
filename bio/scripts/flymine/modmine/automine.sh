@@ -31,6 +31,7 @@ FTPURL=http://submit.modencode.org/submit/public
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../bio/scripts/flymine/modmine/
 
+ARKDIR=/micklem/releases/modmine
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 
@@ -213,7 +214,7 @@ IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
-#SOURCES=worm-network
+#SOURCES=modencode-metadata,worm-network
 fi
 
 
@@ -947,14 +948,14 @@ elif [ $RESTART = "y" ]
 then
 # restart build after failure
 echo; echo "Restarting build using last available back-up db.."
-../bio/scripts/project_build -V $REL $V -l localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -l localhost $ARKDIR/`date "+%y%m%d"`\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $QRESTART = "y" ]
 then
 # restart build without recovering last dumped db
 echo; echo "Quick restart of the build (using current db).."
-../bio/scripts/project_build -V $REL $V -r localhost /tmp/mod-all\
-|| { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
+../bio/scripts/project_build -V $REL $V -r localhost $ARKDIR/`date "+%y%m%d"`\
+|| { printf "%b" "\n modMine build (quick restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
 # new build. static, metadata, organism
@@ -976,7 +977,7 @@ cd ../bio/scripts
 fi
 # .. and build modmine
 cd $MINEDIR
-../bio/scripts/project_build -V $REL $V -b localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -b localhost $ARKDIR/`date "+%y%m%d"`\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 
@@ -1007,7 +1008,7 @@ interact
 #---------------------------------------
 # and run acceptance tests
 #---------------------------------------
-if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
+if [ "$TEST" = "y" ] && [ "$VALIDATING" = "n" ]
 then
 if [ -n "$P" ]
 then
