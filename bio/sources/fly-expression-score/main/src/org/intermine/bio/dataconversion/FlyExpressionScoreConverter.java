@@ -49,16 +49,18 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 
     private static Map<String, String> cellLines = null;
     private static Map<String, String> devStages = null;
-       
+
     private Map<String, String> geneItems = new HashMap<String, String>();
     private Map<String, String> exonItems = new HashMap<String, String>();
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
-    public FlyExpressionScoreConverter(ItemWriter writer, Model model) throws ObjectStoreException{
+    public FlyExpressionScoreConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         createSubmissionItem();
         createOrganismItem();
@@ -87,7 +89,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         } else {
             throw new IllegalArgumentException("Unexpected file: "
                     + currentFile.getName());
-        }        
+        }
     }
 
     /**
@@ -102,7 +104,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @throws ObjectStoreException
      */
     private void processGeneScoreFile(Reader reader, Item submission, Item organism)
-    throws IOException, ObjectStoreException {
+        throws IOException, ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -111,14 +113,14 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         }
         String [] headers = null;
         int lineNumber = 0;
-        
+
         cellLines = new HashMap<String, String>();
         devStages = new HashMap<String, String>();
-                
+
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
-            LOG.debug("SCOREg " + line[0] );
-            
+            LOG.debug("SCOREg " + line[0]);
+
             if (lineNumber == 0) {
                 // column headers - strip off any extra columns - FlyAtlas
                 // not necessary for FlyExpressionScore, but OK to keep the code
@@ -144,7 +146,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     String col = headers[i];
                     col = correctOfficialName(col, CELL_LINE);
 
-                    if (!cellLines.containsKey(col)) {                    
+                    if (!cellLines.containsKey(col)) {
                         Item cellLine = createCellLine(col);
                         cellLines.put(col, cellLine.getIdentifier());
                     }
@@ -161,7 +163,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     String col = headers[i];
                     col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
 
-                    if (!devStages.containsKey(col)) {                    
+                    if (!devStages.containsKey(col)) {
                         Item developmentalStage = createDevelopmentalStage(col);
                         devStages.put(col, developmentalStage.getIdentifier());
                     }
@@ -189,7 +191,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @throws ObjectStoreException
      */
     private void processExonScoreFile(Reader reader, Item submission, Item organism)
-    throws IOException, ObjectStoreException {
+        throws IOException, ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -198,13 +200,13 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         }
         String [] headers = null;
         int lineNumber = 0;
-        
+
         cellLines = new HashMap<String, String>();
         devStages = new HashMap<String, String>();
-        
+
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
-            LOG.debug("SCOREe " + line[4] );
+            LOG.debug("SCOREe " + line[4]);
 
             if (lineNumber == 0) {
                 // column headers - strip off any extra columns - FlyAtlas
@@ -231,11 +233,11 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     String col = headers[i];
                     col = correctOfficialName(col, CELL_LINE);
 
-                    if (!cellLines.containsKey(col)) {                    
+                    if (!cellLines.containsKey(col)) {
                         Item cellLine = createCellLine(col);
                         cellLines.put(col, cellLine.getIdentifier());
                     }
-                                    
+
                     Item score = createExonExpressionScore(line[i]);
                     score.setReference("exon", exonItems.get(primaryId));
                     score.setReference("cellLine", cellLines.get(col));
@@ -248,12 +250,12 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                 for (int i = 32; i < headers.length; i++) {
                     String col = headers[i];
                     col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
-                    
-                    if (!devStages.containsKey(col)) {                    
+
+                    if (!devStages.containsKey(col)) {
                         Item developmentalStage = createDevelopmentalStage(col);
                         devStages.put(col, developmentalStage.getIdentifier());
                     }
-                    
+
                     Item score = createExonExpressionScore(line[i]);
                     score.setReference("exon", exonItems.get(primaryId));
                     score.setReference("developmentalStage", devStages.get(col));
@@ -318,7 +320,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         return name;
     }
 
-    
+
     /**
      * Create and store a FlyExpressionScore item on the first time called.
      *
@@ -363,7 +365,6 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      *
      * @param primaryId the primaryIdentifier
      * @param type gene or exon
-     * @return an Item representing the BioEntity
      * @throws ObjectStoreException
      */
     private void createBioEntity(String primaryId, String type) throws ObjectStoreException {
@@ -375,27 +376,27 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                 bioentity.setAttribute("primaryIdentifier", primaryId);
                 store(bioentity);
                 geneItems.put(primaryId, bioentity.getIdentifier());
-            }            
+            }
         } else if ("Exon".equals(type)) {
             if (!exonItems.containsKey(primaryId)) {
                 bioentity = createItem("Exon");
                 bioentity.setAttribute("primaryIdentifier", primaryId);
                 store(bioentity);
                 exonItems.put(primaryId, bioentity.getIdentifier());
-            }            
+            }
         }
     }
 
-        
+
     /**
      * Create and store a Submission item on the first time called.
      *
-     * @param DCCid the submission id
+     * @param dccid the submission id
      * @return an Item representing the Submission
      */
-    private Item createSubmission(String DCCid) throws ObjectStoreException {
+    private Item createSubmission(String dccid) throws ObjectStoreException {
         Item submission = createItem("Submission");
-        submission.setAttribute("DCCid", DCCid);
+        submission.setAttribute("DCCid", dccid);
         store(submission);
 
         return submission;
@@ -404,25 +405,25 @@ public class FlyExpressionScoreConverter extends BioFileConverter
     /**
      * Create and store a Submission item on the first time called.
      *
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if something goes wrong
      */
     protected void createSubmissionItem() throws ObjectStoreException {
         sub = createItem("Submission");
         sub.setAttribute("DCCid", DCCID);
         store(sub);
     }
-    
+
     /**
      * Create and store a organism item on the first time called.
      *
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if something goes wrong
      */
     protected void createOrganismItem() throws ObjectStoreException {
         org = createItem("Organism");
         org.setAttribute("taxonId", FLY_TAX_ID);
         store(org);
     }
-   
+
     /**
      * Create and store a CellLine item on the first time called.
      *
