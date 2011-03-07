@@ -37,7 +37,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.
+ * Prepare templates and news to be rendered on home page
  *
  * @author Tom Riley
  */
@@ -53,17 +53,12 @@ public class BeginAction extends InterMineAction
      /**
      * Either display the query builder or redirect to project.sitePrefix.
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward execute(ActionMapping mapping,
             ActionForm form,
@@ -91,19 +86,7 @@ public class BeginAction extends InterMineAction
                             + properties.getProperty("galaxy.url.value"));
         }
 
-        /* count number of templates and bags */
-        request.setAttribute("bagCount", new Integer(im.getBagManager()
-                .getGlobalBags().size()));
-        request.setAttribute("templateCount", new Integer(im
-                .getTemplateManager().getGlobalTemplates().size()));
-
         List<TemplateQuery> templates = null;
-
-        Object beginQueryClassConfig = properties.get("begin.query.classes");
-        if (beginQueryClassConfig != null) {
-            String[] beginQueryClasses = beginQueryClassConfig.toString().split("[ ,]+");
-            request.setAttribute("beginQueryClasses", beginQueryClasses);
-        }
 
         // do we have popular templates cached?
         if (bagOfTabs == null) {
