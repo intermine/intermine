@@ -11,6 +11,7 @@ package org.intermine.bio.web.logic;
  */
 
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -30,44 +31,23 @@ public class CytoscapeNetworkGenerator
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkGenerator.class);
 
-    //============ for SIF format ============
-    /**
-     * Convert a set of CytoscapeNetworkData to String in SIF format.
-     *
-     * @param interactionSet a set of CytoscapeNetworkData objects
-     * @return the network in SIF format as a string or text
-     */
-    public String createNetworkInSIF(Set<CytoscapeNetworkEdgeData> interactionSet) {
-
-        StringBuffer theNetwork = new StringBuffer();
-
-        // Build a line of network data, the data will be used in javascript in jsp,
-        // js can only take "\n" in a string instead of real new line, so use "\\n" here
-        for (CytoscapeNetworkEdgeData interactionString : interactionSet) {
-            theNetwork.append(interactionString.generateInteractionString());
-            theNetwork.append("\\n");
-        }
-
-        return theNetwork.toString();
-    }
-
     //============ for XGMML format ============
     /**
      * Convert a set of CytoscapeNetworkData to String in XGMML format.
      * Use StringBuffer instead of DOM or SAX.
      *
-     * @param interactionEdgeSet a set of CytoscapeNetworkEdgeData objects
-     * @param interactionNodeSet a set of CytoscapeNetworkNodeData objects
+     * @param interactionNodeMap a map of CytoscapeNetworkNodeData objects
+     * @param interactionEdgeMap a map of CytoscapeNetworkEdgeData objects
      * @return the network in XGMML format as a string or text
      */
     public String createGeneNetworkInXGMML(
-            Set<CytoscapeNetworkNodeData> interactionNodeSet,
-            Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
+            Map<String, CytoscapeNetworkNodeData> interactionNodeMap,
+            Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap) {
 
         StringBuffer sb = new StringBuffer();
         sb = addHeaderToGeneNetworkInXGMML(sb);
-        sb = addNodesToGeneNetworkInXGMML(sb, interactionNodeSet);
-        sb = addEdgesToGeneNetworkInXGMML(sb, interactionEdgeSet);
+        sb = addNodesToGeneNetworkInXGMML(sb, interactionNodeMap);
+        sb = addEdgesToGeneNetworkInXGMML(sb, interactionEdgeMap);
         sb = addTailToNetworkInXGMML(sb);
 
         return sb.toString();
@@ -124,12 +104,12 @@ public class CytoscapeNetworkGenerator
      * Generate the network nodes of XGMML.
      *
      * @param sb
-     * @param interactionNodeSet
+     * @param interactionNodeMap
      * @return sb
      */
     private StringBuffer addNodesToGeneNetworkInXGMML(StringBuffer sb,
-            Set<CytoscapeNetworkNodeData> interactionNodeSet) {
-        for (CytoscapeNetworkNodeData node : interactionNodeSet) {
+            Map<String, CytoscapeNetworkNodeData> interactionNodeMap) {
+        for (CytoscapeNetworkNodeData node : interactionNodeMap.values()) {
             if (node.getSourceLabel() == null || "".equals(node.getSourceLabel())) {
                 sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
                         + node.getSoureceId() + "\">");
@@ -151,12 +131,12 @@ public class CytoscapeNetworkGenerator
      * Generate the network edges of XGMML.
      *
      * @param sb
-     * @param interactionEdgeSet
+     * @param interactionEdgeMap
      * @return sb
      */
     private StringBuffer addEdgesToGeneNetworkInXGMML(StringBuffer sb,
-            Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
-        for (CytoscapeNetworkEdgeData edge : interactionEdgeSet) {
+            Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap) {
+        for (CytoscapeNetworkEdgeData edge : interactionEdgeMap.values()) {
             sb.append("<edge source=\"" + edge.getSoureceId() + "\" directed=\"true\" "
                     + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSoureceId() + " ("
                     + edge.getInteractionType() + ") " + edge.getTargetId() + "\" "

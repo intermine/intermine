@@ -11,7 +11,7 @@ package org.intermine.bio.web.logic;
  */
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -100,89 +100,93 @@ public class CytoscapeNetworkService
         }
 
         // Add the interaction network for this gene to the whole network
-        Set<CytoscapeNetworkNodeData> interactionNodeSet = getInteractionNodeSet(results, im);
-        Set<CytoscapeNetworkEdgeData> interactionEdgeSet = getInteractionEdgeSet(results, im);
+        Map<String, CytoscapeNetworkNodeData> interactionNodeMap = getInteractionNodeMap(
+                results, im);
+        Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap = getInteractionEdgeMap(
+                results, im);
 
         CytoscapeNetworkGenerator dataGen = new CytoscapeNetworkGenerator();
         String networkdata = dataGen.createGeneNetworkInXGMML(
-                interactionNodeSet, interactionEdgeSet);
+                interactionNodeMap, interactionEdgeMap);
 
         return networkdata;
     }
 
     /**
-     * Create a set of CytoscapeNetworkNodeData objects for parsing them to xgmml.
+     * Create a map of CytoscapeNetworkNodeData objects for parsing them to xgmml.
      *
      * @param results raw data queried back from database
      * @param im InterMineAPI
-     * @return A set of CytoscapeNetworkNodeData objects
+     * @return A map of CytoscapeNetworkNodeData objects
      * @throws ObjectStoreException
      */
-    private Set<CytoscapeNetworkNodeData> getInteractionNodeSet(
+    private Map<String, CytoscapeNetworkNodeData> getInteractionNodeMap(
             List<List<Object>> results, InterMineAPI im) throws ObjectStoreException  {
 
-        Set<CytoscapeNetworkNodeData> interactionNodeSet = new HashSet<CytoscapeNetworkNodeData>();
+        Map<String, CytoscapeNetworkNodeData> interactionNodeMap =
+            new HashMap<String, CytoscapeNetworkNodeData>();
 
         for (List<Object> aRecode : results) {
 
-            String sourceGenePID = (String) aRecode.get(0);
-            String sourceGeneSymbol = (String) aRecode.get(1);
-            Integer sourceGeneIMId = (Integer) aRecode.get(7);
+            String sourcePID = (String) aRecode.get(0);
+            String sourceSymbol = (String) aRecode.get(1);
+            Integer id = (Integer) aRecode.get(7);
 
             // === New Node ===
             CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
 
-            aNode.setInterMineId(sourceGeneIMId);
-            aNode.setSoureceId(String.valueOf(sourceGeneIMId)); // Use intermine id for source id
+            aNode.setInterMineId(id);
+            aNode.setSoureceId(String.valueOf(id)); // Use intermine id for source id
 
             Object sourceGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
-                    .getObjectById(sourceGeneIMId), im.getClassKeys());
+                    .getObjectById(id), im.getClassKeys());
 
-            if (sourceGeneSymbol != null) {
-                aNode.setSourceLabel(sourceGeneSymbol);
-            } else if (sourceGenePID != null) {
-                aNode.setSourceLabel(sourceGenePID);
+            if (sourceSymbol != null) {
+                aNode.setSourceLabel(sourceSymbol);
+            } else if (sourcePID != null) {
+                aNode.setSourceLabel(sourcePID);
             } else if (sourceGenekeyFldVal != null) {
                 aNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
             } else {
                 aNode.setSourceLabel("(Unknown Name)");
             }
 
-            interactionNodeSet.add(aNode);
+            interactionNodeMap.put(String.valueOf(id), aNode);
         }
 
-        return interactionNodeSet;
+        return interactionNodeMap;
     }
 
     /**
-     * Create a set of CytoscapeNetworkEdgeData objects for parsing them to xgmml.
+     * Create a map of CytoscapeNetworkEdgeData objects for parsing them to xgmml.
      *
      * @param results raw data queried back from database
      * @param im InterMineAPI
-     * @return A set of CytoscapeNetworkEdgeData objects
+     * @return A map of CytoscapeNetworkEdgeData objects
      * @throws ObjectStoreException
      */
-    private Set<CytoscapeNetworkEdgeData> getInteractionEdgeSet(List<List<Object>> results,
+    private Map<String, CytoscapeNetworkEdgeData> getInteractionEdgeMap(List<List<Object>> results,
             InterMineAPI im) throws ObjectStoreException {
 
-        Set<CytoscapeNetworkEdgeData> interactionEdgeSet = new HashSet<CytoscapeNetworkEdgeData>();
+        Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap =
+            new HashMap<String, CytoscapeNetworkEdgeData>();
 
         for (List<Object> aRecode : results) {
 
-            String sourceGenePID = (String) aRecode.get(0);
-            String sourceGeneSymbol = (String) aRecode.get(1);
+            String sourcePID = (String) aRecode.get(0);
+            String sourceSymbol = (String) aRecode.get(1);
             String interactionType = (String) aRecode.get(2);
-            String targetGenePID = (String) aRecode.get(3);
-            String targetGeneSymbol = (String) aRecode.get(4);
+            String targetPID = (String) aRecode.get(3);
+            String targetSymbol = (String) aRecode.get(4);
             String dataSourceName = (String) aRecode.get(5);
             String interactionShortName = (String) aRecode.get(6);
-            Integer sourceGeneIMId = (Integer) aRecode.get(7);
-            Integer targetGeneIMId = (Integer) aRecode.get(8);
+            Integer sourceId = (Integer) aRecode.get(7);
+            Integer targetId = (Integer) aRecode.get(8);
 
             Object sourceGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
-                    .getObjectById(sourceGeneIMId), im.getClassKeys());
+                    .getObjectById(sourceId), im.getClassKeys());
             Object targetGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
-                    .getObjectById(targetGeneIMId), im.getClassKeys());
+                    .getObjectById(targetId), im.getClassKeys());
 
             // === New Edge ===
             CytoscapeNetworkEdgeData aEdge = new CytoscapeNetworkEdgeData();
@@ -192,23 +196,23 @@ public class CytoscapeNetworkService
 
             LinkedHashSet<String> interactionShortNames = new LinkedHashSet<String>();
 
-            aEdge.setSoureceId(String.valueOf(sourceGeneIMId));
-            aEdge.setTargetId(String.valueOf(targetGeneIMId));
+            aEdge.setSoureceId(String.valueOf(sourceId));
+            aEdge.setTargetId(String.valueOf(targetId));
 
-            if (sourceGeneSymbol != null) {
-                aEdge.setSourceLabel(sourceGeneSymbol);
-            } else if (sourceGenePID != null) {
-                aEdge.setSourceLabel(sourceGenePID);
+            if (sourceSymbol != null) {
+                aEdge.setSourceLabel(sourceSymbol);
+            } else if (sourcePID != null) {
+                aEdge.setSourceLabel(sourcePID);
             } else if (sourceGenekeyFldVal != null) {
                 aEdge.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
             } else {
                 aEdge.setSourceLabel("(Unknown Name)");
             }
 
-            if (targetGeneSymbol != null) {
-                aEdge.setTargetLabel(targetGeneSymbol);
-            } else if (targetGenePID != null) {
-                aEdge.setTargetLabel(targetGenePID);
+            if (targetSymbol != null) {
+                aEdge.setTargetLabel(targetSymbol);
+            } else if (targetPID != null) {
+                aEdge.setTargetLabel(targetPID);
             } else if (targetGenekeyFldVal != null) {
                 aEdge.setTargetLabel(String.valueOf(targetGenekeyFldVal));
             } else {
@@ -217,58 +221,45 @@ public class CytoscapeNetworkService
 
             aEdge.setInteractionType(interactionType);
 
-            if (interactionEdgeSet.isEmpty()) {
+            String id = sourceId + "-" + targetId;
+            String idRev = targetId + "-" + sourceId;
+            aEdge.setId(id);
 
+            if (!interactionEdgeMap.containsKey(id) && !interactionEdgeMap.containsKey(idRev)) {
                 interactionShortNames.add(interactionShortName);
                 dataSources.put(dataSourceName, interactionShortNames);
                 aEdge.setDataSources(dataSources);
                 aEdge.setDirection("one");
 
-                interactionEdgeSet.add(aEdge);
+                interactionEdgeMap.put(id, aEdge);
             } else {
-                // You can't add to the HashSet while iterating. You have to either
-                // keep track of where you want to add, and then do that after
-                // you're done iterating, or else create a new HashSet on the fly,
-                // copying from the old one and filling in the holes as they occur.
-                // Thrown - java.util.ConcurrentModificationException
-
-                String interactingString = aEdge.generateInteractionString();
-                String interactingStringRev = aEdge.generateReverseInteractionString();
-
-                // Get a list of interactionString from interactionSet
-                LinkedHashSet<String> intcStrSet = new LinkedHashSet<String>();
-                for (CytoscapeNetworkEdgeData edgedata : interactionEdgeSet) {
-                    intcStrSet.add(edgedata.generateInteractionString());
-                }
-                // A none dulipcated edge
-                if (!(intcStrSet.contains(interactingString) || intcStrSet
-                        .contains(interactingStringRev))) {
-                    interactionShortNames.add(interactionShortName);
-                    dataSources.put(dataSourceName, interactionShortNames);
-                    aEdge.setDataSources(dataSources);
-
-                    interactionEdgeSet.add(aEdge);
-                } else { // duplicated edge
-                    // Pull out the CytoscapeNetworkEdgeData which contains the current
-                    // interactionString
-                    for (CytoscapeNetworkEdgeData edgedata : interactionEdgeSet) {
-                        if (edgedata.generateInteractionString().equals(interactingString)
-                            || edgedata.generateInteractionString().equals(interactingStringRev)) {
-                            edgedata.setDirection("both");
-                            if (edgedata.getDataSources().containsKey(dataSourceName)) {
-                                edgedata.getDataSources().get(dataSourceName)
-                                        .add(interactionShortName);
-                            } else {
-                                LinkedHashSet<String> intNames = new LinkedHashSet<String>();
-                                intNames.add(interactionShortName);
-                                edgedata.getDataSources().put(dataSourceName, intNames);
-                            }
-                        }
+                // Dulipcated edge
+                if (interactionEdgeMap.containsKey(id)) {
+                    if (interactionEdgeMap.get(id).getDataSources().containsKey(dataSourceName)) {
+                        interactionEdgeMap.get(id).getDataSources().get(dataSourceName)
+                                .add(interactionShortName);
+                    } else {
+                        LinkedHashSet<String> intNames = new LinkedHashSet<String>();
+                        intNames.add(interactionShortName);
+                        interactionEdgeMap.get(id).getDataSources().put(dataSourceName, intNames);
+                    }
+                } else if (interactionEdgeMap.containsKey(idRev)) {
+                    interactionEdgeMap.get(idRev).setId(idRev);
+                    interactionEdgeMap.get(idRev).setDirection("both");
+                    if (interactionEdgeMap.get(idRev).getDataSources()
+                            .containsKey(dataSourceName)) {
+                        interactionEdgeMap.get(idRev).getDataSources().get(dataSourceName)
+                                .add(interactionShortName);
+                    } else {
+                        LinkedHashSet<String> intNames = new LinkedHashSet<String>();
+                        intNames.add(interactionShortName);
+                        interactionEdgeMap.get(idRev).getDataSources()
+                                .put(dataSourceName, intNames);
                     }
                 }
             }
         }
 
-        return interactionEdgeSet;
+        return interactionEdgeMap;
     }
 }
