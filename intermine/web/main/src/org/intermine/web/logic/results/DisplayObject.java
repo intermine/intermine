@@ -481,7 +481,8 @@ public class DisplayObject
                             Object fieldValue = object.getFieldValue(fd.getName());
 
                             // determine the types in the collection
-                            List<Class<?>> listOfTypes = PathQueryResultHelper.queryForTypesInCollection(object, fd.getName(), os);
+                            List<Class<?>> listOfTypes = PathQueryResultHelper.
+                            queryForTypesInCollection(object, fd.getName(), os);
 
                             DisplayCollection newCollection =
                                 new DisplayCollection((Collection) fieldValue,
