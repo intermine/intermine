@@ -17,20 +17,18 @@
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
 
 
+<h1><html:link action="/aspect?name=Genes">Genes</html:link></h1>
+
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr>
-    <th>Data Category</th>
     <th>Organism</th>
     <th>Data</th>
     <th>Source</th>
     <th>PubMed</th>
     <th>Note</th>
-
   </tr>
 
-  <tr><td rowspan="3" class="leftcol">
-        <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
-        <p> Genomics </p></html:link></td>
+  <tr>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.33), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R2.16), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2011_01</td>
@@ -53,11 +51,19 @@
     <td> Kriventseva et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15899967" target="_new">PubMed: 15899967</a></td>
     <td> &nbsp;</td>
   </tr>
+  </table>
 
-  <tr><td rowspan="3"  class="leftcol">
-        <html:link action="/aspect?name=Comparative%20Genomics">
-          <p>  <img src="model/images/comparativeGenomics.png" /></p>
-          <p> Comparative Genomics </p></html:link></td>
+  <h1><html:link action="/aspect?name=Homology">Homology</html:link></h1>
+
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td>
        <p><i>D. melanogaster</i></p>
        <p><i>S. cerevisiae</i></p>
@@ -105,11 +111,19 @@
     <td>Ruan et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/18056084 " target="_new">PubMed: 18056084</a></td>
     <td> &nbsp; </td>
   </tr>
+  </table>
 
-  <tr><td rowspan="8"  class="leftcol">
-        <html:link action="/aspect?name=Proteins">
-        <p> <img src="model/images/proteins.png" /></p>
-        <p> Proteins </p></html:link></td>
+    <h1><html:link action="/aspect?name=Genes">Proteins</html:link></h1>
+
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
     <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 2011_01</td>
@@ -172,12 +186,18 @@
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
+</table>
+ <h1><html:link action="/aspect?name=Protein%20Structures">Protein Structures</html:link></h1>
 
-
-  <tr><td rowspan="3"  class="leftcol">
-        <html:link action="/aspect?name=Protein%20Structure">
-        <p> <img src="model/images/pstructure.gif" /></p>
-        <p> Protein Structure</p></html:link></td>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> 3-D structure predictions for protein domains</td>
     <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm" target="_new">Kenji Mizuguchi</a> - 9 April 2006</td>
@@ -201,12 +221,18 @@
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
+</table>
+ <h1><html:link action="/aspect?name=Interactions">Interactions</html:link></h1>
 
-
-  <tr><td rowspan="7"  class="leftcol">
-        <html:link action="/aspect?name=Interactions">
-         <p> <img src="model/images/interaction.gif" /></p>
-        <p> Interactions</p></html:link></td>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
     <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 22 December 2011</td>
@@ -260,12 +286,17 @@
     <td> Enright et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/14709173" target="_new">PubMed:14709173</a></td>
     <td> &nbsp;</td>
   </tr>
-
-
-  <tr><td rowspan="7"  class="leftcol">
-        <html:link action="/aspect?name=Gene%20Ontology">
-         <p> <img src="model/images/geneOntology.png" /></p>
-        <p> Gene Ontology </p></html:link></td>
+</table>
+ <h1><html:link action="/aspect?name=Gene%20Ontology">Gene Ontology</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 25 January 2011</td>
@@ -320,12 +351,17 @@
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a>, Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
-
-  <tr><td rowspan="5" class="leftcol">
-        <html:link action="/aspect?name=Gene%20Expression">
-        <p> <img src="model/images/embryos.jpg" /></p>
-        <p> Gene Expression</p>
-         </html:link></td>
+  </table>
+ <h1><html:link action="/aspect?name=Expression">Expression</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Microarray-based gene expression data for the life cycle of D. melanogaster</td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress" target="_new"> ArrayExpress </a> - Experiment E-FLYC-6</td>
@@ -364,11 +400,17 @@
     <td> Koutsos et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/ 17563388" target="_new">PubMed: 17563388</a></td>
     <td> &nbsp;</td>
   </tr>
-
-  <tr><td rowspan="4" class="leftcol">
-        <html:link action="/aspect?name=Transcriptional%20Regulation">
-        <p> <img src="model/images/bindingSites.png" /></p>
-        <p> Transcriptional Regulation</p></html:link></td>
+  </table>
+ <h1><html:link action="/aspect?name=Regulation">Regulation</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu" target="_new">REDfly</a> - 27 January 2011</td>
@@ -399,11 +441,17 @@
     <td> Down et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17238282" target="_new">PubMed: 17238282</a></td>
     <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td>
   </tr>
-
-  <tr><td rowspan="3" class="leftcol">
-       <html:link action="/aspect?name=Phenotypes">
-        <p> <img src="model/images/phenotypes.png" /></p>
-        <p> Phenotypes</p></html:link></td>
+  </table>
+ <h1><html:link action="/aspect?name=Regulation">Phenotypes</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
    <td> <i>D. melanogaster</i> </td>
     <td> Alleles and phenotypes</td>
     <td> <a href="http://www.flybase.org" target="_new">FlyBase</a> - Version FB2011_01</td>
@@ -426,11 +474,19 @@
     <td> Bieri et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099234" target="_new">PubMed: 17099234</a></td>
     <td> &nbsp;</td>
   </tr>
+  </table>
 
-  <tr><td rowspan="3" class="leftcol">
-       <html:link action="/aspect?name=Pathways">
-        <p> <img src="model/images/pathways.png" /></p>
-        <p> Pathways</p></html:link></td>
+ <h1><html:link action="/aspect?name=Pathways">Pathways</html:link></h1>
+
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i></td>
     <td> Curated pathway information and the genes involved in them</td>
     <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 57, 25 January 2011</td>
@@ -453,24 +509,35 @@
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
+</table>
+ <h1><html:link action="/aspect?name=Disease">Disease</html:link></h1>
 
-
-
-  <tr><td rowspan="1" class="leftcol">
-       <html:link action="/aspect?name=Disease">
-        <p> <img src="model/images/disease.png" /></p>
-        <p> Diseases</p></html:link></td>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Human disease to Drosophila gene data set</td>
     <td> <a href="http://superfly.ucsd.edu/homophila/" target="_new">Homophila</a> - Version 2.1</td>
     <td> Reiter et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/11381037" target="_new">PubMed: 11381037</a></td>
     <td> &nbsp;</td>
   </tr>
-
-  <tr><td rowspan="5" class="leftcol">
-       <html:link action="/aspect?name=Resources">
-        <p> <img src="model/images/drosdel.gif" /></p>
-        <p> Resources</p></html:link></td>
+  </table>
+ <h1><html:link action="/aspect?name=Resources">Resources</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> <a href="http://www.drosdel.org.uk" target="_new">DrosDel</a> artificial deletions</td>
     <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2011_01</td>
@@ -509,11 +576,17 @@
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
-
-  <tr><td rowspan="4" class="leftcol">
-       <html:link action="/aspect?name=Literature">
-        <p> <img src="model/images/book.png" /></p>
-        <p> Literature</p></html:link></td>
+  </table>
+ <h1><html:link action="/aspect?name=Publications">Publications</html:link></h1>
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
+  </tr>
+  <tr>
     <td> <i>Drosophila</i> </td>
     <td> Gene versus publications</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2011_01</td>
