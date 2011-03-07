@@ -1,4 +1,4 @@
-package org.modmine.web;
+package org.modmine.web.model;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -22,6 +22,24 @@ public class Span
     private Integer start;
     private Integer end;
 
+    /**
+     * Constructor
+     * @param spanInString a spam such as X:100..105
+     */
+    public Span (String spanInString) {
+        String[] temp = spanInString.split(":");
+        this.chr = temp[0];
+        temp = temp[1].split("\\.\\.");
+        this.start = Integer.parseInt(temp[0]);
+        this.end = Integer.parseInt(temp[1]);
+    }
+
+    /**
+     * Default constructor
+     */
+    public Span() {
+
+    }
     /**
      * @return chr
      */
@@ -70,5 +88,27 @@ public class Span
     @Override
     public String toString() {
         return chr + ":" + start + ".." + end;
+    }
+
+    /**
+     * @param obj a Span object
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Span) {
+            Span s = (Span) obj;
+            return (chr.equals(s.getChr())
+                    && start.equals(s.getStart()) && end.equals(s.getEnd()));
+        }
+        return false;
+    }
+
+    /**
+     * @return hashCode
+     */
+    @Override
+    public int hashCode() {
+        return chr.hashCode() + start.hashCode() + end.hashCode();
     }
 }

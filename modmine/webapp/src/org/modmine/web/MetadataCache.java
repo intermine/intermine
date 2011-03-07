@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -107,6 +108,33 @@ public final class MetadataCache
             readExperiments(os);
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
+    }
+
+    /**
+     * Fetch experiment and submission details for spanUpload.
+     * @param os the production objectStore
+     * @return a map of experiment name as key and a set of submission ids as value
+     */
+    public static synchronized Map<String, Set<String>>
+    getExperimentSubmissionDCCids(ObjectStore os) {
+        if (experimentCache == null) {
+            readExperiments(os);
+        }
+
+        Map<String, Set<String>> experimentSubmissionsMap =
+            new HashMap<String, Set<String>>();
+
+        for (Entry<String, DisplayExperiment> e : experimentCache.entrySet()) {
+
+            Set<String> dCCidSet = new HashSet<String>();
+            for (Submission s : e.getValue().getSubmissions()) {
+                dCCidSet.add(s.getdCCid());
+            }
+
+            experimentSubmissionsMap.put(e.getKey(), dCCidSet);
+        }
+
+        return experimentSubmissionsMap;
     }
 
     /**

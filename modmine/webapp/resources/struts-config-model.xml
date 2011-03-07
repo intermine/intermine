@@ -115,6 +115,7 @@
   type="org.modmine.web.SpanUploadResultsController" />
 
 <action input="/spanUploadOptions.jsp" name="spanUploadForm" path="/spanUploadAction" scope="request" type="org.modmine.web.SpanUploadAction" >
+    <!-- Not use redirect="true". here it is doing a forward, not redirecting. Redirecting causes the browser to make a new request, and that's why the things I put in the request aren't there anymore. -->
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
     <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
@@ -122,6 +123,12 @@
 <action path="/spanDisplayAction" scope="request" type="org.modmine.web.SpanDisplayAction" >
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
 </action>
+
+<action path="/spanUploadValidation"
+        type="org.modmine.web.SpanUploadValidationAction"/>
+
+<action path="/spanUploadAjax"
+        type="org.modmine.web.SpanUploadAjaxAction"/>
 <!-- End of Span Upload configuration -->
 
 <!-- Begining of Fly Regulatory Network configuration -->

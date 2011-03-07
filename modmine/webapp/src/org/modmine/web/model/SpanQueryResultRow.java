@@ -1,4 +1,4 @@
-package org.modmine.web;
+package org.modmine.web.model;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -11,19 +11,19 @@ package org.modmine.web;
  */
 
 /**
- * A bean to represent a row of the results fields from a query in SpanOverlapQueryRunner
- * @author fhu
+ * A bean to represent a row of the results fields from a query in SpanOverlapQueryRunner.
+ *
+ * @author Fengyuan Hu
  */
 public class SpanQueryResultRow
 {
 
     private String featurePID;
-    @SuppressWarnings("rawtypes")
-    private Class featureClass;
+    private String featureClass;
     private String chr;
     private Integer start;
     private Integer end;
-    private String subDCCid;
+    private String subDCCid; // a String as modENCODE_2675
     private String subTitle;
 
     /**
@@ -43,15 +43,14 @@ public class SpanQueryResultRow
     /**
      * @return feature class
      */
-    @SuppressWarnings("rawtypes")
-    public Class getFeatureClass() {
+    public String getFeatureClass() {
         return featureClass;
     }
 
     /**
      * @param featureClass feature class
      */
-    public void setFeatureClass(@SuppressWarnings("rawtypes") Class featureClass) {
+    public void setFeatureClass(String featureClass) {
         this.featureClass = featureClass;
     }
 
@@ -126,4 +125,10 @@ public class SpanQueryResultRow
         this.subTitle = subTitle;
     }
 
+    /**
+     * @return chr:start..end
+     */
+    public String locationToString() {
+        return chr + ":" + start + ".." + end;
+    }
 }
