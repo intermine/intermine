@@ -31,12 +31,22 @@
   <c:set var="templateCount" value="${fn:length(templates)}" />
 
   <h2>${aspect}</h2>
-  <div><c:if test="${!empty displayObject}">
-    <tiles:insert page="/objectDetailsRefsCols.jsp">
-      <tiles:put name="object" beanName="displayObject" />
-      <tiles:put name="placement" value="${placement}" />
-    </tiles:insert>
-  </c:if></div>
+  <c:if test="${!empty displayObject}">
+    <c:if test="${displayObject.hasNormalInlineLists}">
+      <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
+        <tiles:put name="object" beanName="displayObject" />
+        <tiles:put name="placement" value="${placement}" />
+      </tiles:insert>
+    </c:if>
+  </c:if>
+  <div>
+    <c:if test="${!empty displayObject}">
+      <tiles:insert page="/objectDetailsRefsCols.jsp">
+        <tiles:put name="object" beanName="displayObject" />
+        <tiles:put name="placement" value="${placement}" />
+      </tiles:insert>
+    </c:if>
+  </div>
   <tiles:insert name="/templateList.jsp">
     <tiles:put name="scope" value="global" />
     <tiles:put name="placement" value="${placement}" />

@@ -8,8 +8,9 @@
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
 <tiles:importAttribute name="object" ignore="false" />
+<tiles:importAttribute name="placement" />
 
-<c:forEach items="${object.normalInlineLists}" var="list" varStatus="status">
+<c:forEach items="${object.normalInlineLists[placement]}" var="list" varStatus="status">
   <div class="box grid_12">
     <h3>${list.size} ${list.prefix}</h3>
     <c:choose>
