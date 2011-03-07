@@ -145,8 +145,11 @@ function archive_mine {
 echo
 #echo "Dumping current release $REL ..."
 #pg_dump -F c -i -h modprod0 -f $ARKDIR/r$REL/modmine-r$REL modmine-r$REL -U modmine
+# use the build dump (from modfast)
+# mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
 echo "Dumping modmine-build in modfast..."
-pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-build modmine-build -U modminebuild
+pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
+
 #create release on archive server
 echo
 echo "Creating empty archive modmine-r$REL on modalone..."

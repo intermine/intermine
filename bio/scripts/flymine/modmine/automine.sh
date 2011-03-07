@@ -948,13 +948,13 @@ elif [ $RESTART = "y" ]
 then
 # restart build after failure
 echo; echo "Restarting build using last available back-up db.."
-../bio/scripts/project_build -V $REL $V -l localhost $ARKDIR/`date "+%y%m%d"`\
+../bio/scripts/project_build -V $REL $V -l localhost $ARKDIR/build/mod-final.dmp\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $QRESTART = "y" ]
 then
 # restart build without recovering last dumped db
 echo; echo "Quick restart of the build (using current db).."
-../bio/scripts/project_build -V $REL $V -r localhost $ARKDIR/`date "+%y%m%d"`\
+../bio/scripts/project_build -V $REL $V -r localhost $ARKDIR/build/mod-final.dmp\
 || { printf "%b" "\n modMine build (quick restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
@@ -977,7 +977,7 @@ cd ../bio/scripts
 fi
 # .. and build modmine
 cd $MINEDIR
-../bio/scripts/project_build -V $REL $V -b localhost $ARKDIR/`date "+%y%m%d"`\
+../bio/scripts/project_build -V $REL $V -b localhost $ARKDIR/build/mod-final.dmp\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 
