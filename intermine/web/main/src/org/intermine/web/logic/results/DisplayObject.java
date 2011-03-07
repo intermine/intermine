@@ -75,11 +75,13 @@ public class DisplayObject
     private Map<String, FieldConfig> fieldConfigMap = null;
     private List<String> fieldExprs = null;
     private Map<String, String> verbosity = new HashMap<String, String>();
-    private Map<String, String> showTableAsInlineList = new HashMap<String, String>();
     private final Map<String, List<FieldDescriptor>> classKeys;
 
-    /* @Map inline lists (used to be tables) */
-    private List<InlineList> inlineLists = null;
+    /** @var List set by the WebConfig */
+    private List<InlineList> inlineListsWebConfig = null;
+
+    /** @var Map resolved into the different placements (TreeMap keys) */
+    private TreeMap<String, List<InlineList>> inlineListsPlaced = null;
 
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
@@ -163,20 +165,13 @@ public class DisplayObject
     /**
      *
      * @param header specifies whether the inlineLists should be of header/normal type
-     * @return InlineLists
+     * @return InlineLists that are resolved into their respective placements
      */
-    private List<InlineList> getInlineLists(Boolean header) {
-        if (inlineLists == null) {
+    public TreeMap<String, List<InlineList>> getInlineLists() {
+        if (inlineListsPlaced == null) {
             initialise();
         }
-        List<InlineList> result = new ArrayList<InlineList>();
-        for (InlineList list : inlineLists) {
-            // add only lists of matching display type
-            if (list.getShowInHeader() == header) {
-                result.add(list);
-            }
-        }
-        return result;
+        return inlineListsPlaced;
     }
 
     /**
@@ -184,31 +179,15 @@ public class DisplayObject
      * @return true if the lists of a specified type are not of 0 size
      */
     public Boolean getHasHeaderInlineLists() {
-        return (getHeaderInlineLists().size() > 0);
+        return (getInlineLists().get("im:aspect:Header").size() > 0);
     }
 
     /**
      * Used from JSP
-     * @return true if the lists of a specified type are not of 0 size
+     * @return true if we have more than "header" lists, more that one placement
      */
     public Boolean getHasNormalInlineLists() {
-        return (getNormalInlineLists().size() > 0);
-    }
-
-    /**
-     * Used from JSP
-     * @return InlineList(s)
-     */
-    public List<InlineList> getHeaderInlineLists() {
-        return getInlineLists(true);
-    }
-
-    /**
-     * Used from JSP
-     * @return InlineList(s)
-     */
-    public List<InlineList> getNormalInlineLists() {
-        return getInlineLists(false);
+        return (getInlineLists().size() > 1);
     }
 
     /**
@@ -389,7 +368,7 @@ public class DisplayObject
         attributeDescriptors = new HashMap<String, FieldDescriptor>();
         longAttributes = new HashMap<String, String>();
         longAttributesTruncated = new HashMap<String, Object>();
-        inlineLists = new ArrayList<InlineList>();
+        inlineListsPlaced = new TreeMap<String, List<InlineList>>();
 
         try {
             for (ClassDescriptor cld : clds) {
@@ -397,12 +376,12 @@ public class DisplayObject
                 /** InlineLists **/
                 Type type = webConfig.getTypes().get(cld.getName());
                 // init lists from WebConfig Type
-                inlineLists = type.getInlineLists();
+                inlineListsWebConfig = type.getInlineLists();
                 // a map of inlineList object names so we do not include them elsewhere
                 HashMap<String, Boolean> bagOfInlineListNames = new HashMap<String, Boolean>();
                 // fill up
-                for (int i = 0; i < inlineLists.size(); i++) {
-                    InlineList list = inlineLists.get(i);
+                for (int i = 0; i < inlineListsWebConfig.size(); i++) {
+                    InlineList list = inlineListsWebConfig.get(i);
                     // soon to be list of values
                     Set<Object> listOfListObjects = null;
                     String columnToDisplayBy = null;
@@ -429,8 +408,19 @@ public class DisplayObject
                         throw new RuntimeException("Your collections of inline lists"
                                 + "are failing you", e);
                     }
-                    // save back
-                    inlineLists.set(i, list);
+
+                    // place the list
+                    List l = null;
+                    if (!inlineListsPlaced.containsKey("im:aspect:Header")) {
+                        // first time saving into this placement
+                        l = new ArrayList<InlineList>();
+                    } else {
+                        // fetch the list from the respective placement
+                        l = inlineListsPlaced.get("im:aspect:Header");
+                    }
+                    l.add(list);
+                    inlineListsPlaced.put("im:aspect:Header", l);
+
                     // save name of the collection
                     String path = list.getPath();
                     bagOfInlineListNames.put(path.substring(0, path.indexOf('.')), true);
