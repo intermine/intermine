@@ -17,11 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -49,6 +51,9 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.TableExportForm;
+import org.modmine.web.model.Span;
+import org.modmine.web.model.SpanQueryResultRow;
+import org.modmine.web.model.SpanUploadConstraint;
 
 /**
  * Generate queries for overlaps of submission features and overlaps with gene flanking regions.
@@ -57,6 +62,9 @@ import org.intermine.web.struts.TableExportForm;
   */
 public class FeaturesAction extends InterMineAction
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(FeaturesAction.class);
+
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
@@ -273,8 +281,24 @@ public class FeaturesAction extends InterMineAction
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
-            // Use feature pids as the value in lookup constraint
-            String value = request.getParameter("value");
+            @SuppressWarnings("unchecked")
+            Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
+                 (Map<String, Map<Span, List<SpanQueryResultRow>>>) request
+                                .getSession().getAttribute("spanOverlapFullResultMap");
+
+            @SuppressWarnings("unchecked")
+            Map<SpanUploadConstraint, String> spanConstraintMap =
+                (HashMap<SpanUploadConstraint, String>)  request
+                .getSession().getAttribute("spanConstraintMap");
+
+            String spanUUIDString = request.getParameter("spanUUIDString");
+            String criteria = request.getParameter("criteria");
+
+             // Use feature pids as the value in lookup constraint
+            String value =
+                getSpanOverlapFeatures(spanUUIDString, criteria, spanOverlapFullResultMap);
+
+            // Create a path query
             String path = "SequenceFeature";
             q.addView(path + ".primaryIdentifier");
             q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
@@ -286,7 +310,7 @@ public class FeaturesAction extends InterMineAction
 
             q.addConstraint(Constraints.lookup(path, value, null));
 
-            String organism = request.getParameter("extraValue");
+            String organism = getSpanOrganism(spanUUIDString, spanConstraintMap);
             Set<String> organisms = new HashSet<String>();
             organisms.add(organism);
             taxIds = getTaxonIds(organisms);
@@ -485,6 +509,51 @@ public class FeaturesAction extends InterMineAction
             }
         }
         return taxIds;
+    }
+
+    /**
+     * To export all overlap features
+     * @param spanUUIDString
+     * @param criteria could be "all" or a span string
+     * @param request HttpServletRequest
+     * @return comma separated feature pids as a string
+     */
+    private String getSpanOverlapFeatures(String spanUUIDString, String criteria,
+            Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap) {
+
+        Set<String> featureSet = new HashSet<String>();
+        Map<Span, List<SpanQueryResultRow>> featureMap = spanOverlapFullResultMap
+                .get(spanUUIDString);
+
+        if ("all".equals(criteria)) {
+            for (List<SpanQueryResultRow> l : featureMap.values()) {
+                if (l != null) {
+                    for (SpanQueryResultRow r : l) {
+                        featureSet.add(r.getFeaturePID());
+                    }
+                }
+            }
+
+        } else {
+            Span spanToExport = new Span(criteria);
+            for (SpanQueryResultRow r : featureMap.get(spanToExport)) {
+                featureSet.add(r.getFeaturePID());
+            }
+        }
+
+        return StringUtil.join(featureSet, ",");
+    }
+
+    private String getSpanOrganism(String spanUUIDString,
+            Map<SpanUploadConstraint, String> spanConstraintMap) {
+
+        for (Entry<SpanUploadConstraint, String> e : spanConstraintMap.entrySet()) {
+            if (e.getValue().equals(spanUUIDString)) {
+                return e.getKey().getSpanOrgName();
+            }
+        }
+
+        return null;
     }
 }
 

@@ -1,4 +1,4 @@
-package org.modmine.web;
+package org.modmine.web.logic;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.modmine.web.ChromosomeInfo;
+import org.modmine.web.model.Span;
+
 /**
  * This Class validates if the user input has errors.
  *
@@ -30,7 +33,7 @@ public class SpanValidator
      * @param chrInfoMap a java bean
      * @return resultMap A HashMap
      */
-    public static Map<String, List<Span>> runSpanValidation(String orgName, List<Span> spanList,
+    public Map<String, List<Span>> runSpanValidation(String orgName, List<Span> spanList,
             Map<String, List<ChromosomeInfo>> chrInfoMap) {
 
         // the Map has two key-value mappings
