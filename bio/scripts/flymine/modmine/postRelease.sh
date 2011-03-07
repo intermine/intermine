@@ -5,7 +5,7 @@
 # sc
 
 ARKDIR=/micklem/releases/modmine
-DBHOST=modprod1
+DBHOST=modfast
 DBUSER=modmine
 DATADIR=/micklem/data/modmine/subs/chado
 LOADDIR="$DATADIR/load"
