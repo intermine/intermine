@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,23 +12,18 @@ package org.intermine.web.logic.results;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
@@ -39,7 +34,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * An inline table created from a Collection
@@ -60,7 +54,6 @@ public class InlineResultsTable
     protected Model model;
     protected int size = -1;
     protected WebConfig webConfig;
-    protected Map webProperties;
     private final Map<String, List<FieldDescriptor>> classKeys;
     private List<ResultElement> resultElementRow;
     private Map<String, Object> fieldValues;
@@ -115,7 +108,6 @@ public class InlineResultsTable
             }
         }
         this.webConfig = webConfig;
-        this.webProperties = webProperties;
 
         this.model = model;
         this.size = size;
