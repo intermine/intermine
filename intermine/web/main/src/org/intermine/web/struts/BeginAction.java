@@ -171,6 +171,9 @@ public class BeginAction extends InterMineAction
      */
     private boolean hasUserVisited(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return false;
+        }
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
             if ("visited".equals(cookie.getName())) {
