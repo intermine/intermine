@@ -760,6 +760,14 @@
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
+  <reportdisplayers>
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
+                     jspName="model/sequenceFeatureDisplayer.jsp"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length"
+                     placement="summary"
+                     types="SequenceFeature"/>
+  </reportdisplayers>
+
    <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
         domainLabel="Chromosome"

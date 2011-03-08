@@ -119,6 +119,9 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
 
+        // remove any fields overridden by displayers
+        removeFieldsReplacedByCustomDisplayers(dobj, placementRefsAndCollections);
+
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
         String type = DynamicUtil.getSimpleClass(object.getClass()).getCanonicalName();
@@ -208,6 +211,14 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
     }
+
+    private void removeFieldsReplacedByCustomDisplayers(DisplayObject dobj,
+            Map<String, Map<String, DisplayField>> placementRefsAndCollections) {
+        for (String fieldName : dobj.getReplacedFieldExprs()) {
+            removeField(fieldName, placementRefsAndCollections);
+        }
+    }
+
 
     /**
      * Removes field from placements.

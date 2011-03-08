@@ -268,6 +268,7 @@
     <put name="body" value="keywordsearchresults.tile"/>
     <put name="pageName" value="keywordsearchresults"/>
   </definition>
+  <definition name="customDisplayer.tile" path="/customDisplayer.jsp" controllerUrl="/initCustomDisplayer.do"/>
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

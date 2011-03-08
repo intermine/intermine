@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,6 +39,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.HeaderConfig;
@@ -45,8 +48,6 @@ import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Class to represent an object for display in the webapp. Various maps and collections
@@ -283,7 +284,6 @@ public class DisplayObject
         return refsAndCollections;
     }
 
-
     /**
      * Return the path expressions for the fields that should be used when summarising this
      * DisplayObject.
@@ -292,14 +292,33 @@ public class DisplayObject
     public List<String> getFieldExprs() {
         if (fieldExprs == null) {
             fieldExprs = new ArrayList<String>();
+            Set<String> replacedFieldExprs = getReplacedFieldExprs();
             for (Iterator<String> i = getFieldConfigMap().keySet().iterator(); i.hasNext();) {
                 String fieldExpr = i.next();
-                fieldExprs.add(fieldExpr);
+                if (!replacedFieldExprs.contains(fieldExpr)) {
+                    fieldExprs.add(fieldExpr);
+                }
             }
         }
         return fieldExprs;
     }
 
+    public Set<CustomDisplayer> getReportDisplayers() {
+        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, model);
+        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
+        return displayerManager.getAllReportDislayersForType(clsName);
+    }
+    
+    
+    public Set<String> getReplacedFieldExprs() {
+        Set<String> replacedFieldExprs = new HashSet<String>();
+        for (CustomDisplayer reportDisplayer : getReportDisplayers()) {
+            replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
+        }
+        return replacedFieldExprs;
+    }
+    
+    
     /**
      * (uses different method than in JSP as that one does not work)
      * @return a count of fields in the header
@@ -615,5 +634,4 @@ public class DisplayObject
 
         return null;
     }
-
 }

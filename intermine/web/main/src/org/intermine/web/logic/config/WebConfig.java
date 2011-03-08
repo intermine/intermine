@@ -13,6 +13,7 @@ package org.intermine.web.logic.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,6 +45,12 @@ public class WebConfig
     private Map<String, TableExportConfig> tableExportConfigs =
         new HashMap<String, TableExportConfig>();
     private Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
+    private Set<ReportDisplayerConfig> reportDisplayerConfigs =
+        new HashSet<ReportDisplayerConfig>();
+
+    public Set<ReportDisplayerConfig> getReportDisplayerConfigs() {
+        return reportDisplayerConfigs;
+    }
 
     /**
      * Parse a WebConfig XML file
@@ -147,6 +154,11 @@ public class WebConfig
 
         digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
 
+        digester.addObjectCreate("webconfig/reportdisplayers/reportdisplayer",
+                ReportDisplayerConfig.class);
+        digester.addSetProperties("webconfig/reportdisplayers/reportdisplayer");
+        digester.addSetNext("webconfig/reportdisplayers/reportdisplayer", "addReportDisplayer");
+
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
         webConfig.validate(model);
@@ -212,7 +224,7 @@ public class WebConfig
     }
 
     /**
-     * Get the types (== classes) stored in this WebConfig.
+     * Get a map from fully qualified class name to the Type config for that class
      * @return the types
      */
     public Map<String, Type> getTypes() {
@@ -243,6 +255,16 @@ public class WebConfig
             } else {
                 type.addWidget(widget);
             }
+        }
+    }
+
+    public void addReportDisplayer(ReportDisplayerConfig reportDisplayerConfig) {
+        Set<String> displayForTypes = reportDisplayerConfig.getConfiguredTypes();
+        if (displayForTypes.isEmpty()) {
+            LOG.error("Report displayer: " + reportDisplayerConfig.getJavaClass() + "/"
+                    + reportDisplayerConfig.getJspName() + " is not configured for any types");
+        } else {
+            reportDisplayerConfigs.add(reportDisplayerConfig);
         }
     }
 
@@ -302,6 +324,7 @@ public class WebConfig
      */
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
+
         for (Iterator<String> modelIter = classes.iterator(); modelIter.hasNext();) {
 
             String className = modelIter.next();
