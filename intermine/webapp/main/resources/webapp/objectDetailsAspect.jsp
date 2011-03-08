@@ -11,6 +11,7 @@
 <tiles:importAttribute name="interMineIdBag" ignore="true" />
 <tiles:importAttribute name="aspectId" ignore="true" />
 <tiles:importAttribute name="placement" />
+<tiles:importAttribute name="mapOfInlineLists" />
 <tiles:importAttribute name="trail" />
 <tiles:importAttribute name="opened" ignore="true" />
 
@@ -33,7 +34,7 @@
   <h2>${aspect}</h2>
   <c:if test="${!empty displayObject}">
     <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
-      <tiles:put name="object" beanName="displayObject" />
+      <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
       <tiles:put name="placement" value="${placement}" />
     </tiles:insert>
   </c:if>

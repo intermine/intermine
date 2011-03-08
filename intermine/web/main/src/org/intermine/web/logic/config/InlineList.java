@@ -27,7 +27,7 @@ public class InlineList
     private String path;
     private Boolean showLinksToObjects = false;
     private Set<InlineListObject> listOfObjects;
-    private String placement = null;
+    private Boolean showInHeader = false;
     private FieldDescriptor fieldDescriptor = null;
 
     /**
@@ -63,11 +63,11 @@ public class InlineList
     }
 
     /**
-     * Shall we show this inline list in the header of the report page (and nowhere else?)
-     * @param placement set from WebConfig
+     * Show this list in the header?
+     * @param showInHeader Passed from WebConfig
      */
-    public void setPlacement(String placement) {
-        this.placement = placement;
+    public void setShowInHeader(Boolean showInHeader) {
+        this.showInHeader = showInHeader;
     }
 
     /**
@@ -144,18 +144,10 @@ public class InlineList
 
     /**
      *
-     * @return placement set from WebConfig
-     */
-    public String getPlacement() {
-        return placement;
-    }
-
-    /**
-     *
      * @return are we to show this inline list in the header of the report page?
      */
     public Boolean getShowInHeader() {
-        return (placement != null && "im:aspect:Header".equals(placement));
+        return (showInHeader);
     }
 
 }

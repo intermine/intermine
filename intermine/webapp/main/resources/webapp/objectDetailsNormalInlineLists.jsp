@@ -7,10 +7,10 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
-<tiles:importAttribute name="object" ignore="false" />
+<tiles:importAttribute name="mapOfInlineLists" ignore="false" />
 <tiles:importAttribute name="placement" />
 
-<c:forEach items="${object.inlineLists}" var="lists">
+<c:forEach items="${mapOfInlineLists}" var="lists">
   <c:if test="${lists.key == placement}">
     <c:forEach items="${lists.value}" var="list" varStatus="status">
       <div class="box grid_12">

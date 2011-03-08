@@ -249,14 +249,20 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
   </c:if>
 
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
-    <tiles:insert name="objectDetailsAspect.tile">
-      <tiles:put name="placement" value="im:aspect:${aspect}" />
-      <tiles:put name="displayObject" beanName="object" />
-      <tiles:put name="trail" value="${request.trail}" />
-      <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
-      <tiles:put name="opened" value="${status.index == 0}" />
-    </tiles:insert>
+  <tiles:insert name="objectDetailsAspect.tile">
+    <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
+    <tiles:put name="placement" value="im:aspect:${aspect}" />
+    <tiles:put name="displayObject" beanName="object" />
+    <tiles:put name="trail" value="${request.trail}" />
+    <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+    <tiles:put name="opened" value="${status.index == 0}" />
+  </tiles:insert>
   </c:forEach>
+
+  <h2>Other Inline Lists</h2>
+  <tiles:insert page="/objectDetailsUnplacedInlineLists.jsp">
+    <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
+  </tiles:insert>
 
   <tiles:insert page="/objectDetailsRefsCols.jsp">
     <tiles:put name="object" beanName="object" />
