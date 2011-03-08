@@ -13,6 +13,7 @@ package org.intermine.web.logic.config;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 
 /**
@@ -26,7 +27,24 @@ public class InlineList
     private String path;
     private Boolean showLinksToObjects = false;
     private Set<InlineListObject> listOfObjects;
-    private Boolean showInHeader = false;
+    private String placement = null;
+    private FieldDescriptor fieldDescriptor = null;
+
+    /**
+     * Set FieldDescriptor so we can work with placements
+     * @param fd FieldDescriptor set by DisplayObject on init
+     */
+    public void setDescriptor(FieldDescriptor fd) {
+        fieldDescriptor = fd;
+    }
+
+    /**
+     *
+     * @return FieldDecriptor
+     */
+    public FieldDescriptor getDescriptor() {
+        return fieldDescriptor;
+    }
 
     /**
      * Path set from WebConfig, ie "probeSets.primaryIdentifier"
@@ -46,10 +64,10 @@ public class InlineList
 
     /**
      * Shall we show this inline list in the header of the report page (and nowhere else?)
-     * @param showInHeader set from WebConfig
+     * @param placement set from WebConfig
      */
-    public void setShowInHeader(Boolean showInHeader) {
-        this.showInHeader  = showInHeader;
+    public void setPlacement(String placement) {
+        this.placement = placement;
     }
 
     /**
@@ -126,10 +144,18 @@ public class InlineList
 
     /**
      *
+     * @return placement set from WebConfig
+     */
+    public String getPlacement() {
+        return placement;
+    }
+
+    /**
+     *
      * @return are we to show this inline list in the header of the report page?
      */
     public Boolean getShowInHeader() {
-        return showInHeader;
+        return (placement != null && "im:aspect:Header".equals(placement));
     }
 
 }
