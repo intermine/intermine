@@ -18,7 +18,6 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +45,8 @@ import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Class to represent an object for display in the webapp. Various maps and collections
@@ -85,6 +86,10 @@ public class DisplayObject
 
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
+
+    /** @var default InlineList placement for when they do not have a placement
+     *  set from WebConfig */
+    private String defaultInlineListPlacement = "im:aspect:Proteins";
 
     /**
      * Create a new DisplayObject.
@@ -164,7 +169,6 @@ public class DisplayObject
 
     /**
      *
-     * @param header specifies whether the inlineLists should be of header/normal type
      * @return InlineLists that are resolved into their respective placements
      */
     public TreeMap<String, List<InlineList>> getInlineLists() {
@@ -179,7 +183,8 @@ public class DisplayObject
      * @return true if the lists of a specified type are not of 0 size
      */
     public Boolean getHasHeaderInlineLists() {
-        return (getInlineLists().get("im:aspect:Header").size() > 0);
+        return (getInlineLists().containsKey("im:aspect:Header"))
+            ? (getInlineLists().get("im:aspect:Header").size() > 0) : false;
     }
 
     /**
@@ -187,7 +192,8 @@ public class DisplayObject
      * @return true if we have more than "header" lists, more that one placement
      */
     public Boolean getHasNormalInlineLists() {
-        return (getInlineLists().size() > 1);
+        Integer n = (getInlineLists().containsKey("im:aspect:Header")) ? 1 : 0;
+        return (getInlineLists().size() > n);
     }
 
     /**
@@ -411,15 +417,23 @@ public class DisplayObject
 
                     // place the list
                     List l = null;
-                    if (!inlineListsPlaced.containsKey("im:aspect:Header")) {
+                    String listPlacement = list.getPlacement();
+
+                    // default placement
+                    if (listPlacement == null) {
+                        listPlacement = defaultInlineListPlacement;
+                    }
+
+                    // new List on new placement
+                    if (!inlineListsPlaced.containsKey(listPlacement)) {
                         // first time saving into this placement
                         l = new ArrayList<InlineList>();
                     } else {
                         // fetch the list from the respective placement
-                        l = inlineListsPlaced.get("im:aspect:Header");
+                        l = inlineListsPlaced.get(listPlacement);
                     }
                     l.add(list);
-                    inlineListsPlaced.put("im:aspect:Header", l);
+                    inlineListsPlaced.put(listPlacement, l);
 
                     // save name of the collection
                     String path = list.getPath();
@@ -482,6 +496,9 @@ public class DisplayObject
                             collections.put(fd.getName(), newCollection);
                             //}
                         }
+                    } else {
+                        // assign Descriptor from FieldDescriptors to the InlineList
+                        setDescriptorOnInlineList(fd.getName(), fd);
                     }
                 }
             }
@@ -493,6 +510,24 @@ public class DisplayObject
         // make a combined Map
         refsAndCollections.putAll(references);
         refsAndCollections.putAll(collections);
+    }
+
+    /**
+     * Set Descriptor (for placement) on an InlineList
+     * @param name
+     * @param fd
+     */
+    private void setDescriptorOnInlineList(String name, FieldDescriptor fd) {
+    done:
+        for (Object placement : inlineListsPlaced.keySet()) {
+            for (InlineList list : inlineListsPlaced.get(placement)) {
+                Object path = list.getPath();
+                if (((String) path).substring(0, ((String) path).indexOf('.')).equals(name)) {
+                    list.setDescriptor(fd);
+                    break done;
+                }
+            }
+        }
     }
 
     /**

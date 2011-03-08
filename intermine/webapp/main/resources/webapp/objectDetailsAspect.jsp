@@ -32,12 +32,10 @@
 
   <h2>${aspect}</h2>
   <c:if test="${!empty displayObject}">
-    <c:if test="${displayObject.hasNormalInlineLists}">
-      <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
-        <tiles:put name="object" beanName="displayObject" />
-        <tiles:put name="placement" value="${placement}" />
-      </tiles:insert>
-    </c:if>
+    <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
+      <tiles:put name="object" beanName="displayObject" />
+      <tiles:put name="placement" value="${placement}" />
+    </tiles:insert>
   </c:if>
   <div>
     <c:if test="${!empty displayObject}">
