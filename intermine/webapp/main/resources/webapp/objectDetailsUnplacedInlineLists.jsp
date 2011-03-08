@@ -7,11 +7,22 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
-<tiles:importAttribute name="object" ignore="false" />
+<tiles:importAttribute name="listOfUnplacedInlineLists" ignore="false" />
 
-<c:forEach items="${object.headerInlineLists}" var="list" varStatus="status">
+<c:forEach items="${listOfUnplacedInlineLists}" var="list" varStatus="status">
   <div class="box grid_12">
-    ${list.prefix}:
+    <h3>
+      <c:if test="${IS_SUPERUSER}">
+        <span class="tag-editor">
+          <c:set var="descriptor" value="${list.descriptor}" />
+          <tiles:insert name="inlineTagEditor.tile">
+            <tiles:put name="taggable" beanName="descriptor" />
+            <tiles:put name="show" value="true" />
+          </tiles:insert>
+        </span>
+      </c:if>
+      ${list.size} ${list.prefix}
+    </h3>
     <c:choose>
       <c:when test="${list.showLinksToObjects}">
         <c:forEach items="${list.items}" var="item" varStatus="status">

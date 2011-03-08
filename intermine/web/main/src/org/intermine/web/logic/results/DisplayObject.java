@@ -79,18 +79,13 @@ public class DisplayObject
     private Map<String, String> verbosity = new HashMap<String, String>();
     private final Map<String, List<FieldDescriptor>> classKeys;
 
-    /** @var List set by the WebConfig */
-    private List<InlineList> inlineListsWebConfig = null;
-
-    /** @var Map resolved into the different placements (TreeMap keys) */
-    private TreeMap<String, List<InlineList>> inlineListsPlaced = null;
+    /** @var List header inline lists set by the WebConfig */
+    private List<InlineList> inlineListsHeader = null;
+    /** @var List of 'unplaced' normal InlineLists */
+    private List<InlineList> inlineListsNormal = null;
 
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
-
-    /** @var default InlineList placement for when they do not have a placement
-     *  set from WebConfig */
-    private String defaultInlineListPlacement = "im:aspect:Proteins";
 
     /**
      * Create a new DisplayObject.
@@ -169,32 +164,41 @@ public class DisplayObject
     }
 
     /**
-     *
-     * @return InlineLists that are resolved into their respective placements
-     */
-    public TreeMap<String, List<InlineList>> getInlineLists() {
-        if (inlineListsPlaced == null) {
+    *
+    * @return InlineLists that are resolved into their respective placements
+    */
+    public List<InlineList> getNormalInlineLists() {
+        if (inlineListsNormal == null) {
             initialise();
         }
-        return inlineListsPlaced;
+        return inlineListsNormal;
+    }
+
+    /**
+     *
+     * @return InlineLists to be shown in the header
+     */
+    public List<InlineList> getHeaderInlineLists() {
+        if (inlineListsHeader == null) {
+            initialise();
+        }
+        return inlineListsHeader;
     }
 
     /**
      * Used from JSP
-     * @return true if the lists of a specified type are not of 0 size
+     * @return true if we have inlineListsHeader
      */
     public Boolean getHasHeaderInlineLists() {
-        return (getInlineLists().containsKey("im:aspect:Header"))
-            ? (getInlineLists().get("im:aspect:Header").size() > 0) : false;
+        return (inlineListsHeader != null);
     }
 
     /**
      * Used from JSP
-     * @return true if we have more than "header" lists, more that one placement
+     * @return true if we have InlineLists with no placement yet
      */
     public Boolean getHasNormalInlineLists() {
-        Integer n = (getInlineLists().containsKey("im:aspect:Header")) ? 1 : 0;
-        return (getInlineLists().size() > n);
+        return (inlineListsNormal != null);
     }
 
     /**
@@ -393,7 +397,11 @@ public class DisplayObject
         attributeDescriptors = new HashMap<String, FieldDescriptor>();
         longAttributes = new HashMap<String, String>();
         longAttributesTruncated = new HashMap<String, Object>();
-        inlineListsPlaced = new TreeMap<String, List<InlineList>>();
+
+        // InlineLists
+        inlineListsHeader = new ArrayList<InlineList>();
+        inlineListsNormal = new ArrayList<InlineList>();
+        List<InlineList> inlineListsWebConfig = null;
 
         try {
             for (ClassDescriptor cld : clds) {
@@ -435,24 +443,11 @@ public class DisplayObject
                     }
 
                     // place the list
-                    List l = null;
-                    String listPlacement = list.getPlacement();
-
-                    // default placement
-                    if (listPlacement == null) {
-                        listPlacement = defaultInlineListPlacement;
-                    }
-
-                    // new List on new placement
-                    if (!inlineListsPlaced.containsKey(listPlacement)) {
-                        // first time saving into this placement
-                        l = new ArrayList<InlineList>();
+                    if (list.getShowInHeader()) {
+                        inlineListsHeader.add(list);
                     } else {
-                        // fetch the list from the respective placement
-                        l = inlineListsPlaced.get(listPlacement);
+                        inlineListsNormal.add(list);
                     }
-                    l.add(list);
-                    inlineListsPlaced.put(listPlacement, l);
 
                     // save name of the collection
                     String path = list.getPath();
@@ -532,19 +527,17 @@ public class DisplayObject
     }
 
     /**
-     * Set Descriptor (for placement) on an InlineList
+     * Set Descriptor (for placement) on an InlineList, only done for normal lists
      * @param name
      * @param fd
      */
     private void setDescriptorOnInlineList(String name, FieldDescriptor fd) {
     done:
-        for (Object placement : inlineListsPlaced.keySet()) {
-            for (InlineList list : inlineListsPlaced.get(placement)) {
-                Object path = list.getPath();
-                if (((String) path).substring(0, ((String) path).indexOf('.')).equals(name)) {
-                    list.setDescriptor(fd);
-                    break done;
-                }
+        for (InlineList list : inlineListsNormal) {
+            Object path = list.getPath();
+            if (((String) path).substring(0, ((String) path).indexOf('.')).equals(name)) {
+                list.setDescriptor(fd);
+                break done;
             }
         }
     }

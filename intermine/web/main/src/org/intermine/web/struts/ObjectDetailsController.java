@@ -38,6 +38,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
@@ -85,6 +86,50 @@ public class ObjectDetailsController extends InterMineAction
         dobj.getClass();
         request.setAttribute("object", dobj);
         session.setAttribute("displayObject", dobj);
+
+        // place InlineLists based on TagManager as DisplayObject is cached while Controller is not
+        Map<String, List<InlineList>> placedInlineLists = new TreeMap<String, List<InlineList>>();
+        // traverse all unplaced (non-header) InlineLists
+        List<InlineList> unplacedInlineLists = dobj.getNormalInlineLists();
+        for (Integer i = 0; i < unplacedInlineLists.size(); i++) {
+            InlineList list = unplacedInlineLists.get(i);
+            // Descriptor
+            FieldDescriptor fd = list.getDescriptor();
+            // type
+            String taggedType = null;
+            if (fd.isCollection()) {
+                taggedType = "collection";
+            } else if (fd.isReference()) {
+                taggedType = "reference";
+            } else if (fd.isAttribute()) {
+                taggedType = "attribute";
+            } else {
+                // OMG, now what?
+            }
+            List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                    + "." + fd.getName(), taggedType, superuser);
+            for (Tag tag : tags) {
+                String tagName = tag.getTagName();
+                // aspect much?
+                if (AspectTagUtil.isAspectTag(tagName)) {
+                    List<InlineList> l = null;
+                    if (placedInlineLists.containsKey(tagName)) {
+                        // we already have aspect like this...
+                        l = placedInlineLists.get(tagName);
+                    } else {
+                        // we do not
+                        l = new ArrayList<InlineList>();
+                    }
+                    // save, save, save!
+                    l.add(list);
+                    placedInlineLists.put(tagName, l);
+                    // remove!
+                    unplacedInlineLists.remove(i);
+                }
+            }
+        }
+        session.setAttribute("mapOfInlineLists", placedInlineLists);
+        session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
         Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
             Map<String, DisplayField>>();
