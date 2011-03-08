@@ -156,9 +156,9 @@ public class BeginAction extends InterMineAction
             // set cookie
             setUserVisitedCookie(response);
             // first visit
-            request.setAttribute("isNewUser", true);
+            request.setAttribute("isNewUser", Boolean.TRUE);
         } else {
-            request.setAttribute("isNewUser", false);
+            request.setAttribute("isNewUser", Boolean.FALSE);
         }
 
         return mapping.findForward("begin");
@@ -169,13 +169,11 @@ public class BeginAction extends InterMineAction
      * @param request HTTP Servlet Request
      * @return true if page has been visited
      */
-    private Boolean hasUserVisited(HttpServletRequest request) {
+    private boolean hasUserVisited(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-
-        for(int i = 0; i < cookies.length; i++) {
+        for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
-            if (cookie.getName().equals("visited")) {
-                // early bath for him
+            if ("visited".equals(cookie.getName())) {
                 return true;
             }
         }
@@ -190,9 +188,8 @@ public class BeginAction extends InterMineAction
     private HttpServletResponse setUserVisitedCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("visited", "at some point...");
         // see you in a year
-        cookie.setMaxAge(365*24*60*60);
+        cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
-
         return response;
     }
 
