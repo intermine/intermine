@@ -120,8 +120,6 @@
     </action>
     <action path="/serviceLink" forward="serviceLink.page" >
     </action>
-    <action path="/exportOptions" forward="exportOptions.page" >
-    </action>
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>
     <action path="/exportOptions" forward="exportOptions.page"/>
