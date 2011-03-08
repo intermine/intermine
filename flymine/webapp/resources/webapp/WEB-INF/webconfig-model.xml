@@ -630,7 +630,6 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="stockCenter"/>
-      <fieldconfig fieldExpr="alleles.primaryIdentifier" showInSummary="false" />
     </fields>
   </class>
 
