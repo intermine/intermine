@@ -241,13 +241,6 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="heading" value="true" />
   </tiles:insert>
 
-
-  <c:if test="${object.hasNormalInlineLists}">
-    <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
-      <tiles:put name="object" beanName="object" />
-    </tiles:insert>
-  </c:if>
-
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <tiles:insert name="objectDetailsAspect.tile">
     <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
