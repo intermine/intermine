@@ -460,6 +460,7 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
 
+    <action path="/initCustomDisplayer" type="org.intermine.web.struts.CustomDisplayerController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

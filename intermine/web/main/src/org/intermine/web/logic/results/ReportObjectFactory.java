@@ -12,7 +12,6 @@ package org.intermine.web.logic.results;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
