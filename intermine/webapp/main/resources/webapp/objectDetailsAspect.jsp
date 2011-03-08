@@ -11,7 +11,7 @@
 <tiles:importAttribute name="interMineIdBag" ignore="true" />
 <tiles:importAttribute name="aspectId" ignore="true" />
 <tiles:importAttribute name="placement" />
-<tiles:importAttribute name="mapOfInlineLists" />
+<tiles:importAttribute name="mapOfInlineLists" ignore="false" />
 <tiles:importAttribute name="trail" />
 <tiles:importAttribute name="opened" ignore="true" />
 
