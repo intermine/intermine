@@ -52,7 +52,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		viewPaths.addAll(subIter.getViewPaths());
 	}
 
-	@Override
+
 	public boolean hasNext() {
 		if (subIter.hasNext() || holdOver != null) {
 			return true;
@@ -60,11 +60,11 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		return false;
 	}
 
-	@Override
+
 	public JSONObject next() {
 		Map<String, Object> nextJsonMap = new HashMap<String, Object>();
 		Integer lastId = null;
-		
+
 		if (holdOver != null) {
 			lastId = holdOver.get(0).getId();
 			addRowToJsonMap(holdOver, nextJsonMap);
@@ -91,10 +91,10 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 	private void addRowToJsonMap(List<ResultElement> results,
 			Map<String, Object> jsonMap) {
 		setOrCheckClassAndId(results.get(0), viewPaths.get(0), jsonMap);
-		 
+
 		if (! jsonMap.get(CLASS_KEY).equals(viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName())) {
 			throw new JSONFormattingException(
-				"Head of the object is missing, " + jsonMap + ", " 
+				"Head of the object is missing, " + jsonMap + ", "
 				+ viewPaths.get(0).toStringNoConstraints()
 			);
 		}
@@ -123,29 +123,29 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		}
 		return false;
 	}
-	
+
 	protected void setOrCheckClassAndId(ResultElement cell, Path path,
 			Map<String, Object> jsonMap) {
-		
+
 		String thisType = path.getLastClassDescriptor().getUnqualifiedName();
 		if (jsonMap.containsKey(CLASS_KEY)) {
 			String storedType = (String) jsonMap.get(CLASS_KEY);
 			if (!storedType.equals(thisType)) {
 				throw new JSONFormattingException(
-						"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
+						"This result element (" + cell + ") does not belong on this map (" + jsonMap +
 						") - classes don't match (" + jsonMap.get(CLASS_KEY) + " != " + cell.getType() + ")");
 			}
 		} else if (isCellValidForPath(cell, path)) {
 			jsonMap.put(CLASS_KEY, thisType);
 		} else {
 			throw new JSONFormattingException(
-					"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
+					"This result element (" + cell + ") does not belong on this map (" + jsonMap +
 					") - classes not compatible (" + thisType + " != " + cell.getType() + ")");
 		}
 		if (jsonMap.containsKey(ID_KEY)) {
 			if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
 				throw new JSONFormattingException(
-						"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
+						"This result element (" + cell + ") does not belong on this map (" + jsonMap +
 						") - objectIds don't match (" + jsonMap.get(ID_KEY) + " != " + cell.getId() + ")");
 			}
 		} else {
@@ -176,24 +176,24 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		} else {
 			newValue = cell.getField();
 		}
-		
+
 		if (objectMap.containsKey(key)) {
 			if (objectMap.get(key) == null) {
 				if (newValue != null) {
 					throw new JSONFormattingException(
-							"Trying to set key " + key + " as " + cell.getField() 
+							"Trying to set key " + key + " as " + cell.getField()
 							+ " in " + objectMap + " but it already has the value " + objectMap.get(key)
 					);
 				}
 			} else {
 				if (! objectMap.get(key).equals(newValue)) {
 					throw new JSONFormattingException(
-							"Trying to set key " + key + " as " + cell.getField() 
+							"Trying to set key " + key + " as " + cell.getField()
 							+ " in " + objectMap + " but it already has the value " + objectMap.get(key));
 				}
 			}
 		} else {
-			objectMap.put(key, newValue);	
+			objectMap.put(key, newValue);
 		}
 	}
 
@@ -215,16 +215,16 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 						"Bad path type: "+ section.toString());
 			}
 		}
-		
+
 	}
-	
+
 	protected void setCurrentMapFromCurrentArray(ResultElement cell) {
 		if (currentArray == null) {
 			throw new JSONFormattingException("Nowhere to put this field");
 		}
 		boolean foundMap = false;
 		for (Map<String, Object> obj : currentArray) {
-			foundMap = obj.get(ID_KEY).equals(cell.getId()); 
+			foundMap = obj.get(ID_KEY).equals(cell.getId());
 			if (foundMap) {
 				currentMap = obj;
 				break;
@@ -237,7 +237,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		}
 		currentArray = null;
 	}
-	
+
 	protected void setCurrentMapFromCurrentArray() {
 		try {
 			currentMap = currentArray.get(currentArray.size() - 1);
@@ -259,16 +259,16 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 	protected void addReferenceToCurrentNode(Path referencePath) {
 		if (currentMap == null) {
 			setCurrentMapFromCurrentArray();
-			//throw new JSONFormattingException("The current map should have been set by a preceding attribute - is the view in the right order?" 
+			//throw new JSONFormattingException("The current map should have been set by a preceding attribute - is the view in the right order?"
 			//		+ referencePath.toStringNoConstraints() + viewPaths + currentArray);
 		}
-		
+
 		String key = referencePath.getLastElement();
 		if (currentMap.containsKey(key)) {
 			Object storedItem = currentMap.get(key);
 			boolean storedItemIsMap = storedItem instanceof Map<?,?>;
 			if ( ! storedItemIsMap) {
-				throw new JSONFormattingException("Trying to set a reference on " + key + 
+				throw new JSONFormattingException("Trying to set a reference on " + key +
 						", but this node " + currentMap + " already "
 						+ "has this key set, and to something other than a map " +
 						"(" + storedItem.getClass().getName() + ": " + storedItem + ")");
@@ -282,12 +282,12 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 			Map<String, Object> newMap = new HashMap<String, Object>();
 			ReferenceDescriptor refDesc = (ReferenceDescriptor) referencePath.getEndFieldDescriptor();
 			newMap.put(CLASS_KEY, refDesc.getReferencedClassDescriptor().getUnqualifiedName());
-			
+
 			currentMap.put(key, newMap);
 			currentMap = newMap;
 		}
 	}
-	
+
 	/**
 	 * Adds a new list, representing a collection to the current node (map)
 	 * @param collectionPath
@@ -304,7 +304,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		if (currentMap.containsKey(key)) {
 			Object storedValue = currentMap.get(key);
 			if (! (storedValue instanceof List<?>)) {
-				throw new JSONFormattingException("Trying to set a collection on " + key + 
+				throw new JSONFormattingException("Trying to set a collection on " + key +
 						", but this node " + currentMap + " already "
 						+ "has this key set to something other than a list " +
 						"(" + storedValue.getClass().getName() + ": " + storedValue + ")");
@@ -314,10 +314,10 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 			currentMap.put(key, newArray);
 		}
 		currentArray = (List<Map<String, Object>>) currentMap.get(key);
-		currentMap = null;		
+		currentMap = null;
 	}
 
-	@Override
+
 	public void remove() {
 		throw new UnsupportedOperationException("Remove is not implemented in this class");
 	}
