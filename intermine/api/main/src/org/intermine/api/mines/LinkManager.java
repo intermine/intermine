@@ -163,7 +163,7 @@ public class LinkManager
         if (mineMap == null || mineMap.isEmpty()) {
             return null;
         }
-        for (Map.Entry<String, Set<String>> entry : mine.getMineMap().entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : mineMap.entrySet()) {
             String key = entry.getKey();
             Set<String> mineValues = entry.getValue();
             for (String value : values) {

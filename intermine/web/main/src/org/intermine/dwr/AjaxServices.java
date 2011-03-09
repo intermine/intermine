@@ -671,7 +671,7 @@ public class AjaxServices
      * @param mineName name of a friendly mine
      * @param organisms list of organisms for genes in this list
      * @param identifierList list of identifiers
-     * @return the links to friendly intermines
+     * @return the links to friendly intermines or an error message
      */
     public static String getInterMineOrthologueLinks(String mineName, String organisms,
             String identifierList) {
@@ -684,41 +684,37 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final String errMsg = "No orthologues found in " + mineName;
-        try {
 
-            LinkManager olm = LinkManager.getInstance(im, webProperties);
-            List<String> organismList = StringUtil.tokenize(organisms, ",");
+        LinkManager olm = LinkManager.getInstance(im, webProperties);
+        List<String> organismList = StringUtil.tokenize(organisms, ",");
 
-            Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
-            if (mineValues == null || mineValues.isEmpty()) {
-                return errMsg;
-            }
-            Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
-            Mine mine = entry.getKey();
-            Set<String> orthologues = entry.getValue();
-
-            if (mine == null || orthologues.isEmpty()) {
-                return errMsg;
-            }
-
-            StringBuffer sb = new StringBuffer(mineName + "<ul>");
-            for (String orthologue : orthologues) {
-                String encodedOrthologue = null;
-                try {
-                    encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("error while encoding: " + orthologue, e);
-                }
-                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                    + identifierList + "&orthologue=" + encodedOrthologue;
-                sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
-            }
-            sb.append("</ul>");
-            return sb.toString();
-        } catch (RuntimeException e) {
-            processException(e);
-            return null;
+        Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
+        if (mineValues == null || mineValues.isEmpty()) {
+            return errMsg;
         }
+        Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
+        Mine mine = entry.getKey();
+        Set<String> orthologues = entry.getValue();
+
+        if (mine == null || orthologues.isEmpty()) {
+            return errMsg;
+        }
+
+        // TODO make this a table with counts
+        StringBuffer sb = new StringBuffer(mineName + "<ul>");
+        for (String orthologue : orthologues) {
+            String encodedOrthologue = null;
+            try {
+                encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("error while encoding: " + orthologue, e);
+            }
+            String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
+                + identifierList + "&orthologue=" + encodedOrthologue;
+            sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
     }
 
 
