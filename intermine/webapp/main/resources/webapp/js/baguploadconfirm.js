@@ -41,6 +41,11 @@ function addId2Bag(objectId, row, parentId, issueType) {
 
           // decrease count
           updateCount('#initialIdCount', -1);
+
+          // now update the count of items in a JS var from bagUploadConfirm.jsp
+          if (matchCount != null) {
+            matchCount++;
+          }
         } else {
           idArray[idArray.length] = objectId;
           duplicateArray[parentId] = idArray;
@@ -48,6 +53,9 @@ function addId2Bag(objectId, row, parentId, issueType) {
         }
 
         setLinkState(issueType+'removeAllLink', 'active');
+
+        // update the text of the button that saves our list
+        updateFurtherMatchesDisplay();
     }
 }
 
@@ -77,6 +85,7 @@ function colourRow(rowClass, highlighted) {
  * @param element jQuery syntax
  * @param amount integer
  * @return
+ * @deprecated possibly... :)
  */
 function updateCount(element, amount) {
   // exists?
@@ -87,6 +96,27 @@ function updateCount(element, amount) {
     jQuery(element).text(count);
   }
 }
+
+/**
+ * Will check the current number of matches vs the total count and appropriately show info message
+ *  and update form button text with the totals
+ * @return
+ */
+function updateFurtherMatchesDisplay() {
+  // update the text of the button that saves our list
+  if (jQuery('input#saveList').length > 0) {
+    jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+    // "further matches" text
+    if (jQuery('p#furtherMatches').length > 0) {
+      if (matchCount < totalCount) {
+        jQuery('p#furtherMatches').html(furtherMatchesText);
+      } else {
+        jQuery('p#furtherMatches').html(null);
+      }
+    }
+  }
+}
+
 function unHighlightRow(rowId) {
     colourRow(rowId, false);
 }
@@ -164,6 +194,11 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
             // reduce count
             updateCount('#initialCount', -1);
 
+            // now update the count of items in a JS var from bagUploadConfirm.jsp
+            if (matchCount != null) {
+              matchCount--;
+            }
+
             duplicateArray[parentId] = null;
         } else {
             var idArrayCopy = new Array();
@@ -179,6 +214,8 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
 
         setLinkState(issueType + 'addAllLink', 'active');
 
+        // update the text of the button that saves our list
+        updateFurtherMatchesDisplay();
     }
 }
 
