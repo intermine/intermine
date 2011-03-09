@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,7 +22,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 /**
  * A FileConverter that automatically sets the dataSets collection of objects as they are stored.
@@ -157,11 +156,10 @@ public abstract class BioFileConverter extends FileConverter
      * @param value the Synonym value
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(Item item, String value, boolean store)
-        throws SAXException, ObjectStoreException {
+        throws ObjectStoreException {
         return createSynonym(item.getIdentifier(), value, store);
     }
 
@@ -173,11 +171,10 @@ public abstract class BioFileConverter extends FileConverter
      * @param value the Synonym value
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createSynonym(String subjectId, String value, boolean store)
-        throws SAXException, ObjectStoreException {
+        throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -204,12 +201,11 @@ public abstract class BioFileConverter extends FileConverter
      * @param dataSource external database
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
-     * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
     public Item createCrossReference(String subjectId, String value, String dataSource,
             boolean store)
-        throws SAXException, ObjectStoreException {
+        throws ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }

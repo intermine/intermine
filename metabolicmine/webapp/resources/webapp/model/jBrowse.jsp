@@ -12,6 +12,9 @@
   <div class="geneInformation">
 
     <h3 class="overlapping">Genome Browser</h3>
+
+    <strong style="color:red;">NOTE - this is a demo version of the viewer, an updated version is coming soon</strong>
+
     <c:set var="baseUrl" value="http://jbrowse.org/ucsc/hg19"/>
     <c:set var="chr" value="${object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
     <c:set var="padding" value="${10}"/>

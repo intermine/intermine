@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,9 +33,25 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
         }
-        return baseUrl + WebServiceConstants.MODULE_NAME + "/query/results"
+        return baseUrl + getLinkPath(queryXml, resultFormat);
+    }
+
+    public String getLinkPath(String queryXml, String resultFormat) {
+         return WebServiceConstants.MODULE_NAME + "/query/results"
             + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&"
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
+    }
+
+    public String getMineResultsLink(String baseUrl, String queryXml) {
+        return baseUrl + getMineResultsPath(queryXml);
+    }
+
+    public String getMineResultsPath(String queryXml) {
+        String ret = "/loadQuery.do?";
+        ret += "skipBuilder=true";
+        ret += "&" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml);
+        ret += "&method=xml";
+        return ret;
     }
 
 }

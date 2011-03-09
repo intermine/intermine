@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -97,7 +97,7 @@ public class ModifyTemplateAction extends InterMineAction
                                new ActionMessage("errors.modifyTemplate.delete"));
                 }
 
-                profile.deleteTemplate(template);
+                profile.deleteTemplate(template, im.getTrackerDelegate());
             }
 
             if (SessionMethods.isSuperUser(session)) {

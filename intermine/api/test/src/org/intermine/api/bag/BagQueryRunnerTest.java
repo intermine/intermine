@@ -41,7 +41,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     private ObjectStore os;
     private Map<String, Employee> eIds;
     private TestingBagQueryRunner runner;
-
+    BagQueryConfig bagQueryConfig = null;
     public BagQueryRunnerTest(String arg0) {
         super(arg0);
     }
@@ -55,8 +55,8 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         eIds = getEmployeeIds();
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
-        BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        
+        bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+
         TemplateQueryBinding tqb = new TemplateQueryBinding();
         Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null, PathQuery.USERPROFILE_VERSION);
 
@@ -70,15 +70,15 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
 
     public void testQueries() throws Throwable {
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
-    
+
     public static Test suite() {
         return buildSuite(BagQueryRunnerTest.class);
     }
-    
+
     // expect each input string to match one object
     public void testSearchForBagMatches() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
@@ -88,8 +88,20 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         assertTrue(res.getUnresolved().isEmpty());
     }
 
+
+    // match all
+    public void testSearchForBagMatchesMatchAll() throws Exception {
+        bagQueryConfig.setMatchOnFirst(false);
+        List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
+        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
+        assertEquals(2, res.getMatches().values().size());
+        assertFalse(res.getIssues().isEmpty());
+        assertFalse(res.getUnresolved().isEmpty());
+    }
+
     // test for the case when an identifier appears twice in the input - ignore duplicates
     public void testSearchForBagDuplicates1() throws Exception {
+
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2", "EmployeeA1"});
         BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(2, res.getMatches().values().size());
@@ -200,7 +212,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         Map issues = res.getIssues();
-        
+
         Map translated = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
         assertEquals(1, translated.values().size());
         Map resUnresolved = res.getUnresolved();
@@ -216,7 +228,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         assertEquals(1, res.getMatches().values().size());
         assertEquals(empName1, ((List) res.getMatches().values().iterator().next()).get(0));
         Map issues = res.getIssues();
-        
+
         Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
         assertEquals(1, converted.values().size());
         Map convertedInputToObjs = (Map) converted.values().iterator().next();

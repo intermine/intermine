@@ -486,6 +486,10 @@ div#navtrail a:link, div#navtrail a:visited {
     color: #864;
 }
 
+.typeSelected {
+    color: blue;
+}
+
 .modelBrowser .type {
     color: blue;
 }
@@ -1413,3 +1417,33 @@ h3.interactions { font-size:16px; color:#333; }
 
 /* template button pos */
 div.floatRight { float:right; }
+
+/* list upload progress */
+  #list-progress { font-size:16px; margin-bottom:20px; }
+    #list-progress div { display:inline-block; letter-spacing:-0.3px; height:35px; line-height:32.5px; }
+    *#list-progress div { float:left; } /* <IE7 hack */
+
+    #list-progress div span { vertical-align:middle; }
+
+    #list-progress div strong, #list-progress div img { font-size:20px; vertical-align:middle; margin:0 10px; }
+    #list-progress div.white strong { color:#61a100; }
+    #list-progress div.gray strong { color:#c4c4c4; }
+
+    #list-progress div.white-start { background:url('../images/progress/white-solid.gif') no-repeat left; padding:0; width:1px;
+      display:inline-block; }
+    #list-progress div.white { background:url('../images/progress/white-bg.gif') repeat-x; padding:0; font-weight:bold; padding-right:10px; }
+    #list-progress div.white-to-gray { background:url('../images/progress/white-to-gray.gif') no-repeat left; padding:0; width:26px;
+      display:inline-block; }
+    #list-progress div.gray { background:url('../images/progress/gray-bg.gif') repeat-x; padding:0; padding-right:10px; }
+    #list-progress div.gray-to-gray { background:url('../images/progress/gray-to-gray.gif') no-repeat left; padding:0; width:25px;
+      display:inline-block; }
+    #list-progress div.gray-to-white { background:url('../images/progress/gray-to-white.gif') no-repeat left; padding:0; width:25px;
+      display:inline-block; }
+
+    /* center in different browsers */
+    #list-progress div.wrap { margin:0 auto; float:none; }
+    #list-progress div.wrap, x:-moz-any-link { width:72%; } /* FF2 hack */
+    #list-progress div.wrap, x:-moz-any-link, x:default { width:auto; } /* restore for FF3 */
+    #list-progress div.wrap { *width:75%; } /* <IE7 hack */
+
+    div.clear { clear:both; display:block; height:0; overflow:hidden; visibility:hidden; width:0; }

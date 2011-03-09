@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -67,7 +67,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String action, @SuppressWarnings("unused") List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;

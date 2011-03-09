@@ -312,8 +312,8 @@ public class DisplayObject
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDislayersForType(clsName);
     }
-    
-    
+
+
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
         for (CustomDisplayer reportDisplayer : getReportDisplayers()) {
@@ -321,8 +321,8 @@ public class DisplayObject
         }
         return replacedFieldExprs;
     }
-    
-    
+
+
     /**
      * (uses different method than in JSP as that one does not work)
      * @return a count of fields in the header

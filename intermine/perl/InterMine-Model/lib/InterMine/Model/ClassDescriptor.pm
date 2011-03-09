@@ -9,15 +9,458 @@ InterMine::Model::ClassDescriptor - represents a class in an InterMine model
  use InterMine::Model::ClassDescriptor;
 
  ...
- my $cd =
-   new InterMine::Model::ClassDescriptor(model => $model,
-                                         name => "Gene", extends => ["BioEntity"]);
+ my $cd = InterMine::Model::ClassDescriptor->create(
+            "Gene" => (
+                model => $model,
+                parents => ["BioEntity"]
+            )
+        );
 
 =head1 DESCRIPTION
 
 Objects of this class contain the metadata that describes a class in an
 InterMine model.  Each class has a name, parent classes/interfaces and any
-number of attributes, references and collections.
+number of attributes, references and collections. 
+
+InterMine class descriptors are sub classes of L<Moose::Meta::Class>, 
+and thus L<Class::MOP::Class>. Please refer to these packages for further 
+documentation.
+
+=cut
+
+use Moose;
+extends qw/Moose::Meta::Class/;
+with 'InterMine::Model::Role::Descriptor';
+
+use InterMine::TypeLibrary qw(
+    FieldHash ClassDescriptorList ClassDescriptor BigInt
+);
+use MooseX::Types::Moose qw(ArrayRef Str Bool);
+use Moose::Util::TypeConstraints;
+use Scalar::Util qw(refaddr blessed);
+
+use Carp qw(cluck);
+
+=head1 CLASS METHODS
+
+=head2 create( $name | $name, %attributes | $name, \%attributes | \%attributes )
+
+The class constructor inherited from L<Moose::Meta::Class>.
+
+ Usage   : my $cd = InterMine::Model::ClassDescriptor->create(
+                "Gene" => (
+                    model => $model,
+                    parents => ["BioEntity"]
+                )
+            );
+
+ Function: create a new ClassDescriptor object
+ Args    : model   - the InterMine::Model that this class is a part of
+           name    - the class name
+           parents - a list of the classes and interfaces that this 
+                     classes extends
+
+In most normal use cases, the typical user should NOT need 
+to call this method. It is used internally when parsing the 
+model to build up the list of classes.
+
+=cut
+
+override create => sub {
+    my $class = shift;
+    my $ret = super;
+    $ret->superclasses($ret->superclasses(), 'InterMine::Model::Object');
+    return $ret;
+};
+
+=head1 INSTANCE ATTRIBUTES
+
+=head2 name | package
+
+=over 4
+
+=item * unqualified_name
+
+returns the (unqualified) name of the class this class descriptor represents. 
+
+  $gene_meta->unqualified_name
+  # "Gene"
+
+=item * package
+
+This is the attribute inherited from Moose::Meta::Class, and returns the full
+qualified class name that perl refers to the class internally as.
+
+  $gene_meta->name
+  # InterMine::genomic::FlyMine::Gene
+
+=back 
+
+=cut
+
+has unqualified_name => (
+    isa => 'Str',
+    is  => 'ro',
+    init_arg => undef,
+    lazy_build => 1,
+);
+
+sub _build_unqualified_name {
+    my $self = shift;
+    my $p = $self->name;
+    $p =~ s/.*:://;
+    return $p;
+}
+
+has is_interface => (
+    isa => 'Bool',
+    is  => 'ro',
+    default => 1,
+);
+
+=head2 own_fields
+
+Fields that belong to this class directly. 
+
+=head3 add_own_field($field)
+
+Add a field to the list
+
+=head3 get_own_fields 
+
+Get the full list of fields declared in this class.
+
+=cut 
+
+sub add_own_field {
+    my $self = shift;
+    my $field = shift;
+    $self->set_field($field->name, $field);
+    $field->field_class($self);
+}
+
+sub get_own_fields {
+    my $self = shift;
+    return grep {$_->field_class eq $self} $self->fields;
+}
+
+=head3 own_attributes
+
+Return the fields that are instances of L<InterMine::Model::Attribute>. 
+This is not to be confused with L<Class::MOP>'s C<get_all_attributes>.
+
+=cut
+
+sub own_attributes {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Attribute')} $self->get_own_fields;
+}
+
+=head3 own_references
+
+Return all the fields that are instances of L<InterMine::Model::Reference>,
+but not the subclass L<InterMine::Model::Collection>.
+
+=cut
+
+sub own_references {
+    my $self = shift;
+    return grep {
+        $_->isa('InterMine::Model::Reference') && ! $_->isa('InterMine::Model::Collection')
+        } $self->get_own_fields;
+}
+
+=head3 own_collections
+
+Return all the fields that are instances of L<InterMine::Model::Collection>.
+
+=cut
+
+sub own_collections {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Collection')} $self->get_own_fields;
+}
+
+=head2 fieldhash
+
+The map of fields for this class, including inherited fields. 
+It has the following accessors:
+
+=head3 set_field($name, $field)
+
+Set a field in the map
+
+=head3 get_field_by_name($name)
+
+Retrieve the named field.
+
+=head3 fields
+
+Retrieve all fields as a list
+
+=head3 valid_field($name)
+
+Returns true if there is a field of this name 
+
+=cut
+
+has fieldhash => (
+    traits  => [qw/Hash/],
+    is	    => 'ro',
+    isa	    => FieldHash,
+    default => sub { {} },
+    handles => {
+        set_field	      => 'set',
+        get_field_by_name => 'get',
+        fields            => 'values',
+        valid_field       => 'defined',
+    },
+);
+
+=head3 attributes
+
+Return the fields that are instances of L<InterMine::Model::Attribute>. 
+This is not to be confused with L<Class::MOP>'s C<get_all_attributes>.
+
+=cut
+
+sub attributes {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Attribute')} $self->fields;
+}
+
+=head3 references
+
+Return all the fields that are instances of L<InterMine::Model::Reference>,
+but not the subclass L<InterMine::Model::Collection>.
+
+=cut
+
+sub references {
+    my $self = shift;
+    return grep {
+        $_->isa('InterMine::Model::Reference') && ! $_->isa('InterMine::Model::Collection')
+        } $self->fields;
+}
+
+=head3 collections
+
+Return all the fields that are instances of L<InterMine::Model::Collection>.
+
+=cut
+
+sub collections {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Collection')} $self->fields;
+}
+
+
+=head2 parents 
+
+The names of the immediate ancestors of this class.
+
+=cut
+
+has parents => (
+    is	       => 'ro',
+    isa	       => ArrayRef[Str],
+    traits     => ['Array'],
+    auto_deref => 1,
+    handles    => {
+        has_parents => 'count',
+    },
+
+);
+
+=head2 parental_class_descriptors
+
+The parents as a list of class objects.
+
+ Usage   : @parent_cds = $cd->parental_class_descriptors();
+ Function: return a list of the ClassDescriptor objects for the
+           classes/interfaces that this class directly extends
+ Note    : Calling this method retrives the parents from the model
+           and also sets up superclass relationships
+           in Moose. It should not be called until the Model is completely
+           parsed. It is called automatically once the model has been 
+           parsed.
+ Args    : none
+
+=cut
+
+has parental_class_descriptors => (
+    is	       => 'ro',
+    isa	       => ClassDescriptorList,
+    lazy       => 1,
+    auto_deref => 1,
+    default => sub {
+        my $self = shift;
+        $self->superclasses($self->parents);
+        return [ map {$self->model->get_classdescriptor_by_name($_)} 
+                $self->parents ];
+    },
+);
+
+=head1 INSTANCE METHODS
+
+=head2 new_object
+
+The instantiation method inherited from L<Moose::Meta::Class>.
+You should not normally need to use this directly. Instead call
+the C<make_new> method in L<InterMine::Model>.
+
+=cut
+
+# sanitize input by removing undef attributes from the list
+
+around new_object => sub {
+    my $orig = shift;
+    my $self = shift;
+    my $args = (ref $_[0] eq 'HASH') ? $_[0] : {@_};
+    for my $key (keys %$args) {
+        my $value = $args->{$key};
+        delete $args->{$key} unless (defined $value);
+        # Horrible hacky solution to unnecessary warnings
+        # THIS SHOULD BE DELETED WHEN A BETTER COERCION 
+        # SOLUTION CAN BE FOUND!!!!
+        if (blessed $value and $value->isa('JSON::Boolean')) {
+            $args->{$key} = $$value;
+        }
+    }
+    return $self->$orig($args);
+};
+
+# and make name a synonym for package here.
+
+
+=head2 get_ancestors
+
+The full inheritance list, including all ancestors in the model.
+
+=cut
+
+# Implemented as a method to avoid memory leaks
+sub get_ancestors {
+    my $self = shift;
+    my @inheritance_path = ($self,);
+    my @classes = $self->parental_class_descriptors();
+    for my $class (@classes) {
+        push @inheritance_path, $class->get_ancestors;
+    }
+    return @inheritance_path;
+}
+
+=head2 add_field(FieldDescriptor $field, Bool own)
+
+Add a field to the class. If there is already a field 
+of the same name, it will not be added twice. Setting the boolean
+flag "own" marks this field as originating in this class
+
+See also: InterMine::Model->_fix_class_descriptors
+
+=cut
+
+sub add_field {
+  my ($self, $field, $own)  = @_;
+
+  return if defined $self->get_field_by_name($field->name);
+
+  if ($own) {
+    $self->add_own_field($field);
+  } else {
+    $self->set_field($field->name, $field);
+  }
+}
+
+sub _make_fields_into_attributes {
+    my $self   = shift;
+    my @fields = $self->fields;
+
+    for my $field (@fields) {
+        my $suffix = ucfirst($field->name);
+        my $get = $field->_type_is(Bool)  ? "is" : "get";
+        my $options = {
+            reader    => $get  . $suffix,
+            writer    => "set" . $suffix,
+            predicate => "has" . $suffix,
+            $field->_get_moose_options,
+        };
+
+        $self->add_attribute($field->name, $options);
+    }
+}
+
+=head2 sub_class_of
+
+ Usage   : if ($class_desc->sub_class_of($other_class_desc)) { ... }
+ Function: Returns true if and only if this class is a sub-class 
+           of the given class or is the same class
+ Args    : $other_class_desc - a ClassDescriptor, or name of one
+
+=cut
+
+sub sub_class_of {
+  my $self = shift;
+  my $other_class_desc = shift;
+
+  if ($self eq $other_class_desc) {
+    return 1;
+  } else {
+    for my $parent ($self->parental_class_descriptors()) {
+      if ($parent->sub_class_of($other_class_desc)) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+=head2 to_string
+
+The stringification of a class-descriptor. By default, it stringifies to its 
+unqualified_name.
+
+=cut 
+
+sub to_string {
+    my $self = shift;
+    return $self->unqualified_name;
+}
+
+=head2 to_xml
+
+Returns a string containing an XML representation of the descriptor
+
+=cut
+
+sub to_xml {
+    my $self = shift;
+    my $xml = sprintf(qq{<class name="%s"%s is-interface="%s">\n},
+        $self->unqualified_name, 
+        ($self->has_parents 
+            ? ' extends="' . join(q[ ], $self->parental_class_descriptors) . '"' 
+            : ''),
+        ($self->is_interface ? "true" : "false")
+    );
+    for my $field (
+        sort($self->own_attributes), 
+        sort($self->own_references), 
+        sort($self->own_collections)) {
+        $xml .= q[ ] x 4 . $field->to_xml . "\n";
+    }
+    $xml .= "  </class>";
+    return $xml;
+}
+
+1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Moose::Meta::Class>
+
+=back
 
 =head1 AUTHOR
 
@@ -50,216 +493,3 @@ Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=head1 FUNCTIONS
-
-=cut
-
-use Moose;
-with 'InterMine::Model::Role::Descriptor';
-use InterMine::TypeLibrary qw(
-    FieldList FieldHash ClassDescriptorList ClassDescriptor
-);
-use MooseX::Types::Moose qw(ArrayRef Str);
-
-=head2 new
-
- Usage   : my $cd = new InterMine::Model::ClassDescriptor(model => $model,
-                             name => "Gene", parents => ["BioEntity"]);
-
- Function: create a new ClassDescriptor object
- Args    : model   - the InterMine::Model that this class is a part of
-           name    - the class name
-           parents - a list of the classes and interfaces that this classes
-                     extends
-
-=cut
-
-has own_fields => (
-    traits => ['Array'],
-    is	    => 'ro',
-    isa	    => FieldList,
-    default => sub { [] },
-    handles => {
-	add_own_field  => 'push',
-	get_own_fields => 'elements',
-    },
-);
-has fieldhash => (
-    traits  => [qw/Hash/],
-    is	    => 'ro',
-    isa	    => FieldHash,
-    default => sub { {} },
-    handles => {
-	set_field	  => 'set',
-	get_field_by_name => 'get',
-	fields		  => 'values',
-	valid_field       => 'defined',
-    },
-);
-
-has parents => (
-    is	       => 'ro',
-    isa	       => ArrayRef[Str],
-    auto_deref => 1,
-);
-
-
-=head2 add_field
-
- Usage   : $cd->add_field($field);
- Function: add a Field to this class
- Args    : $field - a sub class of InterMine::Model::Field
-
-=cut
-
-# see also: Model->_fix_class_descriptors()
-sub add_field {
-  my ($self, $field, $own)  = @_;
-
-  return if defined $self->get_field_by_name($field->name);
-
-  $self->set_field($field->name, $field);
-  $self->add_own_field($field) if $own;
-}
-
-has ancestors => (
-    reader     => 'get_ancestors',
-    isa	       => ClassDescriptorList,
-    lazy       => 1,
-    auto_deref => 1,
-    default => sub {
-	my $self = shift;
-	my @inheritance_path = ($self,);
-	my @classes = $self->parental_class_descriptors();
-	for my $class (@classes) {
-	    push @inheritance_path, $class->get_ancestors;
-	}
-	return \@inheritance_path;
-    },
-);
-
-
-=head2 name
-
- Usage   : $name = $cd->name();
- Function: Return the name of this class, eg. "Gene"
- Args    : none
-
-
-=head2 parents
-
- Usage   : @parent_class_names = $cd->parents();
- Function: return a list of the names of the classes/interfaces that this class
-           directly extends
- Args    : none
-
-=head2 parental_class_descriptors
-
- Usage   : @parent_cds = $cd->parental_class_descriptors();
- Function: return a list of the ClassDescriptor objects for the
-           classes/interfaces that this class directly extends
- Args    : none
-
-=cut
-
-has parental_class_descriptors => (
-    is	       => 'ro',
-    isa	       => ClassDescriptorList,
-    lazy       => 1,
-    auto_deref => 1,
-    default => sub {
-	my $self = shift;
-	return [map {$self->model->get_classdescriptor_by_name($_)}
-		    $self->parents];
-    },
-);
-
-# see FieldHash above
-
-=head2 fields
-
- Usage   : @fields = $cd->fields();
- Function: Return the Attribute, Reference and Collection objects for all the
-           fields of this class
- Args    : none
-
-=head2 get_field_by_name
-
- Usage   : $field = $cd->get_field_by_name('company');
- Function: Return a Field object describing the given field, not undef if the
-           field isn't a field in this class
- Args    : $field_name - the name of the field to find
-
-=head2 valid_field
-
- Usage   : if ($cd->valid_field('company')) { ... }
- Function: Return true if and only if the named field is a field in this class
- Args    : $field_name - the name of the field to find
-
-
-=head2 attributes
-
- Usage   : @fields = $cd->attributes();
- Function: Return the Attribute objects for the attributes of this class
- Args    : none
-
-=cut
-
-sub attributes {
-    my $self = shift;
-    return grep {$_->isa('InterMine::Model::Attribute')} $self->fields;
-}
-
-=head2 references
-
- Usage   : @fields = $cd->references();
- Function: Return the Reference objects for the references of this class
- Args    : none
-
-=cut
-
-sub references {
-    my $self = shift;
-    return grep {$_->isa('InterMine::Model::Reference')} $self->fields;
-}
-
-=head2 collections
-
- Usage   : @fields = $cd->collections();
- Function: Return the Collection objects for the collections of this class
- Args    : none
-
-=cut
-
-sub collections {
-    my $self = shift;
-    return grep {$_->isa('InterMine::Model::Collection')} $self->fields;
-}
-
-=head2 sub_class_of
-
- Usage   : if ($class_desc->sub_class_of($other_class_desc)) { ... }
- Function: Returns true if and only if this class is a sub-class of the given
-           class or is the same class
- Args    : $other_class_desc - a ClassDescriptor
-
-=cut
-
-sub sub_class_of
-{
-  my $self = shift;
-  my $other_class_desc = shift;
-
-  if ($self eq $other_class_desc) {
-    return 1;
-  } else {
-    for my $parent ($self->parental_class_descriptors()) {
-      if ($parent->sub_class_of($other_class_desc)) {
-        return 1;
-      }
-    }
-  }
-  return 0;
-}
-
-1;

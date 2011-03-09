@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -140,7 +140,7 @@ public class CreateFlankingRegions
                 // This shouldn't happen
                 return;
             }
-            if (!("FlyBase".equals(source) || source.equals("WormBase"))) {
+            if (!("FlyBase".equals(source) || "WormBase".equals(source))) {
                 return;
             }
 
@@ -170,7 +170,13 @@ public class CreateFlankingRegions
 
                     region.setDistance("" + distance + "kb");
                     region.setDirection(direction);
-                    region.setIncludeGene(includeGene);
+                    try {
+                        PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
+                                "includeGene", "Not setting");
+                        region.setFieldValue("includeGene", includeGene);
+                    } catch (MetaDataException e) {
+                        // GeneFlankingRegion.includeGene not in model so do nothing
+                    }
                     region.setGene(gene);
                     region.setChromosome(chr);
                     region.setChromosomeLocation(location);

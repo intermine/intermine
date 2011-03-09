@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = 0.9401;
+    our $VERSION = '0.9601';
 
 =head1 NAME
 
@@ -52,7 +52,7 @@ under the same terms as Perl itself.
     # Declare Our Own Types
     use MooseX::Types -declare => [
         qw(
-          ConstraintCode UnaryOperator BinaryOperator
+          ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
           TernaryOperator MultiOperator
           LogicOperator LogicGroup LogicOrStr
           JoinedPathString PathString PathList PathHash
@@ -65,23 +65,40 @@ under the same terms as Perl itself.
           Model
           Template TemplateFactory TemplateHash
           Uri HTTPCode NetHTTP
+          ServiceRootUri ServiceRoot NotServiceRoot
           NotAllLowerCase
           Query QueryType QueryName QueryHandler IllegalQueryName
           SavedQuery SavedQueryFactory
           ListFactory
-          TextCSVXS
+          TextCSVXS TextCSV
           ClassDescriptor ClassDescriptorList MaybeClassDescriptor
           Field FieldList MaybeField FieldHash
+          LogHandler
+          DirName PathClassDir
+          VersionNumber
+          BigInt
           )
     ];
 
     # Import built-in Moose types
-    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe/;
+    use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int Value Object/;
+    use Math::BigInt;
+    use Scalar::Util qw(blessed);
+
+    my %fake_to_real_ops = (
+        'eq' => '=',
+        'ne' => '!=',
+        'lt' => '<',
+        'gt' => '>',
+        'ge' => '>=',
+        'le' => '<=',
+    );
 
     # Type definitions
     enum ConstraintCode, [ 'A' .. 'ZZ' ];
     enum UnaryOperator,  [ 'IS NOT NULL', 'IS NULL' ];
     enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=',];
+    enum FakeBinaryOperator, ['eq', 'ne', 'lt', 'gt', 'ge', 'le'];
     enum TernaryOperator, [ 'LOOKUP', 'IN', 'NOT IN'];
     enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
     enum LogicOperator, [ 'and',    'or', ];
@@ -109,8 +126,12 @@ under the same terms as Perl itself.
     subtype ConstraintList, as ArrayRef [Constraint];
     class_type ConstraintFactory,
       { class => 'Webservice::InterMine::ConstraintFactory', };
-    subtype File, as Str, where { -f $_ };
+    subtype File, as Str, where { -f $_ }, message {"'$_' should be a file"};
     class_type Uri, { class => 'URI' };
+    subtype ServiceRootUri, as Uri, where {$_->path =~ m|/service$| && $_->scheme},
+        message { "Uri does not look like a service url: got $_" };
+    subtype ServiceRoot, as Str, where {m|^https?://.*/service$|};
+    subtype NotServiceRoot, as Str, where {! m|^http.*/service$|};
     subtype HTTPCode, as Str, where { /^\d{3}$/ };
     class_type NetHTTP, { class => 'Net::HTTP', };
     enum SortDirection, [ 'asc', 'desc', ];
@@ -137,6 +158,7 @@ under the same terms as Perl itself.
     class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
     class_type Template,    { class => 'Webservice::InterMine::Query::Template', };
     class_type TextCSVXS,   { class => 'Text::CSV_XS', };
+    class_type TextCSV,   { class => 'Text::CSV', };
     class_type ClassDescriptor,
       { class => 'InterMine::Model::ClassDescriptor', };
     subtype MaybeClassDescriptor, as Maybe    [ClassDescriptor];
@@ -146,7 +168,27 @@ under the same terms as Perl itself.
     subtype FieldList,  as ArrayRef[Field];
     subtype FieldHash,  as HashRef[Field];
 
+    subtype DirName, as Str, where {-d $_}, 
+        message {"'$_' should be the name of an existing directory"};
+    class_type PathClassDir, { class => 'Path::Class::Dir'};
+    subtype VersionNumber, as Int, where {$_ > 0}, 
+        message {'I could not get the version number for this service - please check the url and make sure the service is available'};
+
+    class_type BigInt, {class => "Math::BigInt"};
+
     # Type coercions
+
+    coerce BigInt, from Str, via {
+        my $coerced = Math::BigInt->new($_);
+        if ($coerced->is_nan) {
+            return $_; # We almost certainly failed here...
+        } else {
+            return $coerced;
+        }
+    };
+
+
+    coerce BinaryOperator, from FakeBinaryOperator, via {$fake_to_real_ops{$_}};
     coerce QueryName, from IllegalQueryName, 
         via { 
             s/[^a-zA-Z0-9_,. -]/_/g; 
@@ -169,8 +211,25 @@ under the same terms as Perl itself.
     coerce PathList, from JoinedPathString, via { [ split /[,\s]+/ ] };
     coerce PathString, from JoinedPathString,
       via { ( split /[\s]+/ )[0] };
+    coerce ServiceRootUri, from Uri, via {
+        if ($_->path !~ m|/service$|) {
+            $_->path($_->path . '/service');
+        }
+        unless ($_->scheme) {
+            $_->scheme("http");
+        }
+        return $_;
+    };
+    coerce ServiceRootUri, from ServiceRoot, via {
+        URI->new($_);
+    };
+    coerce ServiceRootUri, from NotServiceRoot, via {
+        my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
+        my $suffix = (m|/service$|) ? '' : '/service';
+        URI->new($prefix . $_ . $suffix);
+    };
     coerce Uri, from Str, via {
-        my $prefix = (m!^http://!) ? '' : 'http://';
+        my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
         URI->new( $prefix . $_ );
     };
     coerce Model, from Str, via {
@@ -193,6 +252,7 @@ under the same terms as Perl itself.
         require Webservice::InterMine::SavedQueryFactory;
         Webservice::InterMine::SavedQueryFactory->new( string => $_ );
     };
+    coerce DirName, from PathClassDir, via {$_->stringify};
 }
 __PACKAGE__->meta->make_immutable;
 

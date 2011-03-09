@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -37,6 +36,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.Util;
 
 /**
  * Methods for creating feature for intergenic regions.
@@ -138,8 +138,8 @@ public class IntergenicRegionUtil
     }
 
     private void addToLocToGeneMap(Map<Location, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
-        BioConverterUtil.addToSetMap(locToGeneMap, loc.getStart(), gene);
-        BioConverterUtil.addToSetMap(locToGeneMap, loc.getEnd(), gene);
+        Util.addToSetMap(locToGeneMap, loc.getStart(), gene);
+        Util.addToSetMap(locToGeneMap, loc.getEnd(), gene);
     }
 
     /**

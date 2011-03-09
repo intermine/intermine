@@ -17,22 +17,22 @@
 
 <!-- BluePrint CSS container -->
 <div class="container">
-<div id="wrapper" class="span-12 last">
+<div id="wrapper" class="span-42 last">
 
-  <div id="welcome" class="span-11 last">
+  <div id="welcome" class="span-42 last">
     <!-- <a class="close" href="#" title="Close" onclick="toggleWelcome();return false;">&nbsp;</a> -->
       <div class="top"></div>
-      <div class="center span-11 last">
+      <div class="center span-42 last">
         <div class="bochs" id="bochs-1">
-            <div id="welcome-content" class="span-11 last current">
-              <div style="padding: 0px 20px;">
+            <div id="welcome-content" class="span-42 last current">
+              <div style="padding:0 20px;">
               <h2>Welcome to modMine</h2>
 <p>The <strong>modENCODE</strong> project aims to identify all sequence-based functional elements in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong></i> genomes. modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
 <br />
 <p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong> and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong> results and access the GBrowse <strong>genome browser</strong>.  Explore some of the tools provided below.</p>
 <br />
 <h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
-        <div class="span-11 last">
+        <div class="span-42 last">
               <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
             </div>
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
@@ -161,7 +161,8 @@
       <div class="bottom span-11 last"></div>
   </div>
 
-   <div id="search-bochs" class="span-4">
+   <div class="span-21">
+   <div id="search-bochs">
      <img title="search" src="themes/purple/homepage/search-ico-right.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
      <div class="text">
@@ -195,23 +196,65 @@
 
      </div>
    </div>
-
-   <div id="lists-bochs" class="span-4">
-     <img title="lists" src="images/icons/lists-64.png" class="title">
-     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyze Lists of Data</a></h3>
-     <div class="text">
-       <span style="height: 25px; float: left; width:100px;">&nbsp;</span>
-       <p>
-         <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
-         <strong>Explore</strong> and <strong>Analyze</strong>. Upload lists of identifiers to use in queries and discover relationshops in our analysis widgets.
-         See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.
-       </p>
-       <br />
-       <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">Lists</a>
-     </div>
    </div>
 
-   <div id="templates-bochs" class="span-4 last">
+   <div class="span-21 last">
+   <div id="genomic-bochs">
+     <img title="lists" src="images/icons/genomic-search-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a></h3>
+     <div class="text">
+       <span style="width:71px; height:20px; float:left;">&nbsp;</span>
+       <p>
+         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
+         <img src="themes/modmine/genome_region.jpg" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
+         </a>
+         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project.
+       </p>
+       <br />
+       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a>
+     </div>
+   </div>
+   </div>
+
+   <div style="clear:both;"></div>
+
+   <div class="span-14">
+   <div id="upload-bochs">
+     <img title="lists" src="images/icons/upload-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do">Upload Lists</a></h3>
+     <div class="text">
+       <span style="width: 72px; float: left;">&nbsp;</span>
+        <p>Enter a <strong>list</strong> of identifiers.</p>
+        <br />
+           <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
+               <select name="type">
+                 <c:forEach var="bag" items="${preferredBags}">
+                    <c:choose>
+                      <c:when test="${bag == 'Gene'}">
+                        <option value="Gene" selected="selected">Gene</option>
+                      </c:when>
+                      <c:otherwise>
+                        <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                      </c:otherwise>
+                    </c:choose>
+                 </c:forEach>
+               </select>
+               <textarea id="listInput" name="text"><c:out
+               value="${WEB_PROPERTIES['bag.example.identifiers']}"
+                    default="zen, eve, CG4807, FBgn0000099" /></textarea>
+               <br /><br />
+                <center>
+                  <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
+                  <br />
+                  <input type="submit" value="upload"/>
+                </center>
+           </form>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14">
+   <div id="templates-bochs">
      <img title="templates" src="images/icons/templates-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
      <div class="text">
@@ -219,129 +262,79 @@
         <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
            designed around common tasks performed by our biologist community.</p>
         <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
-        <br />
+        <br /><br />
         <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">Templates</a>
      </div>
    </div>
-
-   <div id="bochs" class="span-4">
-     <h3>Fly Gene Expression</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
-     <div class="text">
-       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
-     </div>
    </div>
 
-   <div id="bochs" class="span-4">
-     <h3>Fly Chromatin states</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><div class="heatmap"><img src="themes/modmine/icons/flyscore-text.png" alt="heatmap"/></div></a>
-<br />
-
-     <a target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><div class="heatmap"><img src="themes/modmine/icons/bg3-text.png" alt="heatmap"/></div></a>
-
+   <div class="span-14 last">
+   <div id="lists-bochs">
+     <img title="lists" src="images/icons/lists-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyze Lists of Data</a></h3>
      <div class="text">
-       <p></p>
-     </div>
-   </div>
-
-   <div id="bochs" class="span-4 last">
-     <h3>Genomic Region Search</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Genome Region Search"/></div></a>
-     <div class="text">
-       <p>Find modENCODE data in given regions of the genome.
+       <span style="height: 25px; float: left; width:100px;">&nbsp;</span>
+       <p>
+         <img src="themes/modmine/widget-charts.jpg" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
+         <strong>Explore</strong> and <strong>Analyze</strong>. Upload lists of identifiers to use in queries and discover relationshops in our analysis widgets.
+         See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.
        </p>
-       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a></div>
+       <br />
+       <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">Lists</a>
      </div>
+   </div>
    </div>
 
    <div style="clear:both;"></div>
-<%--
-   <div id="templates-menu" class="span-11 last">
-       <table id="menu" border="0" cellspacing="0">
-           <tr>
-               <td><div class="cont"><span id="tab1">Genes</span></div></td>
-               <td><div class="cont"><span id="tab2">Proteins</span></div></td>
-               <td><div class="cont"><span id="tab3">Interactions</span></div></td>
-               <td><div class="cont"><span id="tab4">Pathways</span></div></td>
-               <td><div class="cont"><span id="tab5">Homologues</span></div></td>
-               <td><div class="cont"><span id="tab6">Gene Ontology</span></div></td>
-               <td><div class="cont"><span id="tab7">Gene Expression</span></div></td>
-           </tr>
-       </table>
 
-       <div id="tab-content">
-           <div id="content1" class="content">
-               <p>The gene models and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over
-               30 other data sources. <a href="dataCategories.do">Read more</a></p>
-               <br/>
-               <p>Query for genes:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Genomics" />
-               </tiles:insert>
-           </div>
-           <div id="content2" class="content">
-               <p>FlyMine loads proteins from UniProt and FlyBase, and protein domains from InterPro. <a href="aspect.do?name=Proteins">Read
-               more</a></p>
-               <br/>
-               <p>Query for proteins:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Proteins" />
-               </tiles:insert>
-           </div>
-           <div id="content3" class="content">
-               <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
-               <br/>
-               <p>Query for interactions:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Interactions" />
-               </tiles:insert>
-           </div>
-           <div id="content4" class="content">
-               <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
-               <br/>
-               <p>Query for pathways:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Pathways" />
-               </tiles:insert>
-           </div>
-           <div id="content5" class="content">
-               <p>FlyMine loads homologue predictions from InParanoid, KEGG and TreeFam. <a href="aspect.do?name=Comparative+Genomics">
-               Read more</a></p>
-               <br/>
-               <p>Query for homologues:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Comparative Genomics" />
-               </tiles:insert>
-           </div>
-           <div id="content6" class="content">
-               <p>FlyMine loads Gene Ontology annotation from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
-               <a href="aspect.do?name=Gene+Ontology">Read more</a></p>
-               <br/>
-               <p>Query using gene ontology:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Gene Ontology" />
-               </tiles:insert>
-           </div>
-           <div id="content7" class="content">
-               <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.
-               <a href="aspect.do?name=Gene+Expression">Read more</a></p>
-               <br/>
-               <p>Query for gene expression:</p>
-               <tiles:insert name="aspectTemplates.jsp">
-                   <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                   <tiles:put name="aspectTitle" value="Gene Expression" />
-               </tiles:insert>
-           </div>
-       </div>
+   <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Gene Expression</h3>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="themes/modmine/fly_heatmap.jpg" alt="Fly expression heatmap"/></div></a></center>
+     <div class="text">
+       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
+       <p></p>
+     <p>To upload your own list of genes, use the form above or go to the 'Lists' tab and click on
+     <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">'Upload'</a> to create and name
+the new list. You can also use any of modMine's queries to create a list.
+     </p>
+     </div>
+
+   </div>
    </div>
 
---%>
+   <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Chromatin states</h3>
+     <div class="text" >
+       <left>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.jpg" alt="flyscore"/><span>GBrowse Ideograms</span></a>
+       </left>
+       <br />
+<p></p>
+       <left>
+       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.jpg" alt="parklabviewer"/><span>Park Lab Viewer</span></a>
+       </left>
+       <p>Includes folded view and also data about DHS, TSS, replication, etc.</p>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14 last">
+   <div id="bochs">
+     <h3>Regulatory Network</h3>
+
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/wormRegulatoryNetwork.do">Worm <div class="heatmap"><img src="themes/modmine/worm-network-detail2.jpg" alt="Worm Regulatory Network"/></div></a></center>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly <div class="heatmap"><img src="themes/modmine/fly-network-detail2.jpg" alt="Fly Regulatory Network"/></div></a></center>    
+
+     <div class="text">
+       <p><strong>Explore</strong> an hierarchical view of the physical regulatory networks.
+       </p>
+     </div>
+   </div>
+   </div>
+      
+   <div style="clear:both;"></div>
 
 </div>
 </div>
@@ -404,6 +397,7 @@
    // placeholder value for search boxes
    var dataPlaceholder = 'e.g. zen, pha-4';
    var exptPlaceholder = 'e.g. RNA-seq, CP190';
+   var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
    // class used when toggling placeholder
    var inputToggleClass = 'eg';
 
@@ -416,8 +410,9 @@
    }
 
    // e.g. values only available when JavaScript is on
-   $('input#dataSearch').toggleClass(inputToggleClass);
-   $('input#exptSearch').toggleClass(inputToggleClass);
+   jQuery('input#dataSearch').toggleClass(inputToggleClass);
+   jQuery('input#exptSearch').toggleClass(inputToggleClass);
+   jQuery('textarea#listInput').toggleClass(inputToggleClass);
 
    // register input elements with blur & focus
    $('input#dataSearch').blur(function() {
@@ -427,49 +422,34 @@
      }
    });
    // register input elements with blur & focus
-   $('input#exptSearch').blur(function() {
+   jQuery('input#exptSearch').blur(function() {
      if ($(this).val() == '') {
        $(this).toggleClass(inputToggleClass);
        $(this).val(exptPlaceholder);
      }
    });
-   $('input#dataSearch').focus(function() {
+   jQuery('input#dataSearch').focus(function() {
      if ($(this).hasClass(inputToggleClass)) {
        $(this).toggleClass(inputToggleClass);
        $(this).val('');
      }
    });
-   $('input#exptSearch').focus(function() {
-	     if ($(this).hasClass(inputToggleClass)) {
-	       $(this).toggleClass(inputToggleClass);
-	       $(this).val('');
-	     }
-	   });
-
-   // templates switcher
-   jQuery(document).ready(function() {
-        jQuery("#tab-content .content").each(function() {
-            jQuery(this).hide();
-        });
-
-        jQuery("table#menu td:first").addClass("active").show();
-        jQuery("div.content:first").show();
-
-        jQuery("table#menu td").click(function() {
-            jQuery("table#menu td").removeClass("active");
-            jQuery(this).addClass("active");
-            jQuery("#tab-content .content").hide();
-
-            if (jQuery(this).is('span')) {
-                // span
-                var activeTab = jQuery(this).attr("id").substring(3);
-            } else {
-                // td, div (IE)
-                var activeTab = jQuery(this).find("span").attr("id").substring(3);
-            }
-            jQuery('#content' + activeTab).fadeIn();
-
-            return false;
-        });
-    });
+   jQuery('input#exptSearch').focus(function() {
+       if ($(this).hasClass(inputToggleClass)) {
+         $(this).toggleClass(inputToggleClass);
+         $(this).val('');
+       }
+     });
+   jQuery('textarea#listInput').blur(function() {
+       if (jQuery(this).val() == '') {
+           jQuery(this).toggleClass(inputToggleClass);
+           jQuery(this).val(placeholderTextarea);
+       }
+   });
+   jQuery('textarea#listInput').focus(function() {
+       if (jQuery(this).hasClass(inputToggleClass)) {
+           jQuery(this).toggleClass(inputToggleClass);
+           jQuery(this).val('');
+       }
+   });
 </script>

@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,7 +45,6 @@ public abstract class TrackerAbstract implements Tracker
                 if (!DatabaseUtil.tableExists(connection, trackTableName)) {
                     connection.createStatement().execute(getStatementCreatingTable());
                 }
-                trackerLogger = new TrackerLogger(connection, trackTableName, trackTableColumns);
             } else {
                 LOG.warn("trackTableName is null or empty");
             }
@@ -64,7 +63,8 @@ public abstract class TrackerAbstract implements Tracker
             if (track.validate()) {
                 Object[] values = getFormattedTrack(track);
                 synchronized (values) {
-                    trackerLogger.setValues(values);
+                    trackerLogger = new TrackerLogger(connection, trackTableName,
+                                                      trackTableColumns, values);
                     new Thread(trackerLogger).start();
                 }
             } else {

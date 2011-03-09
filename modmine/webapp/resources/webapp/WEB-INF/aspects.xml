@@ -10,8 +10,7 @@
       The project is run as a Research Network. 
     </intro-text>
     <tile-name></tile-name>
-    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
+    <aspect-source name="modENCODE project" url="http://www.modencode.org/"/>
   </aspect>
 
   <aspect name="Genomics">
@@ -40,7 +39,8 @@
       taxon. Paralogues are the result of gene duplication.
     </intro-text>
     <tile-name>model/orthologues.jsp</tile-name>
-    <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
+    <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
+    <aspect-source name="Treefam" url="http://www.treefam.org"/>
   </aspect>
 
   <aspect name="Proteins">
@@ -56,6 +56,20 @@
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
 
+  <aspect name="Interactions">
+    <subtitle>IntAct</subtitle>
+    <icon-image>model/images/interaction.gif</icon-image>
+    <large-image>model/images/interaction.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+      Protein-protein interactions from IntAct (PSI-MI format), genetic interactions from the BioGRID and miRNA target predictions from miRBase.
+    </intro-text>
+    <tile-name>model/interactions.jsp</tile-name>
+    <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
+    <aspect-source name="BioGRID" url="http://www.thebiogrid.org/"/>
+    <aspect-source name="miRBase" url="http://microrna.sanger.ac.uk/targets/v4/"/>
+  </aspect>
+
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
     <icon-image>model/images/geneOntology.png</icon-image>
@@ -69,6 +83,32 @@
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
 
+  <aspect name="Phenotypes">
+    <subtitle>Phenotypes</subtitle>
+    <icon-image>model/images/phenotypes.png</icon-image>
+    <large-image>model/images/phenotypes.png</large-image>
+    <intro-text>
+     &lt;i&gt;Drosophila &lt;/i&gt; allele data as well as results from RNAi experiments in &lt;i&gt;Drosophila&lt;/i&gt; and &lt;i&gt;Caenorhabditis
+     elegans&lt;/i&gt;.
+    </intro-text>
+    <tile-name>model/RNAi.jsp</tile-name>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
+    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
+  </aspect>
+
+  <aspect name="Pathways">
+    <subtitle></subtitle>
+    <icon-image>model/images/pathways.png</icon-image>
+    <large-image>model/images/pathways.png</large-image>
+    <intro-text>
+      KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.
+    </intro-text>
+    <tile-name>model/pathways.jsp</tile-name>
+    <aspect-source name="Reactome" url="http://www.reactome.org/"/>
+    <aspect-source name="FlyReactome" url="http://www.fly.reactome.org/"/>
+  </aspect>
+
   <aspect name="Literature">
     <subtitle></subtitle>
     <icon-image>model/images/book.png</icon-image>
@@ -77,5 +117,7 @@
     </intro-text>
     <tile-name>model/literature.jsp</tile-name>
     <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>
 </aspects>

@@ -47,7 +47,6 @@ under the same terms as Perl itself.
 package Webservice::InterMine::Role::Logical;
 
 use MooseX::Role::WithOverloading;
-use Webservice::InterMine::LogicalSet;
 
 use overload
   '&'      => \&_and,
@@ -67,6 +66,7 @@ sub _or {
 sub _make_node {
     my ( $op, $l, $r, $rev ) = @_;
     ( $l, $r ) = ( $r, $l ) if ($rev);
+    require Webservice::InterMine::LogicalSet;
     return Webservice::InterMine::LogicalSet->new(
         op    => $op,
         left  => $l,

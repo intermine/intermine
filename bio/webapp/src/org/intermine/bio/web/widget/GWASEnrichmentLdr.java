@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -81,7 +81,7 @@ public class GWASEnrichmentLdr extends EnrichmentWidgetLdr
         QueryField qfTaxonId = new QueryField(qcOrganism, "taxonId");
         QueryField qfPrimaryIdentifier = new QueryField(qcSNP, "primaryIdentifier");
         QueryField qfPhenotype = new QueryField(qcGWAS, "phenotype");
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // SNP.GWASResults = GWASResult
@@ -162,7 +162,9 @@ public class GWASEnrichmentLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfIdentifier);
             q.addToSelect(new QueryFunction());
             q.addToGroupBy(qfIdentifier);
-
+            if ("sample".equals(action)) {
+                q.addToSelect(qfIdentifier);
+            }
         }
         return q;
     }

@@ -1,4 +1,4 @@
-package Test::Webservice::InterMine::TemplateFactory;
+package Test::Webservice::InterMine::TemplateFactory::TestModel;
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ use base ('Test::Class');
 use Test::More;
 use Test::Exception;
 use Test::MockObject;
-use InterMine::Model;
+use InterMine::Model::TestModel;
 
 sub class {'Webservice::InterMine::TemplateFactory'}
 sub source_file {'t/data/default-template-queries.xml'}
@@ -29,10 +29,7 @@ sub service {
 }
 
 sub model {
-    my $model = InterMine::Model->new(
-	file => 't/data/testmodel_model.xml'
-    );
-    return $model;
+    return InterMine::Model::TestModel->instance;
 }
 
 sub startup : Test(startup => 1) {
@@ -79,7 +76,7 @@ sub construction : Test(7) {
 	]
     );
     my $missing_source_error = qr/source xml must be passed to a TemplateFactory as either a string or a file/;
-    my $bad_arg_error = qr/does not pass the type constraint because: Validation failed/;
+    my $bad_arg_error = qr/does not pass the type constraint because:.*should be a file/;
     my $bad_xml_error = qr/Can't find any template strings in the xml I was passed/;
     throws_ok(
 	sub {$test->class->new(

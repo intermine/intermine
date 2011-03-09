@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,6 +53,7 @@ public class GWASEnrichmentURLQuery implements WidgetURLQuery
         q.addViews(prefix + ".primaryIdentifier",
                 prefix + ".symbol",
                 prefix + ".organism.name",
+                prefix + ".GWASResults.study.firstAuthor",
                 prefix + ".GWASResults.phenotype",
                 prefix + ".GWASResults.pValue",
                 prefix + ".GWASResults.associatedVariantRiskAllele",

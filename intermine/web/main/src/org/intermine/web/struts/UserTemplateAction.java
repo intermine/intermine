@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
@@ -54,7 +55,8 @@ public class UserTemplateAction extends InterMineDispatchAction
         TemplateQuery template = profile.getSavedTemplates().get(templateName);
         if (template != null) {
             recordMessage(new ActionMessage("templateList.deleted", templateName), request);
-            profile.deleteTemplate(templateName);
+            InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            profile.deleteTemplate(templateName, im.getTrackerDelegate());
             // If superuser then rebuild shared templates
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);

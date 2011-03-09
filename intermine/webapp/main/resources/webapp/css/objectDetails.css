@@ -1,3 +1,4 @@
+<<<<<<< .working
 /* override default InterMine here */
 .attributeField { color:inherit; }
 table.refSummary thead tr td { background-color:inherit; border-bottom:0; border-right:0; }
@@ -153,3 +154,8 @@ div.table.template div.templateDetails div.favorites img { float:left; padding:4
 #in-lists div.heading { margin:0 0 10px 0 !important; background:#F4EEF7 !important; border-width:1px 0 0 0 !important;
   border-style:solid; border-color:#5C0075; padding:2px 6px !important; color:#5C0075 !important; text-shadow:1px 1px 1px #FFF; }
 #in-lists div.body[style] { border:0 !important; padding:0 0 0 6px !important; }
+
+img.tinyQuestionMark {
+  padding-bottom:4px;
+}
+

@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,14 +11,15 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
@@ -28,6 +29,7 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -48,9 +50,10 @@ public class TemplateManager
     private Profile superProfile;
     private Model model;
     private TagManager tagManager;
+    private TemplateTracker templateTracker;
 
     /**
-     * The BagManager references the super user profile to fetch global bags.
+     * The TemplateManager references the super user profile to fetch global templates.
      * @param superProfile the super user profile
      * @param model the object model
      */
@@ -58,6 +61,19 @@ public class TemplateManager
         this.model = model;
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+    }
+
+    /**
+     * The TemplateManager references the super user profile to fetch global templates.
+     * @param superProfile the super user profile
+     * @param model the object model
+     * @param templateTracker the template tracker
+     */
+    public TemplateManager(Profile superProfile, Model model, TemplateTracker templateTracker) {
+        this.model = model;
+        this.superProfile = superProfile;
+        this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+        this.templateTracker = templateTracker;
     }
 
     /**
@@ -112,8 +128,13 @@ public class TemplateManager
         }
     }
 
-
-    private Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+    /**
+     * Fetch all user and global templates in a single map for the given user.  If there are naming
+     * collisions between user and global templates user templates take precedence.
+     * @param profile the user to fetch templates
+     * @return a map of template name to template query, the map will be empty if no templates found
+     */
+    protected Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
         // where name collisions occur user templates take precedence
         Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
 
@@ -128,27 +149,18 @@ public class TemplateManager
      * Get a list of template queries that should appear on report pages for the given type
      * under the specified aspect.
      * @param aspect the aspect to fetch templates for
-     * @param type the type of report page
+     * @param allClasses the type of report page and superclasses
      * @return a list of template queries
      */
-    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect, String type) {
+    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect,
+            Set<String> allClasses) {
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
-
         List<TemplateQuery> aspectTemplates = getAspectTemplates(aspect);
-
-        Set<String> allClasses;
-        if (type.contains(",")) {
-            allClasses = new HashSet<String>(Arrays.asList(type.split(",")));
-        } else {
-            allClasses = Collections.singleton(type);
-        }
-
         for (TemplateQuery template : aspectTemplates) {
             if (isValidReportTemplate(template, allClasses)) {
                 templates.add(template);
             }
         }
-
         Collections.sort(templates, TEMPLATE_COMPARATOR);
         return templates;
     }
@@ -158,7 +170,7 @@ public class TemplateManager
      * Return true if a template should appear on a report page.  All logic should be contained
      * in this method.
      * @param template the template to check
-     * @param classes the class of the report page and it's superclasses
+     * @param classes the class of the report page and its superclasses
      * @return true if template should be displayed on the report page
      */
     private boolean isValidReportTemplate(TemplateQuery template, Collection<String> classes) {
@@ -311,5 +323,116 @@ public class TemplateManager
         }
         return templatesWithTag;
     }
+
+    /**
+     * Return the list of public templates ordered by rank descendant.
+     * @param size maximum number of templates to return
+     * @return List of template names
+     */
+    public List<String> getMostPopularTemplateOrder(Integer size) {
+        return getMostPopularTemplateOrder(null, null, size);
+    }
+
+    /**
+     * Return the template list ordered by rank descendant for the user/sessionid specified
+     * in the input
+     * @param userName the user name
+     * @param sessionId the session id
+     * @param size maximum number of templates to return
+     * @return List of template names
+     */
+    public List<String> getMostPopularTemplateOrder(String userName, String sessionId,
+            Integer size) {
+        List<String> mostPopularTemplateOrder = new ArrayList<String>();
+        Map<String, Double> templateLnRank = templateTracker.getLogarithmMap(userName, sessionId,
+                                                                             this);
+        //create an entry list ordered
+        List<Entry<String, Double>> listOrdered =
+            new LinkedList<Entry<String, Double>>(templateLnRank.entrySet());
+        Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
+            public int compare (Entry<String, Double> e1, Entry<String, Double> e2) {
+                return -e1.getValue().compareTo(e2.getValue());
+            }
+        });
+        for (Entry<String, Double> entry : listOrdered) {
+            mostPopularTemplateOrder.add(entry.getKey());
+        }
+        if (mostPopularTemplateOrder != null && size != null) {
+            if (mostPopularTemplateOrder != null && mostPopularTemplateOrder.size() > size) {
+                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+            }
+        }
+        return mostPopularTemplateOrder;
+    }
+    /**
+     * Return the template list for a particular aspect given in input, ordered by rank descendant
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @return List of template names
+     */
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size) {
+        return getPopularTemplatesByAspect(aspectTag, size, null, null);
+    }
+
+    /**
+     * Return the template list for a particular aspect, ordered by rank descendant for
+     * the user/sessionid specified in the input
+     * @param aspectTag name of aspect tag
+     * @param size maximum number of templates to return
+     * @param userName the user name
+     * @param sessionId the session id
+     * @return List of template names
+     */
+    public List<TemplateQuery> getPopularTemplatesByAspect(String aspectTag, Integer size,
+                                                           String userName, String sessionId) {
+        List<TemplateQuery> templates = getAspectTemplates(aspectTag, null);
+        List<String> mostPopularTemplateNames;
+        if (userName != null && sessionId != null) {
+            mostPopularTemplateNames = getMostPopularTemplateOrder(userName, sessionId, null);
+        } else {
+            mostPopularTemplateNames = getMostPopularTemplateOrder(null);
+        }
+
+        if (mostPopularTemplateNames != null) {
+            Collections.sort(templates, new MostPopularTemplateComparator(
+                                            mostPopularTemplateNames));
+        }
+        if (templates != null && size != null) {
+            if (templates.size() > size) {
+                templates = templates.subList(0, size);
+            }
+        }
+        return templates;
+    }
+
+    private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
+    {
+        private List<String> mostPopularTemplateNames;
+
+        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
+            this.mostPopularTemplateNames = mostPopularTemplateNames;
+        }
+        public int compare(TemplateQuery template1, TemplateQuery template2) {
+            String templateName1 = template1.getName();
+            String templateName2 = template2.getName();
+            if (!mostPopularTemplateNames.contains(templateName1)
+                && !mostPopularTemplateNames.contains(templateName2)) {
+                if (template1.getTitle().equals(template2.getTitle())) {
+                    return template1.getName().compareTo(template2.getName());
+                } else {
+                    return template1.getTitle().compareTo(template2.getTitle());
+                }
+            }
+            if (!mostPopularTemplateNames.contains(templateName1)) {
+                return +1;
+            }
+            if (!mostPopularTemplateNames.contains(templateName2)) {
+                return -1;
+            }
+            return (mostPopularTemplateNames.indexOf(templateName1)
+                   < mostPopularTemplateNames.indexOf(templateName2)) ? -1 : 1;
+        }
+    }
+
 
 }

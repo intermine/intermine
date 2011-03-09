@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -352,8 +352,11 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = getAttrValue(attrs, "type");
             } else if ("evidence".equals(qName) && "entry".equals(previousQName)) {
                 String evidenceCode = getAttrValue(attrs, "key");
-                String pubRefId = getEvidence(getAttrValue(attrs, "attribute"));
-                entry.addEvidence(evidenceCode, pubRefId);
+                String pubmedString = getAttrValue(attrs, "attribute");
+                if (StringUtils.isNotEmpty(evidenceCode) && StringUtils.isNotEmpty(pubmedString)) {
+                    String pubRefId = getEvidence(pubmedString);
+                    entry.addEvidence(evidenceCode, pubRefId);
+                }
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
                     || "isoform".equals(qName)
                     || "gene".equals(qName)) {
@@ -608,7 +611,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     if (pubRefId != null) {
                         pubRefIds.add(pubRefId);
                     } else {
-                        throw new RuntimeException("bad code:" + code);
+                        LOG.error("bad evidence code:" + code + " for "
+                                + uniprotEntry.getPrimaryAccession());
                     }
                 }
                 if (!pubRefIds.isEmpty()) {

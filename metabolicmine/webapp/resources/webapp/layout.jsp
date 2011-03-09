@@ -46,6 +46,9 @@
       <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>
       <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
+
+    <link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico">
+
   </head>
   <body>
 
@@ -61,7 +64,7 @@
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
 
-  <div id="pagecontentcontainer" align="center">
+  <div id="pagecontentcontainer" align="center" class="${pageName}${subtabs[subtabName]}-page">
     <c:choose>
     <c:when test="${!empty fixedLayout}">
       <div id="pagecontent">

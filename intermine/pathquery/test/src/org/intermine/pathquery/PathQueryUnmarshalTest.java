@@ -3,14 +3,16 @@ package org.intermine.pathquery;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,20 +22,21 @@ import org.intermine.metadata.Model;
  */
 
 /**
- * Tests reaction of unmarshalling implementation at errors in query. The tests are written in the way, 
- * that they pass for current implementation of unmarshalling, but the behavior 
+ * Tests reaction of unmarshalling implementation at errors in query.
+ * The tests are written in the way,
+ * that they pass for current implementation of unmarshalling, but the behavior
  * of tests and implementation of unmarshalling should be changed.
  * @author Jakub Kulaviak
  **/
 public class PathQueryUnmarshalTest extends  TestCase
 {
-    
+
     public void testUnknownModel() {
         /*
          * Just now throws exception. It will change later.
          */
         try {
-            createQuery("UnknownModel.xml");    
+            createQuery("UnknownModel.xml");
         } catch (Exception ex) {
             return;
         }
@@ -44,20 +47,22 @@ public class PathQueryUnmarshalTest extends  TestCase
         PathQuery query = createQuery("InvalidView.xml");
         assertTrue(query.verifyQuery().size() == 1);
     }
-    
+
     public void testInvalidSortOrder() {
         PathQuery query = createQuery("InvalidSortOrder.xml");
         assertTrue(query.verifyQuery().size() == 0);
     }
 
     public void testInvalidConstraintLogic() {
-        PathQuery query = createQuery("InvalidConstraintLogic.xml");    
+        PathQuery query = createQuery("InvalidConstraintLogic.xml");
         assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
     }
 
     public void testIncompleteConstraintLogic() {
-        PathQuery query = createQuery("IncompleteConstraintLogic.xml");    
-        assertEquals(Arrays.asList("Value in constraint Employee.age > bad is not in correct format for type of Integer"), query.verifyQuery());
+        PathQuery query = createQuery("IncompleteConstraintLogic.xml");
+        assertEquals(Arrays.asList(
+                "Value in constraint Employee.age > bad is not in correct format for " +
+                "type of Integer"), query.verifyQuery());
     }
 
     /* ? */
@@ -71,7 +76,7 @@ public class PathQueryUnmarshalTest extends  TestCase
     public void testInvalidConstraintOperation() {
         PathQuery query = null;
         try {
-            query = createQuery("InvalidConstraintOperation.xml");    
+            query = createQuery("InvalidConstraintOperation.xml");
         } catch (Exception ex) {
             return;
         }
@@ -80,8 +85,124 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testInvalidConstraintValue() {
         PathQuery query = createQuery("InvalidConstraintValue.xml");
-        System.out.println(query.verifyQuery());
         assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+    }
+
+    public void testInvalidValueTags() {
+        try {
+            PathQuery query = createQuery("BadValueTags.xml");
+        } catch (RuntimeException e) {
+            assertEquals(e.getMessage(),
+                    "org.xml.sax.SAXException: Cannot have any tags inside a value tag");
+            return;
+        }
+        fail("Expected exception");
+    }
+
+    public void testBadConstraintStructure() {
+        try {
+            PathQuery query = createQuery("BadConstraintStructure.xml");
+        } catch (RuntimeException e) {
+            assertEquals("Cannot have anything other than value tag inside a constraint",
+                    e.getCause().getMessage());
+            return;
+        }
+        fail("Expected exception");
+    }
+
+    public void testConfusedStyle() {
+        try {
+            createQuery("ConfusedXMLFormat.xml");
+        } catch (RuntimeException e) {
+            assertEquals("Cannot set path in a constraint inside a node",
+                e.getCause().getMessage());
+            return;
+        }
+        fail("Expected exception");
+    }
+
+    public void testBadDescriptionPath() {
+        try {
+            createQuery("BadDescriptionPath.xml");
+        } catch (RuntimeException e) {
+            assertEquals("Invalid path 'Employee.department.' for description: a nice place to work",
+                e.getCause().getMessage());
+            return;
+        }
+        fail("Expected exception");
+    }
+
+    public void testBadJoinStyle() {
+        try {
+            createQuery("BadJoinStyle.xml");
+        } catch (RuntimeException e) {
+            assertEquals("Unknown join style funky for path Employee.department",
+                e.getCause().getMessage());
+            return;
+        }
+        fail("Expected exception");
+    }
+
+    public void testEmptyValueTag() {
+        PathQuery pq;
+        try {
+            pq = createQuery("EmptyValueTag.xml");
+        } catch (Exception e) {
+            assertEquals("No value provided in value tag",
+                e.getCause().getMessage());
+            return;
+        }
+        fail("Expected exception, but got: " + pq.toString() );
+    }
+
+    public void testMultipleQueries() {
+        String path = "PathQueryBindingUnmarshal/MultipleQueries.xml";
+        InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        Model model = Model.getInstanceByName("testmodel");
+        Collection<PathQuery> pqlist = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).values();
+
+        assertEquals(pqlist.size(), 2);
+    }
+
+    public void testMultipleQueriesWithSameName() {
+        String path = "PathQueryBindingUnmarshal/MultipleQueriesSameName.xml";
+        InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        Model model = Model.getInstanceByName("testmodel");
+        Set<String> pqnames = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).keySet();
+
+        assertTrue(pqnames.contains("a_query"));
+        assertTrue(pqnames.contains("a_query_1"));
+        assertTrue(pqnames.contains("a_query_2"));
+
+    }
+
+    /* Test not currently working: TODO
+    public void testPointlessSubclass() throws PathException {
+        PathQuery query = createQuery("PointlessSubclass.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals("Department", query.getSubclasses().get("Employee.department"));
+        assertEquals("Manager", query.getSubclasses().get("Employee.department.manager"));
+    } */
+
+    public void testHeaderAttributes() {
+        PathQuery query = createQuery("HeaderAttributes.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals(query.getTitle(), "Query Title");
+        assertEquals(query.getDescription(), "Query Description");
+    }
+
+    public void testOldStyleJoins() throws PathException {
+        PathQuery query = createQuery("OldStyleJoins.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals(query.getOuterJoinStatus("Employee.department.employees"),
+                OuterJoinStatus.OUTER);
+    }
+
+    public void testExplicitJoins() throws PathException {
+        PathQuery query = createQuery("ExplicitJoins.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals(query.getOuterJoinStatus("Employee.department.company"), OuterJoinStatus.OUTER);
+        assertEquals(query.getOuterJoinStatus("Employee.department"), OuterJoinStatus.INNER);
     }
 
     private PathQuery createQuery(String fileName)  {
@@ -90,5 +211,5 @@ public class PathQueryUnmarshalTest extends  TestCase
         Model model = Model.getInstanceByName("testmodel");
         PathQuery ret = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).values().iterator().next();
         return ret;
-    }    
+    }
 }

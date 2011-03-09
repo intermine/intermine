@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
@@ -40,6 +42,7 @@ import org.intermine.util.DynamicUtil;
 public final class TemplatePopulator
 {
     private TemplatePopulator() {
+        // don't
     }
 
     /**
@@ -57,6 +60,8 @@ public final class TemplatePopulator
             Map<String, List<TemplateValue>> newConstraints) {
         TemplateQuery template = origTemplate.clone();
         template.setEdited(true);
+        Set<List<TemplateValue>> providedValues = new HashSet<List<TemplateValue>>(
+                newConstraints.values());
 
         for (String editablePath : template.getEditablePaths()) {
             List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
@@ -88,9 +93,18 @@ public final class TemplatePopulator
                     }
                 }
                 if (!found) {
+                    if (!template.isOptional(con)) {
+                        throw new TemplatePopulatorException(
+                                "No value provided for required constraint " + con);
+                    }
                     template.removeConstraint(con);
                 }
             }
+            providedValues.remove(values);
+        }
+        if (!providedValues.isEmpty()) {
+            throw new TemplatePopulatorException("Values provided for non-existent constraints: "
+                + providedValues);
         }
         return template;
     }

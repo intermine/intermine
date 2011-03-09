@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,16 +41,26 @@ import org.intermine.webservice.server.output.Output;
 /**
  * Web service that returns all public lists (bags) that contain object with
  * specified id.
- * See {@link ListsRequestProcessor} for parameter description
+ * See {@link ListsRequestParser} for parameter description
  *  URL examples:
- *  Get all public lists with specified intermine id
- *  /listswithobject?output=xml&amp;id=1343743
- *  Get all public lists with specified id, corresponding intermine id is found with lookup
- *  /listswithobject?output=xml&amp;publicId=1343743
+ *  <ul>
+ *      <li>
+ *  Get all public lists with specified intermine id: <br/>
+ *  <code>/listswithobject?format=xml&amp;id=1343743</code>
+ *      </li>
+ *      <li>
+ *  Get all public lists with specified id, corresponding intermine id is found with lookup: <br/>
+ *  <code>/listswithobject?format=xml&amp;publicId=1343743</code>
+ *      </li>
+ *  </ul>
  * @author Jakub Kulaviak
  **/
 public class ListsService extends WebService
 {
+    /**
+     * Constructor
+     * @param im The InterMine API
+     */
     public ListsService(InterMineAPI im) {
         super(im);
     }
@@ -120,7 +130,7 @@ public class ListsService extends WebService
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
-            List<ResultElement> row = (ArrayList) it.next();
+            List<ResultElement> row = it.next();
             if (it.hasNext()) {
                 throw new BadRequestException("Multiple objects of type " + input.getType()
                         + " with public id " + input.getPublicId() + " were found.");

@@ -68,7 +68,7 @@ sub results_with {
             confess sprintf( $error_format, $_ ) unless $code;
             $new_op_for{$code} = $args{$_};
         } elsif (/^extra_value/) {
-            my ($code) = /^op([A-Z]{1,2})$/;
+            my ($code) = /^extra_value([A-Z]{1,2})$/;
             confess sprintf( $error_format, $_ ) unless $code;
             $new_extra_value_for{$code} = $args{$_};
         } else {
@@ -102,12 +102,17 @@ sub results_with {
 
 sub url {
     my $self       = shift;
+    my %args = @_;
+    my $format = $args{format} || "tab";
     my $url        = $self->service_root . $self->templatequery_path;
     my $uri        = URI->new($url);
     my %query_form = (
-        format => 'tab',
+        format => $format,
         name   => $self->name,
     );
+    for my $opt (qw/start size/) {
+        $query_form{$opt} = $args{$opt} if ($args{$opt});
+    }
 
     my $i = 1;
     for my $constraint ( $self->editable_constraints ) {

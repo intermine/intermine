@@ -23,8 +23,6 @@ to return results. Generally you won't need to interact with it directly, or
 if you do, the methods you will be most interested in are those that return
 objects you can use for running queries.
 
-=head1 METHODS
-
 =cut
 
 package Webservice::InterMine::Service;
@@ -35,10 +33,12 @@ use Webservice::InterMine::Query;
 use Webservice::InterMine::ResultIterator;
 use Net::HTTP;
 use URI;
-use LWP::UserAgent;
-use MooseX::Types::Moose qw/Str/;
+use LWP;
+use MIME::Base64;
+use MooseX::Types::Moose qw/Str Int/;
 use InterMine::TypeLibrary
-  qw(Uri Model TemplateFactory SavedQueryFactory ListFactory);
+  qw(VersionNumber ServiceRootUri Model TemplateFactory SavedQueryFactory ListFactory);
+
 
 =head2 new( $url, [$user, $pass] )
 
@@ -46,18 +46,19 @@ A service can be constructed directly by passing a webservice
 url to the new method. To have access to private data (personal
 templates, saved queries and lists) you also need to provide
 login information in the form of a username and password.
-(B<AUTHENTICATION NOT IMPLEMENTED YET>).
 
 =cut
 
 around BUILDARGS => sub {
     my $orig  = shift;
     my $class = shift;
+    my @build_args = @_;
     if ( @_ <= 3 and $_[0] ne 'root' ) {
         my %args;
-        $args{root} = shift if @_;
-        $args{user} = shift if @_;
-        $args{pass} = shift if @_;
+        for (qw/root user pass/) {
+            my $next = shift @build_args;
+            $args{$_} = $next if $next;
+        }
         return $class->$orig(%args);
     } else {
         return $class->$orig(@_);
@@ -76,6 +77,25 @@ use constant {
     RELEASE_PATH       => '/version/release',
 };
 
+=head1 CONSTRUCTION
+
+=head2 Webservice::InterMine->get_service($root, $user, $pass)
+
+Typically as service is most conveniently obtained through the
+L<Webservice::InterMine> interface. 
+
+=head2 new($root, $user, $pass)
+
+It can of course be instantiated directly, with a standard call to new.
+
+=head2 don't!
+
+You do not have to obtain a service object: simply call the methods
+on the Webservice::InterMine factory class to obtain new queries,
+fetch templates and load saved queries.
+
+=head1 METHODS
+
 =head2 root | user | pass
 
 The values passed into the constructor can be accessed
@@ -86,7 +106,7 @@ a scheme added if none was provided.
 
 has root => (
     is       => 'ro',
-    isa      => Uri,
+    isa      => ServiceRootUri,
     required => 1,
     coerce   => 1,
     handles  => { host => 'host', },
@@ -95,11 +115,13 @@ has root => (
 has user => (
     is  => 'ro',
     isa => Str,
+    predicate => 'has_user',
 );
 
 has pass => (
     is  => 'ro',
     isa => Str,
+    predicate => 'has_pass',
 );
 
 =head2 new_query
@@ -118,6 +140,21 @@ sub new_query {
     my $query = Webservice::InterMine::Query->new(
         service => $self,
         model   => $self->model,
+    );
+    return apply_roles( $query, $roles );
+}
+
+sub new_from_xml {
+    my $self = shift;
+    my %args = @_;
+
+    my $roles = delete $args{with};
+
+    require Webservice::InterMine::Query::Saved;
+    my $query = Webservice::InterMine::Query::Saved->new(
+        service => $self,
+        model   => $self->model,
+        %args,
     );
     return apply_roles( $query, $roles );
 }
@@ -148,9 +185,9 @@ has _templates => (
 );
 
 sub template {
-    my ( $self, $name, $roles ) = @_;
+    my ( $self, $name, %args ) = @_;
     my $t = $self->get_template($name) or return;
-    return apply_roles( $t, $roles );
+    return apply_roles( $t, $args{with} );
 }
 
 has _saved_queries => (
@@ -192,15 +229,16 @@ sub _build_model {
 =head2 version
 
 Returns the version of the webservice - used for determining
-compatibility with different query formats
+compatibility with different query formats. The version is always
+an integer. An attempt to get the version is made on instantiation, 
+which serves to validate the webservice.
 
 =cut
 
 has version => (
     is       => 'ro',
-    isa      => Str,
+    isa      => VersionNumber,
     required => 1,
-    lazy     => 1,
     default  => sub {
         my $self = shift;
         $self->fetch( $self->root . VERSION_PATH );
@@ -226,11 +264,15 @@ has release => (
 
 # Returns a LWP::UserAgent suitable for getting and posting with
 sub agent {
+    my $self = shift;
     my $ua = LWP::UserAgent->new;
     $ua->env_proxy;
     $ua->agent(USER_AGENT);
+    if ($self->has_user and $self->has_pass) {
+        my $auth_string = join(':', $self->user, $self->pass);
+        $ua->default_header( Authorization => encode_base64($auth_string) );
+    }
 
-#    $ua->credentials($self->host.':80', $realm, $self->user, $self->pass);
     return $ua;
 }
 
@@ -303,6 +345,13 @@ sub send_off {
     return $resp;
 }
 
+__PACKAGE__->meta->make_immutable;
+no Moose;
+
+1;
+
+__END__
+
 =head1 AUTHOR
 
 Alex Kalderimis C<dev@intermine.org>
@@ -321,7 +370,7 @@ You can also look for information at:
 
 =over 4
 
-=item * Webservice::InterMine
+=item * InterMine
 
 L<http://www.intermine.org>
 
@@ -333,11 +382,10 @@ L<http://www.intermine.org/perlapi>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006 - 2010 FlyMine, all rights reserved.
+Copyright 2006 - 2011 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
 
-1;

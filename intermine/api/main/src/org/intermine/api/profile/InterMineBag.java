@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -159,7 +159,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         q.addToSelect(osb);
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-        return (List<Integer>) ((List) res);
+        return ((List) res);
     }
 
     /**

@@ -32,6 +32,7 @@ import org.intermine.util.TypeUtil;
 public final class PathUtil
 {
     private PathUtil() {
+        // don't instantitate
     }
 
     /**
@@ -53,9 +54,7 @@ public final class PathUtil
                         + o, path.toString());
             }
         }
-
         Object current = o;
-
         for (String fieldName : path.getElements()) {
             try {
                 if (current == null) {
@@ -73,7 +72,6 @@ public final class PathUtil
                                            + "field \"" + fieldName + "\" in object: " + o, e);
             }
         }
-
         return current;
     }
 
@@ -93,7 +91,6 @@ public final class PathUtil
             // return result as a Set
             return new HashSet<Object>(Collections.singleton(resolvePath(path, o)));
         }
-
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
             Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());

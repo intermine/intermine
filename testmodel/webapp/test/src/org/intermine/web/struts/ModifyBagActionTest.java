@@ -58,7 +58,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         try {
-            ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+            os = ObjectStoreFactory.getObjectStore("os.unittest");
             profileManager = new ProfileManager(os, userProfileOSW);
 
             Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",

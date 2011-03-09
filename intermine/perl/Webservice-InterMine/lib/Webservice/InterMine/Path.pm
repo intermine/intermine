@@ -51,7 +51,7 @@ under the same terms as Perl itself.
 
 use Exporter 'import';
 
-my @validators = qw(validate_path end_is_class b_is_subclass_of_a root);
+my @validators = qw(validate_path end_is_class b_is_subclass_of_a a_is_subclass_of_b root);
 our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class');
 our %EXPORT_TAGS = ( validate => \@validators );
 
@@ -153,12 +153,22 @@ sub end_is_class {
     }
 }
 
-=head2 b_is_subclass_of_a
+=head2 a_is_subclass_of_b($model, $classA, $classB)
 
- Usage   : my $error = b_is_subclass_of_a($model, $pathA, $pathB);
- Function: Returns an error if B is not a subclass of A.
- Args    : $model - An InterMine::Model,
-           $pathA, $pathB - Path strings of the form "Path.string"
+Returns undef if $classA represents a subclass of $classB, or
+if they do not represent valid paths, otherwise returns a message.
+
+=cut 
+
+sub a_is_subclass_of_b {
+    my ( $model, $path_stringA, $path_stringB ) = @_;
+    return b_is_subclass_of_a($model, $path_stringB, $path_stringA);
+}
+
+=head2 b_is_subclass_of_a($model, $classA, $classB)
+
+Returns undef if $classA represents a subclass of $classB, or
+if they do not represent valid paths, otherwise returns a message.
 
 =cut
 
@@ -218,7 +228,7 @@ sub _parse {
         else {
             $current_field = $current_class->get_field_by_name($bit);
             if ( !defined $current_field ) {
-                if ( my $type = $type_hashref->{ $current_class->name } ) {
+                if ( my $type = $type_hashref->{ $current_class } ) {
                     my $type_class = $model->get_classdescriptor_by_name($type);
                     $current_field = $type_class->get_field_by_name($bit);
                 }

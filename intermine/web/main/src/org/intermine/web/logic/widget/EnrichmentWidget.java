@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -79,8 +79,8 @@ public class EnrichmentWidget extends Widget
 
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
                 .newInstance(new Object[] {bag, os, filter});
-
-            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
+            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max),
+                    errorCorrection);
             int analysedTotal = 0;
             if (!resultMaps.isEmpty()) {
                 analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();

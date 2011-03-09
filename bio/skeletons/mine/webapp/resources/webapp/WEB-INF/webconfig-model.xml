@@ -74,15 +74,9 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
-    </fields>
-  </class>
-
  <class className="org.intermine.model.bio.Location">
     <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="feature.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="strand"/>
@@ -202,7 +196,7 @@
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
-  
+
 <!-- widgets -->
 <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"

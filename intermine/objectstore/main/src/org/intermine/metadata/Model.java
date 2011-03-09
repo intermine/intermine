@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -282,6 +283,26 @@ public class Model
         sb.append("</model>");
         return sb.toString();
     }
+
+    public String toJSONString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("name:\"" + modelName + "\"," + ENDL + "classes:{" + ENDL);
+        Iterator<ClassDescriptor> iter = getClassDescriptors().iterator();
+        boolean needsComma = false;
+        while (iter.hasNext()) {
+            ClassDescriptor cld = iter.next();
+            if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
+                if (needsComma) {
+                    sb.append("," + ENDL);
+                }
+                sb.append(cld.toJSONString());
+                needsComma = true;
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
 
     /**
      * Used to generate the SO additions file

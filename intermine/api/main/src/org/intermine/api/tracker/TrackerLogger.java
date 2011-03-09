@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,19 +34,13 @@ public class TrackerLogger implements Runnable
      * @param connection the connection to the database
      * @param tableName the name of the table where the value will be saved
      * @param colNames the names of the columns
+     * @param values the values to be saved
      */
-    public TrackerLogger(Connection connection, String tableName, String[] colNames) {
+    public TrackerLogger(Connection connection, String tableName, String[] colNames,
+                         Object[] values) {
         this.connection = connection;
         this.tableName = tableName;
         this.colNames = colNames;
-    }
-
-    /**
-     * Set the values to insert into the database.
-     * The values have to be in the same order as colNames
-     * @param values an array of Objects to be saved into the database
-     */
-    public void setValues(Object[] values) {
         this.values = values;
     }
 

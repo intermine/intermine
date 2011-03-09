@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,6 +31,7 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -65,11 +66,12 @@ public class MyMineController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
 
         if (SessionMethods.isSuperUser(session)) {
-            Map<String, Integer> templateCounter = im.getTrackerDelegate().getAccessCounter();
+            TrackerDelegate td = im.getTrackerDelegate();
+            Map<String, Integer> templateCounter = td.getAccessCounter();
             if (templateCounter != null) {
                 request.setAttribute("templateCounter", templateCounter);
             }
-            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank();
+            Map<String, Integer> templateRank = td.getRank(im.getTemplateManager());
             if (templateRank != null) {
                 request.setAttribute("templateRank", templateRank);
             }

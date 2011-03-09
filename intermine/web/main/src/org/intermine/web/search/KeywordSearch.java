@@ -1,7 +1,7 @@
 package org.intermine.web.search;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -727,7 +727,7 @@ class InterMineObjectFetcher extends Thread
             f.setBoost(boost);
 
             // if we haven't set a boost and this is short field we can switch off norms
-            if (boost == 1F && value.indexOf(' ') == -1 ) {
+            if (boost == 1F && value.indexOf(' ') == -1) {
                 f.setOmitNorms(true);
                 f.setOmitTermFreqAndPositions(true);
                 if (!normFields.contains(f.name())) {
@@ -844,7 +844,7 @@ class InterMineObjectFetcher extends Thread
  * @author nils
  */
 
-public class KeywordSearch
+public final class KeywordSearch
 {
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
 
@@ -872,6 +872,10 @@ public class KeywordSearch
     private static Map<ClassDescriptor, Float> classBoost;
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
+
+    private KeywordSearch() {
+        //don't
+    }
 
     @SuppressWarnings("unchecked")
     private static synchronized void parseProperties(ObjectStore os) {

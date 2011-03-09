@@ -36,7 +36,7 @@
       <c:if test="${fn:length(viewStrings) > 1 && iePre7 != 'true'}">
         <noscript>
           <fmt:message key="view.intro"/>
-  		  <fmt:message key="view.removeAllFromView.instructions"/>
+        <fmt:message key="view.removeAllFromView.instructions"/>
         </noscript>
         <script type="text/javascript">
           <!--

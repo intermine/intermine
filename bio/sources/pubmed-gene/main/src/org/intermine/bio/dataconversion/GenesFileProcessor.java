@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -92,6 +92,7 @@ public class GenesFileProcessor
         while ((line = getLine()) != null) {
             lineCounter++;
             line = line.trim();
+
             if (line.startsWith("#") || line.length() == 0) {
                 continue;
             }
@@ -111,6 +112,7 @@ public class GenesFileProcessor
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
             }
             checkFileIsSorted(organismId);
+
             //String identifier = parts[3].trim();
             String pubMedId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
@@ -199,6 +201,7 @@ public class GenesFileProcessor
         // any publication then the gene is skipped
         // if there isn't primary identifier gene is skipped
         if (publications != null) {
+
             if (setPrimaryIdentifier(organismId.toString()) && !"-".equals(primIdentifier)) {
                 primIdentifier = removeDatabasePrefix(primIdentifier);
                 if (StringUtils.isEmpty(primIdentifier) || !isValidPrimIdentifier(primIdentifier)) {
@@ -269,7 +272,7 @@ public class GenesFileProcessor
     private boolean isMusMusculus(String taxonId) {
         return "10090".equals(taxonId);
     }
-    
+
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
         Item gene = createItem("Gene");
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());

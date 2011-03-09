@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -169,6 +169,22 @@ public class ReferenceDescriptor extends FieldDescriptor
                 + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append("/>");
+        return sb.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toJSONString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("{name:\"" + name + "\","
+            + "referencedType:\"" + referencedType.substring(referencedType.lastIndexOf(".") + 1)
+            + "\"");
+        if (reverseRefName != null) {
+            sb.append(",reverseReference:\"" + reverseRefName + "\"");
+        }
+        sb.append("}");
         return sb.toString();
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,11 +10,11 @@ package org.intermine.util;
  *
  */
 
-import java.util.Properties;
-import java.util.Enumeration;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -103,18 +103,23 @@ public final class PropertiesUtil
     }
 
     /**
-     * Strips the give string off the keys of the given
-     * Properties. For example, database.name=production =>
-     * name=production.
+     * <p>Strips the given string off the keys of the given
+     * Properties, and returns a new set of properties. The
+     * original properties are not altered.<br/>
+     * For example, given the property:<br/>
+     * <ul><li><code>database.name=production</code></li></ul>
+     * a call to <code>stripStart("database", props)</code> will produce:<br/>
+     * <ul><li><code>name=production</code></li></ul>
+     * Note that a dot will be added to the prefix.</p>
      *
-     * @param str the String to strip off
+     * @param prefix the String to strip off - a "." will be appended to this string.
      * @param props the Properties object to change
      * @return a Properties object containing the same properties with
-     * the initial string stripped off the keys
+     * the initial string + "." stripped off the keys
      */
-    public static Properties stripStart(String str, Properties props) {
-        if (str == null) {
-            throw new NullPointerException("str cannot be null");
+    public static Properties stripStart(String prefix, Properties props) {
+        if (prefix == null) {
+            throw new NullPointerException("prefix cannot be null");
         }
         if (props == null) {
             throw new NullPointerException("props cannot be null");
@@ -123,8 +128,8 @@ public final class PropertiesUtil
         Enumeration<Object> propertyEnum = props.keys();
         while (propertyEnum.hasMoreElements()) {
             String propertyName = (String) propertyEnum.nextElement();
-            if (propertyName.startsWith(str + ".")) {
-                ret.put(propertyName.substring(str.length() + 1), props.get(propertyName));
+            if (propertyName.startsWith(prefix + ".")) {
+                ret.put(propertyName.substring(prefix.length() + 1), props.get(propertyName));
             }
         }
 

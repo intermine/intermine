@@ -1,0 +1,16 @@
+.syntax .add {
+  color: green; }
+.syntax .del {
+  color: red; }
+.syntax .insert {
+  color: green;
+  background-color: #ccffcc;
+  display: block; }
+.syntax .remove {
+  color: red;
+  background-color: #ffcccc;
+  display: block; }
+.syntax .offset {
+  color: blue;
+  background-color: #ccccff;
+  display: block; }

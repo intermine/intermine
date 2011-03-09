@@ -4,7 +4,7 @@ function getProcessGraphWidgetConfig(widgetId, bagName) {
   var extraAttr;
   var extraAttrForm = document.getElementById("widgetselect" + widgetId);
   if(extraAttrForm != null) {
-	  extraAttr = extraAttrForm.value;
+      extraAttr = extraAttrForm.value;
   }
   var pValue = document.getElementById("pValue" + widgetId);
   if(pValue != null) {
@@ -29,11 +29,11 @@ function handleGraphWidget(widget) {
 }
 
 function getProcessHTMLWidgetConfig(widgetId, bagName) {
-	AjaxServices.getProcessHTMLWidget(widgetId, bagName, handleHTMLWidget);
+    AjaxServices.getProcessHTMLWidget(widgetId, bagName, handleHTMLWidget);
 }
 
 function handleHTMLWidget(widget) {
-	var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+    var widgetdataname = document.getElementById('widgetdata' + widget.configId);
     var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
     var widgetdatacontent = document.getElementById('widgetdatacontent' + widget.configId);
     Element.hide($(widgetdatawait));

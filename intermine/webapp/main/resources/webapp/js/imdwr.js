@@ -186,10 +186,9 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
                       </table>';
         if (summaryRowsCount > 10) {
-            content += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
-        } else {
-            content += '</div>';
-        }
+            content += '<div><p>Note: showing only the first 10 rows of summary.</p></div>';
+       }
+       content += '<p><a href="columnSummary.do?tableName=' + tableName + '&summaryPath=' + columnName + '">View all</a></p></div>';
 
         dialog.setContent(content);
         setTimeout("updateCountInColumnSummary()", 200);
@@ -658,11 +657,20 @@ function setWsNamesMap(wsNames, wsListId, type) {
    1;
 }
 
+// used on list analysis page
 function getConvertCountForBag(bagName, type, idname) {
     AjaxServices.getConvertCountForBag(bagName, type, function(count) {
         dwr.util.setValue(type + '_convertcount_'+idname, count)
     });
 }
+
+function getURL(bagName, type, idname) {
+    AjaxServices.getConvertCountForBag(bagName, type, function(count) {
+        dwr.util.setValue(type + '_convertcount_'+idname, count)
+    });
+}
+
+
 
 function saveToggleState(elementId) {
     var display = document.getElementById(elementId).style.display;

@@ -31,7 +31,7 @@
 
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
 
-  <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
+  <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}
   <c:if test="${type == 'EnrichmentWidgetConfig'}">
@@ -40,7 +40,7 @@
   <BR/>
   <c:set var="isMSIE" value='<%= new Boolean(request.getHeader("user-agent").indexOf("MSIE") != -1) %>'/>
   <c:if test="${type ne 'HTMLWidgetConfig' && !isMSIE}" >
-  	<span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
+    <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
   </c:if>
  </p>
 
@@ -55,7 +55,8 @@
     <li>
     <label>Multiple Hypothesis Test Correction</label>
     <html:select property="errorCorrection" styleId="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
-      <html:option value="Benjamini and Hochberg">Benjamini and Hochberg</html:option>
+      <html:option value="Holm-Bonferroni">Holm-Bonferroni</html:option>
+      <html:option value="Benjamini Hochberg">Benjamini and Hochberg</html:option>
       <html:option value="Bonferroni">Bonferroni</html:option>
       <html:option value="None">None</html:option>
     </html:select>
@@ -63,10 +64,8 @@
     <li style="float:right">
     <label>Maximum value to display</label>
     <html:select property="max" styleId="max${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}')">
-      <html:option value="0.01">0.01</html:option>
       <html:option value="0.05">0.05</html:option>
       <html:option value="0.10">0.10</html:option>
-      <html:option value="0.50">0.50</html:option>
       <html:option value="1.00">1.00</html:option>
     </html:select>
     </li>
@@ -96,25 +95,35 @@
  <c:if test="${(type == 'EnrichmentWidgetConfig' || type == 'TableWidgetConfig') && !empty widget.link}">
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
     <ul id="widget_button_bar_${widget.id}" class="widget_button_bar" >
-        <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">View in results table</span></li>
-        <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Download</span></li>
+        <!-- View in results table button -->
+        <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button">
+          <span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button"
+          onclick="jQuery('#tool_bar_item_display_widget_${widget.id}').toggle();return false;"
+          >View in results table</span>
+        </li>
+        <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button">
+          <span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button"
+          onclick="jQuery('#tool_bar_item_export_widget_${widget.id}').toggle();return false;"
+          >Download</span>
+        </li>
     </ul>
   </div>
+  <!-- View in results table table -->
   <div id="tool_bar_item_display_widget_${widget.id}" style="display:none;width:200px;text-align:left" class="tool_bar_item">
     <a href="javascript:submitWidgetForm('${widget.id}','display',null)">Display checked items in results table</a><br/>
     <a href="javascript:submitWidgetForm('${widget.id}','displayAll',null)">Display all items in results table</a>
     <hr/>
-    <a href="javascript:hideMenu('tool_bar_item_display_widget_${widget.id}')" >Cancel</a>
+    <a href="#" onclick="jQuery('#tool_bar_item_display_widget_${widget.id}').toggle();return false;">Cancel</a>
   </div>
 
   <div id="tool_bar_item_export_widget_${widget.id}" style="display:none;width:230px;text-align:left" class="tool_bar_item">
     <a href="javascript:submitWidgetForm('${widget.id}','export','csv')">Export selected as comma separated values</a><br/>
     <a href="javascript:submitWidgetForm('${widget.id}','export','tab')">Export selected as tab separated values</a>
     <hr/>
-  <a href="javascript:hideMenu('tool_bar_item_export_widget_${widget.id}')" >Cancel</a>
+  <a href="#" onclick="jQuery('#tool_bar_item_export_widget_${widget.id}').toggle();return false;">Cancel</a>
   </div>
  </c:if>
-          
+
 <%-- output different widget containers if it's a graph widget because flyatlas widget is too tall --%>
 
 <c:choose>
@@ -122,7 +131,7 @@
     <div id="widgetdata${widget.id}" class="widgetdata">
   </c:when>
   <c:otherwise>
-    <div id="widgetdata${widget.id}" class="widgetdataoverflow">
+    <div id="widgetdata${widget.id}" class="widgetdataoverflow" style="${widget.style}">
   </c:otherwise>
 </c:choose>
 
@@ -136,32 +145,32 @@
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
   <c:if test="${type == 'HTMLWidgetConfig'}" >
-  	<div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
+    <div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
   </c:if>
-  <script language="javascript">  
+  <script language="javascript">
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-    
-    	getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
-     
-    	getProcessTableWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessTableWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-     
-    	getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'HTMLWidgetConfig'}" >
-         
-    	getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
   </c:choose>
-  
+
   </script>
 </div>
 </html:form>

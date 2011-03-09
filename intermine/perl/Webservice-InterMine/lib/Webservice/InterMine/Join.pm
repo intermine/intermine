@@ -38,3 +38,8 @@ override to_hash => sub {
 sub _build_element_name {
     return 'join';
 }
+
+__PACKAGE__->meta->make_immutable;
+no Moose;
+
+1;

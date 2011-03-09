@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -57,30 +57,28 @@ public final class CreateFlyBaseLinkIns
 //    FBgn0005561 GENBANK AAB70249    AAB70249
 
 
-    private static final String DBNAME = "FlyMine";
-    private static final String BASEURL
-        = "http://www.flymine.org/query/portal.do?origin=flybase&externalid=";
-    private static final String HOMEURL = "http://www.flymine.org";
-    private static final String DESC = "Integrated database of Drosophila genomics and proteomics";
-    private static final String EMAIL = "richard@flymine.org";
-    private static final String ENDL = System.getProperty("line.separator");
+    /* FlyMine */
+//    private static final String DBNAME = "FlyMine";
+//    private static final String BASEURL
+//        = "http://www.flymine.org/query/portal.do?origin=flybase&externalid=";
+//    private static final String DESC = "Integrated database of genomic, expression and protein"
+//        + " data for Drosophila.";
+//    private static final String EMAIL = "richard@flymine.org";
+
+    /* modMine */
+    private static final String DBNAME = "modMine";
+    private static final String HOMEURL = "http://intermine.modencode.org";
+    private static final String DESC = "Integrated database of genomic, expression and protein data"
+        + " for Drosophila, and C. elegans.";
+    private static final String EMAIL = "help@modencode.org";
+
+    /* both */
+    private static final String BASEURL = HOMEURL + "/query/portal.do?origin=flybase&externalid=";
     private static final String GENUS = "Drosophila";
     private static final String INFO_FILENAME = DBNAME + "_dbinfo.txt";
     private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
     private static final String DATASOURCE = "FlyBase";
-
-//    private static final String DBNAME = "modMine";
-//    private static final String HOMEURL = "http://intermine.modencode.org";
-//    private static final String BASEURL = HOMEURL + "/query/portal.do?origin=flybase&externalid=";
-//    private static final String DESC = "Integrated database of genomic, expression and protein
-    //data for Drosophila, and C. elegans.";
-//    private static final String EMAIL = "help@modencode.org";
-//    private static final String ENDL = System.getProperty("line.separator");
-//    private static final String GENUS = "Drosophila";
-//    private static final String INFO_FILENAME = DBNAME + "_dbinfo.txt";
-//    private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
-//    private static final String DATASOURCE = "FlyBase";
-
+    private static final String ENDL = System.getProperty("line.separator");
 
     private CreateFlyBaseLinkIns() {
         //disable external instantiation

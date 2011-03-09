@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -75,7 +75,7 @@ public class StringUtilTest extends TestCase
     }
 
     public void testUniqueString() throws Exception {
-        Set set = new HashSet();
+        Set<String> set = new HashSet<String>();
         for (int i = 0; i < 100; i++) {
             String n = StringUtil.uniqueString();
             assertFalse(set.contains(n));
@@ -87,7 +87,7 @@ public class StringUtilTest extends TestCase
         {
             String testString = "$_^abc$_^defaaa bbb ccc$_^zzzzz$_^";
             String[] resArray = StringUtil.split(testString, "$_^");
-            List expected = Arrays.asList(new String [] {"", "abc", "defaaa bbb ccc", "zzzzz", ""});
+            List<String> expected = Arrays.asList(new String [] {"", "abc", "defaaa bbb ccc", "zzzzz", ""});
             assertEquals(expected,  Arrays.asList(resArray));
         }
 
@@ -100,28 +100,28 @@ public class StringUtilTest extends TestCase
         {
             String testString = "abc_def";
             String[] resArray = StringUtil.split(testString, "_");
-            List expected = Arrays.asList(new String [] {"abc", "def"});
+            List<String> expected = Arrays.asList(new String [] {"abc", "def"});
             assertEquals(expected,  Arrays.asList(resArray));
         }
 
         {
             String testString = "XXXXXX";
             String[] resArray = StringUtil.split(testString, "XXX");
-            List expected = Arrays.asList(new String [] {"", "", ""});
+            List<String> expected = Arrays.asList(new String [] {"", "", ""});
             assertEquals(expected,  Arrays.asList(resArray));
         }
 
         {
             String testString = "XXXaXXXb";
             String[] resArray = StringUtil.split(testString, "XXX");
-            List expected = Arrays.asList(new String [] {"", "a", "b"});
+            List<String> expected = Arrays.asList(new String [] {"", "a", "b"});
             assertEquals(expected,  Arrays.asList(resArray));
         }
 
         {
             String testString = " a b c XX d e f XX h i j XX";
             String[] resArray = StringUtil.split(testString, "XX");
-            List expected = Arrays.asList(new String [] {" a b c ", " d e f ", " h i j ", ""});
+            List<String> expected = Arrays.asList(new String [] {" a b c ", " d e f ", " h i j ", ""});
             assertEquals(expected,  Arrays.asList(resArray));
         }
 
@@ -156,7 +156,7 @@ public class StringUtilTest extends TestCase
     }
 
     public void testJoin() throws Exception {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         list.add("one");
         list.add("two");
         list.add("three");
@@ -169,8 +169,8 @@ public class StringUtilTest extends TestCase
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
-        assertEquals(StringUtil.tokenize(""), new ArrayList());
-        assertEquals(StringUtil.tokenize(" "), new ArrayList());
+        assertEquals(StringUtil.tokenize(""), new ArrayList<String>());
+        assertEquals(StringUtil.tokenize(" "), new ArrayList<String>());
         assertEquals(StringUtil.tokenize(" one"), Arrays.asList(new Object[] {"one"}));
         assertEquals(StringUtil.tokenize(" one  two"), Arrays.asList(new Object[] {"one", "two"}));
     }
@@ -207,7 +207,7 @@ public class StringUtilTest extends TestCase
         assertEquals("a, b and c", StringUtil.prettyList(col, true));
     }
 
-    
+
     public void testIndefiniteArticle() throws Exception {
         assertEquals("a", StringUtil.indefiniteArticle("monkey"));
         assertEquals("an", StringUtil.indefiniteArticle("emu"));
@@ -220,7 +220,7 @@ public class StringUtilTest extends TestCase
         assertEquals(new StringUtil.LineWrappedString("The quick brown fox\njumped over the...", true), StringUtil.wrapLines("The quick brown fox jumped over the lazy dog", 20, 2));
         assertEquals(new StringUtil.LineWrappedString("abcdefghi-\njklmnop...", true), StringUtil.wrapLines("abcdefghijklmnopqrstuvwxyz", 10, 2));
     }
-    
+
     public void testTrimSlashes() {
         assertEquals("test", StringUtil.trimSlashes("test/"));
         assertEquals("test", StringUtil.trimSlashes("/test/"));

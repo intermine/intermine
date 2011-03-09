@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,7 +45,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -93,7 +92,7 @@ public class SequenceProcessor extends ChadoProcessor
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     // Avoid explosion of log messages by only logging missing collections once
-    Set<String> loggedMissingCols = new HashSet<String>();
+    private Set<String> loggedMissingCols = new HashSet<String>();
 
     /**
      * An action that makes a synonym.
@@ -653,11 +652,13 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             } else {
-                // TODO
+                // FIXME 31 Jan 11 - there is an error in the FlyBase data that causes this
+                // exception to be thrown, so I am temporarily disabling until the next release
+                // FB2011_02
                 String msg = "srcfeature_id (" + srcFeatureId + ") from location "
                             + featureLocId + " was not found in the feature table";
-//                LOG.error(msg);
-                throw new RuntimeException(msg);
+                LOG.error(msg);
+//                throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");
@@ -2062,7 +2063,7 @@ public class SequenceProcessor extends ChadoProcessor
         try {
             returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier,
                     false);
-        } catch (SAXException e) {
+        } catch (ObjectStoreException e) {
             throw new RuntimeException("Couldn't create synonym", e);
         }
         fdat.addExistingSynonym(identifier);

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,9 @@ package org.intermine.webservice.server;
  *
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Properties;
@@ -34,7 +36,11 @@ import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
 import org.intermine.webservice.server.output.HTMLOutput;
+import org.intermine.webservice.server.output.JSONCountFormatter;
+import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
+import org.intermine.webservice.server.output.JSONRowFormatter;
+import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -80,9 +86,56 @@ public abstract class WebService
 
     /** CSV format constant **/
     public static final int CSV_FORMAT = 3;
-    
+
+    /** Count format constant **/
+    public static final int COUNT_FORMAT = 4;
+
+    // FORMAT CONSTANTS BETWEEN 20-40 ARE RESERVED FOR JSON FORMATS!!
+
+    /** Start of JSON format range **/
+    public static final int JSON_RANGE_START = 20;
+
+    /** End of JSON format range **/
+    public static final int JSON_RANGE_END = 40;
+
+    /** JSONP format constant **/
+    public static final int JSON_FORMAT = 20;
+
+    /** JSONP format constant **/
+    public static final int JSONP_FORMAT = 21;
+
     /** JSON Object format constant **/
-    public static final int JSON_OBJ_FORMAT = 4;
+    public static final int JSON_OBJ_FORMAT = 22;
+
+    /** JSONP Object format constant **/
+    public static final int JSONP_OBJ_FORMAT = 23;
+
+    /** JSON Table format constant **/
+    public static final int JSON_TABLE_FORMAT = 24;
+
+    /** JSONP Table format constant **/
+    public static final int JSONP_TABLE_FORMAT = 25;
+
+    /** JSON Row format constant **/
+    public static final int JSON_ROW_FORMAT = 26;
+
+    /** JSONP Row format constant **/
+    public static final int JSONP_ROW_FORMAT = 27;
+
+    /** JSON count format constant **/
+    public static final int JSON_COUNT_FORMAT = 28;
+
+    /** JSONP count format constant **/
+    public static final int JSONP_COUNT_FORMAT = 29;
+
+    protected boolean formatIsJSON() {
+        int format = getFormat();
+        return (format >= JSON_RANGE_START && format <= JSON_RANGE_END);
+    }
+
+    protected boolean formatIsJSONP() {
+        return formatIsJSON() && (getFormat() % 2 == 1);
+    }
 
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
@@ -103,9 +156,11 @@ public abstract class WebService
     protected InterMineAPI im;
 
     /**
-     * Construct the web service with the InterMine API object that gives access to the core
-     * InterMine functionality.
-     * @param im the InterMine application
+     * Construct the web service with the InterMine API object that gives access
+     * to the core InterMine functionality.
+     *
+     * @param im
+     *            the InterMine application
      */
     public WebService(InterMineAPI im) {
         this.im = im;
@@ -122,8 +177,10 @@ public abstract class WebService
      * services and after that executes <tt>execute</tt> method, that should be
      * overwritten with each web service.
      *
-     * @param request request
-     * @param response response
+     * @param request
+     *            request
+     * @param response
+     *            response
      */
     public void service(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -132,8 +189,8 @@ public abstract class WebService
             this.response = response;
             initOutput(response);
 
-            Properties webProperties = SessionMethods.getWebProperties(request.getSession()
-                    .getServletContext());
+            Properties webProperties = SessionMethods.getWebProperties(request
+                    .getSession().getServletContext());
             if ("true".equalsIgnoreCase(webProperties
                     .getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
                 throw new ServiceForbiddenException("Web service is disabled.");
@@ -150,11 +207,13 @@ public abstract class WebService
     }
 
     /**
-     * If user name and password is specified in request, then it setups user profile in session.
-     * User was authenticated.
-     * It is using Http basis access authentication.
+     * If user name and password is specified in request, then it setups user
+     * profile in session. User was authenticated. It is using Http basis access
+     * authentication.
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
-     * @param request request
+     *
+     * @param request
+     *            request
      */
     private void authenticate(HttpServletRequest request) {
         String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
@@ -165,9 +224,10 @@ public abstract class WebService
         String decoded = new String(Base64.decodeBase64(authString.getBytes()));
         String[] parts = decoded.split(":", 2);
         if (parts.length != 2) {
-            throw new BadRequestException("Invalid request authentication. "
-                    + "Authorization field contains invalid value. Decoded authorization value: "
-                    + parts[0]);
+            throw new BadRequestException(
+                "Invalid request authentication. "
+                + "Authorization field contains invalid value. "
+                + "Decoded authorization value: " + parts[0]);
         }
         String userName = parts[0];
         String password = parts[1];
@@ -210,12 +270,19 @@ public abstract class WebService
     }
 
     private void logError(Throwable t, String msg, int code) {
-        if (code == Output.SC_INTERNAL_SERVER_ERROR) {
+
+        // Stack traces for all!
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(b);
+        t.printStackTrace(ps);
+        ps.flush();
+
+        if (!(t instanceof NullPointerException) && (code == Output.SC_INTERNAL_SERVER_ERROR)) {
             logger.error("Service failed by internal error. Request parameters: \n"
-                    + requestParametersToString(), t);
+                            + requestParametersToString() + b.toString());
         } else {
             logger.debug("Service didn't succeed. It's not an internal error. "
-                    + "Reason: " + getErrorDescription(msg, code));
+                    + "Reason: " + getErrorDescription(msg, code) + "\n" + b.toString());
         }
     }
 
@@ -243,7 +310,6 @@ public abstract class WebService
     private void sendErrorMsg(HttpServletResponse response, String msg, int code) {
         // When status is set, buffer with previous results is cleaned and
         // that's why errors must be set again
-
 
         if (!response.isCommitted()) {
             // Cheating here. It is an xml output, but when content type is set
@@ -290,6 +356,25 @@ public abstract class WebService
         sb.append("</message>");
     }
 
+    /**
+     * Returns true if the format requires the count, rather than the full or
+     * paged result set.
+     * @return a truth value
+     */
+    public boolean formatIsCount() {
+        int format = getFormat();
+        switch (format) {
+            case COUNT_FORMAT:
+                return true;
+            case JSONP_COUNT_FORMAT:
+                return true;
+            case JSON_COUNT_FORMAT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private void initOutput(HttpServletResponse response) {
         PrintWriter out;
         try {
@@ -299,7 +384,8 @@ public abstract class WebService
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-        switch (getFormat()) {
+        int format = getFormat();
+        switch (format) {
             case XML_FORMAT:
                 output = new StreamedOutput(out, new XMLFormatter());
                 ResponseUtil.setXMLHeader(response, "result.xml");
@@ -312,10 +398,50 @@ public abstract class WebService
                 output = new StreamedOutput(out, new CSVFormatter());
                 ResponseUtil.setCSVHeader(response, "result.csv");
                 break;
+            case COUNT_FORMAT:
+                output = new StreamedOutput(out, new TabFormatter());
+                ResponseUtil.setPlainTextHeader(response, "resultcount.txt");
+                break;
+            case JSON_FORMAT:
+                output = new StreamedOutput(out, new JSONFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_FORMAT:
+                output = new StreamedOutput(out, new JSONFormatter());
+                ResponseUtil.setJSONPHeader(response, "result.json");
+                break;
             case JSON_OBJ_FORMAT:
-            	output = new StreamedOutput(out, new JSONObjectFormatter());
-            	ResponseUtil.setJSONHeader( response, "result.json");
-            	break;
+                output = new StreamedOutput(out, new JSONObjectFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_OBJ_FORMAT:
+                output = new StreamedOutput(out, new JSONObjectFormatter());
+                ResponseUtil.setJSONPHeader(response, "result.json");
+                break;
+            case JSON_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                ResponseUtil.setJSONPHeader(response, "result.json");
+                break;
+            case JSON_ROW_FORMAT:
+                output = new StreamedOutput(out, new JSONRowFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_ROW_FORMAT:
+                output = new StreamedOutput(out, new JSONRowFormatter());
+                ResponseUtil.setJSONPHeader(response, "result.json");
+                break;
+            case JSON_COUNT_FORMAT:
+                output = new StreamedOutput(out, new JSONCountFormatter());
+                ResponseUtil.setJSONHeader(response, "resultcount.json");
+                break;
+            case JSONP_COUNT_FORMAT:
+                output = new StreamedOutput(out, new JSONCountFormatter());
+                ResponseUtil.setJSONPHeader(response, "resultcount.json");
+                break;
             case HTML_FORMAT:
                 output = new HTMLOutput(out);
                 ResponseUtil.setHTMLContentType(response);
@@ -331,27 +457,80 @@ public abstract class WebService
      * @return format
      */
     public int getFormat() {
-        String format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        String format = request
+                .getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
         if (StringUtils.isEmpty(format)) {
             return TSV_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_XML
-                        .equalsIgnoreCase(format)) {
+                .equalsIgnoreCase(format)) {
             return XML_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
-                        .equalsIgnoreCase(format)) {
+                .equalsIgnoreCase(format)) {
             return HTML_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
-                        .equalsIgnoreCase(format)) {
+                .equalsIgnoreCase(format)) {
             return CSV_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_COUNT
+                .equalsIgnoreCase(format)) {
+            return COUNT_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_OBJ
                 .equalsIgnoreCase(format)) {
-        	return JSON_OBJ_FORMAT;
+            return JSON_OBJ_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_OBJ
+                .equalsIgnoreCase(format)) {
+            return JSONP_OBJ_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSON_TABLE_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSONP_TABLE_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_ROW
+                .equalsIgnoreCase(format)) {
+            return JSON_ROW_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW
+                .equalsIgnoreCase(format)) {
+            return JSONP_ROW_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP
+                .equalsIgnoreCase(format)) {
+            return JSONP_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON
+                .equalsIgnoreCase(format)) {
+            return JSON_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT
+                .equalsIgnoreCase(format)) {
+            return JSONP_COUNT_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_COUNT
+                .equalsIgnoreCase(format)) {
+            return JSON_COUNT_FORMAT;
         }
         return TSV_FORMAT;
+    }
+
+    /**
+     * Get the value of the callback parameter.
+     * @return The value, or null if this request type does not support this.
+     */
+    public String getCallback() {
+        if (formatIsJSONP()) {
+            return request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -362,12 +541,9 @@ public abstract class WebService
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
      *
-     * @param request
-     *            request
-     * @param response
-     *            response
-     * @throws Exception
-     *             if some error occurs
+     * @param request request
+     * @param response response
+     * @throws Exception if some error occurs
      */
     protected abstract void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception;
@@ -379,8 +555,8 @@ public abstract class WebService
      * @return dispatcher
      */
     public RequestDispatcher getHtmlForward() {
-        return request.getSession().getServletContext().getRequestDispatcher(
-                FORWARD_PATH);
+        return request.getSession().getServletContext()
+                .getRequestDispatcher(FORWARD_PATH);
     }
 
     /**

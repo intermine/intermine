@@ -1,7 +1,7 @@
 package org.intermine.api.tag;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ package org.intermine.api.tag;
 public final class AspectTagUtil
 {
     private AspectTagUtil() {
+        // don't instantiate
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.intermine.api.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,8 +20,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
- * Cell of results table containing information
- * for the parent Object
+ * Cell of results table containing information for the parent Object
  *
  * @author Xavier Watkins
  */
@@ -33,6 +32,7 @@ public class ResultElement implements Serializable
     /** @boolean protected as we need to determine if the element is a key field from JSP */
     protected final boolean keyField;
     private final Path path;
+    private String linkRedirect;
 
     /**
      * Constructs a new ResultCell object
@@ -131,6 +131,20 @@ public class ResultElement implements Serializable
     }
 
     /**
+     * @param linkRedirect the linkRedirect to set
+     */
+    public void setLinkRedirect(String linkRedirect) {
+        this.linkRedirect = linkRedirect;
+    }
+
+    /**
+     * @return the linkRedirect
+     */
+    public String getLinkRedirect() {
+        return linkRedirect;
+    }
+
+    /**
      * Returns a String representation of the ResultElement.
      *
      * @return a String
@@ -166,5 +180,6 @@ public class ResultElement implements Serializable
         return (field == null ? 0 : field.hashCode())
             + (imObj == null ? 0 : 3 * imObj.hashCode());
     }
+
 
 }

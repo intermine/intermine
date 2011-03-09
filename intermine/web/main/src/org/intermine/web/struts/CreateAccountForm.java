@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,11 +72,10 @@ public class CreateAccountForm extends ActionForm
     }
 
     /**
-     * @param username
-     *            The username/email
+     * @param username The username/email set to be lowercase.
      */
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     /**
@@ -87,8 +86,7 @@ public class CreateAccountForm extends ActionForm
     }
 
     /**
-     * @param password2
-     *            Password verification
+     * @param password2 Password verification
      */
     public void setPassword2(String password2) {
         this.password2 = password2;

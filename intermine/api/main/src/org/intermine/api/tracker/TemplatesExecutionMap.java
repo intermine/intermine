@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,7 +23,7 @@ import org.intermine.api.template.TemplateQuery;
  */
 public class TemplatesExecutionMap
 {
-    private Map<String, Map<String, Integer>> templateExecutions =
+    protected Map<String, Map<String, Integer>> templateExecutions =
                                               new HashMap<String, Map<String, Integer>>();
 
     /**
@@ -31,8 +31,8 @@ public class TemplatesExecutionMap
      * @param templateTrack the template track to add
      */
     public void addExecution(TemplateTrack templateTrack) {
-        String executionKey = (templateTrack.getUserName() != null &&
-                              !"".equals(templateTrack.getUserName()))
+        String executionKey = (templateTrack.getUserName() != null
+                              && !"".equals(templateTrack.getUserName()))
                               ? templateTrack.getUserName()
                               : templateTrack.getSessionIdentifier();
         String templateName = templateTrack.getTemplateName();

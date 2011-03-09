@@ -101,7 +101,6 @@
      }
 
     </style>
-
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -172,13 +171,21 @@
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
         </c:if>
         <span class="collectionDescription ${isNull ? 'nullReferenceField' : ''}">
+        <c:choose>
+        <c:when test="${node.pathString == path}">
+            <c:set var="type" value="typeSelected"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="type" value="type"/>
+        </c:otherwise>
+        </c:choose>
           <c:if test="${node.type != 'String'}">
             <c:choose>
               <c:when test="${node.reverseReference && node.reference}">
                 <span class="reverseReference"><c:out value="${node.type}"/></span>
               </c:when>
               <c:when test="${node.origType != null}">
-                <span class="type"><c:out value="${node.origType}"/></span>
+                <span class="${type}"><c:out value="${node.origType}"/></span>
                 <fmt:message key="query.usingSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.origType}"/>
                   <fmt:param value="${node.type}"/>
@@ -187,14 +194,14 @@
                 <span class="subclass"><c:out value="${node.type}"/></span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
               </c:when>
               <c:when test="${node.hasSubclasses}">
-                <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
                 <fmt:message key="query.hasSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/hasSubclasses.png" title="${tooltipSubclasses}"/>
               </c:when>
               <c:otherwise>
-                <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
               </c:otherwise>
             </c:choose>
           </c:if>
@@ -222,7 +229,7 @@
       <c:if test="${!(node.reverseReference && node.reference)}">
         <c:choose>
           <c:when test="${!node.selected && !isNull && summary && KEYLESS_CLASSES_MAP[node.type] == null}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
               <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
             </html:link>
           </c:when>
@@ -230,7 +237,7 @@
               <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
           </c:when>
           <c:when test="${!node.selected && !isNull}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
               <img class="arrow" src="images/show.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
             </html:link>
           </c:when>
@@ -244,7 +251,7 @@
                  height="13" title="constrain"/>
           </c:when>
           <c:otherwise>
-            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}" title="${addConstraintToTitle}"
+            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
               onclick="return addConstraint('${node.pathString}');" >
               <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
             </html:link>
@@ -277,5 +284,4 @@
     <c:if test="${node.button == '+'}">
       <div id="${node.pathString}"></div><!-- div+ ${node.pathString} -->
     </c:if>
-
 <!-- /queryBuilderBrowserLine.jsp -->

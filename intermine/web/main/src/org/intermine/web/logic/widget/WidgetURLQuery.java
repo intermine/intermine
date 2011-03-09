@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,7 +27,7 @@ public interface WidgetURLQuery
      * @param showAll whether or not to show all records.  If false, then only records selected
      * by the user will be returned
      * @return the query generated based on which records the user clicked on in the widget
-     * @throws PathException
+     * @throws PathException if bad path
      */
     PathQuery generatePathQuery(boolean showAll) throws PathException;
 }

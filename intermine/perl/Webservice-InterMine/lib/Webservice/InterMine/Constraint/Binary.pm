@@ -7,13 +7,18 @@ with 'Webservice::InterMine::Constraint::Role::Operator';
 use InterMine::TypeLibrary qw(BinaryOperator);
 use MooseX::Types::Moose qw(Str);
 
-has '+op' => ( isa => BinaryOperator, );
+has '+op' => ( isa => BinaryOperator, coerce => 1);
 
 has 'value' => (
     is       => 'ro',
     isa      => Str,
     required => 1,
     writer   => 'set_value',
+);
+
+has 'extra_value' => (
+    is       => 'ro',
+    isa      => Str,
 );
 
 override to_string => sub {

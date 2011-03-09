@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -192,9 +192,11 @@ public interface Constants
     String WEB_STATE = "WEB_STATE";
 
     /**
-     * Current version of InterMine. This constant must changed by every new InterMine release.
+     * Current version of the InterMine WebService.
+     * This constant must changed every time the API changes, either by addition
+     * or deletion of features.
      */
-    int WEB_SERVICE_VERSION = 2;
+    int WEB_SERVICE_VERSION = 3;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
