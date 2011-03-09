@@ -28,7 +28,7 @@
       <c:when test="${verbose && collection.size > 0}">
         <%-- ############# --%>
         <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3>
+        <h3 class="theme-1-border theme-5-background">
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
               <c:set var="descriptor" value="${collection.descriptor}" />
@@ -43,7 +43,7 @@
           linkName="${placement}_${fieldName}"
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-          <span class="collectionField">
+          <span class="collectionField theme-1-color">
             ${collection.size} ${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
           <c:forEach items="${object.clds}" var="cld">
@@ -55,7 +55,7 @@
       <c:when test="${collection.size > 0}">
         <%-- ############# --%>
         <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3>
+        <h3 class="theme-1-border theme-5-background">
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
               <c:set var="descriptor" value="${collection.descriptor}" />
@@ -70,7 +70,7 @@
           linkName="${placement}_${fieldName}"
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-          <span class="collectionField">
+          <span class="collectionField theme-1-color">
             ${collection.size} ${fieldName}<!--  of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
           <c:forEach items="${object.clds}" var="cld">
@@ -139,7 +139,7 @@
           </c:if></div>
 
           <p class="in_table" style="display:none;">
-            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
               Show all in a table
             </html:link>
           </p>
@@ -155,7 +155,7 @@
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;"></div>
 
           <p class="in_table" style="display:none;">
-            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
               Show all in a table
             </html:link>
           </p>

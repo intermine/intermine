@@ -37,7 +37,7 @@
                        interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" />
       <span id="count_${uid}" class="templateResCount"></span>
     </span>
-    <p class="description">${templateQuery.description}</p>
+    <p class="description theme-1-color theme-5-background">${templateQuery.description}</p>
   </div>
 
  <%--the "N results" bit is located at the bottom of objectDetailsTemplateTable.jsp for some reason--%>

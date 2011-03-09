@@ -50,12 +50,12 @@
         </c:otherwise>
       </c:choose>
 
-      <th align="center" class="columnHeader">
+      <th align="center" class="columnHeader theme-3-border theme-5-background">
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
           <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
           <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-               title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+               title="${summaryTitle}" class="summary_link theme-1-color"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
         </c:if>
         <!-- <div class="column-header-content"> -->
             <table border="0" cellspacing="0" cellpadding="0" class="column-header-content">
@@ -175,7 +175,7 @@
                   </c:choose>
 
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
+                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}">theme-6-background theme-3-border</c:if>" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
                     <c:set var="disabled" value="false"/>
                     <c:if test="${(!empty pagedResults.selectedClass) && ((pagedResults.selectedClass != resultElement.type)&&(pagedResults.selectedClass != column.typeClsString) && pagedResults.selectedColumn != column.index)}">
@@ -207,7 +207,7 @@
               </c:when>
               <c:otherwise>
                 <%-- add a space so that IE renders the borders --%>
-                <td style="background:#eee;">&nbsp;</td>
+                <td class="<c:if test="${status.count % 2 == 0}">theme-6-background theme-3-border</c:if>">&nbsp;</td>
               </c:otherwise>
             </c:choose>
           </c:forEach>

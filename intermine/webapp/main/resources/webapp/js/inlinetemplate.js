@@ -96,7 +96,7 @@ function loadInlineTemplate(i) {
     error: function(jXHR, textStatus) {
       // on fail append a retry to the parent if not present
       if (jQuery(e).parent().find('p.fail').length == 0) {
-        jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
+        jQuery(e).parent().append('<p class="fail theme-7-background">Failed to load the data. <a class="theme-1-color" href="#" onclick="return\
         toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
       }
     },
@@ -189,7 +189,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
                   }
                 });
                 // add a toggler for more rows
-                table.parent().append('<p class="toggle"><a href="#" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+                table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
             }
 
             // fade it in
@@ -204,7 +204,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
         error: function(jXHR, textStatus) {
           // on fail append a retry to the parent if not present
           if (jQuery(e).parent().find('p.fail').length == 0) {
-            jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
+            jQuery(e).parent().append('<p class="fail">Failed to load the data. <a class="theme-1-color" href="#" onclick="return\
             toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
           }
         },
@@ -243,7 +243,7 @@ function trimTable(e) {
         }
       });
       // add a toggler for more rows
-      table.parent().append('<p class="toggle"><a href="#" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+      table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
   }
 
 }
@@ -282,7 +282,7 @@ function showMoreRows(e, round) {
   } else {
     round = parseInt(round) + 1;
     // update toggle count
-    table.parent().find('p.toggle').html('<a href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ');">Show more rows</a>');
+    table.parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ');">Show more rows</a>');
   }
 
   return false;
