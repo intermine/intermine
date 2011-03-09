@@ -25,12 +25,11 @@ function getInterMineOrthologueLinks(mine, organisms, identifierList) {
 
 <c:forEach items="${mines}" var="mine">
     <div id="intermine_orthologue_links_${mine}_waiting"><img src="images/wait30.gif" title="Searching..."/></div>
-    <div id="intermine_orthologue_links_${mine}"/>
+    <div id="intermine_orthologue_links_${mine}"></div>
       <script type="text/javascript" charset="utf-8">
         getInterMineOrthologueLinks('${mine}', '${organisms}', '${identifierList}');
       </script>
 </c:forEach>
 
-<div style="clear:both">
 
 <!-- /orthologueLinkDisplayer.jsp -->
