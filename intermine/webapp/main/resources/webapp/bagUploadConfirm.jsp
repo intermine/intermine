@@ -49,42 +49,6 @@ function toggleForm(matchCount) {
     </div>
     <div class="clear">&nbsp;</div>
 
-    <div id="uploadConfirmMessage">
-      <strong>
-        <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
-      </strong>
-      currently in your list.<br/>
-      <c:if test="${matchCount<totalIdCount}">
-          Also found&nbsp;
-      </c:if>
-      <c:set var="comCount" value="0"/>
-      <c:if test="${fn:length(lowQualityMatches)>0}">
-        <strong>
-          <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
-          synonym matches
-        </strong>
-        <c:set var="comCount" value="${comCount+1}"/>
-      </c:if>
-      <c:if test="${fn:length(duplicates)>0}">
-        <c:if test="${comCount>=1}">,</c:if>
-        <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
-        <c:set var="comCount" value="${comCount+1}"/>
-      </c:if>
-      <c:if test="${fn:length(convertedObjects)>0}">
-        <c:if test="${comCount>=1}">,</c:if>
-        <strong>
-          <span id="convertedCount">${fn:length(convertedObjects)}</span>
-          objects found by converting types
-        </strong>
-        <c:set var="comCount" value="${comCount+1}"/>
-      </c:if>
-      <c:if test="${fn:length(unresolved)>0}">
-      <c:if test="${comCount>=1}">,</c:if>
-        <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
-      </c:if>
-    </div>
-
-
     <c:if test="${(totalIdCount - fn:length(unresolved)) > 0}">
       <h2><c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">a) </c:if>Choose a name for the list</h2>
       <div style="clear:both;"></div>
@@ -94,6 +58,7 @@ function toggleForm(matchCount) {
       <script type="text/javascript">
         var matchCount = ${matchCount};
         var totalCount = ${totalIdCount - fn:length(unresolved)};
+
         var listType = "${bagUploadConfirmForm.bagType}(s)";
         var furtherMatchesText = "There are further matches provided below.";
       </script>
