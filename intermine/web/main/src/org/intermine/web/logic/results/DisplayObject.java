@@ -41,6 +41,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
+import org.intermine.web.logic.config.Displayer;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.HeaderConfig;
@@ -83,6 +84,11 @@ public class DisplayObject
     private List<InlineList> inlineListsHeader = null;
     /** @var List of 'unplaced' normal InlineLists */
     private List<InlineList> inlineListsNormal = null;
+
+    /** @var String path to the tile corresponding to the external links displayer */
+    private String externalLinksDisplayerPath = "attributeLinkDisplayer.tile";
+    /** @var Displayer for external links */
+    private Displayer externalLinksDisplayer = null;
 
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
@@ -627,4 +633,17 @@ public class DisplayObject
 
         return null;
     }
+
+    /**
+     *
+     * @return Displayer showing links to external sites
+     */
+    public Displayer getExternalLinksDisplayer() {
+        if (externalLinksDisplayer == null) {
+            externalLinksDisplayer = new Displayer();
+            externalLinksDisplayer.setSrc(externalLinksDisplayerPath);
+        }
+        return externalLinksDisplayer;
+    }
+
 }

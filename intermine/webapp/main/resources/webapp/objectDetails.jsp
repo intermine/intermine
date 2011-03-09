@@ -224,6 +224,12 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <li><a href="#">YeastMine</a></li>
     <li><a href="#">ZebraMine</a></li>
   </ul>
+
+  <c:set var="displayer" value="${object.externalLinksDisplayer}"/>
+  <c:set var="object_bk" value="${object}"/>
+  <c:set var="object" value="${displayObject.object}" scope="request"/>
+  <tiles:insert beanName="displayer" beanProperty="src"/>
+  <c:set var="object" value="${object_bk}"/>
 </div>
 
 <div class="box grid_9">
