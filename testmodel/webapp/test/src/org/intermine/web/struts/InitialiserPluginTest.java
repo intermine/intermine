@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +28,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -47,7 +48,7 @@ public class InitialiserPluginTest extends TestCase
     private Profile bobProfile;
     private ProfileManager pm;
     private ObjectStore os, userProfileOS;
-    private ObjectStoreWriter osw, userProfileOSW;
+    private ObjectStoreWriter userProfileOSW;
     private Integer bobId = new Integer(101);
     private String bobPass = "bob_pass";
 
@@ -57,9 +58,7 @@ public class InitialiserPluginTest extends TestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        os = osw.getObjectStore();
-
+        os =  ObjectStoreFactory.getObjectStore("os.unittest");
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         userProfileOS = userProfileOSW.getObjectStore();
         pm = new NonCheckingProfileManager(os, userProfileOSW);
@@ -148,7 +147,7 @@ public class InitialiserPluginTest extends TestCase
         tagManager.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
         tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
         tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
-        
+
         List tags = tagManager.getTags("test_tag_", null, "class", null);
         assertEquals(3, tags.size());
 

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -59,7 +59,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         converter.storeAll();
 
         // uncomment to write a new items xml file
-        writeItemsFile(writer.getItems(), "long-oligo_items.xml");
+        //writeItemsFile(writer.getItems(), "long-oligo_items.xml");
 
         Set<?> expected = readItemSet("LongOligoGFF3RecordHandlerTest.xml");
         assertEquals(expected, writer.getItems());

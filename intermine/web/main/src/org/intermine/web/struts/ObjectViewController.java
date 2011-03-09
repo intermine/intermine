@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -70,12 +70,14 @@ public class ObjectViewController extends TilesAction
 
         DisplayObject dobj = displayObjects.get(object);
         FieldConfig fc = dobj.getFieldConfigMap().get(fieldName);
+
+
         // truncate fields by default, unless it says otherwise in config
         boolean doNotTruncate = false;
         if (fc != null) {
             doNotTruncate = fc.getDoNotTruncate();
         }
-        request.setAttribute("doNotTruncate", doNotTruncate);
+        request.setAttribute("doNotTruncate", Boolean.valueOf(doNotTruncate));
         request.setAttribute("fieldName", fieldName);
         return null;
     }

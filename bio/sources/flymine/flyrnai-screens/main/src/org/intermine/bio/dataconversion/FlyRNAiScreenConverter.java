@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     private Map<String, String> screenMap = new HashMap<String, String>();
     private static final String TAXON_ID = "7227";
     private File screenDetailsFile;
-    private Set<String> hitScreenNames = new HashSet<String>();
+    private String[] hitScreenNames;
     protected IdResolverFactory resolverFactory;
 
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
@@ -98,41 +97,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         processHits(reader);
     }
 
-    /**
-     * Check that we have seen the same screen names in the hits and details files.
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws Exception {
-
-        Set<String> noDetails = new HashSet<String>();
-        for (String screenName : hitScreenNames) {
-            if (screenMap.get(screenName) == null) {
-                noDetails.add(screenName);
-            }
-        }
-
-        Set<String> noHits = new HashSet<String>();
-        for (String screenName : screenMap.keySet()) {
-            if (!hitScreenNames.contains(screenName)) {
-                noHits.add(screenName);
-            }
-        }
-
-        if (!noDetails.isEmpty()) {
-            String msg = "Screen names from hits file and details file did not match."
-                    + "  No hits found for screen detail: '" + noHits + "'";
-            throw new RuntimeException(msg);
-        }
-
-        if (!noHits.isEmpty()) {
-            String msg = "Screen names from hits file and details file did not match."
-                    + "  No details found for screen hit: '" + noDetails + "'";
-            LOG.error(msg);
-        }
-        super.close();
-    }
-
     private void processHits(Reader reader)
         throws ObjectStoreException {
 
@@ -152,13 +116,12 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 if ("Amplicon".equals(line[0].trim())) {
                     readingData = true;
                     headerLength = line.length;
+                    hitScreenNames = new String[headerLength];
                     for (int i = 2; i < line.length; i++) {
-                        // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        if (StringUtils.isEmpty(screenName) || screenMap.get(screenName) == null) {
-                            continue;
+                        if (!StringUtils.isEmpty(screenName)) {
+                            hitScreenNames[i] = screenName;
                         }
-                        hitScreenNames.add(screenName);
                     }
                 }
             } else {
@@ -190,15 +153,21 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                         }
                     }
                 }
-                int i = 1;
+
+                // column 0 : screen identifier
+                // column 1 : genes
                 // loop over screens to create results
-                for (String screenName : hitScreenNames) {
-                    String resultValue = RESULTS_KEY.get(line[i + 1].trim());
+                for (int i = 2; i < hitScreenNames.length; i++) {
+                    String resultValue = RESULTS_KEY.get(line[i].trim());
+                    String screenName = hitScreenNames[i];
                     if (resultValue == null) {
-                        throw new RuntimeException("Unrecogised result symbol '" + line[i + 1]
+                        throw new RuntimeException("Unrecogised result symbol '" + line[i]
                             + "' in line: " + Arrays.asList(line));
                     }
-
+                    if (screenMap.get(screenName) == null) {
+                        // we don't have details for all screens
+                        continue;
+                    }
                     if (genes.isEmpty()) {
                         // create a hit that doesn't reference a gene
                         storeScreen(screenName, amplicon.getIdentifier(), resultValue, null);

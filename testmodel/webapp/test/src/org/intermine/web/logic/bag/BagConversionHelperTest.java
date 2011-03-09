@@ -50,17 +50,17 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     List<TemplateQuery> conversionTemplates;
     Profile profile;
     HttpSession session;
-    
+
     public void setUp() throws Exception {
         super.setUp();
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" + 
-                "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
-                "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
-                "        <node path=\"Employee.id\" type=\"Integer\">\n" + 
-                "          <constraint op=\"=\" value=\"0\" description=\"id\" identifier=\"\" editable=\"true\" code=\"A\"/>\n" + 
-                "        </node>\n" + 
-                "        <node path=\"Employee.address.id\" type=\"Integer\"/>\n" + 
-                "      </query>\n" + 
+        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" +
+                "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" +
+                "        <node path=\"Employee\" type=\"Employee\"/>\n" +
+                "        <node path=\"Employee.id\" type=\"Integer\">\n" +
+                "          <constraint op=\"=\" value=\"0\" description=\"id\" identifier=\"\" editable=\"true\" code=\"A\"/>\n" +
+                "        </node>\n" +
+                "        <node path=\"Employee.address.id\" type=\"Integer\"/>\n" +
+                "      </query>\n" +
                 "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         context = getActionServlet().getServletContext();
@@ -68,7 +68,6 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         Map tqs = tqb.unmarshal(new StringReader(template), null, 1);
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(tq));
-        uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ProfileManager profileManager = new ProfileManager(os, uosw);
         profile = new Profile(profileManager, "test", new Integer(101), "testpass",
@@ -76,18 +75,18 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         session = getSession();
         session.setAttribute(Constants.PROFILE, profile);
     }
-    
+
     public void tearDown() throws Exception {
-        uosw.close();        
+        uosw.close();
     }
-    
+
     // this calls getConvertedObjects with a list of Employees and gets back converted Addresses
     public void testGetConvertedObjects() throws Exception {
         InterMineAPI im = SessionMethods.getInterMineAPI(context);
         ObjectStore os = im.getObjectStore();
-        
+
         Results r = getEmployeesAndAddresses();
-        
+
         assertEquals("Results: " + r, 2, r.size());
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
@@ -104,7 +103,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         }
         assertEquals(expected, got);
     }
-    
+
     private Results getEmployeesAndAddresses() throws Exception {
         InterMineAPI im = SessionMethods.getInterMineAPI(context);
         ObjectStore os = im.getObjectStore();

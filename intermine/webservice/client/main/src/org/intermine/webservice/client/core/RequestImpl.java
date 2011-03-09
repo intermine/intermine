@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.core;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,8 @@ import org.intermine.webservice.client.util.URLParser;
 public class RequestImpl implements Request
 {
 
+	protected static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
+	
     private RequestType type;
 
     private String serviceUrl;
@@ -148,6 +150,27 @@ public class RequestImpl implements Request
             throw new ServiceException("Invalid url: " + url, e);
         }
     }
+    
+    /**
+     * Sets the maximum number of rows returned.
+     *
+     * @param maxCount an integer number of rows, where outer joins count as multiple rows
+     */
+    public void setMaxCount(int maxCount) {
+        setParameter("size", maxCount + "");
+    }
+
+    public void setStart(int start) {
+        setParameter("start", start + "");
+    }
+    
+    public void setFormat(String format) {
+    	setParameter("format", format);
+    }
+    
+    public void setJSONFormat() {
+    	setFormat(FORMAT_PARAMETER_JSON_OBJ);
+    }
 
     /**
      * {@inheritDoc}
@@ -162,7 +185,7 @@ public class RequestImpl implements Request
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
-
+  
     /**
      * {@inheritDoc}
      */

@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -96,6 +96,14 @@ public class AttributeDescriptor extends FieldDescriptor
     @Override
     public String toString() {
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toJSONString() {
+        return "{name:\"" + name + "\",type:\"" + type + "\"}";
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
@@ -41,8 +40,6 @@ import org.intermine.xml.full.ReferenceList;
  */
 public abstract class MockItemsTestCase extends TestCase
 {
-
-    private static Logger LOG = Logger.getLogger(MockItemsTestCase.class);
     /**
      *
      */
@@ -178,11 +175,9 @@ public abstract class MockItemsTestCase extends TestCase
             Iterator j = b.iterator();
             while (j.hasNext()) {
                 MockItem itemB = (MockItem) j.next();
-
-                if (itemA.equals(itemB))
+                if (itemA.equals(itemB)) {
                     diff.remove(itemA);
-                else
-                    LOG.error(itemA.diff(itemB));
+                }
             }
         }
         return diff;

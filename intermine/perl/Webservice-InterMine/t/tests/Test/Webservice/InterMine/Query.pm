@@ -36,44 +36,44 @@ use Test::MockObject;
 use Webservice::InterMine::Service;
 use Webservice::InterMine::ResultIterator;
 
-sub startup : Test(startup => 2) {
+sub startup : Test(startup => 3) {
     my $test = shift;
 
     my $service = Test::MockObject->new;
     $service->fake_module(
 	'Webservice::InterMine::Service',
-	new => sub {
-	    return $service;
-	},
+        new => sub {
+            return $service;
+        },
     );
     $service->set_isa('Webservice::InterMine::Service');
     $service->mock(
-	model => sub {
-	    return $test->model;
-	},
+        model => sub {
+            return $test->model;
+        },
     );
 
     $service->mock(
-	root => sub {
-	    return 'FAKEROOT';
-	},
+        root => sub {
+            return 'FAKEROOT';
+        },
     );
     $service->mock(
-	version => sub {2},
+        version => sub {2},
     );
     $service->mock(
-	QUERY_PATH => sub {
-	    return 'FAKEPATH';
-	},
+        QUERY_PATH => sub {
+            return 'FAKEPATH';
+        },
     );
     $test->{service} = $service;
 
     my $iterator = Test::MockObject::Extends->new('Webservice::InterMine::ResultIterator');
     $iterator->mock(
-	all_lines => sub {
-	    my $self = shift;
-	    return @_, @_, @_; #repeated so we get a list back
-	},
+        all_lines => sub {
+            my $self = shift;
+            return @_, @_, @_; #repeated so we get a list back
+        },
     );
     $test->{iterator} = $iterator;
     $test->SUPER::startup;

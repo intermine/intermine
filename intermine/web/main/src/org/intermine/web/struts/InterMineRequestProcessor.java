@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,13 +41,13 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * A RequestProcessor that sends you back to the start if your session isn't valid
+ * A RequestProcessor that sends you back to the start if your session isn't valid.
+ *
  * @author Mark Woodbridge
  */
 public class InterMineRequestProcessor extends TilesRequestProcessor
 {
     private static final Logger LOG = Logger.getLogger(InterMineRequestProcessor.class);
-
     private static final String LOGON_PATH = "/begin";
     private static final String LOGON_INIT_PATH = "/initBegin";
 
@@ -62,10 +62,11 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
                 "/ping", "/standalone", "/quickStart", "/importQuery", "/tree", "/headMenu",
                 "/htmlHead", "/dataCategories", "/bagDetails", "/results", "/passwordReset",
-                "/experiment", "/features");
+                "/experiment", "/features", "/loadQuery", "/loadTemplate");
 
     /**
-     * This is called during the processing of every controller
+     * This is called during the processing of every controller.
+     *
      * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
@@ -165,17 +166,17 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     }
 
     /**
-     * Overriden to copy errors and messages to session before performing
-     * a redirecting forward.
+     * Overridden to copy errors and messages to session before performing a redirecting forward.
      *
      * {@inheritDoc}
      */
     protected void processForwardConfig(HttpServletRequest request, HttpServletResponse response,
             ForwardConfig forward) throws java.io.IOException, javax.servlet.ServletException {
+        ForwardConfig forwardConfig = forward;
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         ActionMessages errors = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
 
-        if (forward != null && forward.getRedirect()) {
+        if (forwardConfig != null && forwardConfig.getRedirect()) {
             MessageResources resources
                 = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
             if (errors != null && !errors.isEmpty()) {
@@ -196,17 +197,17 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             }
             String params = request.getParameter("__intermine_forward_params__");
             if (params != null) {
-                String path = forward.getPath();
+                String path = forwardConfig.getPath();
                 if (path.indexOf('?') != -1) {
                     path += "&" + params;
                 } else {
                     path += "?" + params;
                 }
-                forward = new ForwardConfig("dummy", path, true);
+                forwardConfig = new ForwardConfig("dummy", path, true);
             }
         }
 
-        super.processForwardConfig(request, response, forward);
+        super.processForwardConfig(request, response, forwardConfig);
     }
 
     private final Set<String> bots = Collections.unmodifiableSet(new HashSet<String>(

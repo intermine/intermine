@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
@@ -29,6 +35,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 public final class Util
 {
     private Util() {
+        // don't
     }
 
     /**
@@ -267,4 +274,76 @@ public final class Util
             throw new IllegalArgumentException("Unknown type \"" + type + "\"");
         }
     }
+
+    /**
+     * Add values to a Map from keys to Set of values, creating the value list
+     * as needed.
+     *
+     * @param map the Map
+     * @param key the key
+     * @param values the set of values
+     */
+    public static void addToSetMap(Map map, Object key, Set<Object> values) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
+        Set valuesList = (Set) map.get(key);
+        if (valuesList == null) {
+            valuesList = new HashSet();
+            map.put(key, valuesList);
+        }
+        valuesList.addAll(values);
+    }
+
+
+    /**
+     * Add a value to a Map from keys to Set of values, creating the value list
+     * as needed.
+     *
+     * @param map the Map
+     * @param key the key
+     * @param value the value
+     */
+    public static void addToSetMap(Map map, Object key, Object value) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
+        Set valuesList = (Set) map.get(key);
+        if (valuesList == null) {
+            valuesList = new HashSet();
+            map.put(key, valuesList);
+        }
+        valuesList.add(value);
+    }
+
+    /**
+     * Add a value to a Map from keys to Set of values, creating the value list
+     * as needed.
+     *
+     * @param map the Map
+     * @param key the key
+     * @param value the value
+     */
+    public static void addToListMap(Map map, Object key, Object value) {
+        if (map == null) {
+            throw new IllegalArgumentException("invalid map");
+        }
+        if (key == null) {
+            throw new IllegalArgumentException("invalid map key");
+        }
+        List valuesList = (List) map.get(key);
+        if (valuesList == null) {
+            valuesList = new ArrayList();
+            map.put(key, valuesList);
+        }
+        valuesList.add(value);
+    }
+
+
 }

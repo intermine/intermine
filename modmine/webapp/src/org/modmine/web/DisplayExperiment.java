@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -304,7 +304,7 @@ public class DisplayExperiment
      * @return a map of unlocated features for this experiment
      */
     public Set<String> getUnlocated() {
-        Map<Integer, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
+        Map<String, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
 
         Set<String> unloc = new HashSet<String>();
         for (Submission s : submissions) {

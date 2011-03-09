@@ -2,6 +2,7 @@
 <classes>
 <class name="BindingSite" is-interface="true">
   <attribute name="qvalue" type="java.lang.Double" />
+  <attribute name="sourceFile" type="java.lang.String" />
 </class>
 
 <!-- CDNA isn't a SequenceFeature in SO, declare submissions collection separately -->
@@ -118,6 +119,12 @@
   <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
 </class>
 
+<class name="UnderReplicatedRegion" extends="SequenceFeature" is-interface="true">
+</class>
+
+
+
+
 <!-- OTHER modENCODE classes -->
 
   <class name="Antibody" extends="SubmissionProperty" is-interface="true">
@@ -220,6 +227,7 @@
   <attribute name="url" type="java.lang.String" />
   <attribute name="wikiLink" type="java.lang.String" />
   <attribute name="version" type="java.lang.Integer" />
+  <attribute name="characteristics" type="java.lang.String" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="protocols" />
   <collection name="appliedProtocols" referenced-type="AppliedProtocol" reverse-reference="protocol" />
 </class>
@@ -257,11 +265,13 @@
   <attribute name="experimentDate" type="java.util.Date" />
   <attribute name="publicReleaseDate" type="java.util.Date" />
   <attribute name="embargoDate" type="java.util.Date" />
-  <attribute name="DCCid" type="java.lang.Integer" />
+  <attribute name="DCCid" type="java.lang.String" />
   <attribute name="experimentType" type="java.lang.String" />
   <attribute name="totalReadCount" type="java.lang.Integer" />
+  <attribute name="totalMappedReadCount" type="java.lang.Integer" />
   <attribute name="multiplyMappedReadCount" type="java.lang.Integer" />
   <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" />
+  <attribute name="RNAsize" type="java.lang.String" />
 
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
@@ -292,7 +302,6 @@
   <attribute name="type" type="java.lang.String" />
   <attribute name="value" type="java.lang.String" />
   <collection name="dataAttributes" referenced-type="SubmissionDataAttribute" reverse-reference="submissionData" />
-  <collection name="features" referenced-type="SequenceFeature" />
   <collection name="nextAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="inputs" />
   <collection name="previousAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="outputs" />
   <reference name="submission" referenced-type="Submission" reverse-reference="submissionData" />

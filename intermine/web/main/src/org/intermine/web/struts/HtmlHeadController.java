@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -109,7 +109,12 @@ public class HtmlHeadController extends TilesAction
         /* object */
         } else if ("objectDetails".equals(pageName) && objectId != null) {
 
-            Integer id = new Integer(Integer.parseInt(objectId));
+            Integer id = null;
+            try {
+                id = new Integer(Integer.parseInt(objectId));
+            } catch (NumberFormatException e) {
+                return null;
+            }
             InterMineObject object = os.getObjectById(id);
             if (object == null) {
                 return null;

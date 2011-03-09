@@ -24,7 +24,7 @@
       </div>
   </imutil:disclosureBody>
   </imutil:disclosure>
-  
+
     <div align="center">
       <table border="0">
         <tr>
@@ -35,12 +35,12 @@
             </form>
           </td>
           <td>
-            <c:if test="${PROFILE.loggedIn && !empty QUERY}">              
+            <c:if test="${PROFILE.loggedIn && !empty QUERY}">
                 <fmt:message key="${NEW_TEMPLATE != null ?
                     'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
                 <form method="link" action="<html:rewrite action="/createTemplate"/>">
                   <input type="submit" value="${saveLabel}"/>
-                </form>              
+                </form>
             </c:if>
           </td>
         </tr>

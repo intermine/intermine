@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
@@ -42,13 +43,13 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -97,7 +98,7 @@ public class TableWidgetLdr
             throw new Error("Cannot create path for widget with path \"" + pathString
                     + "\" - check widget configuration");
         }
-        cld = origPath.getEndClassDescriptor();
+        cld = origPath.getLastClassDescriptor();
         type = cld.getUnqualifiedName();
         displayFields = config.getDisplayFields();
         exportField = config.getExportField();
@@ -146,66 +147,66 @@ public class TableWidgetLdr
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
             ResultsRow resRow = (ResultsRow) iter.next();
-            String key = "";
-            for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
+            String countLinkKey = "";
 
-                Object element = iterator.next();
-                if (element instanceof InterMineObject) {
+            boolean isFirst = true;
+            for (int i = 0; i < q.getSelect().size(); i++) {
+                QuerySelectable select = q.getSelect().get(i);
 
-                    InterMineObject o = (InterMineObject) element;
-                    boolean isFirst = true;
-                    for (Iterator iterator3 = columns.iterator(); iterator3.hasNext();) {
-
-                        String columnName = (String) iterator3.next();
-                        Path path;
-                        Object fieldValue;
-                        try {
-                            path = new Path(model, columnName);
-                            fieldValue = PathUtil.resolvePath(path, o);
-                        } catch (PathException e) {
-                            throw new Error("Cannot create path \"" + columnName
-                                    + "\" for widget - check config");
-                        }
-                        Class thisType = path.getStartClassDescriptor().getType();
-                        String fieldName = path.getEndFieldDescriptor().getName();
-                        boolean isKeyField = ClassKeyHelper.isKeyField(config.getClassKeys(),
-                                TypeUtil.unqualifiedName(thisType.getName()), fieldName);
-                        String link = null;
-                        String val = null;
-                        if (fieldValue != null) {
-                            val = fieldValue.toString();
-                        }
-                        if (isKeyField) {
-                            if (fieldValue != null) {
-                                key = fieldValue.toString();
-                            }
-                            link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
-                                + bag.getName() + "|" + o.getId();
-                        } else if (externalLink != null && !"".equals(externalLink)) {
-                            val = val + " <a href=\"" + externalLink + key
-                                + "\" target=\"_new\" class=\"extlink\">["
-                                + config.getExternalLinkLabel() + "]</a>";
-                        }
-
-                        if (isFirst) {
-
-                            String checkbox = "<input name=\"selected\" value=\"" + key
-                                + "\" id=\"selected_" + key + "\" type=\"checkbox\">";
-
-                            flattenedRow.add(new String[] {checkbox});
-                            isFirst = false;
-                        }
-
-                        flattenedRow.add(new String[] {val, link});
-
-                    }
-                } else if (element instanceof Long) {
+                // this will be the last column
+                if (select instanceof QueryFunction) {
                     // if user hasn't configured a link, don't link the counts
                     String link = (config.getLink() == null ? null : "widgetAction.do?bagName="
                         + bag.getName()
                         + "&link=" + config.getLink()
-                        + "&key=" + URLEncoder.encode(key, "UTF-8"));
-                    flattenedRow.add(new String[] {String.valueOf(element), link});
+                        + "&key=" + URLEncoder.encode(countLinkKey, "UTF-8"));
+                    flattenedRow.add(new String[] {String.valueOf(resRow.get(i)), link});
+                } else {
+                    if (select instanceof QueryClass) {
+                        InterMineObject o = (InterMineObject) resRow.get(i);
+                        for (String columnName : columns) {
+                            Path path;
+                            Object fieldValue;
+                            try {
+                                path = new Path(model, columnName);
+                                fieldValue = PathUtil.resolvePath(path, o);
+                            } catch (PathException e) {
+                                throw new Error("Cannot create path \"" + columnName
+                                        + "\" for widget - check config");
+                            }
+                            boolean isKeyField = isKeyField(path);
+
+                            String link = null;
+                            String val = null;
+                            if (fieldValue != null) {
+                                val = fieldValue.toString();
+                            }
+                            if (isKeyField) {
+                                if (fieldValue != null && StringUtils.isBlank(countLinkKey)) {
+                                    countLinkKey = fieldValue.toString();
+                                }
+                                link = getObjectDetailsLink(o, bag.getName());
+                            } else if (!StringUtils.isBlank(externalLink)) {
+                                val = val + " <a href=\"" + externalLink + countLinkKey
+                                    + "\" target=\"_new\" class=\"extlink\">["
+                                    + config.getExternalLinkLabel() + "]</a>";
+                            }
+
+                            if (isFirst) {
+                                flattenedRow.add(new String[] {getCheckbox(countLinkKey)});
+                                isFirst = false;
+                            }
+                            flattenedRow.add(new String[] {val, link});
+                        }
+                    } else if (select instanceof QueryField) {
+                        String fieldValue = String.valueOf(resRow.get(i));
+                        countLinkKey = fieldValue;
+                        if (isFirst) {
+                            flattenedRow.add(new String[] {getCheckbox(fieldValue)});
+                            isFirst = false;
+                        }
+                        flattenedRow.add(new String[] {fieldValue});
+                    }
                 }
 
             }
@@ -222,6 +223,21 @@ public class TableWidgetLdr
         widgetTotal = calcTotal(os, q);
     }
 
+    private String getCheckbox(String key) {
+        return "<input name=\"selected\" value=\"" + key + "\" id=\"selected_" + key
+            + "\" type=\"checkbox\">";
+    }
+
+    private boolean isKeyField(Path path) {
+        String startType = path.getStartClassDescriptor().getType().getSimpleName();
+        String fieldName = path.getEndFieldDescriptor().getName();
+        return ClassKeyHelper.isKeyField(config.getClassKeys(), startType, fieldName);
+    }
+
+    private String getObjectDetailsLink(InterMineObject o, String bagName) {
+        return "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag." + bag.getName()
+            + "|" + o.getId();
+    }
 
     /**
      * get the flattened results
@@ -303,7 +319,7 @@ public class TableWidgetLdr
             ClassDescriptor cldEnd = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
             QueryClass qcEnd = new QueryClass(cldEnd.getType());
 
-            addReferenceConstraint(model, q, qcStart, refName, qcEnd);
+            addReferenceConstraint(q, qcStart, refName, qcEnd);
 
             if (constraintName != null && constraintValue != null) {
                 AttributeDescriptor attFld = cldEnd.getAttributeDescriptorByName(constraintName);
@@ -327,7 +343,8 @@ public class TableWidgetLdr
             QueryFunction qfCount = new QueryFunction();
 
             // if we are at the end of the path, add to select and group by
-            if (queryBits.length == (i + 1)) {
+            //if (queryBits.length == (i + 1)) {
+            if (cldEnd.equals(origPath.getLastClassDescriptor())) {
                 if (keys != null) { // export
                     q.setDistinct(true);
                     QueryField keyField = new QueryField(qcEnd, getKeyField(displayFields));
@@ -340,8 +357,15 @@ public class TableWidgetLdr
                     q.addToSelect(new QueryField(qcExport, exportField));
                 } else if (!calcTotal) {
                     q.setDistinct(false);
-                    q.addToSelect(qcEnd);
-                    q.addToGroupBy(qcEnd);
+
+                    if (origPath.endIsAttribute()) {
+                        QueryField qfEnd = new QueryField(qcEnd, origPath.getLastElement());
+                        q.addToSelect(qfEnd);
+                        q.addToGroupBy(qfEnd);
+                    } else {
+                        q.addToSelect(qcEnd);
+                        q.addToGroupBy(qcEnd);
+                    }
 
                     q.addToSelect(qfCount);
                     q.addToOrderBy(qfCount, "desc");
@@ -357,6 +381,9 @@ public class TableWidgetLdr
                     q.addToSelect(qfCount);
                     q.addFrom(subQ);
                 }
+                // we've reached the end but if the end of the path was an attribute queryBits
+                // still has one more element
+                break;
             }
             cldStart = cldEnd;
             qcStart = qcEnd;
@@ -368,7 +395,6 @@ public class TableWidgetLdr
      * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
      * Return qcEnd as it may need to be passed into mehod again as qcStart.
      *
-     * @param model the Model use to find meta data
      * @param q the query
      * @param qcStart the QueryClass that contains the reference
      * @param refName name of reference to qcEnd
@@ -376,8 +402,8 @@ public class TableWidgetLdr
      * to the query
      * @return QueryClass return qcEnd
      */
-    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart,
-            String refName, QueryClass qcEnd) {
+    private QueryClass addReferenceConstraint(Query q, QueryClass qcStart, String refName,
+            QueryClass qcEnd) {
         q.addFrom(qcEnd);
 
         // already validated against model

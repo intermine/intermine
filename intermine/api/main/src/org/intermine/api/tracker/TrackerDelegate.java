@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,10 +9,8 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 
@@ -24,8 +22,6 @@ import org.intermine.api.template.TemplateManager;
 public class TrackerDelegate
 {
     protected Map<String, Tracker> trackers;
-    protected TemplateTracker templateTracker;
-    private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -33,9 +29,6 @@ public class TrackerDelegate
      */
     public TrackerDelegate(Map<String, Tracker> trackers) {
         this.trackers = trackers;
-        if (!trackers.isEmpty()) {
-            templateTracker = (TemplateTracker) trackers.get(TemplateTracker.getTrackerName());
-        }
     }
 
     /**
@@ -46,11 +39,17 @@ public class TrackerDelegate
         return trackers;
     }
 
-    public void setTemplateManager(TemplateManager templateManager) {
-        if (templateTracker != null) {
-            templateTracker.setTemplateManager(templateManager);
+    /**
+     * Return the tracker template
+     * @return map containing names and trackers
+     */
+    public TemplateTracker getTemplateTracker() {
+        if (!trackers.isEmpty()) {
+            return (TemplateTracker ) trackers.get(TemplateTracker.TRACKER_NAME);
         }
+        return null;
     }
+
     /**
      * Store into the database the template execution by the user specified in input
      * @param templateName the template name
@@ -59,45 +58,10 @@ public class TrackerDelegate
      */
     public void trackTemplate(String templateName, Profile profile,
                              String sessionIdentifier) {
-        if (templateTracker != null) {
-            templateTracker.trackTemplate(templateName, profile, sessionIdentifier);
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            tt.trackTemplate(templateName, profile, sessionIdentifier);
         }
-    }
-
-    /**
-     * Return the template name associated to the public template with the highest rank
-     * @return String the template name
-     */
-    public String getMostPopularTemplate() {
-        if (templateTracker != null) {
-            return templateTracker.getMostPopularTemplate();
-        }
-        return null;
-    }
-
-    /**
-     * Return the list of public templates ordered by rank descendant.
-     * @return List of template names
-     */
-    public List<String> getMostPopularTemplateOrder() {
-        if (templateTracker != null) {
-            return templateTracker.getMostPopularTemplateOrder();
-        }
-        return null;
-    }
-
-    /**
-     * Return the template list ordered by rank descendant for the user specified in input
-     * @param profile the user profile
-     * @param sessionIdentifier the session id
-     * @return List of template names
-     */
-    public List<String> getMostPopularTemplateOrder(Profile profile, String sessionIdentifier) {
-        if (profile != null && templateTracker != null) {
-            return templateTracker.getMostPopularTemplateOrder(profile.getUsername(),
-                                                               sessionIdentifier);
-        }
-        return null;
     }
 
     /**
@@ -105,19 +69,22 @@ public class TrackerDelegate
      * @return map with key the template name and value the rank associated
      */
     public Map<String, Integer> getAccessCounter() {
-        if (templateTracker != null) {
-            return templateTracker.getAccessCounter();
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getAccessCounter();
         }
         return null;
     }
 
     /**
      * Return the rank associated to the templates
+     * @param templateManager the template manager
      * @return map with key the template name and value the rank associated
      */
-    public Map<String, Integer> getRank() {
-        if (templateTracker != null) {
-            return templateTracker.getRank();
+    public Map<String, Integer> getRank(TemplateManager templateManager) {
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            return tt.getRank(templateManager);
         }
         return null;
     }
@@ -128,8 +95,9 @@ public class TrackerDelegate
      * @param newTemplateName the new name
      */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
-        if (templateTracker != null) {
-            templateTracker.updateTemplateName(oldTemplateName, newTemplateName);
+        TemplateTracker tt = getTemplateTracker();
+        if (tt != null) {
+            tt.updateTemplateName(oldTemplateName, newTemplateName);
         }
     }
 }

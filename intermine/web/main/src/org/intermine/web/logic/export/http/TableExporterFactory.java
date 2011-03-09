@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export.http;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,10 +27,7 @@ public class TableExporterFactory
     private static final String TAB = "tab";
     private static final String CSV = "csv";
     private static final String EXCEL = "excel";
-
-    private static Map<String, String> exporters =
-        new HashMap<String, String>();
-
+    private static Map<String, String> exporters = new HashMap<String, String>();
     private Map<String, TableExportConfig> configs = new HashMap<String, TableExportConfig>();
 
     /**

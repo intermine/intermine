@@ -2,7 +2,7 @@
 
 
 <p>metabolicMine is a data warehouse that integrates diverse biological data sets and 
-the tools to explore them. The main focus of metaboliMine is genomics and proteomics of 
+the tools to explore them. The main focus of metabolicMine is genomics and proteomics of 
 common metabolic diseases. By integrating such data into one place it is possible to 
 construct queries across domains of biological knowledge.</p>
 

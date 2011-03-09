@@ -1,7 +1,7 @@
 package org.intermine.dwr;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,15 +10,13 @@ package org.intermine.dwr;
  *
  */
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
@@ -53,6 +50,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.mines.LinkManager;
+import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -627,6 +626,103 @@ public class AjaxServices
     }
 
     /**
+     * For an organism, generate links to other intermines with orthologues
+     *
+     * @param organismName gene.organism
+     * @param primaryIdentifier identifier for gene
+     * @return the links to friendly intermines
+     */
+    public static String getInterMineLinks(String organismName, String primaryIdentifier) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            Properties webProperties = SessionMethods.getWebProperties(servletContext);
+            LinkManager olm = LinkManager.getInstance(im, webProperties);
+
+            // mines with orthologues
+            Map<Mine, Set<String>> minesWithOrthologues = olm.getMines(Arrays.asList(organismName));
+            // mines with genes
+            // Set<Mine> minesWithGenes = olm.getMines(organismName);
+
+            if (minesWithOrthologues.isEmpty()) {
+                return null;
+            }
+            StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other"
+                    + " mines:</h3><ul>");
+            for (Mine mine : minesWithOrthologues.keySet()) {
+                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
+                    + primaryIdentifier + "&orthologue=" + organismName;
+                sb.append("<li><a href=\"" + href + "\">");
+                sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
+                sb.append("</a></li>");
+            }
+            sb.append("</ul></div>");
+            return sb.toString();
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
+    }
+
+    /**
+     * For a mine, test if that mine has orthologues
+     *
+     * @param mineName name of a friendly mine
+     * @param organisms list of organisms for genes in this list
+     * @param identifierList list of identifiers
+     * @return the links to friendly intermines
+     */
+    public static String getInterMineOrthologueLinks(String mineName, String organisms,
+            String identifierList) {
+        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
+                || StringUtils.isEmpty(identifierList)) {
+            return null;
+        }
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final String errMsg = "No orthologues found in " + mineName;
+        try {
+
+            LinkManager olm = LinkManager.getInstance(im, webProperties);
+            List<String> organismList = StringUtil.tokenize(organisms, ",");
+
+            Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
+            if (mineValues == null || mineValues.isEmpty()) {
+                return errMsg;
+            }
+            Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
+            Mine mine = entry.getKey();
+            Set<String> orthologues = entry.getValue();
+
+            if (mine == null || orthologues.isEmpty()) {
+                return errMsg;
+            }
+
+            StringBuffer sb = new StringBuffer(mineName + "<ul>");
+            for (String orthologue : orthologues) {
+                String encodedOrthologue = null;
+                try {
+                    encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("error while encoding: " + orthologue, e);
+                }
+                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
+                    + identifierList + "&orthologue=" + encodedOrthologue;
+                sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
+            }
+            sb.append("</ul>");
+            return sb.toString();
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
+    }
+
+
+    /**
      * Saves information, that some element was toggled - displayed or hidden.
      *
      * @param elementId element id
@@ -721,6 +817,12 @@ public class AjaxServices
                     if (queries.size() > 0) {
                         return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
                             + "by other queries " + queries;
+                    }
+                }
+                for (int i = 0; i < selectedBags.length; i++) {
+                    if (profile.getSavedBags().get(selectedBags[i]) == null) {
+                        return "List " + selectedBags[i] + " cannot be deleted as it is a shared "
+                            + "list";
                     }
                 }
             } else if (!"copy".equals(operation)) {
@@ -1153,28 +1255,6 @@ public class AjaxServices
     // Tags AJAX Interface
     //*****************************************************************************
 
-    /**
-     * Returns all objects names tagged with specified tag type and tag name.
-     * @param type tag type
-     * @param tag tag name
-     * @return objects names
-     */
-    public static Set<String> filterByTag(String type, String tag) {
-        Profile profile = getProfile(getRequest());
-
-        SearchRepository searchRepository = profile.getSearchRepository();
-        Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.
-            getWebSearchableMap(type);
-        if (map == null) {
-            return null;
-        }
-        Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
-        List<String> tagList = new ArrayList<String>();
-        tagList.add(tag);
-        filteredMap.putAll(new SearchFilterEngine().filterByTags(map, tagList, type,
-                profile.getUsername(), getTagManager()));
-        return filteredMap.keySet();
-    }
     /**
      * Adds tag and assures that there is only one tag for this combination of tag name, tagged
      * Object and type.

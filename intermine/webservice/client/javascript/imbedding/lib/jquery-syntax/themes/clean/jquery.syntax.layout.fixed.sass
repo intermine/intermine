@@ -1,0 +1,34 @@
+//	This file is part of the "jQuery.Syntax" project, and is licensed under the GNU AGPLv3.
+//	Copyright 2010 Samuel Williams. All rights reserved.
+//	See <jquery.syntax.js> for licensing details.
+
+div.fixed.syntax
+  background-color: darken($background-primary, 5%)
+  border: 1px solid $border-primary
+  padding: 0 !important
+  margin: 0 !important
+
+  .numbers-column
+    float: left
+    text-align: right
+    margin-right: 0em
+    width: 3em
+    color: darken($background-primary, 35%)
+    background-color: darken($background-primary, 5%)
+    div
+      padding: 0 0.4em 0 !important
+
+  .code-column
+    border-left: 1px solid $border-primary
+    overflow: auto
+    background-color: $background-primary
+    table
+      border-collapse: collapse
+      width: 100%
+      white-space: pre
+    .source
+      margin: auto !important
+      color: $code-primary
+      padding: 0 0.4em 0 !important
+    .source.alt
+      background-color: lighten($background-primary, 2%)

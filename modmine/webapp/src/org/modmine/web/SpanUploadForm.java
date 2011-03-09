@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,8 @@ package org.modmine.web;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,13 +30,13 @@ public class SpanUploadForm extends ActionForm
 
     private String orgName;
     private String[] experiments;
+    private Set<String> dccIDSetOfExp; // the DCCids of experiments
     private String[] featureTypes;
     private String text;
     private FormFile formFile;
     private String whichInput;
-    private Integer[] submissions; // DCCid
-    // by default, intermine use base coordinate
-    private String isInterBaseCoordinate;
+    private String[] submissions; // DCCid
+    private String isInterBaseCoordinate; // by default, intermine use base coordinate
 
     /**
      *
@@ -72,7 +74,7 @@ public class SpanUploadForm extends ActionForm
      *
      * @return submissions
      */
-    public Integer[] getSubmissions() {
+    public String[] getSubmissions() {
         return submissions;
     }
 
@@ -80,7 +82,7 @@ public class SpanUploadForm extends ActionForm
      *
      * @param submissions A string array of submission DCCid
      */
-    public void setSubmissions(Integer[] submissions) {
+    public void setSubmissions(String[] submissions) {
         this.submissions = submissions;
     }
 
@@ -163,7 +165,21 @@ public class SpanUploadForm extends ActionForm
     }
 
     /**
-     *
+     * @return the dccIDSetOfExp
+     */
+    public Set<String> getDccIDSetOfExp() {
+        return dccIDSetOfExp;
+    }
+
+    /**
+     * @param dccIDSetOfExp the dccIDSetOfExp to set
+     */
+    public void setDccIDSetOfExp(Set<String> dccIDSetOfExp) {
+        this.dccIDSetOfExp = dccIDSetOfExp;
+    }
+
+    /**
+     * Class Constructor
      */
     public SpanUploadForm() {
         reset();
@@ -185,10 +201,10 @@ public class SpanUploadForm extends ActionForm
      * {@inheritDoc}
      */
     public void reset() {
-
         orgName = "";
         featureTypes = null;
         experiments = null;
+        dccIDSetOfExp = null;
         text = "";
         formFile = null;
         whichInput = "";

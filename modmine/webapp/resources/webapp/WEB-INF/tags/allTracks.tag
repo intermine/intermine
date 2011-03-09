@@ -1,6 +1,6 @@
 <%@ tag body-content="empty"%>
 <%@ attribute name="tracks" required="true" type="java.util.List" %>
-<%@ attribute name="dccId" required="true" type="java.lang.Integer" %>
+<%@ attribute name="dccId" required="true" type="java.lang.String" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>

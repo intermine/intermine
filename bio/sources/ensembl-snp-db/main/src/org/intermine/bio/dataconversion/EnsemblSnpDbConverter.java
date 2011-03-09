@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
 /**
- * Read Ensembl SNP data directly from MySQL variarion database.
+ * Read Ensembl SNP data directly from MySQL variation database.
  * @author Richard Smith
  */
 public class EnsemblSnpDbConverter extends BioDBConverter
@@ -42,10 +42,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private final Map<String, Set<String>> pendingSnpConsequences =
         new HashMap<String, Set<String>>();
     private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
+    private String dbSnpSourceId;
 
     // TODO move this to a parser argument
     int taxonId = 9606;
-
+    // Edit to restrict to loading fewer chromosomes
+    private static final int MIN_CHROMOSOME = 1;
 
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
@@ -73,13 +75,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
 
         List<String> chrNames = new ArrayList<String>();
-        //int MIN_CHROMOSOME = 1;
-        int MIN_CHROMOSOME = 20;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
-        //chrNames.add("X");
-        //chrNames.add("Y");
+        chrNames.add("X");
+        chrNames.add("Y");
+        chrNames.add("MT");
 
         for (String chrName : chrNames) {
             process(connection, chrName);
@@ -119,6 +120,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         String previousRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
         boolean storeSnp = true;
+        Set<String> snpSynonyms = new HashSet<String>();
 
         while (res.next()) {
             counter++;
@@ -132,6 +134,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
                 int chrStart = Math.min(start, end);
                 int chrEnd = Math.max(start, end);
+
+                if (currentSnp == null) {
+                    LOG.error("currentSNP is null.  vf.variation_feature_id: "
+                            + res.getString("variation_feature_id") + " rsNumber: " + rsNumber
+                            + " previousRsNumber: " + previousRsNumber + " storeSnp: " + storeSnp);
+                }
 
                 String chrLocStr = chrName + ":" + chrStart;
                 if (!seenLocsForSnp.contains(chrLocStr)) {
@@ -157,9 +165,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     if (storeSnp) {
                         snpCounter++;
                         if (uniqueLocation) {
-                            storeSnp(currentSnp, consequenceIdentifiers);
+                            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
                         } else {
-                            Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET);
+                            Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET,
+                                    snpSynonyms);
                             storedSnpIds.put(previousRsNumber, storedSnpId);
                         }
                     }
@@ -178,6 +187,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 previousRsNumber = rsNumber;
                 seenLocsForSnp = new HashSet<String>();
                 consequenceIdentifiers = new HashSet<String>();
+                snpSynonyms = new HashSet<String>();
                 storeSnp = true;
 
                 // map weight is the number of chromosome locations for the SNP, in practice there
@@ -273,6 +283,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 store(consequenceItem);
             }
 
+            // SYNONYMS
+            // we may see the same synonym on multiple row but Set will make them unique
+            String synonym = res.getString("vs.name");
+            if (!StringUtils.isBlank(synonym)) {
+                snpSynonyms.add(synonym);
+            }
             if (counter % 1000 == 0) {
                 LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
                         + chrName);
@@ -280,21 +296,32 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
 
         if (currentSnp != null) {
-            storeSnp(currentSnp, consequenceIdentifiers);
+            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
         }
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
     }
 
 
-    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers)
+    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers, Set<String> synonyms)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
         }
+        for (String synonym : synonyms) {
+            createSynonym(snp.getIdentifier(), synonym, true);
+        }
         return store(snp);
     }
 
+    /**
+     * Given an allele string read from the database determine the type of variation, e.g. snp,
+     * in-del, etc.  This is a re-implementation of code from the Ensembl perl API, see:
+     * http://www.ensembl.org/info/docs/Pdoc/ensembl-variation/
+     *     modules/Bio/EnsEMBL/Variation/Utils/Sequence.html#CODE4
+     * @param alleleStr the alleles to determine the type for
+     * @return a variation class or null if none can be determined
+     */
     protected String determineType(String alleleStr) {
         String type = null;
 
@@ -306,7 +333,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             } else if ("CNV".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
             } else if ("CNV_PROBE".equals(alleleStr)) {
-                type = alleleStr.toLowerCase();
+                type = "cnv probe";
             } else if ("HGMD_MUTATION".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
             } else {
@@ -319,35 +346,26 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                             || (StringUtils.containsOnly(alleles[1], "ACTGN")
                                     && "-".equals(alleles[0]))) {
                         type = "in-del";
-                    } else if (alleles[0].matches("/LARGE|INS|DEL/")
-                            || alleles[1].matches("/LARGE|INS|DEL/")) {
+                    } else if (containsOneOf(alleles[0], "LARGE", "INS", "DEL")
+                            || containsOneOf(alleles[1], "LARGE", "INS", "DEL")) {
                         type = "named";
-                    } else if (1 == 0) {
-                        // TODO substitution
-//                      elsif (($alleles[0] =~ tr/ACTG//) > 1 || ($alleles[1] =~ tr/ACTG//) > 1){
-//                      #AA/GC 2 alleles
-//                      $class = 'substitution'
-//                  }
-                    } else {
-                        LOG.warn("Failed to work out allele type for: " + alleleStr);
+                    } else if ((StringUtils.containsOnly(alleles[0], "ACGT")
+                            && alleles[0].length() > 1)
+                            || (StringUtils.containsOnly(alleles[1], "ACGT")
+                                    && alleles[1].length() > 1)) {
+                        // AA/GC 2 alleles
+                        type = "substitution";
+                    }
+                } else if (alleles.length > 2) {
+                    if (containsDigit(alleles[0])) {
+                        type = "microsat";
+                    } else if (anyContainChar(alleles, "-")) {
+                        type = "mixed";
                     }
                 }
-//                elsif (@alleles > 2) {
-//
-//                    if ($alleles[0] =~ /\d+/) {
-//                        #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
-//                        $class = 'microsat'
-//                    }
-//
-//                    elsif ((grep {/-/} @alleles) > 0) {
-//                        #-/A/T/TTA > 2 alleles
-//                        $class = 'mixed'
-//                    }
-//                    else {
-//                        #  warning("not possible to determine class of alleles " . @alleles);
-//                        $class = '';
-//                    }
-//                 }
+                if (type == null) {
+                    LOG.warn("Failed to work out allele type for: " + alleleStr);
+                }
             }
         }
 
@@ -416,17 +434,21 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
 
-        String query = "SELECT vf.variation_name, vf.allele_string, "
+        String query = "SELECT vf.variation_feature_id, vf.variation_name, vf.allele_string, "
             + " sr.name,"
             + " vf.map_weight, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
             + " s.name,"
             + " vf.validation_status,"
             + " vf.consequence_type,"
-            + " tv.cdna_start,tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id"
+            + " tv.cdna_start,tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id,"
+            + " vs.name"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
             + "     AND tv.cdna_start is not null)"
+            + " LEFT JOIN (variation_synonym vs)"
+            + " ON (vf.variation_id = vs.variation_id"
+            + "     AND vs.source_id = " + getDbSnpSourceId(connection) + ")"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
@@ -437,11 +459,52 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
+    private String getDbSnpSourceId(Connection connection) throws SQLException {
+        if (dbSnpSourceId == null) {
+            String query = "SELECT source_id FROM source WHERE name = \"dbSNP\"";
+            Statement stmt = connection.createStatement();
+            ResultSet res = stmt.executeQuery(query);
+            res.next();
+            dbSnpSourceId = res.getString("source_id");
+            if (dbSnpSourceId == null) {
+                throw new RuntimeException("Failed to retrieve source_id for dbSNP source");
+            }
+        }
+        return dbSnpSourceId;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getDataSetTitle(int taxonId) {
         return DATASET_TITLE;
+    }
+
+    private boolean containsOneOf(String target, String... substrings) {
+        for (String substring : substrings) {
+            if (target.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean anyContainChar(String[] targets, String substring) {
+        for (String target : targets) {
+            if (target.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsDigit(String target) {
+        for (int i = 0; i < target.length(); i++) {
+            if (Character.isDigit(target.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

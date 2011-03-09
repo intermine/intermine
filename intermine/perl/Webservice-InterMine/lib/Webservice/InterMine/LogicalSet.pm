@@ -50,6 +50,7 @@ package Webservice::InterMine::LogicalSet;
 use Moose;
 use Webservice::InterMine::Role::Logical;
 use InterMine::TypeLibrary qw(LogicOperator LogicGroup);
+with 'Webservice::InterMine::Role::Logical';
 
 has op => (
     is       => 'ro',
@@ -63,12 +64,6 @@ has [ 'left', 'right' ] => (
     required => 1,
 );
 
-sub BUILD {
-    my $self = shift;
-    Webservice::InterMine::Role::Logical->meta->apply($self);
-    return $self;
-}
-
 use overload (
     '""'     => 'code',
     fallback => 1,
@@ -77,7 +72,7 @@ use overload (
 sub code {
     my $self = shift;
     my ( $left, $right ) = map { $_->code } $self->left, $self->right;
-    my $string = join ' ' . $self->op . ' ', $left, $right;
+    my $string = join(' ', $left, $self->op, $right);
     if ( $self->op eq 'or' ) {
         return "($string)";
     } else {

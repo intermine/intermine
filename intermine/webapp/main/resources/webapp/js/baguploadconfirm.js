@@ -14,6 +14,7 @@ function addId2Bag(objectId, row, parentId, issueType) {
   // I can remove now...
   setLinkState('removeAllLink', 'active');
 
+
   if (jQuery('#add_' + issueType + '_' + objectId).hasClass('fakelink')) {
     // switch the class on add/remove links
     jQuery('#add_' + issueType + '_' + objectId).removeClass('fakelink');
@@ -43,6 +44,7 @@ function addId2Bag(objectId, row, parentId, issueType) {
         } else {
           idArray[idArray.length] = objectId;
           duplicateArray[parentId] = idArray;
+
         }
 
         setLinkState(issueType+'removeAllLink', 'active');
@@ -84,6 +86,9 @@ function updateCount(element, amount) {
     // set value
     jQuery(element).text(count);
   }
+}
+function unHighlightRow(rowId) {
+    colourRow(rowId, false);
 }
 
 /**
@@ -164,15 +169,16 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
             var idArrayCopy = new Array();
 
             jQuery.each(idArray, function(i, value) {
-              if (objectId != value) {
-                idArrayCopy[idArrayCopy.length] = idArray[i];
-              }
+                if (objectId != value) {
+                    idArrayCopy[idArrayCopy.length] = idArray[i];
+                }
             });
 
             duplicateArray[parentId] = idArrayCopy;
         }
 
         setLinkState(issueType + 'addAllLink', 'active');
+
     }
 }
 
@@ -255,6 +261,5 @@ function setLinkState(link, state) {
       jQuery('#' + link).removeClass("fakelink");
     }
   }
-
 }
 

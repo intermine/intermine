@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,7 +42,7 @@ public class NcbiGeneInfoParser
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
+            String[] line = lineIter.next();
 
             String taxonId = line[0];
             String entrez = line[1];
@@ -128,7 +128,7 @@ public class NcbiGeneInfoParser
         return !taxonDuplicates.contains(symbol);
     }
 
-    private Set<String> findDuplicateSymbols(String taxonId) {
+    public Set<String> findDuplicateSymbols(String taxonId) {
         Set<String> duplicates = new HashSet<String>();
         if (recordMap.containsKey(taxonId)) {
             Set<String> seenSymbols = new HashSet<String>();
@@ -144,6 +144,7 @@ public class NcbiGeneInfoParser
         }
         return duplicates;
     }
+
     private Set<String> parseXrefs(String xrefs, String prefix) {
         if (!prefix.endsWith(":")) {
             prefix = prefix + ":";

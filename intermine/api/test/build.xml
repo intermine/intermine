@@ -13,13 +13,6 @@
 		<task:build-db osname="os.unittest" model="testmodel" />
 	</target>
 
-	<target name="-pre-test" depends="build-db-userprofile, build-db-unittest"/>
-
-
-<!--	<target name="build-db-userprofile" depends="-init-build-db">
-		<task:build-db osname="os.userprofile-test" model="userprofile" />
-	</target>-->
-
-
+	<target name="-pre-test" depends="create-db-userprofile, build-db-unittest"/>
 </project>
 

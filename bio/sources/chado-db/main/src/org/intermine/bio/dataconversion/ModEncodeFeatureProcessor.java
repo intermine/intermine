@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,6 +54,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
+    private static final String BINDING_SITE_FEATS =
+        "'binding_site', 'protein_binding_site', 'TF_binding_site', 'histone_binding_site'";
 
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
@@ -62,13 +65,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR", "origin_of_replication",
             "binding_site", "protein_binding_site", "TF_binding_site",
+            "insulator_binding_site",
             "transcript_region", "histone_binding_site", "copy_number_variation",
             "natural_transposable_element", "start_codon", "stop_codon"
             , "cDNA", "cDNA_match", "miRNA"
             , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
-            , "transcription_end_site", "TSS"
+            , "transcription_end_site", "TSS", "under-replicated-region"
     );
 
     // the FB name for the mitochondrial genome
@@ -81,6 +85,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
+    // list of modelled attributes for expression levels
+    private static final Set<String> EL_KNOWN_ATTRIBUTES =
+        Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                "dcpm",
+                "dcpm_bases",
+                "prediction_status",
+                "read_count",
+                "transcribed")));
+
+    
     /**
      * Create a new ModEncodeFeatureProcessor.
      * @param chadoDBConverter     the parent converter
@@ -188,6 +202,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
         // do experimental features (expression levels)
         processExpressionLevels(connection);
+        
+        // adding sources (result files) for binding sites
+        processPeaksSources(connection);
     }
 
     /**
@@ -580,6 +597,63 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return identifier;
     }
 
+
+    private void processPeaksSources(Connection connection) throws SQLException,
+    ObjectStoreException {
+        ResultSet res = getPeaksSources(connection);
+        while (res.next()) {
+
+            Integer featureId = res.getInt("feature_id");
+//            Integer score = res.getInt("data_id");
+            String sourceFile = res.getString("value");
+
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fData = featureMap.get(featureId);
+                Integer storedFeatureId = fData.getIntermineObjectId();
+
+                Attribute sourceFileAttribute = new Attribute("sourceFile", sourceFile);
+                getChadoDBConverter().store(sourceFileAttribute, storedFeatureId);
+
+//                if (scoreProtocolItemId != null) {
+//                    Reference scoreProtocolRef =
+//                        new Reference("scoreProtocol", scoreProtocolItemId);
+//                    getChadoDBConverter().store(scoreProtocolRef, storedFeatureId);
+//                }
+            }
+        }
+        res.close();
+    }
+
+    private ResultSet getPeaksSources(Connection connection) throws SQLException {
+        // TODO: better test on which query is better.
+        // also: should we rather do 1 big query and put them in a map?
+        //        String query =
+        //            "SELECT df.feature_id, df.data_id, d.value "
+        //            + "FROM data_feature df, feature f, cvterm c, data d "
+        //            + "WHERE f.feature_id = df.feature_id "
+        //            + "AND c.cvterm_id = f.type_id "
+        //            + "AND d.data_id = df.data_id "
+        //            + "AND c.name in ( " + BINDING_SITE_FEATS + ") "
+        //            + "AND df.feature_id IN "
+        //            + "(select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+        String query =
+            "SELECT df.feature_id, df.data_id, d.value "
+            + "FROM data_feature df, feature f, cvterm c, data d "
+            + ", " + SUBFEATUREID_TEMP_TABLE_NAME + " sf "
+            + "WHERE f.feature_id = df.feature_id "
+            + "AND c.cvterm_id = f.type_id "
+            + "AND d.data_id = df.data_id "
+            + "AND c.name in ( " + BINDING_SITE_FEATS + ") "
+            + "AND df.feature_id = sf.feature_id ";
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("QUERY TIME feature sources: " + (System.currentTimeMillis() - bT));
+        return res;
+    }
+
+    
     private void processFeatureScores(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getFeatureScores(connection);
@@ -627,7 +701,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private void processExpressionLevels(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
-
+        
         Integer previousId = -1;
         Item level = null;
 
@@ -664,12 +738,21 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
 
-            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
-                // in some cases (~ 60000, waterston) the value for dcpm is
-                // 'nan' or 'na' instead of a decimal number
+            // check if dcpm is a decimal number
+            if (property.equalsIgnoreCase("dcpm")
+                    && !StringUtils.containsOnly(propValue, ".0123456789")) {
+                // in some cases (waterston) the value for dcpm is
+                // 'nan' or 'na' or '.na' instead of a decimal number
                 previousId = id;
                 continue;
             }
+            if (!EL_KNOWN_ATTRIBUTES.contains(property)) {
+                LOG.debug("ExpressionLevel for feature_id = " + featureId
+                        + " has unknown attribute " + property);
+                previousId = id;
+                continue;
+            }
+
             level.setAttribute(getPropName(property), propValue);
             previousId = id;
         }

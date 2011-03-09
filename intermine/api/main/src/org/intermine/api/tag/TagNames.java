@@ -1,7 +1,7 @@
 package org.intermine.api.tag;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,11 @@ public interface TagNames
      * String used to tag objects that should be hidden at jsp page
      */
     String IM_HIDDEN = "im:hidden";
+
+    /**
+     * String used to tag objects that should be hidden at jsp page
+     */
+    String IM_ADMIN = "im:admin";
 
     /**
      * String used to tag objects by some aspect

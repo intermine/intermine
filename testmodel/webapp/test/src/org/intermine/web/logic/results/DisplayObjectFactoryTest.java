@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,7 +54,7 @@ public class DisplayObjectFactoryTest extends MockStrutsTestCase
     }
 
     public void testDisplayObjectCache() throws Exception {
-        InterMineAPI im = new InterMineAPI(os, null, null, null, null, null);
+        InterMineAPI im = new InterMineAPI(os, null, null, null, null, null, null);
         SessionMethods.setInterMineAPI(getSession().getServletContext(), im);
         Map webProperties = new HashMap();
         getSession().getServletContext().setAttribute(Constants.WEB_PROPERTIES, webProperties);

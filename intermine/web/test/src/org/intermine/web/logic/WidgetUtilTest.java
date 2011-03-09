@@ -1,111 +1,60 @@
 package org.intermine.web.logic;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 
 import junit.framework.TestCase;
 
-import org.intermine.web.logic.widget.Hypergeometric;
-import org.intermine.web.logic.widget.WidgetUtil;
-
 public class WidgetUtilTest extends TestCase
 {
-    private Double maxValue = new Double(1.0);
+    private final int REFERENCE_SIZE = 5;
     private HashMap<String, BigDecimal> resultsMap = new HashMap();
-    private String[] id = new String[4];
-    private int[] taggedSample = new int[4];
-    private int[] taggedPopulation = new int[4];
-    private BigDecimal[] expectedResults = new BigDecimal[4];
-    private int bagsize = 3;
-    private int total = 100;
-    private HashMap<String, BigDecimal> bonferroniMap = new HashMap();
-    private LinkedHashMap<String, BigDecimal> benjaminiMap = new LinkedHashMap();
-    private BigDecimal ONE = new BigDecimal(1);
+    private String[] id = new String[REFERENCE_SIZE];
+    private int[] taggedSample = new int[REFERENCE_SIZE];
+    private int[] taggedPopulation = new int[REFERENCE_SIZE];
+    private BigDecimal[] expectedResults = new BigDecimal[REFERENCE_SIZE];
+    private int bagsize = 100;
+    private int total = 1000;
     public  WidgetUtilTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
 
-        // these numbers are generated via this website:
-        // http://www.quantitativeskills.com/sisa/distributions/hypghlp.htm
+        id[1] = "half";
+        taggedSample[1] = 50;
+        taggedPopulation[1] = 500;
+        expectedResults[1] = new BigDecimal(0.54194604604639440292856988889980129897594451904296875);
 
-        id[1] = "notEnriched";
-        taggedSample[1] = 1;
-        taggedPopulation[1] = 10;
-        expectedResults[1] = new BigDecimal(0.27346938775509510577421679045073688030242919921875);
-
-        id[2] = "underrepresented";
+        id[2] = "notEnriched";
         taggedSample[2] = 1;
-        taggedPopulation[2] = 50;
-        expectedResults[2] = new BigDecimal(0.8787878787878582);
+        taggedPopulation[2] = 10;
+        expectedResults[2] = new BigDecimal(0.6530722852079744455977561301551759243011474609375);
 
-        id[0] = "overrepresented";
-        taggedSample[0] = 3;
-        taggedPopulation[0] = 20;
-        expectedResults[0] = new BigDecimal(0.00705009276437833);
-
-        id[3] = "one";
-        taggedSample[3] = 3;
+        id[3] = "enriched";
+        taggedSample[3] = 25;
         taggedPopulation[3] = 100;
-        expectedResults[3] = new BigDecimal(1);
+        expectedResults[3] = new BigDecimal(0.0000031931122567314319696078761534607792782480828464031219482421875);
 
-        BigDecimal numberOfTests = new BigDecimal(id.length);
-        BigDecimal alpha = new BigDecimal(0.05);
-        BigDecimal alphaPerTest = alpha.divide(numberOfTests, MathContext.DECIMAL32);
+        id[4] = "one";
+        taggedSample[4] = 3;
+        taggedPopulation[4] = 100;
+        expectedResults[4] = new BigDecimal(1);
 
-        for (int i = 3; i >= 0; i--) {
-            BigDecimal p = new BigDecimal(Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total));
+        HypergeometricDistributionImpl h = new HypergeometricDistributionImpl(total,bagsize,bagsize);
+
+        for (int i = 1; i <= 4; i++) {
+            h.setNumberOfSuccesses(taggedPopulation[i]);
+            BigDecimal p = new BigDecimal(h.upperCumulativeProbability(taggedSample[i]));
             resultsMap.put(id[i], p);
-
-            BigDecimal bonferroniP =  p.add(alphaPerTest);
-            if (bonferroniP.compareTo(ONE) >= 0) {
-                bonferroniP = ONE;
-            }
-            bonferroniMap.put(id[i], bonferroniP);
-
-            //p-value * (n/ n - index)
-            if (i == 3) {
-                if (p.compareTo(ONE) >= 0) {
-                    p = ONE;
-                }
-
-                // biggest one isn't changed
-                benjaminiMap.put(id[i], p);
-
-            } else {
-                BigDecimal divisor = numberOfTests.subtract(new BigDecimal(i + 1));
-                BigDecimal m = numberOfTests.divide(divisor, MathContext.DECIMAL128);
-                BigDecimal adjustedP = p.multiply(m, MathContext.DECIMAL128);
-                if (adjustedP.compareTo(ONE) >= 0) {
-                    adjustedP = ONE;
-                }
-                benjaminiMap.put(id[i], adjustedP);
-            }
         }
     }
 
     public void testHypergeometric() throws Exception {
         for (int i = 0; i < 4; i++) {
             assertEquals(expectedResults[i], resultsMap.get(id[i]));
-        }
-    }
-
-    public void testBonferroni() throws Exception {
-        Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
-        for (String label : bonferroniMap.keySet()) {
-            assertEquals(bonferroniMap.get(label), adjustedMap.get(label));
-        }
-    }
-
-    public void testBenjaminiHochberg() throws Exception {
-       Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
-        for (String label : benjaminiMap.keySet()) {
-            assertEquals(benjaminiMap.get(label), adjustedMap.get(label));
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -157,6 +158,37 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
         return editableConstraints.contains(constraint);
+    }
+
+    /**
+     * Returns whether a constraint is optional. This is the logical inverse of isRequired()
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is optional
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isOptional(PathConstraint constraint) {
+        return !isRequired(constraint);
+    }
+
+    /**
+     * Returns whether a constraint is required. This is the logical inverse of isOptional()
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is required
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isRequired(PathConstraint constraint) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot fetch editable status of null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        boolean isRequired = SwitchOffAbility.LOCKED.equals(getSwitchOffAbility(constraint));
+        return isRequired;
     }
 
     /**
@@ -381,7 +413,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * removed - i.e. a query that will return all possible results of executing
      * the template.  The original template is left unaltered.
      *
-     * @return a clone of the original tempate without editable constraints.
+     * @return a clone of the original template without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
         TemplateQuery clone = clone();
@@ -398,6 +430,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -430,6 +463,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -448,6 +482,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @param title the title
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -504,6 +539,34 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             throw new RuntimeException(e);
         }
 
+        return sw.toString();
+    }
+
+    /**
+     * Returns a JSON string representation of the template query.
+     * @return A string representation of the template query.
+     */
+    public synchronized String toJSON() {
+        StringWriter sw = new StringWriter();
+        sw.append("{name:\"" + name + "\",");
+        sw.append("title:\"" + title + "\",");
+        sw.append("constraints:[");
+        Iterator<PathConstraint> iter = getEditableConstraints().iterator();
+        Map<PathConstraint, String> codeForConstraint = getConstraints();
+        while (iter.hasNext()) {
+            PathConstraint pc = iter.next();
+            sw.append("{path:\"" + pc.getPath() + "\",");
+            sw.append("op:'" + pc.getOp().toString() + "'");
+            String value = PathConstraint.getValue(pc);
+            if (value != null) {
+                sw.append(",value:\"" + value + "\"");
+            }
+            sw.append(",code:'" + codeForConstraint.get(pc) + "'}");
+            if (iter.hasNext()) {
+                sw.append(",");
+            }
+        }
+        sw.append("]}");
         return sw.toString();
     }
 

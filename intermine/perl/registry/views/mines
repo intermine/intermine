@@ -1,0 +1,11 @@
+<h2>Mines</h2>
+<ul>
+<% FOREACH mine IN mines %>
+    <li>
+        <h3><% mine.name %></h3>
+        <p><% mine.description %></p>
+        URL: <% mine.homeUrl %><br/>
+        ORGANISMS: <% mine.organisms.join(", ") %>
+    </li>
+<% END %>
+</ul>

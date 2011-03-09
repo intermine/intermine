@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -141,4 +141,11 @@ public abstract class FieldDescriptor
     public boolean isCollection() {
         return (relationType() == ONE_N_RELATION) || (relationType() == M_N_RELATION);
     }
+
+    /**
+     * Return the JSON representation of this object.
+     *
+     * @return a string containing JSON 
+     */
+    public abstract String toJSONString();
 }

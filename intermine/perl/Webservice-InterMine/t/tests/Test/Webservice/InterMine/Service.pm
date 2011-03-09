@@ -6,7 +6,7 @@ use base 'Test::Class';
 use Test::More;
 use Test::Exception;
 use Test::MockObject;
-use InterMine::Model;
+use InterMine::Model::TestModel;
 
 sub class {'Webservice::InterMine::Service'}
 sub fake_queryurl {'fake.url'}
@@ -22,8 +22,7 @@ sub setup :Test(setup) {
 
     # Set up all the mock stuff
 
-
-    my $model = InterMine::Model->new(file => 't/data/testmodel_model.xml');
+    my $model = InterMine::Model::TestModel->instance;
     $test->{model} = $model;
 
     my $fake_query = Test::MockObject->new;
@@ -51,17 +50,26 @@ sub setup :Test(setup) {
 	},
     );
     $test->{connection} = $connection;
+    $test->{version} = 1_000_000;
 
     my $uri = Test::MockObject->new;
     $uri->fake_module(
-	'URI',
-	new => sub {
-	    my $class = shift;
-	    my $url = shift;
-	    $uri->{_url} = $url;
-	    return $uri;
-	},
+        'URI',
+        new => sub {
+            my $class = shift;
+            my $url = shift;
+            $uri->{_url} = $url;
+            return $uri;
+        },
     );
+    $uri->mock(path => sub {
+            my $self = shift;
+            return $uri->{_url};
+        })
+        ->mock(scheme => sub {
+            my $self = shift;
+            return $uri->{_url};
+        });
     $uri->set_isa('URI');
     $uri->mock(host => sub{'URI-HOST'});
     $uri->mock(query_form => sub{});
@@ -108,7 +116,7 @@ sub setup :Test(setup) {
 			   $fakeRes->{_content} = $model;
 		       }
 		       elsif ($url =~ m!/version!) {
-			   $fakeRes->{_content} = "VERSION_STRONE OFG";
+			   $fakeRes->{_content} = $test->{version};
 		       }
 		       else {
 			   $fakeRes->{_content} .= $url;
@@ -135,11 +143,11 @@ sub setup :Test(setup) {
     $test->{TF} = $fake_TemplateFactory;
 }
 
-sub _new : Test(6) {
+sub _new : Test(7) {
     my $test = shift;
     use_ok($test->class);
     my @args = (
-	root => $test->fake_queryurl,
+        root => $test->fake_queryurl,
     );
     my $service = new_ok($test->class, [@args]);
     is($service->root, $test->{uri},
@@ -148,8 +156,14 @@ sub _new : Test(6) {
        "... delegates host appropriately",);
     is($service->model, $test->{model},
        "... gets a model for itself",);
-    is($service->version, "VERSION_STRONE OFG",
+    is($service->version, $test->{version},
        "... gets a version string for itself",);
+    $test->{version} = 'foo';
+    throws_ok(
+        sub {my $bad_service = $test->class->new(@args);},
+        qr/version.*please check the url/,
+        "Dies when it can't get the version"
+    );
     $test->{object} = $service;
 }
 
@@ -160,18 +174,18 @@ sub get_results_iterator : Test(4) {
     my $object   = $test->object;
     my $response;
     lives_ok(
-	sub {$response = $object->get_results_iterator($url, $viewlist);},
-	"Calls for a result iterator ok",
+        sub {$response = $object->get_results_iterator($url, $viewlist);},
+        "Calls for a result iterator ok",
     );
 
     is_deeply(
-	$response->{_init_args}{view_list}, $viewlist,
-	'... handles viewlist correctly',
+        $response->{_init_args}{view_list}, $viewlist,
+        '... handles viewlist correctly',
     );
     is(
-	$response->{_content},
-	$test->user_agent . $url,
-	"... handles agent and url correctly"
+        $response->{_content},
+        $test->user_agent . $url,
+        "... handles agent and url correctly"
     ) or diag(explain $test->{Res});
     # is(
     # 	$response->{_init_args}{connection}{_write_args}{'User-Agent'},
@@ -203,16 +217,17 @@ sub get_results_iterator : Test(4) {
 sub fetch : Test(2) {
     my $test = shift;
     my $url      = $test->fake_queryurl;
-    my $response = $test->class->fetch($url);
+    my $service = $test->class->new(root => $test->fake_queryurl);
+    my $response = $service->fetch($url);
     is(
-	$response,  $test->user_agent . $url,
-	"... handles url and agent correctly",
+        $response,  $test->{version} . $test->user_agent . $url,
+        "... handles url and agent correctly",
     );
     $test->{Res}->set_true('is_error');
     throws_ok(
-	sub {$test->class->fetch('foo')},
-	qr/Hello, I'm a status line/,
-	'... Catches response errors correctly',
+        sub {$service->fetch('foo')},
+        qr/Hello, I'm a status line/,
+        '... Catches response errors correctly',
     );
 }
 

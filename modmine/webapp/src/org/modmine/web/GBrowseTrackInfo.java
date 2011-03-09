@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,8 @@ package org.modmine.web;
  */
 
 /**
- * A Java POJO to store submission track information
+ * A Java POJO to store submission track information.
+ *
  * @author Fengyuan Hu
  */
 public class GBrowseTrackInfo
@@ -19,7 +20,7 @@ public class GBrowseTrackInfo
     private String organism; // {fly,worm}
     private String track;    // e.g. Snyder_PHA4_GFP_COMB
     private String subTrack; // e.g. PHA4_L2_GFP
-    private Integer DCCid;
+    private String dCCid;
 
     /**
      * Instantiates a GBrowse track fully.
@@ -27,15 +28,15 @@ public class GBrowseTrackInfo
      * @param organism     e.g. fly, worm
      * @param track        e.g. Snyder_PHA4_GFP_COMB
      * @param subTrack     e.g. PHA4_L2_GFP
-     * @param DCCid submission ID
+     * @param dCCid submission id
      * @return
      *
      */
-    public GBrowseTrackInfo(String organism, String track, String subTrack, Integer DCCid) {
+    public GBrowseTrackInfo(String organism, String track, String subTrack, String dCCid) {
         this.organism  = organism;
         this.track = track;
         this.subTrack = subTrack;
-        this.DCCid = DCCid;
+        this.dCCid = dCCid;
     }
 
     /**
@@ -62,8 +63,8 @@ public class GBrowseTrackInfo
     /**
      * @return the DCCid
      */
-    public Integer getDCCid() {
-        return DCCid;
+    public String getDCCid() {
+        return dCCid;
     }
 }
 

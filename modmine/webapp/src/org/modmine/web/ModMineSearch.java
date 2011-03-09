@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -204,7 +204,7 @@ public class ModMineSearch
             for (Submission sub : exp.getSubmissions()) {
 
                 Integer subId = sub.getId();
-                Integer dccId = sub.getdCCid();
+                String dccId = sub.getdCCid();
 
                 Document doc = new Document();
                 doc.add(new Field("name", subId.toString(), Field.Store.YES, Field.Index.ANALYZED));

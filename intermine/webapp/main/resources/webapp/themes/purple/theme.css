@@ -179,16 +179,16 @@ table.dbsources {
 
 table.dbsources th  {
     padding: 6px 6px 6px 12px;
-    border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;border-top: 1px solid #C1DAD7;
+    border-right: 1px solid #CCC;border-bottom: 1px solid #CCC;border-top: 1px solid #CCC;
     letter-spacing: 2px;text-transform: uppercase;text-align: left;font-weight: bold;font-size: 0.7em;color: white;
-    background-color: #927F97;}
+    background-color: #333;}
 
 table.dbsources td {
     padding: 6px 6px 6px 12px;
-    border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;background: #fff;}
+    border-right: 1px solid #CCC;border-bottom: 1px solid #CCC;background: #fff;}
 
 table.dbsources td.leftcol {
-    border-left: 1px solid #C1DAD7;}
+    border-left: 1px solid #CCC;}
 
 
 /* =RESULTS TABLES

@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -87,6 +87,7 @@ public class BioPAXPostProcess extends PostProcessor
 
         if (reactomeDataSet == null) {
             LOG.error("Failed to find reactome DataSet object");
+            return;
         }
 
         Results results = findProteinPathways(osw.getObjectStore());

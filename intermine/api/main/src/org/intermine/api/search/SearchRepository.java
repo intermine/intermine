@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -91,7 +91,8 @@ public class SearchRepository
 
     /**
      * Initialise and index web searchables of the given type from the profile.  If scope is
-     * GLOBAL will restrict to those tagged public.
+     * GLOBAL will restrict to those tagged public and NOT hidden.
+     *
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     private void populateWebSearchables(String type) {
@@ -109,7 +110,7 @@ public class SearchRepository
 
             wsMap = new SearchFilterEngine().filterByTags(wsMap,
                     new ArrayList<String>(Collections.singleton(TagNames.IM_PUBLIC)), type,
-                    profile.getUsername(), tagManager);
+                    profile.getUsername(), tagManager, false);
         }
         webSearchablesMap.put(type, wsMap);
         reindex(type);
@@ -471,7 +472,15 @@ public class SearchRepository
                 throw new RuntimeException("unknown WebSearchable: " + name);
             }
 
-            hitMap.put(webSearchable, new Float(topDocs.scoreDocs[i].score));
+            Float luceneScore = new Float(topDocs.scoreDocs[i].score);
+            // different versions of Lucene return not-/normalized results, see:
+            //  http://stackoverflow.com/questions/4642160/
+            //  cap the top hits
+            if (luceneScore > 1) {
+                hitMap.put(webSearchable, new Float(1));
+            } else {
+                hitMap.put(webSearchable, luceneScore);
+            }
             //scopeMap.put(webSearchable, docScope);
 
             try {

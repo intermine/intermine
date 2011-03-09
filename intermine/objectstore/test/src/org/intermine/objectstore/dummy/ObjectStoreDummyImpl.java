@@ -1,7 +1,7 @@
 package org.intermine.objectstore.dummy;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -84,7 +84,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     public void setPoisonRowNo(int row) {
         poisonRowNo = row;
     }
-
+ 
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
      * This will usually only be called by the Results object returned from
@@ -92,13 +92,14 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      *
      * @param q the Query to execute
      * @param start the start row
-     * @param limit the maximum numberof rows to be returned
+     * @param limit the maximum number of rows to be returned
      * @param optimise true if the query should be optimised
      * @param explain true if the query should be explained
      * @param sequence an integer that is ignored
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
+    
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             Map<Object, Integer> sequence) throws ObjectStoreException {
         checkStartLimit(start, limit, q);

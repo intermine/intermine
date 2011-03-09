@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,5 +60,23 @@ public abstract class PathConstraint
      */
     public ConstraintOp getOp() {
         return op;
+    }
+
+    // Medium ugly, but more accessible than where it was...
+    public static String getValue(PathConstraint con) {
+        if (con instanceof PathConstraintAttribute) {
+            return ((PathConstraintAttribute) con).getValue();
+        } else if (con instanceof PathConstraintBag) {
+            return ((PathConstraintBag) con).getBag();
+        } else if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getValue();
+        } else if (con instanceof PathConstraintSubclass) {
+            return ((PathConstraintSubclass) con).getType();
+        } else if (con instanceof PathConstraintLoop) {
+            return ((PathConstraintLoop) con).getLoopPath();
+        } else if (con instanceof PathConstraintNull) {
+            return ((PathConstraintNull) con).getOp().toString();
+        }
+        return null;
     }
 }

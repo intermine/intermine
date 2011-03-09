@@ -1,7 +1,7 @@
 package org.intermine.api.config;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,6 +18,7 @@ package org.intermine.api.config;
 public final class Constants
 {
     private Constants() {
+        // don't instantiate
     }
 
     /**

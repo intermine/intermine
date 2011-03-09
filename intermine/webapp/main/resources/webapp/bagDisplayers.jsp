@@ -15,7 +15,6 @@
     <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
         <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
             <c:if test="${displayer.showOnLeft == showOnLeft}">
-                <!-- Disable for modMine <h3>Orthologues in other Mines</h3> -->
                 <p>
                     <c:set var="bag" value="${bag}" scope="request"/>
                     <tiles:insert beanName="displayer" beanProperty="src"/><br/>

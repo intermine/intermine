@@ -1,5 +1,16 @@
 package org.intermine.bio.dataconversion;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,7 +71,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory {
             throw new IllegalArgumentException("Failed to read any records from gene_info file.");
         }
         if (!records.containsKey(taxonId)) {
-            throw new IllegalArgumentException("No records in gene_info file for taxon: " 
+            throw new IllegalArgumentException("No records in gene_info file for taxon: "
                    + taxonId);
         }
         for (GeneInfoRecord record : records.get(taxonId)) {

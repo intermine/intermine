@@ -1,0 +1,7 @@
+<query model="testmodel" view="Employee.name Employee.age">
+    <constraint path="Employee.name" op="ONE OF">
+        <value>Tom</value>
+        <value>Dick</value>
+        <moniker>Harry</moniker>
+    </constraint>
+</query>

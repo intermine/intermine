@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -115,7 +115,7 @@ public class SubmissionProtocolsController extends TilesAction
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
 
-        Integer dccId = 0;
+        String dccId = null;
         Set<Protocol> pt = new HashSet<Protocol>();
 
         Iterator i = result.iterator();

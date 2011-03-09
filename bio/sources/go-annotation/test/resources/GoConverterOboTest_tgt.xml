@@ -14,7 +14,7 @@
 <reference name="code" ref_id="1_3"/>
 <collection name="publications"><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
 </item>
-<item id="10_5" class="GOEvidence">
+<item id="10_6" class="GOEvidence">
 <reference name="code" ref_id="1_2"/>
 <collection name="publications"><reference ref_id="9_1"/></collection>
 </item>
@@ -36,7 +36,7 @@
 <item id="1_1" class="GOEvidenceCode">
 <attribute name="code" value="NAS"/>
 </item>
-<item id="10_6" class="GOEvidence">
+<item id="10_5" class="GOEvidence">
 <reference name="code" ref_id="1_1"/>
 </item>
 <item id="8_2" class="GOAnnotation">

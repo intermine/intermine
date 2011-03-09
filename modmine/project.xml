@@ -312,7 +312,7 @@
         </source>
         -->
         <!-- LIEB -->
-        <source name="modencode-lieb-metadata" type="chado-db" dump="true">
+        <source name="modencode-lieb-metadata" type="chado-db" >
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -355,7 +355,7 @@
         </source>
         -->
         <!-- SNYDER -->
-        <source name="modencode-snyder-metadata" type="chado-db" >
+        <source name="modencode-snyder-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -366,7 +366,7 @@
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
         <!-- KARPEN -->
-        <source name="modencode-karpen-metadata" type="chado-db" dump="true">
+        <source name="modencode-karpen-metadata" type="chado-db" >
             <property name="organisms" value="7227"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -442,6 +442,10 @@
         <!-- TF-mRNA network -->
         <source name="tf-mrna-network" type="tf-mrna-network">
             <property name="src.data.dir" location="/shared/data/tf-mrna-network"/>
+        </source>
+        <!-- worm network added rel 22-->
+        <source name="worm-network" type="worm-network">
+            <property name="src.data.dir" location="/shared/data/worm-network"/>
         </source>
 
         <source name="update-publications" type="update-publications" dump="true">

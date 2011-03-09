@@ -2,8 +2,7 @@
   padding: 20px;margin:20px;width:350px;
   background-color:#F5F0FF;text-align:center;}
 
-#uploadConfirmMessage {
-  text-align:center; font-size: 140%;}
+#uploadConfirmMessage { font-size: 140%; display:none;}
 
 table.collection {
   border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
@@ -20,6 +19,29 @@ table.inlineResultsTable thead td { border-bottom:1px solid #decce3; background:
 table.inlineResultsTable tr.even td { background:#fcfafd; border-top:1px solid #dcc8e2; border-bottom:1px solid #dcc8e2; }
 table.inlineResultsTable td.identifier { color:#886644; font-weight:bold; }
 
+
 /* description & add all */
 div.description { background:#F4EEF7; padding:0 6px; }
-    div.description div.sectionAddRemove { float:right; }
+div.description div.sectionAddRemove { float:right; }
+
+table.collection t td {
+  border: none;}
+
+table.collection tr.even TD{
+  background-color: #F5F0FF;}
+
+table caption {
+  text-align:left;
+  font-size: 12px;}
+
+table .sectionAddRemove {
+  float:right;}
+
+h1 { font-size:24px; margin-bottom:10px; }
+h2 { font-size:20px; float:left; margin-top:16px; }
+
+p.h2 { float:left; margin:24px 0 0 20px; }
+
+p.hl { background:#FFF3D3; font-weight:bold; padding:0 6px; line-height:20px; float:left; margin:4px 0 0 10px; }
+
+div.formik { float:left; }

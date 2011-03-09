@@ -22,11 +22,11 @@
       $('img_'+path).src='images/minus.gif';
     } else {
       // still need to call queryBuilderChange
-      $('img_'+path).src='images/plus.gif'; 
+      $('img_'+path).src='images/plus.gif';
       path = path.substring(0, path.lastIndexOf('.'));
       new Ajax.Request('<html:rewrite action="/queryBuilderChange"/>',
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
-      $(id).innerHTML=''; 
+      $(id).innerHTML='';
     }
     return false;
   }
@@ -51,19 +51,20 @@
   function isExplorer() {
     return (navigator.appVersion.toLowerCase().indexOf('msie') >= 0);
   }
+
   //-->
 </script>
 
-	<div class="heading">
-	  <fmt:message key="query.currentclass"/>
-	</div>
-	<div class="body" id="browserbody">
-	  <div>
-	    <img class="icon" src="images/icons/queries-64.png" alt="query builder icon" />
-	    <fmt:message key="query.currentclass.detail"/>
-	  </div>
-	  <br/>
-	  <tiles:insert page="/queryBuilderBrowserLines.jsp"/>
-	</div>
+  <div class="heading">
+    <fmt:message key="query.currentclass"/>
+  </div>
+  <div class="body" id="browserbody">
+    <div>
+      <img class="icon" src="images/icons/queries-64.png" alt="query builder icon" />
+      <fmt:message key="query.currentclass.detail"/>
+    </div>
+    <br/>
+    <tiles:insert page="/queryBuilderBrowserLines.jsp"/>
+  </div>
 
 <!-- /queryBuilderBrowser.jsp -->

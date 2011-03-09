@@ -5,9 +5,14 @@ lib/InterMine/Model.pm
 lib/InterMine/Model/Attribute.pm
 lib/InterMine/Model/ClassDescriptor.pm
 lib/InterMine/Model/Collection.pm
+lib/InterMine/Model/Handler.pm
+lib/InterMine/Model/Object.pm
 lib/InterMine/Model/Reference.pm
 lib/InterMine/Model/Role/Descriptor.pm
 lib/InterMine/Model/Role/Field.pm
+lib/InterMine/Model/TestModel.pm
+lib/InterMine/Model/testmodel_model.xml
+lib/InterMine/Model/Types.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -15,8 +20,9 @@ README
 t/00-load.t
 t/01_model/01_field.t
 t/01_model/02_class.t
+t/01_model/02_class_instantiate.t
 t/01_model/03_model.t
-t/boilerplate.t
+t/data/expected_model.xml
 t/data/testmodel_model.xml
 t/manifest.t
 t/pod-coverage.t

@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,16 +36,16 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
  *
  */
 
-public class ExperimentController extends TilesAction 
+public class ExperimentController extends TilesAction
 {
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         final ServletContext servletContext = servlet.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -64,20 +64,20 @@ public class ExperimentController extends TilesAction
         Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
         request.setAttribute("tracks", tracks);
 
-        Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
+        Map<String, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
         request.setAttribute("subTracks", subTracks);
 
-        Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
+        Map<String, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
         request.setAttribute("files", files);
 
-        Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
+        Map<String, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
         request.setAttribute("filesPerSub", filesPerSub);
 
-        Map<Integer, List<String[]>> submissionRepositoryEntries =
+        Map<String, List<String[]>> submissionRepositoryEntries =
             MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-        Map<Integer, List<String>> unlocatedFeatureTypes =
+        Map<String, List<String>> unlocatedFeatureTypes =
             MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
 
@@ -85,7 +85,7 @@ public class ExperimentController extends TilesAction
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
 
-        Map<Integer, Map<String, Long>> subFeatEL =
+        Map<String, Map<String, Long>> subFeatEL =
             MetadataCache.getSubmissionFeatureExpressionLevelCounts(os);
         request.setAttribute("subFeatEL", subFeatEL);
 

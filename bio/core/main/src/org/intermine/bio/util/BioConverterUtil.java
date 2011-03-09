@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -66,59 +66,6 @@ public final class BioConverterUtil
         }
         return javaNamesToSO.get(javaClassName);
     }
-
-    /**
-     * Add values to a Map from keys to Set of values, creating the value list
-     * as needed.
-     *
-     * @param map the Map
-     * @param key the key
-     * @param values the set of values
-     */
-    public static void addToSetMap(Map map, Object key, Set<Object> values) {
-        Set valuesList = (Set) map.get(key);
-        if (valuesList == null) {
-            valuesList = new HashSet();
-            map.put(key, valuesList);
-        }
-        valuesList.addAll(values);
-    }
-
-
-    /**
-     * Add a value to a Map from keys to Set of values, creating the value list
-     * as needed.
-     *
-     * @param map the Map
-     * @param key the key
-     * @param value the value
-     */
-    public static void addToSetMap(Map map, Object key, Object value) {
-        Set valuesList = (Set) map.get(key);
-        if (valuesList == null) {
-            valuesList = new HashSet();
-            map.put(key, valuesList);
-        }
-        valuesList.add(value);
-    }
-
-    /**
-     * Add a value to a Map from keys to Set of values, creating the value list
-     * as needed.
-     *
-     * @param map the Map
-     * @param key the key
-     * @param value the value
-     */
-    public static void addToListMap(Map map, Object key, Object value) {
-        List valuesList = (List) map.get(key);
-        if (valuesList == null) {
-            valuesList = new ArrayList();
-            map.put(key, valuesList);
-        }
-        valuesList.add(value);
-    }
-
 
     /**
      * Create and store ontology object.

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,22 +51,16 @@ public class ModifyBagAction extends InterMineAction
     /**
      * Forward to the correct method based on the button pressed
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused")
-            HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModifyBagForm mbf = (ModifyBagForm) form;
         String[] selectedBagNames = mbf.getSelectedBags();
 
@@ -237,11 +231,9 @@ public class ModifyBagAction extends InterMineAction
         return selectedBags;
     }
 
-
     private void delete(ActionForm form, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
-
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
             InterMineBag bag = profile.getSavedBags().get(

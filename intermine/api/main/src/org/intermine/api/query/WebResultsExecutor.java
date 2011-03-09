@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
@@ -47,33 +49,26 @@ import org.intermine.pathquery.PathQuery;
 public class WebResultsExecutor extends QueryExecutor
 {
     private ObjectStore os;
-    private Map<String, List<FieldDescriptor>> classKeys;
     private Profile profile;
     private BagManager bagManager;
     private BagQueryRunner bagQueryRunner;
     private Map<PathQuery, ResultsInfo> infoCache = Collections.synchronizedMap(
             new IdentityHashMap<PathQuery, ResultsInfo>());
+    private InterMineAPI im;
 
     /**
      * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
      * execute it.
      *
-     * @param os the ObjectStore to run the query in
-     * @param classKeys key fields for classes in the data model
-     * @param bagQueryRunner for executing bag queries
+     * @param im intermine API
      * @param profile the user executing the query - for access to saved lists
-     * @param bagManager access to global and user bags
      */
-    public WebResultsExecutor(ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryRunner bagQueryRunner,
-            Profile profile,
-            BagManager bagManager) {
-        this.os = os;
-        this.classKeys = classKeys;
-        this.bagQueryRunner = bagQueryRunner;
+    public WebResultsExecutor(InterMineAPI im, Profile profile) {
+        os = im.getObjectStore();
+        bagQueryRunner = im.getBagQueryRunner();
         this.profile = profile;
-        this.bagManager = bagManager;
+        this.im = im;
+        bagManager = im.getBagManager();
     }
 
     /**
@@ -113,8 +108,8 @@ public class WebResultsExecutor extends QueryExecutor
             pathToQueryNode = queryToPathToQueryNode.get(realQ);
         }
 
-        WebResults webResults = new WebResults(pathQuery, results, os.getModel(),
-                pathToQueryNode, classKeys, pathToBagQueryResult);
+        WebResults webResults = new WebResults(im, pathQuery, results, pathToQueryNode,
+                pathToBagQueryResult);
 
         return webResults;
     }

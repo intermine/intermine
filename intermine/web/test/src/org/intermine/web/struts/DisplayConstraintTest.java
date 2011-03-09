@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,9 +21,8 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQuery;
 import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -100,7 +99,6 @@ public class DisplayConstraintTest extends TestCase
 
     private void initializeDisplayConstraints() {
         Model model = os.getModel();
-        //BagManager bagManager = new BagManager(superUser, model);
 
         Properties classKeyProps = new Properties();
         try {
@@ -113,12 +111,7 @@ public class DisplayConstraintTest extends TestCase
             ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
-        BagQueryConfig bagQueryConfig = null;
-        try {
-            bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MokaBagQueryConfig bagQueryConfig = new MokaBagQueryConfig();
 
         Properties ossProps = new Properties();
         ossProps.put("org.intermine.model.testmodel.Department.classCount", "3");
@@ -147,7 +140,7 @@ public class DisplayConstraintTest extends TestCase
                 new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
             dcBag = dcf.get(pathConstraintBag, superUser, query);
             PathConstraint pathConstraintLookup =
-                new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
+                new PathConstraintLookup("Employee", "Employee", "DepartmentA1");
             dcLookup = dcf.get(pathConstraintLookup, superUser, query);
             PathConstraint pathConstraintSubclass =
                 new PathConstraintSubclass("Department.employees", "Manager");
@@ -340,7 +333,7 @@ public class DisplayConstraintTest extends TestCase
      */
     public void testGetSelectedExtraValue() {
         assertNull(dcAttribute.getSelectedExtraValue());
-        assertEquals("EmployeeA1", dcLookup.getSelectedExtraValue());
+        assertEquals("DepartmentA1", dcLookup.getSelectedExtraValue());
         assertNull(dcNullPathConstraint.getSelectedExtraValue());
     }
 
@@ -514,5 +507,16 @@ public class DisplayConstraintTest extends TestCase
         assertEquals("locked", dcAttribute.getSwitchable());
         assertEquals("locked", dcNullPathConstraint.getSwitchable());
         assertEquals("on", dcInTemplate.getSwitchable());
+    }
+
+    public class MokaBagQueryConfig extends BagQueryConfig {
+
+        public MokaBagQueryConfig() {
+            super(new HashMap<String, List<BagQuery>>(), new HashMap<String, List<BagQuery>>(),
+                  new HashMap<String, Map<String, String[]>>());
+            this.setConnectField("department");
+            this.setConstrainField("name");
+            this.setExtraConstraintClassName("org.intermine.model.testmodel.Department");
+        }
     }
 }

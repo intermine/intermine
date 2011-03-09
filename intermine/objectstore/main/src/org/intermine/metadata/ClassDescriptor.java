@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -468,9 +469,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Get the name of the super class of this class (may be null).
+     * Get the super class of this class (may be null).
      *
-     * @return the super class name
+     * @return the class descriptor this descriptor extends
      * @throws IllegalStateException if model not set
      */
     public ClassDescriptor getSuperclassDescriptor() {
@@ -730,6 +731,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int compareTo(ClassDescriptor cld) {
         int retval = className.compareTo(cld.className);
         if (retval == 0) {
@@ -784,6 +786,54 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         sb.append("</class>" + ENDL);
         return sb.toString();
     }
+
+    public String toJSONString() {
+        StringBuffer sb = new StringBuffer();
+        Set<String> superClassNames = getSuperclassNames();
+        String name = className.substring(className.lastIndexOf(".") + 1);
+        sb.append(name + ":{\"name\":\"" + name + "\",\"extends\":[");
+        Iterator<String> supersIter = superClassNames.iterator();
+        while (supersIter.hasNext()) {
+            sb.append("\"");
+            String superClassName = supersIter.next();
+            if ("java.lang.Object".equals(superClassName)) {
+                sb.append(superClassName);
+            } else {
+                sb.append(superClassName.substring(superClassName.lastIndexOf(".") + 1));
+            }
+            sb.append("\"");
+            if (supersIter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("],\"isInterface\":" + isInterface + ",\"attributes\":[");
+        Iterator<AttributeDescriptor> attrIter = getAllAttributeDescriptors().iterator();
+        while (attrIter.hasNext()) {
+            sb.append(attrIter.next().toJSONString());
+            if (attrIter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("],\"references\":[");
+        Iterator<ReferenceDescriptor> refIter = getAllReferenceDescriptors().iterator();
+        while (refIter.hasNext()) {
+            sb.append(refIter.next().toJSONString());
+            if (refIter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("],\"collections\":[");
+        Iterator<CollectionDescriptor> colIter = getAllCollectionDescriptors().iterator();
+        while (colIter.hasNext()) {
+            sb.append(colIter.next().toJSONString());
+            if (colIter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
 
     /**
      * Returns a String that contains a multi-line human-readable description of the

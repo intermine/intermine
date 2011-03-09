@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.core;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -91,15 +91,15 @@ public interface Request
      * @see #setType(org.intermine.webservice.client.core.Request.RequestType)
      */
     public void setServiceUrl(String url);
-    
+
     /**
-     * Sets whole request URL. Must not be URL encoded.  
+     * Sets whole request URL. Must not be URL encoded.
      * @param url URL
      */
     public void  setUrl(String url);
-    
+
     /**
-     * 
+     *
      * @param encode true if returned string should be url encoded
      * @see <a href="http://www.ietf.org/rfc/rfc1738.txt">URL encoding specification</a>
      * @return url
@@ -115,17 +115,17 @@ public interface Request
      * @param contentType content type
      */
     public void setContentType(ContentType contentType);
-    
+
     /**
      * Returns all parameters as a modifiable map. You can
      * modify parameters manipulating directly with this map.
      * @return map
      */
     public Map<String, List<String>> getParameterMap();
-    
+
     /**
      * Sets a request header.
-     * 
+     *
      * @param name the header name
      * @param value the header value
      */
@@ -133,17 +133,17 @@ public interface Request
 
     /**
      * Returns the header value.
-     * 
+     *
      * @param name the header name
      * @return the header value
      */
     public String getHeader(String name);
-    
+
     /**
      * Returns request headers.
-     * @return headers 
+     * @return headers
      */
     public Map<String, String> getHeaders();
-    
+
 }
 

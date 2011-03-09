@@ -1,20 +1,20 @@
 use strict;
 use warnings;
-use Carp qw(confess);
+use Carp qw(confess cluck);
 BEGIN {
     eval "use YAML::Syck";
     $ENV{TEST_YAML} = ($@) ? 0 : 1;
 }
-$SIG{__DIE__} = sub {
-    confess(@_);
-};
+$SIG{__DIE__} = \&Carp::confess;
+$SIG{__WARN__} = \&Carp::cluck;
 
 use lib 't/tests'; # for the test role FooBar
-use Test::More tests => 41;
+use Test::More tests => 44;
 use Test::MockObject::Extends;
 use Test::Exception;
 use HTTP::Response;
 use IO::File;
+use InterMine::Model::TestModel;
 
 sub slurp {
     my $file = shift;
@@ -25,7 +25,7 @@ my $module = 'Webservice::InterMine';
 
 my $results_file = 't/data/mock_content_results';
 
-my $model     = slurp('t/data/testmodel_model.xml');
+my $model     = InterMine::Model::TestModel->instance->to_xml;
 my $results   = slurp($results_file);
 my $templates = slurp('t/data/default-template-queries.xml');
 
@@ -263,3 +263,12 @@ SKIP: {
 
     is_deeply($data, $res, "Yamlises, and back, ok");
 }
+
+my $loaded;
+lives_ok {$loaded = $module->load_query(source_file => "t/data/loadable_query.xml")} 
+    "Can load a query";
+
+is_deeply([$loaded->views], ["Employee.name", "Employee.department.name"], "And it can parse it ok");
+
+my $expected_out_xml = q!<saved-query name=""><query name="" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.name asc"><constraint value="20" path="Employee.age" code="A" op="&lt;"/></query></saved-query>!;
+is($loaded->to_xml, $expected_out_xml);
