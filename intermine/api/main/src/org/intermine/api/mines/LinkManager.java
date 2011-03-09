@@ -159,6 +159,10 @@ public class LinkManager
             return null;
         }
         Map<Mine, Set<String>> filteredValues = new HashMap<Mine, Set<String>>();
+        Map<String, Set<String>> mineMap = mine.getMineMap();
+        if (mineMap == null || mineMap.isEmpty()) {
+            return null;
+        }
         for (Map.Entry<String, Set<String>> entry : mine.getMineMap().entrySet()) {
             String key = entry.getKey();
             Set<String> mineValues = entry.getValue();
