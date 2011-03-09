@@ -11,7 +11,7 @@
 
 <c:forEach items="${listOfUnplacedInlineLists}" var="list" varStatus="status">
   <div class="box grid_12">
-    <h3>
+    <h3 class="theme-5-background theme-1-border">
       <c:if test="${IS_SUPERUSER}">
         <span class="tag-editor">
           <c:set var="descriptor" value="${list.descriptor}" />
@@ -26,7 +26,7 @@
     <c:choose>
       <c:when test="${list.showLinksToObjects}">
         <c:forEach items="${list.items}" var="item" varStatus="status">
-          <a href="<c:out value="${WEB_PROPERTIES['path']}" />objectDetails.do?id=${item.id}" target="new"
+          <a class="theme-1-color" href="<c:out value="${WEB_PROPERTIES['path']}" />objectDetails.do?id=${item.id}" target="new"
           title="Show '${item.value}' detail">${item.value}</a><c:if test="${status.count < list.size}">, </c:if>
         </c:forEach>
       </c:when>

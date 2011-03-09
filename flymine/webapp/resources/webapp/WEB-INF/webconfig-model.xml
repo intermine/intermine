@@ -410,6 +410,9 @@
   </class>
 
   <class className="org.intermine.model.bio.OntologyTerm">
+    <headerconfig>
+      <titles mainTitles="identifier|name" />
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
