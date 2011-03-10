@@ -48,7 +48,7 @@
   </div>
   <tiles:insert name="/templateList.jsp">
     <tiles:put name="scope" value="global" />
-    <tiles:put name="placement" value="${placement}" />
+    <tiles:put name="placement" value="im:aspect:${placement}" />
     <tiles:put name="displayObject" beanName="displayObject" />
     <tiles:put name="interMineIdBag" beanName="interMineIdBag" />
     <tiles:put name="noTemplatesMsgKey" value="" />

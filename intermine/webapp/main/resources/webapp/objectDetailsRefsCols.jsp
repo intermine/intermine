@@ -50,6 +50,7 @@
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
           </c:forEach>
         </html:link></h3>
+        <div class="clear"></div>
         <%-- ############# --%>
       </c:when>
       <c:when test="${collection.size > 0}">
@@ -77,6 +78,7 @@
             <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
           </c:forEach>
         </html:link></h3>
+        <div class="clear"></div>
         <%-- ############# --%>
         <%--
         <c:if test="${collection.size == 1}">

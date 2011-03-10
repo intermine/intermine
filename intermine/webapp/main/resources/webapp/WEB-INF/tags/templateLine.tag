@@ -46,7 +46,7 @@
     </c:otherwise>
   </c:choose>
   <html:link action="${actionLink}" title="${linkTitle}">
-    <h3 class="templateTitle">${!empty name ? name : templateQuery.title}</h3>
+    <h3 class="templateTitle theme-5-background">${!empty name ? name : templateQuery.title}</h3>
   </html:link>
   <fmt:message var="linkTitle" key="templateList.run">
     <fmt:param value="${templateQuery.name}"/>

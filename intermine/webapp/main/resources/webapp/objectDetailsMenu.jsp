@@ -30,7 +30,7 @@
             <c:set var="target" value="${fn:toLowerCase(aspect)}"/>
             <html:link
             action="/objectDetails.do?id=${object.id}#${target}"
-            onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', 0);return false;"
+            onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', -21);return false;"
             >${aspect}</html:link>
           </li>
         </c:if>
@@ -38,7 +38,7 @@
       </c:forEach>
       <li>
         <html:link action="/objectDetails.do?id=${object.id}#miscellaneous"
-        onclick="jQuery('a[name=miscellaneous]').scrollTo('slow', 'swing', 0);return false;"
+        onclick="jQuery('a[name=miscellaneous]').scrollTo('slow', 'swing', -21);return false;"
         >Miscellaneous</html:link>
       </li>
     </ul>
