@@ -36,8 +36,6 @@
             </c:otherwise>
           </c:choose>
         </c:if>
-        <c:set var="tableCount" value="${tableCount+1}" scope="page" />
-
         <c:choose>
           <c:when test="${!empty object.fieldConfigMap[expr].displayer}">
             <c:set var="interMineObject" value="${object.object}"
@@ -47,11 +45,13 @@
                 page="${object.fieldConfigMap[expr].displayer}">
                 <tiles:put name="expr" value="${expr}" />
               </tiles:insert> </strong></td>
+              <c:set var="tableCount" value="${tableCount+1}" scope="page" />
           </c:when>
           <c:otherwise>
-            <c:if test="${!empty object.fieldValues[expr]}">
-                <td>${expr}:</td>
-                <td><strong>${object.fieldValues[expr]}</strong></td>
+            <c:if test="${!empty object.fieldValues[expr] && !object.fieldConfigMap[expr].doNotTruncate}">
+              <td>${expr}:</td>
+              <td><strong>${object.fieldValues[expr]}</strong></td>
+              <c:set var="tableCount" value="${tableCount+1}" scope="page" />
             </c:if>
           </c:otherwise>
         </c:choose>
@@ -97,6 +97,17 @@
         </c:choose></td>
     </c:if>
   </c:forEach>
+</table>
+
+<table>
+<c:forEach items="${object.fieldExprs}" var="expr">
+  <c:if test="${!empty object.fieldValues[expr] && object.fieldConfigMap[expr].doNotTruncate}">
+    <tr>
+      <td>${expr}:</td>
+      <td><strong>${object.fieldValues[expr]}</strong></td>
+    </tr>
+  </c:if>
+</c:forEach>
 </table>
 
 <c:if test="${object.hasHeaderInlineLists}">
