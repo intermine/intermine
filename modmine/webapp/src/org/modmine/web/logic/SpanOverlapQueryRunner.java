@@ -136,8 +136,6 @@ public class SpanOverlapQueryRunner implements Runnable
         request.getSession().setAttribute("spanConstraintMap", spanConstraintMap);
         request.setAttribute("spanQueryTotalCount", spanList.size());
 
-        MetadataCache.getGBrowseTracks();
-
         (new Thread(this)).start();
     }
 

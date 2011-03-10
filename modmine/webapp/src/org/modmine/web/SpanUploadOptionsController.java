@@ -68,6 +68,9 @@ public class SpanUploadOptionsController extends TilesAction
         Map<String, List<DisplayExperiment>> cagExpMap = MetadataCache
                 .getCategoryExperiments(os);
 
+        // Read GBrowse tracks
+        MetadataCache.getGBrowseTracks();
+
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
         Map<DisplayExperiment, List<String>> expCagMap =

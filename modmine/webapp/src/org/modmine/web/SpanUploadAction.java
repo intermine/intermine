@@ -182,12 +182,9 @@ public class SpanUploadAction extends InterMineAction
         for (String spanStr : spanStringSet) {
             Span aSpan = new Span();
             // >>> Use regular expression to validate user's input
-            // span in the form of "chr:start..end" as in a pattern
-            // [^:]+:\d+\.{2,}\d+
-            // span in the form of "chr:start-end" as in a pattern
-            // [^:]+:\d+\-\d+
-            // span in the form of "chr(tab)start(tab)end" as in a pattern
-            // [^\t]+\t\d+\t\d+
+            // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            // "chr:start-end" - [^:]+:\d+\-\d+
+            // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
             String ddotsRegex = "[^:]+:\\d+\\.\\.\\d+";
             String tabRegex = "[^\\t]+\\t\\d+\\t\\d+";
             String dashRegex = "[^:]+:\\d+\\-\\d+";
@@ -271,9 +268,10 @@ public class SpanUploadAction extends InterMineAction
                 String spanString = "";
                 for (Span span : resultMap.get("error")) {
                     spanString = spanString + span.getChr() + ":" + span.getStart()
-                            + ".." + span.getEnd() + ",";
+                            + ".." + span.getEnd() + ", ";
                 }
-                errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
+                errorMsg = "<b>Invalid spans in <i>" + orgName + "</i>:</b> "
+                        + spanString.substring(0, spanString.lastIndexOf(","));
             }
 
             if (resultMap.get("error").size() == spanList.size()) { // all spans are wrong
