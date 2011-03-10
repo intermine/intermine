@@ -19,14 +19,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.query.PathQueryAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
@@ -45,26 +43,17 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class InlineResultsTable
 {
-    protected Collection results;
-    protected List resultsAsList;
+    protected Collection<?> results;
+    protected List<?> resultsAsList;
     // just those objects that we will display
+    @SuppressWarnings("unchecked")
     protected List rowObjects = new ArrayList();
-    private List<FieldConfig> fieldConfigs = null;
-    protected List columnFullNames = null;
+    protected List<?> columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
     protected int size = -1;
     protected WebConfig webConfig;
     private final Map<String, List<FieldDescriptor>> classKeys;
-    private List<ResultElement> resultElementRow;
-    private Map<String, Object> fieldValues;
-    private Map<Object, Map<String, Object>> rowFieldValues;
-    private boolean ignoreDisplayers;
-
-    private List<String> listOfRowObjects = new ArrayList<String>();
-
-    /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
-    private ObjectStore os = null;
 
     /** @var List of all the types a table will hold, so we can fetch all the FCs */
     private List<Class<?>> listOfTypes = null;
@@ -90,7 +79,8 @@ public class InlineResultsTable
      *  Collection, a Reference object will have null instead and its Type will be resolved
      *  using getListOfTypes()
      */
-    public InlineResultsTable(Collection results, Model model,
+    @SuppressWarnings("unchecked")
+    public InlineResultsTable(Collection<?> results, Model model,
                               WebConfig webConfig, Map webProperties,
                               Map<String, List<FieldDescriptor>> classKeys,
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
@@ -99,11 +89,11 @@ public class InlineResultsTable
 
         this.results = results;
         this.classKeys = classKeys;
-        if (results instanceof List) {
-            resultsAsList = (List) results;
+        if (results instanceof List<?>) {
+            resultsAsList = (List<?>) results;
         } else {
-            if (results instanceof LazyCollection) {
-                this.resultsAsList = ((LazyCollection) results).asList();
+            if (results instanceof LazyCollection<?>) {
+                this.resultsAsList = ((LazyCollection<?>) results).asList();
             } else {
                 this.resultsAsList = new ArrayList(results);
             }
@@ -112,9 +102,8 @@ public class InlineResultsTable
 
         this.model = model;
         this.size = size;
-        this.ignoreDisplayers = ignoreDisplayers;
 
-        Iterator resultsIter;
+        Iterator<?> resultsIter;
         if (getSize() == -1) {
             resultsIter = resultsAsList.iterator();
         } else {
@@ -267,7 +256,7 @@ public class InlineResultsTable
      *  types of table row objects
      * @return a list of lists of ResultElements
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("null")
     public List<Object> getResultElementRows() {
         if (listOfTableRows == null) {
             listOfTableRows = new LinkedList<Object>();

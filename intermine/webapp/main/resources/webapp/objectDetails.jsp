@@ -15,8 +15,8 @@
 <div id="header_wrap">
 
 <div id="object_header"><tiles:get name="objectTrail.tile" />
-<h1 class="title"><!-- KEEP THIS! ${object.fieldExprs} -->
-    ${object.objectType}: <strong>${object.titleMain}</strong> ${object.titleSub}</h1>
+<a name="summary"></a><h1 class="title"><!-- KEEP THIS! ${object.fieldExprs} -->
+    ${object.objectType}: <strong>${object.titleMain}</strong> ${object.titleSub}</h1></a>
 
 <table class="fields">
   <c:set var="tableCount" value="0" scope="page" />
@@ -125,36 +125,10 @@
 
 <div id="menu-target">&nbsp;</div>
 <div id="toc-menu-wrap">
-<div class="wrap">
-  <span>Quick Links:</span>
-  <div class="menu-wrap">
-    <ul class="menu">
-      <li><a href="#">Summary</a></li>
-      <li><a href="#">Function</a></li>
-      <li><a href="#">Genome</a></li>
-      <li><a href="#">Disease</a></li>
-      <li><a href="#">Interactions</a></li>
-      <li><a class="last" href="#">Reactions</a></li>
-    </ul>
-  </div>
-  <div class="clear">&nbsp;</div>
-</div>
+  <tiles:insert name="objectDetailsMenu.jsp" />
 </div>
 <div id="fixed-menu">
-<div class="wrap">
-  <span>Quick Links:</span>
-  <div class="menu-wrap">
-    <ul class="menu">
-      <li><a href="#">Summary</a></li>
-      <li><a href="#">Function</a></li>
-      <li><a href="#">Genome</a></li>
-      <li><a href="#">Disease</a></li>
-      <li><a href="#">Interactions</a></li>
-      <li><a class="last" href="#">Reactions</a></li>
-    </ul>
-  </div>
-  <div class="clear">&nbsp;</div>
-</div>
+  <tiles:insert name="objectDetailsMenu.jsp" />
 </div>
 <script type="text/javascript">
 jQuery('#fixed-menu').hide(); // hide for IE7
@@ -259,7 +233,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
   </tiles:insert>
 
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
-  <tiles:insert name="objectDetailsAspect.tile">
+    <tiles:insert name="objectDetailsAspect.tile">
     <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
     <tiles:put name="placement" value="im:aspect:${aspect}" />
     <tiles:put name="displayObject" beanName="object" />

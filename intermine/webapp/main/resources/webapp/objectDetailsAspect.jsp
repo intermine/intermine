@@ -31,7 +31,7 @@
     scope="request" />
   <c:set var="templateCount" value="${fn:length(templates)}" />
 
-  <h2>${aspect}</h2>
+  <a name="<c:out value="${fn:toLowerCase(aspect)}"/>"><h2>${aspect}</h2></a>
   <c:if test="${!empty displayObject}">
     <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
       <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
