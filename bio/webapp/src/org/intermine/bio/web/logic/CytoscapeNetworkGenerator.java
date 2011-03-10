@@ -137,8 +137,8 @@ public class CytoscapeNetworkGenerator
     private StringBuffer addEdgesToGeneNetworkInXGMML(StringBuffer sb,
             Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap) {
         for (CytoscapeNetworkEdgeData edge : interactionEdgeMap.values()) {
-            sb.append("<edge source=\"" + edge.getSoureceId() + "\" directed=\"true\" "
-                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSoureceId() + " ("
+            sb.append("<edge source=\"" + edge.getSourceId() + "\" directed=\"true\" "
+                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSourceId() + " ("
                     + edge.getInteractionType() + ") " + edge.getTargetId() + "\" "
                     + "label=\"" + edge.getInteractionType() + "\">");
 
