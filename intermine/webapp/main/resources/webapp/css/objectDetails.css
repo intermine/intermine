@@ -95,7 +95,8 @@ div.container_12 { padding-top:30px; }
 div.box { font-size:12px; }
 div.box div.inner { padding:0 6px 6px 6px; margin-bottom:20px; }
 div.box h2 { margin:0 0 10px 10px; color:#000; }
-div.box h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px; margin-bottom:10px; text-shadow: 1px 1px 1px #FFF; }
+div.box h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px;
+    margin-bottom:10px; text-shadow: 1px 1px 1px #FFF; height:25px; }
 div.box ul { list-style-type:none; padding:0; }
 
 /* inner box in a box */
@@ -120,7 +121,8 @@ ul.quick_links li a strong { display:block; padding:0 10px; line-height:30px; }
 
 /* table */
 div.table { margin-bottom:30px; }
-div.table h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px; margin-bottom:0; text-shadow: 1px 1px 1px #FFF; }
+div.table h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px;
+    margin-bottom:0; text-shadow: 1px 1px 1px #FFF; height:25px; }
 div.table td[width="15"] { display:none; } /* ridicurous */
 div.table p { text-align:center; font-size:12px; padding:2px; }
   div.table p.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
