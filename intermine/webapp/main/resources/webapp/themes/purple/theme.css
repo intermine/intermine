@@ -267,30 +267,30 @@ ul#loginbar li { border-right-color:#5C0075; }
   color:#FFF; padding:2px 36px; }
 
 /* theme color classes (used on Report page currently) */
-.theme-1-color { color:#5C0075 !important; } /* Pigment Indigo */
-.theme-1-background { background-color:#5C0075 !important; } /* Pigment Indigo */
-.theme-1-border { border-color:#5C0075 !important; } /* Pigment Indigo */
+div.table .theme-1-color, div.box .theme-1-color { color:#5C0075 !important; } /* Pigment Indigo */
+div.table .theme-1-background, div.box .theme-1-background { background-color:#5C0075 !important; } /* Pigment Indigo */
+div.table .theme-1-border, div.box .theme-1-border { border-color:#5C0075 !important; } /* Pigment Indigo */
 
-.theme-2-color { color:#A16AAF !important; } /* Wisteria */
-.theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
-.theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
 
-.theme-3-color { color:#DCC8E2 !important; } /* Snuff */
-.theme-3-background { background-color:#DCC8E2 !important; } /* Snuff */
-.theme-3-border { border-color:#DCC8E2 !important; } /* Snuff */
+div.table .theme-3-color, div.box .theme-3-color { color:#DCC8E2 !important; } /* Snuff */
+div.table .theme-3-background, div.box .theme-3-background { background-color:#DCC8E2 !important; } /* Snuff */
+div.table .theme-3-border, div.box .theme-3-border { border-color:#DCC8E2 !important; } /* Snuff */
 
-.theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
-.theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
-.theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
 
-.theme-5-color { color:#F4EEF7 !important; } /* Whisper */
-.theme-5-background { background-color:#F4EEF7 !important; } /* Whisper */
-.theme-5-border { border-color:#F4EEF7 !important; } /* Whisper */
+div.table .theme-5-color, div.box .theme-5-color { color:#F4EEF7 !important; } /* Whisper */
+div.table .theme-5-background, div.box .theme-5-background { background-color:#F4EEF7 !important; } /* Whisper */
+div.table .theme-5-border, div.box .theme-5-border { border-color:#F4EEF7 !important; } /* Whisper */
 
-.theme-6-color { color:#FCFAFD !important; } /* White Lilac */
-.theme-6-background { background-color:#FCFAFD !important; } /* White Lilac */
-.theme-6-border { border-color:#FCFAFD !important; } /* White Lilac */
+div.table .theme-6-color, div.box .theme-6-color { color:#FCFAFD !important; } /* White Lilac */
+div.table .theme-6-background, div.box .theme-6-background { background-color:#FCFAFD !important; } /* White Lilac */
+div.table .theme-6-border, div.box .theme-6-border { border-color:#FCFAFD !important; } /* White Lilac */
 
-.theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
-.theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
-.theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
