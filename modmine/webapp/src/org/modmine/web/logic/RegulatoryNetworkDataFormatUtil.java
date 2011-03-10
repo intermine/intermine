@@ -30,7 +30,11 @@ public final class RegulatoryNetworkDataFormatUtil
 
     // TODO Can be paras passing from action
     private static final String FLY_NETWORK_NAME = "fly_regulatory_network";
+    private static final String WORM_NETWORK_NAME = "worm_regulatory_network";
     private static final String NETWORK_TYPE = "miRNA-TF regulatory network";
+
+    private static String flyNetworkXGMML = "";
+    private static String wormNetworkXGMML = "";
 
     private RegulatoryNetworkDataFormatUtil() {
 
@@ -50,13 +54,18 @@ public final class RegulatoryNetworkDataFormatUtil
             Set<CytoscapeNetworkNodeData> interactionNodeSet,
             Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
 
-        StringBuffer sb = new StringBuffer();
-        sb = addHeaderToFlyRegulatoryNetworkInXGMML(sb);
-        sb = addNodesToFlyRegulatoryNetworkInXGMML(sb, interactionNodeSet);
-        sb = addEdgesToFlyRegulatoryNetworkInXGMML(sb, interactionEdgeSet);
-        sb = addTailToFlyRegulatoryNetworkInXGMML(sb);
+        if ("".equals(flyNetworkXGMML)) {
+            StringBuffer sb = new StringBuffer();
 
-        return sb.toString();
+            sb = addHeaderToFlyRegulatoryNetworkInXGMML(sb);
+            sb = addNodesToFlyRegulatoryNetworkInXGMML(sb, interactionNodeSet);
+            sb = addEdgesToFlyRegulatoryNetworkInXGMML(sb, interactionEdgeSet);
+            sb = addTailToFlyRegulatoryNetworkInXGMML(sb);
+
+            return sb.toString();
+        } else {
+            return flyNetworkXGMML;
+        }
     }
 
     /**
@@ -106,7 +115,7 @@ public final class RegulatoryNetworkDataFormatUtil
     }
 
     /**
-     * Generate the network nodes of XGMML.
+     * Generate the network nodes of XGMML. (the code is really ugly...)
      *
      * @param sb a StringBuffer
      * @param interactionNodeSet
@@ -257,8 +266,8 @@ public final class RegulatoryNetworkDataFormatUtil
     private static StringBuffer addEdgesToFlyRegulatoryNetworkInXGMML(StringBuffer sb,
             Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
         for (CytoscapeNetworkEdgeData edge : interactionEdgeSet) {
-            sb.append("<edge source=\"" + edge.getSoureceId() + "\" directed=\"true\" "
-                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSoureceId() + " ("
+            sb.append("<edge source=\"" + edge.getSourceId() + "\" directed=\"true\" "
+                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSourceId() + " ("
                     + edge.getInteractionType() + ") " + edge.getTargetId() + "\" "
                     + "label=\"" + edge.getInteractionType() + "\">");
 
@@ -294,6 +303,270 @@ public final class RegulatoryNetworkDataFormatUtil
         return sb;
     }
 
+    //=== Worm regulatory network ===
+    /**
+     * Convert a set of CytoscapeNetworkData to String in XGMML format.
+     * Use StringBuffer instead of DOM or SAX.
+     *
+     * @param interactionEdgeSet a set of CytoscapeNetworkEdgeData objects
+     * @param interactionNodeSet a set of CytoscapeNetworkNodeData objects
+     * @return the network in XGMML format as a string or text
+     */
+    public static String createWormRegulatoryNetworkInXGMML(
+            Set<CytoscapeNetworkNodeData> interactionNodeSet,
+            Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
+
+        if ("".equals(wormNetworkXGMML)) {
+            StringBuffer sb = new StringBuffer();
+
+            sb = addHeaderToWormRegulatoryNetworkInXGMML(sb);
+            sb = addNodesToWormRegulatoryNetworkInXGMML(sb, interactionNodeSet);
+            sb = addEdgesToWormRegulatoryNetworkInXGMML(sb, interactionEdgeSet);
+            sb = addTailToWormRegulatoryNetworkInXGMML(sb);
+
+            return sb.toString();
+        } else {
+            return wormNetworkXGMML;
+        }
+    }
+
+    private static StringBuffer addHeaderToWormRegulatoryNetworkInXGMML(
+            StringBuffer sb) {
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
+            .append("<graph label=\"gene_interactions.xgmml\" xmlns:dc=\"http://purl.org/dc/"
+                    + "elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:"
+                    + "rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:cy=\"http:"
+                    + "//www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" >")
+            .append("<att name=\"documentVersion\" value=\"0.1\"/>")
+            .append("<att name=\"networkMetadata\">")
+            .append("<rdf:RDF>")
+            .append("<rdf:Description rdf:about=\"http://www.cytoscape.org/\">")
+            .append("<dc:type>" + NETWORK_TYPE + "</dc:type>")
+            .append("<dc:description>N/A</dc:description>")
+            .append("<dc:identifier>N/A</dc:identifier>")
+            .append("<dc:date>YYYY-MM-YYHH:MM:SS</dc:date>")
+            .append("<dc:title>" + WORM_NETWORK_NAME + ".xgmml</dc:title>")
+            .append("<dc:source>http://www.cytoscape.org/</dc:source>")
+            .append("<dc:format>Cytoscape-XGMML</dc:format>")
+            .append("</rdf:Description>")
+            .append("</rdf:RDF>")
+            .append("</attr>")
+            .append("<att type=\"string\" name=\"backgroundColor\" value=\"#ffffff\"/>")
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_ZOOM\" value=\"1\"/>")
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_X\" value=\"0\"/>")
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_Y\" value=\"0\"/>");
+
+        return sb;
+    }
+
+    private static StringBuffer addNodesToWormRegulatoryNetworkInXGMML(
+            StringBuffer sb, Set<CytoscapeNetworkNodeData> interactionNodeSet) {
+
+        int nodeXLeftTop = -330;
+        int nodeXLeftMid = -135;
+        int nodeXLeftBot = -155;
+        int nodeXMidTop = 250;
+        int nodeXMidMid = 353;
+        int nodeXMidBot = 270;
+        int nodeXRightTop = 845;
+        int nodeXRightMid = 700;
+        int nodeXRightBot = 835;
+
+        for (CytoscapeNetworkNodeData node : interactionNodeSet) {
+            if (node.getSourceLabel().startsWith("mir")) { // miRNA node
+                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                        + node.getSourceLabel().replace("mir-", "miR") + "\">");
+                if ("left".equals(node.getExtraInfo().get("hposition"))) {
+                    if ("top".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXLeftTop)
+                                + "\" y=\"-250\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXLeftTop = nodeXLeftTop + 30;
+                    } else if ("middle".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXLeftMid)
+                                + "\" y=\"-50\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXLeftMid = nodeXLeftMid + 40;
+                    } else if ("bottom".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXLeftBot)
+                                + "\" y=\"150\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXLeftBot = nodeXLeftBot + 50;
+                    }
+                } else if ("right".equals(node.getExtraInfo().get("hposition"))) {
+                    if ("top".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXRightTop)
+                                + "\" y=\"-20\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXRightTop = nodeXRightTop + 40;
+                    } else if ("middle".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXRightMid)
+                                + "\" y=\"180\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXRightMid = nodeXRightMid + 30;
+                    } else if ("bottom".equals(node.getExtraInfo().get("vposition"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXRightBot)
+                                + "\" y=\"380\" fill=\"#ff00ff\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"0\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "type=\"ELLIPSE\"/>");
+                        nodeXRightBot = nodeXRightBot + 50;
+                    }
+                }
+            } else { // TF node
+                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                        + node.getSourceLabel().split("-")[0].toUpperCase()
+                        + node.getSourceLabel().split("-")[1] + "\">");
+                if ("top".equals(node.getExtraInfo().get("vposition"))) {
+                    if ("yellow".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidTop)
+                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidTop)
+                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidTop)
+                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    }
+                    nodeXMidTop = nodeXMidTop + 50;
+                } else if ("middle".equals(node.getExtraInfo().get("vposition"))) {
+                    if ("yellow".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidMid)
+                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidMid)
+                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidMid)
+                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    }
+                    nodeXMidMid = nodeXMidMid + 65;
+                } else if ("bottom".equals(node.getExtraInfo().get("vposition"))) {
+                    if ("yellow".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidBot)
+                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidBot)
+                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
+                        sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
+                            .append("<graphics x=\""
+                                + Integer.toString(nodeXMidBot)
+                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "cy:nodeTransparency=\"0.8\" width=\"1\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "type=\"TRIANGLE\"/>");
+                    }
+                    nodeXMidBot = nodeXMidBot + 90;
+                }
+            }
+            sb.append("</node>");
+        }
+
+        return sb;
+    }
+
+    private static StringBuffer addEdgesToWormRegulatoryNetworkInXGMML(
+            StringBuffer sb, Set<CytoscapeNetworkEdgeData> interactionEdgeSet) {
+        for (CytoscapeNetworkEdgeData edge : interactionEdgeSet) {
+            sb.append("<edge source=\"" + edge.getSourceId() + "\" directed=\"true\" "
+                    + "target=\"" + edge.getTargetId() + "\" label=\""
+                    + edge.getInteractionType() + "\">");
+
+            sb.append("<att type=\"string\" name=\"interactionType\" "
+                    + "value=\"" + edge.getInteractionType() + "\"/>");
+
+            if ("miRNA-TF".equals(edge.getInteractionType())) {
+                sb.append("<graphics cy:sourceArrowColor=\"#000000\" "
+                        + "cy:sourceArrow=\"0\" fill=\"#ff0000\" width=\"1\" "
+                        + "cy:targetArrow=\"3\" cy:targetArrowColor=\"#000000\" "
+                        + "cy:edgeLineType=\"SOLID\"/>");
+            } else if ("TF-miRNA".equals(edge.getInteractionType())) {
+                sb.append("<graphics cy:sourceArrowColor=\"#000000\" "
+                        + "cy:sourceArrow=\"0\" fill=\"#00ff7f\" width=\"1\" "
+                        + "cy:targetArrow=\"3\" cy:targetArrowColor=\"#000000\" "
+                        + "cy:edgeLineType=\"SOLID\"/>");
+            } else if ("TF-TF".equals(edge.getInteractionType())) {
+                sb.append("<graphics cy:sourceArrowColor=\"#000000\" "
+                        + "cy:sourceArrow=\"0\" fill=\"#000000\" width=\"3\" "
+                        + "cy:targetArrow=\"3\" cy:targetArrowColor=\"#000000\" "
+                        + "cy:edgeLineType=\"SOLID\"/>");
+            }
+
+            sb.append("</edge>");
+        }
+
+        return sb;
+    }
+
+    private static StringBuffer addTailToWormRegulatoryNetworkInXGMML(
+            StringBuffer sb) {
+        sb.append("</graph>");
+        return sb;
+    }
+
     //============ for JSON format ============
-    // TODO to be implemented
+    // TODO must implemente
 }
