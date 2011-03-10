@@ -93,6 +93,10 @@ public class ExperimentController extends TilesAction
             MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
         request.setAttribute("expFeatEL", expFeatEL);
 
+        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+            MetadataCache.getSubFileSourceCounts(os);
+        request.setAttribute("subFeatFileSource", subFeatFileSource);
+
         return null;
     }
 }
