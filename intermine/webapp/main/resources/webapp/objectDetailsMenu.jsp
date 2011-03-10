@@ -15,7 +15,7 @@
     <ul class="menu">
       <li>
         <html:link action="/objectDetails.do?id=${object.id}#summary"
-        onclick="jQuery('h1.title').scrollTo('slow', 'swing', 0);return false;"
+        onclick="jQuery('a[name=summary]').scrollTo('slow', 'swing', 0);return false;"
         >Summary</html:link>
       </li>
       <c:forEach items="${CATEGORIES}" var="aspect">
