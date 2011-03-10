@@ -196,7 +196,7 @@ public class CytoscapeNetworkService
 
             LinkedHashSet<String> interactionShortNames = new LinkedHashSet<String>();
 
-            aEdge.setSoureceId(String.valueOf(sourceId));
+            aEdge.setSourceId(String.valueOf(sourceId));
             aEdge.setTargetId(String.valueOf(targetId));
 
             if (sourceSymbol != null) {

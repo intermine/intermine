@@ -102,13 +102,13 @@ public class CytoscapeNetworkController extends TilesAction
 
         //=== Validation ===
         if (interactionInfoMap == null) {
-            String dataNotIncludedMessage = "Interaction data is not included.";
+            String dataNotIncludedMessage = "Interaction data is not integrated.";
             request.setAttribute("dataNotIncludedMessage", dataNotIncludedMessage);
             return null;
         }
 
         // Check if interaction data available for the organism
-        Gene aTestGene = (Gene) os.getObjectById(fullInteractingGeneSet.iterator().next());
+        Gene aTestGene = (Gene) os.getObjectById((Integer) fullInteractingGeneSet.toArray()[0]);
         String orgName = aTestGene.getOrganism().getName();
         if (!interactionInfoMap.containsKey(orgName)) {
             String orgWithNoDataMessage = "No interaction data found for "
@@ -119,6 +119,4 @@ public class CytoscapeNetworkController extends TilesAction
 
         return null;
     }
-
-
 }
