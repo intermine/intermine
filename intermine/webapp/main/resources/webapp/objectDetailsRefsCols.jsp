@@ -123,20 +123,17 @@
     </c:choose>
     <c:if test="${collection.size > 0}">
       <c:choose>
-        <c:when test="${verbose}">
+        <c:when test="${true}">
           <%-- ############# --%>
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
-          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;"><c:if
-            test="${verbose}">
+          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
             <tiles:insert page="/objectDetailsCollectionTable.jsp">
               <tiles:put name="collection" beanName="collection" />
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
             </tiles:insert>
-
             <script type="text/javascript">trimTable('#coll_${fn:replace(placement, ":", "_")}${fieldName}_inner');</script>
-
-          </c:if></div>
+          </div>
 
           <p class="in_table" style="display:none;">
             <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
