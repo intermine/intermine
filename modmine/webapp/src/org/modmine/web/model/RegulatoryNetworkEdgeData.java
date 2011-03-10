@@ -20,5 +20,20 @@ import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
  */
 public class RegulatoryNetworkEdgeData extends CytoscapeNetworkEdgeData
 {
+    /**
+     * @param obj a CytoscapeNetworkEdgeData object
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return false;
+    }
 
+    /**
+     * @return hashCode
+     */
+    @Override
+    public int hashCode() {
+        return (this.getSourceId() + "-" + this.getTargetId()).hashCode();
+    }
 }
