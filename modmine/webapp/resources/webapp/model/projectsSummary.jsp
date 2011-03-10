@@ -108,7 +108,7 @@ Labs:
       <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count > 1 }"><br> </c:if>
 
-     <%-- TEMP patch until data is corrected. it should be (otherwise) --%>
+     <%-- TEMP patch until data is corrected. it should be (otherwise) 
      <c:choose>
      <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators'
   && fc.featureType == 'ProteinBindingSite'}">
@@ -118,7 +118,11 @@ Labs:
       ${fc.featureType}:&nbsp;${fc.featureCounts}
      </c:otherwise>
      </c:choose>
+     --%>
 <%-- END --%>
+
+${fc.featureType}:&nbsp;${fc.featureCounts}
+
 
 <%-- too crowded: rm here, still available in the experiment page
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">

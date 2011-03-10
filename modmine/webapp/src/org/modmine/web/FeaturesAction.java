@@ -91,6 +91,7 @@ public class FeaturesAction extends InterMineAction
         String action = request.getParameter("action");
 
         String dccId = null;
+        String sourceFile = null;
         String experimentName = null;
 
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
@@ -185,6 +186,9 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
+            sourceFile = request.getParameter("file");
+            LOG.info("PBS FILE:" + sourceFile); 
+            
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
@@ -237,9 +241,9 @@ public class FeaturesAction extends InterMineAction
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
                 // temp fix for unmerged peak scores
-                if (unmergedPeaks.contains(dccId)) {
-                    addMergingPeaks(featureType, q);
-                }
+//                if (unmergedPeaks.contains(dccId)) {
+//                    addMergingPeaks(featureType, q);
+//                }
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -249,6 +253,16 @@ public class FeaturesAction extends InterMineAction
                     q.addView(featureType + ".submissions.DCCid");
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
+                
+             // source file
+                
+                if (sourceFile != null) {
+                    LOG.info("PBS adding constraint:" + sourceFile); 
+                    
+                    q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
+                }
+                
+                
             }
         } else if ("subEL".equals(type)) {
             // For the expression levels
@@ -371,8 +385,13 @@ public class FeaturesAction extends InterMineAction
             // temp fix for unmerged peak scores
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-            if (unmergedPeaks.contains(dccId)) {
-                addMergingPeaks(featureType, q);
+//            if (unmergedPeaks.contains(dccId)) {
+//                addMergingPeaks(featureType, q);
+//            }
+            sourceFile = request.getParameter("file");
+            if (sourceFile != null) {
+                LOG.info("PBS adding constraint LIST:" + sourceFile); 
+                q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
 
             Profile profile = SessionMethods.getProfile(session);

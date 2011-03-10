@@ -131,7 +131,6 @@ input.submit {
 <div class="body">
 
 <%-- EXPERIMENT --%>
-
 <c:forEach items="${experiments}" var="exp"  varStatus="status">
 <%-- for gbrowse: to modify and take the organism from the submission --%>
 <c:set var="ncbiftp" value="ftp://ftp.ncbi.nlm.nih.gov"/>
@@ -714,7 +713,7 @@ target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${
 ${fc.key}:
 <%-- temp patch until data is corrected. it should be (otherwise)
    <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
- --%>
+ 
 <c:choose>
 <c:when test="${sub.dCCid == '2753'}">
    <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4230</html:link>
@@ -742,9 +741,11 @@ ${fc.key}:
 </c:when>
 
 <c:otherwise>
-   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
 </c:otherwise>
 </c:choose>
+
+--%>
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
 
 <%-- END patch --%>
 
@@ -794,6 +795,59 @@ Expression Levels:&nbsp;
   </c:forEach>
   </c:if>
 </c:forEach>
+
+<%-- SOURCE FILE --%>
+<c:forEach items="${subFeatFileSource}" var="subFFS" varStatus="subFFS_status">
+  <c:if test="${subFFS.key == sub.dCCid}" >
+  <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
+  <c:if test="${FFS.key == fc.key}" >
+    <c:forEach items="${FFS.value}" var="FS" varStatus="FS_status">
+    <c:if test="${!FS_status.first}">  
+    <br>
+    </c:if>
+    ${FS.key}:
+    <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+
+    &nbsp;&nbsp;export:
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
+        &nbsp;
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=csv">CSV</html:link>
+                <c:set var="isUnloc" value="false"></c:set>
+                <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
+                  <c:if test="${uft.key == sub.dCCid}">
+                   <c:forEach items="${uft.value}" var="uftv" varStatus="uftv_status">
+                    <c:if test="${uftv == fc.key}">
+                      <c:set var="isUnloc" value="true">
+                      </c:set>
+                    </c:if>
+                  </c:forEach>
+                </c:if>
+               </c:forEach>
+      <c:choose>
+      <c:when test="${isUnloc == 'true' }">
+      <i>&nbsp;GFF3&nbsp;SEQ</i>
+      </c:when>
+      <c:otherwise>
+         &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
+         &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
+      </c:otherwise>
+      </c:choose>
+
+         &nbsp;&nbsp;
+         <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}">create&nbsp;LIST</html:link>
+
+    
+    
+    
+    </c:forEach>
+    </c:if>
+  </c:forEach>
+  </c:if>
+</c:forEach>
+
+
+
+
             </td>
             </tr>
 
