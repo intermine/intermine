@@ -48,6 +48,7 @@
   </thead>
   <tbody>
     <c:forEach items="${table.resultElementRows}" var="resultElementRow" varStatus="status">
+      <c:set var="totalRowCount" value="${totalRowCount + 1}" scope="request" />
       <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if> id="tr_${resultElementRow.identifier}">
         <c:if test="${resultElementRow.showIdentifier}">
             <td

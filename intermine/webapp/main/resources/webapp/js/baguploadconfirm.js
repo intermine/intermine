@@ -29,6 +29,11 @@ function addId2Bag(objectId, row, parentId, issueType) {
         // update the number of matches count
         updateCount('#matchCount', 1);
 
+        // now update the count of items in a JS var from bagUploadConfirm.jsp
+        if (matchCount != null) {
+          matchCount++;
+        }
+
         var idArray = duplicateArray[parentId];
         if (idArray == null) {
           duplicateArray[parentId] = new Array(objectId);
@@ -41,11 +46,6 @@ function addId2Bag(objectId, row, parentId, issueType) {
 
           // decrease count
           updateCount('#initialIdCount', -1);
-
-          // now update the count of items in a JS var from bagUploadConfirm.jsp
-          if (matchCount != null) {
-            matchCount++;
-          }
         } else {
           idArray[idArray.length] = objectId;
           duplicateArray[parentId] = idArray;
@@ -183,6 +183,11 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
         // update the number of matches count
         updateCount('#matchCount', -1);
 
+        // now update the count of items in a JS var from bagUploadConfirm.jsp
+        if (matchCount != null) {
+          matchCount--;
+        }
+
         var idArray = duplicateArray[parentId];
         if (idArray.length == 1) {
             // increase count
@@ -193,11 +198,6 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
 
             // reduce count
             updateCount('#initialCount', -1);
-
-            // now update the count of items in a JS var from bagUploadConfirm.jsp
-            if (matchCount != null) {
-              matchCount--;
-            }
 
             duplicateArray[parentId] = null;
         } else {

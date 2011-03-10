@@ -55,13 +55,6 @@ function toggleForm(matchCount) {
       <div class="formik">
       <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
       <input id="saveList" type="button" name="confirmBagUpload" value="Save a list of ${matchCount} ${bagUploadConfirmForm.bagType}(s)" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
-      <script type="text/javascript">
-        var matchCount = ${matchCount};
-        var totalCount = ${totalIdCount - fn:length(unresolved)};
-
-        var listType = "${bagUploadConfirmForm.bagType}(s)";
-        var furtherMatchesText = "There are further matches provided below.";
-      </script>
       </div>
       <div>
         <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
@@ -73,6 +66,8 @@ function toggleForm(matchCount) {
 
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
+
+    <c:set var="totalRowCount" value="0" scope="request" />
 
     <div class="body">
     <h2>b) Add additional matches</h2>
@@ -163,4 +158,13 @@ function toggleForm(matchCount) {
     </div>
   </c:if>
 </html:form>
+
+<script type="text/javascript">
+  var matchCount = ${matchCount};
+  var totalCount = ${matchCount + totalRowCount};
+
+  var listType = "${bagUploadConfirmForm.bagType}(s)";
+  var furtherMatchesText = "There are further matches provided below.";
+</script>
+
 <!-- /bagUploadConfirm.jsp -->
