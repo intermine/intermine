@@ -63,38 +63,30 @@
   <c:forEach items="${object.attributes}" var="entry">
     <c:if test="${!object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
 
-        <c:if test="${tableCount %2 == 0}">
-          <c:choose>
-            <c:when test="${tableCount == 0}">
-              <tr>
-            </c:when>
-            <c:otherwise>
-              </tr><tr>
-            </c:otherwise>
-          </c:choose>
-        </c:if>
-        <c:set var="tableCount" value="${tableCount+1}" scope="page" />
-
-        <td>${entry.key}</td>
-        <c:forEach items="${object.clds}" var="cld">
-          <strong><im:typehelp
-            type="${cld.unqualifiedName}.${entry.key}" /></strong>
-        </c:forEach>
-        <td><c:choose>
-          <c:when test="${object.longAttributes[entry.key] != null}">
-              ${object.longAttributes[entry.key]}
-              <c:if
-              test="${object.longAttributesTruncated[entry.key] != null}">
-              <html:link
-                action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                <fmt:message key="objectDetails.viewall" />
-              </html:link>
-            </c:if>
+      <c:if test="${tableCount %2 == 0}">
+        <c:choose>
+          <c:when test="${tableCount == 0}">
+            <tr>
           </c:when>
           <c:otherwise>
-            <strong><im:value>${entry.value}</im:value></strong>
+            </tr><tr>
           </c:otherwise>
-        </c:choose></td>
+        </c:choose>
+      </c:if>
+
+      <c:choose>
+        <c:when test="${object.longAttributes[entry.key] != null && object.longAttributesTruncated[entry.key] == null}">
+          <td>${entry.key}</td>
+          <td>${object.longAttributes[entry.key]}</td>
+          <c:set var="tableCount" value="${tableCount+1}" scope="page" />
+        </c:when>
+        <c:otherwise>
+          <td>${entry.key}</td>
+          <td><strong><im:value>${entry.value}</im:value></strong></td>
+          <c:set var="tableCount" value="${tableCount+1}" scope="page" />
+        </c:otherwise>
+      </c:choose>
+
     </c:if>
   </c:forEach>
 </table>
@@ -108,6 +100,16 @@
     </tr>
   </c:if>
 </c:forEach>
+  <c:forEach items="${object.attributes}" var="entry">
+    <c:if test="${!object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
+      <c:if test="${object.longAttributes[entry.key] != null && object.longAttributesTruncated[entry.key] != null}">
+        <tr>
+          <td>${entry.key}</td>
+          <td><im:value>${entry.value}</im:value></td>
+        </tr>
+      </c:if>
+    </c:if>
+  </c:forEach>
 </table>
 
 <c:if test="${object.hasHeaderInlineLists}">
