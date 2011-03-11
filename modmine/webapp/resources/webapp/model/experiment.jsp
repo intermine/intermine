@@ -805,6 +805,7 @@ Expression Levels:&nbsp;
     <c:if test="${!FS_status.first}">  
     <br>
     </c:if>
+    <c:if test="${FS.value != fc.value}" >
     ${FS.key}:
     <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
 
@@ -836,7 +837,7 @@ Expression Levels:&nbsp;
          &nbsp;&nbsp;
          <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}">create&nbsp;LIST</html:link>
 
-    
+    </c:if>
     
     
     </c:forEach>
