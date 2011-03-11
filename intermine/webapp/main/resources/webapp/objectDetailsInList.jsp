@@ -17,10 +17,7 @@
       Lists in which this
       <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
-      </c:forEach> can be found:
-      <c:forEach items="${bagsWithId.collection}" var="interMineBag" varStatus="status">
-        <c:if test="${status.count > 2}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
-      </c:forEach>
+      </c:forEach> can be found: <c:forEach items="${bagsWithId.collection}" var="interMineBag" varStatus="status"><c:if test="${status.count > 2}">,</c:if> <c:if test="${interMineBag != null}"><html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>&nbsp;(<c:out value="${interMineBag.size}"/>)</c:if></c:forEach>
 </div>
 </c:if>
 
@@ -34,7 +31,15 @@
       <option name="">--------</option>
       <c:forEach items="${PROFILE.savedBags}" var="entry">
        <c:if test="${empty filteredWebSearchables[entry.key]}">
-        <option name="${entry.key}">${entry.key}</option>
+         <c:set var="notFoundInAList" value="true" scope="page" />
+         <c:forEach items="${bagsWithId.collection}" var="interMineBag">
+           <c:if test="${interMineBag.name == entry.key}">
+             <c:set var="notFoundInAList" value="false" scope="page" />
+           </c:if>
+         </c:forEach>
+         <c:if test="${notFoundInAList}">
+           <option name="${entry.key}">${entry.key}</option>
+         </c:if>
        </c:if>
       </c:forEach>
     </select>

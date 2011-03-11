@@ -45,7 +45,13 @@ public class ObjectDetailsInList
      * @return size of the collection
      */
     public Integer getCount() {
-        return bagsWithId.size();
+        Integer count = 0;
+        for (InterMineBag b : bagsWithId) {
+            if (b != null) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }
