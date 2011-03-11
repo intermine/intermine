@@ -1536,9 +1536,9 @@ public final class MetadataCache
         //        QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
         //        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
         //        cs.addConstraint(ccEl);
-        
+
         q.setConstraint(cs);
-        
+
         Results results = os.execute(q);
         submissionFileSourceCounts = new HashMap<String, Map<String, Map<String, Long>>>();
         
@@ -1550,9 +1550,9 @@ public final class MetadataCache
             Class<?> feat = (Class<?>) row.get(1);
             String fileName = (String) row.get(2);
             Long count = (Long) row.get(3);
-            
+
             String featName = TypeUtil.unqualifiedName(feat.getName());
-            LOG.info("PBS: " + dccId + ":" + featName + "|" + fileName + "=" + count);
+            LOG.debug("PBS: " + dccId + ":" + featName + "|" + fileName + "=" + count);
             
             addToMap (submissionFileSourceCounts, dccId, featName, fileName, count);
         }
@@ -1560,10 +1560,9 @@ public final class MetadataCache
         //            String key = ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT + "."
 //                + dccId + "." + TypeUtil.unqualifiedName(feat.getName());
 //            props.put(key, "" + count);
-        
+
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read submissionFileSourceCounts cache, took: " + timeTaken + "ms");
-        LOG.info("PBS: " + submissionFileSourceCounts);
     }
   
 
