@@ -90,22 +90,28 @@
     }
     else {
 
-       jQuery("#cytoWebContent")
-          .ajaxStart(function(){ jQuery(this).html("Please wait while the network data loads..."); })
-          .ajaxStop(function(){})
-          .ajaxError(function(){ jQuery(this).html("ajax error!"); return;});
-
-        // use ajax to get network
-        jQuery.post("cytoscapeNetworkAjax.do", { fullInteractingGeneSet: '${fullInteractingGeneSet}'}, function(data){
-            if (data.match("^"+"No interaction data found from data sources:")) {
-                geneWithNoDatasourceMessage = data; // case: no interaction data found from the data sources
-                jQuery('#cytoWebContent').html(geneWithNoDatasourceMessage)
-                                         .css('font-style','italic')
-                                         .height(20)
-                                         .width(1200);
-            } else {
-                networkdata = data;
-                displayNetwork(networkdata, fullInteractingGeneSet);
+        // AJAX POST
+        var target = "#cytoWebContent";
+        jQuery(target).html("Please wait while the network data loads...");
+        jQuery.ajax({
+            type: "POST",
+            url: "cytoscapeNetworkAjax.do",
+            dataType: "text",
+            data: "fullInteractingGeneSet=" + encodeURIComponent('${fullInteractingGeneSet}'),
+            success: function(response) {
+                if (response.match("^"+"No interaction data found from data sources:")) {
+                    geneWithNoDatasourceMessage = response; // case: no interaction data found from the data sources
+                    jQuery(target).html(geneWithNoDatasourceMessage)
+                                             .css('font-style','italic')
+                                             .height(20)
+                                             .width(1200);
+                } else {
+                    networkdata = response;
+                    displayNetwork(networkdata, fullInteractingGeneSet);
+                }
+            },
+            error:function (xhr, ajaxOptions, thrownError) {
+                jQuery(target).html("There was a problem retrieving the result.");
             }
         });
     }
