@@ -7,6 +7,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 
+<!-- KEEP THIS! ${object.fieldExprs} -->
+
 <!-- objectDetails.jsp -->
 <html:xhtml />
 
@@ -15,7 +17,7 @@
 <div id="header_wrap">
 
 <div id="object_header"><tiles:get name="objectTrail.tile" />
-<a name="summary"></a><h1 class="title"><!-- KEEP THIS! ${object.fieldExprs} -->
+<a name="summary"></a><h1 class="title">
     ${object.objectType}: <strong>${object.titleMain}</strong> ${object.titleSub}</h1></a>
 
 <table class="fields">
@@ -212,10 +214,9 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <li><a href="#">ZebraMine</a></li>
   </ul>
 
-  <c:set var="displayer" value="${object.externalLinksDisplayer}"/>
   <c:set var="object_bk" value="${object}"/>
   <c:set var="object" value="${displayObject.object}" scope="request"/>
-  <tiles:insert beanName="displayer" beanProperty="src"/>
+  <tiles:insert name="attributeLinks.tile" />
   <c:set var="object" value="${object_bk}"/>
 </div>
 

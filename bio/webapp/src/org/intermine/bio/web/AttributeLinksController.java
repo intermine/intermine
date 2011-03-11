@@ -45,13 +45,13 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.AttributeLinkURL;
 
 /**
- * Set up maps for the attributeLinkDisplayer.jsp
+ * Set up maps for attributeLinks.jsp
  * @author Kim Rutherford
  */
-public class AttributeLinkDisplayerController extends TilesAction
+public class AttributeLinksController extends TilesAction
 {
 
-    protected static final Logger LOG = Logger.getLogger(AttributeLinkDisplayerController.class);
+    protected static final Logger LOG = Logger.getLogger(AttributeLinksController.class);
 
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
 
