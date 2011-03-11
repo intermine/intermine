@@ -16,7 +16,9 @@
 <tiles:importAttribute name="showTitle" ignore="true" />
 <c:if test="${!empty placementRefsAndCollections[placement]}">
 
-  <c:if test="${!empty showTitle}"><a name="miscellaneous"></a><h2>${showTitle}</h2></a></c:if>
+  <c:if test="${!empty showTitle && fn:length(placementRefsAndCollections[placement]) > 0}">
+    <a name="miscellaneous"><h2>${showTitle}</h2></a>
+  </c:if>
 
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
