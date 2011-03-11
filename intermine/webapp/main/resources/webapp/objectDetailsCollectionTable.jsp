@@ -51,7 +51,14 @@
                         </c:when>
                         <c:otherwise>
                           <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>
-                            ${resultElementColumn.field}
+                            <c:choose>
+                              <c:when test="${resultElementColumn.field != null}">
+                                ${resultElementColumn.field}
+                              </c:when>
+                              <c:otherwise>
+                                &nbsp;
+                              </c:otherwise>
+                            </c:choose>
                           </td>
                         </c:otherwise>
                       </c:choose>
