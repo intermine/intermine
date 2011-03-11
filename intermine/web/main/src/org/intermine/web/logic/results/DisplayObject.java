@@ -41,7 +41,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
-import org.intermine.web.logic.config.Displayer;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.HeaderConfig;
@@ -85,11 +84,6 @@ public class DisplayObject
     /** @var List of 'unplaced' normal InlineLists */
     private List<InlineList> inlineListsNormal = null;
 
-    /** @var String path to the tile corresponding to the external links displayer */
-    private String externalLinksDisplayerPath = "attributeLinkDisplayer.tile";
-    /** @var Displayer for external links */
-    private Displayer externalLinksDisplayer = null;
-
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
 
@@ -104,6 +98,7 @@ public class DisplayObject
      * @param os ObjectStore, used when constructing ResultElement of InlineResultTable
      * @throws Exception if an error occurs
      */
+    @SuppressWarnings("unchecked")
     public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
             Map webProperties, Map<String, List<FieldDescriptor>> classKeys, ObjectStore os)
         throws Exception {
@@ -313,6 +308,10 @@ public class DisplayObject
         return fieldExprs;
     }
 
+    /**
+     *
+     * @return Set
+     */
     public Set<CustomDisplayer> getReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, model);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
@@ -320,6 +319,10 @@ public class DisplayObject
     }
 
 
+    /**
+     *
+     * @return Set
+     */
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
         for (CustomDisplayer reportDisplayer : getReportDisplayers()) {
@@ -632,18 +635,6 @@ public class DisplayObject
         }
 
         return null;
-    }
-
-    /**
-     *
-     * @return Displayer showing links to external sites
-     */
-    public Displayer getExternalLinksDisplayer() {
-        if (externalLinksDisplayer == null) {
-            externalLinksDisplayer = new Displayer();
-            externalLinksDisplayer.setSrc(externalLinksDisplayerPath);
-        }
-        return externalLinksDisplayer;
     }
 
 }
