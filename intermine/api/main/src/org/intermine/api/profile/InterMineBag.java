@@ -176,7 +176,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Getter for size, just to make jsp happy.
+     * Getter for size, just to make JSP happy.
      *
      * @return the number of elements in the bag
      * @throws ObjectStoreException if something goes wrong
