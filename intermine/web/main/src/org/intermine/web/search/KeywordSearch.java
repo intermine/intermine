@@ -707,7 +707,7 @@ class InterMineObjectFetcher extends Thread
                             String prefix =
                                 getAttributePrefix(classAttributes.getClassName(), att.getName());
                             if (prefix != null) {
-                                String unPrefixedValue = string.substring(prefix.length() + 1);
+                                String unPrefixedValue = string.substring(prefix.length());
                                 values.add(new ObjectValueContainer(classAttributes.getClassName(),
                                         att.getName(), unPrefixedValue));
                             }
