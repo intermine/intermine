@@ -1,6 +1,5 @@
 package org.intermine.webservice.server.output;
 
-
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
