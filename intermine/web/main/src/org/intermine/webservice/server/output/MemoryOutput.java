@@ -25,7 +25,9 @@ public class MemoryOutput extends Output
     private List<List<String>> results = new  ArrayList<List<String>>();
 
     /** Constructor **/
-    public MemoryOutput() { }
+    public MemoryOutput() {
+
+    }
 
 
     /** Add result  item to memory.
@@ -48,7 +50,9 @@ public class MemoryOutput extends Output
      * Does nothing because MemoryOutput serves as a storage of results during execution.
      */
     @Override
-    public void flush() { }
+    public void flush() {
+
+    }
 
     /**
      * {@inheritDoc}}
