@@ -103,7 +103,6 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
-    @Override
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
@@ -463,7 +462,6 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Destroy method called at Servlet destroy
      */
-    @Override
     public void destroy() {
         try {
             profileManager.close();

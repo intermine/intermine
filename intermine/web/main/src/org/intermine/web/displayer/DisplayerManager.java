@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
@@ -18,31 +18,32 @@ public class DisplayerManager {
     private static DisplayerManager instance = null;
 
     protected static final Logger LOG = Logger.getLogger(DisplayerManager.class);
-    
+
     private Map<String, Map<String, Set<CustomDisplayer>>> displayers =
         new HashMap<String, Map<String, Set<CustomDisplayer>>>();
 
-    public static DisplayerManager getInstance(WebConfig webConfig, Model model) {
+    public static DisplayerManager getInstance(WebConfig webConfig, InterMineAPI im) {
         if (instance == null) {
-            instance = new DisplayerManager(webConfig, model);
+            instance = new DisplayerManager(webConfig, im);
         }
         return instance;
     }
 
-    protected DisplayerManager(WebConfig webConfig, Model model) {
+    protected DisplayerManager(WebConfig webConfig, InterMineAPI im) {
         for (ReportDisplayerConfig config : webConfig.getReportDisplayerConfigs()) {
-            
+
             CustomDisplayer displayer = null;
             try {
                 String customDisplayerName = config.getJavaClass();
-                
+
                 Class<?> clazz =
                     TypeUtil.instantiate(customDisplayerName);
-                Constructor m = clazz.getConstructor(new Class[] {ReportDisplayerConfig.class});
-                displayer = (CustomDisplayer) m.newInstance(new Object[] {config});
-                //displayers.put(customDisplayerName, displayer);
+                Constructor m = clazz.getConstructor(
+                        new Class[] {ReportDisplayerConfig.class, InterMineAPI.class});
+                displayer = (CustomDisplayer) m.newInstance(new Object[] {config, im});
             } catch (Exception e) {
-                LOG.error("Failed to instantiate displayer: " + e);
+                LOG.error("Failed to instantiate displayer for class: " + config.getJavaClass() +
+                        " because: " + e);
             }
             if (displayer == null) {
                 continue;
@@ -55,9 +56,9 @@ public class DisplayerManager {
             }
             Set<String> allTypes = new HashSet<String>();
             for (String type : config.getConfiguredTypes()) {
-                ClassDescriptor cld = model.getClassDescriptorByName(type);
+                ClassDescriptor cld = im.getModel().getClassDescriptorByName(type);
                 allTypes.add(type);
-                for (ClassDescriptor sub : model.getAllSubs(cld)) {
+                for (ClassDescriptor sub : im.getModel().getAllSubs(cld)) {
                     allTypes.add(sub.getUnqualifiedName());
                 }
             }
