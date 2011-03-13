@@ -54,7 +54,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
-    @Override
     public boolean hasNext() {
         return subIter.hasNext();
     }
@@ -84,7 +83,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return ret;
     }
 
-    @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
         List<JSONObject> jsonRow = new ArrayList<JSONObject>();
@@ -97,7 +95,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return next;
     }
 
-    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported for this implementation");
     }

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -77,6 +78,7 @@ public class DisplayObject
     private Map<String, FieldConfig> fieldConfigMap = null;
     private List<String> fieldExprs = null;
     private Map<String, String> verbosity = new HashMap<String, String>();
+    private InterMineAPI im;
     private final Map<String, List<FieldDescriptor>> classKeys;
 
     /** @var List header inline lists set by the WebConfig */
@@ -91,25 +93,22 @@ public class DisplayObject
      * Create a new DisplayObject.
      *
      * @param object the object to display
-     * @param model the metadata for the object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
-     * @param classKeys map of classname to set of keys
-     * @param os ObjectStore, used when constructing ResultElement of InlineResultTable
      * @throws Exception if an error occurs
      */
     @SuppressWarnings("unchecked")
-    public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
-            Map webProperties, Map<String, List<FieldDescriptor>> classKeys, ObjectStore os)
+    public DisplayObject(InterMineObject object, InterMineAPI im, WebConfig webConfig,
+            Map webProperties)
         throws Exception {
 
-        this.os = os;
-
+        this.im = im;
+        this.os = im.getObjectStore();
         this.object = object;
-        this.model = model;
+        this.model = im.getModel();
         this.webConfig = webConfig;
         this.webProperties = webProperties;
-        this.classKeys = classKeys;
+        this.classKeys = im.getClassKeys();
         clds = getLeafClds(object.getClass(), model);
     }
 
@@ -313,7 +312,7 @@ public class DisplayObject
      * @return Set
      */
     public Set<CustomDisplayer> getReportDisplayers() {
-        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, model);
+        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDislayersForType(clsName);
     }

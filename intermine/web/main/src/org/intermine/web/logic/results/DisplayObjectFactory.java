@@ -10,17 +10,13 @@ package org.intermine.web.logic.results;
  *
  */
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -66,16 +62,12 @@ public class DisplayObjectFactory extends CacheMap<InterMineObject, DisplayObjec
         if (displayObject == null) {
             try {
                 final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                Model model = im.getModel();
-                Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
                 ServletContext servletContext = session.getServletContext();
                 WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
                 Properties webProperties = SessionMethods.getWebProperties(servletContext);
 
-                ObjectStore os = im.getObjectStore();
 
-                displayObject = new DisplayObject(imObj, model, webConfig, webProperties,
-                        classKeys, os);
+                displayObject = new DisplayObject(imObj, im, webConfig, webProperties);
             } catch (Exception e) {
                 throw new RuntimeException("failed to make a DisplayObject", e);
             }
