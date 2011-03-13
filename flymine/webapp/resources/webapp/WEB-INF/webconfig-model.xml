@@ -697,9 +697,15 @@
   <reportdisplayers>
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
-                     replacesFields="chromosome,chromosomeLocation,sequence,length"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm"
                      placement="summary"
                      types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.flymine.web.displayer.FlyAtlasDisplayer"
+                     jspName="model/flyAtlasDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
   </reportdisplayers>
 
    <widgets>
