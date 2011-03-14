@@ -47,6 +47,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
 
+    protected static final String BOILERPLATE = 
+    	"#!/usr/bin/perl" + ENDL
+    	+ ENDL
+    	+ "use strict;" + ENDL
+    	+ "use warnings;" + ENDL + ENDL;
+
+    
     /**
      * This method will generate web service source code in Perl from a path query
      * or template query.
@@ -68,12 +75,12 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(BOILERPLATE);
 
         if ("PathQuery".equals(queryClassName)) {
             // Add use Webservice::InterMine
             sb.append("use Webservice::InterMine " + perlWSModuleVer + " '"
-                            + serviceBaseURL + "/service';" + ENDL + ENDL)
+                            + serviceBaseURL + ";" + ENDL + ENDL)
                 .append("# This is an automatically generated script to run the " + projectTitle
                         + " query" + ENDL)
                     .append("# You should install the Webservice::InterMine modules to run this "
@@ -164,7 +171,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                     if (query.getConstraintLogic() != null
                             && !"".equals(query.getConstraintLogic())) {
                         sb.append("# Constraint Logic" + ENDL);
-                        sb.append("$query->logic('" + query.getConstraintLogic() + "');"
+                        sb.append("$query->set_logic('" + query.getConstraintLogic() + "');"
                                 + ENDL);
                     }
                 }
@@ -186,7 +193,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
 
             // Add print results
-            sb.append("print $query->results(as => 'string').\"\\n\";");
+            sb.append("print $query->results(as => 'string'), \"\\n\";");
             sb.append(ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -246,7 +253,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 .append(constraints.toString())
                 .append(");" + ENDL)
                 .append(ENDL)
-                .append("print $results.\"\\n\";" + ENDL);
+                .append("print $results, \"\\n\";" + ENDL);
         }
 
         return sb.toString();
