@@ -155,14 +155,25 @@ echo "Getting Redfly GFF files"
     fi
 echo "==========================================================="
 echo
+# broken, alex, fix me!
+#echo "==========================================================="
+#echo "Getting Reactome BioPAX files"
+#./get_reactome
+#    if [ $? -ne 0 ]
+#    then
+#        echo "error getting Reactome files" 2>&1 >> $tempfile
+#    fi
+#echo "==========================================================="
+echo
 echo "==========================================================="
-echo "Getting Reactome BioPAX files"
-./get_reactome
+echo "Getting BioGRID"
+./get_redfly "$shared_data/biogrid" $tempfile
     if [ $? -ne 0 ]
     then
-        echo "error getting Reactome files" 2>&1 >> $tempfile
+        echo "error getting BioGRID files" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
+echo
 
 
 today=$(date +"%F")
