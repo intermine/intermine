@@ -158,6 +158,12 @@ sub _handle_json_results {
     }
 }
 
+=head2 url 
+
+Get the url for a webservice request
+
+=cut
+
 sub url {
     my $self = shift;
     my %args = @_;
@@ -165,7 +171,7 @@ sub url {
     $query_form{format} = $args{format} || 'tab';
     
     # Set optional parameters
-    for my $opt (qw/start size addheader/) {
+    for my $opt (qw/start size columnheaders/) {
         $query_form{$opt} = $args{$opt} if ($args{$opt});
     }
 
