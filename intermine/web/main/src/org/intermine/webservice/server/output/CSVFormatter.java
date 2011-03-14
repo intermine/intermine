@@ -10,9 +10,6 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-
 import org.intermine.web.logic.export.RowFormatter;
 import org.intermine.web.logic.export.RowFormatterImpl;
 
@@ -21,25 +18,9 @@ import org.intermine.web.logic.export.RowFormatterImpl;
  *
  * @author Jakub Kulaviak
  **/
-public class CSVFormatter extends Formatter
+public class CSVFormatter extends FlatFileFormatter
 {
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatHeader(Map<String, String> attributes) {
-        return "";
-    }
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatResult(List<String> resultRow) {
-        RowFormatter labourer = new RowFormatterImpl(",", true);
-        return labourer.format((List) resultRow);
-    }
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatFooter() {
-        return "";
-    }
+	public CSVFormatter() {
+		setRowFormatter(new RowFormatterImpl(",", true));
+	}
 }

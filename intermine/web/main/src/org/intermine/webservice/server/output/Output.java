@@ -24,7 +24,10 @@ import java.util.Map;
 public abstract class Output
 {
 
-    private Map<String, String> headerAttributes;
+    private Map<String, Object> headerAttributes;
+    
+    private String errorMessage = null;
+    private int status = SC_OK;
 
     /**
      * Bad request http status code.
@@ -55,6 +58,23 @@ public abstract class Output
      * Resource not found http status code.
      */
     public static final int SC_NOT_FOUND = 404;
+    
+    /**
+     * Sets the error message
+     * @param message
+     */
+    public void setError(String message, int code) {
+    	errorMessage = message;
+    	status = code;
+    }
+    
+    protected String getError() {
+    	return errorMessage;
+    }
+    
+    protected int getCode() {
+    	return status;
+    }
 
     /**
      * Adds data to output.
@@ -71,7 +91,7 @@ public abstract class Output
      * Sets header attributes that are displayed for example in xml header.
      * @param attributes header attributes
      */
-    public void setHeaderAttributes(Map<String, String> attributes) {
+    public void setHeaderAttributes(Map<String, Object> attributes) {
         this.headerAttributes = attributes;
     }
 
@@ -79,7 +99,7 @@ public abstract class Output
      * @see #setHeaderAttributes(Map)
      * @return header attributes
      */
-    public Map<String, String>  getHeaderAttributes() {
+    public Map<String, Object>  getHeaderAttributes() {
         return headerAttributes;
     }
 

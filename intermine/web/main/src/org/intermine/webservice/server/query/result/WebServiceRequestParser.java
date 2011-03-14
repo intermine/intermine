@@ -115,6 +115,8 @@ public class WebServiceRequestParser
     /** The callback to be supplied for jsonp calls **/
     public static final String CALLBACK_PARAMETER = "callback";
 
+    public static final String ADD_HEADER_PARAMETER = "addheader";
+    
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
      * method in subclass else the parameters won't be set.

@@ -66,7 +66,7 @@ public class AvailableTemplatesService extends WebService
                     PathQuery.USERPROFILE_VERSION)));
         } else if (formatIsJSON()) {
             ResponseUtil.setJSONHeader(response,  FILE_BASE_NAME + ".json");
-            Map<String, String> attributes = new HashMap<String, String>();
+            Map<String, Object> attributes = new HashMap<String, Object>();
             if (formatIsJSONP()) {
                 String callback = getCallback();
                 if (callback == null || "".equals(callback)) {

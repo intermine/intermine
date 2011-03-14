@@ -14,6 +14,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.intermine.webservice.server.WebService;
+
 /**
  * Immediately as the data or error messages are added they are streamed via http connection.
  * So the data can not be retrieved later. Before streaming they are formatted with
@@ -30,6 +33,8 @@ public class StreamedOutput extends Output
     private Formatter formatter;
 
     private boolean headerPrinted = false;
+    
+    private static final Logger logger = Logger.getLogger(StreamedOutput.class);
 
     /** Constructor.
      * @param writer writer where the data will be printed
@@ -40,13 +45,16 @@ public class StreamedOutput extends Output
         this.writer = writer;
         this.formatter = formatter;
     }
-
-    private void printHeader() {
-        String header = formatter.formatHeader(getHeaderAttributes());
-        if (header != null && header.length() > 0) {
-            writer.println(header);
-        }
-        headerPrinted = true;
+    
+    private void ensureHeaderIsPrinted() {
+    	if (!headerPrinted) {
+    		String header = formatter.formatHeader(getHeaderAttributes());
+            if (header != null && header.length() > 0) {
+                writer.println(header);
+            }		
+            headerPrinted = true;	
+    	}
+    	return;
     }
 
     /** Forwards data to associated writer
@@ -54,7 +62,7 @@ public class StreamedOutput extends Output
      * **/
     @Override
     public void addResultItem(List<String> item) {
-        if (!headerPrinted) { printHeader(); }
+    	ensureHeaderIsPrinted();
         writer.println(formatter.formatResult(item));
         resultsCount++;
     }
@@ -79,9 +87,8 @@ public class StreamedOutput extends Output
      */
     @Override
     public void flush() {
-        if (headerPrinted) {
-            writer.print(formatter.formatFooter());
-        }
+    	ensureHeaderIsPrinted();
+        writer.print(formatter.formatFooter(getError(), getCode()));
         writer.flush();
     }
 
@@ -89,7 +96,7 @@ public class StreamedOutput extends Output
      * {@inheritDoc}
      */
     @Override
-    public void setHeaderAttributes(Map<String, String> attributes) {
+    public void setHeaderAttributes(Map<String, Object> attributes) {
         if (headerPrinted) {
             throw new RuntimeException("Attempt to set header attributes "
                 + "although header was printed already.");

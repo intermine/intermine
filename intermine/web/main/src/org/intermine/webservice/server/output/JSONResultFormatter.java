@@ -47,22 +47,24 @@ public abstract class JSONResultFormatter extends JSONFormatter
      * @param attributes the attributes passed in from the containing output
      */
     @Override
-    public String formatHeader(Map<String, String> attributes) {
+    public String formatHeader(Map<String, Object> attributes) {
         String superResults = super.formatHeader(attributes);
         StringBuilder sb = new StringBuilder(superResults);
-        for (String key : attributes.keySet()) {
-            if (KEY_CALLBACK.equals(key)) { continue; }
-            sb.append("'" + key + "':");
-            String attr = attributes.get(key);
-            boolean shouldQuoteAttr = attrNeedsQuotes(attr);
-            if (shouldQuoteAttr) {
-                sb.append("'");
-            }
-            sb.append(attr);
-            if (shouldQuoteAttr) {
-                sb.append("'");
-            }
-            sb.append(",");
+        if (attributes != null) {
+	        for (String key : attributes.keySet()) {
+	            if (KEY_CALLBACK.equals(key)) { continue; }
+	            sb.append("'" + key + "':");
+	            String attr = (String) attributes.get(key);
+	            boolean shouldQuoteAttr = attrNeedsQuotes(attr);
+	            if (shouldQuoteAttr) {
+	                sb.append("'");
+	            }
+	            sb.append(attr);
+	            if (shouldQuoteAttr) {
+	                sb.append("'");
+	            }
+	            sb.append(",");
+	        }
         }
         sb.append("'results':[");
         return sb.toString();
@@ -84,14 +86,14 @@ public abstract class JSONResultFormatter extends JSONFormatter
      * @return The formatted footer string.
      */
     @Override
-    public String formatFooter() {
+    public String formatFooter(String errorMessage, int errorCode) {
         StringBuilder sb = new StringBuilder();
         sb.append("],");
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
         sb.append("'" + JSONResultFormatter.KEY_TIME + "':'" + executionTime + "'");
-        sb.append(super.formatFooter());
+        sb.append(super.formatFooter(errorMessage, errorCode));
         return sb.toString();
     }
 }
