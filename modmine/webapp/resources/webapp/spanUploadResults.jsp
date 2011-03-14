@@ -24,11 +24,12 @@
 
 <script type="text/javascript" class="source">
 
-    var is_query_finished = false;
+    var is_all_queries_finished = false;
     var spanQueryTotalCount = parseInt(${spanQueryTotalCount});
     var finishedQueryCount = 0;
     var current_page_size = 10;
     var current_page_no = 1;
+    var spanResultWaitingIntervalId = "";
 
     jQuery(document).ready(function(){
 
@@ -54,7 +55,7 @@
                     jQuery("#progressbar").progressBar(percentage);
                     jQuery("#progressbar_status").html(finishedQueryCount + "/" + spanQueryTotalCount);
                 } else {
-                    is_query_finished = true;
+                    is_all_queries_finished = true;
                     jQuery("#progressbar_div").hide();
                     enableExportAll();
                     updatePageNavBarAfterQueryFinish();
@@ -133,26 +134,28 @@
 
     function loadResultData(page_size, page_num) {
 
+        clearInterval(spanResultWaitingIntervalId);
+
         var from_index = (page_num - 1) * page_size; // the start index in the result map
         var to_index = page_num * page_size -1; // the end index in the result map
         if (to_index > spanQueryTotalCount)
             { to_index = spanQueryTotalCount - 1;}
 
-        if (is_query_finished == true || (finishedQueryCount - 1) > to_index) {
+        if (is_all_queries_finished == true || (finishedQueryCount - 1) > to_index) {
             paginationGetResult(from_index, to_index);
-        }
-
-        function waitingForSpanResult()
-        {
-          jQuery("#spanResultsTable > tbody").html('<img src="images/wait30.gif"/> Loading...');
-          if ((finishedQueryCount - 1) >= to_index) {
-              clearInterval(spanResultWaitingIntervalId);
-              paginationGetResult(from_index, to_index);
-          }
         }
 
         if ((finishedQueryCount - 1) < to_index) {
             spanResultWaitingIntervalId = setInterval(waitingForSpanResult, 500);
+        }
+
+        function waitingForSpanResult()
+        {
+          jQuery("#spanResultsTable > tbody").html('<img src="images/wait30.gif"/>');
+          if ((finishedQueryCount - 1) >= to_index) {
+              clearInterval(spanResultWaitingIntervalId);
+              paginationGetResult(from_index, to_index);
+          }
         }
     }
 
