@@ -38,7 +38,7 @@
     }
 </style>
 <div id="cyto_div">
-    <h3 class="interactions">Interaction Network</h3>
+    <h3>Interaction Network</h3>
     <div id="caption" style="font-size:12px; font-style:italic">
     <!-- jQuery will add stuff here -->
     </div>

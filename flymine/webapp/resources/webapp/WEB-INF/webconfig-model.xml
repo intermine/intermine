@@ -192,7 +192,7 @@
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-      <displayer src="cytoscapeNetworkDisplayer.tile"/>
+      <!-- <displayer src="cytoscapeNetworkDisplayer.tile"/> -->
       <displayer src="/model/interMineLinkDisplayer.jsp"/>
     </longdisplayers>
     <bagdisplayers>
@@ -459,7 +459,7 @@
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
-      <displayer src="cytoscapeNetworkDisplayer.tile"/>
+      <!-- <displayer src="cytoscapeNetworkDisplayer.tile"/> -->
     </longdisplayers>
   </class>
 
@@ -707,11 +707,18 @@
                      placement="summary"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+                     jspName="model/cytoscapeNetworkDisplayer.jsp"
+                     replacesFields=""
+                     placement="interactions"
+                     types="Gene,Protein"/>
+
     <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
                      jspName="model/drosophilaHomologueDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
                      types="Gene"/>
+
   </reportdisplayers>
 
    <widgets>
