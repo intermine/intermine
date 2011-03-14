@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -25,14 +24,12 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.core.ResultProcessor;
 
-public class JSONObjFormatterTest extends TestCase {
+import junit.framework.TestCase;
 
-    public JSONObjFormatterTest(String name) {
-        super(name);
-    }
+public class CSVFormatterTest extends TestCase {
 
-    private Properties testProps;
     private ObjectStoreDummyImpl os;
     private Employee tim;
     private Employee gareth;
@@ -44,20 +41,22 @@ public class JSONObjFormatterTest extends TestCase {
     private ExportResultsIterator iterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
+    private Properties testProps;
 
     StringWriter sw;
     PrintWriter pw;
 
+    private final InterMineAPI dummyAPI = new DummyAPI();
+
     Map<String, Object> attributes;
 
-    JSONObjResultProcessor processor;
+    ResultProcessor processor;
 
     @Override
     protected void setUp() throws Exception {
 
         testProps = new Properties();
-        testProps.load(getClass().getResourceAsStream(
-                "JSONObjFormatterTest.properties"));
+        testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
 
         os = new ObjectStoreDummyImpl();
 
@@ -65,9 +64,8 @@ public class JSONObjFormatterTest extends TestCase {
         pw = new PrintWriter(sw);
 
         attributes = new HashMap<String, Object>();
-        attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
-        attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
+        List<String> view = new ArrayList<String>(Arrays.asList("foo", "bar", "baz"));
+        attributes.put(CSVFormatter.HEADER_COLUMNS, view);
 
         tim = new Employee();
         tim.setId(new Integer(5));
@@ -114,7 +112,7 @@ public class JSONObjFormatterTest extends TestCase {
         os.addRow(row5);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Employee.name", "Employee.age", "Employee.id");
+        pq.addViews("Employee.name", "Employee.age");
 
         Map pathToQueryNode = new HashMap();
         Query q;
@@ -123,64 +121,100 @@ public class JSONObjFormatterTest extends TestCase {
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
         iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-        processor = new JSONObjResultProcessor();
-    }
+        processor =  new ResultProcessor();
+ }
 
+    /*
+     * @see junit.framework.TestCase#tearDown()
+     */
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
 
-    public void testJSONObjectFormatter() {
-        JSONObjectFormatter fmtr = new JSONObjectFormatter();
-        assertTrue(fmtr != null);
+    public void testInstantiation() {
+        CSVFormatter fmtr = new CSVFormatter();
+        assertNotNull(fmtr);
     }
 
     public void testFormatHeader() {
-        JSONObjectFormatter fmtr = new JSONObjectFormatter();
-
-        String expected = testProps.getProperty("result.header");
+    	CSVFormatter fmtr = new CSVFormatter();
+        
+        String expected = "\"foo\",\"bar\",\"baz\"";
+        
         assertEquals(expected, fmtr.formatHeader(attributes));
+        
+        expected = "";
+        Map<String, Object> emptyMap = new HashMap<String, Object>();
+        assertEquals(expected, fmtr.formatHeader(emptyMap));
     }
 
     public void testFormatResult() {
-        JSONObjectFormatter fmtr = new JSONObjectFormatter();
-        String expected = "One,Two,Three";
+        CSVFormatter fmtr = new CSVFormatter();
+        String expected = "\"One\",\"Two\",\"Three\"";
         assertEquals(expected,
                 fmtr.formatResult(Arrays.asList("One", "Two", "Three")));
+
         expected = "";
         assertEquals(expected, fmtr.formatResult(new ArrayList<String>()));
     }
-
+    
     public void testFormatFooter() {
-        JSONObjectFormatter fmtr = new JSONObjectFormatter();
-        Date now = Calendar.getInstance().getTime();
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
-        String executionTime = dateFormatter.format(now);
-        String expected = "],'executionTime':'" + executionTime 
-        				+ "',\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        CSVFormatter fmtr = new CSVFormatter();
+        
+        String expected = "";
         assertEquals(expected, fmtr.formatFooter(null, 200));
-        expected = "],'executionTime':'" + executionTime 
-		+ "',\"wasSuccessful\":false,\"error\":\"this error\",\"statusCode\":501}";
-        assertEquals(expected, fmtr.formatFooter("this error", 501));
+        expected = "[ERROR] 400 Bad request. There was a problem with your request parameters:"
+               + "\n[ERROR] This is a test";    
+        assertEquals(expected, fmtr.formatFooter("This is a test", 400));
     }
 
     public void testFormatAll() {
-        JSONObjectFormatter fmtr = new JSONObjectFormatter();
+        CSVFormatter fmtr = new CSVFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
 
-        // These are the two steps the service must perform to get good JSON.
+        // These are the two steps the service must perform.
         processor.write(iterator, out);
         out.flush();
-        Date now = Calendar.getInstance().getTime();
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
-        String executionTime = dateFormatter.format(now);
-        String expected = testProps.getProperty("result.all").replace("{0}",
-                executionTime);
-
+        
+        String expected = 
+        	  "\"foo\",\"bar\",\"baz\"\n"
+        	+ "\"Tim Canterbury\",\"30\"\n"
+        	+ "\"Gareth Keenan\",\"32\"\n"
+        	+ "\"Dawn Tinsley\",\"26\"\n"
+        	+ "\"Keith Bishop\",\"41\"\n"
+        	+ "\"Lee\",\"28\"\n";
+        	
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
     }
+    
+    public void testFormatAllWithProblem() {
+        CSVFormatter fmtr = new CSVFormatter();
+        StreamedOutput out = new StreamedOutput(pw, fmtr);
+        out.setHeaderAttributes(attributes);
+
+        // These are the two steps the service must perform.
+        processor.write(iterator, out);
+        out.setError("Our bad", 500);
+        out.flush();
+        
+        String expected =
+        	  "\"foo\",\"bar\",\"baz\"\n"
+        	+ "\"Tim Canterbury\",\"30\"\n"
+        	+ "\"Gareth Keenan\",\"32\"\n"
+        	+ "\"Dawn Tinsley\",\"26\"\n"
+        	+ "\"Keith Bishop\",\"41\"\n"
+        	+ "\"Lee\",\"28\"\n"
+        	+ "[ERROR] 500 Internal server error.\n"
+        	+ "[ERROR] Our bad";
+        	
+        assertTrue(pw == out.getWriter());
+        assertEquals(5, out.getResultsCount());
+        assertEquals(expected, sw.toString());
+    }
+
+
 }

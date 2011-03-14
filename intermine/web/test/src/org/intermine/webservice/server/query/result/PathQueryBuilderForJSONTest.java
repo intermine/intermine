@@ -15,7 +15,6 @@ import java.util.Map;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 import junit.framework.AssertionFailedError;
