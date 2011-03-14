@@ -706,6 +706,12 @@
                      replacesFields=""
                      placement="summary"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
+                     jspName="model/drosophilaHomologueDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
   </reportdisplayers>
 
    <widgets>
