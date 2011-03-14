@@ -174,8 +174,8 @@ public final class TemplateHelper
     private static ConstraintOp getConstraintOp(String parName, String parValue) {
         ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
         if (parValue != null && ret == null) {
-            throw new IllegalArgumentException("Invalid value of parameter: " + parName
-                    + "It must specify operation.");
+            throw new IllegalArgumentException(
+            		"Problem with parameter '" + parName + "': '" + parValue + "' is not a valid operator.");
         }
         return ret;
     }
