@@ -202,7 +202,7 @@ public class PathQueryHandler extends DefaultHandler
             Map<String, String> attrs, Collection<String> values) throws SAXException {
 
         if (path == null) {
-            throw new SAXException("Path is null: " + q.toString());
+            throw new SAXException("Bad constraint: Path is null. " + q.toString());
         }
 
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
