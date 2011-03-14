@@ -33,11 +33,27 @@ use IO::All;
 use Path::Class;
 use File::Temp;
 use File::Copy;
+use URI;
+use LWP;
+use Web::Scraper;
+
+use constant METADATA_URL => "http://thebiogrid.org/scripts/fetchDirectoryDescription.php";
+my $source_name = 'biogrid';
+
+my $scraper = scraper {
+    process 'h2', heading => 'TEXT';
+};
 
 @ARGV == 1 or die "Expected one argument: data_directory\nusage:\t$0 data_dir\n";
 
-my $version = '3.1.74';
-my $source_name = 'biogrid';
+my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0');
+my $response = $ua->post(METADATA_URL, {directory => '/Current Release'});
+die $response->status_line unless $response->is_success;
+my $scraps = $scraper->scrape($response);
+
+my ($version) = $scraps->{heading} =~ /Release\s+(.*)/g;
+
+die "Could not fetch version" unless $version;
 
 my @desired_organisms = qw/
     Drosophila_melanogaster
@@ -47,6 +63,7 @@ my @desired_organisms = qw/
 
 my $file_address = 'http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-'
                     . $version . '/BIOGRID-ORGANISM-' . $version . '.psi25.zip';
+
 
 my $data_dir = dir($ARGV[0]);
 
@@ -62,7 +79,7 @@ unless (-d "$source_dir") {
 my $version_dir = $source_dir->subdir($version);
 
 if (-d "$version_dir") {
-    die "Version directory exists and is not empty" if ($version_dir->children);
+    die "$version_dir exists and is not empty" if ($version_dir->children);
 } else {
     $version_dir->mkpath();
 }
@@ -73,19 +90,13 @@ my $extract_dir = File::Temp->newdir;
 
 io("$tmp") < io->http($file_address);
 
-system("unzip $tmp -d $extract_dir");
+my @files_to_extract = map {'BIOGRID-ORGANISM-' . $_ . '-' . $version . '.psi25.xml'} 
+                        @desired_organisms;
+system("unzip", "$tmp", @files_to_extract, "-d", "$extract_dir");
 
-for my $organism (@desired_organisms) {
-    my $file_name = 'BIOGRID-ORGANISM-' . $organism . '-' . $version . '.psi25.xml';
-    my $extracted_file = dir("$extract_dir")->file($file_name);
-    my $new_file = $version_dir->file($file_name);
-    if (-f "$extracted_file") {
-        copy("$extracted_file" => "$new_file") 
-            or die "Copy failed for $extracted_file => $new_file";        
-    } else {
-        warn "$extracted_file does not exist";
-    }
-}
+my @extracted_files = dir("$extract_dir")->children;
+copy("$_" => $version_dir->file($_->basename)->stringify) or die "Problem copying $_"
+    for @extracted_files;
 
 my $current_dir = $source_dir->subdir("current");
 
