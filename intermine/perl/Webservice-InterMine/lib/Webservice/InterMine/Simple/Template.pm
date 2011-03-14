@@ -21,7 +21,7 @@ sub result_with {
     my $self = shift;
     my %args = @_;
     my $uri = $self->get_uri;
-    my $format = delete $args{as};
+    my $format = delete $args{as} || 'tab';
     my %query_form = (name => $self->{name}, format => $format, %args);
     $uri->query_form(%query_form);
     my $result = $self->{service}{ua}->get($uri);

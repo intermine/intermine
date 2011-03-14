@@ -121,7 +121,7 @@ sub results {
     my %args = @_;
     my $uri  = $self->get_uri;
     my %query_form = (query => $self->as_xml, format => $self->{as});
-    for (qw/size start addheader/) {
+    for (qw/size start columnheaders/) {
         $query_form{$_} = $args{$_} if (exists $args{$_});
     }
     $uri->query_form(%query_form);

@@ -151,11 +151,13 @@ Examples:
   # Perform boolean logic on constraint objects
   $query->set_logic($conA & ($conB | $conC));
 
-=head2 results([as => $format])
+=head2 results([as => Str, size => Int, start => Int, columnheaders => Bool])
 
-Gets the results for this query in a variety of formats. (see
-L<Webservice::InterMine::Cookbook::Recipe5>) The four default
-formats are:
+Gets a page of results (defined by start and size - defaulting
+to all results from the beginning) in a requested format. (See
+L<Webservice::InterMine::Cookbook::Recipe5>) 
+
+The formats are:
 
 =over 4
 
@@ -164,6 +166,9 @@ formats are:
 Returns all rows as one string, with fields separated by tabs and lines
 separated by new-lines ("\n"). If you are wanting to simply store
 the results in a flat file, this is probably what you want.
+
+If you would like column headers, add the parameter: 
+<code>columnheaders => 1</code>
 
 =item * strings
 
@@ -177,6 +182,10 @@ Returns an arrayref of hashrefs, where the keys are the view columns.
 
 Returns an arrayref of arrayrefs, where the fields are in the same
 order as the view columns.
+
+=item * count 
+
+Returns the total number or results, rather than the results themselves.
 
 =item * jsonobjects
 
