@@ -6,7 +6,7 @@ use Webservice::InterMine::ConstraintFactory;
 extends 'Webservice::InterMine::Query::Core';
 with(
     'Webservice::InterMine::Query::Roles::Runnable',
-    'Webservice::InterMine::Query::Roles::QueryUrl',
+    'Webservice::InterMine::Query::Roles::QueryParameters',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::WriteOutLegacy',
     'Webservice::InterMine::Query::Roles::Serviced',
@@ -131,11 +131,25 @@ Adds a join description to the query (see L<Webservice::InterMine::Cookbook::Rec
 
 Adds a path description to the query (see L<Webservice::InterMine::Cookbook::Recipe4>).
 
-=head2 logic([EXPR or $str])
+=head2 logic
 
-Gets or sets the current logic for the query as an object (calling C<code>
-on the logic object gets a human readable string version). Illegal logic
+Get the logic for the query as an object. The Logic object is string overloaded to
+its human readable string representation (also available with ->code). 
+
+see: L<Webservice::InterMine::LogicalSet>
+
+=head2 set_logic(EXPR or $str)
+
+Sets the current logic for the query. Illegal logic
 expressions or strings will cause exceptions to be thrown.
+
+Examples:
+
+  # Parse a string
+  $query->set_logic("A and (B or C)");
+
+  # Perform boolean logic on constraint objects
+  $query->set_logic($conA & ($conB | $conC));
 
 =head2 results([as => $format])
 

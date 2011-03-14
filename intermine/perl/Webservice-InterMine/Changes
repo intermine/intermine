@@ -47,3 +47,17 @@ Revision history for Webservice-InterMine
         * Added moose hygiene test, and made it pass
         * More POD (especially in important roles)
         * Added size and start (paging) capabilities to Runnable queries
+0.9605: Sat 12 Mar 2011 21:25:56 EST
+        * Added Webservice::InterMine::Simple (see benchmarks)
+            There is a compilation penalty inherent in the use of Moose
+            and meta-class introspection. While perfectly acceptable 
+            when multiple queries are made withing the same process, 
+            for the common use case of a single query, the user may wish for
+            something more performant. In this case, a script that uses 
+            Webservice::InterMine::Simple will gain a full magnitude increase
+            in performance (3.5p/s vs 0.33p/s). However, multiple queries
+            within the same process do not see a similar improvement, it being
+            more in the range of 300% (70p/s vs 250p/s). Where speed is important,
+            and more sophisticated features are not required, a Simple service
+            may be appealing
+         * Added support for headers.

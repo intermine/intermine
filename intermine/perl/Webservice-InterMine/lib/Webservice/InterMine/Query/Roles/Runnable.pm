@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Roles::Runnable;
 
 use Moose::Role;
-requires qw(view service url model);
+requires qw(view service model get_request_parameters resource_path);
 
 use MooseX::Types::Moose qw(Str);
 use Perl6::Junction qw/any/;
@@ -120,6 +120,7 @@ sub results {
         format => $format,
         start => $args{start},
         size  => $args{size},
+        addheaders => $args{addheaders},
     );
     my @lines = $i->all_lines($wanted);
     if ( $wanted eq 'string' and $args{as} eq any(@simple_formats) ) {
@@ -156,6 +157,25 @@ sub _handle_json_results {
         return $perl;
     }
 }
+
+sub url {
+    my $self = shift;
+    my %args = @_;
+    my %query_form = $self->get_request_parameters;
+    $query_form{format} = $args{format} || 'tab';
+    
+    # Set optional parameters
+    for my $opt (qw/start size addheader/) {
+        $query_form{$opt} = $args{$opt} if ($args{$opt});
+    }
+
+    my $url = $self->service->root . $self->resource_path;
+    my $uri = URI->new($url);
+    $uri->query_form(%query_form);
+    return $uri;
+}
+
+1;
 
 =head1 FUNCTIONS
 

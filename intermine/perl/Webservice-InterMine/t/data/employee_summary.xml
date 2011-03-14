@@ -1,0 +1,4 @@
+  <query name="employeesOfACertainAge" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
+    <constraint path="Employee.age" code="A" editable="true" description="First age constraint" op="&gt;" value="35"/>
+    <constraint path="Employee.age" code="B" editable="true" description="Second age constraint" op="!=" value="55"/>
+  </query>

@@ -29,8 +29,6 @@ package Webservice::InterMine::Service;
 
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
-use Webservice::InterMine::Query;
-use Webservice::InterMine::ResultIterator;
 use Net::HTTP;
 use URI;
 use LWP;
@@ -132,6 +130,7 @@ by adding constraints and a view to.
 =cut
 
 sub new_query {
+    require Webservice::InterMine::Query;
     my $self = shift;
     my %args = @_;
 
@@ -143,6 +142,12 @@ sub new_query {
     );
     return apply_roles( $query, $roles );
 }
+
+=head2 new_from_xml(source_file => $file_name)
+
+Returns a new query by unmarshalling a serialised xml query
+
+=cut
 
 sub new_from_xml {
     my $self = shift;
@@ -292,6 +297,7 @@ sub apply_roles {
 
 # Returns a ResultIterator to process the query results with
 sub get_results_iterator {
+    require Webservice::InterMine::ResultIterator;
     my $self      = shift;
     my $url       = shift;
     my $view_list = shift;

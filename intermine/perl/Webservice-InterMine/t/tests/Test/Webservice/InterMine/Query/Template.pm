@@ -38,7 +38,7 @@ sub exp_head {
 	comment => '',
     );
 }
-sub exp_url {'FAKEROOTFAKEPATH?constraint1=Employee.department.name&value1=FOO&format=tab&name=employeesFromCompanyAndDepartment&code1=B&op1=%3D'}
+sub exp_url {'FAKEROOTFAKEPATH?constraint1=Employee.department.name&format=tab&value1=FOO&name=employeesFromCompanyAndDepartment&op1=%3D&code1=B'}
 
 sub args {
     my $test = shift;
@@ -114,7 +114,7 @@ sub _methods : Test(2) {
     $test->SUPER::_methods;
     my @methods = (
 	qw/to_xml source_string source_file url
-	  results_with service_root templatequery_path
+	  results_with service_root 
 	  editable_constraints show_constraints
 	  comment title head insertion/
     );

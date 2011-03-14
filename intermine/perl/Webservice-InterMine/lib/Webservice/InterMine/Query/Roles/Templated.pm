@@ -4,10 +4,7 @@ use Moose::Role;
 use URI;
 use List::MoreUtils qw/uniq/;
 
-requires(
-    qw/name service description results _validate
-      service_root templatequery_path get_constraint/
-);
+requires(qw/name description results _validate get_constraint/);
 
 # allows us to add this role to instances at run-time
 use Moose::Meta::Class;
@@ -98,34 +95,6 @@ sub results_with {
 
     my $results = $clone->results( as => $format );
     return $results;
-}
-
-sub url {
-    my $self       = shift;
-    my %args = @_;
-    my $format = $args{format} || "tab";
-    my $url        = $self->service_root . $self->templatequery_path;
-    my $uri        = URI->new($url);
-    my %query_form = (
-        format => $format,
-        name   => $self->name,
-    );
-    for my $opt (qw/start size/) {
-        $query_form{$opt} = $args{$opt} if ($args{$opt});
-    }
-
-    my $i = 1;
-    for my $constraint ( $self->editable_constraints ) {
-        next unless $constraint->switched_on;
-        my %hash = $constraint->query_hash;
-        while ( my ( $k, $v ) = each %hash ) {
-            $query_form{ $k . $i } = $v;
-        }
-        $i++;
-    }
-    $uri->query_form(%query_form);
-    warn $uri if $ENV{DEBUG};
-    return $uri;
 }
 
 around _validate => sub {
