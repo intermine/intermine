@@ -8,6 +8,7 @@ extends 'Webservice::InterMine::Query::Core';
 with(
     'Webservice::InterMine::Query::Roles::Templated',
     'Webservice::InterMine::Query::Roles::Runnable',
+    'Webservice::InterMine::Query::Roles::TemplateParameters',
     'Webservice::InterMine::Query::Roles::Serviced',
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::WriteOutAble',

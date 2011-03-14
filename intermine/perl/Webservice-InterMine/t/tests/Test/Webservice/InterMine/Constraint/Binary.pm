@@ -50,7 +50,7 @@ sub methods : Test(5) {
     $test->SUPER::methods;
 }
 
-sub strict_construction : Test(23) {
+sub strict_construction : Test(19) {
     my $test = shift;
     $test->SUPER::strict_construction;
 }

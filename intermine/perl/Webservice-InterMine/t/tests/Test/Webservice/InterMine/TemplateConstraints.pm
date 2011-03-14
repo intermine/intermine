@@ -192,7 +192,7 @@ sub default_attributes {
 
 sub type { 'binary' }
 
-sub strict_construction : Test(47) {
+sub strict_construction : Test(43) {
     my $test = shift;
     $test->SUPER::strict_construction;
     $test->test_template_construction($test->SUPER::args);
