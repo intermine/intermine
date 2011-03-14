@@ -13,7 +13,7 @@ package org.intermine.webservice.server;
 import org.intermine.webservice.server.output.Output;
 
 /**
- * Http status code dictionary.
+ * HTTP status code dictionary.
  * @author Jakub Kulaviak
  **/
 public class StatusDictionary
@@ -23,21 +23,23 @@ public class StatusDictionary
      * @return short description of specified status code
      */
     public static String getDescription(int statusCode) {
-        switch (statusCode) {
+        String ret;
+    	switch (statusCode) {
             case Output.SC_BAD_REQUEST:
-                return "There is a problem on the client side (in the browser). Bad request. ";
+                ret = "Bad request. There was a problem with your request parameters:"; break;
             case Output.SC_FORBIDDEN:
-                return "Forbidden. ";
+                ret = "Forbidden. You do not have access to some part of this query - please log in."; break;
             case Output.SC_INTERNAL_SERVER_ERROR:
-                return "Internal server error. ";
+                ret = "Internal server error."; break;
             case Output.SC_NO_CONTENT:
-                return "Resource representation is empty. ";
+                ret = "Resource representation is empty."; break;
             case Output.SC_NOT_FOUND:
-                return "Resource not found. ";
+                ret = "Resource not found."; break;
             case Output.SC_OK:
-                return "OK";
+                ret = "OK"; break;
             default:
-                return "";
+                ret = "Unknown Status";
         }
+    	return statusCode + " " + ret;
     }
 }
