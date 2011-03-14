@@ -41,6 +41,7 @@ import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
@@ -148,7 +149,7 @@ public class QueryResultService extends WebService
      * @param description A description of this query
      */
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
@@ -197,6 +198,11 @@ public class QueryResultService extends WebService
                 callback = "makeInterMineResultsTable";
             }
             attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
+        }
+        if (formatIsFlatFile()) {
+        	if (wantsColumnHeaders()) {
+        		attributes.put(FlatFileFormatter.HEADER_COLUMNS, pq.getView());
+        	}
         }
         output.setHeaderAttributes(attributes);
     }

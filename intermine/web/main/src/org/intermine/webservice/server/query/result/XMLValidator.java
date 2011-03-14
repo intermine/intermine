@@ -41,7 +41,6 @@ public class XMLValidator
         // Made according to http://www.javaworld.com/javaworld/jw-08-2005/jw-0808-xml.html?page=5
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            LOG.debug("DocumentBuilderFactory: " + factory.getClass().getName());
 
             factory.setNamespaceAware(false);
             factory.setValidating(true);

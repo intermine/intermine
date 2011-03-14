@@ -41,9 +41,9 @@ public class JSONFormatter extends Formatter {
      * @param attributes the attributes passed in from the containing output
      */
     @Override
-    public String formatHeader(Map<String, String> attributes) {
+    public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new StringBuilder();
-        if (attributes.get(KEY_CALLBACK) != null) {
+        if (attributes != null && attributes.get(KEY_CALLBACK) != null) {
             hasCallback = true;
             sb.append(attributes.get(KEY_CALLBACK)).append("(");
         }
@@ -78,8 +78,15 @@ public class JSONFormatter extends Formatter {
      * @return The formatted footer string.
      */
     @Override
-    public String formatFooter() {
+    public String formatFooter(String errorMessage, int errorCode) {
         StringBuilder sb = new StringBuilder();
+        sb.append(",\"wasSuccessful\":");
+        if (errorCode != Output.SC_OK) {
+        	sb.append("false,\"error\":\"" + errorMessage + "\"");
+        } else {
+        	sb.append("true,\"error\":null");
+        }
+        sb.append(",\"statusCode\":" + errorCode);
         sb.append("}");
         if (hasCallback) {
             sb.append(");");
