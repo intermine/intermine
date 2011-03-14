@@ -313,7 +313,9 @@ public class PathQueryHandler extends DefaultHandler
             constraintPath = null;
         } else if ("value".equals(qName)) {
             if (valueBuffer == null || valueBuffer.length() < 1) {
-                throw new NullPointerException("No value provided in value tag");
+                throw new NullPointerException("No value provided in value tag."
+                        + " Failed for template query: " + queryName + " on constraint: "
+                        + constraintPath);
             }
             constraintValues.add(valueBuffer.toString());
             valueBuffer = null;
