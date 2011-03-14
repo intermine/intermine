@@ -1,0 +1,104 @@
+#!/usr/bin/perl
+
+=head1 SUMMARY
+
+Download files from  http://www.thebiogrid.org/downloads.php:
+
+=over
+
+=item * BIOGRID-ORGANISM-x.x.xx.psi25.zip
+
+=back
+
+Extract the following three files: 
+
+=over
+
+=item * BIOGRID-ORGANISM-Drosophila_melanogaster-x.x.xx.psi25.xml 
+=item * BIOGRID-ORGANISM-Caenorhabditis_elegans-x.x.xx.psi25.xml 
+=item * BIOGRID-ORGANISM-Saccharomyces_cerevisiae-x.x.xx.psi25.xml
+
+=back
+
+=cut
+
+use strict;
+use warnings;
+
+use IO::All;
+use Path::Class;
+use File::Temp;
+use File::Copy;
+
+
+@ARGV == 1 or die "Expected one argument: data_directory\nusage:\t$0 data_dir\n";
+
+my $version = '3.1.74';
+my $source_name = 'biogrid';
+
+my @desired_organisms = qw/
+    Drosophila_melanogaster
+    Caenorhabditis_elegans
+    Saccharomyces_cerevisiae
+    /;
+
+my $file_address = 'http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-'
+                    . $version . '/BIOGRID-ORGANISM-' . $version . '.psi25.zip';
+
+my $data_dir = dir($ARGV[0]);
+
+warn "Downloading $source_name data (version $version) to $data_dir\n";
+
+my $source_dir = $data_dir->subdir($source_name); 
+
+unless (-d "$source_dir") {
+    die "File exists at $source_dir - cannot use this as a directory" if -e "$source_dir";
+    $source_dir->mkpath() or die "Could not create source directory: $source_dir";
+}
+
+my $version_dir = $source_dir->subdir($version);
+
+if (-d "$version_dir") {
+    die "Version directory exists and is not empty" if ($version_dir->children);
+} else {
+    $version_dir->mkpath();
+}
+
+my $tmp = File::Temp->new(SUFFIX => '.zip', UNLINK => 0);
+
+my $extract_dir = File::Temp->newdir;
+
+io("$tmp") < io->http($file_address);
+
+system("unzip $tmp -d $extract_dir");
+
+for my $organism (@desired_organisms) {
+    my $file_name = 'BIOGRID-ORGANISM-' . $organism . '-' . $version . '.psi25.xml';
+    my $extracted_file = dir("$extract_dir")->file($file_name);
+    my $new_file = $version_dir->file($file_name);
+    if (-f "$extracted_file") {
+        copy("$extracted_file" => "$new_file") 
+            or die "Copy failed for $extracted_file => $new_file";        
+    } else {
+        warn "$extracted_file does not exist";
+    }
+}
+
+my $current_dir = $source_dir->subdir("current");
+
+unlink("$current_dir") if (-e "$current_dir");
+
+symlink("$version_dir" => "$current_dir") 
+    or die "Could not make symlink $version_dir => $current_dir";
+
+exit;
+
+
+
+
+
+
+
+
+
+
