@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+=head1 SYNOPSIS
+
+    get_biogrid /path/to/data/directory
+
 =head1 SUMMARY
 
 Download files from  http://www.thebiogrid.org/downloads.php:
@@ -29,7 +33,6 @@ use IO::All;
 use Path::Class;
 use File::Temp;
 use File::Copy;
-
 
 @ARGV == 1 or die "Expected one argument: data_directory\nusage:\t$0 data_dir\n";
 
@@ -90,6 +93,8 @@ unlink("$current_dir") if (-e "$current_dir");
 
 symlink("$version_dir" => "$current_dir") 
     or die "Could not make symlink $version_dir => $current_dir";
+
+warn "New $source_name data available in $current_dir for version $version\n";
 
 exit;
 
