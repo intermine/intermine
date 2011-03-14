@@ -55,11 +55,14 @@ my ($version) = $scraps->{heading} =~ /Release\s+(.*)/g;
 
 die "Could not fetch version" unless $version;
 
-my @desired_organisms = qw/
-    Drosophila_melanogaster
-    Caenorhabditis_elegans
-    Saccharomyces_cerevisiae
-    /;
+my $conf = io($0 . '.config')->chomp;
+my @desired_organisms;
+
+while (my $option = $conf->getline) {
+    my ($k, $v) = split(/\s*=\s*/, $option);
+    @desired_organisms = split(/,\s*/, $v)
+        if ($k eq 'organisms');
+}
 
 my $file_address = 'http://thebiogrid.org/downloads/archives/Release%20Archive/BIOGRID-'
                     . $version . '/BIOGRID-ORGANISM-' . $version . '.psi25.zip';
