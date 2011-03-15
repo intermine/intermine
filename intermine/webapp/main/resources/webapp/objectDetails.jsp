@@ -145,8 +145,6 @@ jQuery(window).scroll(function() {
 });
 </script>
 
-<code id="testing" style="background:yellow;color:red;font-size:30px;"></code>
-
 <div class="container_12">
 
 <%--
