@@ -37,9 +37,9 @@
         <c:set var="foundDisplayer" value="false" />
       </c:forEach>
       <li>
-        <html:link action="/objectDetails.do?id=${object.id}#miscellaneous"
-        onclick="jQuery('a[name=miscellaneous]').scrollTo('slow', 'swing', -21);return false;"
-        >Miscellaneous</html:link>
+        <html:link action="/objectDetails.do?id=${object.id}#other"
+        onclick="jQuery('a[name=other]').scrollTo('slow', 'swing', -21);return false;"
+        >Other</html:link>
       </li>
     </ul>
   </div>

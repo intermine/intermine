@@ -248,7 +248,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 
   <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
     <div class="clear">&nbsp;</div>
-    <a name="miscellaneous"><h2>Miscellaneous</h2></a>
+    <a name="other"><h2>Other</h2></a>
   </c:if>
   <tiles:insert page="/objectDetailsUnplacedInlineLists.jsp">
     <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
