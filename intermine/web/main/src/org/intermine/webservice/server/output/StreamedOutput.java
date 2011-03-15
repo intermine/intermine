@@ -14,14 +14,12 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.intermine.webservice.server.WebService;
-
 /**
  * Immediately as the data or error messages are added they are streamed via http connection.
  * So the data can not be retrieved later. Before streaming they are formatted with
  * associated formatter.
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  **/
 public class StreamedOutput extends Output
 {
@@ -30,11 +28,9 @@ public class StreamedOutput extends Output
 
     private PrintWriter writer;
 
-    private Formatter formatter;
+    private final Formatter formatter;
 
     private boolean headerPrinted = false;
-    
-    private static final Logger logger = Logger.getLogger(StreamedOutput.class);
 
     /** Constructor.
      * @param writer writer where the data will be printed
@@ -45,16 +41,16 @@ public class StreamedOutput extends Output
         this.writer = writer;
         this.formatter = formatter;
     }
-    
+
     private void ensureHeaderIsPrinted() {
-    	if (!headerPrinted) {
-    		String header = formatter.formatHeader(getHeaderAttributes());
+        if (!headerPrinted) {
+            String header = formatter.formatHeader(getHeaderAttributes());
             if (header != null && header.length() > 0) {
                 writer.println(header);
-            }		
-            headerPrinted = true;	
-    	}
-    	return;
+            }
+            headerPrinted = true;
+        }
+        return;
     }
 
     /** Forwards data to associated writer
@@ -62,7 +58,7 @@ public class StreamedOutput extends Output
      * **/
     @Override
     public void addResultItem(List<String> item) {
-    	ensureHeaderIsPrinted();
+        ensureHeaderIsPrinted();
         writer.println(formatter.formatResult(item));
         resultsCount++;
     }
@@ -87,7 +83,7 @@ public class StreamedOutput extends Output
      */
     @Override
     public void flush() {
-    	ensureHeaderIsPrinted();
+        ensureHeaderIsPrinted();
         writer.print(formatter.formatFooter(getError(), getCode()));
         writer.flush();
     }
@@ -107,6 +103,7 @@ public class StreamedOutput extends Output
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getResultsCount() {
         return resultsCount;
     }
