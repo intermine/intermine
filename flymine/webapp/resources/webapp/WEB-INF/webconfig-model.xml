@@ -24,9 +24,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.BioEntity">
@@ -71,9 +68,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Chromosome">
@@ -82,9 +76,6 @@
       <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
 
@@ -155,7 +146,7 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp" />
     </longdisplayers>
   </class>
 
@@ -190,9 +181,7 @@
       <fieldconfig fieldExpr="organism.shortName" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-      <!-- <displayer src="cytoscapeNetworkDisplayer.tile"/> -->
       <displayer src="/model/interMineLinkDisplayer.jsp"/>
     </longdisplayers>
     <bagdisplayers>
@@ -282,9 +271,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.MicroArrayExperiment">
@@ -517,9 +503,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Reporter">
@@ -612,7 +595,6 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
   </class>
 
@@ -633,9 +615,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInSummary="false"/>
       <fieldconfig fieldExpr="gene.symbol" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TransposableElement">
@@ -706,6 +685,12 @@
                      replacesFields=""
                      placement="summary"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.LocatedSequenceFeatureImageDisplayer"
+                     jspName="model/locatedSequenceFeatureImage.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene,BindingSite,CDS,Chromosome,Exon,SequenceFeature,RegulatoryRegion,TFBindingSite,Transcript"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
