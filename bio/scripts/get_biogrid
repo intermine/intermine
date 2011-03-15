@@ -53,7 +53,7 @@ my $scraps = $scraper->scrape($response);
 
 my ($version) = $scraps->{heading} =~ /Release\s+(.*)/g;
 
-die "Could not fetch version" unless $version;
+die "[ERROR]\tCould not fetch version" unless $version;
 
 my $conf = io($0 . '.config')->chomp;
 my @desired_organisms;
@@ -70,19 +70,19 @@ my $file_address = 'http://thebiogrid.org/downloads/archives/Release%20Archive/B
 
 my $data_dir = dir($ARGV[0]);
 
-warn "Downloading $source_name data (version $version) to $data_dir\n";
+warn "[INFO]\tDownloading $source_name data (version $version) to $data_dir\n";
 
 my $source_dir = $data_dir->subdir($source_name); 
 
 unless (-d "$source_dir") {
-    die "File exists at $source_dir - cannot use this as a directory" if -e "$source_dir";
-    $source_dir->mkpath() or die "Could not create source directory: $source_dir";
+    die "[ERROR]\tFile exists at $source_dir - cannot use this as a directory" if -e "$source_dir";
+    $source_dir->mkpath() or die "[ERROR] Could not create source directory: $source_dir";
 }
 
 my $version_dir = $source_dir->subdir($version);
 
 if (-d "$version_dir") {
-    die "$version_dir exists and is not empty" if ($version_dir->children);
+    die "[INFO]\t$version_dir exists and is not empty - skipping\n" if ($version_dir->children);
 } else {
     $version_dir->mkpath();
 }
@@ -95,7 +95,12 @@ io("$tmp") < io->http($file_address);
 
 my @files_to_extract = map {'BIOGRID-ORGANISM-' . $_ . '-' . $version . '.psi25.xml'} 
                         @desired_organisms;
-system("unzip", "$tmp", @files_to_extract, "-d", "$extract_dir");
+open(my $pipe, '-|', "unzip", "$tmp", @files_to_extract, "-d", "$extract_dir")
+    or die "[ERROR]\tcould not open unzip";
+while (<$pipe>) {
+    print STDERR "[unzip]\t", $_;
+}
+close $pipe or die "[ERROR]\tProblem closing $pipe, $!";
 
 my @extracted_files = dir("$extract_dir")->children;
 copy("$_" => $version_dir->file($_->basename)->stringify) or die "Problem copying $_"
@@ -106,18 +111,8 @@ my $current_dir = $source_dir->subdir("current");
 unlink("$current_dir") if (-e "$current_dir");
 
 symlink("$version_dir" => "$current_dir") 
-    or die "Could not make symlink $version_dir => $current_dir";
+    or die "[ERROR]\tCould not make symlink $version_dir => $current_dir";
 
-warn "New $source_name data available in $current_dir for version $version\n";
+warn "[INFO]\tNew $source_name data available in $current_dir for version $version\n";
 
 exit;
-
-
-
-
-
-
-
-
-
-
