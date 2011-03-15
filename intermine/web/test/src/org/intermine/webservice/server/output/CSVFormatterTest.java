@@ -2,16 +2,14 @@ package org.intermine.webservice.server.output;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+
+import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
@@ -26,8 +24,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.ResultProcessor;
 
-import junit.framework.TestCase;
-
 public class CSVFormatterTest extends TestCase {
 
     private ObjectStoreDummyImpl os;
@@ -41,7 +37,6 @@ public class CSVFormatterTest extends TestCase {
     private ExportResultsIterator iterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
-    private Properties testProps;
 
     StringWriter sw;
     PrintWriter pw;
@@ -55,9 +50,6 @@ public class CSVFormatterTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 
-        testProps = new Properties();
-        testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
-
         os = new ObjectStoreDummyImpl();
 
         sw = new StringWriter();
@@ -65,7 +57,7 @@ public class CSVFormatterTest extends TestCase {
 
         attributes = new HashMap<String, Object>();
         List<String> view = new ArrayList<String>(Arrays.asList("foo", "bar", "baz"));
-        attributes.put(CSVFormatter.HEADER_COLUMNS, view);
+        attributes.put(CSVFormatter.COLUMN_HEADERS, view);
 
         tim = new Employee();
         tim.setId(new Integer(5));
@@ -138,12 +130,12 @@ public class CSVFormatterTest extends TestCase {
     }
 
     public void testFormatHeader() {
-    	CSVFormatter fmtr = new CSVFormatter();
-        
+        CSVFormatter fmtr = new CSVFormatter();
+
         String expected = "\"foo\",\"bar\",\"baz\"";
-        
+
         assertEquals(expected, fmtr.formatHeader(attributes));
-        
+
         expected = "";
         Map<String, Object> emptyMap = new HashMap<String, Object>();
         assertEquals(expected, fmtr.formatHeader(emptyMap));
@@ -158,14 +150,14 @@ public class CSVFormatterTest extends TestCase {
         expected = "";
         assertEquals(expected, fmtr.formatResult(new ArrayList<String>()));
     }
-    
+
     public void testFormatFooter() {
         CSVFormatter fmtr = new CSVFormatter();
-        
+
         String expected = "";
         assertEquals(expected, fmtr.formatFooter(null, 200));
         expected = "[ERROR] 400 Bad request. There was a problem with your request parameters:"
-               + "\n[ERROR] This is a test";    
+               + "\n[ERROR] This is a test";
         assertEquals(expected, fmtr.formatFooter("This is a test", 400));
     }
 
@@ -177,20 +169,20 @@ public class CSVFormatterTest extends TestCase {
         // These are the two steps the service must perform.
         processor.write(iterator, out);
         out.flush();
-        
-        String expected = 
-        	  "\"foo\",\"bar\",\"baz\"\n"
-        	+ "\"Tim Canterbury\",\"30\"\n"
-        	+ "\"Gareth Keenan\",\"32\"\n"
-        	+ "\"Dawn Tinsley\",\"26\"\n"
-        	+ "\"Keith Bishop\",\"41\"\n"
-        	+ "\"Lee\",\"28\"\n";
-        	
+
+        String expected =
+              "\"foo\",\"bar\",\"baz\"\n"
+            + "\"Tim Canterbury\",\"30\"\n"
+            + "\"Gareth Keenan\",\"32\"\n"
+            + "\"Dawn Tinsley\",\"26\"\n"
+            + "\"Keith Bishop\",\"41\"\n"
+            + "\"Lee\",\"28\"\n";
+
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
     }
-    
+
     public void testFormatAllWithProblem() {
         CSVFormatter fmtr = new CSVFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
@@ -200,17 +192,17 @@ public class CSVFormatterTest extends TestCase {
         processor.write(iterator, out);
         out.setError("Our bad", 500);
         out.flush();
-        
+
         String expected =
-        	  "\"foo\",\"bar\",\"baz\"\n"
-        	+ "\"Tim Canterbury\",\"30\"\n"
-        	+ "\"Gareth Keenan\",\"32\"\n"
-        	+ "\"Dawn Tinsley\",\"26\"\n"
-        	+ "\"Keith Bishop\",\"41\"\n"
-        	+ "\"Lee\",\"28\"\n"
-        	+ "[ERROR] 500 Internal server error.\n"
-        	+ "[ERROR] Our bad";
-        	
+              "\"foo\",\"bar\",\"baz\"\n"
+            + "\"Tim Canterbury\",\"30\"\n"
+            + "\"Gareth Keenan\",\"32\"\n"
+            + "\"Dawn Tinsley\",\"26\"\n"
+            + "\"Keith Bishop\",\"41\"\n"
+            + "\"Lee\",\"28\"\n"
+            + "[ERROR] 500 Internal server error.\n"
+            + "[ERROR] Our bad";
+
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
