@@ -213,7 +213,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <li><a href="#">YeastMine</a></li>
     <li><a href="#">ZebraMine</a></li>
   </ul>
-
+  <br />
   <c:set var="object_bk" value="${object}"/>
   <c:set var="object" value="${displayObject.object}" scope="request"/>
   <tiles:insert name="attributeLinks.tile" />

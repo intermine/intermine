@@ -3,8 +3,7 @@
 
 <!-- attributeLinkDisplayer.jsp -->
 
-<div class="inner">
-<h4>External Links</h4>
+<h3>External Links</h3>
 <ul>
   <c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
     <c:set var="href" value="${confMapEntry.value.url}" />
@@ -44,12 +43,10 @@
     </c:if>
   </c:forEach>
 </ul>
-</div>
 
 <%-- show xrefs --%>
 <c:if test="${displayObject.refsAndCollections.count > 0}">
-  <div class="inner">
-    <h4>Lookup Report</h4>
+    <h3>Lookup Report</h3>
     <ul>
       <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
         <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
@@ -67,6 +64,5 @@
         </c:if>
       </c:forEach>
     </ul>
-  </div>
 </c:if>
 <!-- /attributeLinkDisplayer.jsp -->

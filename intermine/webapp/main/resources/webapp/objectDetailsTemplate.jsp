@@ -30,7 +30,7 @@
   <c:set var="trail" value="${param.trail}"/>
 </c:if>
 
-<div class="template table grid_12">
+<div class="template table">
   <div class="templateDetails">
     <span class="${cssClass}" id="label_${fn:replace(uid, ":", "_")}">
       <im:templateLine scope="${scope}" templateQuery="${templateQuery}"

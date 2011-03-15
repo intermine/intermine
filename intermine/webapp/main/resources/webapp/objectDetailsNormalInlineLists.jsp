@@ -14,7 +14,7 @@
   <c:if test="${lists.key == placement}">
     <c:forEach items="${lists.value}" var="list" varStatus="status">
       <c:if test="${list.size > 0}">
-        <div class="box grid_12">
+        <div class="box">
           <h3 class="theme-5-background theme-1-border">
             <c:if test="${IS_SUPERUSER}">
               <span class="tag-editor">

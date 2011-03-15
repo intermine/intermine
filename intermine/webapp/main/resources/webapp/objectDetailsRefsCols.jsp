@@ -29,7 +29,7 @@
     <c:choose>
       <c:when test="${verbose && collection.size > 0}">
         <%-- ############# --%>
-        <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
+        <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
         <h3 class="theme-1-border theme-5-background">
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
@@ -57,7 +57,7 @@
       </c:when>
       <c:when test="${collection.size > 0}">
         <%-- ############# --%>
-        <div class="table grid_12 loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
+        <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
         <h3 class="theme-1-border theme-5-background">
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
