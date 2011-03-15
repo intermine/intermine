@@ -5,7 +5,7 @@
 <!-- locatedSequenceFeatureImage.jsp -->
 
 <div class="inner">
-<h4><fmt:message key="sequenceFeature.GBrowse.message"/></h4>
+<h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
