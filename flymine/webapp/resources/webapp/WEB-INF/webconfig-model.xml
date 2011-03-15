@@ -478,6 +478,12 @@
   </class>
 
   <class className="org.intermine.model.bio.Publication">
+    <headerconfig>
+      <titles mainTitles="firstAuthor|year" />
+    </headerconfig>
+    <inlinelist>
+      <table path="authors.name" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
