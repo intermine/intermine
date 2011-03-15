@@ -167,7 +167,7 @@ echo
 echo
 echo "==========================================================="
 echo "Getting BioGRID"
-./get_redfly "$shared_data/biogrid" $tempfile
+./get_biogrid "$shared_data/psi/biogrid" $tempfile
     if [ $? -ne 0 ]
     then
         echo "error getting BioGRID files" 2>&1 >> $tempfile
