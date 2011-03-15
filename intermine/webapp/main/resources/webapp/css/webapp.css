@@ -905,6 +905,13 @@ ol#news a {
     border: 1px solid #BEDCE4;
 }
 
+/* special case of narrower info messages on list view/upload (metabolicMine) */
+#hints.information.bag {
+  margin:0 auto;
+  width:595px;
+  padding-left:6px;
+}
+
 /* error messages */
 .topBar {
     margin: 5px 10px 10px 10px;
