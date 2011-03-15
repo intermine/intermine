@@ -145,9 +145,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp" />
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.FlyAtlasResult">
