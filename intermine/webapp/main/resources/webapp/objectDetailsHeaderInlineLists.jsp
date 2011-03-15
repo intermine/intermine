@@ -11,8 +11,8 @@
 
 <c:forEach items="${object.headerInlineLists}" var="list" varStatus="status">
   <c:if test="${list.size > 0}">
-    <div class="box grid_12">
-      ${list.prefix}:
+    <div class="box grid_12 list">
+      <span>${list.prefix}</span>:
       <c:choose>
         <c:when test="${list.showLinksToObjects}">
           <c:forEach items="${list.items}" var="item" varStatus="status">
