@@ -91,7 +91,7 @@
     else {
 
        jQuery("#cytoWebContent")
-          .ajaxStart(function(){ jQuery(this).html("Please wait while the network data loads..."); })
+          .ajaxStart(function(){ jQuery(this).html("Please wait..."); })
           .ajaxStop(function(){})
           .ajaxError(function(){ jQuery(this).html("ajax error!"); return;});
 
@@ -105,7 +105,12 @@
                                          .width(1200);
             } else {
                 networkdata = data;
-                displayNetwork(networkdata, fullInteractingGeneSet);
+                if (networkdata.trim() == "") {
+                    jQuery("#cytoWebContent").html("Interactions not available")
+                                       .css('font-style','italic');
+                } else {
+                    displayNetwork(networkdata, fullInteractingGeneSet);
+                }
             }
         });
     }

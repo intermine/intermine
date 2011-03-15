@@ -105,6 +105,10 @@ public class CytoscapeNetworkService
         Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap = getInteractionEdgeMap(
                 results, im);
 
+        if (interactionEdgeMap.size() == 0) {
+            return "";
+        }
+
         CytoscapeNetworkGenerator dataGen = new CytoscapeNetworkGenerator();
         String networkdata = dataGen.createGeneNetworkInXGMML(
                 interactionNodeMap, interactionEdgeMap);
