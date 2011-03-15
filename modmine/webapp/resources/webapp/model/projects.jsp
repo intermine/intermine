@@ -39,7 +39,7 @@
 
 </table>
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">Switch to Experimentss View</a></td></tr>
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
 </table>
 
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
@@ -333,7 +333,7 @@ ${exp.category}
 </c:forEach>
 </table>
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">Switch to Experimentss View</a></td></tr>
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
 </table>
 
 </div>
