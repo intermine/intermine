@@ -619,7 +619,7 @@ public class DisplayObject
                     String result = "";
                     // concatenate a space delineated title together as resolved from FieldValues
                     for (String path : titles.get(key).keySet()) {
-                        String symbol = (String) getFieldValues().get(path);
+                        String symbol = getFieldValues().get(path).toString();
                         // String.isEmpty() was introduced in Java release 1.6
                         if (StringUtils.isNotBlank(symbol)) {
                             result += symbol + " ";
