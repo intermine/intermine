@@ -136,10 +136,10 @@ public abstract class WebService
     protected boolean formatIsJSONP() {
         return formatIsJSON() && (getFormat() % 2 == 1);
     }
-    
+
     protected boolean formatIsFlatFile() {
-    	int format = getFormat();
-    	return (format == TSV_FORMAT || format == CSV_FORMAT);
+        int format = getFormat();
+        return (format == TSV_FORMAT || format == CSV_FORMAT);
     }
 
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
@@ -208,11 +208,11 @@ public abstract class WebService
             sendError(t, response);
         }
         try {
-        	output.flush();	
+            output.flush();
         } catch (Throwable t) {
-        	logger.debug("Error flushing " + t);
+            logger.debug("Error flushing " + t);
         }
-        
+
     }
 
     /**
@@ -269,7 +269,7 @@ public abstract class WebService
         }
         int code;
         if (t instanceof ServiceException) {
-           
+
             ServiceException ex = (ServiceException) t;
             code = ex.getHttpErrorCode();
         } else {
@@ -277,9 +277,9 @@ public abstract class WebService
         }
         logError(t, msg, code);
         if (!formatIsJSONP()) {
-        	// Don't set errors statuses on jsonp requests, to enable
-        	// better error checking in the browser.
-        	response.setStatus(code);	
+            // Don't set errors statuses on jsonp requests, to enable
+            // better error checking in the browser.
+            response.setStatus(code);
         }
         output.setError(msg, code);
         logger.debug("Set error to : " + msg + "," + code);
@@ -417,11 +417,32 @@ public abstract class WebService
                 throw new BadRequestException("Invalid format.");
         }
     }
-    
+
+    /**
+     * Returns true if the request wants column headers as well as result rows
+     * @return true if the request declares it wants column headers
+     */
     public boolean wantsColumnHeaders() {
-    	String wantsCols = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
-    	boolean no = (wantsCols == null || wantsCols.isEmpty() || "0".equals(wantsCols));
-    	return !no;
+        String wantsCols = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0".equals(wantsCols));
+        return !no;
+    }
+
+    /**
+     * Get an enum which represents the column header style (path, friendly, or none)
+     * @return a column header style
+     */
+    public ColumnHeaderStyle getColumnHeaderStyle() {
+        if (wantsColumnHeaders()) {
+            String style = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+            if ("path".equalsIgnoreCase(style)) {
+                return ColumnHeaderStyle.PATH;
+            } else {
+                return ColumnHeaderStyle.FRIENDLY;
+            }
+        } else {
+            return ColumnHeaderStyle.NONE;
+        }
     }
 
     /**
