@@ -19,7 +19,6 @@
 <c:if test="${!empty displayObject}">
   <c:set var="interMineObject" value="${displayObject.object}"/>
 </c:if>
-
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <tiles:insert name="objectDetailsTemplate.jsp">
     <tiles:put name="displayObject" beanName="displayObject"/>

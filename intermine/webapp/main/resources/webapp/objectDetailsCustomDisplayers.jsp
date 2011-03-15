@@ -16,10 +16,11 @@
 <tiles:importAttribute name="showOnLeft" ignore="true"/>
 
 <c:forEach items="${displayObject.reportDisplayers}" var="displayer">
-      <tiles:insert name="customDisplayer.tile">
-        <tiles:put name="displayer" beanName="displayer" />
-        <tiles:put name="displayObject" beanName="displayObject" />
-      </tiles:insert>
+    <tiles:insert name="customDisplayer.tile">
+      <tiles:put name="displayer" beanName="displayer" />
+      <tiles:put name="displayObject" beanName="displayObject" />
+    </tiles:insert>
+    <br />
 </c:forEach>
 
 <!-- /objectDetailsCustomDisplayers.jsp -->
