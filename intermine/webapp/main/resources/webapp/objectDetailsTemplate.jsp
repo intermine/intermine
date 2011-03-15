@@ -32,7 +32,7 @@
 
 <div class="template table grid_12">
   <div class="templateDetails">
-    <span class="${cssClass}" id="label_${uid}">
+    <span class="${cssClass}" id="label_${fn:replace(uid, ":", "_")}">
       <im:templateLine scope="${scope}" templateQuery="${templateQuery}"
                        interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" />
       <span id="count_${uid}" class="templateResCount"></span>
@@ -43,7 +43,7 @@
  <%--the "N results" bit is located at the bottom of objectDetailsTemplateTable.jsp for some reason--%>
 
   <%--results table--%>
-  <div id="table_${uid}">
+  <div id="table_${fn:replace(uid, ":", "_")}">
     <div id="table_${fn:replace(uid, ":", "_")}_int">
       <c:if test="${verbose}">
         <tiles:insert name="objectDetailsTemplateTable.jsp">

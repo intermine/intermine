@@ -145,6 +145,8 @@ jQuery(window).scroll(function() {
 });
 </script>
 
+<code id="testing" style="background:yellow;color:red;font-size:30px;"></code>
+
 <div class="container_12">
 
 <%--
@@ -247,6 +249,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
   </c:forEach>
 
   <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
+    <div class="clear">&nbsp;</div>
     <a name="miscellaneous"><h2>Miscellaneous</h2></a>
   </c:if>
   <tiles:insert page="/objectDetailsUnplacedInlineLists.jsp">

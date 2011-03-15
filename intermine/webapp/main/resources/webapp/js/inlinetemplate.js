@@ -6,10 +6,9 @@ function queueInlineTemplateQuery(placement, templateName, id, trail) {
     queue.push([placement, templateName, id, trail]);
 }
 
-/* Called onload */
-function loadInlineTemplates() {
+jQuery(document).ready(function() {
   loadInlineTemplate(0);
-}
+});
 
 /**
  * jQuery function extension performing a 'scroll to target'
@@ -24,6 +23,7 @@ jQuery.fn.extend({
     scrollTo : function(speed, easing, val, onComplete) {
         return this.each(function() {
             var targetOffset = jQuery(this).offset().top + val;
+
             jQuery('html,body').animate({
                 scrollTop: targetOffset
             }, speed, easing, onComplete);
@@ -319,7 +319,5 @@ function toggleTemplateList(placement, template) {
   Element.toggle('table_'+placement+'_'+template);
   return false;
 }
-
-Event.observe(window, 'load', loadInlineTemplates, false);
 
 // ]]>-->
