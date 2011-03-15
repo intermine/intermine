@@ -17,6 +17,3 @@
 
 <definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
         controllerUrl="/initOrthologueLinkDisplayer.do"/>
-
-<definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
-        controllerUrl="/initCytoscapeNetworkDisplayer.do"/>

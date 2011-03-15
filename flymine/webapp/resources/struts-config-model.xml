@@ -35,9 +35,6 @@
 <action path="/initOrthologueLinkDisplayer"
         type="org.intermine.bio.web.OrthologueLinkController"/>
 
-<action path="/initCytoscapeNetworkDisplayer"
-        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
-
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
 

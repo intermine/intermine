@@ -709,16 +709,9 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="interactions"
                      placement="interactions"
                      types="Gene,Protein"/>
-
-    <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
-                     jspName="model/drosophilaHomologueDisplayer.jsp"
-                     replacesFields=""
-                     placement="summary"
-                     types="Gene"/>
-
   </reportdisplayers>
 
    <widgets>
