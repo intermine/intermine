@@ -66,7 +66,7 @@ public class JSONObjFormatterTest extends TestCase {
 
         attributes = new HashMap<String, Object>();
         attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
+        attributes.put(JSONResultFormatter.KEY_VIEWS, Arrays.asList("foo", "bar", "baz"));
         attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
 
         tim = new Employee();
@@ -157,11 +157,11 @@ public class JSONObjFormatterTest extends TestCase {
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        String expected = "],'executionTime':'" + executionTime 
-        				+ "',\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        String expected = "],\"executionTime\":\"" + executionTime
+                        + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
         assertEquals(expected, fmtr.formatFooter(null, 200));
-        expected = "],'executionTime':'" + executionTime 
-		+ "',\"wasSuccessful\":false,\"error\":\"this error\",\"statusCode\":501}";
+        expected = "],\"executionTime\":\"" + executionTime
+        + "\",\"wasSuccessful\":false,\"error\":\"this error\",\"statusCode\":501}";
         assertEquals(expected, fmtr.formatFooter("this error", 501));
     }
 

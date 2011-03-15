@@ -85,7 +85,7 @@ public class JSONRowFormatterTest extends TestCase {
 
         attributes = new HashMap<String, Object>();
         attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
+        attributes.put(JSONResultFormatter.KEY_VIEWS, Arrays.asList("foo", "bar", "baz"));
         attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
         attributes.put(JSONRowFormatter.KEY_TITLE, "Test Results");
         attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, "some.csv.url");
@@ -192,16 +192,16 @@ public class JSONRowFormatterTest extends TestCase {
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        String expected = "],'executionTime':'" + executionTime 
-             + "',\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
-        assertEquals(expected, fmtr.formatFooter(null, 200));       
-        
-        expected = "],'executionTime':'" + executionTime 
-           + "',\"wasSuccessful\":false,\"error\":\"Not feeling like it\","
+        String expected = "],\"executionTime\":\"" + executionTime
+             + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        assertEquals(expected, fmtr.formatFooter(null, 200));
+
+        expected = "],\"executionTime\":\"" + executionTime
+           + "\",\"wasSuccessful\":false,\"error\":\"Not feeling like it\","
            + "\"statusCode\":400}";
-        
+
         assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
-        
+
         expected += ");";
         attributes.put(JSONRowFormatter.KEY_CALLBACK, "should_not_appear_in_footer");
 
