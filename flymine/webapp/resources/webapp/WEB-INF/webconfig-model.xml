@@ -441,9 +441,6 @@
       <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
-    <longdisplayers>
-      <!-- <displayer src="cytoscapeNetworkDisplayer.tile"/> -->
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.ProteinDomain">
