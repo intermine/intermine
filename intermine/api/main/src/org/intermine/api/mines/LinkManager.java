@@ -59,26 +59,35 @@ public class LinkManager
     private static Mine localMine = null;
     private static final String WEBSERVICE_URL = "/service";
     private static final String RELEASE_VERSION_URL = "/version/release";
-    private static String valuesTemplate, mapTemplate, templateParams;
+    private static String valuesTemplate, mapTemplate, reportTemplate1, reportTemplate2,
+    identifierConstraint, lookupConstraint, constraint1, constraint2;
     private static String valuesURL, mapURL;
     private static final String TEMPLATE_PATH = "/template/results?size=1000&format=tab&name=";
     private static Properties webProperties;
+    private static final String WILDCARD = "*";
 
 /**
  * @param im intermine api
  * @param webProperties the web properties
  */
     public LinkManager(InterMineAPI im, Properties webProperties) {
-        this.webProperties = webProperties;
+        LinkManager.webProperties = webProperties;
 
+        // TODO put in constants
         valuesTemplate = (String) webProperties.get("intermine.template.queryableValues");
         mapTemplate = (String) webProperties.get("intermine.template.queryableMap");
-        templateParams = (String) webProperties.get("intermine.template.params");
+        identifierConstraint
+            = (String) webProperties.get("intermine.template.identifierConstraint");
+        lookupConstraint = (String) webProperties.get("intermine.template.lookupConstraint");
+        constraint1 = (String) webProperties.get("intermine.template.constraint1");
+        constraint2 = (String) webProperties.get("intermine.template.constraint2");
+        reportTemplate1 = (String) webProperties.get("intermine.template.report.otherMines");
+        reportTemplate2 = (String) webProperties.get("intermine.template.report.relatedData");
 
-        valuesURL = WEBSERVICE_URL + TEMPLATE_PATH + valuesTemplate + templateParams;
-        mapURL = WEBSERVICE_URL + TEMPLATE_PATH + mapTemplate + templateParams;
+        valuesURL = WEBSERVICE_URL + TEMPLATE_PATH + valuesTemplate + identifierConstraint;
+        mapURL = WEBSERVICE_URL + TEMPLATE_PATH + mapTemplate + identifierConstraint;
 
-        String localMineName = webProperties.getProperty("project.title");
+        final String localMineName = webProperties.getProperty("project.title");
         localMine = new Mine(localMineName);
         mines = readConfig(im, localMineName);
     }
@@ -106,41 +115,132 @@ public class LinkManager
     }
 
     /**
+     * REPORT PAGE
+     *
      * Returns list of friendly mines that contain value of interest.  Used for
      * the links on the report page.
      *
-     * @param values list from our bag
+     * @param constraintValue optional additional constraint, eg. organism
+     * @param identifier identifier to query
      * @return the list of valid mines for the given list
      */
-    public Map<Mine, Set<String>> getMines(Collection<String> values) {
-        Map<Mine, Set<String>> filteredMines = new HashMap<Mine, Set<String>>();
+    public Map<Mine, String> getObjectInOtherMines(String constraintValue, String identifier) {
+        Map<Mine, String> filteredMines = new HashMap<Mine, String>();
         for (Mine mine : mines.values()) {
-            if (!mine.hasValues()) {
-                LOG.warn("mine " + mine.getName() + " has no genes");
-                continue;
-            }
-            for (String organism : values) {
-                for (Map.Entry<String, Set<String>> entry : mine.getMineMap().entrySet()) {
-                    String key = entry.getKey();
-                    if (entry.getValue().contains(organism)) {
-                        Util.addToSetMap(filteredMines, mine, key);
-                    }
-                }
+//            if (!mine.hasValues()) {
+//                LOG.warn("mine " + mine.getName() + " has no genes");
+//                continue;
+//            }
+            String newIdentifier = runReportQuery(mine, constraintValue, identifier);
+            if (!StringUtils.isEmpty(newIdentifier)) {
+                filteredMines.put(mine, newIdentifier);
             }
         }
         return filteredMines;
     }
 
-    private Mine getMine(String mineName) {
-        for (Mine mine : mines.values()) {
-            if (mine.getName().equals(mineName)) {
-                return mine;
+    private String runReportQuery(Mine mine, String constraintValue, String identifier) {
+        final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
+            + reportTemplate1 + lookupConstraint + identifier + constraint2 + constraintValue;
+        try {
+            BufferedReader reader = runWebServiceQuery(webserviceURL);
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] bits = line.split("\\t");
+                if (bits.length != 2) {
+                    final String msg = "Couldn't process links for " + mine.getName()
+                        + ".  Expected two columns, found " + bits.length + " columns instead."
+                        + webserviceURL;
+                    LOG.info(msg);
+                    return null;
+                }
+                String newIdentifier = bits[0];
+                String symbol = bits[1];
+                if (!StringUtils.isEmpty(symbol)) {
+                    return symbol;
+                }
+                if (!StringUtils.isEmpty(newIdentifier)) {
+                    return newIdentifier;
+                }
             }
+        } catch (MalformedURLException e) {
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
+            return null;
+        } catch (IOException e) {
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
+            throw new RuntimeException(e);
         }
         return null;
     }
 
     /**
+     * used on REPORT page
+     *
+     * Runs queries and builds data structure for display on report pages.
+     *
+     * @param identifier identifier for object from report page
+     * @param constraintValue optional additonal constraint, eg. organism
+     * @return the list of valid mines for the given object
+     */
+    public Map<Mine, Map<String, Set<String>>> getRelatedData(String constraintValue,
+            String identifier) {
+        Map<Mine, Map<String, Set<String>>> filteredMines
+            = new HashMap<Mine, Map<String, Set<String>>>();
+
+        for (Mine mine : mines.values()) {
+//            if (!mine.hasValues() || mine.getMineMap().isEmpty()) {
+//                LOG.warn("no links to " + mine.getName() + ".");
+//                continue;
+//            }
+            Map<String, Set<String>> relatedData = runRelatedDataQuery(mine, constraintValue,
+                    identifier);
+            if (!relatedData.isEmpty()) {
+                filteredMines.put(mine, relatedData);
+            }
+        }
+        return filteredMines;
+    }
+
+    private Map<String, Set<String>> runRelatedDataQuery(Mine mine, String constraintValue,
+            String identifier) {
+        Map<String, Set<String>> relatedDataMap = new HashMap<String, Set<String>>();
+        final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
+            + reportTemplate2 + constraint1 + identifier + constraint2 + constraintValue;
+        try {
+            BufferedReader reader = runWebServiceQuery(webserviceURL);
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] bits = line.split("\\t");
+                if (bits.length != 3) {
+                    String msg = "Couldn't process links for " + mine.getName()
+                        + ".  Expected three columns, found " + bits.length + " columns instead."
+                        + webserviceURL;
+                    LOG.info(msg);
+                    return null;
+                }
+                String key = bits[0];
+                String newIdentifier = bits[1];
+                String symbol = bits[2];
+                if (!StringUtils.isEmpty(symbol)) {
+                    Util.addToSetMap(relatedDataMap, key, symbol);
+                }
+                if (!StringUtils.isEmpty(newIdentifier)) {
+                    Util.addToSetMap(relatedDataMap, key, newIdentifier);
+                }
+            }
+        } catch (MalformedURLException e) {
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
+            return null;
+        } catch (IOException e) {
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
+            return null;
+        }
+        return relatedDataMap;
+    }
+
+    /**
+     * used on LIST ANALYSIS page
+     *
      * For a given mine and list of values, return filtered list of values contained in mine.  eg.
      * for a list of organisms, return the list of organism present in the given mine.
      *
@@ -159,7 +259,11 @@ public class LinkManager
             return null;
         }
         Map<Mine, Set<String>> filteredValues = new HashMap<Mine, Set<String>>();
-        for (Map.Entry<String, Set<String>> entry : mine.getMineMap().entrySet()) {
+        Map<String, Set<String>> mineMap = mine.getMineMap();
+        if (mineMap == null || mineMap.isEmpty()) {
+            return null;
+        }
+        for (Map.Entry<String, Set<String>> entry : mineMap.entrySet()) {
             String key = entry.getKey();
             Set<String> mineValues = entry.getValue();
             for (String value : values) {
@@ -172,6 +276,15 @@ public class LinkManager
             return null;
         }
         return filteredValues;
+    }
+
+    private Mine getMine(String mineName) {
+        for (Mine mine : mines.values()) {
+            if (mine.getName().equals(mineName)) {
+                return mine;
+            }
+        }
+        return null;
     }
 
     /**
@@ -304,6 +417,7 @@ public class LinkManager
                 mine.setDefaultValue(defaultValue);
                 mine.setDefaultMapping(mapping);
                 mines.put(mineId, mine);
+                LOG.info("processing config for " + mineName);
             }
         }
         return mines;
@@ -312,11 +426,9 @@ public class LinkManager
     private static boolean setValues(Mine mine) {
         Set<String> names = new HashSet<String>();
         String webserviceURL = null;
-        URL url;
         try {
-            webserviceURL = mine.getUrl() + valuesURL;
-            url = new URL(webserviceURL);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            webserviceURL = mine.getUrl() + valuesURL + WILDCARD;
+            BufferedReader reader = runWebServiceQuery(webserviceURL);
             String line = null;
             while ((line = reader.readLine()) != null) {
                 names.add(line);
@@ -325,12 +437,17 @@ public class LinkManager
             LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
             return false;
         } catch (IOException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL + " " + e);
             return false;
         }
 
         mine.setMineValues(names);
-        return !names.isEmpty();
+        if (!names.isEmpty()) {
+            LOG.info("processing values for " + mine.getName());
+            return true;
+        }
+        LOG.info("no values found for " + mine.getName());
+        return false;
     }
 
     private static void setMaps(Mine mine) {
@@ -338,7 +455,7 @@ public class LinkManager
         String webserviceURL = null;
         Map<String, Set<String>> mineMap = new HashMap<String, Set<String>>();
         try {
-            webserviceURL = mine.getUrl() + mapURL;
+            webserviceURL = mine.getUrl() + mapURL + WILDCARD;
             url = new URL(webserviceURL);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line = null;
@@ -364,7 +481,13 @@ public class LinkManager
         }
         // adds orthologues for this remote mine
         // merging with any matching orthologues in the local mine
+
         mine.setMineMap(mineMap);
+        if (!mineMap.isEmpty()) {
+            LOG.info("processing map for " + mine.getName());
+        } else {
+            LOG.info("no map found for " + mine.getName());
+        }
     }
 
     // running templates run in setValues() and setMaps() for the local mine
