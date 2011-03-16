@@ -449,10 +449,10 @@ public class LinkManager
                 names.add(line);
             }
         } catch (MalformedURLException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
             return false;
         } catch (IOException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL + " " + e);
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
             return false;
         }
 
