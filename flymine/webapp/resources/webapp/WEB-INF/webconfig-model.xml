@@ -683,7 +683,7 @@
     <reportdisplayer javaClass="org.flymine.web.displayer.FlyAtlasDisplayer"
                      jspName="model/flyAtlasDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
+                     placement="Expression"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.LocatedSequenceFeatureImageDisplayer"
@@ -695,8 +695,16 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
-                     placement="interactions"
+                     placement="Interactions"
                      types="Gene,Protein"/>
+                     
+<!-- 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
+                     jspName="model/geneStructureDisplayer.jsp"
+                     replacesFields=""
+                     placement="Genes"
+                     types="Gene"/>
+-->
   </reportdisplayers>
 
    <widgets>

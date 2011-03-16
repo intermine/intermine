@@ -239,9 +239,8 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 <div class="box grid_9">
 
   <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
-    <tiles:put name="placement" value="" />
+    <tiles:put name="placement" value="summary" />
     <tiles:put name="displayObject" beanName="object" />
-    <tiles:put name="heading" value="true" />
   </tiles:insert>
 
   <tiles:insert

@@ -311,20 +311,29 @@ public class DisplayObject
      *
      * @return Set
      */
-    public Set<CustomDisplayer> getReportDisplayers() {
+    public Set<CustomDisplayer> getAllReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
-        return displayerManager.getAllReportDislayersForType(clsName);
+        return displayerManager.getAllReportDisplayersForType(clsName);
     }
 
-
+    /**
+    *
+    * @return Map
+    */
+   public Map<String, Set<CustomDisplayer>> getReportDisplayers() {
+       DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+       String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
+       return displayerManager.getReportDisplayersForType(clsName);
+   }
+   
     /**
      *
      * @return Set
      */
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
-        for (CustomDisplayer reportDisplayer : getReportDisplayers()) {
+        for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
             replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
         }
         return replacedFieldExprs;

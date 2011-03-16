@@ -12,10 +12,8 @@
 
 <tiles:importAttribute name="displayObject"/>
 <tiles:importAttribute name="placement"/>
-<tiles:importAttribute name="heading" ignore="true"/>
-<tiles:importAttribute name="showOnLeft" ignore="true"/>
 
-<c:forEach items="${displayObject.reportDisplayers}" var="displayer">
+<c:forEach items="${displayObject.reportDisplayers[placement]}" var="displayer">
     <tiles:insert name="customDisplayer.tile">
       <tiles:put name="displayer" beanName="displayer" />
       <tiles:put name="displayObject" beanName="displayObject" />
