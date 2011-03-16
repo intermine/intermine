@@ -167,4 +167,13 @@
     <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
   </aspect>
+  <aspect name="Function">
+    <subtitle>GO, Pathways, Diseases, Phenotype, Domains</subtitle>
+    <intro-text>
+        GO, Pathways, Diseases, Phenotype, Domains
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
+  </aspect>
 </aspects>
