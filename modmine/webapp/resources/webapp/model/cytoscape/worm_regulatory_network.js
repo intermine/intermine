@@ -85,14 +85,65 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
         // corner the description div
         var description = '<div style="padding:8px 8px 8px 8px;">' +
                           '<span>Integrated miRNA-TF regulatory network. ' +
-                          'TFs are organized hierarchically, and those miRNAs either regulating or being ' +
-                          'regulated by the TFs are shown. All larval TF-TF interactions in HOT regions ' +
+                          'The Transcription Factors (TFs) are organized in three layers. The top layer has ' +
+                          'TFs that are not regulated by any other TFs. The middle layer has TFs that both ' +
+                          'regulate and are regulated by other TFs, and the third and lowest row has TFs that ' +
+                          'do not regulate any other TF. miRNAs either regulating or being regulated by the TFs ' +
+                          'are shown. The miRNAs to the left are the ones that regulate at least one of the TFs ' +
+                          'in the network. They are further separated into three rows, based on the highest layer ' +
+                          'of TFs that they regulate. So if a miRNA regulates a TF in the top row it will be placed ' +
+                          'on the top row to the left, and so forth <span id="note_1" class="fakelink">(1)</span>. The miRNAs on the ' +
+                          'right are the ones that do not regulate a TF. Their placement within their three layers ' +
+                          'is based on the lowest layer TF that regulates it <span id="note_2" class="fakelink">(2)</span>. ' +
+                          'All larval TF-TF interactions in HOT regions ' +
                           'were removed. Tissue specificity and number of protein-protein interactions are ' +
                           'shown for each of the hierarchical levles. For further information, please ' +
                           'refer to <a href="http://www.ncbi.nlm.nih.gov/pubmed/221177976" target="_blank">modENCODE ' +
                           'worm integration paper</a> on <i>Science</i>.</span></div>';
 
         jQuery('.description').html(description).css('background','silver').corner(); // or light blue (#B9E6F0)?
+
+
+         // qtip configuration
+         jQuery("#note_1").qtip({
+           content: 'note that if a miRNA regulates two TFs, one in the top layer and one in the second layer it will still be placed in the top layer on the left.',
+           style: {
+             border: {
+               width: 3,
+               radius: 8,
+               color: 'black'
+             },
+             tip: 'bottomLeft',
+             name: 'light',
+             width: 350,
+             height:85
+           },
+            position: {
+              corner: {
+                 target: 'topMiddle',
+                 tooltip: 'bottomLeft'
+              }
+            },
+           show: 'click',
+           hide: 'mouseout'
+         });
+
+         jQuery("#note_2").qtip({
+           content: 'so if a miRNA is regulated by a TF in the second and third layers the miRNA will be placed in the right bottom layer.',
+           style: {
+             border: {
+               width: 3,
+               radius: 8,
+               color: 'black'
+             },
+             tip: 'topLeft',
+             name: 'light',
+             width: 350,
+             height:65
+           },
+           show: 'click',
+           hide: 'mouseout'
+         });
 
         // Filter to show miRNA-TF interactions
         jQuery('#miRNAtoTF').click(function(){

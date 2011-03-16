@@ -168,7 +168,6 @@
             textdirection: "horizontal",
             clickawayclose: true
          });
-
     }
 
 </script>
