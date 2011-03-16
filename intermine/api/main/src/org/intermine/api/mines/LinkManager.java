@@ -59,8 +59,9 @@ public class LinkManager
     private static Mine localMine = null;
     private static final String WEBSERVICE_URL = "/service";
     private static final String RELEASE_VERSION_URL = "/version/release";
-    private static String valuesTemplate, mapTemplate, reportTemplate1, reportTemplate2,
-    identifierConstraint, lookupConstraint, constraint1, constraint2;
+    private static String valuesTemplate, mapTemplate, reportTemplate, relatedDataConstraint1,
+    relatedDataConstraint2, identifierConstraint, lookupConstraint, extraValueConstraint,
+    relatedDataTemplate;
     private static String valuesURL, mapURL;
     private static final String TEMPLATE_PATH = "/template/results?size=1000&format=tab&name=";
     private static Properties webProperties;
@@ -76,13 +77,19 @@ public class LinkManager
         // TODO put in constants
         valuesTemplate = (String) webProperties.get("intermine.template.queryableValues");
         mapTemplate = (String) webProperties.get("intermine.template.queryableMap");
+        reportTemplate = (String) webProperties.get("intermine.template.report.otherMines");
+        relatedDataTemplate = (String) webProperties.get("intermine.template.report.relatedData");
+
         identifierConstraint
             = (String) webProperties.get("intermine.template.identifierConstraint");
         lookupConstraint = (String) webProperties.get("intermine.template.lookupConstraint");
-        constraint1 = (String) webProperties.get("intermine.template.constraint1");
-        constraint2 = (String) webProperties.get("intermine.template.constraint2");
-        reportTemplate1 = (String) webProperties.get("intermine.template.report.otherMines");
-        reportTemplate2 = (String) webProperties.get("intermine.template.report.relatedData");
+
+        extraValueConstraint
+            = (String) webProperties.get("intermine.template.extraValueConstraint");
+        relatedDataConstraint1
+            = (String) webProperties.get("intermine.template.relatedDataConstraint1");
+        relatedDataConstraint2
+            = (String) webProperties.get("intermine.template.relatedDataConstraint2");
 
         valuesURL = WEBSERVICE_URL + TEMPLATE_PATH + valuesTemplate + identifierConstraint;
         mapURL = WEBSERVICE_URL + TEMPLATE_PATH + mapTemplate + identifierConstraint;
@@ -141,7 +148,8 @@ public class LinkManager
 
     private String runReportQuery(Mine mine, String constraintValue, String identifier) {
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
-            + reportTemplate1 + lookupConstraint + identifier + constraint2 + constraintValue;
+            + reportTemplate + lookupConstraint + identifier
+            + extraValueConstraint + constraintValue;
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
             String line = null;
@@ -194,7 +202,7 @@ public class LinkManager
 //            }
             Map<String, Set<String>> relatedData = runRelatedDataQuery(mine, constraintValue,
                     identifier);
-            if (!relatedData.isEmpty()) {
+            if (relatedData != null && !relatedData.isEmpty()) {
                 filteredMines.put(mine, relatedData);
             }
         }
@@ -205,7 +213,8 @@ public class LinkManager
             String identifier) {
         Map<String, Set<String>> relatedDataMap = new HashMap<String, Set<String>>();
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
-            + reportTemplate2 + constraint1 + identifier + constraint2 + constraintValue;
+            + relatedDataTemplate + relatedDataConstraint1 + identifier
+            + relatedDataConstraint2 + constraintValue;
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
             String line = null;

@@ -652,12 +652,13 @@ public class AjaxServices
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         LinkManager olm = LinkManager.getInstance(im, webProperties);
         Map<String, JSONObject> filteredMines = new HashMap<String, JSONObject>();
-        getMinesWithGenes(olm, filteredMines, organismName, primaryIdentifier);
-//        getMinesWithOrthologues(olm, filteredMines, organismName, primaryIdentifier);
+        getMinesWithThisGene(olm, filteredMines, organismName, primaryIdentifier);
+        getMinesWithOrthologues(olm, filteredMines, organismName, primaryIdentifier);
         return filteredMines.values().toString();
     }
 
-    private static void getMinesWithGenes(LinkManager olm, Map<String, JSONObject> filteredMines,
+    // construct a list of mines that have this gene in their database
+    private static void getMinesWithThisGene(LinkManager olm, Map<String, JSONObject> filteredMines,
             String organismShortName, String primaryIdentifier) {
         if (organismShortName == null) {
             LOG.error("error created links to other mines for this gene, no organism provided");
@@ -686,13 +687,12 @@ public class AjaxServices
         for (Map.Entry<Mine, String> entry : minesWithGene.entrySet()) {
             Mine mine = entry.getKey();
             String identifier = entry.getValue();
-            JSONObject jsonMine = convertToJSON(filteredMines, mine, organismShortName, identifier);
-            filteredMines.put(mine.getName(), jsonMine);
+            convertToJSON(filteredMines, mine, organismShortName, identifier);
         }
     }
 
     // convert strings into JSON results, which are processed on JSP page
-    private static JSONObject convertToJSON(Map<String, JSONObject> filteredMines, Mine mine,
+    private static void convertToJSON(Map<String, JSONObject> filteredMines, Mine mine,
             String organismShortName, String identifier) {
         JSONObject jsonGene = new JSONObject();
         try {
@@ -700,7 +700,7 @@ public class AjaxServices
             jsonGene.put("organismName", organismShortName);
         } catch (JSONException e) {
             LOG.error("error creating JSON objects on report page", e);
-            return null;
+            return;
         }
         JSONObject jsonMine = getJSONMine(filteredMines, mine.getName());
         if (jsonMine != null) {
@@ -708,10 +708,9 @@ public class AjaxServices
                 jsonMine.put("gene", jsonGene);
             } catch (JSONException e) {
                 LOG.error("error creating JSON objects on report page", e);
-                return null;
+                return;
             }
         }
-        return jsonMine;
     }
 
     private static void getMinesWithOrthologues(LinkManager olm,
@@ -732,23 +731,7 @@ public class AjaxServices
                 : minesWithOrthologues.entrySet()) {
             String mineName = mineEntry.getKey().getName();
             JSONObject jsonMine = getJSONMine(filteredMines, mineName);
-            Map<String, Set<String>> orthologueMap = mineEntry.getValue();
-            JSONArray genes = new JSONArray();
-            for (Map.Entry<String, Set<String>> entry : orthologueMap.entrySet()) {
-                String orthologueOrganism = entry.getKey();
-                Set<String> identifiers = entry.getValue();
-                for (String identifier : identifiers) {
-                    JSONObject gene = new JSONObject();
-                    try {
-                        gene.put("organismName", orthologueOrganism);
-                        gene.put("identifier", identifier);
-                    } catch (JSONException e) {
-                        LOG.error("error creating JSON objects on report page " + mineName, e);
-                        return;
-                    }
-                    genes.put(gene);
-                }
-            }
+            JSONArray genes = convertToJSON(mineEntry.getValue());
             try {
                 jsonMine.put("orthologues", genes);
             } catch (JSONException e) {
@@ -756,6 +739,27 @@ public class AjaxServices
                 return;
             }
         }
+    }
+
+    // convert list of gene identifiers to JSON array
+    private static JSONArray convertToJSON(Map<String, Set<String>> orthologueMap) {
+        JSONArray genes = new JSONArray();
+        for (Map.Entry<String, Set<String>> entry : orthologueMap.entrySet()) {
+            String orthologueOrganism = entry.getKey();
+            Set<String> identifiers = entry.getValue();
+            for (String identifier : identifiers) {
+                JSONObject gene = new JSONObject();
+                try {
+                    gene.put("organismName", orthologueOrganism);
+                    gene.put("identifier", identifier);
+                } catch (JSONException e) {
+                    LOG.error("error creating JSON objects on report page ", e);
+                    return null;
+                }
+                genes.put(gene);
+            }
+        }
+        return genes;
     }
 
     private static JSONObject getJSONMine(Map<String, JSONObject> mines, String mineName) {
@@ -768,6 +772,7 @@ public class AjaxServices
                 LOG.error("error creating JSON objects on report page for " + mineName, e);
                 return null;
             }
+            mines.put(mineName, jsonMine);
         }
         return jsonMine;
     }
