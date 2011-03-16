@@ -106,23 +106,25 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
 		}
 
 		// Add view interaction inline table
-        PathQuery query = new PathQuery(model);
-
-        query.addViews("Gene.symbol",
-                "Gene.secondaryIdentifier",
+        PathQuery q = new PathQuery(model);
+        q.addViews("Gene.symbol",
+        		"Gene.primaryIdentifier",
                 "Gene.interactions.interactionType",
                 "Gene.interactions.interactingGenes.symbol",
-                "Gene.interactions.interactingGenes.secondaryIdentifier",
+                "Gene.interactions.interactingGenes.primaryIdentifier",
                 "Gene.interactions.dataSets.dataSource.name",
+                "Gene.interactions.experiment.publication.title",
                 "Gene.interactions.experiment.publication.pubMedId");
 
-        query.addOrderBy("Gene.interactions.interactionType", OrderDirection.ASC);
-        query.addConstraint(Constraints.inIds("Gene", startingFeatureSet));
-        query.setOuterJoinStatus("Gene.interactions.experiment.publication", OuterJoinStatus.OUTER);
+        q.addOrderBy("Gene.symbol", OrderDirection.ASC);
+        q.addConstraint(Constraints.inIds("Gene", fullInteractingGeneSet), "B");
+        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes",
+                fullInteractingGeneSet), "A");
+        q.setConstraintLogic("B and A");
 
         try {
             WebResultsExecutor we = im.getWebResultsExecutor(profile);
-            WebResults webResults = we.execute(query);
+            WebResults webResults = we.execute(q);
             PagedTable pagedResults = new PagedTable(webResults, 10);
             pagedResults.setTableid("CytoscapeNetworkDisplayer");
             request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
