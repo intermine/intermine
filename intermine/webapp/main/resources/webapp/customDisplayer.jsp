@@ -6,8 +6,6 @@
 <!-- customDisplayer.jsp -->
     <tiles:importAttribute name="displayer"/>
 
-<%--<c:out value="jspPage: ${jspPage}"/> <c:out value="type: ${type}"/><br/>--%>
-
     <jsp:include page="${jspPage}"/>
 
 <!-- /customDisplayer.jsp -->

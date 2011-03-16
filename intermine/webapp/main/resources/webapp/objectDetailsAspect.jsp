@@ -10,29 +10,33 @@
 <tiles:importAttribute name="displayObject" ignore="true" />
 <tiles:importAttribute name="interMineIdBag" ignore="true" />
 <tiles:importAttribute name="aspectId" ignore="true" />
-<tiles:importAttribute name="placement" />
+<tiles:importAttribute name="placement" ignore="false"/>
 <tiles:importAttribute name="mapOfInlineLists" ignore="false" />
 <tiles:importAttribute name="trail" />
 <tiles:importAttribute name="opened" ignore="true" />
 
 <!-- objectDetailsAspect.jsp -->
 
-<c:forEach items="${displayObject.clds}" var="cld">
-  <c:if
-    test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[placement]) > 0}">
+<c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}" scope="request" />
+
+<c:if test="${!empty displayObject}">  
+  <c:if test="${fn:length(displayObject.reportDisplayers[aspect]) > 0}">
     <c:set var="foundDisplayer" value="true" />
   </c:if>
-</c:forEach>
+</c:if>
 
 <c:if
   test="${!empty placementRefsAndCollections[placement] || foundDisplayer == true ||
     !empty templates}">
-  <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}"
-    scope="request" />
   <c:set var="templateCount" value="${fn:length(templates)}" />
 
   <a name="<c:out value="${fn:toLowerCase(aspect)}"/>"><h2>${aspect}</h2></a>
-  <c:if test="${!empty displayObject}">
+<c:if test="${!empty displayObject}">
+    <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
+      <tiles:put name="placement" value="${aspect}" />
+      <tiles:put name="displayObject" beanName="displayObject" />
+    </tiles:insert>
+
     <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
       <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
       <tiles:put name="placement" value="${placement}" />

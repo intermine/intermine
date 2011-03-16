@@ -78,7 +78,7 @@ public class DisplayerManager {
         }
     }
 
-    public Set<CustomDisplayer> getAllReportDislayersForType(String type) {
+    public Set<CustomDisplayer> getAllReportDisplayersForType(String type) {
         Set<CustomDisplayer> displayersForType = new HashSet<CustomDisplayer>();
         if (displayers.containsKey(type)) {
             for (Set<CustomDisplayer> disps : displayers.get(type).values()) {
@@ -86,6 +86,10 @@ public class DisplayerManager {
             }
         }
         return displayersForType;
+    }
+    
+    public Map<String, Set<CustomDisplayer>> getReportDisplayersForType(String type) {
+        return displayers.get(type);
     }
 
 }
