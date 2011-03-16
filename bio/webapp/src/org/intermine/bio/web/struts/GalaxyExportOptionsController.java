@@ -157,7 +157,8 @@ public class GalaxyExportOptionsController extends TilesAction
             TemplateQuery templateQuery = (TemplateQuery) query;
             Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
                                                    templateQuery.getConstraintSwitchOffAbility();
-            for (Map.Entry<PathConstraint, SwitchOffAbility> entry : constraintSwitchOffAbilityMap.entrySet()) {
+            for (Map.Entry<PathConstraint, SwitchOffAbility> entry
+                : constraintSwitchOffAbilityMap.entrySet()) {
                 if (entry.getValue().compareTo(SwitchOffAbility.OFF) == 0) {
                     templateQuery.removeConstraint(entry.getKey());
                 }
