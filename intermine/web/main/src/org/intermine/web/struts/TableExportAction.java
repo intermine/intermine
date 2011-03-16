@@ -125,7 +125,6 @@ public class TableExportAction extends InterMineAction
                     templateQuery.removeConstraint(entry.getKey());
                 }
             }
-            newPathQuery = new PathQuery(templateQuery);
         }
 
         newPathQuery = new PathQuery(pathQuery);
