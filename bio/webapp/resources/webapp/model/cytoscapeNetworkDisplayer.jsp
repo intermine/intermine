@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- cytoscapeNetworkDisplayer.jsp -->
 
@@ -54,6 +55,13 @@
         Powered by <img border="0/" style="vertical-align: middle;" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
       </a>
     </p>
+</div>
+<div>
+	<tiles:insert name="resultsTable.tile">
+	     <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
+	     <tiles:put name="currentPage" value="objectDetails" />
+	     <tiles:put name="inlineTable" value="true" />
+	</tiles:insert>
 </div>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
