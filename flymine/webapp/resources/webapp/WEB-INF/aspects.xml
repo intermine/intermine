@@ -1,5 +1,5 @@
 <aspects>
-  <aspect name="Genes">
+  <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/images/genomics.gif</icon-image>
     <large-image>model/images/genomics.gif</large-image>

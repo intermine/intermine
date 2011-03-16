@@ -697,6 +697,12 @@
                      replacesFields="interactions"
                      placement="Interactions"
                      types="Gene,Protein"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.InterMineLinkDisplayer"
+                     jspName="model/interMineLinkDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
                      
 <!-- 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"

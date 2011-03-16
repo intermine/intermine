@@ -7,17 +7,17 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <script type="text/javascript" charset="utf-8">
-function getInterMineLinks(organismShortName, identifier) {
-    AjaxServices.getInterMineLinks(organismShortName, identifier, function(mines) {
+function getInterMineLinks(organismShortName, identifier, symbol) {
+    AjaxServices.getInterMineLinks(organismShortName, identifier, symbol, function(mines) {
         jQuery('#intermine_links').html(mines);
     });
 }
 </script>
 
 <!-- interMineLinks.jsp -->
-    <div id="intermine_links"/><br>
+<h3>Link to other InterMines</h3>
+    <div id="intermine_links"></div><br>
       <script type="text/javascript" charset="utf-8">
-        getInterMineLinks('${object.organism.shortName}','${object.primaryIdentifier}' );
+        getInterMineLinks('${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');
       </script>
-    </div>
 <!-- /interMineLinks.jsp -->
