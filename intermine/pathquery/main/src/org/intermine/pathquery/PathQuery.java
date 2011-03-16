@@ -970,6 +970,20 @@ public class PathQuery implements Cloneable
         }
     }
 
+
+    /**
+     * Returns the paths descriptions for the view.
+     * @param pq
+     * @return A list of column names
+     */
+    public List<String> getColumnHeaders() {
+        List<String> columnNames = new ArrayList<String>();
+        for (String viewString : getView()) {
+            columnNames.add(getGeneratedPathDescription(viewString));
+        }
+        return columnNames;
+    }
+
     // -------------------- Query description control --------------------
     // The two attributes description and title are used for display
     // in various queries contexts.
