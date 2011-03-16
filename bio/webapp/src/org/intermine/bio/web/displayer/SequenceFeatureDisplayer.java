@@ -1,6 +1,5 @@
 package org.intermine.bio.web.displayer;
 
-e
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
