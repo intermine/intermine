@@ -7,9 +7,9 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayObject;
 
-public class LocatedSequenceFeatureImageDisplayer extends CustomDisplayer {
+public class GBrowseDisplayer extends CustomDisplayer {
 
-    public LocatedSequenceFeatureImageDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+    public GBrowseDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
 
