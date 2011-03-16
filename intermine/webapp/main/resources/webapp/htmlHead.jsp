@@ -26,6 +26,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
 
+
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
@@ -68,7 +69,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
+  <c:if test="${pageName != 'objectDetails'}">
+   <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
+  </c:if>
 </c:if>
   <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
@@ -81,6 +84,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/table.js'/>"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <!--[if lt IE 7.]>
     <script defer type="text/javascript" src="pngfix.js"></script>
   <![endif]-->
