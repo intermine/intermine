@@ -97,13 +97,6 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
-        final String DCC_PREFIX = "modENCODE_";
-        String[] wrongSubs = new String[]{DCC_PREFIX + "2753", DCC_PREFIX + "2754",
-                DCC_PREFIX + "2755", DCC_PREFIX + "2783", DCC_PREFIX + "2979",
-                DCC_PREFIX + "3247", DCC_PREFIX + "3251", DCC_PREFIX + "3253"};
-
-        final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
-
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
                 && request.getParameter("gzip").equalsIgnoreCase("true")) {
@@ -122,12 +115,6 @@ public class FeaturesAction extends InterMineAction
 
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
-
-            // temp fix for unmerged peak scores
-            if (experimentName.equalsIgnoreCase(
-                    "Genome-wide localization of essential replication initiators")) {
-                addMergingPeaks(featureType, q);
-            }
 
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
@@ -187,8 +174,7 @@ public class FeaturesAction extends InterMineAction
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
             sourceFile = request.getParameter("file");
-            LOG.info("PBS FILE:" + sourceFile); 
-            
+
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
@@ -240,10 +226,6 @@ public class FeaturesAction extends InterMineAction
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-                // temp fix for unmerged peak scores
-//                if (unmergedPeaks.contains(dccId)) {
-//                    addMergingPeaks(featureType, q);
-//                }
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -253,16 +235,12 @@ public class FeaturesAction extends InterMineAction
                     q.addView(featureType + ".submissions.DCCid");
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
-                
+
              // source file
-                
                 if (sourceFile != null) {
-                    LOG.info("PBS adding constraint:" + sourceFile); 
-                    
                     q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
                 }
-                
-                
+
             }
         } else if ("subEL".equals(type)) {
             // For the expression levels
@@ -382,15 +360,10 @@ public class FeaturesAction extends InterMineAction
         } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
             q.addView(featureType + ".id");
-            // temp fix for unmerged peak scores
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-//            if (unmergedPeaks.contains(dccId)) {
-//                addMergingPeaks(featureType, q);
-//            }
             sourceFile = request.getParameter("file");
             if (sourceFile != null) {
-                LOG.info("PBS adding constraint LIST:" + sourceFile); 
                 q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
 
@@ -408,17 +381,6 @@ public class FeaturesAction extends InterMineAction
             return forwardParameters.addParameter("bagName", bagName).forward();
         }
         return null;
-    }
-
-    /**
-     * @param featureType
-     * @param dccId
-     * @param q
-     */
-    private void addMergingPeaks(String featureType, PathQuery q) {
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R1_*"));
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R2_*"));
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*Rep*"));
     }
 
     /**
