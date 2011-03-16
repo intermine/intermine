@@ -2,8 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<!-- locatedSequenceFeatureImage.jsp -->
+<!-- gbrowseDisplayer.jsp -->
 
+<div class="inner">
 <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
@@ -72,5 +73,5 @@
     </c:if>
   </html:link>
 </c:if>
-
-<!-- /locatedSequenceFeatureImage.jsp -->
+</div>
+<!-- /gbrowseDisplayer.jsp -->
