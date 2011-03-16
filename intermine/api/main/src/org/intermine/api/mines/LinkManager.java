@@ -79,11 +79,9 @@ public class LinkManager
         mapTemplate = (String) webProperties.get("intermine.template.queryableMap");
         reportTemplate = (String) webProperties.get("intermine.template.report.otherMines");
         relatedDataTemplate = (String) webProperties.get("intermine.template.report.relatedData");
-
         identifierConstraint
             = (String) webProperties.get("intermine.template.identifierConstraint");
         lookupConstraint = (String) webProperties.get("intermine.template.lookupConstraint");
-
         extraValueConstraint
             = (String) webProperties.get("intermine.template.extraValueConstraint");
         relatedDataConstraint1
@@ -152,6 +150,10 @@ public class LinkManager
             + extraValueConstraint + constraintValue;
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
+            if (reader == null) {
+                LOG.error(mine.getName() + " does not have template " + webserviceURL);
+                return null;
+            }
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] bits = line.split("\\t");
@@ -217,6 +219,10 @@ public class LinkManager
             + relatedDataConstraint2 + constraintValue;
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
+            if (reader == null) {
+                LOG.error(mine.getName() + " does not have template " + webserviceURL);
+                return null;
+            }
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] bits = line.split("\\t");
