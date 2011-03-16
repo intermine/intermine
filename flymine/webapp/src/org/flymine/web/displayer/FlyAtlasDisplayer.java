@@ -2,7 +2,10 @@ package org.flymine.web.displayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +18,12 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.output.JSONResultsIterator;
 import org.intermine.webservice.server.output.JSONRowIterator;
+import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FlyAtlasDisplayer extends CustomDisplayer {
 
@@ -31,41 +39,51 @@ public class FlyAtlasDisplayer extends CustomDisplayer {
         PathQuery q = new PathQuery(im.getModel());
         q.addViews("Gene.microArrayResults.material.primaryIdentifier",
                 "Gene.microArrayResults.tissue.name",
-                "Gene.microArrayResults.affyCall",
-                "Gene.microArrayResults.enrichment",
+                "Gene.microArrayResults.affyCall", // up/down/none => colour
+                "Gene.microArrayResults.enrichment", // fp
                 "Gene.microArrayResults.mRNASignal",
-                "Gene.microArrayResults.presentCall");
+                "Gene.microArrayResults.presentCall" /* Mouseover 1 out of  4 */);
         Integer objectId = displayObject.getId();
         q.addConstraint(Constraints.eq("Gene.id", objectId.toString()));
         q.addConstraint(Constraints.type("Gene.microArrayResults", "FlyAtlasResult"));
+        q.addOrderBySpaceSeparated("Gene.microArrayResults.mRNASignal asc");
+
+        q = PathQueryBuilderForJSONObj.processQuery(q);
 
         Profile profile = SessionMethods.getProfile(request.getSession());
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
-        StringBuilder output = new StringBuilder();
+        List<Double> signals = new ArrayList<Double>();
+        List<String> names = new ArrayList<String>();
+        List<String> affyCalls = new ArrayList<String>();
+        List<Double> enrichments = new ArrayList<Double>();
+        List<Integer> presentCalls = new ArrayList<Integer>();
+        List<String> objectIds = new ArrayList<String>();
 
-        // Using a JSONResultsIterator gave this error:
-        //       <a href="mailto:support@flymine.org?body=I found this error on http://localhost:8080/flymine/layout.jsp.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0Aorg.intermine.webservice.server.output.JSONFormattingException: This array is empty - is the view in the wrong order?
-        //at org.intermine.webservice.server.output.JSONResultsIterator.setCurrentMapFromCurrentArray(JSONResultsIterator.java:358)
-        //at org.intermine.webservice.server.output.JSONResultsIterator.addReferenceToCurrentNode(JSONResultsIterator.java:378)
-        //at org.intermine.webservice.server.output.JSONResultsIterator.addReferencedCellToJsonMap(JSONResultsIterator.java:309)
-        //at org.intermine.webservice.server.output.JSONResultsIterator.addCellToJsonMap(JSONResultsIterator.java:241)
-        //at org.intermine.webservice.server.output.JSONResultsIterator.addRowToJsonMap(JSONResultsIterator.java:114)
-        //at org.intermine.webservice.server.output.JSONResultsIterator.next(JSONResultsIterator.java:96)
-        //at org.flymine.web.displayer.FlyAtlasDisplayer.display(FlyAtlasDisplayer.java:48)
-
-
-        JSONRowIterator jsonIterator = new JSONRowIterator(executor.execute(q), im);
+        JSONResultsIterator jsonIterator = new JSONResultsIterator(executor.execute(q));
         while (jsonIterator.hasNext()) {
-            Object next = jsonIterator.next();
-            List<String> outputLine = new ArrayList<String>(Arrays.asList(next.toString()));
-            if (jsonIterator.hasNext()) {
-                outputLine.add("");
-            }
-            output.append(outputLine);
+        	try {
+	            JSONObject gene = jsonIterator.next();
+	            JSONArray microArrayResults = gene.getJSONArray("microArrayResults");
+	            for (int i = 0; i < microArrayResults.length(); i++) {
+	            	JSONObject flyAtlasResult = microArrayResults.getJSONObject(i);
+	            	objectIds.add(flyAtlasResult.getString("objectId"));
+	            	signals.add(flyAtlasResult.getDouble("mRNASignal"));
+	            	names.add(flyAtlasResult.getJSONObject("tissue").getString("name"));
+	            	affyCalls.add(flyAtlasResult.getString("affyCall"));
+	            	enrichments.add(flyAtlasResult.optDouble("enrichment"));
+	            	presentCalls.add(flyAtlasResult.getInt("presentCall"));
+	            }
+        	} catch (JSONException e) {
+        		//
+        	}
         }
-
-        request.setAttribute("jsonresults", output);
+        request.setAttribute("signals", signals.toString());
+        request.setAttribute("names", new JSONArray(names));
+        request.setAttribute("affyCalls", new JSONArray(affyCalls));
+        request.setAttribute("enrichments", enrichments.toString());
+        request.setAttribute("presentCalls", presentCalls.toString());
+        request.setAttribute("objectIds", new JSONArray(objectIds));
     }
 
 }

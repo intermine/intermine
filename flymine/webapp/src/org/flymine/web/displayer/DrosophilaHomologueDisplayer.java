@@ -58,7 +58,7 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
     }
 
     private Map<String, Set<ResultElement>> initMap() {
-        ListOrderedMap homologues = new ListOrderedMap();
+        Map homologues = new ListOrderedMap();
         for (String species : SPECIES) {
             addToMap(homologues, species, null);
         }
