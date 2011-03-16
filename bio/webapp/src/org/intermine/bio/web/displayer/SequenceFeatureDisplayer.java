@@ -43,9 +43,6 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
         super(config, im);
     }
 
-    /**
-     *
-     */
     @SuppressWarnings("unchecked")
     public void display(HttpServletRequest request, DisplayObject displayObject) {
         InterMineObject imObj = displayObject.getObject();
