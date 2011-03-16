@@ -56,7 +56,8 @@
       </a>
     </p>
 </div>
-<div>
+<div class="box table">
+<h3>Interactions</h3>
 	<tiles:insert name="resultsTable.tile">
 	     <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
 	     <tiles:put name="currentPage" value="objectDetails" />
