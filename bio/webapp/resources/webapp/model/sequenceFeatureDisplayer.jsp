@@ -53,23 +53,28 @@
           </c:if>
         </c:when>
         <c:otherwise>
-          <c:forEach items="${col}" var="loc" varStatus="statei">
-            <strong>
-              <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
-            </strong>
-            <c:if test="${!empty loc.strand}">
-              <span class="smallnote">
-                <c:choose>
-                  <c:when test="${loc.strand == 1}">
-                    forward strand
-                  </c:when>
-                  <c:when test="${loc.strand == -1}">
-                    reverse strand
-                  </c:when>
-                </c:choose>
-              </span>
-            </c:if>
-          </c:forEach>
+          <table class="noborder centered" cellspacing="0" border="0"><tr>
+            <c:forEach items="${col}" var="loc" varStatus="statei">
+              <td>
+                <strong>
+                  <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
+                </strong>
+                <c:if test="${!empty loc.strand}">
+                  <span class="smallnote">
+                    <c:choose>
+                      <c:when test="${loc.strand == 1}">
+                        forward strand
+                      </c:when>
+                      <c:when test="${loc.strand == -1}">
+                        reverse strand
+                      </c:when>
+                    </c:choose>
+                  </span>
+                </c:if>
+              </td>
+              <c:if test="${statei.count % 3 == 0}"></tr><tr></c:if>
+            </c:forEach>
+            </tr></table>
         </c:otherwise>
       </c:choose>
     </td>
@@ -77,8 +82,9 @@
       <c:when test="${!empty feature.length}">
         <td class="theme-3-border theme-6-background border-left">Length:</td>
         <td class="theme-3-border theme-6-background">
+          <c:set var="interMineObject" value="${displayObject.object}" scope="request" />
           <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
-            <tiles:put name="expr" value="${feature.length}" />
+            <tiles:put name="expr" value="length" />
           </tiles:insert>
         </td>
       </c:when>
