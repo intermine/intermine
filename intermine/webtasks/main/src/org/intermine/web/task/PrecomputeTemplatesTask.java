@@ -273,6 +273,6 @@ public class PrecomputeTemplatesTask extends Task
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         Profile profile = pm.getSuperuserProfile();
         TemplateManager templateManager = new TemplateManager(profile, os.getModel());
-        return templateManager.getGlobalTemplates();
+        return templateManager.getGlobalTemplates(true);
     }
 }

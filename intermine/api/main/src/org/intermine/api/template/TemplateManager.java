@@ -144,7 +144,6 @@ public class TemplateManager
         return allTemplates;
     }
 
-
     /**
      * Get a list of template queries that should appear on report pages for the given type
      * under the specified aspect.
@@ -165,7 +164,6 @@ public class TemplateManager
         return templates;
     }
 
-
     /**
      * Return true if a template should appear on a report page.  All logic should be contained
      * in this method.
@@ -175,10 +173,8 @@ public class TemplateManager
      */
     private boolean isValidReportTemplate(TemplateQuery template, Collection<String> classes) {
 
-        // is this template tagged to be hidden on report pages
-        List<Tag> noReportTags = tagManager.getTags(TagNames.IM_REPORT, template.getName(),
-                TagTypes.TEMPLATE, superProfile.getUsername());
-        if (noReportTags.size() < 1) {
+        // must be tagged to be on report page
+        if (!hasTag(superProfile, TagNames.IM_REPORT, template)) {
             return false;
         }
 
@@ -212,7 +208,6 @@ public class TemplateManager
         return true;
     }
 
-
     /**
      * Get public templates for a particular aspect.
      * @param aspect name of aspect tag
@@ -221,7 +216,6 @@ public class TemplateManager
     public List<TemplateQuery> getAspectTemplates(String aspect) {
         return getAspectTemplates(aspect, null);
     }
-
 
     /**
      * Get public templates for a particular aspect.
@@ -259,7 +253,6 @@ public class TemplateManager
         return aspectTemplates;
     }
 
-
     /**
      * Return a map from template name to template query containing superuser templates that are
      * tagged as public and are valid for the current data model.
@@ -267,7 +260,6 @@ public class TemplateManager
      */
     public Map<String, TemplateQuery> getValidGlobalTemplates() {
         Map<String, TemplateQuery> validTemplates = new HashMap<String, TemplateQuery>();
-
         for (Map.Entry<String, TemplateQuery> entry : getGlobalTemplates().entrySet()) {
             if (entry.getValue().isValid()) {
                 validTemplates.put(entry.getKey(), entry.getValue());
@@ -285,6 +277,15 @@ public class TemplateManager
         return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC);
     }
 
+    /**
+     * Return a map from template name to template query containing superuser templates that are
+     * tagged as public.
+     * @param filterOutAdmin if true, filter out templates tagged with IM_ADMIN
+     * @return a map from template name to template query
+     */
+    public Map<String, TemplateQuery> getGlobalTemplates(boolean filterOutAdmin) {
+        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC, filterOutAdmin);
+    }
 
     /**
      * Return template queries used for converting between types in bag upload and lookup queries,
@@ -301,8 +302,6 @@ public class TemplateManager
         return conversionTemplates;
     }
 
-
-
     /**
      * Return a map from template name to template query of template in the given profile that are
      * tagged with a particular tag.
@@ -311,17 +310,43 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag) {
+        return getTemplatesWithTag(profile, tag, false);
+    }
+
+    /**
+     * Return a map from template name to template query of template in the given profile that are
+     * tagged with a particular tag.
+     * @param profile a user profile to get templates from
+     * @param tag the tag to search for
+     * @param filterOutAdmin if false, filter out templates tagged with IM_ADMIN
+     * @return a map from template name to template query
+     */
+    private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag,
+            boolean filterOutAdmin) {
         Map<String, TemplateQuery> templatesWithTag = new HashMap<String, TemplateQuery>();
 
         for (Map.Entry<String, TemplateQuery> entry : profile.getSavedTemplates().entrySet()) {
-            TemplateQuery bag = entry.getValue();
-            List<Tag> tags = tagManager.getTags(tag, bag.getName(), TagTypes.TEMPLATE,
+            TemplateQuery template = entry.getValue();
+            List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());
             if (tags.size() > 0) {
+                // if filtering by admin tag, don't include this template if it's tagged with ADMIN
+                if (!filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
+                    continue;
+                }
                 templatesWithTag.put(entry.getKey(), entry.getValue());
             }
         }
         return templatesWithTag;
+    }
+
+    private boolean hasTag(Profile profile, String tagName, TemplateQuery template) {
+        List<Tag> tags = tagManager.getTags(tagName, template.getName(), TagTypes.TEMPLATE,
+                profile.getUsername());
+        if (tags.size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
