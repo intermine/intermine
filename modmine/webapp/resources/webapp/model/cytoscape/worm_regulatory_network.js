@@ -155,7 +155,7 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
         // Filter to show TF-miRNA interactions
         jQuery('#TFtoMiRNA').click(function(){
              vis.filter("edges", function(edge) {
-                 return edge.color == "#00ff00";
+                 return edge.color == "#00ff7f";
              });
          });
 
