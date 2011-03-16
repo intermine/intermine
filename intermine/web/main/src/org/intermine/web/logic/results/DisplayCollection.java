@@ -52,4 +52,13 @@ public class DisplayCollection extends DisplayField
         return desc;
     }
 
+    /**
+     *
+     * @return Collection for JSP instead of dealing with InlineResultsTable
+     */
+    @SuppressWarnings("unchecked")
+    public Collection getCollection() {
+        return this.collection;
+    }
+
 }
