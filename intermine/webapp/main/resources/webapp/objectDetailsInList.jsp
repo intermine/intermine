@@ -50,5 +50,6 @@
 
 </c:if>
 </div>
+<br />
 </c:if>
 <!-- /objectDetailsInList.jsp -->

@@ -127,21 +127,7 @@
 
 <div id="content">
 
-<c:set var="showMenu" value="false" scope="page" />
-<c:forEach items="${CATEGORIES}" var="aspect">
-  <c:forEach items="${object.clds}" var="cld">
-    <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[placement]) > 0}">
-      <c:set var="foundDisplayer" value="true" />
-    </c:if>
-  </c:forEach>
-  <c:set var="placement" value="im:aspect:${aspect}" />
-  <c:if test="${!empty placementRefsAndCollections[placement] || foundDisplayer == true || !empty templates}">
-      <c:set var="showMenu" value="true" scope="page" />
-  </c:if>
-  <c:set var="foundDisplayer" value="false" />
-</c:forEach>
-
-<c:if test="${showMenu}">
+<c:if test="${categories != null}">
   <div id="menu-target">&nbsp;</div>
   <div id="toc-menu-wrap">
     <tiles:insert name="objectDetailsMenu.jsp" />
@@ -222,7 +208,6 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
       <tiles:put name="objectid" value="${object.id}"/>
     </tiles:insert>
   </div>
-
   <h3>Other Mines</h3>
   <ul>
     <li><a href="#">RatMine</a></li>
@@ -261,7 +246,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
   </tiles:insert>
   </c:forEach>
 
-  <c:if test="${showMenu}">
+  <c:if test="${categories != null}">
     <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
       <div class="clear">&nbsp;</div>
       <a name="other"><h2>Other</h2></a>

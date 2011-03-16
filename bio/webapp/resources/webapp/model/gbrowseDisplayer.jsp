@@ -4,7 +4,6 @@
 
 <!-- gbrowseDisplayer.jsp -->
 
-<div class="inner">
 <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
@@ -73,5 +72,4 @@
     </c:if>
   </html:link>
 </c:if>
-</div>
 <!-- /gbrowseDisplayer.jsp -->

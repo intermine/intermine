@@ -26,6 +26,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -326,7 +327,7 @@ public class DisplayObject
        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
        return displayerManager.getReportDisplayersForType(clsName);
    }
-   
+
     /**
      *
      * @return Set
@@ -628,10 +629,13 @@ public class DisplayObject
                     String result = "";
                     // concatenate a space delineated title together as resolved from FieldValues
                     for (String path : titles.get(key).keySet()) {
-                        String symbol = getFieldValues().get(path).toString();
-                        // String.isEmpty() was introduced in Java release 1.6
-                        if (StringUtils.isNotBlank(symbol)) {
-                            result += symbol + " ";
+                        Object stuff = getFieldValues().get(path);
+                        if (stuff != null) {
+                            String stringyStuff = stuff.toString();
+                            // String.isEmpty() was introduced in Java release 1.6
+                            if (StringUtils.isNotBlank(stringyStuff)) {
+                                result += stringyStuff + " ";
+                            }
                         }
                     }
                     // trailing space & return

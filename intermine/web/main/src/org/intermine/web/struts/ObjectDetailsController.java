@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,11 +33,14 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.results.DisplayCollection;
@@ -45,7 +49,6 @@ import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
@@ -181,6 +184,40 @@ public class ObjectDetailsController extends InterMineAction
         if (stableLink != null) {
             request.setAttribute("stableLink", stableLink);
         }
+
+        // attach only non empty categories
+        Set<String> allClasses = new HashSet<String>();
+        for (ClassDescriptor cld : cds) {
+            allClasses.add(cld.getUnqualifiedName());
+        }
+        TemplateManager templateManager = im.getTemplateManager();
+        Map<String, Set<CustomDisplayer>> displayerMap = dobj.getReportDisplayers();
+
+        List<String> categories = new LinkedList<String>();
+        for (String aspect : aspects) {
+            // 1) Displayers
+            // 2) References & Collections
+            // 3) Inline Lists
+            if (
+                    (displayerMap != null
+                            && displayerMap.containsKey(aspect))
+                    || (placementRefsAndCollections.containsKey("im:aspect:" + aspect)
+                            && placementRefsAndCollections.get("im:aspect:" + aspect) != null
+                            && !placementRefsAndCollections.get("im:aspect:" + aspect).isEmpty())
+                    || placedInlineLists.containsKey(aspect)) {
+                categories.add(aspect);
+            } else {
+                // 4) Templates
+                if (!templateManager.getReportPageTemplatesForAspect(aspect, allClasses)
+                        .isEmpty()) {
+                    categories.add(aspect);
+                }
+            }
+        }
+        if (!categories.isEmpty()) {
+            request.setAttribute("categories", categories);
+        }
+
         return null;
     }
 
