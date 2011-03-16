@@ -357,9 +357,9 @@ public class TemplateManager
         for (Entry<String, Double> entry : listOrdered) {
             mostPopularTemplateOrder.add(entry.getKey());
         }
-        if (mostPopularTemplateOrder != null && size != null) {
-            if (mostPopularTemplateOrder != null && mostPopularTemplateOrder.size() > size) {
-                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+        if (size != null) {
+            if (mostPopularTemplateOrder.size() > size.intValue()) {
+                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size.intValue());
             }
         }
         return mostPopularTemplateOrder;
@@ -398,8 +398,8 @@ public class TemplateManager
                                             mostPopularTemplateNames));
         }
         if (templates != null && size != null) {
-            if (templates.size() > size) {
-                templates = templates.subList(0, size);
+            if (templates.size() > size.intValue()) {
+                templates = templates.subList(0, size.intValue());
             }
         }
         return templates;
