@@ -1,6 +1,9 @@
 package org.intermine.bio.web.displayer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,19 +13,26 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
 import org.intermine.bio.web.logic.CytoscapeNetworkDBQueryRunner;
 import org.intermine.bio.web.logic.CytoscapeNetworkUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Protein;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Protein;
 
 public class CytoscapeNetworkDisplayer extends CustomDisplayer {
 
@@ -38,7 +48,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
         Profile profile = SessionMethods.getProfile(request.getSession()); // Get Profile
         PathQueryExecutor executor = im.getPathQueryExecutor(profile); // Get PathQueryExecutor
 
-        Set<Integer> startingFeatureSet = new HashSet<Integer>(); // feature: gene or protein
+        Set<Integer> startingFeatureSet = new LinkedHashSet<Integer>(); // feature: gene or protein
         String featureType = "";
 
         //=== Get Interaction information ===
@@ -81,10 +91,10 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
         }
 
         // Check if interaction data available for the organism
-        Gene aTestGene;
+        Gene hubGene;
 		try {
-			aTestGene = (Gene) os.getObjectById((Integer) fullInteractingGeneSet.toArray()[0]);
-	        String orgName = aTestGene.getOrganism().getName();
+			hubGene = (Gene) os.getObjectById((Integer) startingFeatureSet.toArray()[0]);
+	        String orgName = hubGene.getOrganism().getName();
 	        if (!interactionInfoMap.containsKey(orgName)) {
 	            String orgWithNoDataMessage = "No interaction data found for "
 	                    + orgName + " genes";
@@ -94,5 +104,31 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
 			request.setAttribute("exception", "An exception occured");
 			e.printStackTrace();
 		}
+
+		// Add view interaction inline table
+        PathQuery query = new PathQuery(model);
+
+        query.addViews("Gene.symbol",
+                "Gene.secondaryIdentifier",
+                "Gene.interactions.interactionType",
+                "Gene.interactions.interactingGenes.symbol",
+                "Gene.interactions.interactingGenes.secondaryIdentifier",
+                "Gene.interactions.dataSets.dataSource.name",
+                "Gene.interactions.experiment.publication.pubMedId");
+
+        query.addOrderBy("Gene.interactions.interactionType", OrderDirection.ASC);
+        query.addConstraint(Constraints.inIds("Gene", startingFeatureSet));
+        query.setOuterJoinStatus("Gene.interactions.experiment.publication", OuterJoinStatus.OUTER);
+
+        try {
+            WebResultsExecutor we = im.getWebResultsExecutor(profile);
+            WebResults webResults = we.execute(query);
+            PagedTable pagedResults = new PagedTable(webResults, 10);
+            pagedResults.setTableid("CytoscapeNetworkDisplayer");
+            request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

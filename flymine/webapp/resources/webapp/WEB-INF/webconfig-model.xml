@@ -686,8 +686,8 @@
                      placement="Expression"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.LocatedSequenceFeatureImageDisplayer"
-                     jspName="model/locatedSequenceFeatureImage.jsp"
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
+                     jspName="model/gbrowseDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
                      types="Gene,BindingSite,CDS,Chromosome,Exon,SequenceFeature,RegulatoryRegion,TFBindingSite,Transcript"/>
