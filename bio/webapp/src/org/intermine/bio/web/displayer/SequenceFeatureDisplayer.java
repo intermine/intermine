@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
@@ -16,8 +15,6 @@ import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.InlineResultsTable;
-import org.intermine.web.logic.results.InlineResultsTableRow;
 
 public class SequenceFeatureDisplayer extends CustomDisplayer {
 
