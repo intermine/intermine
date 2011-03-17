@@ -61,8 +61,10 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
                     i++;
                 }
 
-                request.setAttribute("locationsCollection", results);
-                request.setAttribute("locationsCollectionSize", col.size());
+                if (!results.isEmpty()) {
+                    request.setAttribute("locationsCollection", results);
+                    request.setAttribute("locationsCollectionSize", col.size());
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

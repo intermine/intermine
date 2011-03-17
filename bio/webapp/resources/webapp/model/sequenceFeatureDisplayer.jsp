@@ -60,7 +60,7 @@
             </span>
           </c:if>
         </c:when>
-        <c:otherwise>
+        <c:when test="${locationsCollection != null}">
           <div id="locations-collection">
             <table class="noborder" cellspacing="0" border="0"><tbody><tr>
               <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
@@ -99,7 +99,8 @@
                 Show all in a table
               </html:link>
             </p>
-        </c:otherwise>
+        </c:when>
+        <c:otherwise>No location information in ${WEB_PROPERTIES['project.title']}</c:otherwise>
       </c:choose>
     </td>
     <c:choose>
