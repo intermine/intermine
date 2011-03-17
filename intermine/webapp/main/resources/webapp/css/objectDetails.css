@@ -167,9 +167,11 @@ div.feature table td.border-left { border-left:1px solid #DCC8E2 !important; }
 div.feature p.toggle, div.feature p.in_table { text-align:center; }
 div.feature a { text-decoration:underline; }
 
+/* links in other mines */
+#intermine_links.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
+
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 
 .listsObjectIsIn {
   padding-top: 2px;
   padding-left: 10px;
-}

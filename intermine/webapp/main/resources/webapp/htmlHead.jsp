@@ -31,7 +31,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <c:choose>
-  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin'}">
+  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin' || pageName == 'objectDetails'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
   </c:when>
   <c:otherwise>
