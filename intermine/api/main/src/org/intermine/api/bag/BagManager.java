@@ -245,7 +245,9 @@ public class BagManager
         Iterator<Object> resIter = res.iterator();
         while (resIter.hasNext()) {
             Integer osBagId = (Integer) resIter.next();
-            bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
+            if (osBagIdToInterMineBag.containsKey(osBagId)) {
+                bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
+            }
         }
 
         return bagsContainingId;
