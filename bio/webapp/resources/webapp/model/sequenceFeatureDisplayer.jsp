@@ -26,7 +26,7 @@
     <c:choose>
       <c:when test="${!empty feature.sequenceOntologyTerm}">
         <td class="border-left">Sequence ontology type:</td>
-        <td colspan="2">
+        <td>
           <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
           <img alt="?" title="${feature.sequenceOntologyTerm.description}"
           src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
@@ -34,7 +34,7 @@
         </td>
       </c:when>
       <c:otherwise>
-        <td colspan="3">&nbsp;</td>
+        <td colspan="2">&nbsp;</td>
       </c:otherwise>
     </c:choose>
   </tr>
@@ -114,7 +114,6 @@
       </c:when>
       <c:otherwise>&nbsp;</c:otherwise>
     </c:choose>
-    <td class="theme-3-border theme-6-background">[SEQUENCE] [GFF3]</td>
   </tr>
 </table>
 
