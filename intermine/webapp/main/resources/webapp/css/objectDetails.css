@@ -168,3 +168,8 @@ div.feature p.toggle, div.feature p.in_table { text-align:center; }
 div.feature a { text-decoration:underline; }
 
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
+
+.listsObjectIsIn {
+  padding-top: 2px;
+  padding-left: 10px;
+}

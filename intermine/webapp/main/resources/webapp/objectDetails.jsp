@@ -205,7 +205,7 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
 <div style="float:right;" class="box grid_3">
   <div id="in-lists">
     <tiles:insert name="objectDetailsInList.tile">
-      <tiles:put name="objectid" value="${object.id}"/>
+      <tiles:put name="object" beanName="object"/>
     </tiles:insert>
   </div>
   <h3>Other Mines</h3>

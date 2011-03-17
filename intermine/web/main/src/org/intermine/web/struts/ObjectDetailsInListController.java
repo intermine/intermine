@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.ObjectDetailsInList;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -41,18 +45,28 @@ public class ObjectDetailsInListController extends TilesAction
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-        String id = (String) context.getAttribute("objectid");
+        DisplayObject object = (DisplayObject) context.getAttribute("object");
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
 
         Collection<InterMineBag> bagsWithId =
-            bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));
+            bagManager.getUserOrGlobalBagsContainingId(profile, object.getId());
         // wrap around
         ObjectDetailsInList odil = new ObjectDetailsInList(bagsWithId);
 
         request.setAttribute("bagsWithId", odil);
+
+        List<InterMineBag> bagsToAddTo = new ArrayList<InterMineBag>();
+        Map<String, InterMineBag> userBags =
+            bagManager.getUserBagsOfType(profile, object.getType());
+        for (String bagName : userBags.keySet()) {
+            if (!bagsWithId.contains(userBags.get(bagName))) {
+                bagsToAddTo.add(userBags.get(bagName));
+            }
+        }
+        request.setAttribute("bagsToAddTo", bagsToAddTo);
         return null;
     }
 }

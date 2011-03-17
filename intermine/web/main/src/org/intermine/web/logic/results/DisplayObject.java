@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -154,6 +153,10 @@ public class DisplayObject
      */
     public InterMineObject getObject() {
         return object;
+    }
+
+    public String getType() {
+        return DynamicUtil.getSimpleClass(object).getSimpleName();
     }
 
     /**

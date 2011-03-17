@@ -5,51 +5,54 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+
 <!-- objectDetailsInList.jsp -->
-<c:if test="${(bagsWithId.count > 0) || (! empty PROFILE.savedBags)}">
+
+<tiles:importAttribute name="object" ignore="false"/>
+
   <div class="heading">
     Lists
   </div>
 
 <div class="body" style="padding:10px;border:1px #CCC solid">
-<c:if test="${bagsWithId.count > 0}">
+
 <div>
-      Lists in which this
-      <c:forEach items="${object.clds}" var="cld">
-            ${cld.unqualifiedName}
-      </c:forEach> can be found: <c:forEach items="${bagsWithId.collection}" var="interMineBag" varStatus="status"><c:if test="${status.count > 2}">,</c:if> <c:if test="${interMineBag != null}"><html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>&nbsp;(<c:out value="${interMineBag.size}"/>)</c:if></c:forEach>
+  <c:choose>
+   <c:when test="${bagsWithId.count == 0}">
+      This <c:out value="${object.type}"/> isn't in any lists. <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">Upload a list</html:link>.
+    </c:when>
+    <c:when test="${bagsWithId.count == 1}">
+      This <c:out value="${object.type}"/> is in one list:
+    </c:when>
+    <c:otherwise>
+      This <c:out value="${object.type}"/> is in ${bagsWithId.count} lists:
+    </c:otherwise>
+  </c:choose>
+  <div class="listsObjectIsIn">
+    <c:forEach items="${bagsWithId.collection}" var="bag" varStatus="status">
+      <html:link href="bagDetails.do?bagName=${bag.name}"><c:out value="${bag.name}"/></html:link>&nbsp;(<c:out value="${bag.size}"/>)
+    </c:forEach>
+  </div>
 </div>
-</c:if>
 
 <%-- Add to list --%>
-<c:if test="${!empty PROFILE.savedBags}">
-<div style="margin-top:10px">
-  <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
-    <fmt:message key="objectDetails.addToBag"/>
-    <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-    <select name="bag">
-      <option name="">--------</option>
-      <c:forEach items="${PROFILE.savedBags}" var="entry">
-       <c:if test="${empty filteredWebSearchables[entry.key]}">
-         <c:set var="notFoundInAList" value="true" scope="page" />
-         <c:forEach items="${bagsWithId.collection}" var="interMineBag">
-           <c:if test="${interMineBag.name == entry.key}">
-             <c:set var="notFoundInAList" value="false" scope="page" />
-           </c:if>
-         </c:forEach>
-         <c:if test="${notFoundInAList}">
-           <option name="${entry.key}">${entry.key}</option>
-         </c:if>
-       </c:if>
-      </c:forEach>
-    </select>
-    <input type="hidden" name="object" value="${object.id}"/>
-    <input type="submit" value="<fmt:message key="button.add"/>"/>
-  </form>
-</div>
-
+<c:if test="${!empty bagsToAddTo}">
+  <div style="margin-top:10px">
+    <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
+      Add this ${object.type} to one of your lists:<br/>
+      <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+      <select name="bag">
+        <c:forEach items="${bagsToAddTo}" var="bagOfType">
+          <option name="${bagOfType.name}">${bagOfType.name}</option>
+        </c:forEach>
+      </select>
+      <input type="hidden" name="object" value="${object.id}"/>
+      <input type="submit" value="<fmt:message key="button.add"/>"/>
+    </form>
+  </div>
 </c:if>
+
 </div>
 <br />
-</c:if>
+
 <!-- /objectDetailsInList.jsp -->
