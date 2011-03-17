@@ -670,6 +670,7 @@
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
   <reportdisplayers>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations"
@@ -685,8 +686,8 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
                      jspName="model/gbrowseDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
-                     types="Gene,BindingSite,CDS,Chromosome,Exon,SequenceFeature,RegulatoryRegion,TFBindingSite,Transcript"/>
+                     placement="Genomics"
+                     types="SequenceFeature"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
@@ -697,16 +698,15 @@
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
                      replacesFields="goAnnotation"
-                     placement="summary"
+                     placement="Function"
                      types="Gene"/>
 
-<!--
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genes"
-                     types="Gene"/>
--->
+                     replacesFields="transcripts,exons,CDSs,introns"
+                     placement="summary"
+                     types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
+
   </reportdisplayers>
 
    <widgets>
