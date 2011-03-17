@@ -274,7 +274,7 @@ jQuery(document).ready(function () {
                         </c:when>
                         
                         <c:when test="${doLink}">
-                        <a href="${WEB_PROPERTIES['ftp.prefix']}/${dccNumber}/extracted/${resultElement.field}" class="value extlink">
+                        <a href="${WEB_PROPERTIES['ftp.url']}/get_file/${dccNumber}/extracted/${resultElement.field}" class="value extlink">
                         <c:out value="${resultElement.field}" /> </a></td>
                         <c:set var="doLink" value="false" />
                         </c:when>
