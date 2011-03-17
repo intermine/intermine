@@ -7,11 +7,28 @@
 
 <html:xhtml/>
 
+<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.10.custom.css"/>
 <style type="text/css">
     /* The Cytoscape Web container must have its dimensions set. */
     html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
     /* use absolute value */
-    #cytoWebContent { width: 315px; height: 270px; }
+    #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0; -moz-border-radius: 5px 5px 5px 5px;}
+    #cwtabsbyside { clear: right; float: right; overflow: auto; width: 460px;}
+    #cwinlinetable { display: none; padding: 5px 0 0 0;}
+    fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.3em; padding: 0.3em; }
+    #legend h3 { -moz-border-radius: 5px 5px 0 0; background: none repeat scroll 0 0 #CCCCCC; margin: 0; padding: 4px 5px; color: black; border-top-style: none; }
+    #legend p {
+    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+    border-right: 1px solid #BBBBBB;
+    border-style: none solid solid;
+    border-width: medium 1px 1px;
+    margin: 0;
+    padding: 5px;
+}
+    #legend { padding: 0.2em 0.4em 0.4em; }
+    #powerby { padding: 5px; text-align: center; }
+    #powerby a { color: rgb(136, 136, 136); text-decoration: none; background-color: white; }
+    #powerby img { vertical-align: middle; }
 
     SPAN.physical
     {
@@ -38,26 +55,49 @@
        top:-4px;
     }
 </style>
-<div id="cyto_div">
+<div id="cwhead">
     <h3>Interaction Network</h3>
-    <div id="caption" style="font-size:12px; font-style:italic">
-    <!-- jQuery will add stuff here -->
-    </div>
-    <div id="cytoWebContent" width="*"></div>
+</div>
+
+    <!--
     <div id="menu">
-    <!-- jQuery will add stuff here -->
     </div>
     <div id="legends">
-    <!-- jQuery will add stuff here -->
     </div>
-    <p>
-      <a style="color: rgb(136, 136, 136); text-decoration: none; background-color: white;" onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
-        Powered by <img border="0/" style="vertical-align: middle;" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
-      </a>
-    </p>
+
+    -->
+<div id="cwtabsbyside">
+	<ul>
+		<li><a href="#tabs-controls">Controls</a></li>
+		<li><a href="#tabs-data">Data</a></li>
+		<li><a href="#tabs-help">Help</a></li>
+	</ul>
+	<div id="tabs-controls">
+		<div>
+		  <fieldset>
+		    <label>View interaction data in a table</lable>
+		    <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle();">
+		  </fieldset>
+		</div>
+	</div>
+	<div id="tabs-data">
+		<div>to be implemented...</div>
+	</div>
+	<div id="tabs-help">
+	  <div id="legend">
+	    <h3>Interaction Type</h3>
+	    <p>some...</p>
+	  </div>
+	  <div id="powerby">
+	      <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
+	        Powered by <img border="0/" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
+	      </a>
+      </div>
+    </div>
 </div>
-<div class="box table">
-<h3>Interactions</h3>
+<div id="cwcontent"></div>
+<div id="cwinlinetable" class="box table">
+	<h3>Interactions</h3>
 	<tiles:insert name="resultsTable.tile">
 	     <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
 	     <tiles:put name="currentPage" value="objectDetails" />
@@ -76,7 +116,7 @@
 
 <!-- qTip -->
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/jquery-ui/jquery-ui-1.8.7.custom.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
 
@@ -87,12 +127,14 @@
 
     var project_title = "${WEB_PROPERTIES['project.title']}";
 
+    var target = "#cwcontent";
+
     if (dataNotIncludedMessage != "") {
-        jQuery('#cyto_div').html(dataNotIncludedMessage)
+        jQuery(target).html(dataNotIncludedMessage)
                            .css('font-style','italic');
     }
     else if (orgWithNoDataMessage != "") {
-      jQuery('#cytoWebContent').html(orgWithNoDataMessage)
+      jQuery(target).html(orgWithNoDataMessage)
                                .css('font-style','italic')
                                .height(20)
                                .width(600);
@@ -100,7 +142,6 @@
     else {
 
         // AJAX POST
-        var target = "#cytoWebContent";
         jQuery(target).html("Please wait while the network data loads...");
         jQuery.ajax({
             type: "POST",
@@ -113,10 +154,11 @@
                     jQuery(target).html(geneWithNoDatasourceMessage)
                                              .css('font-style','italic')
                                              .height(20)
-                                             .width(1200);
+                                             .width(60);
                 } else {
                     networkdata = response;
                     displayNetwork(networkdata, fullInteractingGeneSet);
+                    jQuery("#cwtabsbyside").tabs();
                 }
             },
             error:function (xhr, ajaxOptions, thrownError) {

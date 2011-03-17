@@ -10,7 +10,7 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     };
 
     // init
-    vis = new org.cytoscapeweb.Visualization("cytoWebContent", options);   //global, once this function is called
+    vis = new org.cytoscapeweb.Visualization("cwcontent", options);   //global, once this function is called
 
     // after init
     vis.ready(function() {
@@ -32,14 +32,14 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     // === 3. Finally set the visual style again:
     vis.visualStyle(style);
 
-    var caption = "[Click the network to zoom]";
-    jQuery('#caption').html(caption);
-
     var menu = '<span id="physical" class="fakelink">Show Physical Interactions</span>&nbsp;|&nbsp;<span id="genetic" class="fakelink">Show Genetic Interactions</span>&nbsp;|&nbsp;<span id="all" class="fakelink">Show All Interactions</span>';
     jQuery('#menu').html(menu);
 
     var legends = '<span>Interaction Type:</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="physical">legends</span>&nbsp;&nbsp;<span>Physical</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="genetic">legends</span>&nbsp;&nbsp;<span>Genetic</span>';
     jQuery('#legends').html(legends);
+
+    vis.panZoomControlVisible(true);
+    vis.zoomToFit();
 
     // Filter of physical interactions
     jQuery('#physical').click(function(){
@@ -151,13 +151,13 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
 
     .addListener("dblclick", "nodes", function(evt) {
        selectFirstNeighbors(evt.target);
-     })
+     });
 
     /* qTip will be enabled in the next release
     .addListener("click", "edges", function(evt) {
 
         // get the offset of cytoscape div
-        var offset = jQuery("#cytoWebContent").offset();
+        var offset = jQuery("#cwcontent").offset();
         var X = offset.left;
         var Y = offset.top;
 
@@ -229,14 +229,16 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     })
     */
 
+    /*
     .addListener("click", "none", function(evt) {
-        jQuery('#cytoWebContent').height(600)
+        jQuery('#cwcontent').height(600)
                                .width(1000);
         vis.panZoomControlVisible(true);
         jQuery('#caption').html("[Right click a node or edge for more options]");   // Change the caption
         vis.removeListener("click", "none");    // mimic of jQuery.one('click', func)
         vis.zoomToFit();  // Change the scale of the network until it fits the screen, vis.zoom(1.5) is over-sized
-    });
+    }); */
+
   });
 
     // draw options
