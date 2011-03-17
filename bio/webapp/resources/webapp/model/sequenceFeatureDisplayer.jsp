@@ -34,73 +34,77 @@
         </td>
       </c:when>
       <c:otherwise>
-        <td colspan="2">&nbsp;</td>
+        <td colspan="2"></td>
       </c:otherwise>
     </c:choose>
   </tr>
   <tr class="even">
     <td class="theme-3-border theme-6-background">Location:</td>
-    <td class="theme-3-border theme-6-background">
       <c:choose>
         <c:when test="${!empty feature.chromosomeLocation}">
-          <strong>
-            <c:set var="loc" value="${feature.chromosomeLocation}"/>
-            <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
-          </strong>
-          <c:if test="${!empty loc.strand}">
-            <span class="smallnote">
-              <c:choose>
-                <c:when test="${loc.strand == 1}">
-                  forward strand
-                </c:when>
-                <c:when test="${loc.strand == -1}">
-                  reverse strand
-                </c:when>
-              </c:choose>
-            </span>
-          </c:if>
+          <td class="theme-3-border theme-6-background">
+            <strong>
+              <c:set var="loc" value="${feature.chromosomeLocation}"/>
+              <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
+            </strong>
+            <c:if test="${!empty loc.strand}">
+              <span class="smallnote">
+                <c:choose>
+                  <c:when test="${loc.strand == 1}">
+                    forward strand
+                  </c:when>
+                  <c:when test="${loc.strand == -1}">
+                    reverse strand
+                  </c:when>
+                </c:choose>
+              </span>
+            </c:if>
         </c:when>
         <c:when test="${locationsCollection != null}">
-          <div id="locations-collection">
-            <table class="noborder" cellspacing="0" border="0"><tbody><tr>
-              <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
-                <td <c:if test="${(statei.count + 1) % 3 == 0}">class="centered"</c:if>>
-                  <strong>
-                    <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
-                  </strong>
-                  <c:if test="${!empty loc.strand}">
-                    <span class="smallnote">
-                      <c:choose>
-                        <c:when test="${loc.strand == 1}">
-                          forward strand
-                        </c:when>
-                        <c:when test="${loc.strand == -1}">
-                          reverse strand
-                        </c:when>
-                      </c:choose>
-                    </span>
+          <td class="theme-3-border theme-6-background">
+            <div id="locations-collection">
+              <table class="noborder" cellspacing="0" border="0"><tbody><tr>
+                <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
+                  <td <c:if test="${(statei.count + 1) % 3 == 0}">class="centered"</c:if>>
+                    <strong>
+                      <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
+                    </strong>
+                    <c:if test="${!empty loc.strand}">
+                      <span class="smallnote">
+                        <c:choose>
+                          <c:when test="${loc.strand == 1}">
+                            forward strand
+                          </c:when>
+                          <c:when test="${loc.strand == -1}">
+                            reverse strand
+                          </c:when>
+                        </c:choose>
+                      </span>
+                    </c:if>
+                  </td>
+                  <c:if test="${statei.count % 3 == 0}"></tr>
+                    <c:choose>
+                        <c:when test="${statei.count >= 9}"><tr style="display:none;"></c:when>
+                        <c:otherwise><tr></c:otherwise>
+                    </c:choose>
                   </c:if>
-                </td>
-                <c:if test="${statei.count % 3 == 0}"></tr>
-                  <c:choose>
-                      <c:when test="${statei.count >= 9}"><tr style="display:none;"></c:when>
-                      <c:otherwise><tr></c:otherwise>
-                  </c:choose>
+                </c:forEach>
+                </tr></tbody></table>
+                <c:if test="${locationsCollectionSize >= 9}">
+                    <p class="toggle"><a class="theme-1-color" href="#"
+                    onclick="return showMoreRows('#locations-collection', 1, 3);">Show more rows</a></p>
                 </c:if>
-              </c:forEach>
-              </tr></tbody></table>
-              <c:if test="${locationsCollectionSize >= 9}">
-                  <p class="toggle"><a class="theme-1-color" href="#"
-                  onclick="return showMoreRows('#locations-collection', 1, 3);">Show more rows</a></p>
-              </c:if>
-            </div>
-            <p style="display:none;" class="in_table">
-              <html:link styleClass="theme-1-color" action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
-                Show all in a table
-              </html:link>
-            </p>
+              </div>
+              <p style="display:none;" class="in_table">
+                <html:link styleClass="theme-1-color" action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
+                  Show all in a table
+                </html:link>
+              </p>
         </c:when>
-        <c:otherwise>No location information in ${WEB_PROPERTIES['project.title']}</c:otherwise>
+        <c:otherwise>
+          <td class="theme-3-border theme-6-background" colspan="3">
+            No location information in ${WEB_PROPERTIES['project.title']}
+        </c:otherwise>
       </c:choose>
     </td>
     <c:choose>
@@ -113,7 +117,7 @@
           </tiles:insert>
         </td>
       </c:when>
-      <c:otherwise>&nbsp;</c:otherwise>
+      <c:otherwise></c:otherwise>
     </c:choose>
   </tr>
 </table>
