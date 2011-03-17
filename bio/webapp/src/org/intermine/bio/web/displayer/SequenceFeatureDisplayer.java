@@ -21,13 +21,6 @@ import org.intermine.web.logic.results.InlineResultsTableRow;
 
 public class SequenceFeatureDisplayer extends CustomDisplayer {
 
-    /** @var List with a path (in placementRefsAndCollections) to locations Collection */
-    private ArrayList<String> locationCollectionPathlist = new ArrayList<String>() {
-        {
-            add("im:aspect:Miscellaneous");
-            add("locations");
-        }
-    };
     /** @var sets the max number of locations to show in a table, TODO: match with DisplayObj*/
     private Integer maximumNumberOfLocations = 27;
 
@@ -39,49 +32,37 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
     public void display(HttpServletRequest request, DisplayObject displayObject) {
         InterMineObject imObj = displayObject.getObject();
         Object loc = null;
+
         try {
             loc = imObj.getFieldValue("chromosomeLocation");
             // if the chromosomeLocation reference is null iterate over the contents of the
             //  locations collection and display each location where the locatedOn reference points
             //  to a Chromosome object
             if (loc == null) {
-                Map<String, Map<String, DisplayField>> map
-                    = (Map<String, Map<String, DisplayField>>)
-                    request.getAttribute("placementRefsAndCollections");
-
-                if (map.containsKey(locationCollectionPathlist.get(0))) {
-                    if (map.get(locationCollectionPathlist.get(0)).containsKey(
-                            locationCollectionPathlist.get(1))) {
-                        DisplayCollection df = (DisplayCollection) map.get(
-                                locationCollectionPathlist.get(0)).get(
-                                locationCollectionPathlist.get(1));
-                        // now we have a Collection corresponding to "Misc > locations"
-                        Collection col = df.getCollection();
-                        List results = new ArrayList();
-                        Integer i = 0;
-                        for (Object item : col) {
-                            // early exit
-                            if (i == maximumNumberOfLocations) {
-                                break;
-                            }
-
-                            InterMineObject imLocation = (InterMineObject) item;
-                            // fetch where this object is located
-                            Object locatedOnObject = imLocation.getFieldValue("locatedOn");
-                            if (locatedOnObject != null) {
-                                // are we Chromosome?
-                                if ("Chromosome".equals(DynamicUtil.getSimpleClass(
-                                        (InterMineObject) locatedOnObject).getSimpleName())) {
-                                    results.add(item);
-                                }
-                            }
-                            i++;
-                        }
-
-                        request.setAttribute("locationsCollection", results);
-                        request.setAttribute("locationsCollectionSize", col.size());
+                Collection col = (Collection) imObj.getFieldValue("locations");
+                List results = new ArrayList();
+                Integer i = 0;
+                for (Object item : col) {
+                    // early exit
+                    if (i == maximumNumberOfLocations) {
+                        break;
                     }
+
+                    InterMineObject imLocation = (InterMineObject) item;
+                    // fetch where this object is located
+                    Object locatedOnObject = imLocation.getFieldValue("locatedOn");
+                    if (locatedOnObject != null) {
+                        // are we Chromosome?
+                        if ("Chromosome".equals(DynamicUtil.getSimpleClass(
+                                (InterMineObject) locatedOnObject).getSimpleName())) {
+                            results.add(item);
+                        }
+                    }
+                    i++;
                 }
+
+                request.setAttribute("locationsCollection", results);
+                request.setAttribute("locationsCollectionSize", col.size());
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
