@@ -208,21 +208,15 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
       <tiles:put name="object" beanName="object"/>
     </tiles:insert>
   </div>
-  <h3>Other Mines</h3>
-  <ul>
-    <li><a href="#">RatMine</a></li>
-    <li><a href="#">YeastMine</a></li>
-    <li><a href="#">ZebraMine</a></li>
-  </ul>
-  <br />
+
   <c:set var="object_bk" value="${object}"/>
   <c:set var="object" value="${displayObject.object}" scope="request"/>
+  <tiles:insert name="otherMinesLink.tile" />
   <tiles:insert name="attributeLinks.tile" />
   <c:set var="object" value="${object_bk}"/>
 </div>
 
 <div class="box grid_9">
-
   <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="displayObject" beanName="object" />

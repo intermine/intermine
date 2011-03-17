@@ -342,7 +342,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
-    </action>
+    </action>org.intermine.bio.web.OtherMinesLinkController
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
@@ -455,6 +455,8 @@
     <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
+
+    <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
 
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
 

@@ -179,10 +179,7 @@
     </fields>
     <longdisplayers>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-    </longdisplayers>
-    <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
-   </bagdisplayers>
+    </longdisplayers>o
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -696,12 +693,6 @@
                      replacesFields="interactions"
                      placement="Interactions"
                      types="Gene,Protein"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.InterMineLinkDisplayer"
-                     jspName="model/interMineLinkDisplayer.jsp"
-                     replacesFields=""
-                     placement="summary"
-                     types="Gene"/>
 
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
