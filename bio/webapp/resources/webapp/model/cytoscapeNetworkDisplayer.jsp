@@ -13,9 +13,10 @@
     html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
     /* use absolute value */
     #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0; -moz-border-radius: 5px 5px 5px 5px;}
-    #cwtabsbyside { clear: right; float: right; overflow: auto; width: 460px;}
+    #cwtabsbyside { display: none; clear: right; float: right; overflow: auto; width: 460px; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
-    fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.3em; padding: 0.3em; }
+    fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.5em; padding: 0.8em 1em; }
+    label { vertical-align: middle; }
     #legend h3 { -moz-border-radius: 5px 5px 0 0; background: none repeat scroll 0 0 #CCCCCC; margin: 0; padding: 4px 5px; color: black; border-top-style: none; }
     #legend p {
     border-color: -moz-use-text-color #BBBBBB #BBBBBB;
@@ -75,8 +76,28 @@
 	<div id="tabs-controls">
 		<div>
 		  <fieldset>
+            <label>Show:</label><br>
+            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
+            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
+            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
+          </fieldset>
+		  <fieldset>
+            <label>Export network as:</label>
+            <select id="exportoptions">
+                <option value="sif">SIF</option>
+                <option value="xgmml">XGMML</option>
+                <option value="svg">SVG</option>
+                <option value="tab">TSV</option>
+                <option value="csv">CSV</option>
+            </select>
+            <input type="button" id="exportbutton" value="Export">
+		  </fieldset>
+		  <fieldset>
+		    <label class="fakelink" onclick="url = webapp_baseurl + '/' + webapp_path + '/saveFromIdsToBag.do?type=Gene&ids='+fullInteractingGeneSet+'&source=objectDetails&newBagName=interacting_gene_list'; window.open(url);">Create a gene list...</lable>
+		  </fieldset>
+		  <fieldset>
 		    <label>View interaction data in a table</lable>
-		    <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle();">
+		    <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle('blind', {}, 1000);">
 		  </fieldset>
 		</div>
 	</div>
@@ -159,6 +180,7 @@
                     networkdata = response;
                     displayNetwork(networkdata, fullInteractingGeneSet);
                     jQuery("#cwtabsbyside").tabs();
+                    jQuery("#cwtabsbyside").show();
                 }
             },
             error:function (xhr, ajaxOptions, thrownError) {
@@ -166,6 +188,23 @@
             }
         });
     }
+
+    jQuery("#exportoptions").change(function () {
+          jQuery("#exportoptions option:selected").each(function () {
+                type = jQuery(this).val();
+                if (type="tab" || type="csv") {
+					vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet);
+                }
+                else {
+                	vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+                }
+              });
+        }).trigger('change');
+
+   jQuery("#exportbutton").click(function () {
+
+
+		}).trigger('click');
 
 </script>
 

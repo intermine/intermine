@@ -41,27 +41,6 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     vis.panZoomControlVisible(true);
     vis.zoomToFit();
 
-    // Filter of physical interactions
-    jQuery('#physical').click(function(){
-         vis.filter("edges", function(edge) {
-             return edge.color >= "#FF0000";
-         });
-     });
-
-    // Filter of genetic interactions
-    jQuery('#genetic').click(function(){
-        vis.filter("edges", function(edge) {
-            return edge.color <= "#FF0000";
-        });
-    });
-
-    // Show all interactions
-    jQuery('#all').click(function(){
-        vis.filter("edges", function(edge) {
-            return edge.color;
-        });
-    });
-
     vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
         var data = evt.target.data;
         url = webapp_baseurl + "/" + webapp_path + "/objectDetails.do?id=" + data.id;
