@@ -42,6 +42,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
+    <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
+    <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
   </c:if>
 <!--
   <c:if test="${pageName == 'begin'}">
