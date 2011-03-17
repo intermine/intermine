@@ -55,31 +55,6 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     })
     */
 
-    .addContextMenuItem("Create a gene list...", "none", function(evt) {
-       url = webapp_baseurl + "/" + webapp_path + "/saveFromIdsToBag.do?type=Gene&ids="+fullInteractingGeneSet+"&source=objectDetails&newBagName=interacting_gene_list";
-       window.open(url);
-    })
-
-    vis.addContextMenuItem("Export network as SIF...", "none", function(evt) {
-      vis.exportNetwork('sif', 'cytoscapeNetworkExport.do?type=sif');
-    })
-
-    .addContextMenuItem("Export network as XGMML...", "none", function(evt) {
-      vis.exportNetwork('xgmml', 'cytoscapeNetworkExport.do?type=xgmml');
-    })
-
-    .addContextMenuItem("Export network as SVG...", "none", function(evt) {
-      vis.exportNetwork('svg', 'cytoscapeNetworkExport.do?type=svg');
-    })
-
-    .addContextMenuItem("Export network as TSV...", "none", function(evt) {
-      vis.exportNetwork('tab', 'cytoscapeNetworkExport.do?type=tab&fullInteractingGeneSet='+fullInteractingGeneSet);
-    })
-
-    .addContextMenuItem("Export network as CSV...", "none", function(evt) {
-      vis.exportNetwork('csv', 'cytoscapeNetworkExport.do?type=csv&fullInteractingGeneSet='+fullInteractingGeneSet);
-    })
-
      /* will be enabled in the next release
     .addContextMenuItem("View interaction report...", "edges", function(evt) {
         var data = evt.target.data;
