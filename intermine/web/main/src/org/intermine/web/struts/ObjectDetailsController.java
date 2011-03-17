@@ -196,21 +196,29 @@ public class ObjectDetailsController extends InterMineAction
         List<String> categories = new LinkedList<String>();
         for (String aspect : aspects) {
             // 1) Displayers
-            // 2) References & Collections
-            // 3) Inline Lists
+            // 2) Inline Lists
             if (
                     (displayerMap != null
                             && displayerMap.containsKey(aspect))
-                    || (placementRefsAndCollections.containsKey("im:aspect:" + aspect)
-                            && placementRefsAndCollections.get("im:aspect:" + aspect) != null
-                            && !placementRefsAndCollections.get("im:aspect:" + aspect).isEmpty())
                     || placedInlineLists.containsKey(aspect)) {
                 categories.add(aspect);
             } else {
-                // 4) Templates
+                // 3) Templates
                 if (!templateManager.getReportPageTemplatesForAspect(aspect, allClasses)
                         .isEmpty()) {
                     categories.add(aspect);
+                } else {
+                    // 4) References & Collections
+                    if (placementRefsAndCollections.containsKey("im:aspect:" + aspect)
+                            && placementRefsAndCollections.get("im:aspect:" + aspect) != null) {
+                        for (DisplayField df : placementRefsAndCollections.get(
+                                "im:aspect:" + aspect).values()) {
+                            if (df.getSize() > 0) {
+                                categories.add(aspect);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }

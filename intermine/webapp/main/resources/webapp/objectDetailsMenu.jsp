@@ -18,23 +18,14 @@
         onclick="jQuery('a[name=summary]').scrollTo('slow', 'swing', 0);return false;"
         >Summary</html:link>
       </li>
-      <c:forEach items="${CATEGORIES}" var="aspect">
-        <c:forEach items="${object.clds}" var="cld">
-          <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[placement]) > 0}">
-            <c:set var="foundDisplayer" value="true" />
-          </c:if>
-        </c:forEach>
-        <c:set var="placement" value="im:aspect:${aspect}" />
-        <c:if test="${!empty placementRefsAndCollections[placement] || foundDisplayer == true || !empty templates}">
-          <li>
-            <c:set var="target" value="${fn:toLowerCase(aspect)}"/>
-            <html:link
-            action="/objectDetails.do?id=${object.id}#${target}"
-            onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', -21);return false;"
-            >${aspect}</html:link>
-          </li>
-        </c:if>
-        <c:set var="foundDisplayer" value="false" />
+      <c:forEach items="${categories}" var="aspect">
+        <li>
+          <c:set var="target" value="${fn:toLowerCase(aspect)}"/>
+          <html:link
+          action="/objectDetails.do?id=${object.id}#${target}"
+          onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', -21);return false;"
+          >${aspect}</html:link>
+        </li>
       </c:forEach>
       <li>
         <html:link action="/objectDetails.do?id=${object.id}#other"
