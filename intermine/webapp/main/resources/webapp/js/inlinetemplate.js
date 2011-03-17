@@ -243,34 +243,35 @@ function trimTable(e) {
         }
       });
       // add a toggler for more rows
-      table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+      table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1, 10);">Show more rows</a></p>');
   }
 
 }
 
 /**
- * Toggle upto 10 rows in a table above that are currently hidden
+ * Toggle upto ($count) rows in a table above that are currently hidden
  *
- * @param e
+ * @param e element containing the table
+ * @param round how many times have we asked for more rows
+ * @param maxCount max number of rows to show
  * @return
  */
-function showMoreRows(e, round) {
+function showMoreRows(e, round, maxCount) {
   // fetch the associated table
   var table = jQuery(e + ' table');
 
+  var count = maxCount;
+
   // fetch all rows that are not shown yet
   var rows = table.find('tbody tr:hidden')
-  // count of max number of rows to show
-  var count = 10;
   // traverse rows
   rows.each(function(index) {
     if (count > 0) {
       // show row
       jQuery(this).css('display', '');
-      count--;
+      count = parseInt(count) - 1;
     }
   });
-
   // scroll to
   //jQuery(e + ' table').parent().find('p.toggle').scrollTo('slow', 'swing', -20);
 
@@ -282,7 +283,7 @@ function showMoreRows(e, round) {
   } else {
     round = parseInt(round) + 1;
     // update toggle count
-    table.parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ');">Show more rows</a>');
+    table.parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ', ' +  maxCount + ');">Show more rows</a>');
   }
 
   return false;

@@ -148,9 +148,9 @@ div.table.template div.templateDetails p.description { line-height:auto !importa
   text-align:left; padding-left:6px; }
 div.table.template div.templateDetails div.favorites img { float:left; padding:4px 4px 4px 6px; }
 
-/* "noborder" & "centered" tables */
+/* "noborder" tables & "centered" columns */
 table.noborder td { border:none !important; padding:2px !important; }
-table.centered td { text-align:center; }
+td.centered { text-align:center; }
 
 /* sidebar lists in which this object can be found */
 #in-lists div.heading { margin:0 0 10px 0 !important; background:#F4EEF7 !important; border-width:1px 0 0 0 !important;
@@ -164,5 +164,7 @@ div.feature table { width:100%; }
 div.feature table td { padding:6px; }
 div.feature table tr.even td { border-width:1px 0; border-style:solid; }
 div.feature table td.border-left { border-left:1px solid #DCC8E2 !important; }
+div.feature p.toggle, div.feature p.in_table { text-align:center; }
+div.feature a { text-decoration:underline; }
 
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }

@@ -1,15 +1,5 @@
 package org.intermine.bio.web.displayer;
 
-/*
- * Copyright (C) 2002-2011 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +28,8 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
             add("locations");
         }
     };
+    /** @var sets the max number of locations to show in a table, TODO: match with DisplayObj*/
+    private Integer maximumNumberOfLocations = 27;
 
     public SequenceFeatureDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
@@ -66,7 +58,13 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
                         // now we have a Collection corresponding to "Misc > locations"
                         Collection col = df.getCollection();
                         List results = new ArrayList();
+                        Integer i = 0;
                         for (Object item : col) {
+                            // early exit
+                            if (i == maximumNumberOfLocations) {
+                                break;
+                            }
+
                             InterMineObject imLocation = (InterMineObject) item;
                             // fetch where this object is located
                             Object locatedOnObject = imLocation.getFieldValue("locatedOn");
@@ -77,9 +75,11 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
                                     results.add(item);
                                 }
                             }
+                            i++;
                         }
 
-                        request.setAttribute("col", results);
+                        request.setAttribute("locationsCollection", results);
+                        request.setAttribute("locationsCollectionSize", col.size());
                     }
                 }
             }

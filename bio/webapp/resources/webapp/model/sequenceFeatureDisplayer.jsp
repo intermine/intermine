@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- sequenceFeatureDisplayer.jsp -->
@@ -9,7 +10,14 @@
 
 <c:set var="feature" value="${displayObject.object}"/>
 
-<h3>Genome feature</h3>
+<c:choose>
+  <c:when test="${locationsCollection != null}">
+    <h3>This feature maps to ${locationsCollectionSize} genome locations</h3>
+  </c:when>
+  <c:otherwise>
+    <h3>Genome feature</h3>
+  </c:otherwise>
+</c:choose>
 
 <table border="0" cellspacing="0">
   <tr>
@@ -53,28 +61,44 @@
           </c:if>
         </c:when>
         <c:otherwise>
-          <table class="noborder centered" cellspacing="0" border="0"><tr>
-            <c:forEach items="${col}" var="loc" varStatus="statei">
-              <td>
-                <strong>
-                  <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
-                </strong>
-                <c:if test="${!empty loc.strand}">
-                  <span class="smallnote">
-                    <c:choose>
-                      <c:when test="${loc.strand == 1}">
-                        forward strand
-                      </c:when>
-                      <c:when test="${loc.strand == -1}">
-                        reverse strand
-                      </c:when>
-                    </c:choose>
-                  </span>
+          <div id="locations-collection">
+            <table class="noborder" cellspacing="0" border="0"><tbody><tr>
+              <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
+                <td <c:if test="${(statei.count + 1) % 3 == 0}">class="centered"</c:if>>
+                  <strong>
+                    <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
+                  </strong>
+                  <c:if test="${!empty loc.strand}">
+                    <span class="smallnote">
+                      <c:choose>
+                        <c:when test="${loc.strand == 1}">
+                          forward strand
+                        </c:when>
+                        <c:when test="${loc.strand == -1}">
+                          reverse strand
+                        </c:when>
+                      </c:choose>
+                    </span>
+                  </c:if>
+                </td>
+                <c:if test="${statei.count % 3 == 0}"></tr>
+                  <c:choose>
+                      <c:when test="${statei.count >= 9}"><tr style="display:none;"></c:when>
+                      <c:otherwise><tr></c:otherwise>
+                  </c:choose>
                 </c:if>
-              </td>
-              <c:if test="${statei.count % 3 == 0}"></tr><tr></c:if>
-            </c:forEach>
-            </tr></table>
+              </c:forEach>
+              </tr></tbody></table>
+              <c:if test="${locationsCollectionSize >= 9}">
+                  <p class="toggle"><a class="theme-1-color" href="#"
+                  onclick="return showMoreRows('#locations-collection', 1, 3);">Show more rows</a></p>
+              </c:if>
+            </div>
+            <p style="display:none;" class="in_table">
+              <html:link styleClass="theme-1-color" action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
+                Show all in a table
+              </html:link>
+            </p>
         </c:otherwise>
       </c:choose>
     </td>
