@@ -156,6 +156,21 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type) {
+        return filterBagsByType(getUserAndGlobalBags(profile), type);
+    }
+
+    /**
+     * Fetch user bags of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getUserBagsOfType(Profile profile, String type) {
+        return filterBagsByType(getUserBags(profile), type);
+    }
+
+    private Map<String, InterMineBag> filterBagsByType(Map<String, InterMineBag> bags,
+            String type) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
@@ -168,7 +183,7 @@ public class BagManager
         }
 
         Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
-        for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
+        for (Map.Entry<String, InterMineBag> entry : bags.entrySet()) {
             InterMineBag bag = entry.getValue();
             if (classAndSubs.contains(bag.getType())) {
                 bagsOfType.put(entry.getKey(), bag);
