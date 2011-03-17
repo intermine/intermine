@@ -30,7 +30,7 @@
   </c:choose>
   <div class="listsObjectIsIn">
     <c:forEach items="${bagsWithId.collection}" var="bag" varStatus="status">
-      <html:link href="bagDetails.do?bagName=${bag.name}"><c:out value="${bag.name}"/></html:link>&nbsp;(<c:out value="${bag.size}"/>)
+      <html:link href="bagDetails.do?bagName=${bag.name}"><c:out value="${bag.name}"/></html:link>&nbsp;(<c:out value="${bag.size}"/>)<br/>
     </c:forEach>
   </div>
 </div>
