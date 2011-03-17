@@ -84,8 +84,8 @@
 		  <fieldset>
             <label>Export network as:</label>
             <select id="exportoptions">
+                <option value="xgmml" selected>XGMML</option>
                 <option value="sif">SIF</option>
-                <option value="xgmml">XGMML</option>
                 <option value="svg">SVG</option>
                 <option value="tab">TSV</option>
                 <option value="csv">CSV</option>
@@ -189,22 +189,21 @@
         });
     }
 
+
     jQuery("#exportoptions").change(function () {
-          jQuery("#exportoptions option:selected").each(function () {
-                type = jQuery(this).val();
-                if (type="tab" || type="csv") {
-					vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet);
-                }
-                else {
-                	vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
-                }
-              });
-        }).trigger('change');
+        export(jQuery("#exportoptions option:selected").val());
+    });
 
-   jQuery("#exportbutton").click(function () {
+    jQuery("#exportbutton").click(function () {
+		export(jQuery("#exportoptions option:selected").val());
+    });
 
-
-		}).trigger('click');
+    function export(type) {
+        if (type=="tab" || type=="csv") {
+			vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet); }
+        else {
+        	vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type); }
+    }
 
 </script>
 
