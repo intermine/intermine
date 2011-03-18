@@ -221,14 +221,14 @@ arcu non condimentum porta, quam lacus porttitor eros.</p>
     <tiles:put name="placement" value="summary" />
     <tiles:put name="displayObject" beanName="object" />
   </tiles:insert>
-
+<%--
   <tiles:insert
     page="/objectDetailsDisplayers.jsp">
     <tiles:put name="placement" value="" />
     <tiles:put name="displayObject" beanName="object" />
     <tiles:put name="heading" value="true" />
   </tiles:insert>
-
+--%>
   <c:forEach items="${categories}" var="aspect" varStatus="status">
     <tiles:insert name="objectDetailsAspect.tile">
     <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
