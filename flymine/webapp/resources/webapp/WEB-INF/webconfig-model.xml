@@ -682,7 +682,7 @@
 
     <reportdisplayer javaClass="org.flymine.web.displayer.FlyAtlasDisplayer"
                      jspName="model/flyAtlasDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="microArrayResults"
                      placement="Expression"
                      types="Gene"/>
 
