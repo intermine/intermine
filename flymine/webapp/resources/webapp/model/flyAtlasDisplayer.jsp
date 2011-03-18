@@ -3,11 +3,11 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+
 <!-- flyAtlasDisplayer.jsp -->
 
+<c:if test="${signals != '[]'}">
 <div>
-
-
 
 <h3>FlyAtlas adult tissue expression</h3>
 <div id="flyatlas-viz"></div>
@@ -164,5 +164,6 @@ jQuery("input[name='dataPoint']").change(function() {
 
 </script>
 
+</c:if>
 
 <!-- /flyAtlasDisplayer.jsp -->
