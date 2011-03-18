@@ -252,7 +252,7 @@ public final class InterMineLinkGenerator
                 "Gene.homologues.homologue.organism.shortName");
         q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         q.addConstraint(Constraints.eq("Gene.primaryIdentifier", identifier));
-        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
+        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
         return q;
     }
 
