@@ -188,18 +188,18 @@ public final class InterMineLinkGenerator
         }
     }
 
-    private static JSONObject getJSONGene(String identifier, boolean isOrthologue)
+    private static JSONObject getJSONGene(String identifier, boolean isConverted)
         throws JSONException {
         JSONObject gene = new JSONObject();
         gene.put("identifier", identifier);
-        gene.put("isOrthologue", isOrthologue);
+        gene.put("isConverted", isConverted);
         return gene;
     }
 
     private static JSONObject getJSONOrganism(String organismName, String identifier,
-            boolean isOrthologue)
+            boolean isConverted)
         throws JSONException {
-        JSONObject gene = getJSONGene(identifier, isOrthologue);
+        JSONObject gene = getJSONGene(identifier, isConverted);
         JSONObject organism = new JSONObject();
         organism.put("shortName", organismName);
         organism.put("orthologues", gene);
@@ -207,7 +207,7 @@ public final class InterMineLinkGenerator
     }
 
     private static JSONObject getJSONOrganism(Map<String, Set<String>> orthologueMap,
-            boolean isOrthologue)
+            boolean isConverted)
         throws JSONException {
         String organismName = null;
         Set<JSONObject> genes = new HashSet<JSONObject>();
@@ -215,7 +215,7 @@ public final class InterMineLinkGenerator
             organismName = entry.getKey();
             Set<String> identifiers = entry.getValue();
             for (String identifier : identifiers) {
-                JSONObject gene = getJSONGene(identifier, isOrthologue);
+                JSONObject gene = getJSONGene(identifier, isConverted);
                 genes.add(gene);
             }
         }
