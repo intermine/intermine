@@ -150,6 +150,36 @@ div.feature a { text-decoration:underline; }
 #intermine_links ul li ul { padding-left:6px; }
 #intermine_links ul li ul li { display:inline; }
 
+/* gene models */
+.compact-table td {
+  font-size: 10.8px;
+  padding: 0 6px !important;
+  border-color: #DCC8E2;
+}
+
+.compact-table thead tr th {
+  border-bottom-width:1px;
+  border-bottom-style:solid;
+  padding: 0 6px;
+}
+
+table.compact-table table td {
+  border:0 !important;
+}
+
+.compact-table a {
+  text-decoration:none !important;
+}
+
+.compact-table a:hover {
+  text-decoration:underline !important;
+  color:#5C0075;
+}
+
+.highlight {
+  background-color: #FFF3D3;
+}
+
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 
 .listsObjectIsIn {
