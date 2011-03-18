@@ -50,20 +50,24 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #headercontainer { background:inherit; display:inline-block; }
 #fixed-menu { z-index:1; position:fixed; top:0; width:100%; background:#A16AAF; }
 #content { z-index:0; }
-#toc-menu-wrap { background:#A16AAF; line-height:21px; }
-#fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; }
-#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; color:#F4EEF7; height:20px;
-    line-height:20px; }
+#toc-menu-wrap { background:#A16AAF; }
+#fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; vertical-align:bottom; }
+#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; color:#F4EEF7; line-height:20px; }
 #menu-target { height:20px; display:inline-block; background:#F4EEF7; width:100%; }
-div.wrap { line-height:21px; }
 
 /* menu of menues menu */
-div.menu-wrap { float:left; width:90%; line-height:21px; }
+div.menu-wrap { float:left; width:90%; }
 
 /* menu of links not list */
 #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#5C0075; font-size:16px; font-weight:bold;
     padding:0 10px; background:#F4EEF7; }
 #toc-menu-wrap div.wrap div.links, #fixed-menu div.wrap div.links { width:100%; text-align:center; }
+
+/* smallscreen resize */
+#toc-menu-wrap .smallscreen, #fixed-menu .smallscreen { line-height:17px !important; }
+#toc-menu-wrap .smallscreen span, #fixed-menu .smallscreen span { display:none; }
+#toc-menu-wrap .smallscreen a, #fixed-menu .smallscreen a { font-size:13px !important; padding:0 3px !important; }
+#toc-menu-wrap .smallscreen div.menu-wrap, #fixed-menu .smallscreen div.menu-wrap { float:none; width:auto; }
 
 /* content */
 #content p.description { font-size:13px; line-height:19px; margin:20px 0; }

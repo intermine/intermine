@@ -136,14 +136,20 @@
     <tiles:insert name="objectDetailsMenu.jsp" />
   </div>
   <script type="text/javascript">
-  jQuery('#fixed-menu').hide(); // hide for IE7
-  jQuery(window).scroll(function() {
-    if (jQuery('#menu-target').isInView('partial')) {
-      jQuery('#fixed-menu').hide();
-    } else {
-      jQuery('#fixed-menu').show();
+    jQuery('#fixed-menu').hide(); // hide for IE7
+    jQuery(window).scroll(function() {
+      if (jQuery('#menu-target').isInView('partial')) {
+        jQuery('#fixed-menu').hide();
+      } else {
+        jQuery('#fixed-menu').show();
+      }
+    });
+
+    if (jQuery(window).width() < '900') {
+      jQuery('div.wrap').each(function(index) {
+          jQuery(this).addClass('smallscreen');
+      });
     }
-  });
   </script>
 </c:if>
 
