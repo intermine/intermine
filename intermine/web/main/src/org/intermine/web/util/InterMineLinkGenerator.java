@@ -143,16 +143,23 @@ public final class InterMineLinkGenerator
             addCurrentOrganism(organisms, mines, mine.getName(), organismShortName);
             String remoteMineDefaultOrganism = mine.getDefaultValue();
             boolean queryRemoteMine = true;
+            Set<String> matchingHomologues = localHomologues.get(remoteMineDefaultOrganism);
 
             // for default organism, do we have local orthologues?
-            if (localHomologues.containsKey(remoteMineDefaultOrganism)) {
-                // if so, does remote mine have this gene?
-                String homologueIdentifier = olm.getObjectInOtherMine(mine, encodedOrganism,
-                        primaryIdentifier);
-                if (!StringUtils.isEmpty(homologueIdentifier)) {
+            if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
+                Map<String, Set<String>> orthologueMap = new HashMap<String, Set<String>>();
+                for (String homologue : matchingHomologues) {
+                    // if so, does remote mine have this gene?
+                    String homologueIdentifier = olm.getObjectInOtherMine(mine, URLEncoder.encode(""
+                            + remoteMineDefaultOrganism, "UTF-8"), homologue);
+                    if (!StringUtils.isEmpty(homologueIdentifier)) {
+                        Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
+                                homologueIdentifier);
+                    }
+                }
+                if (!orthologueMap.isEmpty()) {
                     queryRemoteMine = false;
-                    JSONObject organism = getJSONOrganism(remoteMineDefaultOrganism,
-                            homologueIdentifier, false);
+                    JSONObject organism = getJSONOrganism(orthologueMap, false);
                     organisms.add(organism);
                 }
             }
@@ -238,9 +245,16 @@ public final class InterMineLinkGenerator
             String orthologuePrimaryIdentifier = (String) row.get(0).getField();
             String orthologueSymbol = (String) row.get(1).getField();
             String organismName = (String) row.get(2).getField();
-            String orthologueIdentifer = (StringUtils.isEmpty(orthologueSymbol)
-                    ? orthologuePrimaryIdentifier : orthologueSymbol);
-            Util.addToSetMap(relatedDataMap, organismName, orthologueIdentifer);
+            String orthologueIdentifer = null;
+            if (!StringUtils.isEmpty(orthologuePrimaryIdentifier)) {
+                orthologueIdentifer = orthologuePrimaryIdentifier;
+            }
+            if (!StringUtils.isEmpty(orthologueSymbol)) {
+                orthologueIdentifer = orthologueSymbol;
+            }
+            if (!StringUtils.isEmpty(orthologueIdentifer)) {
+                Util.addToSetMap(relatedDataMap, organismName, orthologueIdentifer);
+            }
         }
         return relatedDataMap;
     }
