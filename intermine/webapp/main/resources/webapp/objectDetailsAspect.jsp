@@ -19,7 +19,7 @@
 
 <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}" scope="request" />
 
-<c:if test="${!empty displayObject}">  
+<c:if test="${!empty displayObject}">
   <c:if test="${fn:length(displayObject.reportDisplayers[aspect]) > 0}">
     <c:set var="foundDisplayer" value="true" />
   </c:if>
@@ -58,12 +58,14 @@
     <tiles:put name="noTemplatesMsgKey" value="" />
     <tiles:put name="trail" value="${trail}" />
   </tiles:insert>
+
+<%--
   <c:if test="${! empty displayObject}">
     <tiles:insert page="/objectDetailsDisplayers.jsp">
       <tiles:put name="placement" value="${placement}" />
       <tiles:put name="displayObject" beanName="displayObject" />
     </tiles:insert>
   </c:if>
-
+--%>
 </c:if>
 <!-- /objectDetailsAspect.jsp -->
