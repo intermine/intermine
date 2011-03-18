@@ -26,35 +26,29 @@
     margin: 0;
     padding: 5px;
 }
+    #legend table {
+    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+    border-right: 1px solid #BBBBBB;
+    border-style: none solid solid;
+    border-width: medium 1px 1px;
+    margin: 0;
+    padding: 5px;
+}
     #legend { padding: 0.2em 0.4em 0.4em; }
     #powerby { padding: 5px; text-align: center; }
     #powerby a { color: rgb(136, 136, 136); text-decoration: none; background-color: white; }
     #powerby img { vertical-align: middle; }
 
-    SPAN.physical
-    {
-       BACKGROUND-COLOR: #FF0000;
-       COLOR: #FF0000;
-       FONT-SIZE: 2px;
-       padding-top:0px;
-       padding-bottom:0px;
-       padding-right:18px;
-       padding-left:18px;
-       position:relative;
-       top:-4px;
+    #svgtable {
+    border: 2px solid #CCCCCC;
+    border-collapse: separate;
+    border-spacing: 1px;
+    clear: both;
+    width: 100%;
     }
-    .genetic
-    {
-       BACKGROUND-COLOR: #6666FF;
-       COLOR: #6666FF;
-       FONT-SIZE: 2px;
-       padding-top:0px;
-       padding-bottom:0px;
-       padding-right:18px;
-       padding-left:18px;
-       position:relative;
-       top:-4px;
-    }
+
+    #legends { height: 50px; }
+
 </style>
 <div id="cwhead">
     <h3>Interaction Network</h3>
@@ -107,7 +101,12 @@
 	<div id="tabs-help">
 	  <div id="legend">
 	    <h3>Interaction Type</h3>
-	    <p>some...</p>
+        <table id="svgtable">
+          <tr>
+            <td id="legends">
+            </td>
+          </tr>
+        </table>
 	  </div>
 	  <div id="powerby">
 	      <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
@@ -135,9 +134,10 @@
 <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/cytoscapeweb.min.js'/>"></script>
 
-<!-- qTip -->
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
+<link href="model/jquery_svg/jquery.svg.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_svg/jquery.svg.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
 
@@ -189,7 +189,19 @@
         });
     }
 
+    jQuery('#legends').svg();
+    var legends = jQuery('#legends').svg('get');
+    legends.line(20, 5, 80, 5, {stroke: "red", strokeWidth: 4});
+    legends.polygon([[80, 0], [80, 10], [100, 5]], {fill: "red"});
+    legends.text(5, 27, "Physical");
 
+/*
+    jQuery('#legend_genetic').svg();
+    var legend_genetic = jQuery('#legend_genetic').svg('get');
+    legend_genetic.line(20, 5, 80, 5, {stroke: "blue", strokeWidth: 4});
+    legend_genetic.polygon([[80, 0], [80, 10], [100, 5]], {fill: "blue"});
+    legend_genetic.text(5, 27, "Genetic");
+*/
     jQuery("#exportoptions").change(function () {
         export(jQuery("#exportoptions option:selected").val());
     });
