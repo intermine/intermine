@@ -28,7 +28,7 @@
 
   <class className="org.intermine.model.bio.BioEntity">
     <headerconfig>
-      <titles mainTitles="name" />
+      <titles mainTitles="symbol|primaryIdentifier" subTitles="organism.shortName" />
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -158,9 +158,6 @@
   </class>
 
   <class className="org.intermine.model.bio.Gene">
-    <headerconfig>
-      <titles mainTitles="symbol|primaryIdentifier" subTitles="organism.shortName" />
-    </headerconfig>
     <inlinelist>
       <table path="synonyms.value" showInHeader="true" />
       <table path="probeSets.primaryIdentifier" showLinksToObjects="true" />
@@ -355,7 +352,7 @@
 
   <class className="org.intermine.model.bio.OntologyTerm">
     <headerconfig>
-      <titles mainTitles="identifier|name" />
+      <titles mainTitles="identifier|name" subTitles="ontology.name" />
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -372,6 +369,9 @@
   </class>
 
   <class className="org.intermine.model.bio.Organism">
+    <headerconfig>
+      <titles mainTitles="name"/>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
@@ -392,6 +392,9 @@
   </class>
 
   <class className="org.intermine.model.bio.Pathway">
+    <headerconfig>
+      <titles mainTitles="identifier|name"/>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier" />
       <fieldconfig fieldExpr="name" />
@@ -689,12 +692,6 @@
                     placement="Homologues"
                     types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
-                     jspName="model/gbrowseDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genomics"
-                     types="SequenceFeature"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
@@ -703,9 +700,15 @@
 
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
-                     replacesFields="goAnnotation"
+                     replacesFields="goAnnotation,ontologyAnnotations"
                      placement="Function"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
+                     jspName="model/gbrowseDisplayer.jsp"
+                     replacesFields=""
+                     placement="Genomics"
+                     types="SequenceFeature"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
