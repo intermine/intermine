@@ -66,6 +66,7 @@ public class LinkManager
     private static final String TEMPLATE_PATH = "/template/results?size=1000&format=tab&name=";
     private static Properties webProperties;
     private static final String WILDCARD = "*";
+    private static InterMineAPI im;
 
 /**
  * @param im intermine api
@@ -73,6 +74,7 @@ public class LinkManager
  */
     public LinkManager(InterMineAPI im, Properties webProperties) {
         LinkManager.webProperties = webProperties;
+        LinkManager.im = im;
 
         // TODO put in constants
         valuesTemplate = (String) webProperties.get("intermine.template.queryableValues");
@@ -95,6 +97,14 @@ public class LinkManager
         final String localMineName = webProperties.getProperty("project.title");
         localMine = new Mine(localMineName);
         mines = readConfig(im, localMineName);
+    }
+
+    /**
+     * Used in Ajax requests
+     * @return InterMineAPI used
+     */
+    public InterMineAPI getInterMineAPI() {
+        return im;
     }
 
     /**
@@ -132,16 +142,30 @@ public class LinkManager
     public Map<Mine, String> getObjectInOtherMines(String constraintValue, String identifier) {
         Map<Mine, String> filteredMines = new HashMap<Mine, String>();
         for (Mine mine : mines.values()) {
-//            if (!mine.hasValues()) {
-//                LOG.warn("mine " + mine.getName() + " has no genes");
-//                continue;
-//            }
-            String newIdentifier = runReportQuery(mine, constraintValue, identifier);
+            String newIdentifier = getObjectInOtherMine(mine, constraintValue, identifier);
             if (!StringUtils.isEmpty(newIdentifier)) {
                 filteredMines.put(mine, newIdentifier);
             }
         }
         return filteredMines;
+    }
+
+    /**
+     * Test for value in a mine.  Returns the identifier of the object if presents or NULL if not.
+     * Identifier returned my be different because the given identifier may be a synonym or a
+     * better identifier was found (eg. symbol over primaryIdentifier)
+     *
+     * @param mine Mine to test
+     * @param constraintValue extra constraint value
+     * @param identifier identifier of object
+     * @return identifier of the object if presents or NULL if not.
+     */
+    public String getObjectInOtherMine(Mine mine, String constraintValue, String identifier) {
+        String newIdentifier = runReportQuery(mine, constraintValue, identifier);
+        if (!StringUtils.isEmpty(newIdentifier)) {
+            return newIdentifier;
+        }
+        return null;
     }
 
     private String runReportQuery(Mine mine, String constraintValue, String identifier) {
@@ -188,30 +212,12 @@ public class LinkManager
      *
      * Runs queries and builds data structure for display on report pages.
      *
+     * @param mine to query
      * @param identifier identifier for object from report page
      * @param constraintValue optional additonal constraint, eg. organism
      * @return the list of valid mines for the given object
      */
-    public Map<Mine, Map<String, Set<String>>> getRelatedData(String constraintValue,
-            String identifier) {
-        Map<Mine, Map<String, Set<String>>> filteredMines
-            = new HashMap<Mine, Map<String, Set<String>>>();
-
-        for (Mine mine : mines.values()) {
-//            if (!mine.hasValues() || mine.getMineMap().isEmpty()) {
-//                LOG.warn("no links to " + mine.getName() + ".");
-//                continue;
-//            }
-            Map<String, Set<String>> relatedData = runRelatedDataQuery(mine, constraintValue,
-                    identifier);
-            if (relatedData != null && !relatedData.isEmpty()) {
-                filteredMines.put(mine, relatedData);
-            }
-        }
-        return filteredMines;
-    }
-
-    private Map<String, Set<String>> runRelatedDataQuery(Mine mine, String constraintValue,
+    public Map<String, Set<String>> runRelatedDataQuery(Mine mine, String constraintValue,
             String identifier) {
         Map<String, Set<String>> relatedDataMap = new HashMap<String, Set<String>>();
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH

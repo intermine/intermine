@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,7 +103,7 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.json.JSONArray;
+import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -643,139 +642,23 @@ public class AjaxServices
      * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      * @throws JSONException if JSON gives us problems
+     * @throws UnsupportedEncodingException if encoding organism name fails
      */
     public static String getInterMineLinks(String organismName,
-            String primaryIdentifier, String symbol) throws JSONException {
+            String primaryIdentifier, String symbol)
+        throws JSONException, UnsupportedEncodingException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         LinkManager olm = LinkManager.getInstance(im, webProperties);
         Map<String, JSONObject> filteredMines = new HashMap<String, JSONObject>();
-        getMinesWithThisGene(olm, filteredMines, organismName, primaryIdentifier);
-        getMinesWithOrthologues(olm, filteredMines, organismName, primaryIdentifier);
+        InterMineLinkGenerator.getGenes(olm, filteredMines, organismName, primaryIdentifier);
+        // mine --> organism name --> genes|orthologues --> identifier|isOrthologue
         return filteredMines.values().toString();
     }
 
-    // construct a list of mines that have this gene in their database
-    private static void getMinesWithThisGene(LinkManager olm, Map<String, JSONObject> filteredMines,
-            String organismShortName, String primaryIdentifier) {
-        if (organismShortName == null) {
-            LOG.error("error created links to other mines for this gene, no organism provided");
-            return;
-        }
-        if (primaryIdentifier == null) {
-            LOG.error("error created links to other mines for this gene, no primary identifier "
-                    + "provided");
-            return;
-        }
-        String encodedOrganism = organismShortName;
-        try {
-            encodedOrganism = URLEncoder.encode("" + organismShortName, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            LOG.error("Failed to encode " + organismShortName);
-            return;
-        }
 
-        // query each friendly mine, return matches.  value can be identifier or symbol
-        // we only return one value even if there are multiple matches, the portal at the remote
-        // mine will handle duplicates
-        Map<Mine, String> minesWithGene = olm.getObjectInOtherMines(encodedOrganism,
-                primaryIdentifier);
-
-        // process results by converting to JSON objects
-        for (Map.Entry<Mine, String> entry : minesWithGene.entrySet()) {
-            Mine mine = entry.getKey();
-            String identifier = entry.getValue();
-            convertToJSON(filteredMines, mine, organismShortName, identifier);
-        }
-    }
-
-    // convert strings into JSON results, which are processed on JSP page
-    private static void convertToJSON(Map<String, JSONObject> filteredMines, Mine mine,
-            String organismShortName, String identifier) {
-        JSONObject jsonGene = new JSONObject();
-        try {
-            jsonGene.put("identifier", identifier);
-            jsonGene.put("organismName", organismShortName);
-        } catch (JSONException e) {
-            LOG.error("error creating JSON objects on report page", e);
-            return;
-        }
-        JSONObject jsonMine = getJSONMine(filteredMines, mine.getName());
-        if (jsonMine != null) {
-            try {
-                jsonMine.put("gene", jsonGene);
-            } catch (JSONException e) {
-                LOG.error("error creating JSON objects on report page", e);
-                return;
-            }
-        }
-    }
-
-    private static void getMinesWithOrthologues(LinkManager olm,
-            Map<String, JSONObject> filteredMines, String organismShortName,
-            String primaryIdentifier) {
-
-        String encodedOrganism = organismShortName;
-        try {
-            encodedOrganism = URLEncoder.encode("" + organismShortName, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            LOG.error("Failed to encode " + organismShortName);
-            return;
-        }
-        Map<Mine, Map<String, Set<String>>> minesWithOrthologues
-            = olm.getRelatedData(encodedOrganism, primaryIdentifier);
-
-        for (Map.Entry<Mine, Map<String, Set<String>>> mineEntry
-                : minesWithOrthologues.entrySet()) {
-            String mineName = mineEntry.getKey().getName();
-            JSONObject jsonMine = getJSONMine(filteredMines, mineName);
-            JSONArray genes = convertToJSON(mineEntry.getValue());
-            try {
-                jsonMine.put("orthologues", genes);
-            } catch (JSONException e) {
-                LOG.error("error creating JSON objects on report page for " + mineName, e);
-                return;
-            }
-        }
-    }
-
-    // convert list of gene identifiers to JSON array
-    private static JSONArray convertToJSON(Map<String, Set<String>> orthologueMap) {
-        JSONArray genes = new JSONArray();
-        for (Map.Entry<String, Set<String>> entry : orthologueMap.entrySet()) {
-            String orthologueOrganism = entry.getKey();
-            Set<String> identifiers = entry.getValue();
-            for (String identifier : identifiers) {
-                JSONObject gene = new JSONObject();
-                try {
-                    gene.put("organismName", orthologueOrganism);
-                    gene.put("identifier", identifier);
-                } catch (JSONException e) {
-                    LOG.error("error creating JSON objects on report page ", e);
-                    return null;
-                }
-                genes.put(gene);
-            }
-        }
-        return genes;
-    }
-
-    private static JSONObject getJSONMine(Map<String, JSONObject> mines, String mineName) {
-        JSONObject jsonMine = mines.get(mineName);
-        if (jsonMine == null) {
-            jsonMine = new JSONObject();
-            try {
-                jsonMine.put("mineName", mineName);
-            } catch (JSONException e) {
-                LOG.error("error creating JSON objects on report page for " + mineName, e);
-                return null;
-            }
-            mines.put(mineName, jsonMine);
-        }
-        return jsonMine;
-    }
 
     /**
      * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
