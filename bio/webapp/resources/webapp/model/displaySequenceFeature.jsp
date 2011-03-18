@@ -21,13 +21,20 @@
     <%--<span style="${wrapStyle}">--%>
   </c:otherwise>
 </c:choose>
-  <td style="${wrapStyle}" class="theme-3-border">
+  <td style="white-space: nowrap;" class="theme-3-border">
     <c:if test="${!empty feature.symbol}">
       <a href="${detailsLink}${feature.id}"><c:out value="${feature.symbol}"/></a>
     </c:if>
     <a href="${detailsLink}${feature.id}"><c:out value="${feature.primaryIdentifier}"/></a>
-  </td>
-  <td style="text-align:right; ${wrapStyle}" class="theme-3-border">
+  <c:choose>
+    <c:when test="${singleLine != null}">
+      </td>
+      <td style="text-align:right; ${wrapStyle}" class="theme-3-border">
+    </c:when>
+    <c:otherwise>
+      <br />
+    </c:otherwise>
+  </c:choose>
     <c:if test="${!empty feature.length}">
       ${feature.length}
     </c:if>
