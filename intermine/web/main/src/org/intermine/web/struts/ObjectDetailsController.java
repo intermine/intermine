@@ -191,7 +191,7 @@ public class ObjectDetailsController extends InterMineAction
             allClasses.add(cld.getUnqualifiedName());
         }
         TemplateManager templateManager = im.getTemplateManager();
-        Map<String, Set<CustomDisplayer>> displayerMap = dobj.getReportDisplayers();
+        Map<String, List<CustomDisplayer>> displayerMap = dobj.getReportDisplayers();
 
         List<String> categories = new LinkedList<String>();
         for (String aspect : aspects) {
