@@ -15,7 +15,7 @@
 
 <html:xhtml/>
 
-<div>
+<div style="overflow-x: auto;">
   <c:if test="${(displayObject != null || interMineIdBag !=null) && resultsTable != null}">
 
     <%-- Results table --%>
