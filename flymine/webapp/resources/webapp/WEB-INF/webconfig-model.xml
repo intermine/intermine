@@ -684,10 +684,10 @@
                      types="Gene"/>
 
    <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
-   					jspName="model/drosophilaHomologueDisplayer.jsp"
-   					replacesFields=""
-   					placement="summary"
-   					types="Gene"/>
+                    jspName="model/drosophilaHomologueDisplayer.jsp"
+                    replacesFields=""
+                    placement="Homologues"
+                    types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
                      jspName="model/gbrowseDisplayer.jsp"
@@ -709,8 +709,8 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
-                     replacesFields="transcripts,exons,CDSs,introns"
-                     placement="summary"
+                     replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
+                     placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
   </reportdisplayers>
