@@ -865,26 +865,8 @@ Expression Levels:&nbsp;
   </c:if>
 </c:forEach>
 <%-- TARBALL --%> <b>     
+<mm:getTarball dccId="${sub.dCCid}"/>
 
-<%-- set a DEFAULT ftp.url property --%>
-<c:choose>
-<c:when test="${fn:length(WEB_PROPERTIES['ftp.url']) gt 5 }" >
-<c:set var="ftpURL" value="${WEB_PROPERTIES['ftp.url']}" />
-</c:when>
-<c:otherwise>
-<c:set var="ftpURL" value="http://submit.modencode.org/submit/public" />
-</c:otherwise>
-</c:choose>
-
-<a href="${ftpURL}/download_tarball/${fn:substringAfter(sub.dCCid, 'modENCODE_')}.tgz?structured=true"
-         title="Download all data files (tarball)" class="value extlink"> 
-<img class="exportDiv" style="position:relative; top:3px;" border="0" src="model/images/download.png" height="16" width="16"/>
-         <c:out value="Download ALL data files" /> 
-         
-
-         
-         </a>
-</b>
 </span>
 
 </td>
