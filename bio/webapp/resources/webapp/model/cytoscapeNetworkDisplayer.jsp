@@ -12,8 +12,9 @@
     /* The Cytoscape Web container must have its dimensions set. */
     html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
     /* use absolute value */
-    #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0; -moz-border-radius: 5px 5px 5px 5px;}
-    #cwtabsbyside { display: none; clear: right; float: right; overflow: auto; width: 460px; }
+    #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0;
+        -moz-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; float:left; }
+    #cwtabsbyside { display: none; float: right; width: 400px; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
     fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.5em; padding: 0.8em 1em; }
     label { vertical-align: middle; }
@@ -49,6 +50,9 @@
 
     #legends { height: 50px; }
 
+    #interactions-wrap { overflow-x:auto; }
+    #interactions-wrap div.inside { min-width:1040px; }
+
 </style>
 <div id="cwhead">
     <h3>Interaction Network</h3>
@@ -61,68 +65,75 @@
     </div>
 
     -->
-<div id="cwtabsbyside">
-	<ul>
-		<li><a href="#tabs-controls">Controls</a></li>
-		<li><a href="#tabs-data">Data</a></li>
-		<li><a href="#tabs-help">Help</a></li>
-	</ul>
-	<div id="tabs-controls">
-		<div>
-		  <fieldset>
-            <label>Show:</label><br>
-            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
-            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
-            <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
-          </fieldset>
-		  <fieldset>
-            <label>Export network as:</label>
-            <select id="exportoptions">
-                <option value="xgmml" selected>XGMML</option>
-                <option value="sif">SIF</option>
-                <option value="svg">SVG</option>
-                <option value="tab">TSV</option>
-                <option value="csv">CSV</option>
-            </select>
-            <input type="button" id="exportbutton" value="Export">
-		  </fieldset>
-		  <fieldset>
-		    <label class="fakelink" onclick="url = webapp_baseurl + '/' + webapp_path + '/saveFromIdsToBag.do?type=Gene&ids='+fullInteractingGeneSet+'&source=objectDetails&newBagName=interacting_gene_list'; window.open(url);">Create a gene list...</lable>
-		  </fieldset>
-		  <fieldset>
-		    <label>View interaction data in a table</lable>
-		    <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle('blind', {}, 1000);">
-		  </fieldset>
-		</div>
-	</div>
-	<div id="tabs-data">
-		<div>to be implemented...</div>
-	</div>
-	<div id="tabs-help">
-	  <div id="legend">
-	    <h3>Interaction Type</h3>
-        <table id="svgtable">
-          <tr>
-            <td id="legends">
-            </td>
-          </tr>
-        </table>
-	  </div>
-	  <div id="powerby">
-	      <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
-	        Powered by <img border="0/" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
-	      </a>
+<div id="interactions-wrap">
+  <div class="inside">
+  <div id="cwtabsbyside">
+    <ul>
+      <li><a href="#tabs-controls">Controls</a></li>
+      <li><a href="#tabs-data">Data</a></li>
+      <li><a href="#tabs-help">Help</a></li>
+    </ul>
+    <div id="tabs-controls">
+      <div>
+        <fieldset>
+              <label>Show:</label><br>
+              <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
+              <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
+              <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
+            </fieldset>
+        <fieldset>
+              <label>Export network as:</label>
+              <select id="exportoptions">
+                  <option value="xgmml" selected>XGMML</option>
+                  <option value="sif">SIF</option>
+                  <option value="svg">SVG</option>
+                  <option value="tab">TSV</option>
+                  <option value="csv">CSV</option>
+              </select>
+              <input type="button" id="exportbutton" value="Export">
+        </fieldset>
+        <fieldset>
+          <label class="fakelink" onclick="url = webapp_baseurl + '/' + webapp_path + '/saveFromIdsToBag.do?type=Gene&ids='+fullInteractingGeneSet+'&source=objectDetails&newBagName=interacting_gene_list'; window.open(url);">Create a gene list...</lable>
+        </fieldset>
+        <fieldset>
+          <label>View interaction data in a table</lable>
+          <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle('blind', {}, 1000);">
+        </fieldset>
       </div>
     </div>
+    <div id="tabs-data">
+      <div>to be implemented...</div>
+    </div>
+    <div id="tabs-help">
+      <div id="legend">
+        <h3>Interaction Type</h3>
+          <table id="svgtable">
+            <tr>
+              <td id="legends">
+              </td>
+            </tr>
+          </table>
+      </div>
+      <div id="powerby">
+          <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
+            Powered by <img border="0/" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
+          </a>
+        </div>
+      </div>
+  </div>
+  <div id="cwcontent"></div>
+  </div>
 </div>
-<div id="cwcontent"></div>
+<br />
 <div id="cwinlinetable" class="box table">
-	<h3>Interactions</h3>
-	<tiles:insert name="resultsTable.tile">
-	     <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
-	     <tiles:put name="currentPage" value="objectDetails" />
-	     <tiles:put name="inlineTable" value="true" />
-	</tiles:insert>
+  <h3>Interactions</h3>
+  <div style="overflow-x:auto;">
+    <tiles:insert name="resultsTable.tile">
+         <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
+         <tiles:put name="currentPage" value="objectDetails" />
+         <tiles:put name="inlineTable" value="true" />
+    </tiles:insert>
+  </div>
 </div>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
@@ -180,7 +191,7 @@
                     networkdata = response;
                     displayNetwork(networkdata, fullInteractingGeneSet);
                     jQuery("#cwtabsbyside").tabs();
-                    jQuery("#cwtabsbyside").show();
+                    jQuery("#cwtabsbyside").css('display', 'inline');
                 }
             },
             error:function (xhr, ajaxOptions, thrownError) {
@@ -207,14 +218,14 @@
     });
 
     jQuery("#exportbutton").click(function () {
-		export(jQuery("#exportoptions option:selected").val());
+    export(jQuery("#exportoptions option:selected").val());
     });
 
     function export(type) {
         if (type=="tab" || type=="csv") {
-			vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet); }
+      vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet); }
         else {
-        	vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type); }
+          vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type); }
     }
 
 </script>
