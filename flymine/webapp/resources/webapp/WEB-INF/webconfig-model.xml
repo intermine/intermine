@@ -689,7 +689,7 @@
    <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
                     jspName="model/drosophilaHomologueDisplayer.jsp"
                     replacesFields=""
-                    placement="Homologues"
+                    placement="Homology"
                     types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
