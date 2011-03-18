@@ -7,14 +7,10 @@
       AjaxServices.getInterMineLinks(organismShortName, identifier, symbol, function(mines) {
           // switch off loading img
           jQuery('#intermine_links').toggleClass('loading');
-          jQuery('#intermine_links').html(mines);
           // parse to JSON (requires jQuery 1.4.1+)
-          //var jSONObject = jQuery.parseJSON(mines);
+          var jSONObject = jQuery.parseJSON(mines);
+          generate(jSONObject, "#intermine_links");
       });
-
-      //jQuery('#intermine_links').toggleClass('loading');
-      //var object = [{"mineName":"modMine","gene":{"organismName":"D. melanogaster","identifier":"zen"},"orthologues":[{"organismName":"D. melanogaster","identifier":"eve"},{"organismName":"D. melanogaster","identifier":"CG30401"},{"organismName":"D. melanogaster","identifier":"FBgn0004054"},{"organismName":"D. melanogaster","identifier":"FBgn0000606"},{"organismName":"D. melanogaster","identifier":"zen2"},{"organismName":"D. melanogaster","identifier":"FBgn0050401"},{"organismName":"C. elegans","identifier":"WBGene00006873"},{"organismName":"C. elegans","identifier":"vab-7"}]}];
-      //generate(object, "#intermine_links");
   }
 
   function generate(jSONObject, target) {
@@ -23,18 +19,32 @@
 
       // for each mine in question...
       jQuery.each(jSONObject, function(key, entry) {
-          // bag
-          var bag = {}
-
-          // gene
-          var arr = new Array();
-          arr.push(entry['gene']['identifier'])
-          bag[entry['gene']['organismName']] = arr;
-          alert(bag[entry['gene']['organismName']][0]);
-
-          // for each orthologue
-          jQuery.each(entry['orthologues'], function(orthKey, orthEntry) {
-          });
+          if (entry['organisms'] != undefined) {
+              // mine
+              jQuery(target).append("<li id='mine-" + key + "' class='" + entry['mineName'] + "'>" + entry['mineName'] + "<ul class='organisms'></ul></li>");
+              jQuery.each(entry['organisms'], function(organismKey, organismEntry) {
+                  // organism
+                  jQuery(target + " li#mine-" + key + " ul.organisms").append("<li class='organism-" + organismKey + "'>" + organismEntry['shortName'] + "<ul class='entries'></ul></li>");
+                  // gene item
+                  if (organismEntry['genes'] != undefined) {
+                      jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + organismEntry['genes']['orthologues']['identifier'] + "</li>");
+                  }
+                  // orthologues list
+                  if (organismEntry['orthologues'] != undefined) {
+                      jQuery.each(organismEntry['orthologues'], function(orthoKey, orthoEntry) {
+                          jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + orthoEntry['identifier'] + "</li>");
+                      });
+                  }
+                  // add separators & linkify
+                  jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
+                      // http://www.intermine.org/rgd/portal.do?externalids=ENSRNOG00000007950&class=Gene&origin=FlyMine
+                      jQuery(this).html("<a href='http://www.intermine.org/rgd/portal.do?externalids=" + jQuery(this).text() + "&class=Gene&origin=FlyMine'>" + jQuery(this).text() + "</a>");
+                      if (i > 0) {
+                        jQuery(this).html(", " + jQuery(this).html());
+                      }
+                  });
+              });
+          }
       });
   }
   </script>

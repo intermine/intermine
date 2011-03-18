@@ -152,7 +152,8 @@ div.feature a { text-decoration:underline; }
 /* links in other mines */
 #intermine_links.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
 #intermine_links ul li ul { padding-left:6px; }
-#intermine_links ul li ul li { display:inline; }
+#intermine_links ul li ul li { ; }
+#intermine_links ul li ul li ul li { display:inline; }
 
 /* gene models */
 .compact-table td {
