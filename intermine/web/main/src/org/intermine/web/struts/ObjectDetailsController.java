@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class ObjectDetailsController extends InterMineAction
                     l.add(list);
                     placedInlineLists.put(tagName, l);
                     // remove!
-                    unplacedInlineLists.remove(i);
+                    unplacedInlineLists.remove(list);
                 }
             }
         }
@@ -142,8 +141,7 @@ public class ObjectDetailsController extends InterMineAction
 
         Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
             Map<String, DisplayField>>();
-        Set<String> aspects = new LinkedHashSet<String>(
-                SessionMethods.getCategories(servletContext));
+        Set<String> aspects = new HashSet<String>(SessionMethods.getCategories(servletContext));
 
         Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(object.getClass());
 

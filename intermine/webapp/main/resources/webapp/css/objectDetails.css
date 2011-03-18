@@ -168,7 +168,7 @@ div.feature a { text-decoration:underline; }
 }
 
 table.compact-table table td {
-  border:0 !important;
+  border:0 !important; padding:0 !important;
 }
 
 .compact-table a {
