@@ -25,12 +25,12 @@
     <thead>
       <tr>
         <%--<th>Gene</th>--%>
-        <th class="theme-5-background theme-3-border" colspan="2">Transcript</th>
+        <th class="theme-5-background theme-3-border">Transcript</th>
         <th class="theme-5-background theme-3-border">Exons</th>
         <th class="theme-5-background theme-3-border">Introns</th>
-        <th class="theme-5-background theme-3-border" colspan="2">5' UTR</th>
-        <th class="theme-5-background theme-3-border" colspan="2">3' UTR</th>
-        <th class="theme-5-background theme-3-border" colspan="2">CDSs</th>
+        <th class="theme-5-background theme-3-border">5' UTR</th>
+        <th class="theme-5-background theme-3-border">3' UTR</th>
+        <th class="theme-5-background theme-3-border">CDSs</th>
       </tr>
     </thead>
     <c:set var="transcriptCount" value="${fn:length(gene.transcripts)}" />
