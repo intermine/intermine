@@ -11,30 +11,33 @@
 <h3>Gene Ontology</h3>
 
 <table>
-<tr>
+  <tr>
     <th>main ontology</th>
     <th>go term</th>
     <th>evidence code</th>
-</tr>
-<c:forEach items="${goTerms}" var="parentEntry">
-<c:set var="parentTerm" value="${parentEntry.key}" />
-<c:forEach items="${parentEntry.value}" var="entry">
-    <c:set var="term" value="${entry.key}" />
-    <c:set var="evidence" value="${entry.value}" />
-<tr>
-    <td>
-         <c:out value="${parentTerm}"/>
-    </td>
-    <td>
-<c:out value="${term}"/>
-    </td>
-    <td>
+  </tr>
+  <c:forEach items="${goTerms}" var="parentEntry">
+    <c:set var="parentTerm" value="${parentEntry.key}" />
+      <c:forEach items="${parentEntry.value}" var="entry">
+        <c:set var="term" value="${entry.key}" />
+        <c:set var="evidence" value="${entry.value}" />
 
-<c:forEach items="${entry.value}" var="evidence">
-    <c:out value="${evidence}"/>&nbsp;
-</c:forEach>
-    </td>
-</tr>
+        <tr>
+          <td>
+           <c:out value="${parentTerm}"/>
+         </td>
+         <td>
+           <c:out value="${term.name}"/>
+           <img alt="?" title="${term.description}"
+                src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
+                class="tinyQuestionMark" />
+         </td>
+         <td>
+           <c:forEach items="${entry.value}" var="evidence">
+             <c:out value="${evidence}"/>&nbsp;
+           </c:forEach>
+           </td>
+         </tr>
 </c:forEach>
 </c:forEach>
 </table>

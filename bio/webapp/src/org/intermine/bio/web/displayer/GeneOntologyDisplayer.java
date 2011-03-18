@@ -10,6 +10,7 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,10 +27,10 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.GOTerm;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.Util;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayObject;
@@ -43,7 +44,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 {
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();
-    Map<String, Map<String, Set<String>>> goTermsByOntology = new HashMap<String, Map<String,
+    Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
         Set<String>>>();
 
     /**
@@ -77,31 +78,35 @@ public class GeneOntologyDisplayer extends CustomDisplayer
             return;
         }
 
-        PathQuery query = buildQuery(model, primaryIdentifier);
+        PathQuery query = buildQuery(model, displayObject.getId());
         ExportResultsIterator result = executor.execute(query);
 
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
             String parentTerm = (String) row.get(0).getField();
-            Map<String, Set<String>> termToEvidence = getChildTerms(parentTerm);
-            String term = (String) row.get(1).getField();
+            GOTerm term = (GOTerm) row.get(1).getObject();
             String code = (String) row.get(2).getField();
-            Util.addToSetMap(termToEvidence, term, code);
+            addToOntologyMap(parentTerm, term, code);
         }
 
         request.setAttribute("goTerms", goTermsByOntology);
     }
 
-    private Map<String, Set<String>> getChildTerms(String parentTerm) {
-        Map<String, Set<String>> termToEvidence = goTermsByOntology.get(parentTerm);
+    private void addToOntologyMap(String namespace, GOTerm term, String evidenceCode) {
+        Map<GOTerm, Set<String>> termToEvidence = goTermsByOntology.get(namespace);
         if (termToEvidence == null) {
-            termToEvidence = new HashMap<String, Set<String>>();
-            goTermsByOntology.put(parentTerm, termToEvidence);
+            termToEvidence = new HashMap<GOTerm, Set<String>>();
+            goTermsByOntology.put(namespace, termToEvidence);
         }
-        return termToEvidence;
+        Set<String> codes = termToEvidence.get(term);
+        if (codes == null) {
+            codes = new HashSet<String>();
+            termToEvidence.put(term, codes);
+        }
+        codes.add(evidenceCode);
     }
 
-    private PathQuery buildQuery(Model model, String primaryIdentifier) {
+    private PathQuery buildQuery(Model model, Integer geneId) {
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.goAnnotation.ontologyTerm.parents.name",
                 "Gene.goAnnotation.ontologyTerm.name",
@@ -117,11 +122,8 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         q.addConstraint(Constraints.isNull("Gene.goAnnotation.qualifier"));
 
         // gene from report page
-        q.addConstraint(Constraints.eq("Gene.primaryIdentifier", primaryIdentifier));
+        q.addConstraint(Constraints.eq("Gene.id", "" + geneId));
 
         return q;
     }
-
-
-
 }
