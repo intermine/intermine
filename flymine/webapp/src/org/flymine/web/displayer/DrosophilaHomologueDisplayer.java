@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Homologue;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -35,6 +37,7 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
     public void display(HttpServletRequest request, DisplayObject displayObject) {
 
         Map<String, Set<ResultElement>> homologues = initMap();
+        Map<String, String> organismIds = new HashMap<String, String>();
 
         Path symbolPath = null;
         try {
@@ -44,16 +47,43 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
         }
 
         Gene gene = (Gene) displayObject.getObject();
-        for (Homologue homologue : gene.getHomologues()) {
-            for (DataSet dataSet : homologue.getDataSets()) {
-                if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
-                    ResultElement re = new ResultElement(homologue.getHomologue(),
-                            symbolPath, true);
-                    String species = homologue.getHomologue().getOrganism().getSpecies();
-                    addToMap(homologues, species, re);
+        Boolean isRecentred = new Boolean(!"melanogaster".equals(gene.getOrganism().getSpecies()));
+        String thisSpecies = gene.getOrganism().getSpecies();
+        if (isRecentred) {
+            request.setAttribute("origSymbol", gene.getSymbol());
+            HOMOLOGUES: for (Homologue homologue : gene.getHomologues()) {
+                for (DataSet dataSet : homologue.getDataSets()) {
+                    if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
+                        String species = homologue.getHomologue().getOrganism().getSpecies();
+                        if ("melanogaster".equals(species)) {
+                            ResultElement re = new ResultElement(homologue.getHomologue(),
+                                    symbolPath, true);
+                            addToMap(homologues, species, re);
+                            gene = homologue.getHomologue();
+                            break HOMOLOGUES;
+                        }
+                    }
                 }
             }
         }
+
+        for (Homologue homologue : gene.getHomologues()) {
+            for (DataSet dataSet : homologue.getDataSets()) {
+                if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
+                    Organism org = homologue.getHomologue().getOrganism();
+                    organismIds.put(org.getSpecies(), org.getId().toString());
+                    ResultElement re = new ResultElement(homologue.getHomologue(),
+                            symbolPath, true);
+                    String species = org.getSpecies();
+                    if (!isRecentred || (isRecentred && !thisSpecies.equals(species))) {
+                        addToMap(homologues, species, re);
+                    }
+                }
+            }
+        }
+
+        request.setAttribute("organismIds", organismIds);
+        request.setAttribute("isRecentred", isRecentred);
         request.setAttribute("homologues", homologues);
     }
 

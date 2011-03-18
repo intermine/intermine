@@ -14,25 +14,30 @@
 <div>
 
 <h3>Drosophila 12 genomes homology</h3>
+<c:if test="${isRecentred}">
+The 12 genomes homology only records homologues of <i>D. melanogaster</i> genes. So this tree 
+displays the homologues of the D. melanogaster homologue of ${origSymbol}
+</c:if>
 <div id="phylotree"></div>
-<script type="text/javascript">
+<p>
+    Data from the 12 genomes project
+</p>
+<script type="text/javascript">    
+var baseUrl = "/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=";
+var homologues = {
+<c:forEach items="${homologues}" var="entry" varStatus="homologuesLoop">
+${entry.key}: [
+    <c:set var="genes" value="${entry.value}" />
+    <c:forEach items="${genes}" var="resultElement" varStatus="genesLoop">
+    { 
+        uri: "objectDetails.do?id=${resultElement.id}",
+        text: '${fn:replace(resultElement.field, backslash, dblBackslash)}'
+    }${not genesLoop.last ? ',' : ''} 
+    </c:forEach>
+]${not homologuesLoop.last ? ',' : ''}
+</c:forEach>
+};
 window.onload = function() {
-
-  var homologues = {
-  <c:forEach items="${homologues}" var="entry" varStatus="homologuesLoop">
-    ${entry.key}: [
-        <c:set var="genes" value="${entry.value}" />
-        <c:forEach items="${genes}" var="resultElement" varStatus="genesLoop">
-        { 
-          uri: "objectDetails.do?id=${resultElement.id}",
-          text: '${fn:replace(resultElement.field, backslash, dblBackslash)}'
-        }${not genesLoop.last ? ',' : ''} 
-        </c:forEach>
-    ]${not homologuesLoop.last ? ',' : ''}
-  </c:forEach>
-  };
-
-  console.log(homologues);
 
   var phyloJson = {
 phylogeny: [
@@ -47,7 +52,8 @@ phylogeny: [
                 styles: [
                     {
                         "present": [{fill: '#dcc8e2', stroke: 'white', fg: '#8931bc' }],
-                        "absent": [{fill: 'orange', stroke: 'white'}]
+                        "absent": [{fill: 'white', stroke: 'white'}],
+                        "species": [{"font-style": 'italic'}]
                     }
                 ]
             }
@@ -74,7 +80,11 @@ phylogeny: [
                                                         clade: [
                                                             {
                                                                 branch_length: [{Text: 0.2}],
-                                                                name: [{Text: "D. melanogaster"}],
+                                                                name: [{Text: "D. melanogaster", style: "species"}],
+                                                                annotation: ("${organismIds['melanogaster']}") ? [{
+                                                                    desc: [{ Text: "See organism details" }], 
+                                                                    uri: [{ Text: baseUrl + "${organismIds['melanogaster']}" }]
+                                                                }] : null,
                                                                 chart: [
                                                                     { 
                                                                         group: [{Text: (homologues.melanogaster[0] ? "present" : "absent")}],
@@ -87,12 +97,12 @@ phylogeny: [
                                                                 branch_length: [{Text: 0.1}],
                                                                 clade:[
                                                                     {
-                                                                        name: [{Text: "D. simulans"}],
+                                                                        name: [{Text: "D. simulans", style: "species"}],
                                                                         branch_length: [{Text: 0.1}],
-                                                                        annotation: [{
-                                                                            desc: [{Text: "Base of Many Coffees"}], 
-                                                                            uri: [{Text: "http://en.wikipedia.org/wiki/Espresso"}]
-                                                                        }],
+                                                                        annotation: ("${organismIds['simulans']}") ? [{
+                                                                            desc: [{ Text: "See organism details" }], 
+                                                                            uri: [{ Text: baseUrl + "${organismIds['simulans']}" }]
+                                                                        }] : null,
                                                                         chart: [
                                                                             { 
                                                                                 group: [{Text: (homologues.simulans[0] ? "present" : "absent")}],
@@ -102,12 +112,12 @@ phylogeny: [
                                                                         ]
                                                                     },
                                                                     {
-                                                                        name: [{Text: "D. sechellia"}],
+                                                                        name: [{Text: "D. sechellia", style: "species"}],
                                                                         branch_length: [{Text:0.1}],
-                                                                        annotation: [{
-                                                                            desc: [{Text: "Base of Many Coffees"}], 
-                                                                            uri: [{Text: "http://en.wikipedia.org/wiki/Espresso"}]
-                                                                        }],
+                                                                        annotation: ("${organismIds['sechellia']}") ? [{
+                                                                            desc: [{ Text: "See organism details" }], 
+                                                                            uri: [{ Text: baseUrl + "${organismIds['sechellia']}" }]
+                                                                        }] : null,
                                                                         chart: [
                                                                             { 
                                                                                 group: [{Text: (homologues.sechellia[0] ? "present" : "absent")}],
@@ -125,7 +135,11 @@ phylogeny: [
                                                         clade: [
                                                             {
                                                                 branch_length: [{Text: 0.2}],
-                                                                name: [{Text: "D. yakuba"}],
+                                                                name: [{Text: "D. yakuba", style: "species"}],
+                                                                annotation: ("${organismIds['yakuba']}") ? [{
+                                                                    desc: [{ Text: "See organism details" }], 
+                                                                    uri: [{ Text: baseUrl + "${organismIds['yakuba']}" }]
+                                                                }] : null,
                                                                 chart: [
                                                                     { 
                                                                         group: [{Text: (homologues.yakuba[0] ? "present" : "absent")}],
@@ -136,7 +150,11 @@ phylogeny: [
                                                             },
                                                             {
                                                                 branch_length: [{Text: 0.2}],
-                                                                name: [{Text: "D. erecta"}],
+                                                                name: [{Text: "D. erecta", style: "species"}],
+                                                                annotation: ("${organismIds['erecta']}") ? [{
+                                                                    desc: [{ Text: "See organism details" }], 
+                                                                    uri: [{ Text: baseUrl + "${organismIds['erecta']}" }]
+                                                                }] : null,
                                                                 chart: [
                                                                     { 
                                                                         group: [{Text: (homologues.erecta[0] ? "present" : "absent")}],
@@ -150,8 +168,12 @@ phylogeny: [
                                                 ]
                                             },
                                             {
-                                                name: [{Text: "D. ananassae"}], 
+                                                name: [{Text: "D. ananassae", style: "species"}], 
                                                 branch_length: [{Text: "0.4"}],
+                                                annotation: ("${organismIds['ananassae']}") ? [{
+                                                    desc: [{ Text: "See organism details" }], 
+                                                    uri: [{ Text: baseUrl + "${organismIds['ananassae']}" }]
+                                                }] : null,
                                                 chart: [
                                                     { 
                                                         group: [{Text: (homologues.ananassae[0] ? "present" : "absent")}],
@@ -167,7 +189,11 @@ phylogeny: [
                                         clade: [
                                             {
                                                 branch_length: [{Text: 0.1}], 
-                                                name: [{Text: "D. pseudoobscura"}],
+                                                name: [{Text: "D. pseudoobscura", style: "species"}],
+                                                annotation: ("${organismIds['pseudoobscura']}") ? [{
+                                                    desc: [{ Text: "See organism details" }], 
+                                                    uri: [{ Text: baseUrl + "${organismIds['pseudoobscura']}" }]
+                                                }] : null,
                                                 chart: [
                                                     { 
                                                         group: [{Text: (homologues.pseudoobscura[0] ? "present" : "absent")}],
@@ -178,7 +204,11 @@ phylogeny: [
                                             },
                                             {
                                                 branch_length: [{Text: 0.1}], 
-                                                name: [{Text: "D. persimilis"}],
+                                                name: [{Text: "D. persimilis", style: "species"}],
+                                                annotation: ("${organismIds['persimilis']}") ? [{
+                                                    desc: [{ Text: "See organism details" }], 
+                                                    uri: [{ Text: baseUrl + "${organismIds['persimilis']}" }]
+                                                }] : null,
                                                 chart: [
                                                     { 
                                                         group: [{Text: (homologues.persimilis[0] ? "present" : "absent")}],
@@ -193,6 +223,10 @@ phylogeny: [
                             },
                             {
                                 branch_length: [{Text: 0.7}],
+                                annotation: ("${organismIds['willistoni']}") ? [{
+                                    desc: [{ Text: "See organism details" }], 
+                                    uri: [{ Text: baseUrl + "${organismIds['willistoni']}" }]
+                                }] : null,
                                 chart: [
                                     { 
                                         group: [{Text: (homologues.willistoni[0] ? "present" : "absent")}],
@@ -200,7 +234,7 @@ phylogeny: [
                                         uri: [{Text: (homologues.willistoni[0] ? homologues.willistoni[0].uri : '')}] 
                                     }
                                 ],
-                                name: [{Text: "D willistoni"}]
+                                name: [{Text: "D willistoni", style: "species"}]
                             }
                         ]
                 },
@@ -213,7 +247,11 @@ phylogeny: [
                             clade: [
                                 {
                                     branch_length: [{Text: 0.45}],
-                                    name: [{Text: "D. mojavensis"}],
+                                    name: [{Text: "D. mojavensis", style: "species"}],
+                                    annotation: ("${organismIds['mojavensis']}") ? [{
+                                        desc: [{ Text: "See organism details" }], 
+                                        uri: [{ Text: baseUrl + "${organismIds['mojavensis']}" }]
+                                    }] : null,
                                     chart: [
                                         { 
                                             group: [{Text: (homologues.mojavensis[0] ? "present" : "absent")}],
@@ -224,7 +262,11 @@ phylogeny: [
                                 },
                                 {
                                     branch_length: [{Text: 0.45}],
-                                    name: [{Text: "D. virilis"}],
+                                    name: [{Text: "D. virilis", style: "species"}],
+                                    annotation: ("${organismIds['virilis']}") ? [{
+                                        desc: [{ Text: "See organism details" }], 
+                                        uri: [{ Text: baseUrl + "${organismIds['virilis']}" }]
+                                    }] : null,
                                     chart: [
                                         { 
                                             group: [{Text: (homologues.virilis[0] ? "present" : "absent")}],
@@ -237,7 +279,11 @@ phylogeny: [
                         },
                         {
                             branch_length: [{Text: 0.65}],
-                            name: [{Text: "D. grimshawi"}],
+                            name: [{Text: "D. grimshawi", style: "species"}],
+                            annotation: ("${organismIds['grimshawi']}") ? [{
+                                desc: [{ Text: "See organism details" }], 
+                                uri: [{ Text: baseUrl + "${organismIds['grimshawi']}" }]
+                            }] : null,
                             chart: [
                                 { 
                                     group: [{Text: (homologues.grimshawi[0] ? "present" : "absent")}],
@@ -260,7 +306,7 @@ phylogeny: [
   Smits.PhyloCanvas.Render.Style.line["stroke-linecap"] = "round";
   Smits.PhyloCanvas.Render.Style.line["stroke-linejoin"] = "round";
   Smits.PhyloCanvas.Render.Parameters.Rectangular.bufferX = "270";
-  var pylocanvas = new Smits.PhyloCanvas({json: phyloJson}, 'phylotree', 670, 500);
+  var pylocanvas = new Smits.PhyloCanvas({json: phyloJson}, 'phylotree', 600, 300);
 };
 </script>
 
