@@ -1,8 +1,10 @@
 package org.intermine.web.displayer;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +21,8 @@ public class DisplayerManager {
 
     protected static final Logger LOG = Logger.getLogger(DisplayerManager.class);
 
-    private Map<String, Map<String, Set<CustomDisplayer>>> displayers =
-        new HashMap<String, Map<String, Set<CustomDisplayer>>>();
+    private Map<String, Map<String, List<CustomDisplayer>>> displayers =
+        new HashMap<String, Map<String, List<CustomDisplayer>>>();
 
     public static DisplayerManager getInstance(WebConfig webConfig, InterMineAPI im) {
         if (instance == null) {
@@ -63,14 +65,14 @@ public class DisplayerManager {
                 }
             }
             for (String type : allTypes) {
-                Map<String, Set<CustomDisplayer>> typeDisplayers = displayers.get(type);
+                Map<String, List<CustomDisplayer>> typeDisplayers = displayers.get(type);
                 if (typeDisplayers == null) {
-                    typeDisplayers = new HashMap<String, Set<CustomDisplayer>>();
+                    typeDisplayers = new HashMap<String, List<CustomDisplayer>>();
                     displayers.put(type, typeDisplayers);
                 }
-                Set<CustomDisplayer> placementDisplayers = typeDisplayers.get(placement);
+                List<CustomDisplayer> placementDisplayers = typeDisplayers.get(placement);
                 if (placementDisplayers == null) {
-                    placementDisplayers = new HashSet<CustomDisplayer>();
+                    placementDisplayers = new ArrayList<CustomDisplayer>();
                     typeDisplayers.put(placement, placementDisplayers);
                 }
                 placementDisplayers.add(displayer);
@@ -81,14 +83,14 @@ public class DisplayerManager {
     public Set<CustomDisplayer> getAllReportDisplayersForType(String type) {
         Set<CustomDisplayer> displayersForType = new HashSet<CustomDisplayer>();
         if (displayers.containsKey(type)) {
-            for (Set<CustomDisplayer> disps : displayers.get(type).values()) {
+            for (List<CustomDisplayer> disps : displayers.get(type).values()) {
                 displayersForType.addAll(disps);
             }
         }
         return displayersForType;
     }
-    
-    public Map<String, Set<CustomDisplayer>> getReportDisplayersForType(String type) {
+
+    public Map<String, List<CustomDisplayer>> getReportDisplayersForType(String type) {
         return displayers.get(type);
     }
 

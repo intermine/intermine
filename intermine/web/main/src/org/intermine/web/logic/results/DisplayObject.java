@@ -325,7 +325,7 @@ public class DisplayObject
     *
     * @return Map
     */
-   public Map<String, Set<CustomDisplayer>> getReportDisplayers() {
+   public Map<String, List<CustomDisplayer>> getReportDisplayers() {
        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
        return displayerManager.getReportDisplayersForType(clsName);
