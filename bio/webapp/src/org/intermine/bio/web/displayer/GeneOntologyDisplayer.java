@@ -44,8 +44,6 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();
     private static final Map<String, String> evidenceCodes= new HashMap<String, String>();
-    Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
-        Set<String>>>();
 
     /**
      * @param config config
@@ -101,20 +99,24 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         PathQuery query = buildQuery(model, displayObject.getId());
         ExportResultsIterator result = executor.execute(query);
 
+        Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
+        Set<String>>>();
+        
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
             String parentTerm = (String) row.get(0).getField();
             parentTerm = parentTerm.replaceAll("_", " ");
             GOTerm term = (GOTerm) row.get(1).getObject();
             String code = (String) row.get(2).getField();
-            addToOntologyMap(parentTerm, term, code);
+            addToOntologyMap(goTermsByOntology, parentTerm, term, code);
         }
 
         request.setAttribute("goTerms", goTermsByOntology);
         request.setAttribute("codes", evidenceCodes);
     }
 
-    private void addToOntologyMap(String namespace, GOTerm term, String evidenceCode) {
+    private void addToOntologyMap(Map<String, Map<GOTerm, Set<String>>> goTermsByOntology,
+            String namespace, GOTerm term, String evidenceCode) {
         Map<GOTerm, Set<String>> termToEvidence = goTermsByOntology.get(namespace);
         if (termToEvidence == null) {
             termToEvidence = new HashMap<GOTerm, Set<String>>();
