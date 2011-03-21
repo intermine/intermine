@@ -20,35 +20,37 @@
     label { vertical-align: middle; }
     #legend h3 { -moz-border-radius: 5px 5px 0 0; background: none repeat scroll 0 0 #CCCCCC; margin: 0; padding: 4px 5px; color: black; border-top-style: none; }
     #legend p {
-    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-    border-right: 1px solid #BBBBBB;
-    border-style: none solid solid;
-    border-width: medium 1px 1px;
-    margin: 0;
-    padding: 5px;
-}
+	    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+	    border-right: 1px solid #BBBBBB;
+	    border-style: none solid solid;
+	    border-width: medium 1px 1px;
+	    margin: 0;
+	    padding: 5px;
+	}
+
     #legend table {
-    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-    border-right: 1px solid #BBBBBB;
-    border-style: none solid solid;
-    border-width: medium 1px 1px;
-    margin: 0;
-    padding: 5px;
-}
+	    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+	    border-right: 1px solid #BBBBBB;
+	    border-style: none solid solid;
+	    border-width: medium 1px 1px;
+	    margin: 0;
+	    padding: 5px;
+	}
+
     #legend { padding: 0.2em 0.4em 0.4em; }
     #powerby { padding: 5px; text-align: center; }
     #powerby a { color: rgb(136, 136, 136); text-decoration: none; background-color: white; }
     #powerby img { vertical-align: middle; }
 
     #svgtable {
-    border: 2px solid #CCCCCC;
-    border-collapse: separate;
-    border-spacing: 1px;
-    clear: both;
-    width: 100%;
+	    border: 2px solid #CCCCCC;
+	    border-collapse: separate;
+	    border-spacing: 1px;
+	    clear: both;
+	    width: 100%;
     }
 
-    #legends { height: 50px; }
+    #legendall { height: 50px; }
 
     #interactions-wrap { overflow-x:auto; }
     #interactions-wrap div.inside { min-width:1040px; }
@@ -58,13 +60,6 @@
     <h3>Interaction Network</h3>
 </div>
 
-    <!--
-    <div id="menu">
-    </div>
-    <div id="legends">
-    </div>
-
-    -->
 <div id="interactions-wrap">
   <div class="inside">
   <div id="cwtabsbyside">
@@ -109,7 +104,7 @@
         <h3>Interaction Type</h3>
           <table id="svgtable">
             <tr>
-              <td id="legends">
+              <td id="legendall">
               </td>
             </tr>
           </table>
@@ -200,19 +195,17 @@
         });
     }
 
-    jQuery('#legends').svg();
-    var legends = jQuery('#legends').svg('get');
-    legends.line(20, 5, 80, 5, {stroke: "red", strokeWidth: 4});
-    legends.polygon([[80, 0], [80, 10], [100, 5]], {fill: "red"});
-    legends.text(5, 27, "Physical");
+	jQuery('#legendall').svg();
+    var legendall = jQuery('#legendall').svg('get');
+    legendall.line(15, 10, 75, 10, {stroke: "red", strokeWidth: 4});
+    legendall.polygon([[75, 5], [75, 15], [95, 10]], {fill: "red"});
+    legendall.text(100, 15, "Physical");
+    legendall.line(185, 10, 245, 10, {stroke: "blue", strokeWidth: 4});
+    legendall.polygon([[245, 5], [245, 15], [265, 10]], {fill: "blue"});
+    legendall.text(270, 15, "Genetic");
 
-/*
-    jQuery('#legend_genetic').svg();
-    var legend_genetic = jQuery('#legend_genetic').svg('get');
-    legend_genetic.line(20, 5, 80, 5, {stroke: "blue", strokeWidth: 4});
-    legend_genetic.polygon([[80, 0], [80, 10], [100, 5]], {fill: "blue"});
-    legend_genetic.text(5, 27, "Genetic");
-*/
+    jQuery("svg").height("100%").width("100%");
+
     jQuery("#exportoptions").change(function () {
         export(jQuery("#exportoptions option:selected").val());
     });
