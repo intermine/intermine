@@ -1,4 +1,13 @@
 <aspects>
+  <aspect name="Function">
+    <subtitle>GO, Pathways, Diseases, Phenotype, Domains</subtitle>
+    <intro-text>
+        GO, Pathways, Diseases, Phenotype, Domains
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
+  </aspect>
   <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/images/genomics.gif</icon-image>
@@ -64,18 +73,6 @@
     <aspect-source name="BioGRID" url="http://www.thebiogrid.org/"/>
     <aspect-source name="miRBase" url="http://microrna.sanger.ac.uk/targets/v4/"/>
   </aspect>
-
-  <aspect name="Gene Ontology">
-    <subtitle></subtitle>
-    <icon-image>model/images/geneOntology.png</icon-image>
-    <large-image>model/images/geneOntology.png</large-image>
-    <intro-text>
-      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
-    </intro-text>
-    <tile-name>model/GO.jsp</tile-name>
-    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
-  </aspect>
-
   <aspect name="Expression">
     <subtitle></subtitle>
     <icon-image>model/images/embryos.jpg</icon-image>
@@ -90,6 +87,16 @@
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
     <aspect-source name="FlyFish" url="http://fly-fish.ccbr.utoronto.ca/"/>
     <aspect-source name="BDGP in situ" url="http://www.fruitfly.org/cgi-bin/ex/insitu.pl/"/>
+  </aspect>
+  <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
+    <intro-text>
+      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
+    </intro-text>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
 
   <aspect name="Regulation">
@@ -166,14 +173,5 @@
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
-  </aspect>
-  <aspect name="Function">
-    <subtitle>GO, Pathways, Diseases, Phenotype, Domains</subtitle>
-    <intro-text>
-        GO, Pathways, Diseases, Phenotype, Domains
-    </intro-text>
-    <tile-name>model/genomics.jsp</tile-name>
-    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
   </aspect>
 </aspects>
