@@ -10,7 +10,6 @@ package org.intermine.bio.web.displayer;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +43,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 {
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();
+    private static final Map<String, String> evidenceCodes= new HashMap<String, String>();
     Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
         Set<String>>>();
 
@@ -59,8 +59,28 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         ONTOLOGIES.add("GO:0008150");
         ONTOLOGIES.add("GO:0003674");
         ONTOLOGIES.add("GO:0005575");
+        
+        evidenceCodes.put("EXP", "Inferred from Experiment");
+        evidenceCodes.put("IDA", "Inferred from Direct Assay");
+        evidenceCodes.put("IPI", "Inferred from Physical Interaction");
+        evidenceCodes.put("IMP", "Inferred from Mutant Phenotype");
+        evidenceCodes.put("IGI", "Inferred from Genetic Interaction");
+        evidenceCodes.put("IEP", "Inferred from Expression Pattern");
+        evidenceCodes.put("ISS", "Inferred from Sequence or Structural Similarity");
+        evidenceCodes.put("ISO", "Inferred from Sequence Orthology");
+        evidenceCodes.put("ISA", "Inferred from Sequence Alignment");
+        evidenceCodes.put("ISM", "Inferred from Sequence Model");
+        evidenceCodes.put("IGC", "Inferred from Genomic Context");
+        evidenceCodes.put("RCA", "Inferred from Reviewed Computational Analysis");
+        evidenceCodes.put("TAS", "Traceable Author Statement");
+        evidenceCodes.put("NAS", "Non-traceable Author Statement");
+        evidenceCodes.put("IC", "Inferred by Curator");
+        evidenceCodes.put("ND", "No biological Data available");
+        evidenceCodes.put("IEA", "Inferred from Electronic Annotation");
+        evidenceCodes.put("NR", "Not Recorded ");
     }
 
+    
     @Override
     public void display(HttpServletRequest request, DisplayObject displayObject) {
         Model model = im.getModel();
@@ -84,12 +104,14 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
             String parentTerm = (String) row.get(0).getField();
+            parentTerm = parentTerm.replaceAll("_", " ");
             GOTerm term = (GOTerm) row.get(1).getObject();
             String code = (String) row.get(2).getField();
             addToOntologyMap(parentTerm, term, code);
         }
 
         request.setAttribute("goTerms", goTermsByOntology);
+        request.setAttribute("codes", evidenceCodes);
     }
 
     private void addToOntologyMap(String namespace, GOTerm term, String evidenceCode) {

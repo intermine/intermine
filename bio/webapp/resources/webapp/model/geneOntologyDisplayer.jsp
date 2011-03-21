@@ -11,35 +11,38 @@
 <h3>Gene Ontology</h3>
 
 <table>
-  <tr>
-    <th>main ontology</th>
-    <th>go term</th>
-    <th>evidence code</th>
-  </tr>
-  <c:forEach items="${goTerms}" var="parentEntry">
-    <c:set var="parentTerm" value="${parentEntry.key}" />
+<c:forEach items="${goTerms}" var="parentEntry">
+  <c:set var="parentTerm" value="${parentEntry.key}" />
+    <tr>
+      <td colspan="2" style="padding-top: 8px;"><h4>${parentTerm}</h4></td>
       <c:forEach items="${parentEntry.value}" var="entry">
-        <c:set var="term" value="${entry.key}" />
-        <c:set var="evidence" value="${entry.value}" />
-
         <tr>
+          <td style="padding-right: 10px;">
+            <c:set var="term" value="${entry.key}" />
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${term.id}" title="${term.description}">
+            <c:out value="${term.name}"/>
+            </html:link>
+            <img alt="?" title="${term.description}"
+                 src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
+                 class="tinyQuestionMark" />
+          </td>
           <td>
-           <c:out value="${parentTerm}"/>
-         </td>
-         <td>
-           <c:out value="${term.name}"/>
-           <img alt="?" title="${term.description}"
-                src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
-                class="tinyQuestionMark" />
-         </td>
-         <td>
+           <c:set var="evidence" value="${entry.value}" />
            <c:forEach items="${entry.value}" var="evidence">
-             <c:out value="${evidence}"/>&nbsp;
+             <c:out value="${evidence}"/>
+             <c:if test="${!empty codes[evidence] }">
+             <img alt="?" title="${codes[evidence]}"
+                 src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
+                 class="tinyQuestionMark" />
+             </c:if>
+             &nbsp;
            </c:forEach>
-           </td>
-         </tr>
-</c:forEach>
-</c:forEach>
-</table>
+         </td>
+        </tr> 
+   </c:forEach>
+
+
+</c:forEach>      
+      </table>
 
 <!-- /geneOntologyDisplayer.jsp -->
