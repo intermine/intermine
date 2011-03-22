@@ -261,7 +261,7 @@ table.stats
     font-weight: normal;
     font-size: 11px;
     color: #fff;
-    width: 1000px;
+    width: 100%;
     background-color: #666;
     border: 0px;
     border-collapse: collapse;
@@ -286,6 +286,7 @@ table.stats td.head
     border-bottom: 2px #fff solid;
     font-size: 12px;
     font-weight: bold;
+    text-align: left;
 }
 
 table.stats td.subnamecol
@@ -327,29 +328,38 @@ div.active {
 
 </style>
 
-<h3 id="GBTitle">GBrowse Tracks</h3>
+<h3 id="GBTitle">GBrowse Tracks and Data Files</h3>
 
 <c:forEach var="tracks" items="${tracks}" varStatus="track_status">
   <div class="trigger">
     <i style="color:black;">${tracks.key}</i>
   </div>
   <div class="toggle_container">
+  
   <table id="${tracks.key}_table" class="stats">
-
+<%--
    <col width="380px">
    <col width="250px">
    <col width="25px">
-    <tr>
+--%>
+<col width="35%">
+<col width="30%">
+<col width="5%">
+<col width="30%">
+   <tr>
       <td class="head" colspan="3">
         <input type="checkbox" id="${tracks.key}_all" value="${tracks.key}" onclick="checkAll(this.id)"/>
-        <a id="${tracks.key}_a" title="View selected tracks for ${tracks.key} in GBrowse" target="_blank" onclick="if(!updateURL(this.id)){return false;}" style="float:right;">View Selected Tracks in GBrowse</a>
+        <a id="${tracks.key}_a" title="View selected tracks for ${tracks.key} in GBrowse" target="_blank" onclick="if(!updateURL(this.id)){return false;}" >View Selected Tracks in GBrowse</a>
       </td>
+      <td class="head" text-align="right">
+Data Files
+     </td>
     </tr>
     <c:forEach var="trackDetails" items="${tracks.value}" varStatus="trackDetails_status">
       <tr>
         <td valign="middle" class="subnamecol">
           <input type="checkbox" name="${tracks.key}_each" value="${trackDetails.key}" onclick="updateStatus(this.checked, this.name)" />
-          <c:set var="maxLength" value="80"/>
+          <c:set var="maxLength" value="60"/>
           <im:abbreviate value="${trackDetails.key}" length="${maxLength}"/>
         </td>
         <td valign="middle" width="10px">
@@ -358,10 +368,22 @@ div.active {
             <br>
             <c:set var="DCCid" scope="request" value="${gbTrack.DCCid}"/>
           </c:forEach>
-         </td>
+
+
+          </td>
          <td valign="middle">
            <mm:allTracks tracks="${trackDetails.value}" dccId="${DCCid}"/>
          </td>
+
+<c:forEach var="subFiles" items="${files}" varStatus="files_status">
+         <c:if test="${subFiles.key.title eq trackDetails.key}">
+         <td>
+         <span class="filelink">
+         <mm:dataFiles files="${subFiles.value}" dccId="${subFiles.key.dCCid}"/>
+       </span>
+       <mm:getTarball dccId="${subFiles.key.dCCid}"/>
+</c:if>
+         </c:forEach>  
        </tr>
     </c:forEach>
   </table>
