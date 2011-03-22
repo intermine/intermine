@@ -266,7 +266,6 @@ table.stats
     border: 0px;
     border-collapse: collapse;
     border-spacing: 0px;
-    table-layout:fixed;
 }
 
 table.stats td
@@ -292,7 +291,6 @@ table.stats td.head
 table.stats td.subnamecol
 {
     white-space: nowrap;
-
 }
 
 table.stats td.trackcol
@@ -341,11 +339,12 @@ div.active {
    <col width="380px">
    <col width="250px">
    <col width="25px">
---%>
+   
 <col width="35%">
 <col width="30%">
 <col width="5%">
 <col width="30%">
+--%>
    <tr>
       <td class="head" colspan="3">
         <input type="checkbox" id="${tracks.key}_all" value="${tracks.key}" onclick="checkAll(this.id)"/>
@@ -362,7 +361,7 @@ Data Files
           <c:set var="maxLength" value="60"/>
           <im:abbreviate value="${trackDetails.key}" length="${maxLength}"/>
         </td>
-        <td valign="middle" width="10px">
+        <td valign="middle">
           <c:forEach var="gbTrack" items="${trackDetails.value}" varStatus="gbTrack_status">
             <mm:singleTrack track="${gbTrack}"/>
             <br>
