@@ -32,7 +32,7 @@ if(!org) {
 // -
 // -   Description: Draws a gene expression style heatmap using Canvas
 // -   Author: dburdick
-// -   Version: 1.0
+// -   Version: 1.0.1
 // -
 // ---------------------------------------------------------------------------------------------------------------------
 org.systemsbiology.visualization.BioHeatMap = Class.create({
@@ -71,6 +71,11 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._columnLabelBottomPadding = 3;
         this._rowLabelRightPadding = 3;
 
+        // tooltip support
+        this._displayCellTooltips = true;
+        this._tooltipDelay = 100;
+        this.tooltipElement = null;
+
         // events
         this._selected = []; // list of selections
         this._selectedState = false;
@@ -100,9 +105,11 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Parameter data is of type google.visualization.DataTable.
     // Parameter options is a name/value map of options.
     draw: function(data, max, min, options) {
-        this.data = data;
+    	options = options || {};
+    	this.data = data;
         this.options = options;
         this._setupCanvas();
+        this._setupTooltipElement(options);
         var canvas = this.canvas;
         var ctx = this.ctx;
 
@@ -137,7 +144,9 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
             if(this._drawHeatmapBorder)
                 ctx.strokeRect(0, 0, canvas.width, canvas.height);
-            this.canvas.onclick = this._getMouseXY(); // mouse event handler
+            var heatMap = this;
+            this.canvas.onclick = this._getMouseXY(function(lp, mp) { heatMap._onClickEvent(lp, mp) }); // mouse click event handler
+            this.canvas.onmousemove = this._getMouseXY(function(lp, mp) { heatMap._onMoveEvent(lp, mp) }); // mouse move event handler
 
             this._logCalculated(); // log some values to the console
 
@@ -160,12 +169,12 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Google Eventing Methods
     // ------------------------------------
 
-    // get's the current selected rows,cols or cells
+    // gets the current selected rows,cols or cells
     getSelection: function() {
         return this._selected;
     },
 
-    // set's the current selected rows, cols or cells
+    // sets the current selected rows, cols or cells
     setSelection: function(selections) {
         var validSelections = [];
         this._clearSelection();
@@ -216,6 +225,14 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         if (this.canvas.getContext) {
             this.ctx = this.canvas.getContext("2d");
         }
+    },
+
+    _setupTooltipElement: function(options) {
+        this.tooltipElement = document.createElement('div');
+        document.body.appendChild(this.tooltipElement);
+        this.tooltipElement.style.display = 'none';
+        this.tooltipElement.style.position = 'absolute';
+        this.tooltipElement.className = options.tooltipClass || "bioHeatMapTooltip";
     },
 
     // ------------------------------------
@@ -360,6 +377,10 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         else if(options.drawBorder == true)
             this._drawHeatmapBorder = true;
 
+        if(options.tooltipDelay)
+          this._tooltipDelay = options.tooltipDelay
+        if(options.displayCellTooltips != null && options.displayCellTooltips == false)
+          this._displayCellTooltips = false;
 
         // TODO : more OPTIONAL PARAMETERS?
         // - Row normalize the data to average of 0 and variance +/-1?
@@ -609,6 +630,39 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
     },
 
+    // mouse move handler to implement tooltip behaviour
+    _onMoveEvent: function(localPos, mousePos) {
+        // only run if displaying tooltips is enabled
+        if (this._displayCellTooltips) {
+
+        // all movements clear the current timer
+        var tooltipElement = this.tooltipElement;
+        var timerId = tooltipElement.timerId;
+        if(timerId) clearTimeout(timerId);
+
+        var cell = this._getCellFromXY(localPos);
+        if (cell && cell.row != -1) {
+            var props = this.data.getProperties(cell.row, cell.col);
+            if(props && props.tooltip) {
+                var tooltip = props.tooltip.replace(/\n/g, '<br/>'); // line-breaks for newline characters
+                var tooltipDelay = this._tooltipDelay;
+                var showTooltip = function() {
+                    tooltipElement.style.display = "block";
+                    tooltipElement.innerHTML = tooltip;
+                    tooltipElement.style.left = mousePos.x + "px";
+                    tooltipElement.style.top = (mousePos.y - tooltipElement.offsetHeight) + "px";
+                };
+                tooltipElement.timerId = setTimeout(showTooltip, tooltipDelay);
+
+                return;
+            }
+        }
+
+        // fall-through for if no tooltip should be displayed
+        tooltipElement.style.display = "none";
+        }
+    },
+
     _clearSelection: function() {
         if (this._selectionState) {
             //        this.ctx.restore();
@@ -623,31 +677,50 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Mouse functions
     // ------------------------------------
 
-
-    _getMouseXY: function() {
+    // note: modified to take a callback
+    _getMouseXY: function(handler) {
         var bioHeatMap = this;
         return function(e) {
-            var t = this;
+  //          var t = this;
             if(!e) e = window.event; // for IE
-            if (t) {
-                var x = e.clientX + (window.pageXOffset || 0);
-                var y = e.clientY + (window.pageYOffset || 0);
-                while(t) {
-                    xOffset = t.offsetLeft + parseInt(t.style.borderLeftWidth || 0);
-                    xOffset -= t.scrollLeft;
-                    x -= xOffset;
-                    yOffset = t.offsetTop + parseInt(t.style.borderTopWidth || 0);
-                    yOffset -= t.scrollTop;
-                    y -= yOffset;
-                    t = t.offsetParent
-                }
 
-                this._clickPosition = {x:x,y:y};
-                var point = {x:x,y:y};
-                bioHeatMap._onClickEvent(point)
-                return point;
+            // absolute mouse position on the page
+            var mouseX = 0;
+            var mouseY = 0;
+            if (e.pageX || e.pageY) {
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+            }
+            else if (e.clientX || e.clientY) {
+                mouseX = e.clientX + document.body.scrollLeft
+                        + document.documentElement.scrollLeft;
+                mouseY = e.clientY + document.body.scrollTop
+                        + document.documentElement.scrollTop;
             }
 
+            // target element
+            var t;
+	        if (e.target) t = e.target;
+	        else if (e.srcElement) t = e.srcElement;
+	        if (t.nodeType == 3) // defeat Safari bug
+		    t = t.parentNode;
+
+            // target element location in page
+            var curleft = 0;
+            var curtop = 0;
+            if (t.offsetParent) {
+                do {
+                    curleft += t.offsetLeft;
+                    curtop += t.offsetTop;
+                } while (t = t.offsetParent)
+            }
+
+            // x,y relative to target
+            this._clickPosition = {x: mouseX - curleft, y: mouseY - curtop}; // query: this is altering the canvas - was this the intention? Retained to match old code
+            var localPos = {x: mouseX - curleft, y: mouseY - curtop};
+            var mousePos = {x : mouseX, y: mouseY};
+            handler(localPos, mousePos);
+            return localPos;
         }
     },
 
@@ -710,12 +783,12 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
     // --------------------------------
     // constants
     // --------------------------------
-    MINCOLORS: 2,
-  PASS_THROUGH_BLACK_MINCOLORS: 2,
-  NO_PASS_THROUGHBLACK_MINCOLORS: 2,
-  MINRGB: 0,
-  MAXRGB: 255,
-    BLACK_RGBA: {r:0, g:0, b:0, a:1},
+	MINCOLORS: 2,
+	PASS_THROUGH_BLACK_MINCOLORS: 2,
+	NO_PASS_THROUGHBLACK_MINCOLORS: 2,
+	MINRGB: 0,
+	MAXRGB: 255,
+	BLACK_RGBA: {r:0, g:0, b:0, a:1},
 
     // --------------------------------
     // Private Attributes
