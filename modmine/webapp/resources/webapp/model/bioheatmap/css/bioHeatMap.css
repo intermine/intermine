@@ -1,0 +1,14 @@
+.bioHeatMapTooltip {
+    /* background */
+    background-color: yellow;
+
+    /* border */
+    border-color: BLUE;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-border-radius: 7px; /* rounded corners*/
+
+    padding: 3px;
+
+    text-align: center;
+}
