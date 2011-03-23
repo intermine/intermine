@@ -54,6 +54,8 @@ public class HeatMapController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(HeatMapController.class);
 
+    private static final String DCC_PREFIX = "modENCODE_";
+
     private static final String[] EXPRESSION_ORDERED_CONDITION = {"CME L1", "Sg4", "ML-DmD11",
         "ML-DmD20-c2", "ML-DmD20-c5", "Kc167", "GM2", "S2-DRSC", "S2R+", "S1", "1182-4H",
         "ML-DmD16-c3", "ML-DmD32", "ML-DmD17-c3", "ML-DmD8", "CME W1 Cl.8+", "ML-DmD9",
@@ -163,8 +165,12 @@ public class HeatMapController extends TilesAction
                 String developmentalStage = (String) row.get(4).getField();
                 String dccId = (String) row.get(5).getField();
 
-                dCCid = dccId;
-
+                if (!dccId.startsWith(DCC_PREFIX)) {
+                    dCCid = DCC_PREFIX + dccId;
+                } else {
+                    dCCid = dccId;
+                }
+                
                 if (geneSymbol == null) {
                     geneSymbol = geneId;
                 }
