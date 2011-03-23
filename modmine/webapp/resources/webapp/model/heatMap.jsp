@@ -40,7 +40,8 @@
 
          <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
              data_body.addRows(1);
-             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+//             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}", null, { tooltip: '"${ges.key}"' });
 
              <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
                 data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
@@ -51,9 +52,9 @@
                                                                                  endColor: {r:255, g:255, b:0, a:1},
                                                                                  passThroughBlack: false,
                                                                                  numberOfColors: 256,
-                                                                                 cellHeight: 10,
-                                                                                 cellWidth: 10,
-                                                                                 fontHeight: 7,
+                                                                                 cellHeight: 14,
+                                                                                 cellWidth: 14,
+                                                                                 fontHeight: 9,
                                                                                  drawBorder: false});
 
           google.visualization.events.addListener(heatmap, 'select', function() {
