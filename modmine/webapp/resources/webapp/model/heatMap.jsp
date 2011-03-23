@@ -61,12 +61,31 @@
                                                                                  fontHeight: 9,
                                                                                  drawBorder: false});
 
-          google.visualization.events.addListener(heatmap, 'select', function() {
-                    var rowNo = heatmap.getSelection()[0].row;
-                    var colNo = heatmap.getSelection()[0].column;
-                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
-                });
+//          google.visualization.events.addListener(heatmap, 'select', function() {
+//                    var rowNo = heatmap.getSelection()[0].row;
+//                    var colNo = heatmap.getSelection()[0].column;
+//                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
+//                });
 
+          
+          google.visualization.events.addListener(heatmap, 'select', function() {
+
+              var selectionObj = heatmap.getSelection();           
+              var gene = data_body.getValue(selectionObj[0].row,0);
+              var cl   = data_body.getColumnLabel(selectionObj[0].column);   
+              var score = data_body.getValue(selectionObj[0].row,selectionObj[0].column);
+
+              //var cl = cll.replace(' ', '+'); 
+              
+   geneW=window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + gene, "gene", "menubar=1,resizable=1,scrollbars=1, width=1000,height=450" );
+
+//   clW=window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=CellLine&externalids=' + cl, "condition", "menubar=1,resizable=1,scrollbars=1, width=1000,height=450" );
+//   clW.moveTo(0,500);
+              
+//              alert('Expression score: ' + gene + '-' + cl);
+          });
+
+          
         //============= Heatmap legend =============
         var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
 

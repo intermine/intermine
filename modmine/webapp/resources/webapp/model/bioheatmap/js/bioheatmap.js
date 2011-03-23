@@ -73,7 +73,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
         // tooltip support
         this._displayCellTooltips = true;
-        this._tooltipDelay = 100;
+        this._tooltipDelay = 200;
         this.tooltipElement = null;
 
         // events
