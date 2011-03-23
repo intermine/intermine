@@ -15,6 +15,8 @@
 
 <tiles:importAttribute />
 
+<link rel="stylesheet" type="text/css" href="model/bioheatmap/css/bioHeatMap.css"/>
+
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {});
@@ -40,11 +42,13 @@
 
          <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
              data_body.addRows(1);
-data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
-//             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}", null, { tooltip: '"${ges.key}"' });
+             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+             // note: tooltip works only for setCell, so we cannot have them in the columns name
+             // -> removed from rows name
+             // data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}", null, { tooltip: '${ges.key}' });
 
              <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
+                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore}, null, { tooltip: '${geScores.logScore}' });
              </c:forEach>
          </c:forEach>
 
