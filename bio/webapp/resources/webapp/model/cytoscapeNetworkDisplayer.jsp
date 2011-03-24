@@ -77,6 +77,8 @@
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
 
     var project_title = "${WEB_PROPERTIES['project.title']}";
+    var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+    var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
 
     if (dataNotIncludedMessage != "") {
         jQuery('#cyto_div').html(dataNotIncludedMessage)
