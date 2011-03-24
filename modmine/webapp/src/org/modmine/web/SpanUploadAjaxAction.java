@@ -252,7 +252,23 @@ public class SpanUploadAjaxAction extends Action
                 }
             }
 
-            return StringUtil.join(subURLSet, "-");
+            // The first part of gbrowse url
+            /*
+            int spanLength = span.getEnd() - span.getStart();
+            int flank = (int) Math.rint(spanLength * 0.1); // 10%
+            // TODO overflow not tested
+            int newStart = span.getStart() - flank; // newStart >= 0
+            int newEnd = span.getEnd() + flank; // newEnd <= the length of the chr
+            */
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("start=" + span.getStart() + ";")
+                .append("end=" + span.getEnd() + ";")
+                .append("ref=" + span.getChr() + ";")
+                .append("label=Genes;")
+                .append("label=" + StringUtil.join(subURLSet, "-"));
+
+            return sb.toString();
         }
 
         return null;
