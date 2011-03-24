@@ -288,10 +288,18 @@ public class SpanUploadAction extends InterMineAction
                     String gbrowseDefaultUrl = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
                     String gbrowseBaseUrl = GBrowseParser.getGBrowsePrefix();
 
+                    String gbrowseImageDefaultUrl =
+                        "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse_img/";
+                    String gbrowseImageBaseUrl = gbrowseBaseUrl.replaceFirst(
+                            "gbrowse", "gbrowse_img");
+
                     if (gbrowseBaseUrl == null || gbrowseBaseUrl.isEmpty()) {
                         request.getSession().setAttribute("GBROWSE_BASE_URL", gbrowseDefaultUrl);
+                        request.getSession().setAttribute("GBROWSE_IMAGE_URL",
+                                gbrowseImageDefaultUrl);
                     } else {
                         request.getSession().setAttribute("GBROWSE_BASE_URL", gbrowseBaseUrl);
+                        request.getSession().setAttribute("GBROWSE_IMAGE_URL", gbrowseImageBaseUrl);
                     }
                 }
             }
