@@ -122,8 +122,15 @@ public class BagDetailsController extends TilesAction
 
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
 
-        if (pagedResults == null || pagedResults.getExactSize() != imBag.getSize()) {
+        int bagSize = imBag.getSize();
+        if (pagedResults == null || pagedResults.getExactSize() != bagSize) {
             pagedResults = SessionMethods.doQueryGetPagedTable(request, imBag);
+        }
+
+        //tracks the list execution only if the list has'n just been created
+        if (request.getParameter("trackExecution") == null
+            || "true".equals(request.getParameter("trackExecution"))) {
+            im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize);
         }
 
         // TODO this needs to be removed when InterMineBag can store the initial ids of when the

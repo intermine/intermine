@@ -36,6 +36,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -109,6 +110,8 @@ public class KeywordSearchResultsController extends TilesAction
         // term
         String searchTerm = request.getParameter("searchTerm");
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
+        //track the keyword search
+        im.getTrackerDelegate().trackKeywordSearch(searchTerm);
 
         // search in bag (list)
         List<Integer> ids = null;
