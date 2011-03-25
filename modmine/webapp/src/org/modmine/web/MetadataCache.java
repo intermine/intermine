@@ -85,12 +85,15 @@ public final class MetadataCache
     private static Map<String, List<GBrowseTrack>> submissionTracksCache = null;
 
 //    private static Map<String, Map<String, Long>> submissionFileSourceCounts = null;
-    private static Map<String, Map<String,Map<String, Long>>> submissionFileSourceCounts = null;
-    
+    private static Map<String, Map<String, Map<String, Long>>> submissionFileSourceCounts = null;
+
     private static Map<String, Set<ResultFile>> submissionFilesCache = null;
     private static Map<String, Integer> filesPerSubmissionCache = null;
     private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<String, List<String>> submissionUnlocatedFeatureTypes = null;
+    private static Map<String, List<String>> submissionSequencedFeatureTypes = null;
+
+    
     private static Map<String, List<String[]>> submissionRepositedCache = null;
 
     private static Map<String, String> featDescriptionCache = null;
@@ -182,9 +185,9 @@ public final class MetadataCache
 
 
     /**
-     * Fetch unlocated feature types per submission.
+     * Fetch located feature types per submission.
      * @param os the production objectStore
-     * @return map of unlocated feature types
+     * @return map of located feature types
      */
     public static synchronized Map<String, List<String>> getLocatedFeatureTypes(ObjectStore os) {
         if (submissionLocatedFeatureTypes == null) {
@@ -220,6 +223,20 @@ public final class MetadataCache
         return uf;
     }
 
+    /**
+     * Fetch located feature types per submission.
+     * @param os the production objectStore
+     * @return map of located feature types
+     */
+    public static synchronized Map<String, List<String>> getSequencedFeatureTypes(ObjectStore os) {
+        if (submissionSequencedFeatureTypes == null) {
+            readSubmissionSequencedFeature(os);
+        }
+        return submissionSequencedFeatureTypes;
+    }
+
+    
+    
     /**
      * Fetch the collection of ResultFiles per submission.
      * @param os the production objectStore
@@ -1051,6 +1068,25 @@ public final class MetadataCache
                 + submissionFilesCache.size());
     }
 
+
+    private static void readSubmissionSequencedFeature(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        submissionSequencedFeatureTypes = new LinkedHashMap<String, List<String>>();
+        Properties props = extractProperties(os, ModMineCacheKeys.SUB_SEQUENCED_FEATURE_TYPE);
+
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
+
+            String[] token = keyString.split("\\.");
+            String dccId = token[0];
+            String feature = (String) props.get(key);
+
+            addToMap(submissionSequencedFeatureTypes, dccId, feature);
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed sequenced features cache, took: " + timeTaken + "ms size = "
+                + submissionSequencedFeatureTypes.size());
+    }
 
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();

@@ -43,8 +43,17 @@ public final class ModMineCacheKeys
         = "submissionFeatureExpressionLevelCount";
 
     /**
-     * Key to submission expression level per feature type cache entry.
+     * Key to submission located feature type cache entry.
      */
     public static final String SUB_LOCATED_FEATURE_TYPE
         = "submissionLocatedFeatureTypes";
+
+    /**
+     * Key to submission located feature type cache entry.
+     */
+    public static final String SUB_SEQUENCED_FEATURE_TYPE
+        = "submissionLocatedFeatureTypes";
+
+
+
 }
