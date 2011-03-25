@@ -252,11 +252,11 @@ public class SpanUploadAjaxAction extends Action
                 }
             }
 
-            // The first part of gbrowse url
+            // TODO whether add flanks
             /*
             int spanLength = span.getEnd() - span.getStart();
             int flank = (int) Math.rint(spanLength * 0.1); // 10%
-            // TODO overflow not tested
+                // TODO overflow not tested
             int newStart = span.getStart() - flank; // newStart >= 0
             int newEnd = span.getEnd() + flank; // newEnd <= the length of the chr
             */
