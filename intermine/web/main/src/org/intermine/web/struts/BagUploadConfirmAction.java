@@ -21,8 +21,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -50,6 +52,7 @@ public class BagUploadConfirmAction extends InterMineAction
         }
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = confirmForm.getNewBagName();
@@ -81,10 +84,14 @@ public class BagUploadConfirmAction extends InterMineAction
 
         InterMineBag bag = profile.createBag(bagName, bagType, "");
         bag.addIdsToBag(contents, bagType);
-
+        //track the list creation
+        im.getTrackerDelegate().trackListCreation(bagType, bag.getSize(),
+                                                  ListBuildMode.IDENTIFIERS);
         session.removeAttribute("bagQueryResult");
         ForwardParameters forwardParameters
             = new ForwardParameters(mapping.findForward("bagDetails"));
-        return forwardParameters.addParameter("bagName", bagName).forward();
+        forwardParameters.addParameter("bagName", bagName);
+        forwardParameters.addParameter("trackExecution", "false");
+        return forwardParameters.forward();
     }
 }

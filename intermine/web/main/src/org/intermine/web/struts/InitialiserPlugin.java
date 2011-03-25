@@ -23,9 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -47,9 +49,12 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
-import org.intermine.api.tracker.TrackerFactory;
+import org.intermine.api.tracker.TrackerLogger;
+import org.intermine.api.tracker.factory.TrackerFactory;
+import org.intermine.api.tracker.track.Track;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -127,7 +132,8 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
+        TrackerDelegate trackerDelegate = initTrackers(webProperties, userprofileOSW);
+//      TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
         SessionMethods.setInterMineAPI(servletContext, im);
@@ -513,6 +519,11 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
+    private TrackerDelegate initTrackers(Properties webProperties,
+            ObjectStoreWriter userprofileOSW) {
+        return getTrackerDelegate(webProperties, userprofileOSW);
+    }
+
     /**
      * Returns the tracker manager of all trackers defined into the webapp configuration properties
      * @param webProperties the webapp configuration properties where the trackers are defined
@@ -525,21 +536,10 @@ public class InitialiserPlugin implements PlugIn
         String trackerList = (String) webProperties.get("webapp.trackers");
         LOG.warn("initializeTrackers: trackerList is" + trackerList);
         if (trackerList != null) {
-            ObjectStoreWriterInterMineImpl uosw = (ObjectStoreWriterInterMineImpl) userprofileOSW;
-            Connection con;
             String[] trackerClassNames = trackerList.split(",");
-            Tracker tracker;
-            for (String trackerClassName : trackerClassNames) {
-                try {
-                    con = uosw.getDatabase().getConnection();
-                    tracker = TrackerFactory.getTracker(trackerClassName, con);
-                    trackers.put(tracker.getName(), tracker);
-                } catch (Exception e) {
-                    LOG.warn("Tracker " + trackerClassName + " hasn't been instatiated", e);
-                }
-            }
+            TrackerDelegate td = new TrackerDelegate(trackerClassNames, userprofileOSW);
+            return td;
         }
-        TrackerDelegate tm = new TrackerDelegate(trackers);
-        return tm;
+        return null;
     }
 }

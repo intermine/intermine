@@ -34,6 +34,7 @@ import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
@@ -131,6 +132,9 @@ public class ModifyBagAction extends InterMineAction
 
             if (createBag(origBag, newBagName, profile)) {
                 recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
+                //track the list creation
+                im.getTrackerDelegate().trackListCreation(origBag.getType(), origBag.getSize(),
+                                                          ListBuildMode.OPERATION);
             }
         } else {
             if (newNameTextBox != null) {
@@ -215,6 +219,9 @@ public class ModifyBagAction extends InterMineAction
                     + "\" as " + opText + " of  "
                     + StringUtil.prettyList(Arrays.asList(selectedBagNames)) + ".",
                     session);
+            //track the list creation
+            im.getTrackerDelegate().trackListCreation(BagOperations.getCommonBagType(
+                                    selectedBags), newBagSize, ListBuildMode.OPERATION);
         } else {
             SessionMethods.recordError(opText + " operation on lists "
                     + StringUtil.prettyList(Arrays.asList(selectedBagNames))
