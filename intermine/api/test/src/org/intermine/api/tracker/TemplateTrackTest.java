@@ -10,6 +10,8 @@ package org.intermine.api.tracker;
  *
  */
 
+import org.intermine.api.tracker.track.TemplateTrack;
+
 import junit.framework.TestCase;
 
 /**
