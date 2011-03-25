@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.tracker.track.TemplateTrack;
 
 /**
  * Class for saving the template executions into the memory. The template executions are saved into

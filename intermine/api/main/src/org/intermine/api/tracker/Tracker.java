@@ -10,6 +10,9 @@ package org.intermine.api.tracker;
  *
  */
 
+import java.sql.Connection;
+
+import org.intermine.api.tracker.track.Track;
 /**
  * Interface to represent a Tracker, an object tracking the users activities in the webapp
  * into the database
@@ -21,7 +24,7 @@ public interface Tracker
      * Create the table where the tracker saves data
      * @throws Exception when a database error access is verified
      */
-    void createTrackerTable() throws Exception;
+    void createTrackerTable(Connection con) throws Exception;
 
     /**
      * Save into the table a Track

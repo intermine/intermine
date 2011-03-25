@@ -1,4 +1,4 @@
-package org.intermine.api.tracker;
+package org.intermine.api.tracker.factory;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -11,12 +11,16 @@ package org.intermine.api.tracker;
  */
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.Queue;
+
+import org.intermine.api.tracker.Tracker;
+import org.intermine.api.tracker.track.Track;
 
 /**
  * Factory to instantiate the trackers with the reflection
  * @author dbutano
  */
-public class TrackerFactory
+public final class TrackerFactory
 {
     private TrackerFactory() {
     }
@@ -28,15 +32,16 @@ public class TrackerFactory
      * @return the tracker instantiated
      * @throws Exception
      */
-    public static Tracker getTracker(String className, Connection con) throws Exception {
+    public static Tracker getTracker(String className, Connection con, Queue<Track> trackQueue)
+        throws Exception {
         Class<?> cls = null;
         try {
             cls = Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Cannot find specified Tracker class '" + className, e);
         }
-        Class[] params = {Connection.class};
-        Object[] paramsObj = {con};
+        Class[] params = {Connection.class, Queue.class};
+        Object[] paramsObj = {con, trackQueue};
         Method m = cls.getDeclaredMethod("getInstance", params);
         return (Tracker) m.invoke(null, paramsObj);
     }

@@ -1,4 +1,4 @@
-package org.intermine.api.tracker;
+package org.intermine.api.tracker.util;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -10,15 +10,4 @@ package org.intermine.api.tracker;
  *
  */
 
-/**
- * Class to represent the track
- * @author dbutano
- */
-public interface Track
-{
-    /**
-     * Validate the track before saving into the database
-     * @return true if the track is valid
-     */
-    boolean validate();
-}
+public enum ListBuildMode { QUERY, IDENTIFIERS, OPERATION };

@@ -1,4 +1,4 @@
-package org.intermine.api.tracker;
+package org.intermine.api.tracker.track;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -9,17 +9,17 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import org.intermine.api.tracker.util.TrackerUtil;
 /**
  * Class to represent the track for the templates objects.
  * The track contains the template name, the access time, the session identifier
  * and the user name (if the user is logged in)
  * @author dbutano
  */
-public class TemplateTrack implements Track
+public class TemplateTrack extends TrackAbstract
 {
     private String userName;
     private String templateName;
-    private long timestamp;
     private String sessionIdentifier;
 
     /**
@@ -83,16 +83,32 @@ public class TemplateTrack implements Track
     }
 
     /**
-     * Validate the template track before saving into the database.
-     * A track is valid if has a template name and a session identifier
-     * @return true if the template track is valid
+     * {@inheritDoc}
      */
+    @Override
     public boolean validate() {
         if (templateName != null && !"".equals(templateName)
             && sessionIdentifier != null && !"".equals(sessionIdentifier)) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object[] getFormattedTrack() {
+        return new Object[] {templateName, userName,
+                             timestamp, sessionIdentifier};
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTableName() {
+        return TrackerUtil.TEMPLATE_TRACKER_TABLE;
     }
 
 }
