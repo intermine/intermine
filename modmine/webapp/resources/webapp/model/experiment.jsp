@@ -237,15 +237,28 @@ Expression Levels
         title="Download in GFF3 format">GFF3</html:link>
             </td>
             <td align="center">
-             <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
-        title="Download the sequences">SEQ</html:link>
+            
+            <c:choose>
+            <c:when test="${!empty exp.sequenced && fn:contains(exp.unlocated, fc.featureType)}">
 
-            </td>
+            <html:link
+            href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
+            title="Download the sequences">SEQ</html:link>
+
+            
+            </c:when>
+            <c:otherwise>
+            <i>SEQ</i>
+            
+</c:otherwise>
+</c:choose>
+</td>
+
 </c:otherwise>
 </c:choose>
 
-          </tr>
+
+</tr>
       </c:forEach>
       <!-- end submission loop -->
 
@@ -688,9 +701,31 @@ ${fc.key}:
 <i>&nbsp;GFF3&nbsp;SEQ</i>
 </c:when>
 <c:otherwise>
-   &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
-   &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>
-</c:otherwise>
+
+<c:forEach items="${sequencedFeat}" var="sft" varStatus="sft_status">
+   <c:if test="${sft.key == sub.dCCid}">
+    <c:forEach items="${sft.value}" var="sftv" varStatus="sftv_status">
+     <c:if test="${sftv == fc.key}">
+       <c:set var="hasSeq" value="true">
+       </c:set>
+     </c:if>
+   </c:forEach>
+ </c:if>
+</c:forEach>
+
+&nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+
+<c:choose>
+   <c:when test="${isUnloc == 'true' }">
+     &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>
+   </c:when>
+   <c:otherwise>   
+     <i>&nbsp;SEQ</i>
+   </c:otherwise>
+   </c:choose>
+
+   
+   </c:otherwise>
 </c:choose>
 
    &nbsp;&nbsp;
@@ -748,9 +783,38 @@ Expression Levels:&nbsp;
       <i>&nbsp;GFF3&nbsp;SEQ</i>
       </c:when>
       <c:otherwise>
-         &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
-         &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
+
+      <c:forEach items="${sequencedFeat}" var="sft" varStatus="sft_status">
+      <c:if test="${sft.key == sub.dCCid}">
+       <c:forEach items="${sft.value}" var="sftv" varStatus="sftv_status">
+        <c:if test="${sftv == fc.key}">
+          <c:set var="hasSeq" value="true">
+          </c:set>
+        </c:if>
+      </c:forEach>
+    </c:if>
+   </c:forEach>
+
+   &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
+
+   <c:choose>
+      <c:when test="${isUnloc == 'true' }">
+      &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
+      </c:when>
+      <c:otherwise>   
+        <i>&nbsp;SEQ</i>
       </c:otherwise>
+      </c:choose>
+
+      
+      
+      
+<%--      
+      &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
+         &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
+--%>
+         
+         </c:otherwise>
       </c:choose>
          &nbsp;&nbsp;
          <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}">create&nbsp;LIST</html:link>
