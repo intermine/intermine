@@ -381,7 +381,7 @@ public final class CreateModMineMetaDataCache
             props.put(key, "" + count);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+        LOG.info("Read experiment unique feature counts, took: " + timeTaken + "ms");
     }
 
     // TODO MOVE THIS QUERY TO CreateModMineMetaDataCache and add value to ModMineCacheKeys
