@@ -38,7 +38,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     /**
      * This method will generate code that will run using the python webservice
      * client library.
-     * 
+     *
      * @param wsCodeGeninfo
      *            a WebserviceCodeGenInfo object
      * @return the code as a string
@@ -214,7 +214,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
     /**
      * This method helps to generate constraint source code for PathQuery
-     * 
+     *
      * @param pc
      *            PathConstraint object
      * @return a string for constraints source code
@@ -323,7 +323,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     /**
      * This method helps to generate Template Parameters (predefined
      * constraints) source code for TemplateQuery
-     * 
+     *
      * @param pc
      *            PathConstraint object
      * @param opCode
@@ -378,4 +378,3 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         return null;
     }
 }
-w
