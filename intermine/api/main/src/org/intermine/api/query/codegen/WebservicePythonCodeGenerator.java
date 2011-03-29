@@ -3,6 +3,7 @@ package org.intermine.api.query.codegen;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import  java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -57,9 +58,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
         StringBuffer sb = new StringBuffer();
-        sb.append("#!/usr/bin/env python" + ENDL);
-        sb.append("from intermine.service import Service");
-        sb.append(ENDL + ENDL);
+        sb.append("#!/usr/bin/env python" + ENDL + ENDL);
         sb.append("# This is an automatically generated script to run your query" + ENDL);
         sb.append("# to use it you will require the intermine python client." + ENDL);
         sb.append("# To install the client, run the following command from a terminal:" + ENDL);
@@ -68,17 +67,17 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         sb.append("#" + ENDL);
         sb.append("# For further documentation you can visit:" + ENDL);
         sb.append("#     http://www.intermine.org/PythonClient" + ENDL + ENDL);
-        sb.append("service = Service(\"" + serviceBaseURL + "\")" + ENDL);
+        sb.append("# The following two lines will be needed in every python script:" + ENDL);
+        sb.append("from intermine.webservice import Service" + ENDL);
+        sb.append("service = Service(\"" + serviceBaseURL + "/service\")" + ENDL + ENDL);
 
         if ("PathQuery".equals(queryClassName)) {
 
-            if (query.getDescription() == null || "".equals(query.getDescription())) {
-                sb.append("# query description - no description" + ENDL + ENDL);
-            } else {
+            if (query.getDescription() != null && !"".equals(query.getDescription())) {
                 sb.append("# query description - " + query.getDescription() + ENDL + ENDL);
             }
 
-            sb.append("# Queries are associated with the service they query:");
+            sb.append("# Get a new query from the service you will be querying:"  + ENDL);
             sb.append("query = service.new_query()" + ENDL + ENDL);
 
             if (query.getView() == null || query.getView().isEmpty()) {
@@ -86,18 +85,52 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             } else {
                 sb.append("# The view specifies the output columns" + ENDL);
                 sb.append("query.add_view(");
-                listFormatUtil(sb, query.getView());
-                sb.append(")" + ENDL);
+                if (query.getView().size() <= 3) {
+                    listFormatUtil(sb, query.getView());
+                } else {
+                    sb.append(ENDL);
+                    Iterator<String> viewIter = query.getView().iterator();
+
+                    String holdOver = null;
+                    while (viewIter.hasNext() || holdOver != null) {
+                        StringBuffer subBuf = new StringBuffer();
+                        if (holdOver != null) {
+                            subBuf.append(holdOver);
+                        }
+
+                        while (subBuf.length() <= 74 && viewIter.hasNext()) {
+                            String current =  "\"" + viewIter.next() + "\"";
+                            if (viewIter.hasNext()) {
+                                current += ", ";
+                            }
+                            if ((subBuf.length() + current.length()) >= 75) {
+                                holdOver = current;
+                                break;
+                            } else {
+                                holdOver = null;
+                                subBuf.append(current);
+                            }
+                        }
+                        sb.append(INDENT);
+                        sb.append(subBuf.toString());
+
+                        sb.append(ENDL);
+                    }
+                }
+                sb.append(")" + ENDL + ENDL);
             }
 
             // Add orderBy
-            if (query.getOrderBy() != null // unset
-                && !query.getOrderBy().isEmpty() // no sort order
-                && !( // The default
-                query.getOrderBy().size() == 1
-                    && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0)) && query
-                    .getOrderBy().get(0).getDirection() != OrderDirection.ASC)) {
-                sb.append("# Determine the sort order for the results" + ENDL);
+            if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
+                if ( // The default
+                    query.getOrderBy().size() == 1
+                    && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
+                    && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
+                    sb.append("# Uncomment end edit the line below (the default) to select a custom sort order:" + ENDL);
+                    sb.append("# ");
+                } else {
+                    sb.append("# Your custom sort order is specified with the following code:" + ENDL);
+                }
                 for (OrderElement oe : query.getOrderBy()) {
                     sb.append("query.add_sort_order(");
                     sb.append("\"" + oe.getOrderPath() + "\", \"" + oe.getDirection() + "\"");
@@ -111,29 +144,39 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 // Add comments for constraints
                 sb.append("# You can edit the constraint values below" + ENDL);
 
-                if (query.getConstraints().size() == 1) { // no logic
-                    PathConstraint pc = query.getConstraints().entrySet().iterator().next()
-                        .getKey();
-                    String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                    sb.append(pathContraintUtil(pc, null));
-                } else {
-                    for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
-                        PathConstraint pc = entry.getKey();
-                        String className = TypeUtil.unqualifiedName(pc.getClass().toString());
+                int coded_queries = 0;
+                List<String> uncoded_query_texts = new ArrayList<String>();
+                List<String> coded_query_texts = new ArrayList<String>();
 
-                        // Insert "code => 'A'"
-                        sb.append(pathContraintUtil(pc, entry.getValue()));
-                    }
-
-                    // Add constraintLogic
-                    if (query.getConstraintLogic() != null
-                        && !"".equals(query.getConstraintLogic())) {
-                        sb.append("# Constraint Logic" + ENDL);
-                        sb.append("query.set_logic(\"" + query.getConstraintLogic() + "\")" + ENDL);
+                for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
+                    PathConstraint pc = entry.getKey();
+                    if (entry.getValue() != null) {
+                        coded_queries++;
+                        coded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
+                    } else {
+                        uncoded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
                     }
                 }
-
+                // Subclass constraints must come first or the query will break
+                for (String text: uncoded_query_texts) {
+                    sb.append(text);
+                }
+                for (String text: coded_query_texts) {
+                    sb.append(text);
+                }
                 sb.append(ENDL);
+
+                // Add constraintLogic
+                if (query.getConstraintLogic() != null
+                    && !"".equals(query.getConstraintLogic())) {
+                    String logic = query.getConstraintLogic();
+                    if (coded_queries <= 1 || logic.indexOf("or") == -1) {
+                        sb.append("# Uncomment and edit the code below to specify your own custom logic:" + ENDL + "# ");
+                    } else {
+                        sb.append("# Your custom constraint logic is specified with the code below:" + ENDL);
+                    }
+                    sb.append("query.set_logic(\"" + logic + "\")" + ENDL + ENDL);
+                }
             }
 
             if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
@@ -143,7 +186,6 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                         + "\")" + ENDL);
                 }
             }
-            sb.append(ENDL);
             sb.append("print query.results()" + ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -175,7 +217,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 constraintComments.append("# " + opCode + INDENT + path);
                 String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
                 if (constraintDes == null || "".equals(constraintDes)) {
-                    constraintComments.append(INDENT + "no constraint description" + ENDL);
+                    constraintComments.append(ENDL);
                 } else {
                     constraintComments.append(INDENT + constraintDes + ENDL);
                 }
@@ -187,10 +229,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
             }
 
-            if (description == null || "".equals(description)) {
-                sb.append("# template description - no description" + ENDL + ENDL);
-            } else {
-                sb.append("# template description - " + description + ENDL + ENDL);
+            if (description != null && !"".equals(description)) {
+                printLine(sb, "# ", description);
+                sb.append(ENDL);
             }
             sb.append("template = service.get_template('" + templateName + "')" + ENDL + ENDL);
             sb.append(constraintComments.toString() + ENDL);
@@ -209,6 +250,26 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             if (it.hasNext()) {
                 sb.append(",");
             }
+        }
+    }
+
+    /*
+     * Nicely format long lines
+     */
+    private void printLine(StringBuffer sb, String prefix, String line) {
+        String lineToPrint;
+        if (prefix != null) {
+            lineToPrint = prefix + line;
+        } else {
+            lineToPrint = line;
+        }
+        if (lineToPrint.length() > 80 && lineToPrint.lastIndexOf(' ', 80) != -1) {
+            int lastCutPoint = lineToPrint.lastIndexOf(' ', 80);
+            sb.append(lineToPrint.substring(0, lastCutPoint) + ENDL);
+            String nextLine = lineToPrint.substring(lastCutPoint + 1);
+            printLine(sb, prefix, nextLine);
+        } else {
+            sb.append(lineToPrint + ENDL);
         }
     }
 
@@ -333,16 +394,17 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     private String templateConstraintUtil(PathConstraint pc, String opCode) {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String op = pc.getOp().toString();
+        String start = INDENT + opCode + " = ";
 
         if ("PathConstraintAttribute".equals(className)) {
             String value = ((PathConstraintAttribute) pc).getValue();
-            return INDENT + opCode + "{\"op\": \"" + op + "\", \"value\": \"" + value + "\"}";
+            return start + "{\"op\": \"" + op + "\", \"value\": \"" + value + "\"}";
         }
 
         if ("PathConstraintLookup".equals(className)) {
             String value = ((PathConstraintLookup) pc).getValue();
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-            return INDENT + opCode + "{\"op\": \"LOOKUP\", \"value\": \"" + value
+            return start + "{\"op\": \"LOOKUP\", \"value\": \"" + value
                 + "\", \"extra_value\": \"" + extraValue + "\"}";
         }
 
@@ -360,12 +422,12 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             Collection<String> values = ((PathConstraintMultiValue) pc).getValues();
             listFormatUtil(sb, values);
             sb.append("]");
-            return INDENT + opCode + "{\"op\": \"" + op + "\", \"values\": \"" + sb.toString()
+            return start + "{\"op\": \"" + op + "\", \"values\": \"" + sb.toString()
                 + "\"}";
         }
 
         if ("PathConstraintNull".equals(className)) {
-            return INDENT + opCode + "{\"op\": \"" + op + "\"}";
+            return start + "{\"op\": \"" + op + "\"}";
         }
 
         if ("PathConstraintSubclass".equals(className)) {

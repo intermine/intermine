@@ -367,9 +367,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 }
                 return
                     "$query->add_constraint(" + ENDL
-                    + INDENT + "path  => '" + path + "'," + ENDL
-                    + INDENT + "op    => 'ONE OF'," + ENDL
-                    + INDENT + "value => [" + ENDL
+                    + INDENT + "path   => '" + path + "'," + ENDL
+                    + INDENT + "op     => 'ONE OF'," + ENDL
+                    + INDENT + "values => [" + ENDL
                     + values.toString()
                     + INDENT + "]," + ENDL
                     + ");" + ENDL;
