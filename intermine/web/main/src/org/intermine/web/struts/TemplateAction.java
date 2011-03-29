@@ -270,8 +270,11 @@ public class TemplateAction extends InterMineAction
     private boolean codeGenTemplate(HttpServletRequest request) {
         String codeGenTemplate = request.getParameter("actionType");
         if (codeGenTemplate != null
-                && ("perl".equalsIgnoreCase(codeGenTemplate) || "java"
-                        .equalsIgnoreCase(codeGenTemplate))) {
+                && ("perl".equalsIgnoreCase(codeGenTemplate) || 
+                    "java".equalsIgnoreCase(codeGenTemplate) ||
+                    "python".equalsIgnoreCase(codeGenTemplate) ||
+                    "javascript".equalsIgnoreCase(codeGenTemplate) 
+                    )) {
             return true;
         }
         return false;
