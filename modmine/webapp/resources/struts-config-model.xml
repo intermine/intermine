@@ -120,13 +120,6 @@
     <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
 
-<action path="/spanDisplayAction" scope="request" type="org.modmine.web.SpanDisplayAction" >
-    <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
-</action>
-
-<action path="/spanUploadValidation"
-        type="org.modmine.web.SpanUploadValidationAction"/>
-
 <action path="/spanUploadAjax"
         type="org.modmine.web.SpanUploadAjaxAction"/>
 <!-- End of Span Upload configuration -->
