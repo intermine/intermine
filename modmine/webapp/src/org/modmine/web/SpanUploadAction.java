@@ -32,12 +32,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.modmine.web.logic.SpanOverlapQueryRunner;
 import org.modmine.web.logic.SpanValidator;
-import org.modmine.web.model.Span;
 
 /**
  * @author Fengyuan Hu
@@ -183,9 +183,9 @@ public class SpanUploadAction extends InterMineAction
 
         // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
         // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
-        List<Span> spanList = new ArrayList<Span>();
+        List<GenomicRegion> spanList = new ArrayList<GenomicRegion>();
         for (String spanStr : spanStringSet) {
-            Span aSpan = new Span();
+            GenomicRegion aSpan = new GenomicRegion();
             // >>> Use regular expression to validate user's input
             // "chr:start..end" - [^:]+:\d+\.{2,}\d+
             // "chr:start-end" - [^:]+:\d+\-\d+
@@ -234,7 +234,7 @@ public class SpanUploadAction extends InterMineAction
                 .runSpanValidationQuery(im);
 
         // Chromesome starts with "chr" - UCSC formats
-        for (Span aSpan : spanList) {
+        for (GenomicRegion aSpan : spanList) {
             if (aSpan.getChr().startsWith("chr")) {
                 aSpan.setChr(aSpan.getChr().substring(3));
             }
@@ -264,14 +264,15 @@ public class SpanUploadAction extends InterMineAction
 
         } else { // Validate spans
             SpanValidator v = new SpanValidator();
-            Map<String, List<Span>> resultMap = v.runSpanValidation(orgName, spanList, chrInfoMap);
+            Map<String, List<GenomicRegion>> resultMap = v.runSpanValidation(
+                    orgName, spanList, chrInfoMap);
 
             String errorMsg = "";
             if (resultMap.get("error").size() == 0) {
                 errorMsg = null;
             } else {
                 String spanString = "";
-                for (Span span : resultMap.get("error")) {
+                for (GenomicRegion span : resultMap.get("error")) {
                     spanString = spanString + span.getChr() + ":" + span.getStart()
                             + ".." + span.getEnd() + ", ";
                 }

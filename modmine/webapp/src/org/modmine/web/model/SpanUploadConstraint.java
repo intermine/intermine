@@ -12,6 +12,8 @@ package org.modmine.web.model;
 
 import java.util.List;
 
+import org.intermine.bio.web.model.GenomicRegion;
+
 /**
  * A class to represent the constraints a user selected including a list of submissions, features
  * and spans.
@@ -20,7 +22,7 @@ import java.util.List;
  */
 public class SpanUploadConstraint
 {
-    private List<Span> spanList = null;
+    private List<GenomicRegion> spanList = null;
     private List<String> subKeys = null;
     @SuppressWarnings("rawtypes")
     private List<Class> ftKeys = null;
@@ -29,14 +31,14 @@ public class SpanUploadConstraint
     /**
      * @return the spanList
      */
-    public List<Span> getSpanList() {
+    public List<GenomicRegion> getSpanList() {
         return spanList;
     }
 
     /**
      * @param spanList the spanList to set
      */
-    public void setSpanList(List<Span> spanList) {
+    public void setSpanList(List<GenomicRegion> spanList) {
         this.spanList = spanList;
     }
 
