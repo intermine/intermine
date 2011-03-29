@@ -186,7 +186,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                         + "\")" + ENDL);
                 }
             }
-            sb.append("print query.results()" + ENDL);
+            sb.append("print(query.results())" + ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
@@ -237,7 +237,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             sb.append(constraintComments.toString() + ENDL);
             sb.append("results = template.results(" + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
-            sb.append("print results" + ENDL);
+            sb.append("print(results)" + ENDL);
         }
 
         return sb.toString();
