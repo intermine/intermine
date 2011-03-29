@@ -27,7 +27,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
 import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
+import org.intermine.api.query.codegen.WebserviceJavaScriptCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePerlCodeGenerator;
+import org.intermine.api.query.codegen.WebservicePythonCodeGenerator;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
@@ -46,6 +48,20 @@ import org.intermine.web.util.URLGenerator;
 public class WebserviceCodeGenAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(WebserviceCodeGenAction.class);
+
+    private WebserviceCodeGenerator getCodeGenerator(String method) {
+    	if ("perl".equals(method)) {
+    		return new WebservicePerlCodeGenerator();
+    	} else if ("java".equals(method)) {
+            return new WebserviceJavaCodeGenerator();
+    	} else if ("python".equals(method)) {
+            return new WebservicePythonCodeGenerator();
+    	} else if ("javascript".equals(method)) {
+            return new WebserviceJavaScriptCodeGenerator();
+    	} else {
+    		throw new IllegalArgumentException("Unknown code generation language: " + method);
+    	}
+    }
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
@@ -68,39 +84,20 @@ public class WebserviceCodeGenAction extends InterMineAction
         try {
             String method = request.getParameter("method");
             String source = request.getParameter("source");
-
-            if ("perl".equals(method)) {
-                WebserviceCodeGenerator wsPerlCG = new WebservicePerlCodeGenerator();
-
-                if ("templateQuery".equals(source)) {
-                    String sc = wsPerlCG.generate(setWebserviceCodeGenInfo(
-                            getTemplateQuery(im, profile, request, session),
-                            serviceBaseURL, projectTitle, perlWSModuleVer));
-                    output(sc, method, source, response);
-                } else if ("pathQuery".equals(source)) {
-                    String sc = wsPerlCG
-                            .generate(setWebserviceCodeGenInfo(
-                                    getPathQuery(session), serviceBaseURL,
-                                    projectTitle, perlWSModuleVer));
-                    output(sc, method, source, response);
-                }
-            } else if ("java".equals(method)) {
-                WebserviceCodeGenerator wsJavaCG = new WebserviceJavaCodeGenerator();
-
-                if ("templateQuery".equals(source)) {
-                    String sc = wsJavaCG.generate(setWebserviceCodeGenInfo(
-                            getTemplateQuery(im, profile, request, session),
-                            serviceBaseURL, projectTitle, null));
-                    output(sc, method, source, response);
-                } else if ("pathQuery".equals(source)) {
-                    String sc = wsJavaCG
-                            .generate(setWebserviceCodeGenInfo(
-                                    getPathQuery(session), serviceBaseURL,
-                                    projectTitle, null));
-                    output(sc, method, source, response);
-                }
+            WebserviceCodeGenerator codeGen = getCodeGenerator(method);
+            if ("templateQuery".equals(source)) {
+                String sc = codeGen.generate(setWebserviceCodeGenInfo(
+                        getTemplateQuery(im, profile, request, session),
+                        serviceBaseURL, projectTitle, perlWSModuleVer));
+                output(sc, method, source, response);
+            } else if ("pathQuery".equals(source)) {
+                String sc = codeGen.generate(setWebserviceCodeGenInfo(
+                                getPathQuery(session), serviceBaseURL,
+                                projectTitle, perlWSModuleVer));
+                output(sc, method, source, response);
             }
         } catch (Exception e) {
+            LOG.error(e);
             e.printStackTrace();
             output(e.toString(), "exception", "e", response);
             return mapping.findForward("begin");
