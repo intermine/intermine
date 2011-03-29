@@ -7,7 +7,7 @@
 <tiles:importAttribute name="idToHighlight" ignore="true"/>
 <tiles:importAttribute name="singleLine" ignore="true"/>
 
- <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id="/>
+ <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id="/>
 
 <c:if test="${!empty singleLine}">
   <c:set var="wrapStyle" value="white-space: nowrap;"/>

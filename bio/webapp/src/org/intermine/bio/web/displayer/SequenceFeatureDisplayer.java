@@ -14,7 +14,7 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 public class SequenceFeatureDisplayer extends CustomDisplayer {
 
@@ -26,8 +26,8 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
     }
 
     @SuppressWarnings("unchecked")
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
-        InterMineObject imObj = displayObject.getObject();
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        InterMineObject imObj = reportObject.getObject();
         Object loc = null;
 
         try {

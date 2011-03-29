@@ -20,22 +20,22 @@
     label { vertical-align: middle; }
     #legend h3 { -moz-border-radius: 5px 5px 0 0; background: none repeat scroll 0 0 #CCCCCC; margin: 0; padding: 4px 5px; color: black; border-top-style: none; }
     #legend p {
-	    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-	    border-right: 1px solid #BBBBBB;
-	    border-style: none solid solid;
-	    border-width: medium 1px 1px;
-	    margin: 0;
-	    padding: 5px;
-	}
+      border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+      border-right: 1px solid #BBBBBB;
+      border-style: none solid solid;
+      border-width: medium 1px 1px;
+      margin: 0;
+      padding: 5px;
+  }
 
     #legend table {
-	    border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-	    border-right: 1px solid #BBBBBB;
-	    border-style: none solid solid;
-	    border-width: medium 1px 1px;
-	    margin: 0;
-	    padding: 5px;
-	}
+      border-color: -moz-use-text-color #BBBBBB #BBBBBB;
+      border-right: 1px solid #BBBBBB;
+      border-style: none solid solid;
+      border-width: medium 1px 1px;
+      margin: 0;
+      padding: 5px;
+  }
 
     #legend { padding: 0.2em 0.4em 0.4em; }
     #powerby { padding: 5px; text-align: center; }
@@ -43,11 +43,11 @@
     #powerby img { vertical-align: middle; }
 
     #svgtable {
-	    border: 2px solid #CCCCCC;
-	    border-collapse: separate;
-	    border-spacing: 1px;
-	    clear: both;
-	    width: 100%;
+      border: 2px solid #CCCCCC;
+      border-collapse: separate;
+      border-spacing: 1px;
+      clear: both;
+      width: 100%;
     }
 
     #legendall { height: 50px; }
@@ -88,7 +88,7 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
         <fieldset>
-          <label class="fakelink" onclick="url = webapp_baseurl + '/' + webapp_path + '/saveFromIdsToBag.do?type=Gene&ids='+fullInteractingGeneSet+'&source=objectDetails&newBagName=interacting_gene_list'; window.open(url);">Create a gene list...</lable>
+          <label class="fakelink" onclick="url = webapp_baseurl + '/' + webapp_path + '/saveFromIdsToBag.do?type=Gene&ids='+fullInteractingGeneSet+'&source=report&newBagName=interacting_gene_list'; window.open(url);">Create a gene list...</lable>
         </fieldset>
         <fieldset>
           <label>View interaction data in a table</lable>
@@ -125,7 +125,7 @@
   <div style="overflow-x:auto;">
     <tiles:insert name="resultsTable.tile">
          <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
-         <tiles:put name="currentPage" value="objectDetails" />
+         <tiles:put name="currentPage" value="report" />
          <tiles:put name="inlineTable" value="true" />
     </tiles:insert>
   </div>
@@ -195,7 +195,7 @@
         });
     }
 
-	jQuery('#legendall').svg();
+  jQuery('#legendall').svg();
     var legendall = jQuery('#legendall').svg('get');
     legendall.line(15, 10, 75, 10, {stroke: "red", strokeWidth: 4});
     legendall.polygon([[75, 5], [75, 15], [95, 10]], {fill: "red"});

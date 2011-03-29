@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.displayer.CustomDisplayer;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 public class CustomDisplayerController extends TilesAction {
     /**
@@ -23,9 +23,9 @@ public class CustomDisplayerController extends TilesAction {
                                  @SuppressWarnings("unused") HttpServletResponse response) {
 
         CustomDisplayer displayer = (CustomDisplayer) context.getAttribute("displayer");
-        DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
+        ReportObject reportObject = (ReportObject) context.getAttribute("reportObject");
 
-        displayer.execute(request, displayObject);
+        displayer.execute(request, reportObject);
 
         return null;
     }

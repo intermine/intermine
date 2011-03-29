@@ -32,7 +32,7 @@ import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -57,7 +57,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         ONTOLOGIES.add("GO:0008150");
         ONTOLOGIES.add("GO:0003674");
         ONTOLOGIES.add("GO:0005575");
-        
+
         evidenceCodes.put("EXP", "Inferred from Experiment");
         evidenceCodes.put("IDA", "Inferred from Direct Assay");
         evidenceCodes.put("IPI", "Inferred from Physical Interaction");
@@ -78,9 +78,9 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         evidenceCodes.put("NR", "Not Recorded ");
     }
 
-    
+
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
+    public void display(HttpServletRequest request, ReportObject reportObject) {
         Model model = im.getModel();
         Profile profile = SessionMethods.getProfile(request.getSession());
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
@@ -96,12 +96,12 @@ public class GeneOntologyDisplayer extends CustomDisplayer
             return;
         }
 
-        PathQuery query = buildQuery(model, displayObject.getId());
+        PathQuery query = buildQuery(model, reportObject.getId());
         ExportResultsIterator result = executor.execute(query);
 
         Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
         Set<String>>>();
-        
+
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
             String parentTerm = (String) row.get(0).getField();

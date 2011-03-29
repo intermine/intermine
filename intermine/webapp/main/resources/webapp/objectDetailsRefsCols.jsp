@@ -24,10 +24,8 @@
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
-    <c:set var="verbose"
-      value="${!empty object.verbosity[placementAndField]}" />
     <c:choose>
-      <c:when test="${verbose && collection.size > 0}">
+      <c:when test="${collection.size > 0}">
         <%-- ############# --%>
         <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
         <h3 class="theme-1-border theme-5-background">
@@ -48,9 +46,7 @@
           <span class="collectionField theme-1-color">
             ${collection.size} ${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
-          <c:forEach items="${object.clds}" var="cld">
-            <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
-          </c:forEach>
+          <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
         </html:link></h3>
         <div class="clear"></div>
         <%-- ############# --%>
@@ -76,9 +72,7 @@
           <span class="collectionField theme-1-color">
             ${collection.size} ${fieldName}<!--  of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
-          <c:forEach items="${object.clds}" var="cld">
-            <im:typehelp type="${cld.unqualifiedName}.${fieldName}" />
-          </c:forEach>
+          <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
         </html:link></h3>
         <div class="clear"></div>
         <%-- ############# --%>
@@ -115,7 +109,7 @@
           </span>
           <c:if test="${collection.size == 1 && !verbose}">
             <c:if test="${collection.table.ids[0] != null}">
-              [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}|${collection.table.ids[0]}">
+              [<html:link action="/report?id=${collection.table.ids[0]}&amp;trail=${param.trail}|${collection.table.ids[0]}">
                 <fmt:message key="results.details"/>
               </html:link>]
             </c:if>

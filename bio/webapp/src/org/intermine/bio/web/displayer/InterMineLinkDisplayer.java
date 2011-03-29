@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 public class InterMineLinkDisplayer extends CustomDisplayer {
 
@@ -24,6 +24,6 @@ public class InterMineLinkDisplayer extends CustomDisplayer {
     }
 
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
+    public void display(HttpServletRequest request, ReportObject reportObject) {
     }
 }

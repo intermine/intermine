@@ -16,13 +16,13 @@
 <html:xhtml/>
 
 <div style="overflow-x: auto;">
-  <c:if test="${(displayObject != null || interMineIdBag !=null) && resultsTable != null}">
+  <c:if test="${(reportObject != null || interMineIdBag !=null) && resultsTable != null}">
 
     <%-- Results table --%>
   <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="resultsTable" />
      <tiles:put name="inlineTable" value="true" />
-     <tiles:put name="currentPage" value="objectDetails" />
+     <tiles:put name="currentPage" value="report" />
   </tiles:insert>
 
   </c:if>
@@ -36,7 +36,7 @@
     <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}"/>
   </c:when>
   <c:otherwise>
-     <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />
+     <c:set var="extra" value="${extra}&amp;idForLookup=${reportObject.object.id}" />
   </c:otherwise>
   </c:choose>
 <p class="in_table">

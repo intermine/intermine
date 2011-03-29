@@ -17,7 +17,7 @@
 <div id="header_wrap">
 
 <div id="object_header"><tiles:get name="objectTrail.tile" />
-<a name="summary"></a><h1 class="title">
+<a name="summary"><h1 class="title">
     ${object.objectType}: <strong>${object.titleMain}</strong> ${object.titleSub}</h1></a>
 
 <table class="fields">

@@ -31,7 +31,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <c:choose>
-  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin' || pageName == 'objectDetails'}">
+  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin' || pageName == 'report'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
   </c:when>
   <c:otherwise>
@@ -40,7 +40,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 </c:choose>
 
 <c:if test="${pageName != 'begin'}">
-  <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
+  <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
@@ -71,7 +71,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'objectDetails'}">
+  <c:if test="${pageName != 'report'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>

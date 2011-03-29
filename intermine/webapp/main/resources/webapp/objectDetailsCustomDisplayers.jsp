@@ -10,13 +10,13 @@
 
 <html:xhtml/>
 
-<tiles:importAttribute name="displayObject"/>
+<tiles:importAttribute name="reportObject"/>
 <tiles:importAttribute name="placement"/>
 
-<c:forEach items="${displayObject.reportDisplayers[placement]}" var="displayer">
+<c:forEach items="${reportObject.reportDisplayers[placement]}" var="displayer">
     <tiles:insert name="customDisplayer.tile">
       <tiles:put name="displayer" beanName="displayer" />
-      <tiles:put name="displayObject" beanName="displayObject" />
+      <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
     <br />
 </c:forEach>

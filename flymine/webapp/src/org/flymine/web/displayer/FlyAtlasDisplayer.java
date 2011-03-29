@@ -16,7 +16,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONResultsIterator;
 import org.intermine.webservice.server.output.JSONRowIterator;
@@ -34,7 +34,7 @@ public class FlyAtlasDisplayer extends CustomDisplayer {
     }
 
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
+    public void display(HttpServletRequest request, ReportObject reportObject) {
 
         PathQuery q = new PathQuery(im.getModel());
         q.addViews("Gene.microArrayResults.material.primaryIdentifier",
@@ -43,7 +43,7 @@ public class FlyAtlasDisplayer extends CustomDisplayer {
                 "Gene.microArrayResults.enrichment", // fp
                 "Gene.microArrayResults.mRNASignal",
                 "Gene.microArrayResults.presentCall" /* Mouseover 1 out of  4 */);
-        Integer objectId = displayObject.getId();
+        Integer objectId = reportObject.getId();
         q.addConstraint(Constraints.eq("Gene.id", objectId.toString()));
         q.addConstraint(Constraints.type("Gene.microArrayResults", "FlyAtlasResult"));
         q.addOrderBySpaceSeparated("Gene.microArrayResults.mRNASignal asc");
@@ -62,21 +62,21 @@ public class FlyAtlasDisplayer extends CustomDisplayer {
 
         JSONResultsIterator jsonIterator = new JSONResultsIterator(executor.execute(q));
         while (jsonIterator.hasNext()) {
-        	try {
-	            JSONObject gene = jsonIterator.next();
-	            JSONArray microArrayResults = gene.getJSONArray("microArrayResults");
-	            for (int i = 0; i < microArrayResults.length(); i++) {
-	            	JSONObject flyAtlasResult = microArrayResults.getJSONObject(i);
-	            	objectIds.add(flyAtlasResult.getString("objectId"));
-	            	signals.add(flyAtlasResult.getDouble("mRNASignal"));
-	            	names.add(flyAtlasResult.getJSONObject("tissue").getString("name"));
-	            	affyCalls.add(flyAtlasResult.getString("affyCall"));
-	            	enrichments.add(flyAtlasResult.optDouble("enrichment"));
-	            	presentCalls.add(flyAtlasResult.getInt("presentCall"));
-	            }
-        	} catch (JSONException e) {
-        		//
-        	}
+            try {
+                JSONObject gene = jsonIterator.next();
+                JSONArray microArrayResults = gene.getJSONArray("microArrayResults");
+                for (int i = 0; i < microArrayResults.length(); i++) {
+                    JSONObject flyAtlasResult = microArrayResults.getJSONObject(i);
+                    objectIds.add(flyAtlasResult.getString("objectId"));
+                    signals.add(flyAtlasResult.getDouble("mRNASignal"));
+                    names.add(flyAtlasResult.getJSONObject("tissue").getString("name"));
+                    affyCalls.add(flyAtlasResult.getString("affyCall"));
+                    enrichments.add(flyAtlasResult.optDouble("enrichment"));
+                    presentCalls.add(flyAtlasResult.getInt("presentCall"));
+                }
+            } catch (JSONException e) {
+                //
+            }
         }
         request.setAttribute("signals", signals.toString());
         request.setAttribute("names", new JSONArray(names));

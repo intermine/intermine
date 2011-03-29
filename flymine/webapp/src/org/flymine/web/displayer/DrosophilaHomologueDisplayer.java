@@ -20,7 +20,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 public class DrosophilaHomologueDisplayer extends CustomDisplayer {
 
@@ -34,7 +34,7 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
     }
 
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
+    public void display(HttpServletRequest request, ReportObject reportObject) {
 
         Map<String, Set<ResultElement>> homologues = initMap();
         Map<String, String> organismIds = new HashMap<String, String>();
@@ -46,7 +46,7 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
             return;
         }
 
-        Gene gene = (Gene) displayObject.getObject();
+        Gene gene = (Gene) reportObject.getObject();
         Boolean isRecentred = new Boolean(!"melanogaster".equals(gene.getOrganism().getSpecies()));
         String thisSpecies = gene.getOrganism().getSpecies();
         if (isRecentred) {

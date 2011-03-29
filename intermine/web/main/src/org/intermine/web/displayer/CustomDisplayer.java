@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 public abstract class CustomDisplayer {
 
@@ -18,13 +18,13 @@ public abstract class CustomDisplayer {
         this.im = im;
     }
 
-    public void execute(HttpServletRequest request, DisplayObject displayObject) {
-        request.setAttribute("displayObject", displayObject);
+    public void execute(HttpServletRequest request, ReportObject reportObject) {
+        request.setAttribute("reportObject", reportObject);
         request.setAttribute("jspPage", getJspPage());
-        display(request, displayObject);
+        display(request, reportObject);
     }
 
-    public abstract void display(HttpServletRequest request, DisplayObject displayObject);
+    public abstract void display(HttpServletRequest request, ReportObject reportObject);
 
     public String getJspPage() {
         return config.getJspName();
@@ -33,4 +33,5 @@ public abstract class CustomDisplayer {
     public Set<String> getReplacedFieldExprs() {
         return config.getReplacedFieldNames();
     }
+
 }

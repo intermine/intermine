@@ -28,8 +28,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.ObjectDetailsInList;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -45,7 +45,7 @@ public class ObjectDetailsInListController extends TilesAction
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-        DisplayObject object = (DisplayObject) context.getAttribute("object");
+        ReportObject object = (ReportObject) context.getAttribute("object");
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);

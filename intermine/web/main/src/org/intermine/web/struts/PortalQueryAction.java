@@ -123,7 +123,7 @@ public class PortalQueryAction extends InterMineAction
             // check the matches first...
             for (Map.Entry<Integer, List> entry : matches.entrySet()) {
                 String id = entry.getKey().toString();
-                return new ForwardParameters(mapping.findForward("objectDetails"))
+                return new ForwardParameters(mapping.findForward("report"))
                     .addParameter("id", id).forward();
             }
 
@@ -142,7 +142,7 @@ public class PortalQueryAction extends InterMineAction
                         String[] pair = token.split("=");
                         if (pair[0].equalsIgnoreCase("id")) {
                             id = pair[1].replaceAll("\"", "").replaceAll("]", "");
-                            return new ForwardParameters(mapping.findForward("objectDetails"))
+                            return new ForwardParameters(mapping.findForward("report"))
                                 .addParameter("id", id).forward();
                         }
                         continue;

@@ -72,6 +72,6 @@ public class AddToBagAction extends InterMineAction
         } else {
             recordError(new ActionMessage("bag.noSuchBag"), request);
         }
-        return mapping.findForward("objectDetails");
+        return mapping.findForward("report");
     }
 }

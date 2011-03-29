@@ -127,11 +127,6 @@ public interface Constants
     int POLL_REFRESH_SECONDS = 2;
 
     /**
-     * The session attribute that holds the DisplayObjectCache object for the session.
-     */
-    String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
-
-    /**
      * The session attribute that holds the ReportObjectCache object for the session.
      */
     String REPORT_OBJECT_CACHE = "REPORT_OBJECT_CACHE";
@@ -152,14 +147,14 @@ public interface Constants
     String RUNNING_QUERIES = "RUNNING_QUERIES";
 
     /**
-     * Servlet attribute. Map from class name to Set of leaf class descriptors.
-     */
-    String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
-
-    /**
      * Servlet attribute. Map from MultiKey(experiment, gene) id to temp file name.
      */
     String GRAPH_CACHE = "GRAPH_CACHE";
+
+    /**
+     * Servlet attribute. Map from class name to Set of leaf class descriptors.
+     */
+    String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
 
     /**
      * Servlet attribute. The global webapp cache - a InterMineCache object.

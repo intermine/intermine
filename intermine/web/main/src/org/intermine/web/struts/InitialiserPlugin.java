@@ -73,7 +73,7 @@ import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -425,21 +425,6 @@ public class InitialiserPlugin implements PlugIn
             }
         }
         servletContext.setAttribute(Constants.EMPTY_FIELD_MAP, emptyFields);
-        // Build map interface that takes an object and returns set of leaf class descriptors
-        Map leafDescriptorsMap = new AbstractMap() {
-            @Override
-            public Set entrySet() {
-                return null;
-            }
-            @Override
-            public Object get(Object key) {
-                if (key == null) {
-                    return Collections.EMPTY_SET;
-                }
-                return DisplayObject.getLeafClds(key.getClass(), model);
-            }
-        };
-        servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
     }
 
 

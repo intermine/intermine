@@ -162,12 +162,11 @@ public class InlineResultsTable
             // fetch all the object types we have,
             //  and traverse-add them to a list of FCs
             for (Class<?> clazz : getListOfTypes()) {
-                for (ClassDescriptor cd : DisplayObject.getLeafClds(clazz, model)) {
-                    for (FieldConfig fc : getClassFieldConfigs(cd)) {
-                        if (fc.getShowInInlineCollection() && !listOfTableFieldConfigs
-                                .contains(fc)) {
-                            listOfTableFieldConfigs.add(fc);
-                        }
+                for (FieldConfig fc : getClassFieldConfigs(
+                        model.getClassDescriptorByName(clazz.getName()))) {
+                    if (fc.getShowInInlineCollection() && !listOfTableFieldConfigs
+                            .contains(fc)) {
+                        listOfTableFieldConfigs.add(fc);
                     }
                 }
             }
@@ -200,14 +199,7 @@ public class InlineResultsTable
      * @return true if a Class has a FieldConfig defined
      */
     private Boolean isThisFieldConfigInThisObject(Class<?> clazz, FieldConfig fc) {
-        // for all class descriptors in a DisplayObject
-        for (ClassDescriptor cd : DisplayObject.getLeafClds(clazz, model)) {
-            // traverse FieldConfigs and return true if found
-            if (getClassFieldConfigs(cd).contains(fc)) {
-                return true;
-            }
-        }
-        return false;
+        return (getClassFieldConfigs(model.getClassDescriptorByName(clazz.getName())).contains(fc));
     }
 
     /**
@@ -249,7 +241,7 @@ public class InlineResultsTable
     protected void saveObjectIdOnTableRow(Integer id, Object tableRowObject) { }
 
     /**
-     * Main method used from objectDetails to resolve a tablefull of ResultElements
+     * Main method used from report to resolve a tablefull of ResultElements
      *
      * @see this method partly uses Template Pattern, check that calls to table row objects are
      *  made generic as BagUploadConfirm AND ReportPage both use this method while using different

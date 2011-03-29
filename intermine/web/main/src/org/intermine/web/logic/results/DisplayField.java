@@ -76,7 +76,8 @@ public class DisplayField
             // default
             int maxInlineTableSize = 30;
 
-            String maxInlineTableSizeString =
+            // will throw an exception
+            /*String maxInlineTableSizeString =
                 (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
 
             try {
@@ -84,7 +85,7 @@ public class DisplayField
             } catch (NumberFormatException e) {
                 LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
                          + maxInlineTableSizeString);
-            }
+            }*/
 
             int tableSize = maxInlineTableSize;
 

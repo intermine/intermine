@@ -10,15 +10,10 @@ package org.intermine.web.logic.results;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.config.WebConfig;
@@ -36,7 +31,7 @@ public class ReportObjectFactory extends CacheMap<InterMineObject, ReportObject>
     private HttpSession session = null;
 
     /**
-     * Create a new DisplayObjectCache for the given session.
+     * Create a new ReportObjectCache for the given session.
      * @param session the HTTP session
      */
     public ReportObjectFactory(HttpSession session) {
@@ -65,11 +60,9 @@ public class ReportObjectFactory extends CacheMap<InterMineObject, ReportObject>
         if (reportObject == null) {
             try {
                 final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                Model model = im.getModel();
-                Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
                 ServletContext servletContext = session.getServletContext();
                 WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-                reportObject = new ReportObject(imObj, model, webConfig, classKeys);
+                reportObject = new ReportObject(imObj, webConfig, im);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to make a reportObject", e);
             }

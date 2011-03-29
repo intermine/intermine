@@ -185,7 +185,7 @@ public class TableWidgetLdr
                                 if (fieldValue != null && StringUtils.isBlank(countLinkKey)) {
                                     countLinkKey = fieldValue.toString();
                                 }
-                                link = getObjectDetailsLink(o, bag.getName());
+                                link = getReportLink(o, bag.getName());
                             } else if (!StringUtils.isBlank(externalLink)) {
                                 val = val + " <a href=\"" + externalLink + countLinkKey
                                     + "\" target=\"_new\" class=\"extlink\">["
@@ -234,8 +234,8 @@ public class TableWidgetLdr
         return ClassKeyHelper.isKeyField(config.getClassKeys(), startType, fieldName);
     }
 
-    private String getObjectDetailsLink(InterMineObject o, String bagName) {
-        return "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag." + bag.getName()
+    private String getReportLink(InterMineObject o, String bagName) {
+        return "report.do?id=" + o.getId() + "&amp;trail=|bag." + bag.getName()
             + "|" + o.getId();
     }
 
