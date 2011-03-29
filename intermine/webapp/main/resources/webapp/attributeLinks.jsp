@@ -45,10 +45,10 @@
 </ul>
 
 <%-- show xrefs --%>
-<c:if test="${displayObject.refsAndCollections.count > 0}">
+<c:if test="${reportObject.refsAndCollections.count > 0}">
     <h3>Lookup Report</h3>
     <ul>
-      <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
+      <c:forEach var="xrefCol" items="${reportObject.refsAndCollections}">
         <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
          <c:forEach var="xref" items="${xrefCol.value.table.resultsAsList}">
            <c:forEach var="xrefMapItem" items="${xrefMap}">

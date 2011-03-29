@@ -7,7 +7,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 
-<tiles:importAttribute name="displayObject" ignore="true" />
+<tiles:importAttribute name="reportObject" ignore="true" />
 <tiles:importAttribute name="interMineIdBag" ignore="true" />
 <tiles:importAttribute name="aspectId" ignore="true" />
 <tiles:importAttribute name="placement" ignore="false"/>
@@ -19,8 +19,8 @@
 
 <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}" scope="request" />
 
-<c:if test="${!empty displayObject}">
-  <c:if test="${fn:length(displayObject.reportDisplayers[aspect]) > 0}">
+<c:if test="${!empty reportObject}">
+  <c:if test="${fn:length(reportObject.reportDisplayers[aspect]) > 0}">
     <c:set var="foundDisplayer" value="true" />
   </c:if>
 </c:if>
@@ -31,10 +31,10 @@
   <c:set var="templateCount" value="${fn:length(templates)}" />
 
   <a name="<c:out value="${fn:toLowerCase(aspect)}"/>"><h2>${aspect}</h2></a>
-<c:if test="${!empty displayObject}">
+<c:if test="${!empty reportObject}">
     <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
       <tiles:put name="placement" value="${aspect}" />
-      <tiles:put name="displayObject" beanName="displayObject" />
+      <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
 
     <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
@@ -43,27 +43,29 @@
     </tiles:insert>
   </c:if>
   <div>
-    <c:if test="${!empty displayObject}">
+    <c:if test="${!empty reportObject}">
       <tiles:insert page="/objectDetailsRefsCols.jsp">
-        <tiles:put name="object" beanName="displayObject" />
+        <tiles:put name="object" beanName="reportObject" />
         <tiles:put name="placement" value="${placement}" />
       </tiles:insert>
     </c:if>
   </div>
+  <%--
   <tiles:insert name="/templateList.jsp">
     <tiles:put name="scope" value="global" />
     <tiles:put name="placement" value="im:aspect:${placement}" />
-    <tiles:put name="displayObject" beanName="displayObject" />
+    <tiles:put name="reportObject" beanName="reportObject" />
     <tiles:put name="interMineIdBag" beanName="interMineIdBag" />
     <tiles:put name="noTemplatesMsgKey" value="" />
     <tiles:put name="trail" value="${trail}" />
   </tiles:insert>
+  --%>
 
 <%--
-  <c:if test="${! empty displayObject}">
+  <c:if test="${! empty reportObject}">
     <tiles:insert page="/objectDetailsDisplayers.jsp">
       <tiles:put name="placement" value="${placement}" />
-      <tiles:put name="displayObject" beanName="displayObject" />
+      <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
   </c:if>
 --%>

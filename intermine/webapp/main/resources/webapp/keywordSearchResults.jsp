@@ -391,7 +391,7 @@ input.submit {
               <td><c:out value="${searchResult.type}"></c:out></td>
               <td>
               <div class="objectKeys"><html:link
-                href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${searchResult.id}">
+                href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
                 <c:if test="${empty searchResult.keyFields}">
                   <c:out value="${searchResult.type}"></c:out>
                 </c:if>

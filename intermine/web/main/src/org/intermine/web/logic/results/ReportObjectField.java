@@ -10,10 +10,9 @@ package org.intermine.web.logic.results;
  *
  */
 
-import org.intermine.util.TypeUtil;
 
 /**
- * Object field.
+ * Object field, used in header the summary of ReportObject
  *
  * @author Radek Stepan
  */
@@ -39,20 +38,24 @@ public class ReportObjectField
      */
     private String pathString;
 
+    /** @var shall we truncate the field value? */
+    private boolean fieldDoNotTruncate;
+
     /**
      * Constructor
-     * @param objectType String
+     * @param objectType unqualified class name
      * @param fieldName String
      * @param fieldValue Object
      * @param fieldDisplayerPage String
+     * @param doNotTruncate bool
      */
     public ReportObjectField(String objectType, String fieldName,
-            Object fieldValue, String fieldDisplayerPage) {
+            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate) {
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
         this.fieldDisplayerPage = fieldDisplayerPage;
-        // form path string from an unqualified name and a field name
-        this.pathString = TypeUtil.unqualifiedName(objectType) + "." + fieldName;
+        this.fieldDoNotTruncate = doNotTruncate;
+        this.pathString = objectType + "." + fieldName;
     }
 
     /**
@@ -69,6 +72,14 @@ public class ReportObjectField
      */
     public Object getValue() {
         return fieldValue;
+    }
+
+    /**
+     *
+     * @return true if do not truncate
+     */
+    public boolean getDoNotTruncate() {
+        return fieldDoNotTruncate;
     }
 
     /**

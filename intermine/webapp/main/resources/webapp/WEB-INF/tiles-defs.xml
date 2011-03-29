@@ -74,9 +74,9 @@
     <put name="body" value="noResults.tile"/>
     <put name="pageName" value="noResults"/>
   </definition>
-  <definition name="objectDetails.page" extends="layout.template">
-    <put name="body" value="objectDetailsPage.tile"/>
-    <put name="pageName" value="objectDetails"/>
+  <definition name="report.page" extends="layout.template">
+    <put name="body" value="reportPage.tile"/>
+    <put name="pageName" value="report"/>
   </definition>
   <definition name="importTemplates.page" extends="layout.template">
     <put name="body" value="importTemplates.jsp"/>
@@ -196,7 +196,7 @@
   <definition name="htmlHead.tile" path="/htmlHead.jsp" controllerUrl="/initHtmlHead.do"/>
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
 
-  <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
+  <definition name="reportPage.tile" path="/report.jsp" controllerUrl="/initReport.do"/>
   <definition name="otherMinesLink.tile" path="/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
   <definition name="attributeLinks.tile" path="/attributeLinks.jsp" controllerUrl="/initAttributeLinks.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>

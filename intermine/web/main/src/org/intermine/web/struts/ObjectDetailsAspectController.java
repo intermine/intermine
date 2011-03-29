@@ -20,7 +20,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.search.Scope;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 
 /**
  * Controller for the objectDetailsAspect tile.
@@ -37,13 +37,13 @@ public class ObjectDetailsAspectController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        DisplayObject dobj = (DisplayObject) context.getAttribute("displayObject");
+        ReportObject robj = (ReportObject) context.getAttribute("reportObject");
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("scope", Scope.GLOBAL);
         cc.putAttribute("placement", context.getAttribute("placement"));
-        cc.putAttribute("displayObject", dobj);
+        cc.putAttribute("reportObject", robj);
         cc.putAttribute("interMineIdBag", interMineIdBag);
 
         new TemplateListController().execute(cc, mapping, form, request, response);

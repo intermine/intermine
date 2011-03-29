@@ -19,7 +19,7 @@
         <tr>
           <td style="padding-right: 10px;">
             <c:set var="term" value="${entry.key}" />
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${term.id}" title="${term.description}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${term.id}" title="${term.description}">
             <c:out value="${term.name}"/>
             </html:link>
             <img alt="?" title="${term.description}"
@@ -38,11 +38,11 @@
              &nbsp;
            </c:forEach>
          </td>
-        </tr> 
+        </tr>
    </c:forEach>
 
 
-</c:forEach>      
+</c:forEach>
       </table>
 
 <!-- /geneOntologyDisplayer.jsp -->

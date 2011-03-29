@@ -33,9 +33,9 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -135,10 +135,10 @@ public class ModifyDetails extends DispatchAction
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
-        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
+        ReportObject object = getReportObject(session, request.getParameter("id"));
 
         if (object != null) {
-            object.setVerbosity(placement + "_" + fieldName, true);
+            //object.setVerbosity(placement + "_" + fieldName, true);
         }
 
         return forwardToReport(mapping, request.getParameter("id"), trail);
@@ -161,9 +161,9 @@ public class ModifyDetails extends DispatchAction
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
-        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
+        ReportObject object = getReportObject(session, request.getParameter("id"));
 
-        object.setVerbosity(placement + "_" + fieldName, false);
+        //object.setVerbosity(placement + "_" + fieldName, false);
 
         return forwardToReport(mapping, request.getParameter("id"), trail);
     }
@@ -183,21 +183,21 @@ public class ModifyDetails extends DispatchAction
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
-        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
+        ReportObject object = getReportObject(session, request.getParameter("id"));
         Object collection = object.getRefsAndCollections().get(fieldName);
 
         String key = placement + "_" + fieldName;
 
-        object.setVerbosity(key, !object.isVerbose(key));
+        //object.setVerbosity(key, !object.isVerbose(key));
 
         request.setAttribute("object", object);
         request.setAttribute("trail", trail);
         request.setAttribute("collection", collection);
         request.setAttribute("fieldName", fieldName);
 
-        if (object.isVerbose(key)) {
-            return mapping.findForward("objectDetailsCollectionTable");
-        }
+        //if (object.isVerbose(key)) {
+        //    return mapping.findForward("objectDetailsCollectionTable");
+        //}
         return null;
     }
 
@@ -229,9 +229,9 @@ public class ModifyDetails extends DispatchAction
 
         if ("object".equals(detailsType)) {
             InterMineObject o = os.getObjectById(new Integer(id));
-            DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
-            DisplayObject obj = displayObjects.get(o);
-            cc.putAttribute("displayObject", obj);
+            ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
+            ReportObject obj = reportObjects.get(o);
+            cc.putAttribute("reportObject", obj);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
 
@@ -255,20 +255,20 @@ public class ModifyDetails extends DispatchAction
      * Construct an ActionForward to the object details page.
      */
     private ActionForward forwardToReport(ActionMapping mapping, String id, String trail) {
-        ForwardParameters forward = new ForwardParameters(mapping.findForward("objectDetails"));
+        ForwardParameters forward = new ForwardParameters(mapping.findForward("report"));
         forward.addParameter("id", id);
         forward.addParameter("trail", trail);
         return forward.forward();
     }
 
     /**
-     * Get a DisplayObject from the session given the object id as a string.
+     * Get a ReportObject from the session given the object id as a string.
      *
      * @param session the current http session
      * @param idString intermine object id
-     * @return DisplayObject for the intermine object
+     * @return ReportObject for the intermine object
      */
-    protected DisplayObject getDisplayObject(HttpSession session, String idString) {
+    protected ReportObject getReportObject(HttpSession session, String idString) {
         ObjectStore os = SessionMethods.getInterMineAPI(session).getObjectStore();
         InterMineObject obj = null;
         try {
@@ -280,10 +280,10 @@ public class ModifyDetails extends DispatchAction
             LOG.error("Could not find object with id " + idString);
             return null;
         }
-        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
-        DisplayObject retval = displayObjects.get(obj);
+        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
+        ReportObject retval = reportObjects.get(obj);
         if (retval == null) {
-            LOG.error("Could not find DisplayObject on session for id " + idString);
+            LOG.error("Could not find ReportObject on session for id " + idString);
         }
         return retval;
     }

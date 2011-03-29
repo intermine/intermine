@@ -8,7 +8,7 @@
 
 <div class="feature">
 
-<c:set var="feature" value="${displayObject.object}"/>
+<c:set var="feature" value="${reportObject.object}"/>
 
 <c:choose>
   <c:when test="${locationsCollection != null}">
@@ -111,7 +111,7 @@
       <c:when test="${!empty feature.length}">
         <td class="theme-3-border theme-6-background border-left">Length:</td>
         <td class="theme-3-border theme-6-background">
-          <c:set var="interMineObject" value="${displayObject.object}" scope="request" />
+          <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
           <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
             <tiles:put name="expr" value="length" />
           </tiles:insert>

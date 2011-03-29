@@ -30,7 +30,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -41,7 +41,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
     }
 
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
+    public void display(HttpServletRequest request, ReportObject reportObject) {
 
         ObjectStore os = im.getObjectStore(); // Get OS
         Model model = im.getModel(); // Get Model
@@ -92,23 +92,23 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
 
         // Check if interaction data available for the organism
         Gene hubGene;
-		try {
-			hubGene = (Gene) os.getObjectById((Integer) startingFeatureSet.toArray()[0]);
-	        String orgName = hubGene.getOrganism().getName();
-	        if (!interactionInfoMap.containsKey(orgName)) {
-	            String orgWithNoDataMessage = "No interaction data found for "
-	                    + orgName + " genes";
-	            request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
-	        }
-		} catch (ObjectStoreException e) {
-			request.setAttribute("exception", "An exception occured");
-			e.printStackTrace();
-		}
+        try {
+            hubGene = (Gene) os.getObjectById((Integer) startingFeatureSet.toArray()[0]);
+            String orgName = hubGene.getOrganism().getName();
+            if (!interactionInfoMap.containsKey(orgName)) {
+                String orgWithNoDataMessage = "No interaction data found for "
+                        + orgName + " genes";
+                request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
+            }
+        } catch (ObjectStoreException e) {
+            request.setAttribute("exception", "An exception occured");
+            e.printStackTrace();
+        }
 
-		// Add view interaction inline table
+        // Add view interaction inline table
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.symbol",
-        		"Gene.primaryIdentifier",
+                "Gene.primaryIdentifier",
                 "Gene.interactions.interactionType",
                 "Gene.interactions.interactingGenes.symbol",
                 "Gene.interactions.interactingGenes.primaryIdentifier",

@@ -14,20 +14,37 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.util.PathUtil;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.HeaderConfig;
+import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * Object to be displayed on report.do
@@ -37,41 +54,104 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class ReportObject
 {
-    private final InterMineObject object;
+    private InterMineObject object;
     private final WebConfig webConfig;
-    private final Model model;
-    @SuppressWarnings("unused")
-    private final Map<String, List<FieldDescriptor>> classKeys;
-    private final String type;
+    /** unqualified (!!) object type string */
+    private final String objectType;
 
     private Map<String, Object> fieldValues;
+
+    private InterMineAPI im;
 
     /**
      * @List<ReportObjectField> setup list of summary fields this object has
      */
     private List<ReportObjectField> objectSummaryFields;
 
+    /** @var List header inline lists set by the WebConfig */
+    private List<InlineList> inlineListsHeader = null;
+    /** @var List of 'unplaced' normal InlineLists */
+    private List<InlineList> inlineListsNormal = null;
+
+    private Map<String, String> webProperties;
+    private Map<String, Object> attributes = null;
+    private Map<String, String> longAttributes = null;
+    private Map<String, Object> longAttributesTruncated = null;
+    private Map<String, FieldDescriptor> attributeDescriptors = null;
+    private Map<String, DisplayReference> references = null;
+    private Map<String, DisplayCollection> collections = null;
+    private Map<String, DisplayField> refsAndCollections = null;
+
+    /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
+    private ObjectStore os = null;
+
     /**
-     * Setup internal DisplayObject
+     * Setup internal ReportObject
      * @param object InterMineObject
-     * @param model Model
      * @param webConfig WebConfig
-     * @param classKeys List
      * @throws Exception Exception
      */
-    public ReportObject(InterMineObject object, Model model, WebConfig webConfig,
-            Map<String, List<FieldDescriptor>> classKeys) throws Exception {
+    public ReportObject(InterMineObject object, WebConfig webConfig,
+            InterMineAPI im) throws Exception {
         this.object = object;
-        this.model = model;
         this.webConfig = webConfig;
-        this.classKeys = classKeys;
+        this.im = im;
+
+        this.os = im.getObjectStore();
 
         // infer dynamic type of IM object
-        this.type = DynamicUtil.getSimpleClass(object).getName();
+        this.objectType = DynamicUtil.getSimpleClass(object).getSimpleName();
     }
 
     /**
-     * A listing of object fields as pieced together from the various displayObject methods
+    *
+    * @return Map
+    */
+   public Map<String, List<CustomDisplayer>> getReportDisplayers() {
+       DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+       return displayerManager.getReportDisplayersForType(objectType);
+   }
+
+   /**
+    * Get the id of this object
+    * @return the id
+    */
+   public int getId() {
+       return object.getId().intValue();
+   }
+
+   /**
+    * Get the attribute fields and values for this object
+    * @return the attributes
+    */
+   public Map<String, Object> getAttributes() {
+       if (attributes == null) {
+           initialise();
+       }
+       return attributes;
+   }
+
+   /**
+    * Get the class descriptor for this object
+    * @return one class descriptor
+    */
+   public ClassDescriptor getClassDescriptor() {
+       return im.getModel().getClassDescriptorByName(objectType);
+   }
+
+   /**
+    * Get the collection fields and values for this object
+    * @return the collections
+    */
+   public Map<String, DisplayCollection> getCollections() {
+       if (collections == null) {
+           initialise();
+       }
+       return collections;
+   }
+
+    /**
+     * A listing of object fields as pieced together from the various ReportObject methods
      * @return <ReportObjectField>s List
      */
     public List<ReportObjectField> getObjectSummaryFields() {
@@ -96,10 +176,11 @@ public class ReportObject
 
                     // add new ReportObjectField
                     objectSummaryFields.add(new ReportObjectField(
-                            type,
+                            objectType,
                             fieldName,
                             fieldValue,
-                            fieldDisplayer
+                            fieldDisplayer,
+                            fc.getDoNotTruncate()
                     ));
                 }
             }
@@ -120,10 +201,11 @@ public class ReportObject
      * Return a list of field configs
      * @return Collection<FieldConfig>
      */
-    protected Collection<FieldConfig> getFieldConfigs() {
+    public Collection<FieldConfig> getFieldConfigs() {
         Map<String, Type> types = webConfig.getTypes();
-        if (types.containsKey(type)) {
-            return types.get(type).getFieldConfigs();
+        String qualifiedType = DynamicUtil.getSimpleClass(object).getName();
+        if (types.containsKey(qualifiedType)) {
+            return types.get(qualifiedType).getFieldConfigs();
         }
         return Collections.emptyList();
     }
@@ -152,15 +234,308 @@ public class ReportObject
         // fetch field configs
         for (FieldConfig fc : getFieldConfigs()) {
             // crete a path string
-            String pathString = TypeUtil.unqualifiedName(type) + "." + fc.getFieldExpr();
+            String pathString = objectType + "." + fc.getFieldExpr();
             try {
                 // resolve path
-                Path path = new Path(model, pathString);
+                Path path = new Path(im.getModel(), pathString);
                 fieldValues.put(fc.getFieldExpr(), PathUtil.resolvePath(path, object));
             } catch (PathException e) {
                 throw new Error("There must be a bug", e);
             }
         }
+    }
+
+    public String getType() {
+        return objectType;
+    }
+
+    /**
+     * Used by JSP
+     * @return the main title of this object, i.e.: "eve FBgn0000606"
+     */
+    public String getTitleMain() {
+        return getTitles("main");
+    }
+
+    /**
+     * Used by JSP
+     * @return the subtitle of this object, i.e.: "D. melanogaster"
+     */
+    public String getTitleSub() {
+        return getTitles("sub");
+    }
+
+    /**
+     * Get a title based on the type key we pass it
+     * @param key: main|sub
+     * @return the titles string as resolved based on the path(s) under key
+     */
+    private String getTitles(String key) {
+        // fetch the Type
+        Type type = webConfig.getTypes().get(getClassDescriptor().getName());
+        // retrieve the titles map, HeaderConfig serves as a useless wrapper
+        HeaderConfig hc = type.getHeaderConfig();
+        if (hc != null) {
+            Map<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
+            // if we have something saved
+            if (titles != null && titles.containsKey(key)) {
+                String result = "";
+                // concatenate a space delineated title together as resolved from FieldValues
+                for (String path : titles.get(key).keySet()) {
+                    Object stuff = getFieldValue(path);
+                    if (stuff != null) {
+                        String stringyStuff = stuff.toString();
+                        // String.isEmpty() was introduced in Java release 1.6
+                        if (StringUtils.isNotBlank(stringyStuff)) {
+                            result += stringyStuff + " ";
+                        }
+                    }
+                }
+                // trailing space & return
+                if (!result.isEmpty()) {
+                    return result.substring(0, result.length() - 1);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create the Maps and Lists returned by the getters in this class.
+     */
+    @SuppressWarnings("unchecked")
+    private void initialise() {
+        attributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        references = new TreeMap<String, DisplayReference>(String.CASE_INSENSITIVE_ORDER);
+        collections = new TreeMap<String, DisplayCollection>(String.CASE_INSENSITIVE_ORDER);
+        refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
+        attributeDescriptors = new HashMap<String, FieldDescriptor>();
+        longAttributes = new HashMap<String, String>();
+        longAttributesTruncated = new HashMap<String, Object>();
+
+        // InlineLists
+        inlineListsHeader = new ArrayList<InlineList>();
+        inlineListsNormal = new ArrayList<InlineList>();
+        List<InlineList> inlineListsWebConfig = null;
+
+        try {
+
+            /** InlineLists **/
+            Type type = webConfig.getTypes().get(getClassDescriptor().getName());
+            // init lists from WebConfig Type
+            inlineListsWebConfig = type.getInlineLists();
+            // a map of inlineList object names so we do not include them elsewhere
+            HashMap<String, Boolean> bagOfInlineListNames = new HashMap<String, Boolean>();
+            // fill up
+            for (int i = 0; i < inlineListsWebConfig.size(); i++) {
+                InlineList list = inlineListsWebConfig.get(i);
+                // soon to be list of values
+                Set<Object> listOfListObjects = null;
+                String columnToDisplayBy = null;
+                try {
+                    // create a new path to the collection of objects
+                    Path path = new Path(im.getModel(),
+                            DynamicUtil.getSimpleClass(object.getClass()).getSimpleName()
+                            + '.' + list.getPath());
+                    try {
+                        // save the suffix, the value we will show the list by
+                        columnToDisplayBy = path.getLastElement();
+                        // create only a prefix of the path so we have
+                        //  Objects and not just Strings
+                        path = path.getPrefix();
+                    } catch (Error e) {
+                        throw new RuntimeException("You need to specify a key to display"
+                                + "the list by, not just the root element.");
+                    }
+                    // resolve path to a collection and save into a list
+                    listOfListObjects = PathUtil.resolveCollectionPath(path, object);
+                    list.setListOfObjects(listOfListObjects, columnToDisplayBy);
+
+                } catch (PathException e) {
+                    throw new RuntimeException("Your collections of inline lists"
+                            + "are failing you", e);
+                }
+
+                // place the list
+                if (list.getShowInHeader()) {
+                    inlineListsHeader.add(list);
+                } else {
+                    inlineListsNormal.add(list);
+                }
+
+                // save name of the collection
+                String path = list.getPath();
+                bagOfInlineListNames.put(path.substring(0, path.indexOf('.')), true);
+            }
+
+            for (FieldDescriptor fd : getClassDescriptor().getAllFieldDescriptors()) {
+                // only continue if we have not included this object in an inline list
+                if (bagOfInlineListNames.get(fd.getName()) == null) {
+                    if (fd.isAttribute() && !"id".equals(fd.getName())) {
+                        Object fieldValue = object.getFieldValue(fd.getName());
+                        if (fieldValue != null) {
+                            if (fieldValue instanceof ClobAccess) {
+                                ClobAccess fieldClob = (ClobAccess) fieldValue;
+                                if (fieldClob.length() > 200) {
+                                    fieldValue = fieldClob.subSequence(0, 200).toString();
+                                } else {
+                                    fieldValue = fieldClob.toString();
+                                }
+                            }
+
+                            attributes.put(fd.getName(), fieldValue);
+                            attributeDescriptors.put(fd.getName(), fd);
+                            if (fieldValue instanceof String) {
+                                String fieldString = (String) fieldValue;
+                                if (fieldString.length() > 30) {
+                                    StringUtil.LineWrappedString lws = StringUtil.wrapLines(
+                                            fieldString, 50, 3, 11);
+                                    longAttributes.put(fd.getName(), lws.getString()
+                                            .replace("\n", "<BR>"));
+                                    if (lws.isTruncated()) {
+                                        longAttributesTruncated.put(fd.getName(), Boolean.TRUE);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (fd.isReference()) {
+                        ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+
+                        //check whether reference is null without dereferencing
+                        ProxyReference proxy =
+                            (ProxyReference) object.getFieldProxy(ref.getName());
+
+                        DisplayReference newReference =
+                            new DisplayReference(proxy, ref, webConfig,
+                                webProperties, im.getClassKeys());
+                        references.put(fd.getName(), newReference);
+                    } else if (fd.isCollection()) {
+                        Object fieldValue = object.getFieldValue(fd.getName());
+
+                        // determine the types in the collection
+                        List<Class<?>> listOfTypes = PathQueryResultHelper.
+                        queryForTypesInCollection(object, fd.getName(), os);
+
+                        DisplayCollection newCollection =
+                            new DisplayCollection((Collection) fieldValue,
+                                    (CollectionDescriptor) fd, webConfig, webProperties,
+                                    im.getClassKeys(), listOfTypes);
+                        //if (newCollection.getSize() > 0) {
+                        collections.put(fd.getName(), newCollection);
+                        //}
+                    }
+                } else {
+                    // assign Descriptor from FieldDescriptors to the InlineList
+                    setDescriptorOnInlineList(fd.getName(), fd);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while creating a ReportObject", e);
+        }
+
+        // make a combined Map
+        refsAndCollections.putAll(references);
+        refsAndCollections.putAll(collections);
+    }
+
+    /**
+     * Get all the reference and collection fields and values for this object
+     * @return the collections
+     */
+    public Map<String, DisplayField> getRefsAndCollections() {
+        if (refsAndCollections == null) {
+            initialise();
+        }
+        return refsAndCollections;
+    }
+
+    /**
+    *
+    * @return Set
+    */
+   public Set<String> getReplacedFieldExprs() {
+       Set<String> replacedFieldExprs = new HashSet<String>();
+       for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
+           replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
+       }
+       return replacedFieldExprs;
+   }
+
+   /**
+   *
+   * @return Set
+   */
+  public Set<CustomDisplayer> getAllReportDisplayers() {
+      DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+      String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
+      return displayerManager.getAllReportDisplayersForType(clsName);
+  }
+
+  /**
+   * Get attribute descriptors.
+   * @return map of attribute descriptors
+   */
+  public Map<String, FieldDescriptor> getAttributeDescriptors() {
+      if (attributeDescriptors == null) {
+          initialise();
+      }
+      return attributeDescriptors;
+  }
+
+    /**
+     * Set Descriptor (for placement) on an InlineList, only done for normal lists
+     * @param name
+     * @param fd
+     */
+    private void setDescriptorOnInlineList(String name, FieldDescriptor fd) {
+    done:
+        for (InlineList list : inlineListsNormal) {
+            Object path = list.getPath();
+            if (((String) path).substring(0, ((String) path).indexOf('.')).equals(name)) {
+                list.setDescriptor(fd);
+                break done;
+            }
+        }
+    }
+
+    /**
+    *
+    * @return InlineLists that are resolved into their respective placements
+    */
+    public List<InlineList> getNormalInlineLists() {
+        if (inlineListsNormal == null) {
+            initialise();
+        }
+        return inlineListsNormal;
+    }
+
+    /**
+     *
+     * @return InlineLists to be shown in the header
+     */
+    public List<InlineList> getHeaderInlineLists() {
+        if (inlineListsHeader == null) {
+            initialise();
+        }
+        return inlineListsHeader;
+    }
+
+    /**
+     * Used from JSP
+     * @return true if we have inlineListsHeader
+     */
+    public Boolean getHasHeaderInlineLists() {
+        return (getHeaderInlineLists() != null);
+    }
+
+    /**
+     * Used from JSP
+     * @return true if we have InlineLists with no placement yet
+     */
+    public Boolean getHasNormalInlineLists() {
+        return (getNormalInlineLists() != null);
     }
 
 }

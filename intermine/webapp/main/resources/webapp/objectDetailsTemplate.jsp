@@ -10,7 +10,7 @@
 
 <html:xhtml/>
 
-<tiles:importAttribute name="displayObject" ignore="true"/>
+<tiles:importAttribute name="reportObject" ignore="true"/>
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="templateQuery"/>
 <tiles:importAttribute name="placement"/>
@@ -21,9 +21,8 @@
 <c:set var="uid" value="${fn:replace(placement, ' ', '_')}_${templateName}"/>
 
 <c:set var="placementAndField" value="${placement}_${templateName}"/>
-<c:if test="${!empty displayObject}">
-  <c:set var="verbose" value="${!empty displayObject.verbosity[placementAndField]}"/>
-  <c:set var="interMineObject" value="${displayObject.object}"/>
+<c:if test="${!empty reportObject}">
+  <c:set var="interMineObject" value="${reportObject.object}"/>
 </c:if>
 
 <c:if test="${!empty param.trail}">
@@ -45,25 +44,23 @@
   <%--results table--%>
   <div id="table_${fn:replace(uid, ":", "_")}">
     <div id="table_${fn:replace(uid, ":", "_")}_int">
-      <c:if test="${verbose}">
         <tiles:insert name="objectDetailsTemplateTable.jsp">
-          <tiles:put name="displayObject" beanName="displayObject"/>
+          <tiles:put name="reportObject" beanName="reportObject"/>
           <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
           <tiles:put name="placement" value="${placement}"/>
         </tiles:insert>
-      </c:if>
       <p class='loading'>&nbsp;</p>
     </div>
   </div>
 
   <c:choose>
-    <c:when test="${!verbose && displayObject != null}">
+    <c:when test="${reportObject != null}">
       <script type="text/javascript">
-          queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}', '${trail}');
+          queueInlineTemplateQuery('${placement}', '${templateName}', '${reportObject.object.id}', '${trail}');
       </script>
     </c:when>
-    <c:when test="${!verbose && interMineIdBag != null}">
+    <c:when test="${interMineIdBag != null}">
       <script type="text/javascript">
           queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}', '${trail}');
       </script>

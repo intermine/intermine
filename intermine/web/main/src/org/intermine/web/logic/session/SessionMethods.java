@@ -59,7 +59,6 @@ import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
@@ -424,29 +423,10 @@ public final class SessionMethods
     }
 
     /**
-     * Return the displayObjects Map from the session or create and return it if it doesn't exist.
+     * Return the ReportObjects Map from the session or create and return it if it doesn't exist.
      *
-     * @param session the HttpSession to get the displayObjects Map from
-     * @return the (possibly new) displayObjects Map
-     */
-    public static DisplayObjectFactory getDisplayObjects(HttpSession session) {
-        DisplayObjectFactory displayObjects =
-            (DisplayObjectFactory) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
-
-        // Build map from object id to DisplayObject
-        if (displayObjects == null) {
-            displayObjects = new DisplayObjectFactory(session);
-            session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, displayObjects);
-        }
-
-        return displayObjects;
-    }
-
-    /**
-     * Return the reportObjects Map from the session or create and return it if it doesn't exist.
-     *
-     * @param session the HttpSession to get the reportObjects Map from
-     * @return the (possibly new) reportObjects Map
+     * @param session the HttpSession to get the ReportObjects Map from
+     * @return the (possibly new) ReportObjects Map
      */
     public static ReportObjectFactory getReportObjects(HttpSession session) {
         ReportObjectFactory reportObjects =
@@ -472,7 +452,7 @@ public final class SessionMethods
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
                     new HashMap<String, TemplateQuery>()));
-        session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
+        session.setAttribute(Constants.REPORT_OBJECT_CACHE, new ReportObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 

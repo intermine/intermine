@@ -25,7 +25,7 @@
   </c:when>
   <c:otherwise>
     <c:set var="detailsLink"
-      value="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}"
+      value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}"
       scope="request" />
   </c:otherwise>
 </c:choose>
@@ -85,17 +85,18 @@
     </c:choose>
   </c:when>
   <c:otherwise>
-    <span style="white-space: nowrap"> <c:forEach var="cld"
-      items="${leafClds}">
+    <span style="white-space: nowrap"> <c:forEach var="cld" items="${leafClds}">
       <span class="type"><c:out value="${cld.unqualifiedName}" /></span>
     </c:forEach> [<a class="theme-1-color" href="${detailsLink}"${extlink}><fmt:message
       key="results.details" /></a>] </span>
     <br />
-    <div style="margin-left: 8px"><c:set var="displayObject"
-      value="${DISPLAY_OBJECT_CACHE[object]}" /> <c:forEach
-      items="${displayObject.fieldExprs}" var="expr">
+    <div style="margin-left: 8px"><c:set var="reportObject"
+      value="${REPORT_OBJECT_CACHE[object]}" />
+
+      <c:forEach items="${reportObject.fieldExprs}" var="expr">
       <im:eval evalExpression="object.${expr}" evalVariable="outVal" />
-      <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
+
+      <c:if test="${reportObject.fieldConfigMap[expr].showInResults}">
         <c:set var="style" value="white-space:nowrap" />
         <c:if
           test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
@@ -108,7 +109,10 @@
         <div style="${style}"><span class="attributeField">${expr}</span>
         <im:value>${outVal}</im:value></div>
       </c:if>
-    </c:forEach> <c:forEach items="${leafClds}" var="cld">
+
+    </c:forEach>
+
+    <c:forEach items="${leafClds}" var="cld">
       <c:if test="${WEBCONFIG.types[cld.name].tableDisplayer != null}">
         <div>${cld} <tiles:insert
           page="${WEBCONFIG.types[cld.name].tableDisplayer.src}">

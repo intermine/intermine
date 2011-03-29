@@ -32,7 +32,7 @@ public class InlineList
 
     /**
      * Set FieldDescriptor so we can work with placements
-     * @param fd FieldDescriptor set by DisplayObject on init
+     * @param fd FieldDescriptor set by ReportObject on init
      */
     public void setDescriptor(FieldDescriptor fd) {
         fieldDescriptor = fd;
@@ -72,7 +72,7 @@ public class InlineList
 
     /**
      *
-     * @return String path so that DisplayObject can resolve the actual Objects
+     * @return String path so that ReportObject can resolve the actual Objects
      */
     public String getPath() {
         return path;
@@ -89,7 +89,7 @@ public class InlineList
 
     /**
      * Set a set ;) of Objects by turning them into InterMineObjects and then InlineListObjects
-     * @param list received from DisplayObject resolver
+     * @param list received from ReportObject resolver
      * @param key is a value by which we want to show the objects by,
      *  "probeSets.primaryIdentifier" => primaryIdentifier
      */

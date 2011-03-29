@@ -34,7 +34,7 @@
                      styleClass="objectTrailLinkResults">List</html:link>
         </c:when>
         <c:otherwise>
-          <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"
+          <html:link action="/report?id=${item.objectId}&amp;trail=${item.trail}"
                      styleClass="objectTrailLink" title="ID = ${item.objectId}">${item.label}</html:link>
         </c:otherwise>
       </c:choose>

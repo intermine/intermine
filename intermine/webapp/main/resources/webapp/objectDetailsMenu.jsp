@@ -13,19 +13,19 @@
   <span>Quick Links:</span>
   <div class="menu-wrap">
     <div class="links">
-      <html:link action="/objectDetails.do?id=${object.id}#summary"
+      <html:link action="/report.do?id=${object.id}#summary"
       onclick="jQuery('a[name=summary]').scrollTo('slow', 'swing', 0);return false;"
       >Summary</html:link>
 
       <c:forEach items="${categories}" var="aspect">
         <c:set var="target" value="${fn:toLowerCase(aspect)}"/>
         <html:link
-        action="/objectDetails.do?id=${object.id}#${target}"
+        action="/report.do?id=${object.id}#${target}"
         onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', -21);return false;"
         >${aspect}</html:link>
       </c:forEach>
 
-      <html:link action="/objectDetails.do?id=${object.id}#other"
+      <html:link action="/report.do?id=${object.id}#other"
       onclick="jQuery('a[name=other]').scrollTo('slow', 'swing', -21);return false;"
       >Other</html:link>
     </div>

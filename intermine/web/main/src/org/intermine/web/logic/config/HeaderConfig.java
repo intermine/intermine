@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
 /**
- * Configuration of an object (Type) header when displayed on objectDetails
+ * Configuration of an object (Type) header when displayed on report
  * @author radek
  *
  */

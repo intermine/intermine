@@ -46,9 +46,9 @@ import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -74,7 +74,7 @@ public class ObjectDetailsController extends InterMineAction
         TagManager tagManager = im.getTagManager();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = im.getObjectStore();
-        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
 
         String idString = request.getParameter("id");
 
@@ -91,12 +91,12 @@ public class ObjectDetailsController extends InterMineAction
 
         String superuser = im.getProfileManager().getSuperuser();
 
-        DisplayObject dobj = displayObjects.get(object);
+        ReportObject dobj = reportObjects.get(object);
         dobj.getClass();
         request.setAttribute("object", dobj);
-        session.setAttribute("displayObject", dobj);
+        session.setAttribute("reportObject", dobj);
 
-        // place InlineLists based on TagManager as DisplayObject is cached while Controller is not
+        // place InlineLists based on TagManager as ReportObject is cached while Controller is not
         Map<String, List<InlineList>> placedInlineLists = new TreeMap<String, List<InlineList>>();
         // traverse all unplaced (non-header) InlineLists
         List<InlineList> unplacedInlineLists = dobj.getNormalInlineLists();
@@ -239,7 +239,7 @@ public class ObjectDetailsController extends InterMineAction
      * @return
      */
     private Map<String, DisplayField> getSummaryFields(TagManager tagManager, String superuser,
-            DisplayObject dobj, Set<ClassDescriptor> cds) {
+            ReportObject dobj, Set<ClassDescriptor> cds) {
         Map<String, DisplayField> ret =
             new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
         for (ClassDescriptor cd : cds) {
@@ -277,7 +277,7 @@ public class ObjectDetailsController extends InterMineAction
      * @param miscRefs map that contains dispRef (may be removed by this method)
      * @param tagManager the tag manager
      * @param sup  the superuser account name
-     * @param placementRefsAndCollections take from the DisplayObject
+     * @param placementRefsAndCollections take from the ReportObject
      * @param isSuperUser if current user is superuser
      */
     public static void categoriseBasedOnTags(FieldDescriptor fd,
@@ -308,7 +308,7 @@ public class ObjectDetailsController extends InterMineAction
         }
     }
 
-    private void removeFieldsReplacedByCustomDisplayers(DisplayObject dobj,
+    private void removeFieldsReplacedByCustomDisplayers(ReportObject dobj,
             Map<String, Map<String, DisplayField>> placementRefsAndCollections) {
         for (String fieldName : dobj.getReplacedFieldExprs()) {
             removeField(fieldName, placementRefsAndCollections);

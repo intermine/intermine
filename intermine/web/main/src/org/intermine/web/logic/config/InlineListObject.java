@@ -26,7 +26,7 @@ public class InlineListObject
 
     /**
      * Initialize
-     * @param object InterMine object received from DisplayObject
+     * @param object InterMine object received from ReportObject
      * @param value represents the values of a column specified in webconfig-model.xml
      * @param id represents an object ID so we can link to its report page
      */

@@ -61,7 +61,7 @@
     </action>
     <action path="/help" forward="help.page">
     </action>
-    <action path="/objectDetails" forward="objectDetails.page">
+    <action path="/report" forward="report.page">
     </action>
     <action path="/classDescription" forward="classDescription.page">
     </action>
@@ -175,7 +175,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/modifyDetails" type="org.intermine.web.struts.ModifyDetails" parameter="method">
-      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+      <forward name="report" redirect="true" path="/report.do"/>
       <forward name="results" path="/results.do" redirect="true"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
       <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
@@ -395,7 +395,7 @@
     </action>
     <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
     </action>
-    <action path="/initObjectDetails" type="org.intermine.web.struts.ObjectDetailsController">
+    <action path="/initReport" type="org.intermine.web.struts.ReportController">
     </action>
     <action path="/initObjectDetailsAspect" type="org.intermine.web.struts.ObjectDetailsAspectController">
     </action>

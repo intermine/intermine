@@ -29,8 +29,8 @@ import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
-import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -54,7 +54,7 @@ public class ObjectDetailsTemplateController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
+        ReportObject reportObject = (ReportObject) context.getAttribute("reportObject");
         InterMineBag interMineBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         TemplateQuery template = (TemplateQuery) context.getAttribute("templateQuery");
@@ -63,8 +63,8 @@ public class ObjectDetailsTemplateController extends TilesAction
 
         TemplateQuery populatedTemplate;
         try {
-            if (displayObject != null) {
-                InterMineObject obj = displayObject.getObject();
+            if (reportObject != null) {
+                InterMineObject obj = reportObject.getObject();
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
@@ -75,11 +75,11 @@ public class ObjectDetailsTemplateController extends TilesAction
             }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error setting up template '" + template.getName() + "' on report page for"
-                    + ((displayObject == null) ? " bag " + interMineBag.getName()
-                        : " object " + displayObject.getId()) + ".", e);
+                    + ((reportObject == null) ? " bag " + interMineBag.getName()
+                        : " object " + reportObject.getId()) + ".", e);
             throw new RuntimeException("Error setting up template '" + template.getName()
-                    + "' on report page for" + ((displayObject == null) ? " bag "
-                        + interMineBag.getName() : " object " + displayObject.getId()) + ".", e);
+                    + "' on report page for" + ((reportObject == null) ? " bag "
+                        + interMineBag.getName() : " object " + reportObject.getId()) + ".", e);
         }
 
         Profile profile = SessionMethods.getProfile(session);

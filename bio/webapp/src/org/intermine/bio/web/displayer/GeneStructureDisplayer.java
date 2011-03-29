@@ -41,7 +41,7 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.InlineTableResultElement;
 import org.intermine.web.logic.session.SessionMethods;
 import org.jfree.util.Log;
@@ -55,17 +55,17 @@ public class GeneStructureDisplayer extends CustomDisplayer {
     }
 
     @Override
-    public void display(HttpServletRequest request, DisplayObject displayObject) {
-        String clsName = DynamicUtil.getSimpleClass(displayObject.getObject()).getSimpleName();
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        String clsName = DynamicUtil.getSimpleClass(reportObject.getObject()).getSimpleName();
 
         request.setAttribute("message", "Gene structure displayer for type: " + clsName);
 
         Gene gene = null;
         if ("Gene".equals(clsName)) {
-            gene = (Gene) displayObject.getObject();
+            gene = (Gene) reportObject.getObject();
         } else if ("Transcript".equals(clsName) || "MRNA".equals(clsName)
                 || "Exon".equals(clsName)) {
-            InterMineObject imObj = (InterMineObject) displayObject.getObject();
+            InterMineObject imObj = (InterMineObject) reportObject.getObject();
             try {
                 gene = (Gene) imObj.getFieldValue("gene");
             } catch (IllegalAccessException e) {
@@ -85,13 +85,13 @@ public class GeneStructureDisplayer extends CustomDisplayer {
                         + gene.getPrimaryIdentifier() + ", " + gene.getId());
             }
             request.setAttribute("gene", gene);
-            request.setAttribute("actualId", displayObject.getId());
+            request.setAttribute("actualId", reportObject.getId());
         }
 
 
     }
 
-    private void old(HttpServletRequest request, DisplayObject displayObject) {
+    private void old(HttpServletRequest request, ReportObject reportObject) {
         // 0. work out available classes for organism
         // 1. work out feature type
         // 2. get to gene from feature
@@ -103,13 +103,13 @@ public class GeneStructureDisplayer extends CustomDisplayer {
         //    - request: mark current feature for highlighting
         // 4. cache table
 
-        String clsName = DynamicUtil.getSimpleClass(displayObject.getObject()).getSimpleName();
+        String clsName = DynamicUtil.getSimpleClass(reportObject.getObject()).getSimpleName();
 
         request.setAttribute("message", "Gene structure displayer for type: " + clsName);
 
         List<List<List<List<ResultElement>>>> ugly = new ArrayList<List<List<List<ResultElement>>>>();
         if ("Gene".equals(clsName)) {
-            Gene gene = (Gene) displayObject.getObject();
+            Gene gene = (Gene) reportObject.getObject();
 
             PathQuery pq = new PathQuery(im.getModel());
             pq.addView("Gene.symbol");

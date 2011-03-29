@@ -70,9 +70,9 @@
                 <c:when test="${!resultElementColumn.hasDisplayer}">
                   <c:choose>
                     <c:when test="${resultElementColumn.isKeyField}">
-                      <a href="objectDetails.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
+                      <a href="report.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
                       <!--
-                      <html:link action="/objectDetails?id=${resultElementColumn.id}">
+                      <html:link action="/report?id=${resultElementColumn.id}">
                         <fmt:message key="${resultElementColumn.field}"/>
                       </html:link>
                       -->
