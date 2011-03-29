@@ -70,6 +70,11 @@ public class SpanUploadAction extends InterMineAction
 
         SpanUploadForm spanUploadForm = (SpanUploadForm) form;
         String orgName = spanUploadForm.getOrgName();
+
+        if ("".equals(orgName)) {
+            return mapping.findForward("spanUploadOptions");
+        }
+
         String isInterBaseCoordinate = spanUploadForm.getIsInterBaseCoordinate();
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
