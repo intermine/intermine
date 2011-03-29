@@ -1,4 +1,4 @@
-package org.modmine.web.model;
+package org.intermine.bio.web.model;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -12,11 +12,11 @@ package org.modmine.web.model;
 
 /**
  * This Java bean represents one record of Chromosome coordinates from user input
- * The record should be in BED format: "chr start end".
+ * The record should be in BED format: "chr\tstart\tend".
  *
  * @author Fengyuan Hu
  */
-public class Span
+public class GenomicRegion
 {
     private String chr;
     private Integer start;
@@ -24,10 +24,10 @@ public class Span
 
     /**
      * Constructor
-     * @param spanInString a spam such as X:100..105
+     * @param grAsString a genomic region such as X:100..105
      */
-    public Span (String spanInString) {
-        String[] temp = spanInString.split(":");
+    public GenomicRegion (String grAsString) {
+        String[] temp = grAsString.split(":");
         this.chr = temp[0];
         temp = temp[1].split("\\.\\.");
         this.start = Integer.parseInt(temp[0]);
@@ -37,7 +37,7 @@ public class Span
     /**
      * Default constructor
      */
-    public Span() {
+    public GenomicRegion() {
 
     }
     /**
@@ -91,13 +91,13 @@ public class Span
     }
 
     /**
-     * @param obj a Span object
+     * @param obj a GenomicRegion object
      * @return boolean
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Span) {
-            Span s = (Span) obj;
+        if (obj instanceof GenomicRegion) {
+            GenomicRegion s = (GenomicRegion) obj;
             return (chr.equals(s.getChr())
                     && start.equals(s.getStart()) && end.equals(s.getEnd()));
         }

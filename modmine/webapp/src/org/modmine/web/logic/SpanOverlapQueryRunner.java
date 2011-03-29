@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
@@ -46,10 +47,9 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.modmine.web.ChromosomeInfo;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 import org.modmine.web.GBrowseTrackInfo;
 import org.modmine.web.MetadataCache;
-import org.modmine.web.GBrowseParser.GBrowseTrack;
-import org.modmine.web.model.Span;
 import org.modmine.web.model.SpanQueryResultRow;
 import org.modmine.web.model.SpanUploadConstraint;
 
@@ -67,7 +67,7 @@ public class SpanOverlapQueryRunner implements Runnable
     private static final Logger LOG = Logger.getLogger(SpanOverlapQueryRunner.class);
 
     private String spanUUIDString = null;
-    private List<Span> spanList = null;
+    private List<GenomicRegion> spanList = null;
     @SuppressWarnings("rawtypes")
     private List<Class> ftKeys = null;
     private List<String> subKeys = null;
@@ -85,7 +85,7 @@ public class SpanOverlapQueryRunner implements Runnable
      * @param im intermineAPI
      * @param request http request
      */
-    public SpanOverlapQueryRunner(String spanUUIDString, List<Span> spanList,
+    public SpanOverlapQueryRunner(String spanUUIDString, List<GenomicRegion> spanList,
             @SuppressWarnings("rawtypes") List<Class> ftKeys, List<String> subKeys, String orgName,
             InterMineAPI im, HttpServletRequest request) {
         this.spanUUIDString = spanUUIDString;
@@ -152,31 +152,32 @@ public class SpanOverlapQueryRunner implements Runnable
 
         // Use spanOverlapFullResultMap to store the data in the session
         @SuppressWarnings("unchecked")
-        Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
-             (Map<String, Map<Span, List<SpanQueryResultRow>>>) request
+        Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
+             (Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>>) request
                             .getSession().getAttribute("spanOverlapFullResultMap");
 
         if (spanOverlapFullResultMap == null) {
-            spanOverlapFullResultMap = new HashMap<String, Map<Span, List<SpanQueryResultRow>>>();
+            spanOverlapFullResultMap =
+                new HashMap<String, Map<GenomicRegion, List<SpanQueryResultRow>>>();
         }
 
-        Map<Span, List<SpanQueryResultRow>> spanOverlapResultDisplayMap =
-            Collections.synchronizedMap(new LinkedHashMap<Span, List<SpanQueryResultRow>>());
+        Map<GenomicRegion, List<SpanQueryResultRow>> spanOverlapResultDisplayMap = Collections
+                .synchronizedMap(new LinkedHashMap<GenomicRegion, List<SpanQueryResultRow>>());
 
         // GBrowse track
         @SuppressWarnings("unchecked")
-        Map<String, Map<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>>>
-        gbrowseFullTrackMap = (HashMap<String, Map<Span, LinkedHashMap<String,
+        Map<String, Map<GenomicRegion, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>>>
+        gbrowseFullTrackMap = (HashMap<String, Map<GenomicRegion, LinkedHashMap<String,
                 LinkedHashSet<GBrowseTrackInfo>>>>) request.getSession()
                     .getAttribute("gbrowseFullTrackMap");
 
         if (gbrowseFullTrackMap == null) {
-            gbrowseFullTrackMap = new HashMap<String, Map<Span, LinkedHashMap<String,
+            gbrowseFullTrackMap = new HashMap<String, Map<GenomicRegion, LinkedHashMap<String,
             LinkedHashSet<GBrowseTrackInfo>>>>();
         }
 
-        Map<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> gbrowseTrackMap =
-            Collections.synchronizedMap(new LinkedHashMap<Span, LinkedHashMap<String,
+        Map<GenomicRegion, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> gbrowseTrackMap =
+            Collections.synchronizedMap(new LinkedHashMap<GenomicRegion, LinkedHashMap<String,
                         LinkedHashSet<GBrowseTrackInfo>>>());
 
         if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
@@ -188,7 +189,7 @@ public class SpanOverlapQueryRunner implements Runnable
 
             try {
                 Query q;
-                for (Span aSpan: spanList) {
+                for (GenomicRegion aSpan: spanList) {
                     q = new Query();
                     q.setDistinct(true);
 

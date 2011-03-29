@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.bio.web.model.GenomicRegion;
 import org.modmine.web.ChromosomeInfo;
-import org.modmine.web.model.Span;
 
 /**
  * This Class validates if the user input has errors.
@@ -33,20 +33,21 @@ public class SpanValidator
      * @param chrInfoMap a java bean
      * @return resultMap A HashMap
      */
-    public Map<String, List<Span>> runSpanValidation(String orgName, List<Span> spanList,
+    public Map<String, List<GenomicRegion>> runSpanValidation(String orgName,
+            List<GenomicRegion> spanList,
             Map<String, List<ChromosomeInfo>> chrInfoMap) {
 
         // the Map has two key-value mappings
         // PASS-ArrayList<passedSpan>
         // ERROR-ArrayList<errorSpan>
-        Map<String, List<Span>> resultMap = new HashMap<String, List<Span>>();
-        List<Span> passedSpanList = new ArrayList<Span>();
-        List<Span> errorSpanList = new ArrayList<Span>();
+        Map<String, List<GenomicRegion>> resultMap = new HashMap<String, List<GenomicRegion>>();
+        List<GenomicRegion> passedSpanList = new ArrayList<GenomicRegion>();
+        List<GenomicRegion> errorSpanList = new ArrayList<GenomicRegion>();
 
         List<ChromosomeInfo> chrInfoList = chrInfoMap.get(orgName);
 
         // make passedSpanList
-        for (Span aSpan : spanList) {
+        for (GenomicRegion aSpan : spanList) {
             for (ChromosomeInfo chrInfo : chrInfoList) {
                 if (aSpan.getChr().equals(chrInfo.getChrPID())) {
                     if ((aSpan.getStart() >= 0 && aSpan.getStart() <= chrInfo
@@ -54,7 +55,7 @@ public class SpanValidator
                             && (aSpan.getEnd() >= 0 && aSpan.getEnd() <= chrInfo
                                     .getChrLength())) {
                         if (aSpan.getStart() > aSpan.getEnd()) { // Start must be smaller than End
-                            Span newSpan = new Span();
+                            GenomicRegion newSpan = new GenomicRegion();
                             newSpan.setChr(aSpan.getChr());
                             newSpan.setStart(aSpan.getEnd());
                             newSpan.setEnd(aSpan.getStart());
@@ -69,7 +70,7 @@ public class SpanValidator
         }
 
         // make errorSpanList
-        for (Span aSpan : spanList) {
+        for (GenomicRegion aSpan : spanList) {
             if (!passedSpanList.contains(aSpan)) {
                 errorSpanList.add(aSpan);
             }
