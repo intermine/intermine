@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -39,6 +40,7 @@ import org.intermine.webservice.server.output.HTMLOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
+import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -137,6 +139,11 @@ public abstract class WebService
         return formatIsJSON() && (getFormat() % 2 == 1);
     }
 
+    protected boolean formatIsFlatFile() {
+        int format = getFormat();
+        return (format == TSV_FORMAT || format == CSV_FORMAT);
+    }
+
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
     private static Logger logger = Logger.getLogger(WebService.class);
@@ -199,11 +206,15 @@ public abstract class WebService
             authenticate(request);
 
             execute(request, response);
-
         } catch (Throwable t) {
             sendError(t, response);
         }
-        output.flush();
+        try {
+            output.flush();
+        } catch (Throwable t) {
+            logger.debug("Error flushing " + t);
+        }
+
     }
 
     /**
@@ -255,18 +266,34 @@ public abstract class WebService
 
     private void sendError(Throwable t, HttpServletResponse response) {
         String msg = WebServiceConstants.SERVICE_FAILED_MSG;
+        if (t.getMessage() != null && t.getMessage().length() >= 0) {
+            msg = t.getMessage();
+        }
         int code;
         if (t instanceof ServiceException) {
-            if (t.getMessage() != null && t.getMessage().length() >= 0) {
-                msg = t.getMessage();
-            }
+
             ServiceException ex = (ServiceException) t;
             code = ex.getHttpErrorCode();
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
         logError(t, msg, code);
-        sendErrorMsg(response, formatErrorMsg(msg, code), code);
+        if (!formatIsJSONP()) {
+            // Don't set errors statuses on jsonp requests, to enable
+            // better error checking in the browser.
+            response.setStatus(code);
+        } else {
+            // But do set callbacks
+            String callback = getCallback();
+            if (callback == null) {
+                callback = "makeInterMineResultsTable";
+            }
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
+            output.setHeaderAttributes(attributes);
+        }
+        output.setError(msg, code);
+        logger.debug("Set error to : " + msg + "," + code);
     }
 
     private void logError(Throwable t, String msg, int code) {
@@ -305,55 +332,6 @@ public abstract class WebService
         sb.append(StatusDictionary.getDescription(errorCode));
         sb.append(msg);
         return sb.toString();
-    }
-
-    private void sendErrorMsg(HttpServletResponse response, String msg, int code) {
-        // When status is set, buffer with previous results is cleaned and
-        // that's why errors must be set again
-
-        if (!response.isCommitted()) {
-            // Cheating here. It is an xml output, but when content type is set
-            // to html, then
-            // browsers try to display in more readable way then xml
-            response.setContentType("text/html");
-            try {
-                // Error message is written together with response status code
-                // and it is written to the output as well. So it is displayed
-                // in browser in case of problems.
-                // Used deprecated setStatus method because there isn't any
-                // other
-                // method for sending error with simple description which
-                // wouldn't be formatted
-                // by server
-                response.setStatus(code, msg);
-                if (code != Output.SC_NO_CONTENT) {
-                    response.getWriter().print(msg);
-                }
-            } catch (IOException e) {
-                logger.error("Writing error to response failed.", e);
-            }
-        } else {
-            try {
-                response.getWriter().print(msg);
-            } catch (IOException e) {
-                logger.error("Writing error to response failed.", e);
-            }
-        }
-    }
-
-    private String formatErrorMsg(String content, int errorCode) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<error>");
-        printMessage(StatusDictionary.getDescription(errorCode), sb);
-        printMessage(content, sb);
-        sb.append("</error>");
-        return sb.toString();
-    }
-
-    private void printMessage(String string, StringBuilder sb) {
-        sb.append("<message>");
-        sb.append(string);
-        sb.append("</message>");
     }
 
     /**
@@ -448,6 +426,33 @@ public abstract class WebService
                 break;
             default:
                 throw new BadRequestException("Invalid format.");
+        }
+    }
+
+    /**
+     * Returns true if the request wants column headers as well as result rows
+     * @return true if the request declares it wants column headers
+     */
+    public boolean wantsColumnHeaders() {
+        String wantsCols = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0".equals(wantsCols));
+        return !no;
+    }
+
+    /**
+     * Get an enum which represents the column header style (path, friendly, or none)
+     * @return a column header style
+     */
+    public ColumnHeaderStyle getColumnHeaderStyle() {
+        if (wantsColumnHeaders()) {
+            String style = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+            if ("path".equalsIgnoreCase(style)) {
+                return ColumnHeaderStyle.PATH;
+            } else {
+                return ColumnHeaderStyle.FRIENDLY;
+            }
+        } else {
+            return ColumnHeaderStyle.NONE;
         }
     }
 

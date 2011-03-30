@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,25 +49,44 @@ public abstract class JSONResultFormatter extends JSONFormatter
      * @param attributes the attributes passed in from the containing output
      */
     @Override
-    public String formatHeader(Map<String, String> attributes) {
+    public String formatHeader(Map<String, Object> attributes) {
         String superResults = super.formatHeader(attributes);
         StringBuilder sb = new StringBuilder(superResults);
-        for (String key : attributes.keySet()) {
-            if (KEY_CALLBACK.equals(key)) { continue; }
-            sb.append("'" + key + "':");
-            String attr = attributes.get(key);
-            boolean shouldQuoteAttr = attrNeedsQuotes(attr);
-            if (shouldQuoteAttr) {
-                sb.append("'");
+        if (attributes != null) {
+            for (String key : attributes.keySet()) {
+                if (KEY_CALLBACK.equals(key)) { continue; }
+                sb.append("\"" + key + "\":");
+                // Format lists as arrays
+                if (attributes.get(key) instanceof List) {
+                    sb.append("[");
+                    List<Object> attr = (List<Object>) attributes.get(key);
+                    Iterator<Object> it = attr.iterator();
+                    while (it.hasNext()) {
+                        sb.append(quote(it.next()));
+                        if (it.hasNext()) { sb.append(","); }
+                    }
+                    sb.append("]");
+                } else {
+                    // Format as attribute
+                    sb.append(quote(attributes.get(key)));
+                }
+                sb.append(",");
             }
-            sb.append(attr);
-            if (shouldQuoteAttr) {
-                sb.append("'");
-            }
-            sb.append(",");
         }
-        sb.append("'results':[");
+        sb.append("\"results\":[");
         return sb.toString();
+    }
+
+    private String quote(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        String sth = o.toString();
+        if (attrNeedsQuotes(sth)) {
+            return "\"" + sth + "\"";
+        } else {
+            return sth;
+        }
     }
 
     private boolean attrNeedsQuotes(String attr) {
@@ -84,14 +105,14 @@ public abstract class JSONResultFormatter extends JSONFormatter
      * @return The formatted footer string.
      */
     @Override
-    public String formatFooter() {
+    public String formatFooter(String errorMessage, int errorCode) {
         StringBuilder sb = new StringBuilder();
         sb.append("],");
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        sb.append("'" + JSONResultFormatter.KEY_TIME + "':'" + executionTime + "'");
-        sb.append(super.formatFooter());
+        sb.append("\"" + JSONResultFormatter.KEY_TIME + "\":\"" + executionTime + "\"");
+        sb.append(super.formatFooter(errorMessage, errorCode));
         return sb.toString();
     }
 }
