@@ -158,32 +158,39 @@ public class ReportObject
         // are we setup yet?
         if (objectSummaryFields == null) {
             objectSummaryFields = new ArrayList<ReportObjectField>();
+            List<ReportObjectField> objectOtherSummaryFields = new ArrayList<ReportObjectField>();
 
             // traverse all path expressions for the fields that should be used when
             //  summarising the object
             for (FieldConfig fc : getFieldConfigs()) {
+                // get fieldName
+                String fieldName = fc.getFieldExpr();
+
+                // get fieldValue
+                Object fieldValue = getFieldValue(fieldName);
+
+                // get displayer
+                //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
+                String fieldDisplayer = fc.getDisplayer();
+
+                // new ReportObjectField
+                ReportObjectField rof = new ReportObjectField(
+                        objectType,
+                        fieldName,
+                        fieldValue,
+                        fieldDisplayer,
+                        fc.getDoNotTruncate()
+                );
+
                 // show in summary...
                 if (fc.getShowInSummary()) {
-                    // get fieldName
-                    String fieldName = fc.getFieldExpr();
-
-                    // get fieldValue
-                    Object fieldValue = getFieldValue(fieldName);
-
-                    // get displayer
-                    //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
-                    String fieldDisplayer = fc.getDisplayer();
-
-                    // add new ReportObjectField
-                    objectSummaryFields.add(new ReportObjectField(
-                            objectType,
-                            fieldName,
-                            fieldValue,
-                            fieldDisplayer,
-                            fc.getDoNotTruncate()
-                    ));
+                    objectSummaryFields.add(rof);
+                } else { // show in summary also, but not right now...
+                    objectOtherSummaryFields.add(rof);
                 }
             }
+            // append the other fields
+            objectSummaryFields.addAll(objectOtherSummaryFields);
         }
 
         return objectSummaryFields;
