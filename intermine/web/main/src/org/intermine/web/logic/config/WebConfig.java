@@ -121,6 +121,8 @@ public class WebConfig
                 "showLinksToObjects", "showLinksToObjects");
         digester.addSetProperties("webconfig/class/inlinelist/table",
                 "showInHeader", "showInHeader");
+        digester.addSetProperties("webconfig/class/inlinelist/table", "lineLength", "lineLength");
+
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/displayer");
