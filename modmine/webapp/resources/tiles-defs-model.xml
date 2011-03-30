@@ -100,12 +100,10 @@
         controllerUrl="/initSpanUploadOptions.do"/>
 
 <definition name="spanUploadResults.page" extends="layout.template">
-  <put name="body" value="spanUploadResults.tile"/>
+  <put name="body" value="spanUploadResults.jsp"/>
   <put name="pageName" value="spanUploadResults"/>
 </definition>
 
-<definition name="spanUploadResults.tile" path="/spanUploadResults.jsp"
-        controllerUrl="/initSpanUploadResults.do"/>
 <!-- End of Span Upload configuration -->
 
 <!-- Begining of Fly Regulatory Network configuration -->
