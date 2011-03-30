@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -39,6 +40,7 @@ import org.intermine.webservice.server.output.HTMLOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
+import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -280,6 +282,15 @@ public abstract class WebService
             // Don't set errors statuses on jsonp requests, to enable
             // better error checking in the browser.
             response.setStatus(code);
+        } else {
+            // But do set callbacks
+            String callback = getCallback();
+            if (callback == null) {
+                callback = "makeInterMineResultsTable";
+            }
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
+            output.setHeaderAttributes(attributes);
         }
         output.setError(msg, code);
         logger.debug("Set error to : " + msg + "," + code);
