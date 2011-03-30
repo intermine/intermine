@@ -50,7 +50,6 @@
       </tiles:insert>
     </c:if>
   </div>
-  <%--
   <tiles:insert name="/templateList.jsp">
     <tiles:put name="scope" value="global" />
     <tiles:put name="placement" value="im:aspect:${placement}" />
@@ -59,7 +58,6 @@
     <tiles:put name="noTemplatesMsgKey" value="" />
     <tiles:put name="trail" value="${trail}" />
   </tiles:insert>
-  --%>
 
 <%--
   <c:if test="${! empty reportObject}">

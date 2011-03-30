@@ -22,6 +22,7 @@
 
 <c:set var="placementAndField" value="${placement}_${templateName}"/>
 <c:if test="${!empty reportObject}">
+  <c:set var="verbose" value="false"/>
   <c:set var="interMineObject" value="${reportObject.object}"/>
 </c:if>
 
@@ -44,23 +45,25 @@
   <%--results table--%>
   <div id="table_${fn:replace(uid, ":", "_")}">
     <div id="table_${fn:replace(uid, ":", "_")}_int">
+      <c:if test="${verbose}">
         <tiles:insert name="objectDetailsTemplateTable.jsp">
           <tiles:put name="reportObject" beanName="reportObject"/>
           <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
           <tiles:put name="placement" value="${placement}"/>
         </tiles:insert>
+      </c:if>
       <p class='loading'>&nbsp;</p>
     </div>
   </div>
 
   <c:choose>
-    <c:when test="${reportObject != null}">
+    <c:when test="${!verbose && reportObject != null}">
       <script type="text/javascript">
           queueInlineTemplateQuery('${placement}', '${templateName}', '${reportObject.object.id}', '${trail}');
       </script>
     </c:when>
-    <c:when test="${interMineIdBag != null}">
+    <c:when test="${!verbose && interMineIdBag != null}">
       <script type="text/javascript">
           queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}', '${trail}');
       </script>
