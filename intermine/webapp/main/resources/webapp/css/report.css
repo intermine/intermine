@@ -18,6 +18,7 @@ div.templateDetails { height:auto !important; margin-left:auto !important; }
 .body, .disclosure { margin:auto !important; }
 #in-lists { ; }
 div#navtrail { margin:0 !important; }
+p.no-external-links { padding:0 0 0 6px; }
 
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
