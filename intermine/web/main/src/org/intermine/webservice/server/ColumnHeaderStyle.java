@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.output;
+package org.intermine.webservice.server;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -11,17 +11,8 @@ package org.intermine.webservice.server.output;
  */
 
 /**
- * @author Alexis Kalderimis
+ * Enumeration for outer join status.
  *
+ * @author Alex Kalderimis
  */
-public class JSONRowFormatter extends JSONTableFormatter
-{
-
-    /**
-     * Constructor
-     */
-    public JSONRowFormatter() {
-        // empty constructor
-    }
-
-}
+public enum ColumnHeaderStyle { PATH, FRIENDLY, NONE }

@@ -35,12 +35,14 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
+import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
@@ -148,7 +150,7 @@ public class QueryResultService extends WebService
      * @param description A description of this query
      */
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
@@ -162,10 +164,6 @@ public class QueryResultService extends WebService
         }
         int f = getFormat();
         if (f == WebService.JSON_TABLE_FORMAT || f == WebService.JSONP_TABLE_FORMAT) {
-            List<String> columnNames = new ArrayList<String>();
-            for (String viewString : pq.getView()) {
-                columnNames.add("'" + pq.getGeneratedPathDescription(viewString) + "'");
-            }
             String csvUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_CSV);
             String tsvUrl =  getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
             String pageUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW);
@@ -183,7 +181,7 @@ public class QueryResultService extends WebService
             attributes.put("size", String.valueOf(size));
             attributes.put("pagePath", pageUrl);
             attributes.put("mineResultsLink", mineResLink);
-            attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, columnNames.toString());
+            attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, pq.getColumnHeaders());
             attributes.put(JSONTableFormatter.KEY_CURRENT_PAGE, pageUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_CSV_URL, csvUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
@@ -198,8 +196,18 @@ public class QueryResultService extends WebService
             }
             attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
         }
+        if (formatIsFlatFile()) {
+            if (wantsColumnHeaders()) {
+                if (ColumnHeaderStyle.FRIENDLY == getColumnHeaderStyle()) {
+                    attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getColumnHeaders());
+                } else {
+                    attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getView());
+                }
+            }
+        }
         output.setHeaderAttributes(attributes);
     }
+
 
     private void forward(PathQuery pathQuery, String title, String description,
             WebServiceInput input, String mineLink, String layout) {

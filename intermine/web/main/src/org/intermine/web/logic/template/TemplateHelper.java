@@ -82,15 +82,16 @@ public final class TemplateHelper
     }
 
     public static String templateMapToJson(Map<String, TemplateQuery> templates) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("{");
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
-            sb.append("'" + name + "':" + templates.get(name).toJSON());
+            sb.append("\"" + name + "\":" + templates.get(name).toJSON());
             if (keys.hasNext()) {
                 sb.append(",");
             }
         }
+        sb.append("}");
         String result = sb.toString();
         return result;
     }

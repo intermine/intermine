@@ -10,40 +10,16 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-
-
+import org.intermine.web.logic.export.RowFormatter;
+import org.intermine.web.logic.export.RowFormatterImpl;
 
 /**
  * Formats data to tab separated data format.
  * @author Jakub Kulaviak
  **/
-public class TabFormatter extends Formatter
+public class TabFormatter extends FlatFileFormatter
 {
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatHeader(Map<String, String> attributes) {
-        return "";
-    }
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatResult(List<String> resultRow) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < resultRow.size(); i++) {
-            sb.append(resultRow.get(i));
-            if (i != resultRow.size() - 1) {
-                sb.append("\t");
-            }
-        }
-        return sb.toString();
-    }
-
-    /** {@inheritDoc}} **/
-    @Override
-    public String formatFooter() {
-        return "";
-    }
+	public TabFormatter() {
+		setRowFormatter(new RowFormatterImpl("\t", false));
+	}
 }

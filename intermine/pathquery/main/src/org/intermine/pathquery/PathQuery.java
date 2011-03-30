@@ -970,6 +970,20 @@ public class PathQuery implements Cloneable
         }
     }
 
+
+    /**
+     * Returns the paths descriptions for the view.
+     * @param pq
+     * @return A list of column names
+     */
+    public List<String> getColumnHeaders() {
+        List<String> columnNames = new ArrayList<String>();
+        for (String viewString : getView()) {
+            columnNames.add(getGeneratedPathDescription(viewString));
+        }
+        return columnNames;
+    }
+
     // -------------------- Query description control --------------------
     // The two attributes description and title are used for display
     // in various queries contexts.
@@ -2137,6 +2151,14 @@ public class PathQuery implements Cloneable
         return "PathQuery( view: " + view + ", orderBy: " + orderBy + ", constraints: "
             + constraints + ", logic: " + logic + ", outerJoinStatus: " + outerJoinStatus
             + ", descriptions: " + descriptions + ", description: " + description + ")";
+    }
+
+    /**
+     * Convert a PathQuery to XML, using the default value of PathQuery.USERPROFILE_VERSION
+     * @return This query as xml
+     */
+    public synchronized String toXml() {
+    	return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
     /**
