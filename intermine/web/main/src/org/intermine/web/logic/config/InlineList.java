@@ -29,6 +29,7 @@ public class InlineList
     private Set<InlineListObject> listOfObjects;
     private Boolean showInHeader = false;
     private FieldDescriptor fieldDescriptor = null;
+    private Integer lineLength = null;
 
     /**
      * Set FieldDescriptor so we can work with placements
@@ -68,6 +69,24 @@ public class InlineList
      */
     public void setShowInHeader(Boolean showInHeader) {
         this.showInHeader = showInHeader;
+    }
+
+    /**
+     * Sets the amount of entries to show based on their total length
+     * @see the number is approximate as we do not break inside the text
+     * @param lineLength total character length (spaces, commas included!)
+     */
+    public void setLineLength(Integer lineLength) {
+        this.lineLength = lineLength;
+    }
+
+    /**
+     *
+     * @see our JavaScript (jQuery) expects non set values to be "0"
+     * @return total character length (spaces, commas included) to show
+     */
+    public Integer getLineLength() {
+        return (lineLength != null) ? lineLength : 0;
     }
 
     /**
