@@ -7,7 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <%--in order to filter out chars from strings --%>
 
 
-<!-- objectDetailsRefsCols.jsp -->
+<!-- reportRefsCols.jsp -->
 
 <html:xhtml />
 
@@ -125,7 +125,7 @@
           <%-- ############# --%>
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
-            <tiles:insert page="/objectDetailsCollectionTable.jsp">
+            <tiles:insert page="/reportCollectionTable.jsp">
               <tiles:put name="collection" beanName="collection" />
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
@@ -209,4 +209,4 @@ function loadInView() {
 
 </script>
 
-<!-- /objectDetailsRefsCols.jsp -->
+<!-- /reportRefsCols.jsp -->

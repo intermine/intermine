@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-	prefix="str"%>
+  prefix="str"%>
 
 
 <tiles:importAttribute />
@@ -16,16 +16,16 @@
 
 <%--
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${subs}" var="item" varStatus="status">
-		<c:if test="${status.count le 5">
-			<tr>
-				<td><html:link
-					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.value.id}">
+  <c:forEach items="${subs}" var="item" varStatus="status">
+    <c:if test="${status.count le 5">
+      <tr>
+        <td><html:link
+          href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${item.value.id}">
  ${item.value.title}
     </html:link>
-			</tr>
-		</c:if>
-	</c:forEach>
+      </tr>
+    </c:if>
+  </c:forEach>
 </table>
 </div>
 
@@ -42,7 +42,7 @@ dateStyle="short"
     <c:if test="${item.key le LIMIT}">
       <tr>
         <td><html:link
-          href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.value.id}">
+          href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${item.value.id}">
  ${item.value.title}
     </html:link>
     </td>
@@ -75,7 +75,7 @@ dateStyle="short"
   </node>
   </query>
 </im:querylink>
-		</td>
+    </td>
 
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
@@ -101,7 +101,7 @@ dateStyle="short"
 
 <br>
 </td>
-	</tr></table>
+  </tr></table>
 
 
 

@@ -177,8 +177,8 @@
 
 
   <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
-  <definition name="objectDetailsTemplateTable.tile" path="/objectDetailsTemplateTable.jsp"
-              controllerUrl="/initObjectDetailsTemplateTable.do"/>
+  <definition name="reportTemplateTable.tile" path="/reportTemplateTable.jsp"
+              controllerUrl="/initReportTemplateTable.do"/>
   <definition name="queryBuilder.tile" path="/queryBuilder.jsp" controllerUrl="/initQueryBuilder.do"/>
   <definition name="queryBuilderConstraint.tile" path="/queryBuilderConstraint.jsp" controllerUrl="/initQueryBuilderConstraint.do"/>
   <definition name="queryBuilderSummary.tile" path="/queryBuilderSummary.jsp" controllerUrl="/initQueryBuilderSummary.do"/>
@@ -188,7 +188,7 @@
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition>
-  <definition name="objectDetailsBags.tile" path="/objectDetailsBags.jsp" controllerUrl="/objectDetailsBags.do"/>
+  <definition name="reportBags.tile" path="/reportBags.jsp" controllerUrl="/reportBags.do"/>
   <definition name="classChooser.tile" path="/queryClassSelect.jsp" controllerUrl="/initClassChooser.do"/>
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
@@ -224,7 +224,7 @@
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="bagUploadConfirmIssue.tile" path="/bagUploadConfirmIssue.jsp" controllerUrl="/initBagUploadConfirmIssue.do"/>
-  <definition name="objectDetailsAspect.tile" path="/objectDetailsAspect.jsp" controllerUrl="/initObjectDetailsAspect.do"/>
+  <definition name="reportAspect.tile" path="/reportAspect.jsp" controllerUrl="/initReportAspect.do"/>
   <definition name="setFavourite.tile" path="setFavourite.jsp" controllerUrl="/initSetFavourite.do" />
   <definition name="precomputeTemplate.tile" path="precompute.jsp"  />
   <definition name="summariseTemplate.tile" path="summarise.jsp" />
@@ -242,7 +242,7 @@
   <definition name="paging.tile" path="paging.jsp" />
   <definition name="widget.tile" path="widget.jsp" />
   <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
-  <definition name="objectDetailsInList.tile" path="objectDetailsInList.jsp" controllerUrl="/initObjectDetailsInList.do"/>
+  <definition name="reportInList.tile" path="reportInList.jsp" controllerUrl="/initReportInList.do"/>
   <definition name="news.tile" path="news.jsp" />
   <definition name="exportOptions.tile" path="/exportOptions.jsp" controllerUrl="/initExportOptions.do"/>
   <definition name="addColumn.tile" path="/addColumn.jsp"/>

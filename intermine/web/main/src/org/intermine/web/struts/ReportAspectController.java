@@ -23,10 +23,10 @@ import org.intermine.api.search.Scope;
 import org.intermine.web.logic.results.ReportObject;
 
 /**
- * Controller for the objectDetailsAspect tile.
+ * Controller for the reportAspect tile.
  * @author Thomas Riley
  */
-public class ObjectDetailsAspectController extends TilesAction
+public class ReportAspectController extends TilesAction
 {
     /**
      * {@inheritDoc}

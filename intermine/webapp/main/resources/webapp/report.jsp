@@ -74,7 +74,7 @@
     <%-- header Inline Lists --%>
     <c:if test="${object.hasHeaderInlineLists}">
       <div class="box">
-        <tiles:insert page="/objectDetailsHeaderInlineLists.jsp">
+        <tiles:insert page="/reportHeaderInlineLists.jsp">
           <tiles:put name="object" beanName="object" />
         </tiles:insert>
       </div>
@@ -88,10 +88,10 @@
 <c:if test="${categories != null}">
   <div id="menu-target">&nbsp;</div>
   <div id="toc-menu-wrap">
-    <tiles:insert name="objectDetailsMenu.jsp" />
+    <tiles:insert name="reportMenu.jsp" />
   </div>
   <div id="fixed-menu">
-    <tiles:insert name="objectDetailsMenu.jsp" />
+    <tiles:insert name="reportMenu.jsp" />
   </div>
   <script type="text/javascript">
     jQuery('#fixed-menu').hide(); // hide for IE7
@@ -114,8 +114,8 @@
 <div class="container_12">
 
  <c:set value="${fn:length(CATEGORIES)}" var="aspectCount" /> <c:set
-  var="templateIdPrefix" value="objectDetailsTemplate${objectType}" /> <c:set
-  var="miscId" value="objectDetailsMisc${objectType}" /> <%-- All other references and collections --%>
+  var="templateIdPrefix" value="reportTemplate${objectType}" /> <c:set
+  var="miscId" value="reportMisc${objectType}" /> <%-- All other references and collections --%>
 <script type="text/javascript">
       <!--//<![CDATA[
         var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
@@ -125,7 +125,7 @@
 
 <div style="float:right;" class="box grid_3">
   <div id="in-lists">
-    <tiles:insert name="objectDetailsInList.tile">
+    <tiles:insert name="reportInList.tile">
       <tiles:put name="object" beanName="object"/>
     </tiles:insert>
   </div>
@@ -138,20 +138,20 @@
 </div>
 
 <div class="box grid_9">
-  <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
+  <tiles:insert page="/reportCustomDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
   </tiles:insert>
 <%--
   <tiles:insert
-    page="/objectDetailsDisplayers.jsp">
+    page="/reportDisplayers.jsp">
     <tiles:put name="placement" value="" />
     <tiles:put name="reportObject" beanName="object" />
     <tiles:put name="heading" value="true" />
   </tiles:insert>
 --%>
   <c:forEach items="${categories}" var="aspect" varStatus="status">
-    <tiles:insert name="objectDetailsAspect.tile">
+    <tiles:insert name="reportAspect.tile">
     <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
     <tiles:put name="placement" value="im:aspect:${aspect}" />
     <tiles:put name="reportObject" beanName="object" />
@@ -167,11 +167,11 @@
       <a name="other"><h2>Other</h2></a>
     </c:if>
   </c:if>
-  <tiles:insert page="/objectDetailsUnplacedInlineLists.jsp">
+  <tiles:insert page="/reportUnplacedInlineLists.jsp">
     <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
   </tiles:insert>
 
-  <tiles:insert page="/objectDetailsRefsCols.jsp">
+  <tiles:insert page="/reportRefsCols.jsp">
     <tiles:put name="object" beanName="object" />
     <tiles:put name="placement" value="im:aspect:Miscellaneous" />
   </tiles:insert>

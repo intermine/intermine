@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
+import org.intermine.api.InterMineAPI;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStore;
@@ -29,9 +26,8 @@ import org.intermine.web.logic.config.WebConfig;
 public class ReportObjectTest extends TestCase
 {
 
-    private Model model;
     private WebConfig webConfig;
-    private Map<String, List<FieldDescriptor>> classKeys;
+    private InterMineAPI imAPI;
 
     private Company company;
     private Address address;
@@ -50,10 +46,6 @@ public class ReportObjectTest extends TestCase
         address.setAddress("Space");
 
         company.setAddress(address);
-
-        // Model
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        model = os.getModel();
 
         // WebConfig
         webConfig = new WebConfig();
@@ -78,14 +70,19 @@ public class ReportObjectTest extends TestCase
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+
+        // ObjectStore
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+
+        // InterMine API
+        imAPI = new InterMineAPI(os, null, null, null, null, null, null);
     }
 
     @SuppressWarnings("unchecked")
     public void testFieldConfigsNoConfig() throws Exception {
         // setup the object we are testing
         WebConfig newWebConfig = new WebConfig();
-        ReportObject reportObject = new ReportObject(company, model, newWebConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, newWebConfig, imAPI);
 
         // test
         assertEquals(new ArrayList(), reportObject.getFieldConfigs());
@@ -94,7 +91,7 @@ public class ReportObjectTest extends TestCase
     @SuppressWarnings("unchecked")
     public void testGetFieldConfigs() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, model, webConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         List<FieldConfig> fieldConfigs = new ArrayList<FieldConfig>();
         FieldConfig df1 = new FieldConfig();
@@ -114,7 +111,7 @@ public class ReportObjectTest extends TestCase
 
     public void testGetFieldValue() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, model, webConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         // test
         assertEquals("Weyland Yutani", reportObject.getFieldValue("name"));
@@ -140,7 +137,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df3);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, model, webConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         // test
         assertEquals(2, reportObject.getObjectSummaryFields().size());
@@ -158,7 +155,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, model, webConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         // test
         assertEquals(true, reportObject.getObjectSummaryFields().get(0).getValueHasDisplayer());
@@ -176,7 +173,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, model, webConfig, classKeys);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         // test
         assertEquals("Company.name", reportObject.getObjectSummaryFields().get(0).getPathString());

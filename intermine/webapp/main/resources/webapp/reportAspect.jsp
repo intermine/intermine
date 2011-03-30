@@ -15,7 +15,7 @@
 <tiles:importAttribute name="trail" />
 <tiles:importAttribute name="opened" ignore="true" />
 
-<!-- objectDetailsAspect.jsp -->
+<!-- reportAspect.jsp -->
 
 <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}" scope="request" />
 
@@ -32,19 +32,19 @@
 
   <a name="<c:out value="${fn:toLowerCase(aspect)}"/>"><h2>${aspect}</h2></a>
 <c:if test="${!empty reportObject}">
-    <tiles:insert page="/objectDetailsCustomDisplayers.jsp">
+    <tiles:insert page="/reportCustomDisplayers.jsp">
       <tiles:put name="placement" value="${aspect}" />
       <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
 
-    <tiles:insert page="/objectDetailsNormalInlineLists.jsp">
+    <tiles:insert page="/reportNormalInlineLists.jsp">
       <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
       <tiles:put name="placement" value="${placement}" />
     </tiles:insert>
   </c:if>
   <div>
     <c:if test="${!empty reportObject}">
-      <tiles:insert page="/objectDetailsRefsCols.jsp">
+      <tiles:insert page="/reportRefsCols.jsp">
         <tiles:put name="object" beanName="reportObject" />
         <tiles:put name="placement" value="${placement}" />
       </tiles:insert>
@@ -61,11 +61,11 @@
 
 <%--
   <c:if test="${! empty reportObject}">
-    <tiles:insert page="/objectDetailsDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="${placement}" />
       <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
   </c:if>
 --%>
 </c:if>
-<!-- /objectDetailsAspect.jsp -->
+<!-- /reportAspect.jsp -->

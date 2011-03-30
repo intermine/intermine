@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 
-<!-- objectDetailsInList.jsp -->
+<!-- reportInList.jsp -->
 
 <tiles:importAttribute name="object" ignore="false"/>
 
@@ -55,4 +55,4 @@
 </div>
 <br />
 
-<!-- /objectDetailsInList.jsp -->
+<!-- /reportInList.jsp -->
