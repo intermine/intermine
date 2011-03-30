@@ -34,7 +34,7 @@ import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Controller for an inline table created by running a template on an object details page.
+ * Controller for an inline table created by running a template on a report page.
  * @author Kim Rutherford
  * @author Richard Smith
  */
@@ -45,6 +45,7 @@ public class ObjectDetailsTemplateController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("null")
     @Override
     public ActionForward execute(ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
