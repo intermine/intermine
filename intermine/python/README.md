@@ -51,7 +51,7 @@ The source code can be downloaded from a variety of places:
 Running the Tests:
 ------------------
 
-If you would like ot run the test suite, you can do so by executing
+If you would like to run the test suite, you can do so by executing
 the following command: (from the source directory)
 
   python -m intermine.test.test
@@ -73,7 +73,7 @@ Extensive documentation is available by using the "pydoc" command, eg:
 Also see:
 
 * Documentation on PyPi: http://packages.python.org/intermine/
-* Documentation at InterMine: http://www.intermine.org/wiki/PythonClient
+* Documentation at InterMine: http://www.flymine.org/download/python-docs http://www.intermine.org/wiki/PythonClient
 
 License:
 --------
