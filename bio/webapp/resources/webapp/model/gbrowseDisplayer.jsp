@@ -4,12 +4,12 @@
 
 <!-- gbrowseDisplayer.jsp -->
 
-<div class="feature">
-
-<h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
-
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
+
+  <div class="feature">
+
+  <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
 
@@ -74,7 +74,9 @@
     </c:if>
   </html:link>
 </div>
-</c:if>
+
 <br/>
 </div>
+
+</c:if>
 <!-- /gbrowseDisplayer.jsp -->
