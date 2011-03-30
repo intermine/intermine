@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- objectDetailsDisplayers.jsp -->
+<!-- reportDisplayers.jsp -->
 
 <html:xhtml/>
 
@@ -35,4 +35,4 @@
   </c:if>
 </c:forEach>
 
-<!-- /objectDetailsDisplayers.jsp -->
+<!-- /reportDisplayers.jsp -->

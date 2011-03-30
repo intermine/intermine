@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- objectDetailsCollectionTable -->
+<!-- reportCollectionTable -->
 
 <% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
   <tiles:importAttribute name="collection"/>
@@ -89,4 +89,4 @@
     <c:otherwise>InlineResultsTable.java is failing you</c:otherwise>
     </c:choose>
 
-<!-- /objectDetailsCollectionTable -->
+<!-- /reportCollectionTable -->

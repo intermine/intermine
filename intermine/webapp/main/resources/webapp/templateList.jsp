@@ -20,7 +20,7 @@
   <c:set var="interMineObject" value="${reportObject.object}"/>
 </c:if>
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
-  <tiles:insert name="objectDetailsTemplate.jsp">
+  <tiles:insert name="reportTemplate.jsp">
     <tiles:put name="reportObject" beanName="reportObject"/>
     <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
     <tiles:put name="templateQuery" beanName="templateQuery"/>

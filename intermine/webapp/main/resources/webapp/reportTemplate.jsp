@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- objectDetailsTemplate.jsp -->
+<!-- reportTemplate.jsp -->
 
 <html:xhtml/>
 
@@ -40,13 +40,13 @@
     <p class="description theme-1-color theme-5-background">${templateQuery.description}</p>
   </div>
 
- <%--the "N results" bit is located at the bottom of objectDetailsTemplateTable.jsp for some reason--%>
+ <%--the "N results" bit is located at the bottom of reportTemplateTable.jsp for some reason--%>
 
   <%--results table--%>
   <div id="table_${fn:replace(uid, ":", "_")}">
     <div id="table_${fn:replace(uid, ":", "_")}_int">
       <c:if test="${verbose}">
-        <tiles:insert name="objectDetailsTemplateTable.jsp">
+        <tiles:insert name="reportTemplateTable.jsp">
           <tiles:put name="reportObject" beanName="reportObject"/>
           <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
@@ -71,4 +71,4 @@
   </c:choose>
 
 </div>
-<!-- /objectDetailsTemplate.jsp -->
+<!-- /reportTemplate.jsp -->

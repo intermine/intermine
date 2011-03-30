@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.flatouterjoins.MultiRow;
@@ -29,7 +28,6 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

@@ -38,9 +38,9 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  * @author Richard Smith
  */
-public class ObjectDetailsTemplateController extends TilesAction
+public class ReportTemplateController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(ObjectDetailsTemplateController.class);
+    private static final Logger LOG = Logger.getLogger(ReportTemplateController.class);
 
     /**
      * {@inheritDoc}
@@ -48,10 +48,10 @@ public class ObjectDetailsTemplateController extends TilesAction
     @SuppressWarnings("null")
     @Override
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

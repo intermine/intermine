@@ -18,8 +18,8 @@
     <th>Submissions</th>
   </tr>
 <c:forEach items="${experiments}" var="item">
- <tr><td> 
-    <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
+ <tr><td>
+    <html:link  href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
  <td>${item.key.affiliation}
@@ -29,20 +29,20 @@
           <c:set var="pName" value="${proj.value.name}" />
           <c:set var="pId" value="${proj.value.id}" />
         </c:if>
-      </c:forEach> 
-     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${pId}">
+      </c:forEach>
+     <html:link  href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pId}">
  ${pName}
     </html:link>
- 
- 
+
+
  <td>
  <c:forEach items="${item.value}" var="sub">
 
-    <html:link  href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}">
+    <html:link  href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}">
  ${sub.title}
     </html:link>
   <br>
-</c:forEach> 
+</c:forEach>
 </c:forEach>
 
 
@@ -55,11 +55,11 @@ ${experiments['key']}
  <tr><td> ${item.key.name}<td>${item.key.affiliation}<td>${item.value.title}
 
   --%>
-  
+
 </tr>
 </table>
 
- 
+
 <%--
 <c:forEach items="${experiments}" var="item">
   <c:if test="${item.identifier == 'E-FLYC-6'}">

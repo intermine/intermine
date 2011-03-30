@@ -132,9 +132,9 @@ public class ModifyDetails extends DispatchAction
             return null;
         }
 
-        String fieldName = request.getParameter("field");
+        //String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String placement = request.getParameter("placement");
+        //String placement = request.getParameter("placement");
         ReportObject object = getReportObject(session, request.getParameter("id"));
 
         if (object != null) {
@@ -157,11 +157,11 @@ public class ModifyDetails extends DispatchAction
     public ActionForward unverbosify(ActionMapping mapping,
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        HttpSession session = request.getSession();
-        String fieldName = request.getParameter("field");
+        //HttpSession session = request.getSession();
+        //String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String placement = request.getParameter("placement");
-        ReportObject object = getReportObject(session, request.getParameter("id"));
+        //String placement = request.getParameter("placement");
+        //ReportObject object = getReportObject(session, request.getParameter("id"));
 
         //object.setVerbosity(placement + "_" + fieldName, false);
 
@@ -182,11 +182,11 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String placement = request.getParameter("placement");
+        //String placement = request.getParameter("placement");
         ReportObject object = getReportObject(session, request.getParameter("id"));
         Object collection = object.getRefsAndCollections().get(fieldName);
 
-        String key = placement + "_" + fieldName;
+        //String key = placement + "_" + fieldName;
 
         //object.setVerbosity(key, !object.isVerbose(key));
 
@@ -196,7 +196,7 @@ public class ModifyDetails extends DispatchAction
         request.setAttribute("fieldName", fieldName);
 
         //if (object.isVerbose(key)) {
-        //    return mapping.findForward("objectDetailsCollectionTable");
+        //    return mapping.findForward("reportCollectionTable");
         //}
         return null;
     }
@@ -235,9 +235,9 @@ public class ModifyDetails extends DispatchAction
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
 
-            new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+            new ReportTemplateController().execute(cc, mapping, form, request, response);
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
-            return mapping.findForward("objectDetailsTemplateTable");
+            return mapping.findForward("reportTemplateTable");
         }
         BagManager bagManager = im.getBagManager();
 
@@ -246,9 +246,9 @@ public class ModifyDetails extends DispatchAction
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));
 
-        new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+        new ReportTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
-        return mapping.findForward("objectDetailsTemplateTable");
+        return mapping.findForward("reportTemplateTable");
     }
 
     /**

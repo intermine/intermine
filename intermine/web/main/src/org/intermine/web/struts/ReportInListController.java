@@ -28,7 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.results.ObjectDetailsInList;
+import org.intermine.web.logic.results.ReportInList;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -36,7 +36,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author "Xavier Watkins"
  *
  */
-public class ObjectDetailsInListController extends TilesAction
+public class ReportInListController extends TilesAction
 {
    /**
      * {@inheritDoc}
@@ -54,7 +54,7 @@ public class ObjectDetailsInListController extends TilesAction
         Collection<InterMineBag> bagsWithId =
             bagManager.getUserOrGlobalBagsContainingId(profile, object.getId());
         // wrap around
-        ObjectDetailsInList odil = new ObjectDetailsInList(bagsWithId);
+        ReportInList odil = new ReportInList(bagsWithId);
 
         request.setAttribute("bagsWithId", odil);
 

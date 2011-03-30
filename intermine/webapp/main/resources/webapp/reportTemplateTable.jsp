@@ -7,7 +7,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- objectDetailsTemplateTable.jsp -->
+<!-- reportTemplateTable.jsp -->
 
 <% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
   <tiles:importAttribute/>
@@ -72,4 +72,4 @@
 </c:choose>
 
 
-<!-- /objectDetailsTemplateTable.jsp -->
+<!-- /reportTemplateTable.jsp -->

@@ -19,7 +19,7 @@ import org.intermine.api.profile.InterMineBag;
  * @author radek
  *
  */
-public class ObjectDetailsInList
+public class ReportInList
 {
 
     private Collection<InterMineBag> bagsWithId = null;
@@ -28,7 +28,7 @@ public class ObjectDetailsInList
      * Setup
      * @param bagsWithId collection
      */
-    public ObjectDetailsInList(Collection<InterMineBag> bagsWithId) {
+    public ReportInList(Collection<InterMineBag> bagsWithId) {
         this.bagsWithId = bagsWithId;
     }
 
