@@ -67,13 +67,20 @@
     <c:set var="type" value="${type}+CDSs"/>
     <c:set var="label" value="${label}-CDSs"/>
   </c:if>
-<div style="padding: 20px">
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
-    <c:if test="${cld.unqualifiedName != 'Chromosome'}">
-        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=600;b=1" title="GBrowse"/>
-    </c:if>
-  </html:link>
-</div>
+  <c:choose>
+  <c:when test="${ WEB_PROPERTIES['gbrowse.database.source'] != null }">
+    <div style="padding: 20px">
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
+        <c:if test="${cld.unqualifiedName != 'Chromosome'}">
+            <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=600;b=1" title="GBrowse"/>
+        </c:if>
+      </html:link>
+    </div>
+  </c:when>
+  <c:otherwise>
+    <p class="gbrowse-not-configured"><i>GBrowse is not configured in web.properties</i></p>
+  </c:otherwise>
+  </c:choose>
 
 <br/>
 </div>
