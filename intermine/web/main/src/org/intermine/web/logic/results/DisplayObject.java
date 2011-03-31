@@ -58,7 +58,10 @@ import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
  *
  * @author Mark Woodbridge
  * @author Radek Stepan
+ *
+ * @deprecated ReportObject replaces
  */
+@java.lang.Deprecated
 public class DisplayObject
 {
     private InterMineObject object;
@@ -514,7 +517,7 @@ public class DisplayObject
 
                             DisplayReference newReference =
                                 new DisplayReference(proxy, ref, webConfig,
-                                    webProperties, classKeys);
+                                    classKeys);
                             references.put(fd.getName(), newReference);
                         } else if (fd.isCollection()) {
                             Object fieldValue = object.getFieldValue(fd.getName());
@@ -526,7 +529,7 @@ public class DisplayObject
                             DisplayCollection newCollection =
                                 new DisplayCollection((Collection) fieldValue,
                                         (CollectionDescriptor) fd, webConfig, webProperties,
-                                        classKeys, listOfTypes);
+                                        listOfTypes);
                             //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
                             //}
