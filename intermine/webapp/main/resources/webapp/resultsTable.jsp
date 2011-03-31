@@ -13,6 +13,7 @@
 <tiles:importAttribute name="bagName" ignore="true"/>
 <tiles:importAttribute name="inlineTable" ignore="true"/>
 <tiles:importAttribute name="highlightId" ignore="true"/>
+<tiles:importAttribute name="tableIdentifier" ignore="true"/>
 
 <script type="text/javascript">
   function changePageSize() {
@@ -31,6 +32,7 @@
 <table class="results" cellspacing="0" width="100%">
 
   <%-- The headers --%>
+  <c:if test="${pagedResults.exactSize > 0}">
   <thead>
   <tr>
     <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
@@ -122,6 +124,7 @@
     </c:forEach>
   </tr>
   </thead>
+  </c:if>
 
   <%-- The data --%>
 
@@ -215,6 +218,30 @@
         </c:forEach>
     </c:forEach>
     </tbody>
+
+    <c:if test="${tableIdentifier != null}">
+      <script type=text/javascript>
+        // table with some results, hide it
+        jQuery('#${tableIdentifier} table').hide();
+        // provide a toggler instead of the "show all link"
+        jQuery('#${tableIdentifier} p.in_table a').hide();
+
+        var onclick = "jQuery('#${tableIdentifier} table').show();" +
+        "jQuery('#${tableIdentifier} p.in_table a').show();" +
+        "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
+        if (${pagedResults.exactSize} > 1) {
+          // nasty hardcode
+          if (${pagedResults.exactSize} < 10) {
+            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show '+${pagedResults.exactSize}+' results</a>'
+          } else {
+            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show first 10 results (out of '+${pagedResults.exactSize}+')</a>'
+          }
+        } else {
+          var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show 1 result</a>'
+        }
+        jQuery('#${tableIdentifier} p.in_table').append(toggle);
+      </script>
+    </c:if>
   </c:if>
 
   <div>
