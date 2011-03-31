@@ -102,11 +102,9 @@
 <!-- End of Cytoscape Web configuration -->
 
 <!-- Begining of Span Upload configuration -->
-<action path="/spanUploadOptions" forward="spanUploadOptions.page">
-</action>
+<action path="/spanUploadOptions" forward="spanUploadOptions.page" />
 
-<action path="/spanUploadResults" forward="spanUploadResults.page">
-</action>
+<action path="/spanUploadResults" forward="spanUploadResults.page" />
 
 <action path="/initSpanUploadOptions"
   type="org.modmine.web.SpanUploadOptionsController" />

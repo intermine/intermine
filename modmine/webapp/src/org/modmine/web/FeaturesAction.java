@@ -10,14 +10,13 @@ package org.modmine.web;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +31,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.metadata.Model;
@@ -51,7 +51,6 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.TableExportForm;
-import org.modmine.web.model.Span;
 import org.modmine.web.model.SpanQueryResultRow;
 import org.modmine.web.model.SpanUploadConstraint;
 
@@ -274,8 +273,8 @@ public class FeaturesAction extends InterMineAction
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
             @SuppressWarnings("unchecked")
-            Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
-                 (Map<String, Map<Span, List<SpanQueryResultRow>>>) request
+            Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
+                 (Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>>) request
                                 .getSession().getAttribute("spanOverlapFullResultMap");
 
             @SuppressWarnings("unchecked")
@@ -500,10 +499,10 @@ public class FeaturesAction extends InterMineAction
      * @return comma separated feature pids as a string
      */
     private String getSpanOverlapFeatures(String spanUUIDString, String criteria,
-            Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap) {
+            Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap) {
 
         Set<String> featureSet = new HashSet<String>();
-        Map<Span, List<SpanQueryResultRow>> featureMap = spanOverlapFullResultMap
+        Map<GenomicRegion, List<SpanQueryResultRow>> featureMap = spanOverlapFullResultMap
                 .get(spanUUIDString);
 
         if ("all".equals(criteria)) {
@@ -516,7 +515,7 @@ public class FeaturesAction extends InterMineAction
             }
 
         } else {
-            Span spanToExport = new Span(criteria);
+            GenomicRegion spanToExport = new GenomicRegion(criteria);
             for (SpanQueryResultRow r : featureMap.get(spanToExport)) {
                 featureSet.add(r.getFeaturePID());
             }
