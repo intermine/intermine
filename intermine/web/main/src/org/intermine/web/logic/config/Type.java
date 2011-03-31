@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
@@ -52,10 +53,11 @@ public class Type
     private HeaderConfig headerConfig = null;
 
     /**
-     * Set the fully-qualified class name for this Type
+     * Set the unqualified class name for this Type (from fully-qualified)
      * @param className the name of the Type
      */
     public void setClassName(String className) {
+        //this.className = TypeUtil.unqualifiedName(className);
         this.className = className;
     }
 

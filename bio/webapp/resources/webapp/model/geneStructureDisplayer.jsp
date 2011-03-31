@@ -103,7 +103,7 @@
                 <tiles:put name="feature" beanName="fivePrimeUTR"/>
               </tiles:insert>
             </c:when>
-            <c:otherwise><td colspan="2"></td></c:otherwise>
+            <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
           <%--</td>--%>
           <%--<td>--%>
@@ -114,7 +114,7 @@
                 <tiles:put name="feature" beanName="threePrimeUTR"/>
               </tiles:insert>
             </c:when>
-            <c:otherwise><td colspan="2"></td></c:otherwise>
+            <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
           <%--</td>--%>
           <%--<td>--%>
@@ -126,7 +126,7 @@
                 </tiles:insert>
               </c:forEach>
             </c:when>
-            <c:otherwise><td colspan="2"></td></c:otherwise>
+            <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
           <%--</td>--%>
 
