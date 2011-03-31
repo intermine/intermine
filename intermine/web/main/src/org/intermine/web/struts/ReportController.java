@@ -90,45 +90,47 @@ public class ReportController extends InterMineAction
             Map<String, List<InlineList>> placedInlineLists = new TreeMap<String, List<InlineList>>();
             // traverse all unplaced (non-header) InlineLists
             List<InlineList> unplacedInlineLists = reportObject.getNormalInlineLists();
-            for (Integer i = 0; i < unplacedInlineLists.size(); i++) {
-                InlineList list = unplacedInlineLists.get(i);
-                // Descriptor, assume not null
-                FieldDescriptor fd = list.getDescriptor();
-                // type
-                String taggedType = null;
-                if (fd.isCollection()) {
-                    taggedType = "collection";
-                } else if (fd.isReference()) {
-                    taggedType = "reference";
-                } else if (fd.isAttribute()) {
-                    taggedType = "attribute";
-                } else {
-                    // OMG, now what?
-                }
-                List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
-                        + "." + fd.getName(), taggedType, superuser);
-                for (Tag tag : tags) {
-                    String tagName = tag.getTagName();
-                    // aspect much?
-                    if (AspectTagUtil.isAspectTag(tagName)) {
-                        List<InlineList> l = null;
-                        if (placedInlineLists.containsKey(tagName)) {
-                            // we already have aspect like this...
-                            l = placedInlineLists.get(tagName);
-                        } else {
-                            // we do not
-                            l = new ArrayList<InlineList>();
+            if (unplacedInlineLists != null) {
+                for (Integer i = 0; i < unplacedInlineLists.size(); i++) {
+                    InlineList list = unplacedInlineLists.get(i);
+                    // Descriptor, assume not null
+                    FieldDescriptor fd = list.getDescriptor();
+                    // type
+                    String taggedType = null;
+                    if (fd.isCollection()) {
+                        taggedType = "collection";
+                    } else if (fd.isReference()) {
+                        taggedType = "reference";
+                    } else if (fd.isAttribute()) {
+                        taggedType = "attribute";
+                    } else {
+                        // OMG, now what?
+                    }
+                    List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                            + "." + fd.getName(), taggedType, superuser);
+                    for (Tag tag : tags) {
+                        String tagName = tag.getTagName();
+                        // aspect much?
+                        if (AspectTagUtil.isAspectTag(tagName)) {
+                            List<InlineList> l = null;
+                            if (placedInlineLists.containsKey(tagName)) {
+                                // we already have aspect like this...
+                                l = placedInlineLists.get(tagName);
+                            } else {
+                                // we do not
+                                l = new ArrayList<InlineList>();
+                            }
+                            // save, save, save!
+                            l.add(list);
+                            placedInlineLists.put(tagName, l);
+                            // remove!
+                            unplacedInlineLists.remove(list);
                         }
-                        // save, save, save!
-                        l.add(list);
-                        placedInlineLists.put(tagName, l);
-                        // remove!
-                        unplacedInlineLists.remove(list);
                     }
                 }
+                session.setAttribute("mapOfInlineLists", placedInlineLists);
+                session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
             }
-            session.setAttribute("mapOfInlineLists", placedInlineLists);
-            session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
             Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
                 Map<String, DisplayField>>();

@@ -28,7 +28,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -514,8 +513,8 @@ public class ReportObject
         }
 
         // make a combined Map
-        refsAndCollections.putAll(references);
-        refsAndCollections.putAll(collections);
+        if (references != null) refsAndCollections.putAll(references);
+        if (collections != null) refsAndCollections.putAll(collections);
     }
 
     /**
