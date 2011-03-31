@@ -103,14 +103,13 @@ public class BagUploadConfirmIssueController extends TilesAction
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Map webPropertiesMap = SessionMethods.getWebProperties(servletContext);
-        Map classKeys = im.getClassKeys();
 
         // create a BagUploadConfirmInlineResultsTable which is a special case of InlineResultsTable
         //  that uses BagUploadConfirmInlineResultsTableRow objects which is a special case of
         //  InlineResultsTableRow containing methods to set/get identifier & rowspan
         BagUploadConfirmInlineResultsTable table =
             new BagUploadConfirmInlineResultsTable(objectList, model, webConfig, webPropertiesMap,
-                    classKeys, -1, true, null);
+                    -1, true, null);
 
         // map additional matches onto the table
         table = mapResultTableOnAdditionalMatches(table, identifierResultElementMap);

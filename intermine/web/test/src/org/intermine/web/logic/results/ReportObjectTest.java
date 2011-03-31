@@ -2,13 +2,19 @@ package org.intermine.web.logic.results;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStore;
@@ -177,6 +183,57 @@ public class ReportObjectTest extends TestCase
 
         // test
         assertEquals("Company.name", reportObject.getObjectSummaryFields().get(0).getPathString());
+    }
+
+    /**
+     * Test our References and Collections from a ReportObject
+     * @throws Exception
+     */
+    public void testGetRefsAndCols() throws Exception {
+        // setup the object we are testing
+        webConfig = new WebConfig();
+
+        Type type  = new Type();
+        type.setClassName("org.intermine.model.testmodel.Company");
+        FieldConfig df1 = new FieldConfig();
+        df1.setFieldExpr("name");
+        type.addFieldConfig(df1);
+        webConfig.addType(type);
+
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+
+        // build the map of DisplayField(s) that we want to see in the result
+        Map<String, DisplayField> m = new HashMap<String, DisplayField>();
+        for (FieldDescriptor fd : imAPI.getModel().getClassDescriptorByName(
+                "org.intermine.model.testmodel.Company").getAllFieldDescriptors()) {
+            // Reference
+            if (fd.isReference()) {
+                ReferenceDescriptor ref = (ReferenceDescriptor) fd;
+                DisplayReference dr = new DisplayReference(null, ref, webConfig, imAPI.getClassKeys());
+                m.put(fd.getName(), dr);
+            }
+            // Collection
+            if (fd.isCollection()) {
+                Object fieldValue = company.getFieldValue(fd.getName());
+                DisplayCollection dc = new DisplayCollection((Collection<?>) fieldValue,
+                        (CollectionDescriptor) fd, webConfig, imAPI.getClassKeys(), null);
+                m.put(fd.getName(), dc);
+            }
+        }
+
+        // this is what we got
+        Map<String, DisplayField> r = reportObject.getRefsAndCollections();
+
+        // size match
+        assertEquals(m.size(), r.size());
+
+        // traverse what we got against what we should see
+        for (String key : r.keySet()) {
+            // keys match
+            assertTrue(m.containsKey(key));
+            // type match
+            assertEquals(r.get(key).getClass().getName(), m.get(key).getClass().getName());
+        }
     }
 
 }

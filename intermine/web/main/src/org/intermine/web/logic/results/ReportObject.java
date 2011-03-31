@@ -72,7 +72,6 @@ public class ReportObject
     /** @var List of 'unplaced' normal InlineLists */
     private List<InlineList> inlineListsNormal = null;
 
-    private Map<String, String> webProperties;
     private Map<String, Object> attributes = null;
     private Map<String, String> longAttributes = null;
     private Map<String, Object> longAttributesTruncated = null;
@@ -88,10 +87,11 @@ public class ReportObject
      * Setup internal ReportObject
      * @param object InterMineObject
      * @param webConfig WebConfig
+     * @param im InterMineAPI
      * @throws Exception Exception
      */
-    public ReportObject(InterMineObject object, WebConfig webConfig,
-            InterMineAPI im) throws Exception {
+    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im)
+        throws Exception {
         this.object = object;
         this.webConfig = webConfig;
         this.im = im;
@@ -422,18 +422,22 @@ public class ReportObject
 
         ReferenceDescriptor ref = (ReferenceDescriptor) fd;
 
-        //check whether reference is null without dereferencing
+        // check whether reference is null without dereferencing
+        Object proxyObject = null;
         ProxyReference proxy = null;
         try {
-            proxy = (ProxyReference) object.getFieldProxy(ref.getName());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            proxyObject = object.getFieldProxy(ref.getName());
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
         }
-
+        if (proxyObject instanceof org.intermine.objectstore.proxy.ProxyReference) {
+            proxy = (ProxyReference) proxyObject;
+        } else {
+            // no go on objects that are not Proxies, ie Tests
+        }
         DisplayReference newReference = null;
         try {
-            newReference = new DisplayReference(proxy, ref, webConfig,
-                webProperties, im.getClassKeys());
+            newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -463,8 +467,7 @@ public class ReportObject
         DisplayCollection newCollection = null;
         try {
             newCollection = new DisplayCollection((Collection<?>) fieldValue,
-                    (CollectionDescriptor) fd, webConfig, webProperties,
-                    im.getClassKeys(), listOfTypes);
+                    (CollectionDescriptor) fd, webConfig, im.getClassKeys(), listOfTypes);
         } catch (Exception e) {
             e.printStackTrace();
         }

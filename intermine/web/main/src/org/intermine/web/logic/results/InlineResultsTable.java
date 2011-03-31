@@ -71,7 +71,6 @@ public class InlineResultsTable
      * @param results the List to display object
      * @param model the current Model
      * @param webConfig the WebConfig object for this webapp
-     * @param webProperties the web properties from the session
      * @param classKeys Map of class name to set of keys
      * @param size the maximum number of rows to list from the collection, or -1 if we should
      * @param ignoreDisplayers if true don't include any columns that have jsp displayers defined
@@ -81,8 +80,7 @@ public class InlineResultsTable
      */
     @SuppressWarnings("unchecked")
     public InlineResultsTable(Collection<?> results, Model model,
-                              WebConfig webConfig, Map webProperties,
-                              Map<String, List<FieldDescriptor>> classKeys,
+                              WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
 
         this.listOfTypes = listOfTypes;

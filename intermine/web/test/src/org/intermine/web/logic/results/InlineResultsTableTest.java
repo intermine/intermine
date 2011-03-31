@@ -34,7 +34,6 @@ public class InlineResultsTableTest extends TestCase
 
     private Model model;
     private WebConfig webConfig;
-    private Map<String, List<FieldDescriptor>> classKeys;
     private Properties classKeyProps;
     private ObjectStore os;
 
@@ -92,7 +91,6 @@ public class InlineResultsTableTest extends TestCase
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
     /**
@@ -106,7 +104,7 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, classKeys, new Integer(1), new Boolean(false), null);
+                null, new Integer(1), new Boolean(false), null);
 
         assertEquals(new Integer(1), (Integer) resultsTable.getListOfTypes().size());
         assertEquals(new Boolean(false), resultsTable.getHasMoreThanOneType());
@@ -136,7 +134,7 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, classKeys, new Integer(2), new Boolean(false), typeClasses);
+                null, new Integer(2), new Boolean(false), typeClasses);
 
         assertEquals(new Integer(2), (Integer) resultsTable.getListOfTypes().size());
         assertEquals(new Integer(3), new Integer(resultsTable.getColumnsSize()));
@@ -176,7 +174,7 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, classKeys, new Integer(2), new Boolean(false), typeClasses);
+                null, new Integer(2), new Boolean(false), typeClasses);
 
         assertEquals(new Integer(3), new Integer(resultsTable.getTableFieldConfigs().size()));
         assertEquals(new Integer(3), new Integer(resultsTable.getColumnsSize()));
@@ -205,7 +203,7 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, classKeys, new Integer(2), new Boolean(false), typeClasses);
+                null, new Integer(2), new Boolean(false), typeClasses);
 
         // List<InlineResultsTableRow>
         List<Object> rows = resultsTable.getResultElementRows();
