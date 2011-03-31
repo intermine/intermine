@@ -22,6 +22,7 @@ class TestInstantiation(unittest.TestCase):
         self.assertTrue(isinstance(m, Model), "Can make a model")
         try:
             bad_m = Model("foo")
+            self.fail("No ModelParseError thrown at bad model xml")
         except ModelParseError as ex:
             self.assertEqual(ex.message, "Error parsing model")
 
@@ -43,19 +44,21 @@ class TestModel(unittest.TestCase):
         for good_class in ["Employee", "Company", "Department"]:
             cd = self.model.get_class(good_class)
             self.assertEqual(cd.name, good_class)
-        dep = self.model.get_class("Employee.department.company.CEO")
-        self.assertEqual(dep.name, "CEO") 
-        self.assertTrue(dep.isa("Employee"))
+        ceo = self.model.get_class("Employee.department.company.CEO")
+        self.assertEqual(ceo.name, "CEO") 
+        self.assertTrue(ceo.isa("Employee"))
         emp = self.model.get_class("Employee")
-        self.assertTrue(dep.isa(emp))
+        self.assertTrue(ceo.isa(emp))
 
         try:
             self.model.get_class("Foo")
+            self.fail("No ModelError thrown at non existent class")
         except ModelError as ex:
             self.assertEqual(ex.message, 
                     "'Foo' is not a class in this model")
         try: 
             self.model.get_class("Employee.name")
+            self.fail("No ModelError thrown at non class")
         except ModelError as ex:
             self.assertEqual(ex.message, "'Employee.name' is not a class")
 
@@ -69,6 +72,7 @@ class TestModel(unittest.TestCase):
 
         try:
             ceo.get_field("foo")
+            self.fail("No ModelError thrown at non existent field")
         except ModelError as ex:
             self.assertEqual(ex.message, 
                 "There is no field called foo in CEO")
@@ -123,6 +127,7 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(self.q.views, expected)
         try: 
             self.q.add_view("Employee.name", "Employee.age", "Employee.department")
+            self.fail("No ConstraintError thrown at non attribute view")
         except ConstraintError as ex:
             self.assertEqual(ex.message, "'Employee.department' does not represent an attribute")
 
@@ -141,6 +146,7 @@ class TestQuery(unittest.TestCase):
     def testConstraintPathProblems(self):
         try:
             self.q.add_constraint('Foo', 'IS NULL')
+            self.fail("No ModelError thrown for bad path")
         except ModelError as ex:
             self.assertEqual(ex.message, "'Foo' is not a class in this model")
 
@@ -156,6 +162,7 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(self.q.constraints.__repr__(), self.expected_binary)
         try:
             self.q.add_constraint('Department.company', '=', "foo")
+            self.fail("No ConstraintError thrown for non attribute BinaryConstraint")
         except ConstraintError as ex:
             self.assertEqual(ex.message, "'Department.company' does not represent an attribute")
 
@@ -165,6 +172,7 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(self.q.constraints.__repr__(), self.expected_ternary)
         try:
             self.q.add_constraint('Department.company.name', 'LOOKUP', "foo")
+            self.fail("No ConstraintError thrown for non object TernaryConstraint")
         except ConstraintError as ex:
             self.assertEqual(ex.message, "'Department.company.name' does not represent a class, or a reference to a class")
 
@@ -172,21 +180,26 @@ class TestQuery(unittest.TestCase):
         self.q.add_constraint('Employee.name', 'ONE OF', ['Tom', 'Dick', 'Harry'])
         self.q.add_constraint('Manager.name', 'NONE OF', ['Sue', 'Jane', 'Helen'])
         self.assertEqual(self.q.constraints.__repr__(), self.expected_multi)
+        self.assertRaises(TypeError, self.q.add_constraint, "Manager.name", "ONE OF", "Tom, Dick, Harry")
+        self.assertRaises(ConstraintError, self.q.add_constraint, "Manager", "ONE OF", ["Tom", "Dick", "Harry"])
 
     def testListConstraint(self):
         self.q.add_constraint('Employee', 'IN', 'my-list')
         self.q.add_constraint('Manager', 'NOT IN', 'my-list')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_list)
+        self.assertRaises(ConstraintError, self.q.add_constraint, "Employee.name", "IN", "some list")
 
     def testSubclassConstraints(self):
         self.q.add_constraint('Department.employees', 'Manager')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_subclass)
         try:
            self.q.add_constraint('Department.company.CEO', 'Foo')
+           self.fail("No ModelError thrown for illegal subclass")
         except ModelError as ex:
             self.assertEqual(ex.message, "'Foo' is not a class in this model")
         try:
             self.q.add_constraint('Department.company.CEO', 'Manager')
+            self.fail("No ConstraintError thrown for bad subclass relationship")
         except ConstraintError as ex:
             self.assertEqual(ex.message, "'Manager' is not a subclass of 'Department.company.CEO'")
 
@@ -371,6 +384,7 @@ class TestTemplates(unittest.TestCase):
         self.assertEqual(t.get_results_list(), expected)
         try:
             self.service.get_template("Non_Existant")
+            self.fail("No ServiceError thrown at a non existent template")
         except ServiceError as ex:
             self.assertEqual(ex.message, "There is no template called 'Non_Existant' at this service")
     

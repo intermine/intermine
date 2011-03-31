@@ -231,6 +231,7 @@ class ListConstraint(CodedConstraint):
 
 class LoopConstraint(CodedConstraint):
     OPS = set(['IS', 'IS NOT'])
+    SERIALISED_OPS = {'IS':'=', 'IS NOT':'!='}
     def __init__(self, path, op, loopPath, code="A"):
         self.loopPath = loopPath
         super(LoopConstraint, self).__init__(path, op, code)
@@ -239,8 +240,8 @@ class LoopConstraint(CodedConstraint):
         s = super(LoopConstraint, self).to_string()
         return " ".join([s, self.loopPath])
     def to_dict(self):
-        d = super(BinaryConstraint, self).to_dict()
-        d.update(loopPath=self.loopPath)
+        d = super(LoopConstraint, self).to_dict()
+        d.update(loopPath=self.loopPath, op=self.SERIALISED_OPS[self.op])
         return d
     
 class TernaryConstraint(BinaryConstraint):
