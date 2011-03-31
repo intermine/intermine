@@ -219,7 +219,7 @@ class ListConstraint(CodedConstraint):
     OPS = set(['IN', 'NOT IN'])
     def __init__(self, path, op, list_name, code="A"):
         self.list_name = list_name
-        super(BinaryConstraint, self).__init__(path, op, code)
+        super(ListConstraint, self).__init__(path, op, code)
 
     def to_string(self):
         s = super(ListConstraint, self).to_string()
@@ -358,6 +358,15 @@ class TemplateBinaryConstraint(BinaryConstraint, TemplateConstraint):
         return(BinaryConstraint.to_string(self) 
                 + " " + TemplateConstraint.to_string(self))
 
+class TemplateListConstraint(ListConstraint, TemplateConstraint):
+    def __init__(self, *a, **d):
+        (c_args, t_args) = self.separate_arg_sets(d)
+        ListConstraint.__init__(self, *a, **c_args)
+        TemplateConstraint.__init__(self, **t_args)
+    def to_string(self):
+        return(ListConstraint.to_string(self) 
+                + " " + TemplateConstraint.to_string(self))
+
 class TemplateLoopConstraint(LoopConstraint, TemplateConstraint):
     def __init__(self, *a, **d):
         (c_args, t_args) = self.separate_arg_sets(d)
@@ -398,7 +407,8 @@ class ConstraintFactory(object):
 
     CONSTRAINT_CLASSES = set([
         UnaryConstraint, BinaryConstraint, TernaryConstraint, 
-        MultiConstraint, SubClassConstraint, LoopConstraint])
+        MultiConstraint, SubClassConstraint, LoopConstraint,
+        ListConstraint])
 
     def __init__(self):
         self._codes = iter(string.ascii_uppercase)
@@ -421,5 +431,6 @@ class TemplateConstraintFactory(ConstraintFactory):
     CONSTRAINT_CLASSES = set([
         TemplateUnaryConstraint, TemplateBinaryConstraint, 
         TemplateTernaryConstraint, TemplateMultiConstraint,
-        TemplateSubClassConstraint, TemplateLoopConstraint
+        TemplateSubClassConstraint, TemplateLoopConstraint, 
+        TemplateListConstraint
     ])

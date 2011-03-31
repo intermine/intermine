@@ -228,7 +228,7 @@ class Service(object):
 
         """
         if self._templates is None:
-            sock = urllib.urlopen(self.root + self.TEMPLATES_PATH)
+            sock = self.opener.open(self.root + self.TEMPLATES_PATH)
             dom = minidom.parse(sock)
             sock.close()
             templates = {}
@@ -368,9 +368,10 @@ class InterMineURLOpener(urllib.FancyURLopener):
         urllib.FancyURLopener.__init__(self)
         if credentials and len(credentials) == 2:
             base64string = base64.encodestring('%s:%s' % credentials)[:-1]
-            auth_header = "Basic %s" % base64string
-            self.addheader("Authorization", auth_header)
+            self.addheader("Authorization", base64string)
             self.using_authentication = True
+        else: 
+            self.using_authentication = False
 
     def http_error_default(self, url, fp, errcode, errmsg, headers):
         """Re-implementation of http_error_default, with content now supplied by default"""

@@ -100,6 +100,7 @@ class TestQuery(unittest.TestCase):
     expected_unary = '[<UnaryConstraint: Employee.age IS NULL>, <UnaryConstraint: Employee.name IS NOT NULL>]'
     expected_binary = '[<BinaryConstraint: Employee.age > 50000>, <BinaryConstraint: Employee.name = John>, <BinaryConstraint: Employee.end != 0>]'
     expected_multi = "[<MultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry']>, <MultiConstraint: Manager.name NONE OF ['Sue', 'Jane', 'Helen']>]"
+    expected_list = "[<ListConstraint: Employee IN my-list>, <ListConstraint: Manager NOT IN my-list>]"
     expected_ternary = '[<TernaryConstraint: Employee LOOKUP Susan>, <TernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg>]'
     expected_subclass = "[<SubClassConstraint: Department.employees ISA Manager>]"
 
@@ -172,6 +173,11 @@ class TestQuery(unittest.TestCase):
         self.q.add_constraint('Manager.name', 'NONE OF', ['Sue', 'Jane', 'Helen'])
         self.assertEqual(self.q.constraints.__repr__(), self.expected_multi)
 
+    def testListConstraint(self):
+        self.q.add_constraint('Employee', 'IN', 'my-list')
+        self.q.add_constraint('Manager', 'NOT IN', 'my-list')
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_list)
+
     def testSubclassConstraints(self):
         self.q.add_constraint('Department.employees', 'Manager')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_subclass)
@@ -236,6 +242,7 @@ class TestTemplate(TestQuery):
     expected_multi = "[<TemplateMultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry'] (editable, locked)>, <TemplateMultiConstraint: Manager.name NONE OF ['Sue', 'Jane', 'Helen'] (editable, locked)>]"
     expected_ternary = '[<TemplateTernaryConstraint: Employee LOOKUP Susan (editable, locked)>, <TemplateTernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg (editable, locked)>]'
     expected_subclass = '[<TemplateSubClassConstraint: Department.employees ISA Manager (editable, locked)>]'
+    expected_list = "[<TemplateListConstraint: Employee IN my-list (editable, locked)>, <TemplateListConstraint: Manager NOT IN my-list (editable, locked)>]"
 
     def setUp(self):
         super(TestTemplate, self).setUp()
