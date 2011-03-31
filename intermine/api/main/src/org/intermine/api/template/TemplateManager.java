@@ -134,7 +134,7 @@ public class TemplateManager
      * @param profile the user to fetch templates
      * @return a map of template name to template query, the map will be empty if no templates found
      */
-    protected Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+    public Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
         // where name collisions occur user templates take precedence
         Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
 
