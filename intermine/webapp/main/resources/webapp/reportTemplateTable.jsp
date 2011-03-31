@@ -6,7 +6,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-
 <!-- reportTemplateTable.jsp -->
 
 <% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
@@ -23,6 +22,7 @@
      <tiles:put name="pagedResults" beanName="resultsTable" />
      <tiles:put name="inlineTable" value="true" />
      <tiles:put name="currentPage" value="report" />
+     <tiles:put name="tableIdentifier" value="table_${fn:replace(placement, ':', '_')}_${templateQuery.name}" />
   </tiles:insert>
 
   </c:if>
@@ -40,9 +40,16 @@
   </c:otherwise>
   </c:choose>
 <p class="in_table">
-<html:link styleClass="theme-1-color" action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
-  Show all in a table
-</html:link>
+<c:choose>
+  <c:when test="${resultsTable.exactSize == 0}">
+    <i>No results for this ${reportObject.type}</i>
+  </c:when>
+  <c:otherwise>
+    <html:link styleClass="theme-1-color" action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
+      Show all in a table
+    </html:link>
+  </c:otherwise>
+</c:choose>
 </p>
 
 <%-- Update ui given results of this template --%>
