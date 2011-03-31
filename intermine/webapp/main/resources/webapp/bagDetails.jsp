@@ -247,10 +247,9 @@
 
 <!-- link outs -->
 <div id="linkOuts" class="listtoolbox" align="left">
-  <h3>Link outs</h3>
      <p>
-  <tiles:insert name="attributeLinkDisplayer.tile">
-       <tiles:put name="bag" beanName="bag" />
+  <tiles:insert name="attributeLinks.tile">
+    <tiles:put name="bag" beanName="bag" />
   </tiles:insert>
   </p>
 </div>
