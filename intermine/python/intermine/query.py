@@ -460,10 +460,11 @@ class Query(object):
 
         This method will check the path attribute of each constraint.
         In addition it will:
-          - Check that BinaryConstraints have an Attribute as their path
+          - Check that BinaryConstraints and MultiConstraints have an Attribute as their path
           - Check that TernaryConstraints have a Reference as theirs
           - Check that SubClassConstraints have a correct subclass relationship
-          - Check that LoopConstraints have a valid loopPath
+          - Check that LoopConstraints have a valid loopPath, of a compatible type
+          - Check that ListConstraints refer to an object
 
         @raise ModelError: if the paths are not valid
         @raise ConstraintError: if the constraints do not satisfy the above rules
@@ -475,7 +476,7 @@ class Query(object):
             if isinstance(con, TernaryConstraint):
                 if pathA.get_class() is None:
                     raise ConstraintError("'" + str(pathA) + "' does not represent a class, or a reference to a class")
-            elif isinstance(con, BinaryConstraint):
+            elif isinstance(con, BinaryConstraint) or isinstance(con, MultiConstraint):
                 if not pathA.is_attribute():
                     raise ConstraintError("'" + str(pathA) + "' does not represent an attribute")
             elif isinstance(con, SubClassConstraint):
@@ -483,7 +484,16 @@ class Query(object):
                 if not pathB.get_class().isa(pathA.get_class()):
                     raise ConstraintError("'" + con.subclass + "' is not a subclass of '" + con.path + "'")
             elif isinstance(con, LoopConstraint):
-                self.model.validate_path(con.loopPath, self.get_subclass_dict())
+                pathB = self.model.make_path(con.loopPath, self.get_subclass_dict())
+                for path in [pathA, pathB]:
+                    if not path.get_class():
+                        raise ConstraintError("'" + str(path) + "' does not refer to an object")
+                (classA, classB) = (pathA.get_class(), pathB.get_class())
+                if not classA.isa(classB) and not classB.isa(classA):
+                    raise ConstraintError("the classes are of incompatible types: " + str(classA) + "," + str(classB))
+            elif isinstance(con, ListConstraint):
+                if not pathA.get_class():
+                    raise ConstraintError("'" + str(pathA) + "' does not refer to an object")
 
     @property
     def constraints(self):
