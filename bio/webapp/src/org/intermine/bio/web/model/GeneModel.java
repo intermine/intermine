@@ -31,6 +31,7 @@ public class GeneModel {
         init();
     }
 
+    @SuppressWarnings("unchecked")
     private void init() {
         // find other components
         if (transcript == null) {

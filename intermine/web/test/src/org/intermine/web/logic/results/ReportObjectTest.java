@@ -140,7 +140,7 @@ public class ReportObjectTest extends TestCase
         ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
 
         // test
-        assertEquals(2, reportObject.getObjectSummaryFields().size());
+        assertEquals(3, reportObject.getObjectSummaryFields().size());
     }
 
     public void testFieldDisplayer() throws Exception {
