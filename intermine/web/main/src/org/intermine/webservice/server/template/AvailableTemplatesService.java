@@ -20,11 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -58,7 +60,13 @@ public class AvailableTemplatesService extends WebService
         pathFromUrl = StringUtil.trimSlashes(pathFromUrl);
 
         TemplateManager templateManager = im.getTemplateManager();
-        Map<String, TemplateQuery> templates = templateManager.getGlobalTemplates();
+        Map<String, TemplateQuery> templates;
+        if (isAuthenticated()) {
+            Profile profile = SessionMethods.getProfile(request.getSession());
+            templates = templateManager.getUserAndGlobalTemplates(profile);
+        } else {
+            templates = templateManager.getGlobalTemplates();
+        }
 
         if (pathFromUrl != null && XML.equalsIgnoreCase(pathFromUrl)) {
             ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + "." + XML);
