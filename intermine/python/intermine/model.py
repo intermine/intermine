@@ -490,7 +490,7 @@ class Model(object):
                     cl.field_dict[name] = col
                 self.classes[class_name] = cl
         except Exception, error:
-            raise ModelParseError("Error parsing model", error)
+            raise ModelParseError("Error parsing model", source, error)
 
     def vivify(self):
         """
@@ -674,5 +674,15 @@ class PathParseError(ModelError):
     pass
 
 class ModelParseError(ModelError):
-    pass
+   
+    def __init__(self, message, source, cause=None):
+        self.source = source
+        super(ModelParseError, self).__init__(message, cause)
+
+    def __str__(self):
+        base = repr(self.message) + ":" + repr(self.source)
+        if self.cause is None:
+            return base
+        else:
+            return base + repr(self.cause)
 

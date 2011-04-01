@@ -54,7 +54,7 @@ Running the Tests:
 If you would like to run the test suite, you can do so by executing
 the following command: (from the source directory)
 
-  python -m intermine.test.test
+  python setup.py test
 
 Installation:
 -------------
