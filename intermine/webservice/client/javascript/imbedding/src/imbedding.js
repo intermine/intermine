@@ -32,6 +32,8 @@ IMBedding = (function() {
         openOnLoad: false,
         previousText: "Previous",
         queryTitleText: null,
+        replaceRightArrows: true,
+        rightArrowStyle: "\u21E8", // block right arrow (unicode hex representation)
         resultsDescriptionText: null,
         showAdditionsLink: true,
         showAllCeiling: 75,
@@ -78,6 +80,8 @@ IMBedding = (function() {
         this._constructor = function(data, passedOpts) {
             var outer = this;
             this.options = jQuery.extend({}, defaultOptions, passedOpts);
+
+
             this.uid = new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
             this.uid.replace(/\s+/g, '');
             this.start = data.start;
@@ -94,6 +98,9 @@ IMBedding = (function() {
             this.titlebox = jQuery('<div id="imbedded-table-titlebox-' 
                     + this.uid + '" class="imbedded-table-titlebox"></div>');
             var queryTitle = this.options.queryTitleText || data.title || this.options.defaultQueryName;
+            if (this.options.replaceRightArrows) {
+                queryTitle = queryTitle.replace("-->", this.options.rightArrowStyle);
+            }
             this.title = jQuery('<a id="imbedded-table-title-' 
                     + this.uid + '" class="imbedded-table-title">' + queryTitle + '</a>');
             this.expandHelp = jQuery('<span id="imbedded-table-expand-help-' 
@@ -508,6 +515,11 @@ IMBedding = (function() {
         }
         if (! data.size && data.format == "jsonptable") {
             data.size = defaultTableSize;
+        }
+        if (!target instanceof Function) {
+            var throbber = document.createElement("img");
+            throbber.src = defaultOptions.throbberSrc;
+            jQuery(target).empty().append(throbber);
         }
         $.jsonp({
             url: url, 

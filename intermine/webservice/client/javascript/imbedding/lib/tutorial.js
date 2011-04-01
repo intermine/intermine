@@ -1,7 +1,7 @@
 availableTemplates = null;
 var model = {};
 var baseUrl = "http://squirrel.flymine.org/intermine-test";
-var flyMineBase = "http://preview.flymine.org/preview";
+var flyMineBase = "http://squirrel.flymine.org/report-page";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";
@@ -978,8 +978,7 @@ $(function() {
             loadTemplateInfo(
                 "http://squirrel.flymine.org/intermine-test/service/templates");
         } else if (this.value == "flymine") {
-            loadTemplateInfo(
-                "http://preview.flymine.org/preview/service/templates");
+            loadTemplateInfo(flyMineBase + "/service/templates");
         }
     });
     $('#source-radios-q').buttonset();
@@ -988,8 +987,7 @@ $(function() {
             loadModel(
                 "http://squirrel.flymine.org/intermine-test/service/model");
         } else if (this.value == "flymine") {
-            loadModel(
-                "http://preview.flymine.org/preview/service/model");
+            loadModel(flyMineBase + "/service/model");
         }
     });
     $('#sortOrderSelector').button();
@@ -1484,12 +1482,12 @@ var loadTemplateInfo = function(url) {
             format: "jsonp"
         },
         success: function( data ) {
-            window.availableTemplates = data;
+            window.availableTemplates = data.templates;
             var names = [];
-            for (name in data) {
+            for (name in data.templates) {
                 names.push({
                     value: name,
-                    label: data[name].title
+                    label: data.templates[name].title
                 });
             }
             $('#templateName').autocomplete({
@@ -1543,7 +1541,6 @@ var loadModel = function(url) {
 
 
 $(function() {
-    loadTemplateInfo(
-        "http://preview.flymine.org/preview/service/templates");
-    loadModel("http://preview.flymine.org/preview/service/model");
+    loadTemplateInfo(flyMineBase + "/service/templates");
+    loadModel(flyMineBase + "/service/model");
 });
