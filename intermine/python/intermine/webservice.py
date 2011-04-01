@@ -333,7 +333,7 @@ class ResultIterator(object):
         params.update({"format" : "csv"})
         url  = root + path
         data = urllib.urlencode(params)
-        con = opener.open(url + "?" + data)
+        con = opener.open(url, data)
         self.reader = {
             "string" : lambda: con,
             "list"   : lambda: csv.reader(con),
