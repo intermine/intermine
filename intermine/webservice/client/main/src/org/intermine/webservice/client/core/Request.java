@@ -38,13 +38,13 @@ public interface Request
      * @param name parameter name
      * @param value parameter value
      */
-    public void addParameter(String name, String value);
+    void addParameter(String name, String value);
 
     /**
      * @param name parameter name
      * @return parameter values
      */
-    public List<String> getParameterValues(String name);
+    List<String> getParameterValues(String name);
 
     /**
      * Use only if you are sure, that the parameter has
@@ -52,76 +52,76 @@ public interface Request
      * @param name parameter name
      * @return parameter value
      */
-    public String getParameter(String name);
+    String getParameter(String name);
 
     /**
      * @return names of all parameters
      */
-    public Set<String> getParameterNames();
+    Set<String> getParameterNames();
 
     /**
      * Sets parameter
      * @param name parameter name
      * @param value parameter value
      */
-    public void setParameter(String name, String value);
+    void setParameter(String name, String value);
 
     /**
      * @return request type
      * @see RequestType
      */
-    public RequestType getType();
+    RequestType getType();
 
     /**
      * @param type request type
      * @see RequestType
      */
-    public void setType(RequestType type);
+    void setType(RequestType type);
 
     /**
-     * Returns service url. Service url is the url of service without service parameters.
+     * Returns service URL. Service URL is the URL of service without service parameters.
      * Example: http://www.flymine.org/service/query/results
-     * @return url
+     * @return URL as a string
      */
-    public String getServiceUrl();
+    String getServiceUrl();
 
     /**
      * Sets service URL.
-     * @param url url
+     * @param url URL as a string
      * @see #setType(org.intermine.webservice.client.core.Request.RequestType)
      */
-    public void setServiceUrl(String url);
+    void setServiceUrl(String url);
 
     /**
      * Sets whole request URL. Must not be URL encoded.
      * @param url URL
      */
-    public void  setUrl(String url);
+    void  setUrl(String url);
 
     /**
      *
-     * @param encode true if returned string should be url encoded
+     * @param encode true if returned string should be URL-encoded
      * @see <a href="http://www.ietf.org/rfc/rfc1738.txt">URL encoding specification</a>
-     * @return url
+     * @return URL
      */
-    public String getUrl(boolean encode);
+    String getUrl(boolean encode);
 
     /**
      * @return content type
      */
-    public ContentType getContentType();
+    ContentType getContentType();
 
     /**
      * @param contentType content type
      */
-    public void setContentType(ContentType contentType);
+    void setContentType(ContentType contentType);
 
     /**
      * Returns all parameters as a modifiable map. You can
      * modify parameters manipulating directly with this map.
      * @return map
      */
-    public Map<String, List<String>> getParameterMap();
+    Map<String, List<String>> getParameterMap();
 
     /**
      * Sets a request header.
@@ -129,7 +129,7 @@ public interface Request
      * @param name the header name
      * @param value the header value
      */
-    public void setHeader(String name, String value);
+    void setHeader(String name, String value);
 
     /**
      * Returns the header value.
@@ -137,13 +137,13 @@ public interface Request
      * @param name the header name
      * @return the header value
      */
-    public String getHeader(String name);
+    String getHeader(String name);
 
     /**
      * Returns request headers.
      * @return headers
      */
-    public Map<String, String> getHeaders();
+    Map<String, String> getHeaders();
 
 }
 
