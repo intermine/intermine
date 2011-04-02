@@ -2,6 +2,7 @@ from urlparse import urlunsplit, urljoin
 from xml.dom import minidom
 import urllib
 import csv
+import json
 import base64
 
 # Local intermine imports
@@ -307,7 +308,8 @@ class Service(object):
 
 class ResultIterator(object):
     
-    ROW_FORMATS = frozenset(["string", "list", "dict"])
+    ROW_FORMATS = frozenset(["string", "list", "dict", "jsonrows", "jsonobjects"])
+    JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
 
     def __init__(self, root, path, params, rowformat, view, opener):
         """
@@ -330,14 +332,22 @@ class ResultIterator(object):
         if rowformat not in self.ROW_FORMATS:
             raise ValueError("'" + rowformat + "' is not a valid row format:" + self.ROW_FORMATS)
 
-        params.update({"format" : "csv"})
+        if rowformat in self.JSON_FORMATS:
+            params.update({"format" : rowformat})
+        elif rowformat == "string":
+            params.update({"format" : "tsv"})
+        else:
+            params.update({"format" : "jsonrows"})
+
         url  = root + path
         data = urllib.urlencode(params)
         con = opener.open(url, data)
         self.reader = {
-            "string" : lambda: con,
-            "list"   : lambda: csv.reader(con),
-            "dict"   : lambda: csv.DictReader(con, view)
+            "string"      : lambda: FlatFileIterator(con),
+            "list"        : lambda: JSONIterator(con, ListValueParser()),
+            "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
+            "jsonobjects" : lambda: JSONIterator(con, EchoParser()),
+            "jsonrows"    : lambda: JSONIterator(con, EchoParser())
         }.get(rowformat)()
 
     def __iter__(self):
@@ -346,6 +356,96 @@ class ResultIterator(object):
     def next(self):
         """Returns the next row, in the appropriate format"""
         return self.reader.next()
+
+class FlatFileIterator(object):
+
+    def __init__(self, connection):
+        self.connection = connection
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        line = self.connection.next()
+        if line.startswith("[ERROR]"):
+            raise WebserviceError(line)
+        return line
+
+class JSONIterator(object):
+
+    def __init__(self, connection, parser):
+        self.connection = connection
+        self.parser = parser
+        self.header = ""
+        self.footer = ""
+        self.parse_header()
+    
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.get_next_row_from_connection()
+
+    def parse_header(self):
+        try:
+            line = self.connection.next().strip()
+            self.header += line
+            if not line.endswith('"results":['):
+                self.parse_header()
+        except StopIteration:
+            raise WebserviceError("The connection returned a bad header" + self.header)
+
+    def check_return_status(self):
+        container = self.header + self.footer
+        info = json.loads(container)
+        if not info["wasSuccessful"]:
+            raise WebserviceError(info["statusCode"], info["error"])
+
+    def get_next_row_from_connection(self):
+        next_row = None
+        try:
+            line = self.connection.next()
+            if line.startswith("]"):
+                self.footer += line;
+                for otherline in self.connection:
+                    self.footer += line
+                self.check_return_status()
+            else:
+                line = line.strip().strip(',')
+                row = json.loads(line)
+                next_row = self.parser.parse(row)
+        except StopIteration:
+            raise WebserviceError("Connection interrupted")
+
+        if next_row is None:
+            raise StopIteration
+        else:
+            return next_row
+
+class Parser(object):
+
+    def __init__(self, view=[]):
+        self.view = view
+
+class EchoParser(Parser):
+
+    def parse(self, data):
+        """Most basic parser - just returns the fed in data structure"""
+        return data
+
+class ListValueParser(Parser):
+
+    def parse(self, row):
+        return [cell.get("value") for cell in row]
+
+class DictValueParser(Parser):
+
+    def parse(self, row):
+        pairs = zip(self.view, row)
+        return_dict = {}
+        for view, cell in pairs:
+            return_dict[view] = cell.get("value")
+        return return_dict
 
 class InterMineURLOpener(urllib.FancyURLopener):
     """
@@ -439,6 +539,9 @@ class InterMineURLOpener(urllib.FancyURLopener):
         content = fp.read()
         fp.close()
         raise WebserviceError("Internal server error", errcode, errmsg, content)
+
+class UnimplementedError(Exception):
+    pass
 
 class ServiceError(ReadableException):
     """Errors in the creation and use of the Service object"""
