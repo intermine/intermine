@@ -23,19 +23,57 @@ import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.core.TabTableResult;
+import org.intermine.webservice.client.core.XMLTableResult;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * The QueryService is service that provides some methods for flexible querying InterMine data.
+ * The QueryService class provides a mechanism for sending data queries to an InterMine
+ * webservice, and retrieving and parsing the results.
  *
  * <p>
- * The basic tool for querying data in InterMine is PathQuery object. See examples to see how
- * to construct PathQuery.
+ * The basic tool for querying data in InterMine is the PathQuery object. PathQueries are
+ * highly abstracted structured representations of a query over a database, including
+ * ways to select the output columns and the filters. To see examples to see how
+ * to construct PathQuery objects, see {@link PathQuery}.
  * </p>
+ *
+ * Usage:
+ * <pre>
+ * ServiceFactory serviceFactory = new ServiceFactory(serviceRootUrl);
+ * QueryService queryService = serviceFactory.getQueryService();
+ * ModelService modelService = serviceFactory.getModelService();
+ * PathQuery query = new PathQuery(modelService.getModel());
+ *
+ * query.addViews("Gene.symbol", "Gene.length", "Gene.proteins.symbol");
+ * query.addConstraint(Constraints.lookup("Gene", "zen", "D. melanogaster"));
+ *
+ * //find out how many results there are
+ * int count = queryService.getCount(query);
+ *
+ * System.out.println("There are " + count + " results for this query");
+ *
+ * List<List<String>> rows = service.getAllResults(query);
+ *
+ * for (List<String> row : rows) {
+ *      for (int i = 0; i < row.size(); i++) {
+ *           System.out.println(query.getViews().get(i) + " is " + row.get(i));
+ *      }
+ *      System.out.print("\n");
+ * }
+ *
+ * </pre>
+ *
+ * Query results are typically fetched as a multi-dimensional list of strings (rows of columns), but
+ * you can also request simply the count of result rows in the whole result set, and JSONObjects,
+ * a nested representation of individual records
+ * (@link {http://www.intermine.org/wiki/JSONObjectFormat}).
+ *
+ * Results can also be paged: passing in the start index and the page size will return the
+ * appropriate slice of results. The default start is 0 (the beginning) and the default page-size
+ * is null (everything). So the query above will get all results.
  *
  * @author Jakub Kulaviak
  **/
@@ -46,8 +84,11 @@ public class QueryService extends Service
 
     private static final int START = 0;
 
+    private static final Integer ALL_RESULTS = null;
+
     /**
-     * Use {@link ServiceFactory} instead for creating this service .
+     * Constructor. It is recommended for maintainability reasons that you not use this constructor.
+     * Instead, use the {@link ServiceFactory} instead for creating instances of this class.
      * @param rootUrl root URL
      * @param applicationName application name
      */
@@ -56,9 +97,10 @@ public class QueryService extends Service
     }
 
     /**
-     * A subclass of RequestImpl that described a request for a data query.
+     * The request class for handling queries - in particular this class is responsible
+     * for handling the query parameters. The only special one that query supports is "query"
      *
-     * @author Jakub Kulaviak
+     *  @author Jakub Kulaviak
      */
     protected static class QueryRequest extends RequestImpl
     {
@@ -71,12 +113,14 @@ public class QueryService extends Service
          */
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
+            setXMLFormat();
         }
 
         /**
-         * Sets the query that is to be executed.
+         * Adds the query to be run. The query is passed to the service as a string, in XML
+         * format.
          *
-         * @param xml the query to be executed, in xml format
+         * @param xml the query to be executed, in XML format
          */
         public void setQueryXml(String xml) {
             setParameter("query", xml);
@@ -85,8 +129,10 @@ public class QueryService extends Service
 
 
     /**
-     * Constructs PathQuery from its XML representation. You can use this method
-     * for creating PathQuery, modifying it a bit and executing afterwards.
+     * Constructs a PathQuery from its XML representation. You can use this method
+     * for creating a PathQuery, modifying it a bit and then executing it afterwards.
+     * This might be useful if you have saved some useful queries as XML to local files.
+     *
      * @param queryXml PathQuery represented as a XML string
      * @return created PathQuery
      */
@@ -99,7 +145,8 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns number of results of specified query.
+     * Returns the number of results the specified query will return.
+     *
      * @param query query
      * @return number of results of specified query.
      */
@@ -108,7 +155,8 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns number of results of specified query.
+     * Returns the number of results the specified query will return.
+     *
      * @param queryXml PathQuery represented as a XML string
      * @return number of results of specified query.
      */
@@ -117,44 +165,53 @@ public class QueryService extends Service
         request.setQueryXml(queryXml);
         String body = getResponseString(request);
         if (body.length() == 0) {
-            throw new ServiceException("Service didn't return any result");
+            throw new ServiceException("The server didn't return any results");
         }
         try {
             return Integer.parseInt(body);
         }  catch (NumberFormatException e) {
-            throw new ServiceException("Service returned invalid result. It is not number: "
+            throw new ServiceException("The server returned an invalid result. It is not a number: "
                     + body, e);
         }
     }
 
     /**
-     * Fetch the results as a list of JSON Objects
+     * Fetch all the results as a list of JSON Objects
+     *
      * @param query A PathQuery object
+     *
      * @return a list of JSON objects
-     * @throws JSONException
+     *
+     * @throws JSONException if the server returns badly formatted JSON, or non-json data
      */
-    public List<JSONObject> getJSONResults(PathQuery query) throws JSONException {
+    public List<JSONObject> getAllJSONResults(PathQuery query) throws JSONException {
         return getJSONResults(query.toXml(PathQuery.USERPROFILE_VERSION), START, null);
     }
 
     /**
-     * Fetch the results as a list of JSON Objects
-     * @param query A PathQuery object
-     * @param maxCount maximum number of returned results
+     * Fetch all the results as a list of JSON Objects
+     *
+     * @param queryXml An XML string representing the query
+     *
      * @return a list of JSON objects
-     * @throws JSONException
+     *
+     * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
      */
-    public List<JSONObject> getJSONResults(PathQuery query, Integer maxCount) throws JSONException {
-        return getJSONResults(query.toXml(PathQuery.USERPROFILE_VERSION), START, maxCount);
+    public List<JSONObject> getAllJSONResults(String queryXml) throws JSONException {
+        return getJSONResults(queryXml, START, ALL_RESULTS);
     }
 
     /**
-     * Fetch the results as a list of JSON Objects
+     * Fetch some results as a list of JSON Objects. You define which results you want
+     * by supplying a start index, and a maximum page size.
+     *
      * @param query A PathQuery object
      * @param start the starting index
      * @param maxCount maximum number of returned results
+     *
      * @return a list of JSON objects
-     * @throws JSONException
+     *
+     * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
      */
     public List<JSONObject> getJSONResults(PathQuery query, int start, Integer maxCount)
         throws JSONException {
@@ -162,33 +219,16 @@ public class QueryService extends Service
     }
 
     /**
-     * Fetch the results as a list of JSON Objects
-     * @param queryXml An XML string representing the query
-     * @return a list of JSON objects
-     * @throws JSONException
-     */
-    public List<JSONObject> getJSONResults(String queryXml) throws JSONException {
-        return getJSONResults(queryXml, START, null);
-    }
-
-    /**
-     * Fetch the results as a list of JSON Objects
-     * @param queryXml An XML string representing the query
-     * @param maxCount maximum number of returned results
-     * @return a list of JSON objects
-     * @throws JSONException
-     */
-    public List<JSONObject> getJSONResults(String queryXml, Integer maxCount) throws JSONException {
-        return getJSONResults(queryXml, START, maxCount);
-    }
-
-    /**
-     * Fetch the results as a list of JSON Objects
+     * Fetch some results as a list of JSON Objects. You define which results you want
+     * by supplying a start index, and a maximum page size.
+     *
      * @param queryXml An XML string representing the query
      * @param start the starting index
      * @param size the maximum number of results to return
+     *
      * @return a list of JSON objects
-     * @throws JSONException
+     *
+     * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
      */
     public List<JSONObject> getJSONResults(String queryXml, int start, Integer size)
         throws JSONException {
@@ -205,9 +245,11 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns a String response for a request from a server.
+     * Returns a String response for a request from a server. This is the method used internally
+     * to actually perform requests to the server.
      *
      * @param request the QueryRequest
+     *
      * @return a String
      */
     protected String getResponseString(QueryRequest request) {
@@ -216,46 +258,77 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param query query
+     * Returns a specific set of the results of the specified PathQuery.
+     * If you expect a lot of results, or have set a very large page size
+     * we would recommend that you use the getResultIterator() method instead, as that will
+     * read through the lines one by one without storing them all in memory at once.
+     *
+     * @param query the query as a PathQuery object
+     *
      * @param start The starting index
      * @param maxCount maximum number of returned results
+     *
      * @return results of specified PathQuery
      */
-    public List<List<String>> getResult(PathQuery query, int start, Integer maxCount) {
+    public List<List<String>> getResults(PathQuery query, int start, Integer maxCount) {
         return getResultInternal(
                 query.toXml(PathQuery.USERPROFILE_VERSION), start, maxCount).getData();
     }
 
     /**
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param query query
-     * @param maxCount maximum number of returned results
+     * Returns a specific set of the results of the specified PathQuery.
+     * If you expect a lot of results, or have set a very large page size
+     * we would recommend that you use the getResultIterator() method instead, as that will
+     * read through the lines one by one without storing them all in memory at once.
+     *
+     * @param queryXml PathQuery represented as a XML string
+     * @param start the starting index
+     * @param maxCount maximum number of returned results (null means all results)
+     *
      * @return results of specified PathQuery
      */
-    public List<List<String>> getResult(PathQuery query, Integer maxCount) {
-        return getResultInternal(
-                query.toXml(PathQuery.USERPROFILE_VERSION), START, maxCount).getData();
+    public List<List<String>> getResults(String queryXml, int start, Integer maxCount) {
+        return getResultInternal(queryXml, start, maxCount).getData();
     }
 
     /**
+     * Returns all of the results of the specified PathQuery.
+     * If you expect a lot of results, we would recommend that you use the getResultIterator()
+     * method instead, as that will read through the lines one by one without storing
+     * them all in memory at once.
+     *
      * Returns results of specified PathQuery. If you expect a lot of results
      * use getResultIterator() method.
      * @param query query
      * @return results of specified PathQuery
      */
-    public List<List<String>> getResult(PathQuery query) {
+    public List<List<String>> getAllResults(PathQuery query) {
         return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), START, null).getData();
     }
 
     /**
-     * Returns results of specified PathQuery as iterator. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param query query
+     * Returns all of the results of the specified PathQuery.
+     * If you expect a lot of results, we would recommend that you use the getResultIterator()
+     * method instead, as that will read through the lines one by one without storing
+     * them all in memory at once.
+     *
+     * @param queryXml PathQuery represented as a XML string
+     *
+     * @return results of specified PathQuery
+     */
+    public List<List<String>> getAllResults(String queryXml) {
+        return getResultInternal(queryXml, START, null).getData();
+    }
+
+    /**
+     * Returns a specific set of the results of a specified PathQuery as an iterator.
+     * We would recommend that you use this method if you expect a lot of rows of results
+     * and might run out of memory.
+     *
+     * @param query the query as a PathQuery object
      * @param start The starting index
      * @param maxCount maximum number of returned results
+     *
      * @return results of specified PathQuery
      */
     public Iterator<List<String>> getResultIterator(PathQuery query, int start, Integer maxCount) {
@@ -264,65 +337,14 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery as iterator. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param query query
-     * @param maxCount maximum number of returned results
-     * @return results of specified PathQuery
-     */
-    public Iterator<List<String>> getResultIterator(PathQuery query, Integer maxCount) {
-        return getResultIterator(query, START, maxCount);
-    }
-
-    /**
-     * Returns results of specified PathQuery as iterator. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param query query
-     * @return results of specified PathQuery
-     */
-    public Iterator<List<String>> getResultIterator(PathQuery query) {
-        return getResultIterator(query, START, null);
-    }
-
-    /**
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param queryXml PathQuery represented as a XML string
+     * Returns a specific set of the results of a specified PathQuery as an iterator.
+     * We would recommend that you use this method if you expect a lot of rows of results and
+     * might run out of memory.
+     *
+     * @param queryXml the query represented as an XML string
      * @param start the starting index
      * @param maxCount maximum number of returned results
-     * @return results of specified PathQuery
-     */
-    public List<List<String>> getResult(String queryXml, int start, Integer maxCount) {
-        return getResultInternal(queryXml, start, maxCount).getData();
-    }
-
-    /**
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param queryXml PathQuery represented as a XML string
-     * @param maxCount maximum number of returned results
-     * @return results of specified PathQuery
-     */
-    public List<List<String>> getResult(String queryXml, Integer maxCount) {
-        return getResultInternal(queryXml, START, maxCount).getData();
-    }
-
-    /**
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param queryXml PathQuery represented as a XML string
-     * @return results of specified PathQuery
-     */
-    public List<List<String>> getResult(String queryXml) {
-        return getResultInternal(queryXml, START, null).getData();
-    }
-
-    /**
-     * Returns results of specified PathQuery. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param queryXml PathQuery represented as a XML string
-     * @param start the starting index
-     * @param maxCount maximum number of returned results
+     *
      * @return results of specified PathQuery
      */
     public Iterator<List<String>> getResultIterator(String queryXml, int start, Integer maxCount) {
@@ -330,27 +352,40 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param queryXml PathQuery represented as a XML string
-     * @param maxCount The maximum number of results to return
+     * Returns all the results of a specified PathQuery as an iterator. We would recommend that
+     * you use this method if you expect a lot of rows of results and might run out of memory.
+     *
+     * @param query the query as a PathQuery object
+     *
      * @return results of specified PathQuery
      */
-    public Iterator<List<String>> getResultIterator(String queryXml, Integer maxCount) {
-        return getResultIterator(queryXml, START, maxCount);
+    public Iterator<List<String>> getAllResultIterator(PathQuery query) {
+        return getResultIterator(query, START, null);
     }
 
     /**
-     * Returns results of specified PathQuery. Use this method if you expect a lot
-     * of results and you would run out of memory.
-     * @param queryXml PathQuery represented as a XML string
-     * @return results of specified PathQuery
+     * Returns all the results of a specified PathQuery as an iterator. We would recommend that
+     * you use this method if you expect a lot of rows of results and might run out of memory.
+     *
+     * @param queryXml the query represented as an XML string
+     *
+     * @return an iterator over the results of the specified PathQuery
      */
-    public Iterator<List<String>> getResultIterator(String queryXml) {
+    public Iterator<List<String>> getAllResultIterator(String queryXml) {
         return getResultIterator(queryXml, START, null);
     }
 
-    private TabTableResult getResultInternal(String queryXml, int start, Integer maxCount) {
+    /**
+     * Prepare the request by setting the appropriate parameters onto the request object, before
+     * sending it off to receive the results.
+     *
+     * @param queryXml the query represented as an XML string
+     * @param start the starting index
+     * @param maxCount maximum number of returned results
+     *
+     * @return a data table object
+     */
+    private XMLTableResult getResultInternal(String queryXml, int start, Integer maxCount) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         if (maxCount != null) {
@@ -362,20 +397,24 @@ public class QueryService extends Service
     }
 
     /**
-     * Performs the query and returns a TabTableResult containing the data.
+     * Performs the query and returns a XMLTableResult containing the data.
+     * This is an internal method for handling the intermediate processing steps
      *
      * @param request a QueryRequest object
-     * @return a TabTableResult object containing the data fetched
+     *
+     * @return a XMLTableResult object containing the data fetched
      */
-    protected TabTableResult getResponseTable(QueryRequest request) {
+    protected XMLTableResult getResponseTable(QueryRequest request) {
         HttpConnection connection = executeRequest(request);
-        return new TabTableResult(connection);
+        return new XMLTableResult(connection);
     }
 
     /**
      * Performs the query and returns a JSONResult containing the data.
+     * This is an internal method for handling the intermediate processing steps
      *
      * @param request a QueryRequest object
+     *
      * @return a JSONResult object containing the data fetched
      */
     protected JSONResult getJSONResponse(QueryRequest request) {
