@@ -11,8 +11,7 @@ from testserver import TestServer
 class WebserviceTest(unittest.TestCase):
     TEST_PORT = 8000
 
-    @classmethod
-    def get_test_root(cls):
+    def get_test_root(self):
         return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/service"
 
 class TestInstantiation(WebserviceTest): 
@@ -304,7 +303,7 @@ class TestQueryResults(WebserviceTest):
     
     def setUp(self):
         if self.service is None:
-            self.__class__.service = Service(WebserviceTest.get_test_root())
+            self.__class__.service = Service(self.get_test_root())
         if self.model is None:
             self.__class__.model = Model(self.get_test_root() + "/model")
 
@@ -381,36 +380,78 @@ class TestQueryResults(WebserviceTest):
 
     def testResultsList(self):
         """Should be able to get results as one list per row"""
-        expected = [['foo', 'bar', 'baz'],['quux','fizz','fop']]
-        try:
-            self.assertEqual(self.query.get_results_list(), expected)
-            self.assertEqual(self.template.get_results_list(), expected)
-        except IOError as e:
-            raise RuntimeError("Error connecting to " + self.query.service.root)
+        expected = [['foo', 'bar', 'baz'], [123, 1.23, -1.23], [True, False, None]] 
+        attempts = 0
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    self.assertEqual(self.query.get_results_list(), expected)
+                    self.assertEqual(self.template.get_results_list(), expected)
+                except IOError as e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
 
     def testResultsDict(self):
         """Should be able to get results as one dictionary per row"""
         expected = [
-            {'Employee.name':'foo', 'Employee.age':'bar', 'Employee.id':'baz'},
-            {'Employee.name':'quux', 'Employee.age':'fizz', 'Employee.id':'fop'}
-            ]
-        try:
-            self.assertEqual(self.query.get_results_list("dict"), expected)
-            self.assertEqual(self.template.get_results_list("dict"), expected)
-        except IOError as e:
-            raise RuntimeError("Error connecting to " + self.query.service.root)
+            {'Employee.age': u'bar', 'Employee.id': u'baz', 'Employee.name': u'foo'}, 
+            {'Employee.age': 1.23, 'Employee.id': -1.23, 'Employee.name': 123}, 
+            {'Employee.age': False, 'Employee.id': None, 'Employee.name': True}
+        ] 
+        attempts = 0
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    self.assertEqual(self.query.get_results_list("dict"), expected)
+                    self.assertEqual(self.template.get_results_list("dict"), expected)
+                except IOError as e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
+
+class TestStringResults(WebserviceTest):
+
+    model = None
+    service = None
+
+    def get_test_root(self):
+        return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/stringservice"
+
+    def setUp(self):
+        if self.service is None:
+            self.__class__.service = Service(self.get_test_root())
+        if self.model is None:
+            self.__class__.model = Model(self.get_test_root() + "/model")
+
+        q = Query(self.model, self.service)
+        q.add_view("Employee.name", "Employee.age", "Employee.id")
+        self.query = q
+        t = Template(self.model, self.service)
+        t.add_view("Employee.name", "Employee.age", "Employee.id")
+        t.add_constraint("Employee.name", '=', "Fred")
+        t.add_constraint("Employee.age", ">", 25)
+        self.template = t
 
     def testResultsString(self):
         """Should be able to get results as one string per row"""
-        expected = [
-            '"foo","bar","baz"\n',
-            '"quux","fizz","fop"\n'
-            ]
-        try:
-            self.assertEqual(self.query.get_results_list("string"), expected)
-            self.assertEqual(self.template.get_results_list("string"), expected)
-        except IOError as e:
-            raise RuntimeError("Error connecting to " + self.query.service.root)
+        expected = ['foo\tbar\tbaz\n', '123\t1.23\t-1.23\n']
+        attempts = 0
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    self.assertEqual(self.query.get_results_list("string"), expected)
+                    self.assertEqual(self.template.get_results_list("string"), expected)
+                except IOError as e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
 
 class TestTemplates(WebserviceTest):
 
@@ -424,8 +465,18 @@ class TestTemplates(WebserviceTest):
         self.assertTrue(isinstance(t, Template))
         expected = "[<TemplateMultiConstraint: Employee.name ONE OF [u'Dick', u'Jane', u'Timmy, the Loyal German-Shepherd'] (editable, locked)>]"
         self.assertEqual(t.editable_constraints.__repr__(), expected)
-        expected = [['foo', 'bar', 'baz'],['quux','fizz','fop']]
-        self.assertEqual(t.get_results_list(), expected)
+        expected = [[u'foo', u'bar', u'baz'], [123, 1.23, -1.23], [True, False, None]] 
+        attempts = 0
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    self.assertEqual(t.get_results_list(), expected)
+                except IOError as e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
         try:
             self.service.get_template("Non_Existant")
             self.fail("No ServiceError raised by non-existant template")
