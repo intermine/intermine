@@ -10,7 +10,7 @@ package org.intermine.webservice.client.services;
  *
  */
 
-import org.intermine.webservice.client.core.TabTableResult;
+import org.intermine.webservice.client.core.XMLTableResult;
 
 /**
  * Provides a dummy-fied TemplateService.
@@ -40,11 +40,11 @@ public class DummyTemplateService extends TemplateService
         this.expectedUrl = url;
     }
 
-    protected TabTableResult getResponseTable(TemplateRequest request) {
+    protected XMLTableResult getResponseTable(TemplateRequest request) {
         if (!request.getUrl(true).equals(expectedUrl)) {
             throw new IllegalArgumentException("Expected URL \"" + expectedUrl + "\" does not match got URL \"" + request.getUrl(true) + "\"");
         }
-        return new TabTableResult(fakeResponse);
+        return new XMLTableResult(fakeResponse);
     }
 }
 

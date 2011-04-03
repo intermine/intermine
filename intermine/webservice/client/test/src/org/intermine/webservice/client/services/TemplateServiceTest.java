@@ -35,9 +35,8 @@ public class TemplateServiceTest extends TestCase
      */
     public void testNonDefaultParameters() {
         DummyTemplateService service = TestUtil.getTemplateService();
-        service.setFakeResponse("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue");
-        //service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?value3=60&value4=true&value1=EmployeeA&size=10&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
-        service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?value3=60&value4=true&value1=EmployeeA&size=10&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
+        service.setFakeResponse("<ResultSet><Result><i>EmployeeA1</i><i>10</i><i>1.1</i><i>true</i></Result><Result><i>EmployeeA2</i><i>20</i><i>2.2</i><i>false</i></Result></ResultSet>");
+        service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?format=xml&value3=60&value4=true&value1=EmployeeA&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA"));
 
@@ -50,10 +49,10 @@ public class TemplateServiceTest extends TestCase
         parameters.add(par2);
 
         parameters.add(new TemplateParameter("Employee.fullTime", "eq", "true"));
-        List<List<String>> results = service.getResult("fourConstraints", parameters, 10);
+        List<List<String>> results = service.getAllResults("fourConstraints", parameters);
         assertEquals(2, results.size());
         // returns 2 results, notice that the logic for constraints B and C is OR -> returns Employee of age 10
-        TestUtil.checkRow(results.get(0), "EmployeeA1", "10", "1", "true");
-        TestUtil.checkRow(results.get(1), "EmployeeA2", "20", "2", "true");
+        TestUtil.checkRow(results.get(0), "EmployeeA1", "10", "1.1", "true");
+        TestUtil.checkRow(results.get(1), "EmployeeA2", "20", "2.2", "false");
     }
 }
