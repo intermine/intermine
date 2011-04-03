@@ -57,7 +57,7 @@ public abstract class FlatFileFormatter extends Formatter {
     public String formatFooter(String errorMessage, int errorCode) {
         StringBuilder sb = new StringBuilder();
         if (errorCode != Output.SC_OK) {
-            sb.append(ERROR_INTRO).append(errorCode).append(errorMessage);
+            sb.append(ERROR_INTRO).append(errorCode).append(" " + errorMessage);
         }
         return sb.toString();
     }
