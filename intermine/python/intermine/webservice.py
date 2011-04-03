@@ -127,15 +127,13 @@ class Service(object):
         Returns the webservice version
         ==============================
 
-        Service.version S{->} int
-            
-        May throw: ServiceError, if the version cannot be fetched
-
         The version specifies what capabilities a
         specific webservice provides. The most current 
         version is 3
 
-        @type: int
+        may raise ServiceError: if the version cannot be fetched
+
+        @rtype: int
         """
         if self._version is None:
             try:
@@ -159,7 +157,7 @@ class Service(object):
         (eg: "release-26", "release-27", "release-28"). They can also
         have less machine readable meanings (eg: "beta")
 
-        @type: string
+        @rtype: string
         """
         if self._release is None:
             self._release = urllib.urlopen(self.root + RELEASE_PATH).read()
@@ -227,7 +225,7 @@ class Service(object):
          if name in service.templates:
             template = service.get_template(name)
 
-        @type: dict
+        @rtype: dict
 
         """
         if self._templates is None:
@@ -259,7 +257,7 @@ class Service(object):
 
         raises ModelParseError: if the model cannot be read
 
-        @type: L{intermine.model.Model}
+        @rtype: L{intermine.model.Model}
 
         """
         if self._model is None:
@@ -558,7 +556,7 @@ class ListValueParser(Parser):
         @param row: a row of data from a result set
         @type row: a JSON string
 
-        @ rtype list
+        @rtype: list
         """
         return [cell.get("value") for cell in row]
 
@@ -579,7 +577,7 @@ class DictValueParser(Parser):
         @param row: a row of data from a result set
         @type row: a JSON string
 
-        @ rtype dict
+        @rtype: dict
         """
         pairs = zip(self.view, row)
         return_dict = {}

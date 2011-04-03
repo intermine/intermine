@@ -84,7 +84,7 @@ class Class(object):
         The fields are returned sorted by name. Fields
         includes all Attributes, References and Collections
 
-        @type: list(L{Field})
+        @rtype: list(L{Field})
         """
         return sorted(self.field_dict.values(), key=lambda field: field.name)
 
@@ -94,7 +94,7 @@ class Class(object):
         The fields of this class which contain data
         ===========================================
 
-        @type: list(L{Attribute})
+        @rtype: list(L{Attribute})
         """
         return filter(lambda x: isinstance(x, Attribute), self.fields)
 
@@ -104,7 +104,7 @@ class Class(object):
         fields which reference other objects
         ====================================
 
-        @type: list(L{Reference})
+        @rtype: list(L{Reference})
         """
         def isRef(x): return isinstance(x, Reference) and not isinstance(x, Collection)
         return filter(isRef, self.fields)
@@ -115,7 +115,7 @@ class Class(object):
         fields which reference many other objects
         =========================================
 
-        @type: list(L{Collection})
+        @rtype: list(L{Collection})
         """
         return filter(lambda x: isinstance(x, Collection), self.fields)
 
@@ -357,7 +357,7 @@ class Path(object):
         """
         The descriptor for the last part of the string.
         
-        @type: Class|Field
+        @rtype: L{model.Class} or L{model.Field}
         """
         return self.parts[-1]
 
