@@ -102,9 +102,6 @@ class Service(object):
 
         @raise ServiceError: if the version cannot be fetched and parsed
         @raise ValueError:   if a username is supplied, but no password
-
-        @return: Service
-
         """
         self.root = root
         self._templates = None
@@ -137,6 +134,8 @@ class Service(object):
         The version specifies what capabilities a
         specific webservice provides. The most current 
         version is 3
+
+        @type: int
         """
         if self._version is None:
             try:
@@ -159,6 +158,8 @@ class Service(object):
         releases usually sort in ascending order of recentness 
         (eg: "release-26", "release-27", "release-28"). They can also
         have less machine readable meanings (eg: "beta")
+
+        @type: string
         """
         if self._release is None:
             self._release = urllib.urlopen(self.root + RELEASE_PATH).read()
@@ -190,7 +191,8 @@ class Service(object):
         
         @see: L{intermine.service.Service.__init__}
 
-        @param name: the template's name as a string
+        @param name: the template's name
+        @type name: string
 
         @raise ServiceError: if the template does not exist
         @raise QueryParseError: if the template cannot be parsed
@@ -275,9 +277,13 @@ class Service(object):
         normally need to call it directly
 
         @param path: The resource path (eg: "/query/results")
+        @type path: string
         @param params: The query parameters for this request as a dictionary
-        @param rowformat: One of "dict", "list", "string"
+        @type params: dict
+        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @type rowformat: string
         @param view: The output columns
+        @type view: list
 
         @raise WebserviceError: for failed requests
 
@@ -295,21 +301,27 @@ class Service(object):
         normally need to call it directly
 
         @param path: The resource path (eg: "/query/results")
+        @type path: string
         @param params: The query parameters for this request as a dictionary
-        @param rowformat: One of "dict", "list", "string"
+        @type params: dict
+        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @type rowformat: string
         @param view: The output columns
+        @type view: list
 
         @raise WebserviceError: for failed requests
 
-        @return: list(list|dict|string)
+        @return: a list of rows of data
         """
         rows = self.get_results(path, params, rowformat, view)
         return [r for r in rows]
 
 class ResultIterator(object):
     
-    ROW_FORMATS = frozenset(["string", "list", "dict", "jsonrows", "jsonobjects"])
+    PARSED_FORMATS = frozenset(["list", "dict"])
+    STRING_FORMATS = frozenset(["tsv", "csv"])
     JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
+    ROW_FORMATS = PARSED_FORMATS | STRING_FORMATS | JSON_FORMATS
 
     def __init__(self, root, path, params, rowformat, view, opener):
         """
@@ -320,11 +332,17 @@ class ResultIterator(object):
         not need to create one manually.
 
         @param root: The root path (eg: "http://www.flymine.org/query/service")
+        @type root: string
         @param path: The resource path (eg: "/query/results")
-        @param params: The query parameters for this request as a dictionary
-        @param rowformat: One of "dict", "list", "string"
+        @type path: string
+        @param params: The query parameters for this request
+        @type params: dict
+        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @type rowformat: string
         @param view: The output columns
-        @param opener: A urllib.URLopener object
+        @type view: list
+        @param opener: A url opener (user-agent)
+        @type opener: urllib.URLopener
 
         @raise ValueError: if the row format is incorrect
         @raise WebserviceError: if the request is unsuccessful
@@ -332,18 +350,17 @@ class ResultIterator(object):
         if rowformat not in self.ROW_FORMATS:
             raise ValueError("'" + rowformat + "' is not a valid row format:" + self.ROW_FORMATS)
 
-        if rowformat in self.JSON_FORMATS:
-            params.update({"format" : rowformat})
-        elif rowformat == "string":
-            params.update({"format" : "tsv"})
-        else:
+        if rowformat in self.PARSED_FORMATS:
             params.update({"format" : "jsonrows"})
+        else:
+            params.update({"format" : rowformat})
 
         url  = root + path
         data = urllib.urlencode(params)
         con = opener.open(url, data)
         self.reader = {
-            "string"      : lambda: FlatFileIterator(con),
+            "tsv"         : lambda: FlatFileIterator(con, EchoParser()),
+            "csv"         : lambda: FlatFileIterator(con, EchoParser()),
             "list"        : lambda: JSONIterator(con, ListValueParser()),
             "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
             "jsonobjects" : lambda: JSONIterator(con, EchoParser()),
@@ -354,26 +371,62 @@ class ResultIterator(object):
         return self.reader
 
     def next(self):
-        """Returns the next row, in the appropriate format"""
+        """
+        Returns the next row, in the appropriate format
+        
+        @rtype: whatever the rowformat was determined to be
+        """
         return self.reader.next()
 
 class FlatFileIterator(object):
+    """
+    An iterator for handling results returned as a flat file (TSV/CSV).
+    ===================================================================
 
-    def __init__(self, connection):
+    This iterator can be used as the sub iterator in a ResultIterator
+    """
+
+    def __init__(self, connection, parser):
+        """
+        Constructor
+        ===========
+
+        @param connection: The source of data
+        @type connection: socket.socket
+        @param parser: a handler for each row of data
+        @type parser: Parser
+        """
         self.connection = connection
+        self.parser = parser
 
     def __iter__(self):
         return self
 
     def next(self):
+        """Return a parsed line of data"""
         line = self.connection.next()
         if line.startswith("[ERROR]"):
             raise WebserviceError(line)
-        return line
+        return self.parser.parse(line)
 
 class JSONIterator(object):
+    """
+    An iterator for handling results returned in the JSONRows format
+    ================================================================
+
+    This iterator can be used as the sub iterator in a ResultIterator
+    """
 
     def __init__(self, connection, parser):
+        """
+        Constructor
+        ===========
+
+        @param connection: The source of data
+        @type connection: socket.socket
+        @param parser: a handler for each row of data
+        @type parser: Parser
+        """
         self.connection = connection
         self.parser = parser
         self.header = ""
@@ -384,9 +437,11 @@ class JSONIterator(object):
         return self
 
     def next(self):
+        """Returns a parsed row of data"""
         return self.get_next_row_from_connection()
 
     def parse_header(self):
+        """Reads out the header information from the connection"""
         try:
             line = self.connection.next().strip()
             self.header += line
@@ -396,12 +451,33 @@ class JSONIterator(object):
             raise WebserviceError("The connection returned a bad header" + self.header)
 
     def check_return_status(self):
+        """
+        Perform status checks
+        =====================
+
+        The footer containts information as to whether the result
+        set was successfully transferred in its entirety. This
+        method makes sure we don't silently accept an 
+        incomplete result set.
+
+        @raise WebserviceError: if the footer indicates there was an error
+        """
         container = self.header + self.footer
-        info = json.loads(container)
+        info = None
+        try:
+            info = json.loads(container)
+        except:
+            raise WebserviceError("Error parsing JSON container: " + container)
+
         if not info["wasSuccessful"]:
             raise WebserviceError(info["statusCode"], info["error"])
 
     def get_next_row_from_connection(self):
+        """
+        Reads the connection to get the next row, and sends it to the parser
+
+        @raise WebserviceError: if the connection is interrupted
+        """
         next_row = None
         try:
             line = self.connection.next()
@@ -423,24 +499,88 @@ class JSONIterator(object):
             return next_row
 
 class Parser(object):
+    """
+    Base class for result line parsers
+    ==================================
+
+    Sub-class this class to gain a default constructor
+
+    """
 
     def __init__(self, view=[]):
+        """
+        Constructor
+        ===========
+
+        @param view: the list of output columns (default: [])
+        @type view: list
+        """
         self.view = view
 
+    def parse(self, data):
+        """
+        Abstract method - implementations must provide behaviour
+
+        @param data: a line of data
+        """
+        raise UnimplementedError
+
 class EchoParser(Parser):
+    """
+    A result parser that echoes its input
+    =====================================
+
+    Parses jsonrow formatted rows into lists
+    of values.
+    """
 
     def parse(self, data):
-        """Most basic parser - just returns the fed in data structure"""
+        """
+        Most basic parser - just returns the fed in data structure
+
+        @param data: the data from the result set
+        """
         return data
 
 class ListValueParser(Parser):
+    """
+    A result parser that produces lists
+    ===================================
+
+    Parses jsonrow formatted rows into lists
+    of values.
+    """
 
     def parse(self, row):
+        """
+        Parse a row of JSON results into a list
+        
+        @param row: a row of data from a result set
+        @type row: a JSON string
+
+        @ rtype list
+        """
         return [cell.get("value") for cell in row]
 
 class DictValueParser(Parser):
+    """
+    A result parser that produces dictionaries
+    ==========================================
+
+    Parses jsonrow formatted rows into dictionaries 
+    where the key is the view string for the cell, 
+    and the value is the contents of the returned cell.
+    """
 
     def parse(self, row):
+        """
+        Parse a row of JSON results into a dictionary
+        
+        @param row: a row of data from a result set
+        @type row: a JSON string
+
+        @ rtype dict
+        """
         pairs = zip(self.view, row)
         return_dict = {}
         for view, cell in pairs:

@@ -414,13 +414,16 @@ class TestQueryResults(WebserviceTest):
 
         do_tests()
 
-class TestStringResults(WebserviceTest):
+class TestTSVResults(WebserviceTest):
 
     model = None
     service = None
+    PATH = "/testservice/tsvservice"
+    FORMAT = "tsv"
+    EXPECTED_RESULTS = ['foo\tbar\tbaz\n', '123\t1.23\t-1.23\n']
 
     def get_test_root(self):
-        return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/stringservice"
+        return "http://localhost:" + str(self.TEST_PORT) + self.PATH
 
     def setUp(self):
         if self.service is None:
@@ -437,21 +440,26 @@ class TestStringResults(WebserviceTest):
         t.add_constraint("Employee.age", ">", 25)
         self.template = t
 
-    def testResultsString(self):
+    def testResults(self):
         """Should be able to get results as one string per row"""
-        expected = ['foo\tbar\tbaz\n', '123\t1.23\t-1.23\n']
         attempts = 0
         def do_tests(error=None):
             if attempts < 5:
                 try:
-                    self.assertEqual(self.query.get_results_list("string"), expected)
-                    self.assertEqual(self.template.get_results_list("string"), expected)
+                    self.assertEqual(self.query.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
+                    self.assertEqual(self.template.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
                 except IOError as e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
 
         do_tests()
+
+class TestCSVResults(TestTSVResults):
+
+    PATH = "/testservice/csvservice"
+    FORMAT = "csv"
+    EXPECTED_RESULTS = ['"foo","bar","baz"\n', '"123","1.23","-1.23"\n']
 
 class TestTemplates(WebserviceTest):
 
