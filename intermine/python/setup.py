@@ -63,7 +63,7 @@ class CleanCommand(Command):
     Remove everything from build, including that 
     directory, and all .pyc files
     """
-    user_options = [ ]
+    user_options = [('verbose', 'v', "produce verbose output", 1)]
 
     def initialize_options(self):
         self._files_to_delete = [ ]
@@ -83,7 +83,11 @@ class CleanCommand(Command):
         self._dirs_to_delete.append('build')
 
     def finalize_options(self):
-        pass
+        args, obj = fancy_getopt(self.user_options, {}, None, None)
+        # Ugly as sin, but distutils forced me to do it :(
+        # All I wanted was this command to default to quiet...
+        if "--verbose" not in args and "-v" not in args:
+            self.verbose = 0
 
     def run(self):
         for clean_me in self._files_to_delete:
@@ -91,6 +95,7 @@ class CleanCommand(Command):
                 log.info("Would have unlinked " + clean_me)
             else:
                 try:
+                    self.announce("Deleting " + clean_me, level=2)
                     os.unlink(clean_me)
                 except Exception as e:
                     message = " ".join(["Failed to delete file", clean_me, str(e)])
@@ -101,11 +106,14 @@ class CleanCommand(Command):
             else:
                 if os.path.exists(clean_me):
                     try:
+                        self.announce("Going to remove " + clean_me, level=2)
                         os.rmdir(clean_me)
                     except Exception as e:
                         message = " ".join(
                                 ["Failed to delete dir", clean_me, str(e)])
                         log.warn(message)
+                elif clean_me != "build":
+                    log.warn(clean_me + " does not exist")
 
 setup(
         name = "intermine",
