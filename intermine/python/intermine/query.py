@@ -282,7 +282,7 @@ class Query(object):
         @raise ModelError: if the query has illegal paths in it
         @raise ConstraintError: if the constraints don't make sense
 
-        @return: L{intermine.query.Query}
+        @rtype: L{Query}
         """
         obj = cls(*args, **kwargs)
         obj.do_verification = False
@@ -442,7 +442,7 @@ class Query(object):
 
         @see: L{intermine.constraints}
 
-        @return: subclass of intermine.constraints.Constraint 
+        @rtype: L{intermine.constraints.Constraint}
         """
         con = self.constraint_factory.make_constraint(*args, **kwargs)
         if self.do_verification: self.verify_constraint_paths([con])
@@ -507,7 +507,7 @@ class Query(object):
         the order they were added to the query) and with any
         subclass contraints at the end.
 
-        @type: list(Constraint)
+        @rtype: list(Constraint)
         """
         ret = sorted(self.constraint_dict.values(), key=lambda con: con.code)
         ret.extend(self.uncoded_constraints)
@@ -521,7 +521,8 @@ class Query(object):
         Returns the constraint with the given code, if if exists.
         If no such constraint exists, it throws a ConstraintError
 
-        @return: subclass of L{intermine.constraints.CodedConstraint}
+        @return: the constraint corresponding to the given code
+        @rtype: L{intermine.constraints.CodedConstraint}
         """
         if code in self.constraint_dict: 
             return self.constraint_dict[code]
@@ -569,7 +570,7 @@ class Query(object):
         @raise ModelError: if the path is invalid
         @raise TypeError: if the join style is invalid
 
-        @return: L{intermine.pathfeatures.Join}
+        @rtype: L{intermine.pathfeatures.Join}
         """
         join = Join(*args, **kwargs)
         if self.do_verification: self.verify_join_paths([join])
@@ -606,7 +607,7 @@ class Query(object):
         useful if you plan to keep your query (perhaps as xml) or store it
         as a template.
 
-        @return: L{intermine.pathfeatures.PathDescription}
+        @rtype: L{intermine.pathfeatures.PathDescription}
 
         """
         path_description = PathDescription(*args, **kwargs)
@@ -639,7 +640,7 @@ class Query(object):
         be used in a logic expression. The only kind of constraint 
         that this excludes, at present, is SubClassConstraints
 
-        @type: list(L{intermine.constraints.CodedConstraint})
+        @rtype: list(L{intermine.constraints.CodedConstraint})
         """
         return sorted(self.constraint_dict.values(), key=lambda con: con.code)
 
@@ -654,7 +655,7 @@ class Query(object):
         The LogicGroup object stringifies to a string that can be parsed to 
         obtain itself (eg: "A and (B or C or D)").
 
-        @return: L{intermine.constraints.LogicGroup}
+        @rtype: L{intermine.constraints.LogicGroup}
         """
         if self._logic is None:
             return reduce(lambda x, y: x+y, self.coded_constraints)
@@ -713,7 +714,7 @@ class Query(object):
 
         @raise QueryError: if the view is empty
 
-        @return: L{intermine.pathfeatures.SortOrderList}
+        @rtype: L{intermine.pathfeatures.SortOrderList}
         """
         try:
             return SortOrderList((self.views[0], SortOrder.ASC))
@@ -730,7 +731,7 @@ class Query(object):
 
         @raise QueryError: if the view is empty
 
-        @return: L{intermine.pathfeatures.SortOrderList}
+        @rtype: L{intermine.pathfeatures.SortOrderList}
         """
         if self._sort_order_list.is_empty():
             return self.get_default_sort_order()         
@@ -802,7 +803,7 @@ class Query(object):
 
         Users most likely will not need to ever call this method.
 
-        @return: dict(string, string)
+        @rtype: dict(string, string)
         """
         subclass_dict = {}
         for c in self.constraints:
@@ -820,10 +821,11 @@ class Query(object):
           for row in query.results():
             do_sth_with(row)
         
-        @param row: the format for the row. Valid options are "dict", "list" and "string". 
-            defaults to "list"
+        @param row: the format for the row. Defaults to "list". Valid options are 
+            "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
+        @type row: string
 
-        @return: L{intermine.webservice.ResultIterator}
+        @rtype: L{intermine.webservice.ResultIterator}
 
         @raise WebserviceError: if the request is unsuccessful
         """
@@ -842,7 +844,7 @@ class Query(object):
         Internally, this just calls a constant property
         in intermine.service.Service
 
-        @return: str
+        @rtype: str
         """
         return self.service.QUERY_PATH
 
@@ -859,10 +861,11 @@ class Query(object):
         be other circumstances when you might want to keep the whole
         list in one place.
 
-        @param rowformat: the format for the row. Valid options are "dict", "list" and "string". 
-            defaults to "list"
+        @param rowformat: the format for the row. Defaults to "list". Valid options are 
+            "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
+        @type rowformat: string
 
-        @return: list(dict|list|string)
+        @rtype: list
 
         @raise WebserviceError: if the request is unsuccessful
 
@@ -886,7 +889,8 @@ class Query(object):
         @see: Query.joins
         @see: Query.constraints
 
-        @return: list(PathDescription, Join, Constraint)
+        @return: the child element of this query
+        @rtype: list
         """
         return sum([self.path_descriptions, self.joins, self.constraints], [])
         
@@ -899,7 +903,7 @@ class Query(object):
         parameters. These consist simply of:
          - query: the xml representation of the query
 
-        @return: dict(string, string)
+        @rtype: dict
 
         """
         xml = self.to_xml()
@@ -915,7 +919,7 @@ class Query(object):
         xml serialised version of the query. You probably 
         won't need to call this directly.
 
-        @return: xml.minidom.Node
+        @rtype: xml.minidom.Node
         """
         impl  = getDOMImplementation()
         doc   = impl.createDocument(None, "query", None)
@@ -953,6 +957,7 @@ class Query(object):
         internet to the webservice.
 
         @return: the serialised xml string
+        @rtype: string
         """
         n = self.to_Node()
         return n.toxml()
@@ -966,6 +971,7 @@ class Query(object):
         internet to the webservice, only more readably.
 
         @return: the serialised xml string
+        @rtype: string
         """
         n = self.to_Node()
         return n.toprettyxml()
@@ -1104,7 +1110,8 @@ class Template(Query):
 
         This overrides the method of the same name in Query
         
-        @return: str - the path to the REST resource
+        @return: the path to the REST resource
+        @rtype: string
         """
         return self.service.TEMPLATEQUERY_PATH
 
@@ -1121,7 +1128,7 @@ class Template(Query):
         values. This method does the cloning and changing of constraint
         values
 
-        @return: L{Template}
+        @rtype: L{Template}
         """
         clone = self.clone()
         for code, options in con_values.items():
@@ -1158,7 +1165,7 @@ class Template(Query):
         "op" (operator), "value", and "extra_value" and "values" in the case of 
         ternary and multi constraints.
 
-        @return: L{intermine.webservice.ResultIterator}
+        @rtype: L{intermine.webservice.ResultIterator}
         """
         clone = self.get_adjusted_template(con_values)
         return super(Template, clone).results(row)
@@ -1175,7 +1182,7 @@ class Template(Query):
         @see: L{intermine.query.Query.get_results_list}
         @see: L{intermine.query.Template.results}
 
-        @return: list(dict|list|string)
+        @rtype: list
 
         """
         clone = self.get_adjusted_template(con_values)
