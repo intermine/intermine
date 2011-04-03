@@ -156,8 +156,7 @@ public class TabFormatterTest extends TestCase {
 
         String expected = "";
         assertEquals(expected, fmtr.formatFooter(null, 200));
-        expected = "[ERROR] 400 Bad request. There was a problem with your request parameters:"
-               + "\n[ERROR] This is a test";
+        expected = "[ERROR] 400 This is a test";
         assertEquals(expected, fmtr.formatFooter("This is a test", 400));
     }
 
@@ -200,8 +199,7 @@ public class TabFormatterTest extends TestCase {
             + "Dawn Tinsley\t26\n"
             + "Keith Bishop\t41\n"
             + "Lee\t28\n"
-            + "[ERROR] 500 Internal server error.\n"
-            + "[ERROR] Our bad";
+            + "[ERROR] 500 Our bad";
 
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
