@@ -45,7 +45,8 @@
           jQuery('#header-inline-list-' + numero + ' ul.items li.show-more').hide();
         }
 
-        if (listLength > 0) {
+        // give some leeway of 20 chars as "Show more" takes up some space too
+        if (listLength > 0 && ${list.length} - 20 > listLength) {
           // traverse all elements for this list
           jQuery('#header-inline-list-${outerStatus.count} ul.items li').each(function(index) {
             // substract elements length
