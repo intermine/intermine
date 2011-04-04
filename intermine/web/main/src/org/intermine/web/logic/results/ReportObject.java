@@ -441,7 +441,12 @@ public class ReportObject
         } catch (Exception e) {
             e.printStackTrace();
         }
-        references.put(fd.getName(), newReference);
+
+        if (newReference != null) {
+            if (newReference.collection.size() > 0) {
+                references.put(fd.getName(), newReference);
+            }
+        }
     }
 
     /**
@@ -471,9 +476,12 @@ public class ReportObject
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //if (newCollection.getSize() > 0) {
-        collections.put(fd.getName(), newCollection);
-        //}
+
+        if (newCollection != null) {
+            if (newCollection.getCollection().size() > 0) {
+                collections.put(fd.getName(), newCollection);
+            }
+        }
     }
 
     /**
