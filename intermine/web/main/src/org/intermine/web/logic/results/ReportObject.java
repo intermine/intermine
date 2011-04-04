@@ -149,6 +149,14 @@ public class ReportObject
        return collections;
    }
 
+   private String stripTail(String input) {
+           Integer dot = input.indexOf(".");
+           if (dot > 0) {
+               return input.substring(0, dot);
+           }
+           return input;
+   }
+
     /**
      * A listing of object fields as pieced together from the various ReportObject methods
      * @return <ReportObjectField>s List
@@ -159,33 +167,39 @@ public class ReportObject
             objectSummaryFields = new ArrayList<ReportObjectField>();
             List<ReportObjectField> objectOtherSummaryFields = new ArrayList<ReportObjectField>();
 
+            // to make sure we do not show fields that are replaced elsewhere
+            Set<String> replacedFields = getReplacedFieldExprs();
+
             // traverse all path expressions for the fields that should be used when
             //  summarising the object
             for (FieldConfig fc : getFieldConfigs()) {
                 // get fieldName
                 String fieldName = fc.getFieldExpr();
 
-                // get fieldValue
-                Object fieldValue = getFieldValue(fieldName);
+                // only non-replaced fields
+                if (!replacedFields.contains(stripTail(fieldName))) {
+                    // get fieldValue
+                    Object fieldValue = getFieldValue(fieldName);
 
-                // get displayer
-                //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
-                String fieldDisplayer = fc.getDisplayer();
+                    // get displayer
+                    //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
+                    String fieldDisplayer = fc.getDisplayer();
 
-                // new ReportObjectField
-                ReportObjectField rof = new ReportObjectField(
-                        objectType,
-                        fieldName,
-                        fieldValue,
-                        fieldDisplayer,
-                        fc.getDoNotTruncate()
-                );
+                    // new ReportObjectField
+                    ReportObjectField rof = new ReportObjectField(
+                            objectType,
+                            fieldName,
+                            fieldValue,
+                            fieldDisplayer,
+                            fc.getDoNotTruncate()
+                    );
 
-                // show in summary...
-                if (fc.getShowInSummary()) {
-                    objectSummaryFields.add(rof);
-                } else { // show in summary also, but not right now...
-                    objectOtherSummaryFields.add(rof);
+                    // show in summary...
+                    if (fc.getShowInSummary()) {
+                        objectSummaryFields.add(rof);
+                    } else { // show in summary also, but not right now...
+                        objectOtherSummaryFields.add(rof);
+                    }
                 }
             }
             // append the other fields
