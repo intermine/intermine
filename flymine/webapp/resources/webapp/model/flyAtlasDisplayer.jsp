@@ -44,7 +44,6 @@ function drawFlyAtlasChart(event, sortBySignal, useLinearScale, showSignal) {
   var sortByName = !sortBySignal;
   var showEnrichment = !showSignal;
   var useLog = !useLinearScale;
-  console.log(arguments);
   var signal_data = new google.visualization.DataTable();
   var enrichment_data = new google.visualization.DataTable();
   var signals = <c:out value="${signals}"/>;
