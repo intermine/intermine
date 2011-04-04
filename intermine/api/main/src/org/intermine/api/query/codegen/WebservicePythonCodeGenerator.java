@@ -14,6 +14,7 @@ import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
@@ -44,11 +45,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
      *            a WebserviceCodeGenInfo object
      * @return the code as a string
      */
-    public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
+    public String generate(WebserviceCodeGenInfo info) {
 
-        PathQuery query = wsCodeGenInfo.getQuery();
-        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
-        String projectTitle = wsCodeGenInfo.getProjectTitle();
+        PathQuery query = info.getQuery();
 
         // query is null
         if (query == null) {
@@ -69,7 +68,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         sb.append("#     http://www.intermine.org/PythonClient" + ENDL + ENDL);
         sb.append("# The following two lines will be needed in every python script:" + ENDL);
         sb.append("from intermine.webservice import Service" + ENDL);
-        sb.append("service = Service(\"" + serviceBaseURL + "/service\")" + ENDL + ENDL);
+        if (info.isPublic()) {
+            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")" + ENDL + ENDL);
+        } else {
+        	sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
+        			+ ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
+        }
+
 
         if ("PathQuery".equals(queryClassName)) {
 
@@ -236,10 +241,10 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             }
             sb.append("template = service.get_template('" + templateName + "')" + ENDL + ENDL);
             sb.append(constraintComments.toString() + ENDL);
-            sb.append("results = template.results( \"string\"," + ENDL);
+            sb.append("results = template.results( \"tsv\"," + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
             sb.append("for row in results:" + ENDL);
-            sb.append(INDENT + "print(row)");
+            sb.append(INDENT + "print row,");
         }
 
         return sb.toString();
@@ -292,48 +297,35 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         sb.append("\"" + path + "\", ");
 
+        if ("PathConstraintSubclass".equals(className)) {
+            // can not test from webapp
+            String type = ((PathConstraintSubclass) pc).getType();
+            sb.append("\"" + type + "\"");
+        } else if ("PathConstraintLoop".equals(className)) {
+        	if (op.equals(ConstraintOp.EQUALS)) {
+        		sb.append("\"IS\"");
+        	} else {
+        		sb.append("\"IS NOT\"");
+        	}
+        } else {
+        	sb.append("\"" + op.toString() + "\"");
+        }
+
         if ("PathConstraintAttribute".equals(className)) {
-
-            if (op.equals(ConstraintOp.EQUALS)) {
-                sb.append("\"=\", ");
-            } else if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                sb.append("\"!=\", ");
-            } else if (op.equals(ConstraintOp.MATCHES)) {
-                sb.append("\"=\", ");
-            } else if (op.equals(ConstraintOp.DOES_NOT_MATCH)) {
-                sb.append("\"!=\", ");
-            } else if (op.equals(ConstraintOp.LESS_THAN)) {
-                sb.append("\"<\", ");
-            } else if (op.equals(ConstraintOp.LESS_THAN_EQUALS)) {
-                sb.append("\"<=\", ");
-            } else if (op.equals(ConstraintOp.GREATER_THAN)) {
-                sb.append("\">=\", ");
-            } else if (op.equals(ConstraintOp.GREATER_THAN_EQUALS)) {
-                sb.append("\">=\", ");
-            }
-
             String value = ((PathConstraintAttribute) pc).getValue();
-
-            sb.append("\"" + value + "\"");
+            sb.append(", \"" + value + "\"");
         }
 
         if ("PathConstraintLookup".equals(className)) {
             String value = ((PathConstraintLookup) pc).getValue();
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
 
-            sb.append("\"LOOKUP\", \"" + value + "\", \"" + extraValue + "\"");
+            sb.append(", \"" + value + "\", \"" + extraValue + "\"");
         }
 
         if ("PathConstraintBag".equals(className)) {
-            String value = ((PathConstraintLookup) pc).getValue();
-
-            if (op.equals(ConstraintOp.IN)) {
-                sb.append("\"IN\", ");
-            } else if (op.equals(ConstraintOp.NOT_IN)) {
-                sb.append("\"NOT IN\", ");
-            }
-
-            sb.append("\"" + value + "\"");
+            String list = ((PathConstraintBag) pc).getBag();
+            sb.append(", \"" + list + "\"");
         }
 
         if ("PathConstraintIds".equals(className)) {
@@ -341,39 +333,15 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintMultiValue".equals(className)) {
-            if (op.equals(ConstraintOp.ONE_OF)) {
-                sb.append("\"ONE OF\", ");
-            } else if (op.equals(ConstraintOp.NONE_OF)) {
-                sb.append("\"NONE OF\", ");
-            }
-            sb.append("[");
+            sb.append(", [");
             Collection<String> values = ((PathConstraintMultiValue) pc).getValues();
             listFormatUtil(sb, values);
             sb.append("]");
         }
 
-        if ("PathConstraintNull".equals(className)) {
-            if (op.equals(ConstraintOp.IS_NULL)) {
-                sb.append("\"IS NULL\"");
-            } else if (op.equals(ConstraintOp.IS_NOT_NULL)) {
-                sb.append("\"IS NOT NULL\"");
-            }
-        }
-
-        if ("PathConstraintSubclass".equals(className)) {
-            // can not test from webapp
-            String type = ((PathConstraintSubclass) pc).getType();
-            sb.append("\"" + type + "\"");
-        }
-
         if ("PathConstraintLoop".equals(className)) {
-            if (op.equals(ConstraintOp.EQUALS)) {
-                sb.append("\"=\", ");
-            } else if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                sb.append("\"!=\", ");
-            }
             String loopPath = ((PathConstraintLoop) pc).getLoopPath();
-            sb.append("\"" + loopPath + "\"");
+            sb.append(", \"" + loopPath + "\"");
         }
 
         if (code != null) {
