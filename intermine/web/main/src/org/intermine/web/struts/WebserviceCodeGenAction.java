@@ -12,7 +12,10 @@ package org.intermine.web.struts;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +27,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
 import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
@@ -44,6 +48,7 @@ import org.intermine.web.util.URLGenerator;
  * Multiple-query is not supported.
  *
  * @author Fengyuan Hu
+ * @author Alexis Kalderimis
  */
 public class WebserviceCodeGenAction extends InterMineAction
 {
@@ -84,22 +89,35 @@ public class WebserviceCodeGenAction extends InterMineAction
         try {
             String method = request.getParameter("method");
             String source = request.getParameter("source");
-            WebserviceCodeGenerator codeGen = getCodeGenerator(method);
+
+            WebserviceCodeGenInfo info = null;
             if ("templateQuery".equals(source)) {
-                String sc = codeGen.generate(setWebserviceCodeGenInfo(
-                        getTemplateQuery(im, profile, request, session),
-                        serviceBaseURL, projectTitle, perlWSModuleVer));
-                output(sc, method, source, response);
+            	TemplateQuery template = getTemplateQuery(im, profile, request, session);
+            	info = getWebserviceCodeGenInfo(
+            			template,
+            			serviceBaseURL,
+            			projectTitle,
+            			perlWSModuleVer,
+            			templateIsPublic(template, im, profile),
+            			profile.getUsername());
+
             } else if ("pathQuery".equals(source)) {
-                String sc = codeGen.generate(setWebserviceCodeGenInfo(
-                                getPathQuery(session), serviceBaseURL,
-                                projectTitle, perlWSModuleVer));
-                output(sc, method, source, response);
+            	PathQuery pq = getPathQuery(session);
+            	info = getWebserviceCodeGenInfo(
+            			pq,
+            			serviceBaseURL,
+                        projectTitle,
+                        perlWSModuleVer,
+                        pathQueryIsPublic(pq, im, profile),
+                        profile.getUsername());
             }
+            WebserviceCodeGenerator codeGen = getCodeGenerator(method);
+            String sc = codeGen.generate(info);
+            sendCode(sc, info.getFileName(), getExtension(method), response);
         } catch (Exception e) {
             LOG.error(e);
             e.printStackTrace();
-            output(e.toString(), "exception", "e", response);
+            sendCode(e.toString(), "exception", "e", response);
             return mapping.findForward("begin");
         }
 
@@ -114,7 +132,7 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @param session HttpSession object
      * @return PathQuery object
      */
-    private PathQuery getTemplateQuery(InterMineAPI im, Profile profile,
+    private TemplateQuery getTemplateQuery(InterMineAPI im, Profile profile,
             HttpServletRequest request, HttpSession session) {
 
         String name = request.getParameter("name");
@@ -130,15 +148,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                                      ? templateManager.getTemplate(profile, name, scope)
                                      : (TemplateQuery) SessionMethods.getQuery(session);
             if (template != null) {
-                // User's template, convert to PathQuery
-                if (!im.getTagManager().getObjectTagNames(template.getName(),
-                                TagTypes.TEMPLATE, profile.getUsername())
-                        .contains(TagNames.IM_PUBLIC)) {
-                    PathQuery query = template.getPathQuery();
-                    return query;
-                } else {
-                    return template;
-                }
+            	return template;
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
                         + scope);
@@ -167,31 +177,66 @@ public class WebserviceCodeGenAction extends InterMineAction
     }
 
     /**
+     * Utility function to determine whether the template is publicly accessible.
+     * This is determined by checking whether this template is within the current
+     * user's profile, and whether the underlying query is itself public.
+     * @param t The template
+     * @param im A reference to the API
+     * @param p A reference to the Profile
+     * @return whether or not Joe Public could run this without logging in.
+     */
+    private boolean templateIsPublic(TemplateQuery t, InterMineAPI im, Profile p) {
+    	Map<String, TemplateQuery> templates = p.getSavedTemplates();
+
+		return !templates.keySet().contains(t.getName()) && pathQueryIsPublic(t, im, p);
+    }
+
+    /**
+     * Utility function to determine whether the PathQuery is publicly accessible.
+     * PathQueries are accessibly publicly as long as they do not reference
+     * private lists.
+     * @param pq The query to interrogate
+     * @return whether the query is accessible publicly or not
+     */
+    private boolean pathQueryIsPublic(PathQuery pq, InterMineAPI im, Profile p) {
+    	Set<String> listNames = pq.getBagNames();
+    	TagManager tm = im.getTagManager();
+    	for (String name: listNames) {
+    		Set<String> tags = tm.getObjectTagNames(name, TagTypes.BAG, p.getUsername());
+    		if (!tags.contains(TagNames.IM_PUBLIC)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+
+    /**
      * Method to set a new WebserviceCodeGenInfo object.
      * @param query a PathQuery or TemplateQuery object
      * @param serviceRootURL the base url of web service
      * @param projectName the InterMine project name
      * @return a WebserviceCodeGenInfo object with query, serviceRootURL and projectName set
      */
-    private WebserviceCodeGenInfo setWebserviceCodeGenInfo(PathQuery query,
-            String serviceRootURL, String projectTitle, String perlWSModuleVer) {
+    private WebserviceCodeGenInfo getWebserviceCodeGenInfo(PathQuery query,
+            String serviceRootURL, String projectTitle, String perlWSModuleVer,
+            boolean isPublic, String user) {
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle, perlWSModuleVer);
+            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle, perlWSModuleVer, isPublic, user);
         return wsCodeGenInfo;
     }
 
     /**
      * Method called to print the source code.
      * @param sourceCodeString a string representing the source code
-     * @param method perl/java
-     * @param source template query/path query
+     * @param extension the file extension to add (pl/py/java/...)
+     * @param filename The name for the file (template_query/path_query)
      * @param response HttpServletResponse
      */
-    private void output(String sourceCodeString, String method, String source,
+    private void sendCode(String sourceCodeString, String extension, String filename,
             HttpServletResponse response) {
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=" + source + "." + method);
+        response.setHeader("Content-Disposition ", "inline; filename=" + filename + "." + extension);
 
         PrintStream out;
         try {
@@ -201,5 +246,24 @@ public class WebserviceCodeGenAction extends InterMineAction
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get the extension for the method type. By default it returns the
+     * method itself, unless there is a predefined translation.
+     * @param method the method to translate
+     * @return the extension to use
+     */
+    private static String getExtension(String method) {
+    	if ("perl".equalsIgnoreCase(method)) {
+    		return "pl";
+    	}
+    	if ("python".equalsIgnoreCase(method)) {
+    		return "py";
+    	}
+    	if ("javascript".equalsIgnoreCase(method)) {
+    		return "html"; // javascript is meant to be embedded
+    	}
+    	return method;
     }
 }
