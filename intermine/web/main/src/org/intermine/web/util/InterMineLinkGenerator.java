@@ -152,7 +152,9 @@ public final class InterMineLinkGenerator
                     // if so, does remote mine have this gene?
                     String homologueIdentifier = olm.getObjectInOtherMine(mine, URLEncoder.encode(""
                             + remoteMineDefaultOrganism, "UTF-8"), homologue);
-                    if (!StringUtils.isEmpty(homologueIdentifier)) {
+                    // not sure it will ever be isEmpty as we pass "" beforehand
+                    if (!StringUtils.isEmpty(homologueIdentifier)
+                            && !"\"\"".equals(homologueIdentifier)) {
                         Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
                                 homologueIdentifier);
                     }
