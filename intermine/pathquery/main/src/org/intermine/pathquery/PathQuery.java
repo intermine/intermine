@@ -2154,6 +2154,14 @@ public class PathQuery implements Cloneable
     }
 
     /**
+     * Convert a PathQuery to XML, using the default value of PathQuery.USERPROFILE_VERSION
+     * @return This query as xml
+     */
+    public synchronized String toXml() {
+    	return this.toXml(PathQuery.USERPROFILE_VERSION);
+    }
+
+    /**
      * Convert a PathQuery to XML.
      *
      * @param version the version number of the XML format
