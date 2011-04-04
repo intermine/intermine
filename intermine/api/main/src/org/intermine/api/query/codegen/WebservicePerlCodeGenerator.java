@@ -22,7 +22,9 @@ import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
@@ -92,7 +94,12 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         StringBuffer sb = new StringBuffer(BOILERPLATE).append(INTRO);
     	sb.append("# Passing a url to the import statement sets this webservice as your default" + ENDL);
-        sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "';" + ENDL);
+    	if (wsCodeGenInfo.isPublic()) {
+    		sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "';" + ENDL);
+    	} else {
+    		sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "', "
+    				+ "'" + wsCodeGenInfo.getUserName() + "', YOUR-PASSWORD;" + ENDL);
+    	}
         sb.append(ENDL);
 
         if ("PathQuery".equals(queryClassName)) {
@@ -283,28 +290,10 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         if ("PathConstraintAttribute".equals(className)) {
             String value = ((PathConstraintAttribute) pc).getValue();
-            String opStr = "";
-            if (op.equals(ConstraintOp.EQUALS)) {
-                opStr = "=";
-            } else if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                opStr = "!=";
-            } else if (op.equals(ConstraintOp.MATCHES)) {
-                opStr = "LIKE";
-            } else if (op.equals(ConstraintOp.DOES_NOT_MATCH)) {
-                opStr = "NOT LIKE";
-            } else if (op.equals(ConstraintOp.LESS_THAN)) {
-                opStr = "<";
-            } else if (op.equals(ConstraintOp.LESS_THAN_EQUALS)) {
-                opStr = "<=";
-            } else if (op.equals(ConstraintOp.GREATER_THAN)) {
-                opStr = ">";
-            } else if (op.equals(ConstraintOp.GREATER_THAN_EQUALS)) {
-                opStr = ">=";
-            }
             return
                 "$query->add_constraint(" + ENDL
                 + INDENT + "path  => '" + path + "'," + ENDL
-                + INDENT + "op    => '" + opStr + "'," + ENDL
+                + INDENT + "op    => '" + op.toString() + "'," + ENDL
                 + INDENT + "value => '" + value + "'," + ENDL
                 + INDENT + "code  => '" + code + "'," + ENDL
                 + ");" + ENDL;
@@ -326,7 +315,14 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintBag".equals(className)) {
-            // Not supported
+            String list = ((PathConstraintBag) pc).getBag();
+            return
+            	"$query->add_constraint(" + ENDL
+            	+ INDENT + "path  => '" + path + "'," + ENDL
+            	+ INDENT + "op    => '" + op.toString() + "'," + ENDL
+            	+ INDENT + "value => '" + list + "'," + ENDL
+                + INDENT + "code  => '" + code + "'," + ENDL
+            	+ ");" + ENDL;
         }
 
         if ("PathConstraintIds".equals(className)) {
@@ -334,13 +330,6 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintMultiValue".equals(className)) {
-        	String opStr = "";
-        	if (op.equals(ConstraintOp.ONE_OF)) {
-        		opStr = "ONE OF";
-        	} else if (op.equals(ConstraintOp.NONE_OF)) {
-        		opStr = "NONE OF";
-        	}
-
             StringBuffer values = new StringBuffer();
             for (String aValue : ((PathConstraintMultiValue) pc).getValues()) {
                 values.append(INDENT + INDENT + "'" + aValue + "'," + ENDL);
@@ -348,7 +337,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             return
                 "$query->add_constraint(" + ENDL
                 + INDENT + "path   => '" + path + "'," + ENDL
-                + INDENT + "op     => '" + opStr + "'," + ENDL
+                + INDENT + "op     => '" + op.toString() + "'," + ENDL
                 + INDENT + "values => [" + ENDL
                 + values.toString()
                 + INDENT + "]," + ENDL
@@ -357,17 +346,11 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintNull".equals(className)) {
-        	String opStr = "";
-            if (op.equals(ConstraintOp.IS_NULL)) {
-            	opStr = "IS NULL";
-            } else if (op.equals(ConstraintOp.IS_NOT_NULL)) {
-            	opStr = "IS NOT NULL";
-            }
             return
                 "$query->add_constraint(" + ENDL
-                + INDENT + "path  => '" + path + "'," + ENDL
-                + INDENT + "op    => '" + opStr + "'," + ENDL
-                + INDENT + "code  => '" + code + "'," + ENDL
+                + INDENT + "path => '" + path + "'," + ENDL
+                + INDENT + "op   => '" + op.toString() + "'," + ENDL
+                + INDENT + "code => '" + code + "'," + ENDL
                 + ");" + ENDL;
 
         }
@@ -376,34 +359,28 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             String type = ((PathConstraintSubclass) pc).getType();
             return
                 "$query->add_constraint(" + ENDL
-                + INDENT + "path  => '" + path + "'," + ENDL
+                + INDENT + "path => '" + path + "'," + ENDL
                 + INDENT + "type => '" + type + "'," + ENDL
                 + ");" + ENDL;
         }
 
         if ("PathConstraintLoop".equals(className)) {
-            // not supported
-            /*
             String loopPath = ((PathConstraintLoop) pc).getLoopPath();
-            if (op.equals(ConstraintOp.EQUALS)) {
-                return
-                    "$query->add_constraint(" + ENDL
-                    + INDENT + "path  => '" + path + "'," + ENDL
-                    + INDENT + "op    => '='," + ENDL
-                    + INDENT + "loop_path => '" + loopPath + "'," + ENDL
-                    + ");" + ENDL;
+            String opStr = op.toString();
+            if (ConstraintOp.EQUALS.equals(op)) {
+            	opStr = "IS";
+            } else if (ConstraintOp.NOT_EQUALS.equals(op)) {
+            	opStr = "IS NOT";
             }
-
-            if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                return
-                    "$query->add_constraint(" + ENDL
-                    + INDENT + "path  => '" + path + "'," + ENDL
-                    + INDENT + "op    => '!='," + ENDL
-                    + INDENT + "loop_path => '" + loopPath + "'," + ENDL
-                    + ");" + ENDL;
-            }
-            */
+            return
+                "$query->add_constraint(" + ENDL
+                + INDENT + "path      => '" + path + "'," + ENDL
+                + INDENT + "op        => '" + opStr + "'," + ENDL
+                + INDENT + "loop_path => '" + loopPath + "'," + ENDL
+                + INDENT + "code      => '" + code + "'," + ENDL
+                + ");" + ENDL;
         }
+
         return null;
     }
 
