@@ -186,8 +186,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                         + "\")" + ENDL);
                 }
             }
-            sb.append("for row in query.results(\"string\"):" + ENDL);
-            sb.append(INDENT + "print(row)");
+            sb.append("for row in query.results(\"tsv\"):" + ENDL);
+            sb.append(INDENT + "print row,");
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 

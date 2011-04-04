@@ -44,6 +44,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         + "again...";
 
     protected static final String INDENT = "    ";
+    protected static final String INDENT2 = INDENT + INDENT;
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -276,9 +277,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add join status
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
             impIM.append("import org.intermine.pathquery.OuterJoinStatus;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add join status" + ENDL);
+            sb.append(INDENT2 + "// Add join status" + ENDL);
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                sb.append(INDENT + INDENT + "query.setOuterJoinStatus(\""
+                sb.append(INDENT2 + "query.setOuterJoinStatus(\""
                         + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
                         + ENDL);
             }
@@ -289,27 +290,24 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add description?
 
         // Add display results code
-        sb.append(INDENT + INDENT + "// Number of results are fetched" + ENDL)
-            .append(INDENT + INDENT + "int maxCount = 10000;" + ENDL)
-                .append(INDENT + INDENT
-                        + "List<List<String>> result = service.getResult(query, maxCount);"
-                        + ENDL)
-            // Change to "System.out .println" in order to fix checkstyle
-            .append(INDENT + INDENT + "System.out.print(\"Results: \\n\");" + ENDL)
-            .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
-            .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL)
-            .append(INDENT + INDENT  + "}" + ENDL)
-            .append(INDENT + "}" + ENDL + ENDL);
+        sb.append(INDENT2 + "List<List<String>> result = service.getAllResults(query);" + ENDL
+                + INDENT2 + "List<String> view = query.getView();" + ENDL
+                + INDENT2 + "System.out.println(\"Results:\");" + ENDL
+                + INDENT2 + "for (List<String> row : result) {" + ENDL
+                + INDENT2 + INDENT + "for (String cell : row) {" + ENDL
+                + INDENT2 + INDENT2 + "System.out.print(cell + \" \");" + ENDL
+                + INDENT2 + INDENT + "}" + ENDL
+                + INDENT2 + INDENT + "System.out.print(\"\\n\");" + ENDL
+                + INDENT2 + "}" + ENDL
+                + INDENT + "}" + ENDL 
+                + ENDL);
 
         // Add getModel method
-        sb.append(INDENT + "private static Model getModel() {" + ENDL)
-            .append(INDENT + INDENT + "ModelService service = new ServiceFactory("
-                    + "serviceRootUrl, \"ModelService\").getModelService();" + ENDL)
-            .append(INDENT + INDENT + "return service.getModel();" + ENDL)
-            .append(INDENT + "}" + ENDL);
+        sb.append(INDENT + "private static Model getModel() {" + ENDL
+                + INDENT2 + "ModelService service = new ServiceFactory(" 
+                          + "serviceRootUrl, \"ModelService\").getModelService();" + ENDL
+                + INDENT2 + "return service.getModel();" + ENDL
+                + INDENT + "}" + ENDL);
 
         sb.append("}" + ENDL);
 
