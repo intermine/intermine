@@ -25,9 +25,11 @@
         >${aspect}</html:link>
       </c:forEach>
 
-      <html:link action="/report.do?id=${object.id}#other"
-      onclick="jQuery('a[name=other]').scrollTo('slow', 'swing', -21);return false;"
-      >Other</html:link>
+      <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
+        <html:link action="/report.do?id=${object.id}#other"
+        onclick="jQuery('a[name=other]').scrollTo('slow', 'swing', -21);return false;"
+        >Other</html:link>
+      </c:if>
     </div>
   </div>
   <div class="clear">&nbsp;</div>

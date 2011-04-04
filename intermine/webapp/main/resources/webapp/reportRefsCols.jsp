@@ -23,6 +23,7 @@
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
+
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
     <c:choose>
       <c:when test="${collection.size > 0}">

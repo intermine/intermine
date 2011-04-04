@@ -128,9 +128,9 @@ public class ReportController extends InterMineAction
                         }
                     }
                 }
-                session.setAttribute("mapOfInlineLists", placedInlineLists);
-                session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
             }
+            session.setAttribute("mapOfInlineLists", placedInlineLists);
+            session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
             Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
                 Map<String, DisplayField>>();
