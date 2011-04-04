@@ -352,11 +352,15 @@
         <c:when test="${empty builder}">
           <a href="javascript:codeGenTemplate('perl');">Perl</a>
           <span>|</span>
+          <a href="javascript:codeGenTemplate('python');">Python</a>
+          <span>|</span>
           <a href="javascript:codeGenTemplate('java');">Java</a>
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
         </c:when>
         <c:otherwise>
           <a href="javascript:;">Perl</a>
+          <span>|</span>
+          <a href="javascript:;">Python</a>
           <span>|</span>
           <a href="javascript:;">Java</a>
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
