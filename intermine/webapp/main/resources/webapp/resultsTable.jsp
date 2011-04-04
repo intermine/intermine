@@ -226,6 +226,9 @@
         // provide a toggler instead of the "show all link"
         jQuery('#${tableIdentifier} p.in_table a').hide();
 
+        // show template description
+        jQuery('#${tableIdentifier}').parent().find("p.description").show();
+
         var onclick = "jQuery('#${tableIdentifier} table').show();" +
         "jQuery('#${tableIdentifier} p.in_table a').show();" +
         "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
