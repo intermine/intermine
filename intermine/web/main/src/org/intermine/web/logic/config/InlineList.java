@@ -146,6 +146,24 @@ public class InlineList
 
     /**
      *
+     * @return the length of the strings in this list combined, delimiters included!
+     */
+    public Integer getLength() {
+        Integer length = 0;
+        Set<InlineListObject> items = getItems();
+        if (items != null) {
+            for (InlineListObject ilObj : getItems()) {
+                Object value = ilObj.getValue();
+                String valueString = value.toString();
+                length += valueString.length() + 2;
+            }
+            length -= 2;
+        }
+        return length;
+    }
+
+    /**
+     *
      * @return a size of the collection so we can determine if we
      *  are outputting a last item in the JSP etc.
      */
