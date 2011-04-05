@@ -16,6 +16,8 @@ import java.util.StringTokenizer;
 
 /**
  * Configuration of an object (Type) header when displayed on report
+ * @see bear in mind that we can apply special formatting to the paths, by adding [] or **
+ * characters towards the beginning/end of the path and ReportObject needs to deal with that!
  * @author radek
  *
  */

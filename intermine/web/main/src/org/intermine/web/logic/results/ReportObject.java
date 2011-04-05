@@ -302,11 +302,25 @@ public class ReportObject
                 String result = "";
                 // concatenate a space delineated title together as resolved from FieldValues
                 for (String path : titles.get(key).keySet()) {
+                    // do we have some special formatting chars?
+                    char first = path.charAt(0);
+                    char last = path.charAt(path.length() - 1);
+                    // strip all "non allowed" characters
+                    path = path.replaceAll("[^a-zA-Z.]", "");
+
+                    // resolve the field value
                     Object stuff = getFieldValue(path);
                     if (stuff != null) {
                         String stringyStuff = stuff.toString();
                         // String.isEmpty() was introduced in Java release 1.6
                         if (StringUtils.isNotBlank(stringyStuff)) {
+                            // apply special formatting
+                            if (first == '[' && last == ']') {
+                                stringyStuff = first + stringyStuff + last;
+                            } else if (first == '*' && first == last) {
+                                stringyStuff = "<i>" + stringyStuff + "</i>";
+                            }
+
                             result += stringyStuff + " ";
                         }
                     }
