@@ -303,7 +303,11 @@ function loadGraph1() {
     IMBedding.loadQuery(
         {
             select: ["Employee.age", "Employee.department.company.name"],
-            from: "testmodel"
+            from: "testmodel",
+            where: [
+                {path: "Employee.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Employee.department.company.name", op: "!=", value: "Company*"}
+            ]
         },
         {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
@@ -435,7 +439,11 @@ function loadGraph2() {
     IMBedding.loadQuery(
         {
             select: ["Manager.age", "Manager.seniority", "Manager.name"],
-            where: [{path: "Manager.age", op: ">", value: 30}],
+            where: [
+                {path: "Manager.age", op: ">", value: 30},
+                {path: "Manager.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Manager.department.company.name", op: "!=", value: "Company*"}
+                ],
             from: "testmodel"
         },
         {size: 1000, format: "jsonpobjects"},
@@ -475,7 +483,9 @@ function loadGraph2() {
                         y = item.datapoint[1].toFixed(2);
                     var key = parseInt(x) + "-" + parseInt(y);
                     var manager = managers[key];
-                    showTooltip(item.pageX, item.pageY, manager.name);
+                    if (manager) {
+                        showTooltip(item.pageX, item.pageY, manager.name);
+                    }
                 }
                 else {
                     $("#tooltip").remove();
