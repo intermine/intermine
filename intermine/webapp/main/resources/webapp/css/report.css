@@ -101,6 +101,7 @@ div.table table.refSummary thead td { border-width:0 0 1px 0; border-style:solid
 div.table table.refSummary tr.even td { border-width:1px 0; border-style:solid; }
 
 /* "templates" tables */
+h3.templateTitle { font-weight:normal; }
 div.table table.results { font-size:12px; }
 div.table table.results td { padding:6px; }
 div.table table.column-header-content td { padding:0px; }
