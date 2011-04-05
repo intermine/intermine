@@ -81,14 +81,20 @@ public class WebConfig
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
         /* configure how the "title" of an object is displayed on Type */
-        digester.addObjectCreate("webconfig/class/headerconfig/titles", HeaderConfig.class);
+        digester.addObjectCreate("webconfig/class/headerconfig", HeaderConfig.class);
         digester.addSetProperties("webconfig/class/headerconfig/titles",
                 "mainTitles", "mainTitles");
         digester.addSetProperties("webconfig/class/headerconfig/titles",
                 "subTitles", "subTitles");
         digester.addSetProperties("webconfig/class/headerconfig/titles",
                 "appendConfig", "appendConfig");
-        digester.addSetNext("webconfig/class/headerconfig/titles", "addHeaderConfig");
+        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+                "url", "url");
+        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+                "text", "text");
+        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+                "imageName", "imageName");
+        digester.addSetNext("webconfig/class/headerconfig", "addHeaderConfig");
 
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
         digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");

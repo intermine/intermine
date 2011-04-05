@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -40,6 +42,7 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfig;
+import org.intermine.web.logic.config.HeaderConfigLink;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -82,6 +85,8 @@ public class ReportObject
 
     /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
     private ObjectStore os = null;
+
+    private HeaderConfigLink headerLink;
 
     /**
      * Setup internal ReportObject
@@ -287,7 +292,7 @@ public class ReportObject
 
     /**
      * Get a title based on the type key we pass it
-     * @param key: main|sub
+     * @param key: main|subre
      * @return the titles string as resolved based on the path(s) under key
      */
     private String getTitles(String key) {
@@ -333,6 +338,50 @@ public class ReportObject
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @return a resolved link
+     */
+    public HeaderConfigLink getHeaderLink() {
+        if (this.headerLink == null) {
+            // fetch the Type
+            Type type = webConfig.getTypes().get(getClassDescriptor().getName());
+            // retrieve the titles map, HeaderConfig serves as a useless wrapper
+            HeaderConfig hc = type.getHeaderConfig();
+
+            if (hc != null) {
+                // fetch the link object
+                HeaderConfigLink link = hc.getLinkObject();
+
+                // link URL
+                String linkUrl = link.getLinkUrl();
+
+                if (linkUrl != null) {
+                    // patternz
+                    Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
+
+                    Matcher m = linkPattern.matcher(linkUrl);
+                    while (m.find()) {
+                        // get the field name and do some filtering just in case
+                        String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
+                        // resolve the field value
+                        Object stuff = getFieldValue(path);
+                        if (stuff != null) {
+                            String stringyStuff = stuff.toString();
+                            // String.isEmpty() was introduced in Java release 1.6
+                            if (StringUtils.isNotBlank(stringyStuff)) {
+                                // replace the field with the value & update
+                                link.setLinkUrl(linkUrl.replace("{" + path + "}", stringyStuff));
+                                this.headerLink = link;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return this.headerLink;
     }
 
     /**

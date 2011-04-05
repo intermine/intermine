@@ -33,6 +33,8 @@ public class HeaderConfig
     /** @var decides whether to append or only inherit config from parent, used by WebConfig only */
     private Boolean appendConfig = false;
 
+    private HeaderConfigLink link = new HeaderConfigLink();
+
     /**
      * Set main title(s) path(s) for the object, e.g.: symbol, primaryIdentifier => eve FBgn0000606
      * @param mainTitles a '|' delineated string of paths
@@ -110,4 +112,35 @@ public class HeaderConfig
         return appendConfig;
     }
 
+    /**
+     * Set
+     * @param url header link url
+     */
+    public void setLinkUrl(String url) {
+        this.link.setLinkUrl(url);
+    }
+
+    /**
+     * Set
+     * @param text header link text
+     */
+    public void setLinkText(String text) {
+        this.link.setLinkText(text);
+    }
+
+    /**
+     * Set
+     * @param imageName header link image name
+     */
+    public void setLinkImageName(String imageName) {
+        this.link.setLinkImageName(imageName);
+    }
+
+    /**
+     *
+     * @return the object that encapsulates header link
+     */
+    public HeaderConfigLink getLinkObject() {
+        return this.link;
+    }
 }

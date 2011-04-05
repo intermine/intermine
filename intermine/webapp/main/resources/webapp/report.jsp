@@ -14,7 +14,19 @@
 
 <div id="header_wrap">
   <div id="object_header">
-    <tiles:get name="objectTrail.tile" />
+    <c:if test="${object.headerLink != null}">
+        <c:set var="headerLink" value="${object.headerLink}"/>
+        <div id="headerLink">
+            <a href="${headerLink.linkUrl}" target="new">
+              <c:if test="${headerLink.linkImageName != null}">
+                  <img src="model/images/${headerLink.linkImageName}" />
+              </c:if>
+              <c:if test="${headerLink.linkText != null}">
+                  ${headerLink.linkText}
+              </c:if>
+            </a>
+        </div>
+    </c:if>
     <a name="summary"></a>
     <h1 class="title">
         ${object.type}: <strong>${object.titleMain}</strong> ${object.titleSub}
