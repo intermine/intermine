@@ -290,6 +290,7 @@ div.feature table td.border-left { border-left-color:#DCC8E2 !important; }
 div.box div.inner { border-color:#FCFAFD; }
 div.box div.inner h4 { background-color:#FCFAFD; }
 #object_header #headerLink a { color:#5C0075; }
+#fixed-menu div.links a.current { background:#5C0075; color:#FFF; }
 
 /* theme color classes (used on Report page currently) */
 div.table .theme-1-color, div.box .theme-1-color { color:#5C0075 !important; } /* Pigment Indigo */
