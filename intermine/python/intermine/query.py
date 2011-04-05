@@ -3,8 +3,8 @@ from copy import deepcopy
 from xml.dom import minidom, getDOMImplementation
 
 from .util import openAnything, ReadableException
-from .constraints import *
 from .pathfeatures import PathDescription, Join, SortOrder, SortOrderList
+import constraints
 
 """
 Classes representing queries against webservices
@@ -261,9 +261,9 @@ class Query(object):
         self.uncoded_constraints = []
         self.views = []
         self._sort_order_list = SortOrderList()
-        self._logic_parser = LogicParser(self)
+        self._logic_parser = constraints.LogicParser(self)
         self._logic = None
-        self.constraint_factory = ConstraintFactory()
+        self.constraint_factory = constraints.ConstraintFactory()
 
     @classmethod
     def from_xml(cls, xml, *args, **kwargs):
@@ -453,7 +453,7 @@ class Query(object):
         
         return con
 
-    def verify_constraint_paths(self, constraints=None):
+    def verify_constraint_paths(self, cons=None):
         """
         Check that the constraints are valid
         ====================================
@@ -466,24 +466,26 @@ class Query(object):
           - Check that LoopConstraints have a valid loopPath, of a compatible type
           - Check that ListConstraints refer to an object
 
+        @param cons: The constraints to check (defaults to all constraints on the query)
+
         @raise ModelError: if the paths are not valid
         @raise ConstraintError: if the constraints do not satisfy the above rules
 
         """
-        if constraints is None: constraints = self.constraints
-        for con in constraints:
+        if cons is None: cons = self.constraints
+        for con in cons:
             pathA = self.model.make_path(con.path, self.get_subclass_dict())
-            if isinstance(con, TernaryConstraint):
+            if isinstance(con, constraints.TernaryConstraint):
                 if pathA.get_class() is None:
                     raise ConstraintError("'" + str(pathA) + "' does not represent a class, or a reference to a class")
-            elif isinstance(con, BinaryConstraint) or isinstance(con, MultiConstraint):
+            elif isinstance(con, constraints.BinaryConstraint) or isinstance(con, constraints.MultiConstraint):
                 if not pathA.is_attribute():
                     raise ConstraintError("'" + str(pathA) + "' does not represent an attribute")
-            elif isinstance(con, SubClassConstraint):
+            elif isinstance(con, constraints.SubClassConstraint):
                 pathB = self.model.make_path(con.subclass, self.get_subclass_dict())
                 if not pathB.get_class().isa(pathA.get_class()):
                     raise ConstraintError("'" + con.subclass + "' is not a subclass of '" + con.path + "'")
-            elif isinstance(con, LoopConstraint):
+            elif isinstance(con, constraints.LoopConstraint):
                 pathB = self.model.make_path(con.loopPath, self.get_subclass_dict())
                 for path in [pathA, pathB]:
                     if not path.get_class():
@@ -491,7 +493,7 @@ class Query(object):
                 (classA, classB) = (pathA.get_class(), pathB.get_class())
                 if not classA.isa(classB) and not classB.isa(classA):
                     raise ConstraintError("the classes are of incompatible types: " + str(classA) + "," + str(classB))
-            elif isinstance(con, ListConstraint):
+            elif isinstance(con, constraints.ListConstraint):
                 if not pathA.get_class():
                     raise ConstraintError("'" + str(pathA) + "' does not refer to an object")
 
@@ -679,7 +681,7 @@ class Query(object):
 
         raise LogicParseError: if there is a syntax error in the logic
         """
-        if isinstance(value, LogicGroup):
+        if isinstance(value, constraints.LogicGroup):
             logic = value
         else: 
             logic = self._logic_parser.parse(value)
@@ -807,7 +809,7 @@ class Query(object):
         """
         subclass_dict = {}
         for c in self.constraints:
-            if isinstance(c, SubClassConstraint):
+            if isinstance(c, constraints.SubClassConstraint):
                 subclass_dict[c.path] = c.subclass
         return subclass_dict
 
@@ -1050,7 +1052,7 @@ class Template(Query):
         @see: L{intermine.webservice.Service.get_template}
         """
         super(Template, self).__init__(*args, **kwargs)
-        self.constraint_factory = TemplateConstraintFactory()
+        self.constraint_factory = constraints.TemplateConstraintFactory()
     @property
     def editable_constraints(self):
         """
@@ -1127,6 +1129,8 @@ class Template(Query):
         template unchanged so it can be run again with different
         values. This method does the cloning and changing of constraint
         values
+
+        @raise ConstraintError: if the constraint values specify values for a non-editable constraint.
 
         @rtype: L{Template}
         """

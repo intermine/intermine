@@ -2,8 +2,13 @@ from urlparse import urlunsplit, urljoin
 from xml.dom import minidom
 import urllib
 import csv
-import json
 import base64
+
+# Use core json for 2.6+, simplejson for <=2.5
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 # Local intermine imports
 from .query import Query, Template
@@ -187,7 +192,7 @@ class Service(object):
         a private template (ie. one you made yourself 
         and is not available to others) then you may need to authenticate
         
-        @see: L{intermine.service.Service.__init__}
+        @see: L{intermine.webservice.Service.__init__}
 
         @param name: the template's name
         @type name: string
