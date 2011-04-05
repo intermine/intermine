@@ -56,16 +56,9 @@
             <tr class="${rowClass}">
           </c:otherwise>
         </c:choose>
-          <%--<c:if test="${rowCount.first}">
-            <td rowSpan="${transcriptCount}"/>
-              <c:out value="${gene.symbol} ${gene.primaryIdentifier}"/>
-            </td>
-          </c:if>--%>
-          <%--<td>--%>
             <tiles:insert page="/model/displaySequenceFeature.jsp">
                 <tiles:put name="feature" beanName="transcript"/>
             </tiles:insert>
-          <%--</td>--%>
           <td>
             <c:if test="${!empty geneModel.exons}">
               <table>
@@ -95,7 +88,6 @@
               </table>
             </c:if>
           </td>
-          <%--<td>--%>
           <c:choose>
             <c:when test="${!empty geneModel.fivePrimeUTR}">
               <c:set var="fivePrimeUTR" value="${geneModel.fivePrimeUTR}"/>
@@ -105,8 +97,6 @@
             </c:when>
             <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
-          <%--</td>--%>
-          <%--<td>--%>
           <c:choose>
             <c:when test="${!empty geneModel.threePrimeUTR}">
               <c:set var="threePrimeUTR" value="${geneModel.threePrimeUTR}"/>
@@ -116,8 +106,6 @@
             </c:when>
             <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
-          <%--</td>--%>
-          <%--<td>--%>
           <c:choose>
             <c:when test="${!empty geneModel.CDSs}">
               <c:forEach items="${geneModel.CDSs}" var="cds">
@@ -128,8 +116,6 @@
             </c:when>
             <c:otherwise><td>&nbsp;</td></c:otherwise>
           </c:choose>
-          <%--</td>--%>
-
         </tr>
 
 
