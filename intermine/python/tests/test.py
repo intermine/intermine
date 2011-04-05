@@ -23,7 +23,7 @@ class TestInstantiation(WebserviceTest):
         try:
             bad_m = Model("foo")
             self.fail("No ModelParseError thrown at bad model xml")
-        except ModelParseError as ex:
+        except ModelParseError, ex:
             self.assertEqual(ex.message, "Error parsing model")
 
     def testMakeService(self):
@@ -54,13 +54,13 @@ class TestModel(WebserviceTest):
         try:
             self.model.get_class("Foo")
             self.fail("No ModelError thrown at non existent class")
-        except ModelError as ex:
+        except ModelError, ex:
             self.assertEqual(ex.message, 
                     "'Foo' is not a class in this model")
         try: 
             self.model.get_class("Employee.name")
             self.fail("No ModelError thrown at bad class retrieval")
-        except ModelError as ex:
+        except ModelError, ex:
             self.assertEqual(ex.message, "'Employee.name' is not a class")
 
     def testClassFields(self):
@@ -74,7 +74,7 @@ class TestModel(WebserviceTest):
         try:
             ceo.get_field("foo")
             self.fail("No ModelError thrown at non existent field")
-        except ModelError as ex:
+        except ModelError, ex:
             self.assertEqual(ex.message, 
                 "There is no field called foo in CEO")
 
@@ -132,7 +132,7 @@ class TestQuery(WebserviceTest):
         try: 
             self.q.add_view("Employee.name", "Employee.age", "Employee.department")
             self.fail("No ConstraintError thrown at non attribute view")
-        except ConstraintError as ex:
+        except ConstraintError, ex:
             self.assertEqual(ex.message, "'Employee.department' does not represent an attribute")
 
     def testSortOrder(self):
@@ -153,7 +153,7 @@ class TestQuery(WebserviceTest):
         try:
             self.q.add_constraint('Foo', 'IS NULL')
             self.fail("No ModelError thrown at bad path name")
-        except ModelError as ex:
+        except ModelError, ex:
             self.assertEqual(ex.message, "'Foo' is not a class in this model")
 
     def testUnaryConstraints(self):
@@ -171,7 +171,7 @@ class TestQuery(WebserviceTest):
         try:
             self.q.add_constraint('Department.company', '=', "foo")
             self.fail("No ConstraintError thrown for non attribute BinaryConstraint")
-        except ConstraintError as ex:
+        except ConstraintError, ex:
             self.assertEqual(ex.message, "'Department.company' does not represent an attribute")
 
     def testTernaryConstraint(self):
@@ -182,7 +182,7 @@ class TestQuery(WebserviceTest):
         try:
             self.q.add_constraint('Department.company.name', 'LOOKUP', "foo")
             self.fail("No ConstraintError thrown for non object TernaryConstraint")
-        except ConstraintError as ex:
+        except ConstraintError, ex:
             self.assertEqual(ex.message, "'Department.company.name' does not represent a class, or a reference to a class")
 
     def testMultiConstraint(self):
@@ -215,12 +215,12 @@ class TestQuery(WebserviceTest):
         try:
            self.q.add_constraint('Department.company.CEO', 'Foo')
            self.fail("No ModelError raised by bad sub class")
-        except ModelError as ex:
+        except ModelError, ex:
             self.assertEqual(ex.message, "'Foo' is not a class in this model")
         try:
             self.q.add_constraint('Department.company.CEO', 'Manager')
             self.fail("No ConstraintError raised by bad subclass relationship")
-        except ConstraintError as ex:
+        except ConstraintError, ex:
             self.assertEqual(ex.message, "'Manager' is not a subclass of 'Department.company.CEO'")
 
     def testLogic(self):
@@ -387,7 +387,7 @@ class TestQueryResults(WebserviceTest):
                 try:
                     self.assertEqual(self.query.get_results_list(), expected)
                     self.assertEqual(self.template.get_results_list(), expected)
-                except IOError as e:
+                except IOError, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
@@ -407,7 +407,7 @@ class TestQueryResults(WebserviceTest):
                 try:
                     self.assertEqual(self.query.get_results_list("dict"), expected)
                     self.assertEqual(self.template.get_results_list("dict"), expected)
-                except IOError as e:
+                except IOError, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
@@ -448,7 +448,7 @@ class TestTSVResults(WebserviceTest):
                 try:
                     self.assertEqual(self.query.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
                     self.assertEqual(self.template.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
-                except IOError as e:
+                except IOError, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
@@ -479,7 +479,7 @@ class TestTemplates(WebserviceTest):
             if attempts < 5:
                 try:
                     self.assertEqual(t.get_results_list(), expected)
-                except IOError as e:
+                except IOError, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
@@ -488,7 +488,7 @@ class TestTemplates(WebserviceTest):
         try:
             self.service.get_template("Non_Existant")
             self.fail("No ServiceError raised by non-existant template")
-        except ServiceError as ex:
+        except ServiceError, ex:
             self.assertEqual(ex.message, "There is no template called 'Non_Existant' at this service")
     
     def testTemplateConstraintParsing(self):

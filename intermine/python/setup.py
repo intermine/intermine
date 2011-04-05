@@ -97,7 +97,7 @@ class CleanCommand(Command):
                 try:
                     self.announce("Deleting " + clean_me, level=2)
                     os.unlink(clean_me)
-                except Exception as e:
+                except Exception, e:
                     message = " ".join(["Failed to delete file", clean_me, str(e)])
                     log.warn(message)
         for clean_me in self._dirs_to_delete:
@@ -108,7 +108,7 @@ class CleanCommand(Command):
                     try:
                         self.announce("Going to remove " + clean_me, level=2)
                         os.rmdir(clean_me)
-                    except Exception as e:
+                    except Exception, e:
                         message = " ".join(
                                 ["Failed to delete dir", clean_me, str(e)])
                         log.warn(message)
