@@ -231,7 +231,8 @@
 
         // prepend the count in the title
         var h = jQuery('#${tableIdentifier}').parent().find("h3.templateTitle");
-        h.text(${pagedResults.exactSize} + ' ' + h.text());
+        h.html(${pagedResults.exactSize} + ' ' + h.html());
+        h.css('font-weight', 'bold');
 
         var onclick = "jQuery('#${tableIdentifier} table').show();" +
         "jQuery('#${tableIdentifier} p.in_table a').show();" +
