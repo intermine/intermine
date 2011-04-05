@@ -27,7 +27,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll; }
 
 /* header */
-#object_header { width:92%; margin-left:4%; margin-right:4%; }
+#object_header { width:92%; margin-left:4%; margin-right:4%; position:relative; }
     #object_header h1.title {font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif; font-size:24px;
         font-weight:normal; position:relative; }
     #object_header p.description { margin:0; padding-bottom:10px; }
@@ -41,6 +41,9 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
     #object_header div.box.grid_12 { margin:auto !important; }
     #object_header div.list ul { margin-left:3px; }
     #object_header div.list ul li { display:inline; margin:0; }
+
+    /* header link */
+    #headerLink { position:absolute; top:0; right:0; z-index:3; font-size:12px; }
 
 /* 'floating' menu */
 #pagecontentmax { padding-top:0; }
