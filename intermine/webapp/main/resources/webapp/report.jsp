@@ -108,11 +108,60 @@
   <script type="text/javascript">
     jQuery('#fixed-menu').hide(); // hide for IE7
     jQuery(window).scroll(function() {
+      // transition fix
       if (jQuery('#menu-target').isInView('partial')) {
         jQuery('#fixed-menu').hide();
       } else {
         jQuery('#fixed-menu').show();
       }
+
+      // where are we
+      var currentAspect = null;
+      var currentAspectDistance = 9999;
+
+      // distance from top (screen)
+      var screenTop = jQuery(window).scrollTop();
+      // distance from bottom (screen)
+      var screenBottom = screenTop + jQuery(window).height();
+      // center of the screen
+      var screenMiddle = ((screenBottom - screenTop) / 2) + screenTop;
+
+      // traverse aspect blocks
+      jQuery('div.aspectBlock').each(function(i) {
+        // is this aspect in view?
+        if (jQuery(this).isInView('partial')) {
+            // top & bottom distance for the element
+            var elementTop = jQuery(this).offset().top;
+            var elementBottom = elementTop + jQuery(this).height();
+            // absolute distance from the middle of the screen is...
+            var elementTopDistance = Math.abs(elementTop - screenMiddle);
+            var elementBottomDistance = Math.abs(elementBottom - screenMiddle);
+
+            // save the one that is closer to the middle
+            if (elementTopDistance < currentAspectDistance) {
+              currentAspectDistance = elementTopDistance;
+              currentAspect = jQuery(this).attr('id');
+            }
+            if (elementBottomDistance < currentAspectDistance) {
+              currentAspectDistance = elementBottomDistance;
+              currentAspect = jQuery(this).attr('id');
+            }
+        }
+      });
+
+      if (currentAspect != null) {
+        // strip the 'Category' suffix
+        currentAspect = currentAspect.substring(0, currentAspect.length - 8);
+        // find the one link in the top menu that corresponds to where we are
+        jQuery('#fixed-menu div.links a').each(function(i) {
+            if (jQuery(this).text() == currentAspect) {
+                jQuery(this).addClass('current');
+            } else {
+                jQuery(this).removeClass('current');
+            }
+        });
+      }
+
     });
 
     if (jQuery(window).width() < '900') {
@@ -163,30 +212,34 @@
   </tiles:insert>
 --%>
   <c:forEach items="${categories}" var="aspect" varStatus="status">
-    <tiles:insert name="reportAspect.tile">
-    <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
-    <tiles:put name="placement" value="im:aspect:${aspect}" />
-    <tiles:put name="reportObject" beanName="object" />
-    <tiles:put name="trail" value="${request.trail}" />
-    <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
-    <tiles:put name="opened" value="${status.index == 0}" />
-  </tiles:insert>
+    <div id="${aspect}Category" class="aspectBlock">
+      <tiles:insert name="reportAspect.tile">
+        <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
+        <tiles:put name="placement" value="im:aspect:${aspect}" />
+        <tiles:put name="reportObject" beanName="object" />
+        <tiles:put name="trail" value="${request.trail}" />
+        <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+        <tiles:put name="opened" value="${status.index == 0}" />
+      </tiles:insert>
+  </div>
   </c:forEach>
 
-  <c:if test="${categories != null}">
-    <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
-      <div class="clear">&nbsp;</div>
-      <a name="other"><h2>Other</h2></a>
+  <div id="OtherCategory" class="aspectBlock">
+    <c:if test="${categories != null}">
+      <c:if test="${fn:length(placementRefsAndCollections['im:aspect:Miscellaneous']) > 0 || fn:length(listOfUnplacedInlineLists) > 0}">
+        <div class="clear">&nbsp;</div>
+        <a name="other"><h2>Other</h2></a>
+      </c:if>
     </c:if>
-  </c:if>
-  <tiles:insert page="/reportUnplacedInlineLists.jsp">
-    <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
-  </tiles:insert>
+    <tiles:insert page="/reportUnplacedInlineLists.jsp">
+      <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
+    </tiles:insert>
 
-  <tiles:insert page="/reportRefsCols.jsp">
-    <tiles:put name="object" beanName="object" />
-    <tiles:put name="placement" value="im:aspect:Miscellaneous" />
-  </tiles:insert>
+    <tiles:insert page="/reportRefsCols.jsp">
+      <tiles:put name="object" beanName="object" />
+      <tiles:put name="placement" value="im:aspect:Miscellaneous" />
+    </tiles:insert>
+  </div>
 </div>
 
 </div>
