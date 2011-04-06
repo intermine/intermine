@@ -14,8 +14,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
- * @author alex
+ * Base class for formatters that process JSON data. The 
+ * following basic structure is assumed: The result set
+ * is a single JavaScript object literal, with an optional
+ * callback provided by the user, and some result
+ * status meta-data to round it off (see formatFooter).
+
+ * @author Alex Kalderimis
  *
  */
 public class JSONFormatter extends Formatter {
@@ -73,7 +81,15 @@ public class JSONFormatter extends Formatter {
     }
 
     /**
-     * Put on the final brace, and close the call-back bracket if needed
+     * Put on the final brace, and close the call-back bracket if needed.
+     * If an error has been reported, format that nicely,
+     * escaping problematic JavaScript characters appropriately 
+     * in the message portion.
+     *
+     * @param errorMessage The message reporting the problem encountered
+     *      in processing this request, or null if there was none
+     * @param errorCode The status code for the request (200 on success)
+     *
      * @see org.intermine.webservice.server.output.Formatter#formatFooter()
      * @return The formatted footer string.
      */
@@ -82,7 +98,7 @@ public class JSONFormatter extends Formatter {
         StringBuilder sb = new StringBuilder();
         sb.append(",\"wasSuccessful\":");
         if (errorCode != Output.SC_OK) {
-        	sb.append("false,\"error\":\"" + errorMessage + "\"");
+        	sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJavaScript(errorMessage) + "\"");
         } else {
         	sb.append("true,\"error\":null");
         }
