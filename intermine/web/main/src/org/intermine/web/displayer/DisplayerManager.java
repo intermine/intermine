@@ -1,5 +1,15 @@
 package org.intermine.web.displayer;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,15 +25,27 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
 
-public class DisplayerManager {
-
+/**
+ * Read in and provide access to report page custom displayers.  Displayers are constructed based
+ * on entries in webconfig-model.xml and cached.  On creation config is copied to subclasses.
+ * @author Richard Smith
+ *
+ */
+public final class DisplayerManager
+{
     private static DisplayerManager instance = null;
+    private Map<String, Map<String, List<CustomDisplayer>>> displayers =
+        new HashMap<String, Map<String, List<CustomDisplayer>>>();
+    private static final String DEFAULT_PLACEMENT = "summary";
 
     protected static final Logger LOG = Logger.getLogger(DisplayerManager.class);
 
-    private Map<String, Map<String, List<CustomDisplayer>>> displayers =
-        new HashMap<String, Map<String, List<CustomDisplayer>>>();
-
+    /**
+     * Fetch the DisplayerManager, a single instance is held.
+     * @param webConfig web configuration
+     * @param im the InterMine API
+     * @return the DisplayerManager
+     */
     public static DisplayerManager getInstance(WebConfig webConfig, InterMineAPI im) {
         if (instance == null) {
             instance = new DisplayerManager(webConfig, im);
@@ -31,7 +53,7 @@ public class DisplayerManager {
         return instance;
     }
 
-    protected DisplayerManager(WebConfig webConfig, InterMineAPI im) {
+    private DisplayerManager(WebConfig webConfig, InterMineAPI im) {
         for (ReportDisplayerConfig config : webConfig.getReportDisplayerConfigs()) {
 
             CustomDisplayer displayer = null;
@@ -44,17 +66,16 @@ public class DisplayerManager {
                         new Class[] {ReportDisplayerConfig.class, InterMineAPI.class});
                 displayer = (CustomDisplayer) m.newInstance(new Object[] {config, im});
             } catch (Exception e) {
-                LOG.error("Failed to instantiate displayer for class: " + config.getJavaClass() +
-                        " because: " + e);
+                LOG.error("Failed to instantiate displayer for class: " + config.getJavaClass()
+                        + " because: " + e);
             }
             if (displayer == null) {
                 continue;
             }
 
             String placement = config.getPlacement();
-            // TODO formalise default placements
             if (placement == null) {
-                placement = "summary";
+                placement = DEFAULT_PLACEMENT;
             }
             Set<String> allTypes = new HashSet<String>();
             for (String type : config.getConfiguredTypes()) {
@@ -80,6 +101,11 @@ public class DisplayerManager {
         }
     }
 
+    /**
+     * Get all displayers for the given type regardless of placement.
+     * @param type an unqualified class name to look up
+     * @return a set of displayers or an empty set if there are none
+     */
     public Set<CustomDisplayer> getAllReportDisplayersForType(String type) {
         Set<CustomDisplayer> displayersForType = new HashSet<CustomDisplayer>();
         if (displayers.containsKey(type)) {
@@ -90,6 +116,12 @@ public class DisplayerManager {
         return displayersForType;
     }
 
+    /**
+     * Get a map from placement string (a data category or summary) to displayers for the given
+     * type.  Returns null if there are no displayers for the type.
+     * @param type an unqualified class name
+     * @return a map from placement to displayers or null
+     */
     public Map<String, List<CustomDisplayer>> getReportDisplayersForType(String type) {
         return displayers.get(type);
     }
