@@ -173,12 +173,17 @@
             </div>
 
             <div id="api">
-                <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+                <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
                 <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
-                <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
+                <p>
+                    Access our <c:out value="${WEB_PROPERTIES['project.title']}"/> data via
+                    our Application Programming Interface (API) too!
+                    We provide client libraries in the following languages:
+                </p>
                 <ul>
-                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do">Perl API</a>
-                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java API</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
                 </ul>
             </div>
 
