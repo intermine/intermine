@@ -291,6 +291,7 @@ div.box div.inner { border-color:#FCFAFD; }
 div.box div.inner h4 { background-color:#FCFAFD; }
 #object_header #headerLink a { color:#5C0075; }
 #fixed-menu div.links a.current { background:#5C0075; color:#FFF; }
+div.table.template p.in_table a span { background-color:#FFF; color:#5C0075; }
 
 /* theme color classes (used on Report page currently) */
 div.table .theme-1-color, div.box .theme-1-color { color:#5C0075 !important; } /* Pigment Indigo */
@@ -320,3 +321,20 @@ div.table .theme-6-border, div.box .theme-6-border { border-color:#FCFAFD !impor
 div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
 div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
 div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+
+/* redefine for template tables */
+div.table.green .theme-1-color { color:#0A7500 !important; } /* Japanese Laurel */
+div.table.green .theme-1-background { background-color:#0A7500 !important; } /* Japanese Laurel */
+div.table.green .theme-1-border { border-color:#0A7500 !important; } /* Japanese Laurel */
+
+div.table.green .theme-3-color { color:#C8E2C8 !important; } /* Surf Crest */
+div.table.green .theme-3-background { background-color:#C8E2C8 !important; } /* Surf Crest */
+div.table.green .theme-3-border { border-color:#C8E2C8 !important; } /* Surf Crest */
+
+div.table.green .theme-5-color { color:#EEF7EE !important; } /* Panache */
+div.table.green .theme-5-background { background-color:#EEF7EE !important; } /* Panache */
+div.table.green .theme-5-border { border-color:#EEF7EE !important; } /* Panache */
+
+div.table.green .theme-6-color { color:#FAFDFA !important; } /* Panache Light */
+div.table.green .theme-6-background { background-color:#FAFDFA !important; } /* Panache Light */
+div.table.green .theme-6-border { border-color:#FAFDFA !important; } /* Panache Light */
