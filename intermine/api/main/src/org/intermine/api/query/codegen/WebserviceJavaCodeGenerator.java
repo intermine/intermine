@@ -55,6 +55,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @param wsCodeGenInfo a WebserviceCodeGenInfo object
      * @return web service source code in a string
      */
+    @Override
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
@@ -130,13 +131,13 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add class code
         sb.append("public class QueryClient" + ENDL)
             .append(
-            	"{" + ENDL
-            	+ INDENT + "private static final String ROOT "
+                "{" + ENDL
+                + INDENT + "private static final String ROOT "
                     + "= \"" + info.getServiceBaseURL() + "/service\";" + ENDL
                 + ENDL);
         if (!info.isPublic()) {
-        	sb.append(
-        		INDENT + "//Add your login details here by setting your password." + ENDL
+            sb.append(
+                INDENT + "//Add your login details here by setting your password." + ENDL
               + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
               + INDENT + "private static final String PASSWORD = null;" + ENDL
               + ENDL);
@@ -145,26 +146,26 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add methods code
         // Add Main method
         sb.append(
-        	  INDENT +         "/**" + ENDL
-        	+ INDENT + SPACE + "*" + SPACE + "Perform the query and print the rows of results." + ENDL
+              INDENT +         "/**" + ENDL
+            + INDENT + SPACE + "*" + SPACE + "Perform the query and print the rows of results." + ENDL
             + INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL
             + INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL
             + INDENT + SPACE + "*/" + ENDL);
 
         sb.append(
-        	INDENT + "public static void main(String[] args) {" + ENDL
-        	+ INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT)" + ENDL
+            INDENT + "public static void main(String[] args) {" + ENDL
+            + INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT);" + ENDL
             + INDENT2 + "Model model = factory.getModelService().getModel();" + ENDL
-        	+ INDENT2 + "QueryService service = factory.getQueryService();" + ENDL
+            + INDENT2 + "QueryService service = factory.getQueryService();" + ENDL
             + INDENT2 + "PathQuery query = new PathQuery(model);" + ENDL
             + ENDL);
 
         // If we need to authenticate, do that now.
         if (!info.isPublic()) {
-        	sb.append(
-        		 INDENT2 + "// Log in to access the private lists in this query" + ENDL
-        	   + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
-        	   + ENDL);
+            sb.append(
+                 INDENT2 + "// Log in to access the private lists in this query" + ENDL
+               + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
+               + ENDL);
         }
 
         PathQuery query = info.getQuery();
@@ -329,19 +330,19 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private StringBuffer generateTemplateQueryCode(WebserviceCodeGenInfo info,
             StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
 
-    	TemplateQuery template = (TemplateQuery) info.getQuery();
+        TemplateQuery template = (TemplateQuery) info.getQuery();
         String srcClassName = TypeUtil.javaiseClassName(template.getName());
 
         // Add package and import
         pac.append("package " + TypeUtil.javaisePackageName(info.getProjectTitle()) + ENDL + ENDL);
 
         impJava.append(
-        		"import java.util.ArrayList;" + ENDL
-        	 +  "import java.util.List;" + ENDL);
+                "import java.util.ArrayList;" + ENDL
+             +  "import java.util.List;" + ENDL);
 
         impIM.append(
-        	  "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL
-        	+ "import org.intermine.webservice.client.services.TemplateService;" + ENDL
+              "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL
+            + "import org.intermine.webservice.client.services.TemplateService;" + ENDL
             + "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL);
 
         // Add class comments
@@ -358,14 +359,14 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         // Add class code
         sb.append("public class Template" + srcClassName + ENDL
-        	+ "{" + ENDL
-        	+ INDENT + "private static final String ROOT = \"" + info.getServiceBaseURL()
-        			 + "/service\";" + ENDL
+            + "{" + ENDL
+            + INDENT + "private static final String ROOT = \"" + info.getServiceBaseURL()
+                     + "/service\";" + ENDL
             + ENDL);
 
         if (!info.isPublic()) {
-           	sb.append(
-           		INDENT + "//Add your login details here by setting your password." + ENDL
+               sb.append(
+                   INDENT + "//Add your login details here by setting your password." + ENDL
                 + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
                 + INDENT + "private static final String PASSWORD = null;" + ENDL
                 + ENDL);
@@ -378,16 +379,16 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             .append(INDENT + SPACE + "*/" + ENDL);
 
         sb.append(
-    		  INDENT + "public static void main(String[] args) {" + ENDL
-    		+ ENDL+ INDENT2
-    		+ "TemplateService service = new ServiceFactory(ROOT).getTemplateService();" + ENDL
+              INDENT + "public static void main(String[] args) {" + ENDL
+            + ENDL+ INDENT2
+            + "TemplateService service = new ServiceFactory(ROOT).getTemplateService();" + ENDL
             + ENDL);
 
         if (!info.isPublic()) {
-        	sb.append(
-           		 INDENT2 + "// Log in to access this template" + ENDL
-          	   + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
-          	   + ENDL);
+            sb.append(
+                    INDENT2 + "// Log in to access this template" + ENDL
+                 + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
+                 + ENDL);
         }
 
         sb.append(
@@ -409,7 +410,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         // Add display results code
         sb.append(
-        	  INDENT2 + "// Name of template" + ENDL
+              INDENT2 + "// Name of template" + ENDL
             + INDENT2 + "String name = \"" + template.getName() + "\";" + ENDL
             + ENDL
             + INDENT2 + "List<List<String>> rows = " + "service.getAllResults(name, parameters);" + ENDL

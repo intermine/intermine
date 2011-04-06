@@ -37,13 +37,11 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
     protected static final String SCRIPT_IMPORTS          =
-		"<!-- You need to import the following client libraries: -->" + ENDL
-		+ "<!-- jQuery (hosted by Google) -->" + ENDL
-        + "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" type=\"text/javascript\"></script>" + ENDL
-        + "<!-- jquery-jsonp (available from the googlecode repository) -->" + ENDL
-        + "<script src=\"http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js\" type=\"text/javascript\"></script>" + ENDL
-        + "<!-- IMbedding (hosted for your convenience on intermine.org) -->" + ENDL
-        + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.min.js\" type=\"text/javascript\"></script>" + ENDL + ENDL;
+		  "<!-- You need to import the IMBedding client library - this is hosted at intermine.org for your convenience: -->" + ENDL
+        + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
+        + "<!-- We also need to import a stylesheet - you can choose from light, dark or bold-->" + ENDL
+        + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.1/style/light.css\">" + ENDL 
+        + ENDL;
 
     protected static final String PRELUDE =
         "<!-- This is an automatically generated code snippet to run your query" + ENDL
@@ -70,7 +68,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
-        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL() + "/service";
+        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
 
         // query is null
         if (query == null) {
