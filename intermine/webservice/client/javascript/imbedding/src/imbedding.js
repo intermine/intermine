@@ -1,4 +1,6 @@
 IMBedding = (function() {
+    // Add in a console in case there is no global one.
+    console = console || {log: function() {}};
     var baseUrl = null;
     var tables = {};
     var defaultTableSize = 10;
@@ -23,6 +25,7 @@ IMBedding = (function() {
         countText: "[x] rows",
         defaultQueryName: "Query Results",
         emptyCellText: "[NONE]",
+        errorHandler: function(error, statusCode) {console.log("Error:", error, statusCode)},
         expandHelpText: "show table",
         exportCSVText: "Export as CSV file",
         exportTSVText: "Export as TSV file",
@@ -493,14 +496,19 @@ IMBedding = (function() {
         if (target instanceof Function) {
             return target;
         } else {
-            return function(data) {buildTable(data, target, options)};
-        }
-    };
-    var handleError = function(options, textStatus) {
-        if (textStatus == "error") {
-            alert("Something was wrong with your query - please edit it");
-        } else {
-            alert(textStatus);
+            return function(data) {
+                if ("wasSuccessful" in data) {
+                    if (data.wasSuccessful) {
+                        buildTable(data, target, options);
+                    } else {
+                        errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                        errorHandler(data.error, data.statusCode);
+                    }
+                } else {
+                    errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                    errorHandler("Incorrect data format returned from server", 500);
+                }
+            }
         }
     };
     var loadUrl = function(url, target) {
@@ -520,12 +528,13 @@ IMBedding = (function() {
             throbber.src = defaultOptions.throbberSrc;
             jQuery(target).empty().append(throbber);
         }
+
         jQuery.jsonp({
             url: url, 
             data: data, 
             success: callback, 
             callbackParameter: "callback",
-            error: handleError
+            error: options.errorHandler || defaultOptions.errorHandler
         });
     };
 
