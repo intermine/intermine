@@ -36,11 +36,21 @@ public class ServiceFactory
 {
 
     private final String rootUrl;
-
-    private final String applicationName;
+    private String applicationName = "InterMine-WS-Client-Java-0.96";
 
     /**
-     * Constructor.
+     * Construct a service factory with a default application name. (defaults to
+     * "InterMine-WS-Client-Java-$VERSION")
+     * @param rootUrl the base URL for all services, it is the prefix common to all services.
+     *      Example: http://www.flymine.org/query/service
+     */
+    public ServiceFactory(String rootUrl) {
+        this.rootUrl = rootUrl;
+    }
+
+    /**
+     * Construct a factory for gaining access to specific resources. Allows you to set 
+     * the root url and the User-Agent identifier.
      * @param rootUrl the base URL for all services, it is the prefix common to all services.
      *      Example: http://www.flymine.org/query/service
      * @param applicationName application name, information to identify your application to the
