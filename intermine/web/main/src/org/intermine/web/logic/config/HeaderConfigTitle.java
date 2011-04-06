@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
  * @author radek
  *
  */
-public class HeaderConfig
+public class HeaderConfigTitle
 {
 
     /**
@@ -110,37 +110,5 @@ public class HeaderConfig
      */
     public Boolean getAppendConfig() {
         return appendConfig;
-    }
-
-    /**
-     * Set
-     * @param url header link url
-     */
-    public void setLinkUrl(String url) {
-        this.link.setLinkUrl(url);
-    }
-
-    /**
-     * Set
-     * @param text header link text
-     */
-    public void setLinkText(String text) {
-        this.link.setLinkText(text);
-    }
-
-    /**
-     * Set
-     * @param imageName header link image name
-     */
-    public void setLinkImageName(String imageName) {
-        this.link.setLinkImageName(imageName);
-    }
-
-    /**
-     *
-     * @return the object that encapsulates header link
-     */
-    public HeaderConfigLink getLinkObject() {
-        return this.link;
     }
 }

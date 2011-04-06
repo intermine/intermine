@@ -130,9 +130,10 @@
       jQuery('div.aspectBlock').each(function(i) {
         // is this aspect in view?
         if (jQuery(this).isInView('partial')) {
-            // top & bottom distance for the element
-            var elementTop = jQuery(this).offset().top;
-            var elementBottom = elementTop + jQuery(this).height();
+            // top & bottom distance for the element, increase the top one as divs align
+            var elementTop = jQuery(this).offset().top + 1;
+            var elementBottom = elementTop + jQuery(this).height() - 1;
+
             // absolute distance from the middle of the screen is...
             var elementTopDistance = Math.abs(elementTop - screenMiddle);
             var elementBottomDistance = Math.abs(elementBottom - screenMiddle);

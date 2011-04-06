@@ -49,7 +49,8 @@ public class Type
     private LinkedList<InlineList> inlineLists = new LinkedList<InlineList>();
 
     /** @var header configuration having paths to titles to show */
-    private HeaderConfig headerConfig = null;
+    private HeaderConfigTitle headerConfigTitle;
+    private HeaderConfigLink headerConfigLink;
 
     /**
      * Set the unqualified class name for this Type (from fully-qualified)
@@ -122,8 +123,32 @@ public class Type
      * Add a header configuration, used from WebConfig
      * @param headerConfig lalala
      */
-    public void addHeaderConfig(HeaderConfig headerConfig) {
-        this.headerConfig = headerConfig;
+    public void addHeaderConfigTitle(HeaderConfigTitle headerConfig) {
+        this.headerConfigTitle = headerConfig;
+    }
+
+    /**
+     *
+     * @return HeaderConfigTitle
+     */
+    public HeaderConfigTitle getHeaderConfigTitle() {
+        return this.headerConfigTitle;
+    }
+
+    /**
+     * Add a header configuration, used from WebConfig
+     * @param headerConfig lalala
+     */
+    public void addHeaderConfigLink(HeaderConfigLink headerConfig) {
+        this.headerConfigLink = headerConfig;
+    }
+
+    /**
+    *
+    * @return HeaderConfigTitle
+    */
+    public HeaderConfigLink getHeaderConfigLink() {
+        return this.headerConfigLink;
     }
 
     /**
@@ -186,14 +211,6 @@ public class Type
      */
     public List<InlineList> getInlineLists() {
         return inlineLists;
-    }
-
-    /**
-     *
-     * @return header configuration
-     */
-    public HeaderConfig getHeaderConfig() {
-        return headerConfig;
     }
 
     /**

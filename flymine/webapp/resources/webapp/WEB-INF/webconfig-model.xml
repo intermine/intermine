@@ -28,7 +28,9 @@
 
   <class className="org.intermine.model.bio.BioEntity">
     <headerconfig>
-      <titles mainTitles="[symbol]|primaryIdentifier" subTitles="*organism.shortName*" />
+      <titles>
+        <title mainTitles="[symbol]|primaryIdentifier" subTitles="*organism.shortName*" />
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -159,11 +161,12 @@
 
   <class className="org.intermine.model.bio.Gene">
     <headerconfig>
-      <titles mainTitles="[symbol]|primaryIdentifier" subTitles="*organism.shortName*" />
-      <customlink
-        linkUrl="http://www.yeastgenome.org/cgi-bin/locus.fpl?dbid={primaryIdentifier}"
-        linkImageName="flybase_logo_link.png"
-      />
+      <customlinks>
+        <customlink
+          linkUrl="http://www.yeastgenome.org/cgi-bin/locus.fpl?dbid={primaryIdentifier}"
+          linkImageName="flybase_logo_link.png"
+        />
+      </customlinks>
     </headerconfig>
     <inlinelist>
       <table path="synonyms.value" showInHeader="true" lineLength="100" />
