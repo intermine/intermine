@@ -136,7 +136,7 @@
 
           <p class="in_table" style="display:none;">
             <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-              Show all in a table
+              Show all in a table »
             </html:link>
           </p>
 
@@ -152,7 +152,7 @@
 
           <p class="in_table" style="display:none;">
             <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-              Show all in a table
+              Show all in a table »
             </html:link>
           </p>
 

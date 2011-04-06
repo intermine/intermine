@@ -189,7 +189,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
                   }
                 });
                 // add a toggler for more rows
-                table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+                table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
             }
 
             // fade it in
@@ -243,7 +243,7 @@ function trimTable(e) {
         }
       });
       // add a toggler for more rows
-      table.parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1, 10);">Show more rows</a></p>');
+      table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1, 10);">Show more rows</a></p>');
   }
 
 }
@@ -278,12 +278,12 @@ function showMoreRows(e, round, maxCount) {
   // if the count is > 0 (< 30 entries) or 3rd round (30+ entries) at this
   // point, show a link to table instead
   if (count > 0 || round == 2) {
-    table.parent().find('p.toggle').css('display', 'none');
+    table.parent().parent().find('p.toggle').css('display', 'none');
     table.parent().parent().find('p.in_table').css('display', '');
   } else {
     round = parseInt(round) + 1;
     // update toggle count
-    table.parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ', ' +  maxCount + ');">Show more rows</a>');
+    table.parent().parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ', ' +  maxCount + ');">Show more rows</a>');
   }
 
   return false;

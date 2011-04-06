@@ -49,7 +49,7 @@
   </c:when>
   <c:otherwise>
     <html:link styleClass="theme-1-color" action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
-      Show all in a table
+      Show all in a table »
     </html:link>
   </c:otherwise>
 </c:choose>
