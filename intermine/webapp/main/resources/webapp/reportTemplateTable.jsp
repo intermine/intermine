@@ -42,7 +42,10 @@
 <p class="in_table">
 <c:choose>
   <c:when test="${resultsTable.exactSize == 0}">
-    <i>No results for this ${reportObject.type}</i>
+    <script type="text/javascript">
+        var h = jQuery('#table_${fn:replace(placement, ':', '_')}_${templateQuery.name}').parent().find("h3.templateTitle div.right");
+        h.html('No results for this ${reportObject.type}');
+    </script>
   </c:when>
   <c:otherwise>
     <html:link styleClass="theme-1-color" action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">

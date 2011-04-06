@@ -226,26 +226,23 @@
         // provide a toggler instead of the "show all link"
         jQuery('#${tableIdentifier} p.in_table a').hide();
 
-        // show template description
-        jQuery('#${tableIdentifier}').parent().find("p.description").show();
-
-        // prepend the count in the title
-        var h = jQuery('#${tableIdentifier}').parent().find("h3.templateTitle");
-        h.html(${pagedResults.exactSize} + ' ' + h.html());
-        h.css('font-weight', 'bold');
+        // add the count to the title
+        var h = jQuery('#${tableIdentifier}').parent().find("h3.templateTitle div.right");
+        h.html(${pagedResults.exactSize} + ' results');
 
         var onclick = "jQuery('#${tableIdentifier} table').show();" +
         "jQuery('#${tableIdentifier} p.in_table a').show();" +
+        "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
         "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
         if (${pagedResults.exactSize} > 1) {
           // nasty hardcode
           if (${pagedResults.exactSize} < 10) {
-            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show '+${pagedResults.exactSize}+' results</a>';
+            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;"><span>Show</span></a>';
           } else {
-            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show first 10 results</a>';
+            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;"><span>Show</span></a>';
           }
         } else {
-          var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;">Show 1 result</a>';
+          var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;"><span>Show</span></a>';
         }
         jQuery('#${tableIdentifier} p.in_table').append(toggle);
       </script>

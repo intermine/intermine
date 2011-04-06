@@ -92,6 +92,8 @@ div.table h3 { border-top-width:1px; border-top-style:solid; font-size:14px; pad
     margin-bottom:0; /*height:25px;*/ }
 div.table td[width="15"] { display:none; } /* ridicurous */
 div.table p { text-align:center; font-size:12px; padding:2px; }
+  div.table p.in_table a span { background:url('../images/report/arrow_expand.gif') no-repeat 2px;
+    padding:1px 2px 1px 14px; -moz-border-radius:2px; -moz-box-shadow: 0px 1px 2px #EFEFEF; }
   div.table p.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
   div.table p a { text-decoration:underline; }
 
@@ -102,7 +104,9 @@ div.table table.refSummary thead td { border-width:0 0 1px 0; border-style:solid
 div.table table.refSummary tr.even td { border-width:1px 0; border-style:solid; }
 
 /* "templates" tables */
-h3.templateTitle { font-weight:normal; }
+h3.templateTitle { cursor:pointer; }
+h3.templateTitle div.right { float:right; }
+h3.templateTitle img { vertical-align:middle; }
 div.table table.results { font-size:12px; }
 div.table table.results td { padding:6px; }
 div.table table.column-header-content td { padding:0px; }
