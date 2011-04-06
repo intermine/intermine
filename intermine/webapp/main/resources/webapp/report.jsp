@@ -14,7 +14,7 @@
 
 <div id="header_wrap">
   <div id="object_header">
-    <c:if test="${object.headerLink != null}">
+    <c:if test="${object.headerLink == null}">
         <c:set var="headerLink" value="${object.headerLink}"/>
         <div id="headerLink">
             <a href="${headerLink.linkUrl}" target="new">
