@@ -41,7 +41,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.HeaderConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
 import org.intermine.web.logic.config.HeaderConfigTitle;
 import org.intermine.web.logic.config.InlineList;
