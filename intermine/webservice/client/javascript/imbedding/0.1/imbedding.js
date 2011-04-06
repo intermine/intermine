@@ -32,6 +32,8 @@ IMBedding = (function() {
         openOnLoad: false,
         previousText: "Previous",
         queryTitleText: null,
+        replaceRightArrows: true,
+        rightArrowStyle: "\u21E8", // block right arrow (unicode hex representation)
         resultsDescriptionText: null,
         showAdditionsLink: true,
         showAllCeiling: 75,
@@ -60,7 +62,7 @@ IMBedding = (function() {
     };
 
     var showIMTooltip = function(x, y, content) {
-     $('<div></div>').html(content)
+     jQuery('<div></div>').html(content)
                      .attr("id", "imtooltip")
                      .addClass("imbedded-table-tooltip")
                      .appendTo("body")
@@ -78,6 +80,8 @@ IMBedding = (function() {
         this._constructor = function(data, passedOpts) {
             var outer = this;
             this.options = jQuery.extend({}, defaultOptions, passedOpts);
+
+
             this.uid = new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
             this.uid.replace(/\s+/g, '');
             this.start = data.start;
@@ -94,6 +98,9 @@ IMBedding = (function() {
             this.titlebox = jQuery('<div id="imbedded-table-titlebox-' 
                     + this.uid + '" class="imbedded-table-titlebox"></div>');
             var queryTitle = this.options.queryTitleText || data.title || this.options.defaultQueryName;
+            if (this.options.replaceRightArrows) {
+                queryTitle = queryTitle.replace("-->", this.options.rightArrowStyle);
+            }
             this.title = jQuery('<a id="imbedded-table-title-' 
                     + this.uid + '" class="imbedded-table-title">' + queryTitle + '</a>');
             this.expandHelp = jQuery('<span id="imbedded-table-expand-help-' 
@@ -107,7 +114,7 @@ IMBedding = (function() {
                     + this.options.nextText + '</a>')
                     .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
                     .click(function() {
-                        $.jsonp({
+                        jQuery.jsonp({
                             url: outer.nextUrl,
                             callbackParameter: "callback",
                             success: function(data) {outer.changePage(data)}
@@ -119,7 +126,7 @@ IMBedding = (function() {
                     + this.options.previousText + '</a>')
                     .mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
             this.prevLink.click(function() {
-                $.jsonp({
+                jQuery.jsonp({
                     url: outer.prevUrl,
                     callbackParameter: "callback",
                     success: function(data) {outer.changePage(data)}
@@ -172,7 +179,7 @@ IMBedding = (function() {
             // all pager links
             this.pagers = jQuery().add(this.prevLink).add(this.morePagers);
 
-            $.jsonp({
+            jQuery.jsonp({
                 url: this.localiseUrl(data.count),
                 success: function(countData) {
                     if (outer.options.showCount) {
@@ -287,7 +294,7 @@ IMBedding = (function() {
             var url = this.localiseUrl(this.getPageUrl());
             if (! this.isFilledIn) {
                 this.container.css({cursor: "wait"});
-                $.jsonp({
+                jQuery.jsonp({
                     url: url,
                     success: function(data) {
                         outer.fillInTable(data);
@@ -335,7 +342,7 @@ IMBedding = (function() {
             var noOfRowsToGet = this.additionSize;
             var append = true;
             var url = this.getNextUrl(noOfRowsToGet, showAll);
-            $.jsonp({
+            jQuery.jsonp({
                 url: url,
                 success: function(data) {
                     outer.size += noOfRowsToGet;
@@ -421,7 +428,6 @@ IMBedding = (function() {
             }
             // Remove the throbber
             this.table.children('img').detach();
-
 
             var resultCount = resultSet.results.length;
             for (var i = 0; i < resultCount; i++) {
@@ -509,7 +515,12 @@ IMBedding = (function() {
         if (! data.size && data.format == "jsonptable") {
             data.size = defaultTableSize;
         }
-        $.jsonp({
+        if (!target instanceof Function) {
+            var throbber = document.createElement("img");
+            throbber.src = defaultOptions.throbberSrc;
+            jQuery(target).empty().append(throbber);
+        }
+        jQuery.jsonp({
             url: url, 
             data: data, 
             success: callback, 
@@ -600,6 +611,41 @@ IMBedding = (function() {
         }
     };
 
+    var _loadJSInclude = function(scriptPath, callback) {
+        var scriptNode = document.createElement('SCRIPT');
+        scriptNode.type = 'text/javascript';
+        scriptNode.src = scriptPath;
+
+        var headNode = document.getElementsByTagName('HEAD');
+        if (headNode[0] != null)
+            headNode[0].appendChild(scriptNode);
+
+        if (callback != null)    
+        {
+            scriptNode.onreadystagechange = callback;            
+            scriptNode.onload = callback;
+        }
+    }
+
+    var _check_for_jsonp = function(callback) {
+        if (typeof(jQuery.jsonp) == 'undefined') {
+            _loadJSInclude('http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js', callback);
+        } else {
+            callback();
+        }
+    }
+    var _check_for_jquery = function(callback) {
+        if (typeof(jQuery) == 'undefined') {
+            _loadJSInclude('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js', function() {_check_for_jsonp(callback)});
+        } else {
+            _check_for_jsonp(callback);
+        }
+    }
+
+    var loadDependencies = function(callback) {
+        _check_for_jquery(callback);
+    }
+
     return {
         getTables: function() {return tables},
         getTable: function(id) {return tables[id]},
@@ -612,7 +658,11 @@ IMBedding = (function() {
             return defaultQuery;
         },
         setDefaultOptions: function(obj) {
-            jQuery.extend(defaultOptions, obj);
+            loadDependencies(function() {
+                jQuery.extend(defaultOptions, obj);
+            });
+        },
+        getDefaultOptions: function() {
             return defaultOptions;
         },
         setBaseUrl: function(url) {
@@ -623,16 +673,21 @@ IMBedding = (function() {
             return baseUrl;
         },
         loadTemplate: function(data, target, options) {
-            if ("baseUrl" in data) {
-                baseUrl = data.baseUrl;
-            }
-            var url = localiseUrl(templateResultsPath, options); 
-            return getResults(url, data, target, options);
+            loadDependencies(function() {
+                if ("baseUrl" in data) {
+                    baseUrl = data.baseUrl;
+                }
+                var url = localiseUrl(templateResultsPath, options); 
+                getResults(url, data, target, options);
+            });
         },
         loadQuery: function(query, data, target, options) {
-            data.query = getXML(query);
-            var url = localiseUrl(queryResultsPath, options);
-            return getResults(url, data, target, options);
+            loadDependencies(function() {
+                data.query = getXML(query);
+                var url = localiseUrl(queryResultsPath, options);
+                getResults(url, data, target, options);
+            });
         }
     };
 })();
+
