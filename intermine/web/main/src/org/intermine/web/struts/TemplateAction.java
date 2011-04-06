@@ -10,16 +10,20 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
@@ -28,6 +32,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
+import org.intermine.api.query.codegen.WebserviceCodeGenerator;
+import org.intermine.api.query.codegen.WebserviceJavaScriptCodeGenerator;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
@@ -122,6 +129,7 @@ public class TemplateAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
+
         TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
         //If I'm browsing from the history or from saved query the template is in the session
         //with the values edited by the user, from this template we retrieve the original name
@@ -141,6 +149,8 @@ public class TemplateAction extends InterMineAction
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
 
+        String url = new URLGenerator(request).getPermanentBaseURL();
+
         if (!populatedTemplate.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
                     StringUtil.prettyList(populatedTemplate.verifyQuery())), request);
@@ -149,30 +159,42 @@ public class TemplateAction extends InterMineAction
 
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-            TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String htmlLink = gen.getHtmlLink(new URLGenerator(request)
-                    .getPermanentBaseURL(), populatedTemplate);
-            String tabLink = gen.getTabLink(new URLGenerator(request)
-                    .getPermanentBaseURL(), populatedTemplate);
-            if (gen.getError() != null) {
-                recordError(new ActionMessage("errors.linkGenerationFailed",
-                        gen.getError()), request);
-                return mapping.findForward("template");
-            }
-            session.setAttribute("htmlLink", htmlLink);
-            session.setAttribute("tabLink", tabLink);
-            String url = new URLGenerator(request).getPermanentBaseURL();
-            session.setAttribute("highlightedLink", gen.getHighlightedLink(url,
-                    populatedTemplate));
-            String title = populatedTemplate.getTitle();
-            title = title.replace("-->",
-                    "&nbsp;<img src=\"images/tmpl_arrow.png\" "
-                            + "style=\"vertical-align:middle\">&nbsp;");
-            session.setAttribute("pageTitle", title);
-            session.setAttribute("pageDescription", populatedTemplate
-                    .getDescription());
-            return mapping.findForward("serviceLink");
 
+
+            Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+                    .getServletContext());
+
+            WebserviceCodeGenInfo info = new WebserviceCodeGenInfo(
+                    populatedTemplate,
+                    url,
+                    webProperties.getProperty("project.title"),
+                    webProperties.getProperty("perl.wsModuleVer"),
+                    WebserviceCodeGenAction.templateIsPublic(template, im, profile),
+                    profile.getUsername());
+            WebserviceCodeGenerator codeGen = new WebserviceJavaScriptCodeGenerator();
+            String code = codeGen.generate(info);
+            session.setAttribute("realCode", code);
+            String escapedCode = StringEscapeUtils.escapeHtml(code);
+            session.setAttribute("jsCode", escapedCode);
+
+            return mapping.findForward("serviceLink");
+        }
+
+        if (!editQuery && !skipBuilder && !editTemplate && wantsWebserviceURL(request)) {
+            TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
+            String webserviceUrl = gen.getTabLink(url, populatedTemplate);
+
+            response.setContentType("text/plain");
+
+            PrintStream out;
+            try {
+                out = new PrintStream(response.getOutputStream());
+                out.print(webserviceUrl);
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         if (!editQuery && !skipBuilder && !editTemplate && exportTemplate(request)) {
@@ -258,6 +280,14 @@ public class TemplateAction extends InterMineAction
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
 
+    private boolean wantsWebserviceURL(HttpServletRequest request) {
+        String ws = request.getParameter("actionType");
+        if (ws != null && ws.equalsIgnoreCase("webserviceURL")) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean exportTemplate(HttpServletRequest request) {
         String exportTemplate = request.getParameter("actionType");
         if (exportTemplate != null
@@ -270,10 +300,10 @@ public class TemplateAction extends InterMineAction
     private boolean codeGenTemplate(HttpServletRequest request) {
         String codeGenTemplate = request.getParameter("actionType");
         if (codeGenTemplate != null
-                && ("perl".equalsIgnoreCase(codeGenTemplate) || 
-                    "java".equalsIgnoreCase(codeGenTemplate) ||
-                    "python".equalsIgnoreCase(codeGenTemplate) ||
-                    "javascript".equalsIgnoreCase(codeGenTemplate) 
+                && ("perl".equalsIgnoreCase(codeGenTemplate)
+                     || "java".equalsIgnoreCase(codeGenTemplate)
+                     || "python".equalsIgnoreCase(codeGenTemplate)
+                     || "javascript".equalsIgnoreCase(codeGenTemplate)
                     )) {
             return true;
         }
