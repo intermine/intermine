@@ -249,6 +249,52 @@ function trimTable(e) {
 }
 
 /**
+ * Toggle upto ($count) rows in a table inside a template
+ *
+ * @param e element containing the table
+ * @param round how many times have we asked for more rows
+ * @param maxCount max number of rows to show
+ * @return
+ */
+function showMoreRowsTemplate(e, round, maxCount) {
+  var table = jQuery(e + ' table');
+
+  if (round == 1) {
+    table.show();
+    var rows = table.find('tbody tr.bodyRow');
+    rows.each(function(index) {
+      jQuery(this).hide();
+    });
+  }
+
+  // fetch all rows that are not shown yet
+  var rows = table.find('tbody tr.bodyRow:hidden');
+  var count = maxCount;
+  // traverse rows
+  rows.each(function(index) {
+   if (count > 0) {
+      // show row
+      jQuery(this).show();
+      count = parseInt(count) - 1;
+    }
+  });
+
+  // if the count is > 0 (< 30 entries) or 4rd round (30+ entries) at this
+  // point, show a link to table instead
+  if (count > 0 || round == 3) {
+    table.parent().parent().find('p.in_table a').css('display', '');
+    table.parent().parent().find('p.in_table a.toggler').css('display', 'none');
+  } else {
+    round = parseInt(round) + 1;
+    // update toggle count
+    table.parent().parent().find('p.in_table a.toggler').remove();
+    table.parent().parent().find('p.in_table').append('<a class="toggler" onclick="return showMoreRowsTemplate(\'' + e + '\', ' + round + ', ' +  maxCount + ');" href="#"><span>Show 10 rows</span></a>');
+  }
+
+  return false;
+}
+
+/**
  * Toggle upto ($count) rows in a table above that are currently hidden
  *
  * @param e element containing the table

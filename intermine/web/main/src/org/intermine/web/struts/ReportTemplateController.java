@@ -88,7 +88,7 @@ public class ReportTemplateController extends TilesAction
         WebResults webResults = executor.execute(populatedTemplate);
         // if there was a problem running query ignore and don't put up results
         if (webResults != null) {
-            PagedTable pagedResults = new PagedTable(webResults, 10);
+            PagedTable pagedResults = new PagedTable(webResults, 30);
             pagedResults.setTableid("itt." + populatedTemplate.getName());
             context.putAttribute("resultsTable", pagedResults);
         }
