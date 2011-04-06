@@ -44,7 +44,7 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
-import org.intermine.web.logic.config.HeaderConfig;
+import org.intermine.web.logic.config.HeaderConfigTitle;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -627,7 +627,7 @@ public class DisplayObject
             // fetch the Type
             Type type = webConfig.getTypes().get(cld.getName());
             // retrieve the titles map, HeaderConfig serves as a useless wrapper
-            HeaderConfig hc = type.getHeaderConfig();
+            HeaderConfigTitle hc = type.getHeaderConfigTitle();
             if (hc != null) {
                 Map<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
                 // if we have something saved

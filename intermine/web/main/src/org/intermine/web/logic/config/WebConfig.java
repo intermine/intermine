@@ -81,20 +81,24 @@ public class WebConfig
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
         /* configure how the "title" of an object is displayed on Type */
-        digester.addObjectCreate("webconfig/class/headerconfig", HeaderConfig.class);
-        digester.addSetProperties("webconfig/class/headerconfig/titles",
+        digester.addObjectCreate("webconfig/class/headerconfig/titles", HeaderConfigTitle.class);
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
                 "mainTitles", "mainTitles");
-        digester.addSetProperties("webconfig/class/headerconfig/titles",
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
                 "subTitles", "subTitles");
-        digester.addSetProperties("webconfig/class/headerconfig/titles",
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
                 "appendConfig", "appendConfig");
-        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+        digester.addSetNext("webconfig/class/headerconfig/titles", "addHeaderConfigTitle");
+
+        digester.addObjectCreate("webconfig/class/headerconfig/customlinks",
+                HeaderConfigLink.class);
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
                 "url", "url");
-        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
                 "text", "text");
-        digester.addSetProperties("webconfig/class/headerconfig/customlink",
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
                 "imageName", "imageName");
-        digester.addSetNext("webconfig/class/headerconfig", "addHeaderConfig");
+        digester.addSetNext("webconfig/class/headerconfig/customlinks", "addHeaderConfigLink");
 
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
         digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");
@@ -356,7 +360,7 @@ public class WebConfig
                 if (superClassType != null) {
                     // set title config, the setter itself only adds configs that have not been set
                     //  before, see setTitles() in HeaderConfig
-                    HeaderConfig hc = superClassType.getHeaderConfig();
+                    HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
 
                         // set the HeaderConfig titles as HeaderConfig for thisClassType might have
@@ -365,7 +369,7 @@ public class WebConfig
                         if (titles != null) {
 
                             // new childish HeaderConfig
-                            HeaderConfig newHC = thisClassType.getHeaderConfig();
+                            HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
                             if (newHC != null) {
                                 // type A behavior: inherit titles from the parent and append
                                 if (newHC.getAppendConfig()) {
@@ -384,7 +388,7 @@ public class WebConfig
                                 }
                             } else {
                                 // type B behavior: inherit from parent if we are null
-                                thisClassType.addHeaderConfig(hc);
+                                thisClassType.addHeaderConfigTitle(hc);
                             }
                         }
                     }

@@ -50,7 +50,8 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
 #navtrail { display:inline-block; float:right; background:inherit; width:97.5%; }
 #headercontainer { background:inherit; display:inline-block; }
-#fixed-menu { position:fixed; top:0; width:100%; z-index:1; }
+#fixed-menu { position:fixed; top:0; width:100%; z-index:1;
+    box-shadow: 0px 1px 4px #A9A9A9; -moz-box-shadow: 0px 1px 4px #A9A9A9; -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
 #content { z-index:0; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; vertical-align:bottom; }
 #fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; line-height:20px; }
