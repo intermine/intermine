@@ -85,7 +85,7 @@ div.imbedded-table-tooltip {
     padding-left: 5px;
 }
 
-.imbedded-addition-link {
+.imbedded-addition-link, .imbedded-next {
     float: right;
 }
 
