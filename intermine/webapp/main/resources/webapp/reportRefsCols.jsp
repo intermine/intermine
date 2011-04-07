@@ -126,8 +126,11 @@
           <%-- ############# --%>
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
+
+            <c:set var="inlineResultsTable" value="${collection.table}"/>
+
             <tiles:insert page="/reportCollectionTable.jsp">
-              <tiles:put name="collection" beanName="collection" />
+              <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
             </tiles:insert>

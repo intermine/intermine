@@ -9,7 +9,7 @@
 <!-- reportCollectionTable -->
 
 <% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
-  <tiles:importAttribute name="collection"/>
+  <tiles:importAttribute name="inlineResultsTable"/>
   <tiles:importAttribute name="fieldName"/>
 <% } %>
 
@@ -20,18 +20,18 @@
       <table border="0" cellspacing="0" class="refSummary" align="left">
         <thead style="text-align: center">
           <tr>
-            <c:if test="${collection.table.hasMoreThanOneType}"><td class="theme-5-background theme-3-border">Class</td></c:if>
-            <c:forEach items="${collection.table.tableFieldConfigs}" var="fc">
+            <c:if test="${inlineResultsTable.hasMoreThanOneType}"><td class="theme-5-background theme-3-border">Class</td></c:if>
+            <c:forEach items="${inlineResultsTable.tableFieldConfigs}" var="fc">
               <td class="theme-5-background theme-3-border">${fc.fieldExpr}</td>
             </c:forEach>
           </tr>
         </thead>
         <tbody>
 
-          <c:forEach items="${collection.table.resultElementRows}" var="resultElementRow" varStatus="status">
+          <c:forEach items="${inlineResultsTable.resultElementRows}" var="resultElementRow" varStatus="status">
             <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if>>
               <c:forEach items="${resultElementRow.items}" var="resultElementColumn" varStatus="rowStatus">
-                <c:if test="${rowStatus.count == 1 && collection.table.hasMoreThanOneType}">
+                <c:if test="${rowStatus.count == 1 && inlineResultsTable.hasMoreThanOneType}">
                   <td class="type <c:if test="${status.count % 2 == 0}">theme-3-border theme-6-background</c:if>">
                       ${resultElementRow.className}
                   </td>
