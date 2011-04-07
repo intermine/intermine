@@ -249,6 +249,35 @@ function trimTable(e) {
 }
 
 /**
+ * Close template
+ *
+ * @param e element containing the table
+ * @return
+ */
+function collapseTemplate(e, maxCount) {
+  var table = jQuery(e + ' table');
+
+  // hide description and table rows
+  table.hide();
+  jQuery(e).parent().find('p.description').hide();
+
+  // scroll to the table
+  jQuery(e).scrollTo('fast', 'swing', -60);
+
+  // remove collapser & toggler
+  table.parent().parent().find('p.in_table a.collapser').remove();
+  table.parent().parent().find('p.in_table a.toggler').remove();
+
+  // hide "show all" if not
+  table.parent().parent().find('p.in_table a.showAll').hide();
+
+  // append a toggler back
+  table.parent().parent().find('p.in_table').append('<a class="toggler" onclick="return showMoreRowsTemplate(\'' + e + '\', 1, ' +  maxCount + ');" href="#"><span>Show 10 rows</span></a>');
+
+  return false;
+}
+
+/**
  * Toggle upto ($count) rows in a table inside a template
  *
  * @param e element containing the table
@@ -279,6 +308,11 @@ function showMoreRowsTemplate(e, round, maxCount) {
     }
   });
 
+  // first round, show collapser
+  if (round == 1) {
+    table.parent().parent().find('p.in_table').append('<a class="collapser" style="float:right;" onclick="return collapseTemplate(\'' + e + '\', ' +  maxCount + ');" href="#"><span>Collapse</span></a>');
+  }
+
   // if the count is > 0 (< 30 entries) or 4rd round (30+ entries) at this
   // point, show a link to table instead
   if (count > 0 || round == 3) {
@@ -286,8 +320,9 @@ function showMoreRowsTemplate(e, round, maxCount) {
     table.parent().parent().find('p.in_table a.toggler').css('display', 'none');
   } else {
     round = parseInt(round) + 1;
-    // update toggle count
+    // remove toggle count
     table.parent().parent().find('p.in_table a.toggler').remove();
+    // update toggle count
     table.parent().parent().find('p.in_table').append('<a class="toggler" onclick="return showMoreRowsTemplate(\'' + e + '\', ' + round + ', ' +  maxCount + ');" href="#"><span>Show 10 rows</span></a>');
   }
 
