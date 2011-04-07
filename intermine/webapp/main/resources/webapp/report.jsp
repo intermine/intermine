@@ -92,6 +92,32 @@
       </div>
     </c:if>
 
+    <%-- permalink --%>
+    <%-- <p class="share">Share this page: <a href="${stableLink}">${stableLink}</a></p> --%>
+    <div id="share">
+      <a class="share" href="#"></a>
+      <div class="popup">
+        <span class="close"></span>
+        Paste the following link
+        <input type="text" value="${stableLink}">
+      </div>
+      <script type="text/javascript">
+        jQuery('#object_header a.share').click(function() {
+          // show
+          jQuery("#object_header #share div.popup").show();
+          // select
+          jQuery("#object_header #share div.popup").find('input').select();
+
+          return false;
+        });
+        jQuery('#object_header #share div.popup span.close').click(function() {
+          // hide
+          jQuery("#object_header #share div.popup").hide();
+
+          return false;
+        });
+      </script>
+  </div>
   </div>
 </div>
 

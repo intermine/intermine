@@ -45,6 +45,18 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
     /* header link */
     #headerLink { position:absolute; top:0; right:0; z-index:3; font-size:12px; }
 
+    /* share this */
+    #object_header p.share { background:url('../images/report/share_tiny.png') no-repeat 3px; padding-left:14px;
+     font-size:12px; }
+    #object_header a.share { background:url('../images/report/share_badge.png') no-repeat left; width:44px; height:11px;
+     display:inline-block; margin-left:3px; }
+    #object_header #share { position:relative; font-size:11px; }
+    #object_header #share div.popup { display:none; position:absolute; top:0px; left:0; z-index:2; background:#FFF;
+     border:1px solid #7F7F7F; padding:6px; }
+    #object_header #share div.popup input { display:block; width:400px; font-size:11px; }
+    #object_header #share div.popup span.close { float:right; display:inline-block; width:14px; height:10px;
+     background:url('../images/report/close.png') no-repeat left; cursor:pointer; }
+
 /* 'floating' menu */
 #pagecontentmax { padding-top:0; }
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
