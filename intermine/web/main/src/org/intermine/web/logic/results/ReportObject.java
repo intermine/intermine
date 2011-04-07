@@ -240,7 +240,7 @@ public class ReportObject
      * @param fieldExpression String
      * @return Object
      */
-    protected Object getFieldValue(String fieldExpression) {
+    public Object getFieldValue(String fieldExpression) {
         // if field values as a whole are not set yet...
         if (fieldValues == null) {
             setupFieldValues();

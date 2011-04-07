@@ -10,8 +10,12 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,11 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GeneModelCache;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -57,6 +67,61 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
         // group other overlapping features by type, to display types and counts
         Map<String, Integer> featureCounts = new HashMap<String, Integer>();
         Map<String, InlineResultsTable> featureTables = new HashMap<String, InlineResultsTable>();
+
+        // resolve Collection from FieldDescriptor
+        for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
+            if ("overlappingFeatures".equals(fd.getName()) && fd.isCollection()) {
+                // fetch the collection
+                Collection<?> collection = (Collection<?>)
+                    reportObject.getFieldValue("overlappingFeatures");
+
+                // get the types
+                List<Class<?>> lt = PathQueryResultHelper.
+                queryForTypesInCollection(reportObject.getObject(), "overlappingFeatures",
+                        im.getObjectStore());
+
+                // make collection into a list
+                List<?> collectionList;
+                if (collection instanceof List<?>) {
+                    collectionList = (List<?>) collection;
+                } else {
+                    if (collection instanceof LazyCollection<?>) {
+                        collectionList = ((LazyCollection<?>) collection).asList();
+                    } else {
+                        collectionList = new ArrayList(collection);
+                    }
+                }
+
+                // separate objects into their types
+                Map<String, InlineResultsTable> m = new HashMap<String, InlineResultsTable>();
+                for (Class<?> c : lt) {
+                    Iterator<?> resultsIter = collectionList.iterator();
+
+                    // new collection of objects of only type "c"
+                    Set<InterMineObject> s = new HashSet<InterMineObject>();
+
+                    // loop through each row object
+                    while (resultsIter.hasNext()) {
+                        Object o = resultsIter.next();
+                        if (o instanceof ProxyReference) {
+                            // special case for ProxyReference from DisplayReference objects
+                            o = ((ProxyReference) o).getObject();
+                        }
+                        // cast
+                        InterMineObject imObj = (InterMineObject) o;
+                        // type match?
+                        if (c.equals(DynamicUtil.getSimpleClass(imObj).getName())) {
+                            s.add(imObj);
+                        }
+                    }
+
+                    // create a DisplayCollection
+
+
+                    m.put(c.toString(), t);
+                }
+            }
+        }
 
         SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
 
