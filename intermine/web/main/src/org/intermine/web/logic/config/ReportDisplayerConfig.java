@@ -7,6 +7,7 @@ public class ReportDisplayerConfig {
     private String javaClass;
     private String jspName;
     private String placement;
+    private String parameters;
     private String replacesFields;
     private String types;
     private Set<String> configuredTypes = null;
@@ -46,6 +47,13 @@ public class ReportDisplayerConfig {
     }
     public void setPlacement(String placement) {
         this.placement = placement;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
     public String getReplacesFields() {
         return replacesFields;
