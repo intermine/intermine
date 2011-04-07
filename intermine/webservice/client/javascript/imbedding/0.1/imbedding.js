@@ -30,8 +30,8 @@ IMBedding = (function() {
 
 
     var defaultOptions = {
-        addCommasToCount: true,
-        commaSeparator: ",",
+        formatCount: true,
+        thousandsSeparator: ",",
         additionText: "Load [x] more rows",
         afterBuildTable: function(table) {},
         afterTableUpdate: function(table, resultSet) {},
@@ -201,8 +201,8 @@ IMBedding = (function() {
                 url: this.localiseUrl(data.count),
                 success: function(countData) {
                     if (outer.options.showCount) {
-                        var displayCount = (outer.options.addCommasToCount) 
-                            ? addCommas(countData.count, outer.options.commaSeparator)
+                        var displayCount = (outer.options.formatCount) 
+                            ? addCommas(countData.count, outer.options.thousandsSeparator)
                             : countData.count;
                         var count = outer.options.countText.replace("[x]", displayCount);
                         outer.countDisplayer.text("(" + count + ")");
