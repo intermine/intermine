@@ -58,7 +58,8 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     	+ "use warnings;" + ENDL + ENDL;
 
     protected static final String INTRO =
-    	  "# This is an automatically generated script to run your query." + ENDL
+          "######################################################################" + ENDL
+        + "# This is an automatically generated script to run your query." + ENDL
     	+ "# To use it you will require the InterMine Perl client libraries." + ENDL
     	+ "# These can be installed from CPAN, using your preferred client, eg:" + ENDL
     	+ "#" + ENDL
@@ -66,10 +67,16 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     	+ "#" + ENDL
     	+ "# For help using these modules, please see these resources:" + ENDL
     	+ "#" + ENDL
-    	+ "#" + INDENT + "* http://search.cpan.org/perldoc?Webservice::InterMine - The documentation on CPAN" + ENDL
-    	+ "#" + INDENT + "* http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook - A How-To manual for getting started" + ENDL
-    	+ "#" + INDENT + "* http://www.intermine.org/wiki/PerlWebServiceAPI - Our own introduction to the Perl client" + ENDL
-    	+ "#" + INDENT + "* http://www.intermine.org/wiki/WebService - Reference documentation for the underlying REST API" + ENDL
+    	+ "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
+        + "#       - API reference " + ENDL
+    	+ "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
+        + "#       - A How-To manual" + ENDL
+    	+ "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
+        + "#       - General Usage" + ENDL
+    	+ "#  * http://www.intermine.org/wiki/WebService" + ENDL
+        + "#       - Reference documentation for the underlying REST API" + ENDL
+        + "#" + ENDL
+        + "######################################################################" + ENDL
     	+ ENDL;
     /**
      * This method will generate web service source code in Perl from a path query
