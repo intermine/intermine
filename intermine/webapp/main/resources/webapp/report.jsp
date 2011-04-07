@@ -11,6 +11,7 @@
 <html:xhtml/>
 
 <link rel="stylesheet" type="text/css" href="css/960gs.css" />
+<link rel="stylesheet" type="text/css" href="css/report.print.css" media="print" />
 
 <div id="header_wrap">
   <div id="object_header">
@@ -211,7 +212,7 @@
       //]]>-->
       </script> <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div style="float:right;" class="box grid_3">
+<div style="float:right;" class="box grid_3 sidebar">
   <div id="in-lists">
     <tiles:insert name="reportInList.tile">
       <tiles:put name="object" beanName="object"/>
