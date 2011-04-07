@@ -72,16 +72,21 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
         StringBuffer sb = new StringBuffer();
-        sb.append("#!/usr/bin/env python" + ENDL + ENDL);
+        sb.append("#!/usr/bin/env python" + ENDL);
+        sb.append(ENDL);
+        sb.append("#####################################################################" + ENDL);
         sb.append("# This is an automatically generated script to run your query" + ENDL);
         sb.append("# to use it you will require the intermine python client." + ENDL);
         sb.append("# To install the client, run the following command from a terminal:" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("#     easyinstall intermine-webservice" + ENDL);
+        sb.append("#     sudo easy_install intermine" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("# For further documentation you can visit:" + ENDL);
-        sb.append("#     http://www.intermine.org/PythonClient" + ENDL + ENDL);
-        sb.append("# The following two lines will be needed in every python script:" + ENDL);
+        sb.append("# For documentation and help you can visit:" + ENDL);
+        sb.append("#     * http://www.intermine.org/PythonClient - general usage guide" + ENDL);
+        sb.append("#     * http://www.intermine.org/docs/python-docs - API reference" + ENDL);
+        sb.append("#" + ENDL);
+        sb.append("#####################################################################" + ENDL);
+        sb.append(ENDL);
         sb.append("from intermine.webservice import Service" + ENDL);
         if (info.isPublic()) {
             sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")"
@@ -209,7 +214,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 }
             }
             sb.append("for row in query.results(\"tsv\"):" + ENDL);
-            sb.append(INDENT + "print row,");
+            sb.append(INDENT + "print row");
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
@@ -261,7 +266,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             sb.append("results = template.results( \"tsv\"," + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
             sb.append("for row in results:" + ENDL);
-            sb.append(INDENT + "print row,");
+            sb.append(INDENT + "print row");
         }
 
         return sb.toString();
