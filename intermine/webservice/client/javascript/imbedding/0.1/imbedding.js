@@ -16,7 +16,22 @@ IMBedding = (function() {
         return ((index % 2 == 0) ? "imbedded-row-even" : "imbedded-row-odd");
     };
 
+    var addCommas = function(nStr, separator) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + separator + '$2');
+        }
+        return x1 + x2;
+    }
+
+
     var defaultOptions = {
+        addCommasToCount: true,
+        commaSeparator: ",",
         additionText: "Load [x] more rows",
         afterBuildTable: function(table) {},
         afterTableUpdate: function(table, resultSet) {},
@@ -25,7 +40,7 @@ IMBedding = (function() {
         countText: "[x] rows",
         defaultQueryName: "Query Results",
         emptyCellText: "[NONE]",
-        errorHandler: function(error, statusCode) {console.log("Error:", error, statusCode)},
+        errorHandler: function(error, statusCode) {console.log("Error:", error, statusCode); alert("Sorry - this table could not be loaded:\n" + error);},
         expandHelpText: "show table",
         exportCSVText: "Export as CSV file",
         exportTSVText: "Export as TSV file",
@@ -186,7 +201,10 @@ IMBedding = (function() {
                 url: this.localiseUrl(data.count),
                 success: function(countData) {
                     if (outer.options.showCount) {
-                        var count = outer.options.countText.replace("[x]", countData.count);
+                        var displayCount = (outer.options.addCommasToCount) 
+                            ? addCommas(countData.count, outer.options.commaSeparator)
+                            : countData.count;
+                        var count = outer.options.countText.replace("[x]", displayCount);
                         outer.countDisplayer.text("(" + count + ")");
                     }
                     outer.count = countData.count;
@@ -515,8 +533,18 @@ IMBedding = (function() {
             url += "&format=jsonptable";
             return getResults(url, {}, target);
     };
+
+    var getErrorHandler = function(options) {
+        if (options && "errorHandler" in options) {
+            return options["errorHandler"];
+        } else {
+            return defaultOptions.errorHandler;
+        }
+    };
+
     var getResults = function(url, data, target, options) {
         var callback = getCallback(target, options);
+        var errorHandler = getErrorHandler(options);
         if (! data.format) {
             data.format = "jsonptable";
         }
@@ -534,7 +562,7 @@ IMBedding = (function() {
             data: data, 
             success: callback, 
             callbackParameter: "callback",
-            error: options.errorHandler || defaultOptions.errorHandler
+            error: errorHandler
         });
     };
 
