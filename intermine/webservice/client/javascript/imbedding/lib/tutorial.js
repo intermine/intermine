@@ -239,7 +239,8 @@ function loadTable4e() {
         mineLinkText: "Guarda in Mine",
         resultsDescriptionText: "il risultato della loro interrogazione",
         queryTitleText: "Organismo --> Tutti genia con un dominio specifico",
-        countText: "[x] righe"
+        countText: "[x] righe",
+        thousandsSeparator: "."
     };
     IMBedding.loadTemplate(
         {
