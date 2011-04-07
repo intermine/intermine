@@ -29,7 +29,7 @@
   <class className="org.intermine.model.bio.BioEntity">
     <headerconfig>
       <titles>
-        <title mainTitles="[symbol]|primaryIdentifier" subTitles="*organism.shortName*" />
+        <title mainTitles="symbol|primaryIdentifier" subTitles="*organism.shortName*" />
       </titles>
     </headerconfig>
     <fields>
@@ -696,6 +696,13 @@
                      placement="Expression"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Homology"
+                     parameters="{'dataSets': {'TreeFam data set', 'KEGG orthologues data set', 'InParanoid data set'}}"
+                     types="Gene"/>
+
    <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
                     jspName="model/drosophilaHomologueDisplayer.jsp"
                     replacesFields=""
@@ -728,9 +735,10 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
                      jspName="model/overlappingFeaturesDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="overlappingFeatures"
                      placement="Genomics"
                      types="SequenceFeature"/>
+
   </reportdisplayers>
 
    <widgets>

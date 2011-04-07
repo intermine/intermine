@@ -9,6 +9,7 @@
 
 <div>
   <h3>Overlapping Features</h3>
+<p style="color: red;">[UNDER CONSTRUCTION!]</p>
   <p>Genome features that overlap coordinates of this ${reportObject.type}</p>
   <c:forEach items="${featureCounts}" var="entry">
     <c:out value="${entry.key}: ${entry.value}"/>
