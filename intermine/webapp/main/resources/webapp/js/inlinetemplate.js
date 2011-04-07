@@ -189,7 +189,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
                   }
                 });
                 // add a toggler for more rows
-                table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+                table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color toggler" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
             }
 
             // fade it in
@@ -243,13 +243,13 @@ function trimTable(e) {
         }
       });
       // add a toggler for more rows
-      table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color" onclick="return showMoreRows(\'' + e + '\', 1, 10);">Show more rows</a></p>');
+      table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color toggler" onclick="return showMoreRows(\'' + e + '\', 1, 10);">Show more rows</a></p>');
   }
 
 }
 
 /**
- * Close template
+ * Collapse/close template
  *
  * @param e element containing the table
  * @return
@@ -273,6 +273,45 @@ function collapseTemplate(e, maxCount) {
 
   // append a toggler back
   table.parent().parent().find('p.in_table').append('<a class="toggler" onclick="return showMoreRowsTemplate(\'' + e + '\', 1, ' +  maxCount + ');" href="#"><span>Show 10 rows</span></a>');
+
+  return false;
+}
+
+/**
+ * Collapse/close collection or reference
+ *
+ * @param e element containing the table
+ * @return
+ */
+function collapseTable(e, maxCount) {
+  var table = jQuery(e + ' table');
+
+  var count = maxCount;
+
+  // show but the first 10 rows
+  table.find('tbody tr').each(function(index) {
+    if (count > 0) {
+      jQuery(this).show();
+    } else {
+      jQuery(this).hide();
+    }
+
+    count--;
+  });
+
+  // scroll to the table
+  jQuery(e).scrollTo('fast', 'swing', -60);
+
+  // remove collapser
+  table.parent().parent().find('p.toggle a.collapser').hide();
+
+  // remove toggler and replace with a first round version
+  // update toggle count
+  table.parent().parent().find('p.toggle a.toggler').remove();
+  table.parent().parent().find('p.toggle').append('<a class="theme-1-color toggler" href="#" onclick="return showMoreRows(\'' + e + '\', 1, ' +  maxCount + ');">Show more rows</a>');
+
+  // hide the show all in table one
+  table.parent().parent().find('p.in_table').hide();
 
   return false;
 }
@@ -356,15 +395,21 @@ function showMoreRows(e, round, maxCount) {
   // scroll to
   //jQuery(e + ' table').parent().find('p.toggle').scrollTo('slow', 'swing', -20);
 
+  // first round, show collapser
+  if (round == 1) {
+    table.parent().parent().find('p.toggle').append('<a class="collapser" style="float:right;" onclick="return collapseTable(\'' + e + '\', ' +  maxCount + ');" href="#"><span>Collapse</span></a>');
+  }
+
   // if the count is > 0 (< 30 entries) or 3rd round (30+ entries) at this
   // point, show a link to table instead
   if (count > 0 || round == 2) {
-    table.parent().parent().find('p.toggle').css('display', 'none');
+    table.parent().parent().find('p.toggle a.toggler').hide();
     table.parent().parent().find('p.in_table').css('display', '');
   } else {
     round = parseInt(round) + 1;
     // update toggle count
-    table.parent().parent().find('p.toggle').html('<a class="theme-1-color" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ', ' +  maxCount + ');">Show more rows</a>');
+    table.parent().parent().find('p.toggle a.toggler').remove();
+    table.parent().parent().find('p.toggle').append('<a class="theme-1-color toggler" href="#" onclick="return showMoreRows(\'' + e + '\', ' + round + ', ' +  maxCount + ');">Show more rows</a>');
   }
 
   return false;
