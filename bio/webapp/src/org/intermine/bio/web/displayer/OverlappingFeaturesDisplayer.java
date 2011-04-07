@@ -11,6 +11,7 @@ package org.intermine.bio.web.displayer;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,7 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
         super(config, im);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
         // TODO check if type is a gene model type
@@ -72,8 +74,13 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
             if ("overlappingFeatures".equals(fd.getName()) && fd.isCollection()) {
                 // fetch the collection
-                Collection<?> collection = (Collection<?>)
-                    reportObject.getFieldValue("overlappingFeatures");
+                Collection<?> collection = null;
+                try {
+                    collection = (Collection<?>)
+                        reportObject.getObject().getFieldValue("overlappingFeatures");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
 
                 // get the types
                 List<Class<?>> lt = PathQueryResultHelper.
@@ -93,12 +100,11 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                 }
 
                 // separate objects into their types
-                Map<String, InlineResultsTable> m = new HashMap<String, InlineResultsTable>();
                 for (Class<?> c : lt) {
                     Iterator<?> resultsIter = collectionList.iterator();
 
                     // new collection of objects of only type "c"
-                    Set<InterMineObject> s = new HashSet<InterMineObject>();
+                    List<InterMineObject> s = new ArrayList<InterMineObject>();
 
                     // loop through each row object
                     while (resultsIter.hasNext()) {
@@ -115,13 +121,21 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                         }
                     }
 
-                    // create a DisplayCollection
+                    // one element list
+                    ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
+                    lc.add(c);
 
+                    // create an InlineResultsTable
+                    InlineResultsTable t = new InlineResultsTable(s,
+                            fd.getClassDescriptor().getModel(), reportObject.getWebConfig(),
+                            im.getClassKeys(), s.size(), false, lc);
 
-                    m.put(c.toString(), t);
+                    featureTables.put(c.toString(), t);
                 }
             }
         }
+
+        request.setAttribute("featureTables", featureTables);
 
         SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
 

@@ -9,11 +9,25 @@
 
 <div>
   <h3>Overlapping Features</h3>
-<p style="color: red;">[UNDER CONSTRUCTION!]</p>
+  <p style="color: red;">[UNDER CONSTRUCTION!]</p>
   <p>Genome features that overlap coordinates of this ${reportObject.type}</p>
   <c:forEach items="${featureCounts}" var="entry">
     <c:out value="${entry.key}: ${entry.value}"/>
   </c:forEach>
+
+  <c:if test="${!empty featureTables}">
+    <c:forEach items="${featureTables}" var="entry">
+      <br/>${entry.value}
+      <%--
+      <tiles:insert page="/reportCollectionTable.jsp">
+         <tiles:put name="inlineResultsTable" beanName="entry.value" />
+         <tiles:put name="object" beanName="reportObject.object" />
+         <tiles:put name="fieldName" value="${entry.key}" />
+      </tiles:insert>
+      --%>
+    </c:forEach>
+  </c:if>
+
 </div>
 
 <!-- /overlappingFeaturesDisplayer.jsp -->
