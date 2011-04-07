@@ -45,6 +45,8 @@
     <script type="text/javascript">
         var h = jQuery('#table_${fn:replace(placement, ':', '_')}_${templateQuery.name}').parent().find("h3.templateTitle div.right");
         h.html('No results for this ${reportObject.type}');
+        // apply gray style
+        h.parent().parent().parent().parent().parent().addClass('gray');
     </script>
   </c:when>
   <c:otherwise>
