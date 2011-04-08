@@ -3,7 +3,6 @@ package org.intermine.bio.web.displayer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,8 +11,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.DisplayCollection;
-import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.ReportObject;
 
 public class SequenceFeatureDisplayer extends CustomDisplayer {

@@ -739,6 +739,12 @@
                      placement="Genomics"
                      types="SequenceFeature"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
+                     jspName="model/regulatoryRegionsDisplayer.jsp"
+                     replacesFields="regulatoryRegions"
+                     placement="Regulation"
+                     types="Gene"/>
+
   </reportdisplayers>
 
    <widgets>
