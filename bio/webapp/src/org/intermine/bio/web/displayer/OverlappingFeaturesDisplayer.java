@@ -16,9 +16,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,12 +34,14 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Displayer for features overlapping a particular SequenceFeature using the overlappingFeatures
@@ -67,8 +71,25 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
         // TODO check if type is a gene model type
 
         // group other overlapping features by type, to display types and counts
-        Map<String, Integer> featureCounts = new HashMap<String, Integer>();
-        Map<String, InlineResultsTable> featureTables = new HashMap<String, InlineResultsTable>();
+        Map<String, Integer> featureCounts = new TreeMap<String, Integer>();
+        Map<String, InlineResultsTable> featureTables = new TreeMap<String, InlineResultsTable>();
+
+        SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
+
+        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(startFeature, im.getModel());
+        try {
+            Collection<InterMineObject> overlappingFeatures =
+                (Collection<InterMineObject>) startFeature.getFieldValue("overlappingFeatures");
+            for (InterMineObject feature : overlappingFeatures) {
+                if (!geneModelIds.contains(feature.getId())) {
+                    incrementCount(featureCounts, feature);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            LOG.error("Error accessing overlappingFeatures collection for feature: "
+                    + startFeature.getPrimaryIdentifier() + ", " + startFeature.getId());
+        }
+        request.setAttribute("featureCounts", featureCounts);
 
         // resolve Collection from FieldDescriptor
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
@@ -99,13 +120,15 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                     }
                 }
 
-                // separate objects into their types
+            // separate objects into their types
+            looptyloop:
                 for (Class<?> c : lt) {
                     Iterator<?> resultsIter = collectionList.iterator();
 
                     // new collection of objects of only type "c"
                     List<InterMineObject> s = new ArrayList<InterMineObject>();
 
+                    String type = null;
                     // loop through each row object
                     while (resultsIter.hasNext()) {
                         Object o = resultsIter.next();
@@ -116,43 +139,37 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                         // cast
                         InterMineObject imObj = (InterMineObject) o;
                         // type match?
-                        if (c.equals(DynamicUtil.getSimpleClass(imObj).getName())) {
+                        Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
+                        if (c.equals(imObjClass)) {
                             s.add(imObj);
+                            // determine type
+                            type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
+                            // do we actually want any of this?
+                            if (!featureCounts.containsKey(type)) {
+                                continue looptyloop;
+                            }
                         }
                     }
 
-                    // one element list
-                    ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
-                    lc.add(c);
+                    if (s.size() > 0) {
+                        // one element list
+                        ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
+                        lc.add(c);
 
-                    // create an InlineResultsTable
-                    InlineResultsTable t = new InlineResultsTable(s,
-                            fd.getClassDescriptor().getModel(), reportObject.getWebConfig(),
-                            im.getClassKeys(), s.size(), false, lc);
+                        // create an InlineResultsTable
+                        InlineResultsTable t = new InlineResultsTable(s,
+                                fd.getClassDescriptor().getModel(),
+                                SessionMethods.getWebConfig(request), im.getClassKeys(), s.size(),
+                                false, lc);
 
-                    featureTables.put(c.toString(), t);
+                        // name the table based on the first element contained
+                        featureTables.put(type, t);
+                    }
                 }
             }
         }
 
         request.setAttribute("featureTables", featureTables);
-
-        SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
-
-        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(startFeature, im.getModel());
-        try {
-            Collection<InterMineObject> overlappingFeatures =
-                (Collection<InterMineObject>) startFeature.getFieldValue("overlappingFeatures");
-            for (InterMineObject feature : overlappingFeatures) {
-                if (!geneModelIds.contains(feature.getId())) {
-                    incrementCount(featureCounts, feature);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            LOG.error("Error accessing overlappingFeatures collection for feature: "
-                    + startFeature.getPrimaryIdentifier() + ", " + startFeature.getId());
-        }
-        request.setAttribute("featureCounts", featureCounts);
     }
 
     private void incrementCount(Map<String, Integer> featureCounts, InterMineObject feature) {

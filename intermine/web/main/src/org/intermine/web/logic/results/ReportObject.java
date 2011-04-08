@@ -560,15 +560,6 @@ public class ReportObject
     }
 
     /**
-     *
-     * @return WebConfig at the moment from OverlappingFeaturesDisplayer to construct
-     * InlineResultsTable(s)
-     */
-    public WebConfig getWebConfig() {
-        return this.webConfig;
-    }
-
-    /**
      * Create the Maps and Lists returned by the getters in this class.
      */
     private void initialise() {
