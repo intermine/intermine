@@ -31,14 +31,23 @@
            <tiles:put name="object" beanName="reportObject.object" />
            <tiles:put name="fieldName" value="${entry.key}" />
         </tiles:insert>
-
         <p class="toggle">
           <a href="#" style="float:right;" class="collapser"><span>Hide</span></a>
+        </p>
+        <p class="in_table">
+          <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+            Show all in a table »
+          </html:link>
         </p>
       <br/>
       </div>
       <div class="clear"></div>
     </c:forEach>
+    <p class="in_table outer">
+      <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+        Show all in a table »
+      </html:link>
+    </p>
   </c:if>
 
   <script type="text/javascript">
@@ -69,6 +78,9 @@
             // we are active
             jQuery(this).toggleClass('active');
 
+            // hide the global show all in a table
+            jQuery(this).parent().parent().find('p.in_table.outer').hide();
+
             // no linking on my turf
             e.preventDefault();
         }
@@ -90,6 +102,8 @@
               jQuery(this).toggleClass('active');
             });
 
+            // show the global show all in a table
+            jQuery(this).parent().parent().parent().find('p.in_table').show();
 
             // no linking on my turf
             e.preventDefault();
