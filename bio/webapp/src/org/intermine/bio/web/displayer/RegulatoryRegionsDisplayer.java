@@ -37,24 +37,23 @@ import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Displayer for features overlapping a particular SequenceFeature using the overlappingFeatures
- * collection.  Features are divided by type with a count provided.  For gene model components other
- * objects in the gene model are excluded by id - e.g. for an exon this won't display the transcript
- * and gene that the exon is a member of because they will always overlap.
+ * TODO: merge this with OverlappingFeaturesDisplayer to reuse common functionality (preferrably wo/
+ * creating another table type on a report page
+ *
  * @author Richard Smith
  *
  */
-public class OverlappingFeaturesDisplayer extends CustomDisplayer
+public class RegulatoryRegionsDisplayer extends CustomDisplayer
 {
 
-    protected static final Logger LOG = Logger.getLogger(OverlappingFeaturesDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(RegulatoryRegionsDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.
      * @param config to describe the report displayer
      * @param im the InterMine API
      */
-    public OverlappingFeaturesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+    public RegulatoryRegionsDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
 
@@ -64,41 +63,41 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
         // TODO check if type is a gene model type
 
         // group other overlapping features by type, to display types and counts
-        Map<String, Integer> featureCounts = new TreeMap<String, Integer>();
-        Map<String, InlineResultsTable> featureTables = new TreeMap<String, InlineResultsTable>();
+        Map<String, Integer> regionCounts = new TreeMap<String, Integer>();
+        Map<String, InlineResultsTable> regionTables = new TreeMap<String, InlineResultsTable>();
 
-        SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
+        SequenceFeature startRegion = (SequenceFeature) reportObject.getObject();
 
-        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(startFeature, im.getModel());
+        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(startRegion, im.getModel());
         try {
-            Collection<InterMineObject> overlappingFeatures =
-                (Collection<InterMineObject>) startFeature.getFieldValue("overlappingFeatures");
-            for (InterMineObject feature : overlappingFeatures) {
-                if (!geneModelIds.contains(feature.getId())) {
-                    incrementCount(featureCounts, feature);
+            Collection<InterMineObject> regulatoryRegions =
+                (Collection<InterMineObject>) startRegion.getFieldValue("regulatoryRegions");
+            for (InterMineObject region : regulatoryRegions) {
+                if (!geneModelIds.contains(region.getId())) {
+                    incrementCount(regionCounts, region);
                 }
             }
         } catch (IllegalAccessException e) {
-            LOG.error("Error accessing overlappingFeatures collection for feature: "
-                    + startFeature.getPrimaryIdentifier() + ", " + startFeature.getId());
+            LOG.error("Error accessing regulatoryRegions collection for region: "
+                    + startRegion.getPrimaryIdentifier() + ", " + startRegion.getId());
         }
-        request.setAttribute("featureCounts", featureCounts);
+        request.setAttribute("regionCounts", regionCounts);
 
         // resolve Collection from FieldDescriptor
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
-            if ("overlappingFeatures".equals(fd.getName()) && fd.isCollection()) {
+            if ("regulatoryRegions".equals(fd.getName()) && fd.isCollection()) {
                 // fetch the collection
                 Collection<?> collection = null;
                 try {
                     collection = (Collection<?>)
-                        reportObject.getObject().getFieldValue("overlappingFeatures");
+                        reportObject.getObject().getFieldValue("regulatoryRegions");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
 
                 // get the types
                 List<Class<?>> lt = PathQueryResultHelper.
-                queryForTypesInCollection(reportObject.getObject(), "overlappingFeatures",
+                queryForTypesInCollection(reportObject.getObject(), "regulatoryRegions",
                         im.getObjectStore());
 
                 // make collection into a list
@@ -138,7 +137,7 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                             // determine type
                             type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
                             // do we actually want any of this?
-                            if (!featureCounts.containsKey(type)) {
+                            if (!regionCounts.containsKey(type)) {
                                 continue looptyloop;
                             }
                         }
@@ -156,23 +155,23 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                                 false, lc);
 
                         // name the table based on the first element contained
-                        featureTables.put(type, t);
+                        regionTables.put(type, t);
                     }
                 }
             }
         }
 
-        request.setAttribute("featureTables", featureTables);
+        request.setAttribute("regionTables", regionTables);
     }
 
-    private void incrementCount(Map<String, Integer> featureCounts, InterMineObject feature) {
+    private void incrementCount(Map<String, Integer> regionCounts, InterMineObject feature) {
         String type = DynamicUtil.getSimpleClass(feature).getSimpleName();
-        Integer count = featureCounts.get(type);
+        Integer count = regionCounts.get(type);
         if (count == null) {
             count = new Integer(0);
-            featureCounts.put(type, count);
+            regionCounts.put(type, count);
         }
-        featureCounts.put(type, new Integer(count.intValue() + 1));
+        regionCounts.put(type, new Integer(count.intValue() + 1));
     }
 
 }
