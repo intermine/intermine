@@ -23,11 +23,10 @@ public class NameUtilTest extends TestCase {
         assertTrue(NameUtil.isValidName("dot.dot.dot"));
         assertTrue(NameUtil.isValidName("dash-dash-dash"));
         assertTrue(NameUtil.isValidName("colon:colon:colon"));
-
-        String badChars  = "¬!£$%^&*()+}{@~?<,/;'#][";
-
-        for (int i = 0; i < badChars.length(); i++) {
-            char c = badChars.charAt(i);
+        assertFalse(NameUtil.isValidName("Hello World!"));
+        char[]  badChars  = {'¬','!','£','$','%','^','&','*','(',')','+','}','{','@','~','?','<',',','/',';','\'','#',']','['};
+        for (int i = 0; i < badChars.length; i++) {
+            char c = badChars[i];
             String badName = c + "invalid " + c;
             assertFalse(NameUtil.isValidName(badName));
         }
