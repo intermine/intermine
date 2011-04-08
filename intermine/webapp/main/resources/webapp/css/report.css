@@ -156,6 +156,18 @@ div.feature table td.border-left { border-left-width:1px !important; border-left
 div.feature p.toggle, div.feature p.in_table { text-align:center; }
 div.feature a { text-decoration:underline; }
 
+/* custom displayers */
+div.custom-displayer h3 { margin-bottom:0; }
+div.custom-displayer p.desc, div.custom-displayer p.switchers { margin-bottom:0; padding:0 0 0 6px; }
+div.custom-displayer p.switchers { padding-bottom:2px; }
+/*
+div.custom-displayer p.switchers a.switcher { background:url('../images/report/toggle_plus_tiny.png') no-repeat left;
+    padding-left:10px; }
+div.custom-displayer p.switchers a.switcher.active { background:url('../images/report/toggle_minus_tiny.png') no-repeat left; }
+*/
+div.custom-displayer p.switchers a.switcher { text-decoration:underline; }
+div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-decoration:none; }
+
 /* links in other mines */
 #intermine_links.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
 #intermine_links ul li ul { padding-left:6px; }
