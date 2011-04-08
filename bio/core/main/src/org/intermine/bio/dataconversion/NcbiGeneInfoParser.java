@@ -128,7 +128,7 @@ public class NcbiGeneInfoParser
         return !taxonDuplicates.contains(symbol);
     }
 
-    public Set<String> findDuplicateSymbols(String taxonId) {
+    private Set<String> findDuplicateSymbols(String taxonId) {
         Set<String> duplicates = new HashSet<String>();
         if (recordMap.containsKey(taxonId)) {
             Set<String> seenSymbols = new HashSet<String>();
@@ -146,13 +146,14 @@ public class NcbiGeneInfoParser
     }
 
     private Set<String> parseXrefs(String xrefs, String prefix) {
+        String newPrefix = prefix;
         if (!prefix.endsWith(":")) {
-            prefix = prefix + ":";
+            newPrefix = prefix + ":";
         }
         Set<String> matched = new HashSet<String>();
         for (String xref : xrefs.split("\\|")) {
             if (xref.startsWith(prefix)) {
-                matched.add(xref.substring(prefix.length()));
+                matched.add(xref.substring(newPrefix.length()));
             }
         }
         return matched;
