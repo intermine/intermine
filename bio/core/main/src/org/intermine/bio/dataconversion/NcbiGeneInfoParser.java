@@ -128,7 +128,7 @@ public class NcbiGeneInfoParser
         return !taxonDuplicates.contains(symbol);
     }
 
-    private Set<String> findDuplicateSymbols(String taxonId) {
+    public Set<String> findDuplicateSymbols(String taxonId) {
         Set<String> duplicates = new HashSet<String>();
         if (recordMap.containsKey(taxonId)) {
             Set<String> seenSymbols = new HashSet<String>();

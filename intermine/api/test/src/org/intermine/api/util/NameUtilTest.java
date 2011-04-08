@@ -58,7 +58,7 @@ public class NameUtilTest extends TestCase {
         listNames.add(correctedBadListName);
         assertEquals(correctedBadListName + "_1", NameUtil.validateName(listNames, badListName));
 
-        assertEquals("ab", NameUtil.validateName(listNames, "a`b"));
+        assertEquals("ab", NameUtil.validateName(listNames, "a$b"));
     }
 
     public void testFindNewQueryName() {
