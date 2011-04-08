@@ -166,8 +166,8 @@ public class CalculateLocations
      * Transcript that is as big as all the exons in it's exons collection.  One new location will
      * be created for each possible Location.object - Transcript->Chromosome, Transcript->Contig
      * etc.
-     * @param parentClass the parent, eg. Transcript
-     * @param childClass the child, eg. Exon
+     * @param parentClsName the parent, eg. Transcript
+     * @param childClsName the child, eg. Exon
      * @param refField the linking field eg. "exons"
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
