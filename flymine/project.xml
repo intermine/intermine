@@ -97,11 +97,8 @@
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
 
-    <source name="homophila" type="homophila">
-      <property name="src.data.dir" location="/shared/data/homophila/current"/>
-      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
-      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
-      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
+    <source name="omim" type="omim">
+      <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
