@@ -512,7 +512,6 @@
       <fieldconfig fieldExpr="prosaZScore"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
-      <fieldconfig fieldExpr="alignment" showInResults="false" />
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
