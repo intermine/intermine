@@ -66,7 +66,8 @@
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
         <%-- NON key field, truncate --%>
-        <im:abbreviate value="${object}" length="${maxLength}" />
+        <%--<im:abbreviate value="${object}" length="${maxLength}" />--%>
+        ${object}
       </c:when>
       <c:when test="${resultElement.keyField}">
         <%-- key field --%>
