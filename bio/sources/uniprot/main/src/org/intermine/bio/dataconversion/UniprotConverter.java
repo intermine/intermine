@@ -342,12 +342,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 // if the dbref has no gene designation value, it is discarded.
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
-                String type = getAttrValue(attrs, "type");
-                String geneDesignation = CONFIG.getGeneDesignation();
-                if (type != null && geneDesignation.equals(type)) {
-                    String value = getAttrValue(attrs, "value");
-                    entry.addGeneDesignation(value);
-                }
+                String value = getAttrValue(attrs, "value");
+                entry.addGeneDesignation(value);
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
             } else if ("evidence".equals(qName) && "entry".equals(previousQName)) {
@@ -522,7 +518,6 @@ public class UniprotConverter extends BioDirectoryConverter
             if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()) {
 
                 setDataSet(uniprotEntry.getDatasetRefId());
-
                 for (String isoformAccession: uniprotEntry.getIsoforms()) {
                     isoforms.add(uniprotEntry.createIsoformEntry(isoformAccession));
                 }
@@ -691,7 +686,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processSynonyms(String proteinRefId, UniprotEntry uniprotEntry)
-            throws SAXException, ObjectStoreException {
+            throws ObjectStoreException {
 
             // accessions
             for (String accession : uniprotEntry.getAccessions()) {
@@ -751,7 +746,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         // if cross references not listed in CONFIG, load all
         private void setCrossReference(String subjectId, String value, String dataSource,
-                boolean store) throws SAXException, ObjectStoreException {
+                boolean store) throws ObjectStoreException {
             List<String> xrefs = CONFIG.getCrossReferences();
             if (xrefs.isEmpty() || xrefs.contains(dataSource)) {
                 Item item = createCrossReference(subjectId, value, dataSource, store);
@@ -779,7 +774,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // gets the unique identifier and list of identifiers to set
         // loops through each gene entry, assigns refId to protein
         private void processGene(Item protein, UniprotEntry uniprotEntry)
-            throws SAXException, ObjectStoreException {
+            throws SAXException {
             String taxId = uniprotEntry.getTaxonId();
 
             // which gene.identifier field has to be unique
@@ -823,10 +818,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // creates synonym
         private String createGene(UniprotEntry uniprotEntry, String taxId, Set<String> geneFields,
                 String uniqueIdentifierFieldType)
-            throws SAXException, ObjectStoreException {
-
-            List<String> geneSynonyms = new ArrayList<String>();
-
+            throws SAXException {
             String uniqueIdentifierValue = getGeneIdentifier(uniprotEntry, taxId,
                     uniqueIdentifierFieldType, true);
             if (uniqueIdentifierValue == null) {
@@ -878,12 +870,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-
-                // synonyms
                 geneRefId = gene.getIdentifier();
-                for (String identifier : geneSynonyms) {
-                    createSynonym(geneRefId, identifier, true);
-                }
             }
             return geneRefId;
         }
@@ -908,7 +895,6 @@ public class UniprotConverter extends BioDirectoryConverter
                                                + taxId);
                 }
             }
-
             if ("name".equals(method)) {
                 if (uniprotEntry.getGeneNames() == null || uniprotEntry.getGeneNames().isEmpty()) {
                     LOG.error("No gene names for " + taxId + ". protein accession:"
@@ -922,7 +908,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     identifierValue = uniprotEntry.getGeneDesignation(value);
                 } else {
                     Map<String, List<String>> dbrefs = uniprotEntry.getDbrefs();
-                    String msg = "no " + value + " identifier found for gene attached to protein: "
+                    final String msg = "no " + value
+                        + " identifier found for gene attached to protein: "
                                     + uniprotEntry.getPrimaryAccession();
                     if (dbrefs == null || dbrefs.isEmpty()) {
                         LOG.error(msg);
