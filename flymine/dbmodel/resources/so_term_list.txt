@@ -49,5 +49,6 @@ UTR
 # many-to-many part_of relationships (default is many-to-one)
 exon.transcript
 intron.transcript
+intron.gene
 UTR.transcript
 EST.overlapping_EST_set
