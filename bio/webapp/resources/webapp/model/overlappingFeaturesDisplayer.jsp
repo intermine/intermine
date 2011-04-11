@@ -52,26 +52,65 @@
 
   <script type="text/javascript">
     // apply different class to h3 so tables are not so separate
-    jQuery("#overlapping-features.custom-displayer div.table h3").each(function(i){
+    jQuery("#overlapping-features.custom-displayer div.table h3").each(function(i) {
         jQuery(this).toggleClass('theme-2-border');
         jQuery(this).toggleClass('theme-3-border');
     });
 
     // switcher between tables this displayer haz
-    jQuery("#overlapping-features.custom-displayer a.switcher").each(function(i){
+    jQuery("#overlapping-features.custom-displayer a.switcher").each(function(i) {
       jQuery(this).bind(
         "click",
-        function(e){
+        function(e) {
             // hide anyone (!) that is shown
-            jQuery("#overlapping-features.custom-displayer div.table:visible").each(function(j){
+            jQuery("#overlapping-features.custom-displayer div.table:visible").each(function(j) {
               jQuery(this).hide();
+              // hide more toggler
+              jQuery(this).parent().find('p.toggle a.toggler').remove();
             });
 
             // show the one we want
             jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table").show();
 
+            // show only 10 rows
+            var rows = jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr");
+            var count = 10;
+            rows.each(function(index) {
+                count--;
+                if (count < 0) {
+                    jQuery(this).hide();
+                }
+            });
+            // add a show next link
+            if (count < 0) {
+                var a = "<a href='#' style='float:right;margin-right:20px;' class='toggler'><span>Show more rows</span></a>";
+                jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle").append(a);
+                jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").bind(
+                    "click",
+                    function(f) {
+                        // show another 10 rows
+                        count = 10;
+                        rows = jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden");
+                        rows.each(function(index) {
+                            count--;
+                            if (count > 0) {
+                                jQuery(this).show();
+                            }
+                        });
+
+                        // we have no more rows to show
+                        if (jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden").length == 0) {
+                            // hide the link to more
+                            jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").remove();
+                        }
+
+                        // no linking on my turf
+                        f.preventDefault();
+                    });
+            }
+
             // switchers all off
-            jQuery("#overlapping-features.custom-displayer a.switcher.active").each(function(j){
+            jQuery("#overlapping-features.custom-displayer a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
@@ -88,22 +127,27 @@
     });
 
     // table hider
-    jQuery("#overlapping-features.custom-displayer p.toggle a").each(function(i){
+    jQuery("#overlapping-features.custom-displayer p.toggle a").each(function(i) {
       jQuery(this).bind(
         "click",
-        function(e){
+        function(e) {
             // hide anyone (!) that is shown
-            jQuery("#overlapping-features.custom-displayer div.table:visible").each(function(j){
+            jQuery("#overlapping-features.custom-displayer div.table:visible").each(function(j) {
               jQuery(this).hide();
+              // hide more toggler
+              jQuery(this).parent().find('p.toggle a.toggler').remove();
             });
 
             // switchers all off
-            jQuery("#overlapping-features.custom-displayer a.switcher.active").each(function(j){
+            jQuery("#overlapping-features.custom-displayer a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
             // show the global show all in a table
             jQuery(this).parent().parent().parent().find('p.in_table').show();
+
+            // scroll to the top of the displayer (inlinetemplate.js)
+            jQuery("#overlapping-features.custom-displayer").scrollTo('fast', 'swing', -30);
 
             // no linking on my turf
             e.preventDefault();

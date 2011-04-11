@@ -46,6 +46,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class OverlappingFeaturesDisplayer extends CustomDisplayer
 {
+    /** @var maximum amount of rows to show per table */
+    private Integer maxCount = 30;
 
     protected static final Logger LOG = Logger.getLogger(OverlappingFeaturesDisplayer.class);
 
@@ -122,8 +124,9 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                     List<InterMineObject> s = new ArrayList<InterMineObject>();
 
                     String type = null;
+                    Integer count = this.maxCount;
                     // loop through each row object
-                    while (resultsIter.hasNext()) {
+                    while (resultsIter.hasNext() && count > 0) {
                         Object o = resultsIter.next();
                         if (o instanceof ProxyReference) {
                             // special case for ProxyReference from DisplayReference objects
@@ -134,6 +137,7 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                         // type match?
                         Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
                         if (c.equals(imObjClass)) {
+                            count--;
                             s.add(imObj);
                             // determine type
                             type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
