@@ -472,7 +472,7 @@
       <fieldconfig fieldExpr="prosaZScore"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
-      <fieldconfig fieldExpr="alignment" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="alignment" doNotTruncate="true" showInResults="false" showInInlineCollection="false" />
     </fields>
     <longdisplayers>
       <displayer src="/model/modelledStructure.jsp"/>
