@@ -128,6 +128,10 @@ public class NcbiGeneInfoParser
         return !taxonDuplicates.contains(symbol);
     }
 
+    /**
+     * @param taxonId taxon ID for organism of interest
+     * @return set of symbols that are duplicated
+     */
     public Set<String> findDuplicateSymbols(String taxonId) {
         Set<String> duplicates = new HashSet<String>();
         if (recordMap.containsKey(taxonId)) {
