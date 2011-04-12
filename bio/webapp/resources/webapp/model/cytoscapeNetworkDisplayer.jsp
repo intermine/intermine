@@ -88,7 +88,7 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
         <fieldset>
-          <label class="fakelink" onclick="window.open('${WEB_PROPERTIES[\'project.baseurl\']}/${WEB_PROPERTIES[\'project.path\']}/saveFromIdsToBag.do?type=Gene&ids="+fullInteractingGeneSet+"&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</lable>
+          <label class="fakelink" onclick="window.open('${WEB_PROPERTIES['project.baseurl']}/${WEB_PROPERTIES['project.path']}/saveFromIdsToBag.do?type=Gene&ids="+fullInteractingGeneSet+"&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</lable>
         </fieldset>
         <fieldset>
           <label>View interaction data in a table</lable>
