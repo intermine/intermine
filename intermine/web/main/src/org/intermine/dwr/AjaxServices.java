@@ -17,12 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -106,12 +102,6 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
 
 /**
@@ -840,10 +830,11 @@ public class AjaxServices
      * @param bagName the name of a bag
      * @return the list of queries
      */
-    private static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+    private static List<String> queriesThatMentionBag(Map<String, SavedQuery> savedQueries,
+            String bagName) {
         try {
             List<String> queries = new ArrayList<String>();
-            for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+            for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
                 String queryName = (String) i.next();
                 SavedQuery query = (SavedQuery) savedQueries.get(queryName);
                 if (query.getPathQuery().getBagNames().contains(bagName)) {
@@ -1153,94 +1144,6 @@ public class AjaxServices
             return "";
         } catch (IOException e) {
             return "";
-        }
-    }
-
-    /**
-     * Get the news
-     * @param rssURI the URI of the rss feed
-     * @return the news feed as html
-     * @deprecated use getNewsPreview() instead
-     */
-    public static String getNewsRead(String rssURI) {
-        try {
-            URL feedUrl = new URL(rssURI);
-            SyndFeedInput input = new SyndFeedInput();
-            XmlReader reader;
-            try {
-                reader = new XmlReader(feedUrl);
-            } catch (Throwable e) {
-                // xml document at this url doesn't exist or is invalid, so the news cannot be read
-                return "<i>No news</i>";
-            }
-            SyndFeed feed = input.build(reader);
-            List<SyndEntry> entries = feed.getEntries();
-            StringBuffer html = new StringBuffer("<ol id=\"news\">");
-            int counter = 0;
-            for (SyndEntry syndEntry : entries) {
-                if (counter > 4) {
-                    break;
-                }
-
-                // NB: apparently, the only accepted formats for getPublishedDate are
-                // Fri, 28 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 08 11:02 GMT
-                //
-                // an annoying error appears if the format is not followed, and news tile hangs.
-                //
-                // the following is used to display the date without timestamp.
-                // this should always work since the retrieved date has a fixed format,
-                // independent of the one used in the xml.
-                // longDate = Wed Aug 19 14:44:19 BST 2009
-                String longDate = syndEntry.getPublishedDate().toString();
-                String dayMonth = longDate.substring(0, 10);
-                String year = longDate.substring(24);
-
-                DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
-                Date date = df.parse(longDate);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-
-                // month starts at zero
-                int month = calendar.get(calendar.MONTH) + 1;
-                String monthString = String.valueOf(month);
-                if (monthString.length() == 1) {
-                    monthString = "0" + monthString;
-                }
-
-                //http://blog.flymine.org/2009/08/
-//                WebContext ctx = WebContextFactory.get();
-//                ServletContext servletContext = ctx.getServletContext();
-//                Properties properties = SessionMethods.getWebProperties(servletContext);
-
-                String url = syndEntry.getLink();
-//                properties.getProperty("project.news") + "/" + year + "/"   + monthString;
-
-                html.append("<li>");
-                html.append("<strong>");
-                html.append("<a href=\"" + url + "\">");
-                html.append(syndEntry.getTitle());
-                html.append("</a>");
-                html.append("</strong>");
-//                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
-                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
-                html.append(syndEntry.getDescription().getValue());
-                html.append("</li>");
-                counter++;
-            }
-            html.append("</ol>");
-            return html.toString();
-        } catch (MalformedURLException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (IllegalArgumentException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (FeedException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (java.text.ParseException e) {
-            return "<i>No news at specified URL</i>";
         }
     }
 
