@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -100,7 +102,6 @@ import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.util.InterMineLinkGenerator;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -631,19 +632,27 @@ public class AjaxServices
      * @param primaryIdentifier identifier for gene
      * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
-     * @throws JSONException if JSON gives us problems
-     * @throws UnsupportedEncodingException if encoding organism name fails
      */
     public static String getInterMineLinks(String organismName,
-            String primaryIdentifier, String symbol)
-        throws JSONException, UnsupportedEncodingException {
+            String primaryIdentifier, String symbol) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         LinkManager olm = LinkManager.getInstance(im, webProperties);
         Map<String, JSONObject> filteredMines = new HashMap<String, JSONObject>();
-        InterMineLinkGenerator.getGenes(olm, filteredMines, organismName, primaryIdentifier);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.BioInterMineLinkGenerator");
+        Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate BioInterMineLinkGenerator because: " + e);
+            return null;
+        }
+        linkGen.getLinks(olm, filteredMines, organismName, primaryIdentifier);
         // mine --> organism name --> genes|orthologues --> identifier|isOrthologue
         return filteredMines.values().toString();
     }

@@ -60,9 +60,8 @@ public final class DisplayerManager
             try {
                 String customDisplayerName = config.getJavaClass();
 
-                Class<?> clazz =
-                    TypeUtil.instantiate(customDisplayerName);
-                Constructor m = clazz.getConstructor(
+                Class<?> clazz = TypeUtil.instantiate(customDisplayerName);
+                Constructor<?> m = clazz.getConstructor(
                         new Class[] {ReportDisplayerConfig.class, InterMineAPI.class});
                 displayer = (CustomDisplayer) m.newInstance(new Object[] {config, im});
             } catch (Exception e) {
