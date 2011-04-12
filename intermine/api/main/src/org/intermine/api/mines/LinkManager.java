@@ -139,12 +139,12 @@ public class LinkManager
      * @param identifier identifier to query
      * @return the list of valid mines for the given list
      */
-    public Map<Mine, String> getObjectInOtherMines(String constraintValue, String identifier) {
-        Map<Mine, String> filteredMines = new HashMap<Mine, String>();
+    public Map<Mine, String[]> getObjectInOtherMines(String constraintValue, String identifier) {
+        Map<Mine, String[]> filteredMines = new HashMap<Mine, String[]>();
         for (Mine mine : mines.values()) {
-            String newIdentifier = getObjectInOtherMine(mine, constraintValue, identifier);
-            if (!StringUtils.isEmpty(newIdentifier)) {
-                filteredMines.put(mine, newIdentifier);
+            String[] identifiers = getObjectInOtherMine(mine, constraintValue, identifier);
+            if (identifiers != null && identifiers.length == 2 && identifiers[0] != null) {
+                filteredMines.put(mine, identifiers);
             }
         }
         return filteredMines;
@@ -160,18 +160,15 @@ public class LinkManager
      * @param identifier identifier of object
      * @return identifier of the object if presents or NULL if not.
      */
-    public String getObjectInOtherMine(Mine mine, String constraintValue, String identifier) {
-        String newIdentifier = runReportQuery(mine, constraintValue, identifier);
-        if (!StringUtils.isEmpty(newIdentifier)) {
-            return newIdentifier;
-        }
-        return null;
+    public String[] getObjectInOtherMine(Mine mine, String constraintValue, String identifier) {
+        return runReportQuery(mine, constraintValue, identifier);
     }
 
-    private String runReportQuery(Mine mine, String constraintValue, String identifier) {
+    private String[] runReportQuery(Mine mine, String constraintValue, String identifier) {
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + reportTemplate + lookupConstraint + identifier
             + extraValueConstraint + constraintValue;
+        String[] identifiers = new String[2];
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
             if (reader == null) {
@@ -190,11 +187,12 @@ public class LinkManager
                 }
                 String newIdentifier = bits[0];
                 String symbol = bits[1];
-                if (!StringUtils.isEmpty(symbol)) {
-                    return symbol;
-                }
                 if (!StringUtils.isEmpty(newIdentifier)) {
-                    return newIdentifier;
+                    identifiers[0] = newIdentifier;
+                    identifiers[1] = newIdentifier;
+                }
+                if (!StringUtils.isEmpty(symbol)) {
+                    identifiers[1] = symbol;
                 }
             }
         } catch (MalformedURLException e) {
@@ -204,7 +202,7 @@ public class LinkManager
             LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
             throw new RuntimeException(e);
         }
-        return null;
+        return identifiers;
     }
 
     /**
@@ -217,9 +215,9 @@ public class LinkManager
      * @param constraintValue optional additonal constraint, eg. organism
      * @return the list of valid mines for the given object
      */
-    public Map<String, Set<String>> runRelatedDataQuery(Mine mine, String constraintValue,
+    public Map<String, Set<String[]>> runRelatedDataQuery(Mine mine, String constraintValue,
             String identifier) {
-        Map<String, Set<String>> relatedDataMap = new HashMap<String, Set<String>>();
+        Map<String, Set<String[]>> relatedDataMap = new HashMap<String, Set<String[]>>();
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + relatedDataTemplate + relatedDataConstraint1 + identifier
             + relatedDataConstraint2 + constraintValue;
@@ -242,11 +240,17 @@ public class LinkManager
                 String key = bits[0];
                 String newIdentifier = bits[1];
                 String symbol = bits[2];
-                if (!StringUtils.isEmpty(symbol)) {
-                    Util.addToSetMap(relatedDataMap, key, symbol);
-                }
+
+                String[] identifiers = new String[2];
                 if (!StringUtils.isEmpty(newIdentifier)) {
-                    Util.addToSetMap(relatedDataMap, key, newIdentifier);
+                    identifiers[0] = newIdentifier;
+                    identifiers[1] = newIdentifier;
+                }
+                if (!StringUtils.isEmpty(symbol)) {
+                    identifiers[1] = symbol;
+                }
+                if (identifiers[0] != null) {
+                    Util.addToSetMap(relatedDataMap, key, identifiers);
                 }
             }
         } catch (MalformedURLException e) {
