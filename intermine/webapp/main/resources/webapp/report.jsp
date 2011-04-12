@@ -212,7 +212,7 @@
       //]]>-->
       </script> <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div style="float:right;" class="box grid_3 sidebar">
+<div style="float:right;" class="box grid_2 sidebar">
   <div id="in-lists">
     <tiles:insert name="reportInList.tile">
       <tiles:put name="object" beanName="object"/>
@@ -226,7 +226,7 @@
   <c:set var="object" value="${object_bk}"/>
 </div>
 
-<div class="box grid_9">
+<div class="box grid_10">
   <tiles:insert page="/reportCustomDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
