@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -305,8 +306,15 @@ public class ReportObject
             // if we have something saved
             if (titles != null && titles.containsKey(key)) {
                 String result = "";
+                // specify the maximum number of values to show
+                Integer maxCount = ("main".equals(key)
+                        && hc.getNumberOfMainTitlesToShow() != null)
+                        ? hc.getNumberOfMainTitlesToShow() : 666;
+                Integer count = 0;
                 // concatenate a space delineated title together as resolved from FieldValues
-                for (String path : titles.get(key).keySet()) {
+                Iterator<String> itr = titles.get(key).keySet().iterator();
+                while (itr.hasNext() && count < maxCount) {
+                    String path = itr.next();
                     // do we have some special formatting chars?
                     char first = path.charAt(0);
                     char last = path.charAt(path.length() - 1);
@@ -327,6 +335,7 @@ public class ReportObject
                             }
 
                             result += stringyStuff + " ";
+                            count++;
                         }
                     }
                 }

@@ -35,6 +35,8 @@ public class HeaderConfigTitle
 
     private HeaderConfigLink link = new HeaderConfigLink();
 
+    private Integer numberOfMainTitlesToShow = null;
+
     /**
      * Set main title(s) path(s) for the object, e.g.: symbol, primaryIdentifier => eve FBgn0000606
      * @param mainTitles a '|' delineated string of paths
@@ -49,6 +51,23 @@ public class HeaderConfigTitle
      */
     public void setSubTitles(String subTitles) {
         setTitles(subTitles, "sub");
+    }
+
+    /**
+     * How many main titles to show in the main title
+     * @param maxNumber integer
+     */
+    public void setNumberOfMainTitlesToShow(Integer maxNumber) {
+        this.numberOfMainTitlesToShow = maxNumber;
+    }
+
+    /**
+     *
+     * @return number of main titles to show at the maximum
+     * @see one might not want to show primaryId if we have a symbol etc.
+     */
+    public Integer getNumberOfMainTitlesToShow() {
+        return this.numberOfMainTitlesToShow;
     }
 
     /**

@@ -87,6 +87,8 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/headerconfig/titles/title",
                 "subTitles", "subTitles");
         digester.addSetProperties("webconfig/class/headerconfig/titles/title",
+                "numberOfMainTitlesToShow", "numberOfMainTitlesToShow");
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
                 "appendConfig", "appendConfig");
         digester.addSetNext("webconfig/class/headerconfig/titles", "addHeaderConfigTitle");
 

@@ -29,7 +29,7 @@
   <class className="org.intermine.model.bio.BioEntity">
     <headerconfig>
       <titles>
-        <title mainTitles="symbol|primaryIdentifier" subTitles="*organism.shortName*" />
+        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.shortName*" />
       </titles>
     </headerconfig>
     <fields>
