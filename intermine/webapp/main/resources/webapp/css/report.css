@@ -19,6 +19,7 @@ div.templateDetails { height:auto !important; margin-left:auto !important; }
 #in-lists { ; }
 div#navtrail { margin:0 !important; }
 p.no-external-links, p.gbrowse-not-configured { padding:0 0 0 6px; }
+#headercontainer { overflow-x:hidden; /* was not working on vanilla Flymine either, might result in unexpected behavior */ }
 
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
@@ -27,7 +28,7 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 #header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll; }
 
 /* header */
-#object_header { width:92%; margin-left:4%; margin-right:4%; position:relative; }
+#object_header { width:94%; margin-left:3%; margin-right:3%; position:relative; }
     #object_header h1.title {font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif; font-size:24px;
         font-weight:normal; position:relative; }
     #object_header p.description { margin:0; padding-bottom:10px; }
@@ -60,12 +61,12 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 /* 'floating' menu */
 #pagecontentmax { padding-top:0; }
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
-#navtrail { display:inline-block; float:right; background:inherit; width:97.5%; }
+#navtrail { display:inline-block; float:right; background:inherit; width:96.4%; }
 #headercontainer { background:inherit; display:inline-block; }
-#fixed-menu { position:fixed; top:0; width:100%; z-index:1; left:-2px; /* remove when we find what is adding space to the right */
-    box-shadow: 0px 1px 4px #A9A9A9; -moz-box-shadow: 0px 1px 4px #A9A9A9; -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
+#fixed-menu { position:fixed; top:0; width:100%; z-index:1; box-shadow: 0px 1px 4px #A9A9A9;
+    -moz-box-shadow: 0px 1px 4px #A9A9A9; -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
 #content { z-index:0; }
-#fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:92%; vertical-align:bottom; }
+#fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:94%; vertical-align:bottom; }
 #fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; line-height:20px; }
 #menu-target { display:inline-block; height:20px; width:100%; }
 
