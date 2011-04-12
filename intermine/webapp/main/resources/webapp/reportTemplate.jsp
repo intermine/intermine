@@ -40,6 +40,15 @@
     <p class="description theme-1-color theme-5-background" style="display:none;">${templateQuery.description}</p>
   </div>
 
+  <script type="text/javascript">
+    // move the 'favorite star' element within DOM as we cannot modify templateLine.tag
+    jQuery("span#label_${fn:replace(uid, ":", "_")} div.favorites").appendTo("span#label_${fn:replace(uid, ":", "_")} h3");
+    // not only that, not we need to remove the default click behavior on the title "link"
+    jQuery("span#label_${fn:replace(uid, ":", "_")} h3.templateTitle").parent().click(function(e) {
+        e.preventDefault();
+    });
+  </script>
+
  <%--the "N results" bit is located at the bottom of reportTemplateTable.jsp for some reason--%>
 
   <%--results table--%>

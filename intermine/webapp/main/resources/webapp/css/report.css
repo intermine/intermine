@@ -118,6 +118,8 @@ div.table p { text-align:center; font-size:12px; padding:2px; }
   div.table.template p.in_table a.collapser { text-decoration:none; }
   div.table p.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
   div.table p a { text-decoration:underline; }
+  div.table h3.templateTitle div.favorites { float:left; }
+  div.table div.templateDetails a { cursor:default; }
 
 /* "normal" tables */
 div.table table.refSummary { font-size:12px; width:100%; }
