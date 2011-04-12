@@ -43,6 +43,10 @@ import org.json.JSONObject;
 public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
 {
     private static final Logger LOG = Logger.getLogger(BioInterMineLinkGenerator.class);
+
+    /**
+     * Constructor
+     */
     public BioInterMineLinkGenerator() {
         super();
     }
