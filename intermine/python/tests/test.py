@@ -332,12 +332,27 @@ class TestQueryResults(WebserviceTest):
         expectedQ = (
             '/QUERY-PATH', 
             {
-                'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>'
+                'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
+                'start': 0
             }, 
             'list', 
             ['Employee.name', 'Employee.age', 'Employee.id']
         )
         self.assertEqual(expectedQ, q.results())
+        self.assertEqual(list(expectedQ), q.get_results_list())
+
+        expectedQ = (
+            '/QUERY-PATH', 
+            {
+                'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
+                'start': 10,
+                'size': 200
+            }, 
+            'list', 
+            ['Employee.name', 'Employee.age', 'Employee.id']
+        )
+        self.assertEqual(expectedQ, q.results(start=10, size=200))
+        self.assertEqual(list(expectedQ), q.get_results_list(start=10, size=200))
 
         expected1 = (
             '/TEMPLATE-PATH', 
@@ -350,11 +365,13 @@ class TestQueryResults(WebserviceTest):
              'op1': '=',
              'op2': '>', 
              'value1': 'Fred', 
-             'value2': '25'
+             'value2': '25',
+             'start': 0
             }, 
            'list', 
            ['Employee.name', 'Employee.age', 'Employee.id'])
         self.assertEqual(expected1, t.results())
+        self.assertEqual(list(expected1), t.get_results_list())
 
         expected2 = (
             '/TEMPLATE-PATH', 
@@ -367,11 +384,42 @@ class TestQueryResults(WebserviceTest):
              'op1': '<',
              'op2': '>', 
              'value1': 'Tom', 
-             'value2': '55'
+             'value2': '55',
+             'start': 0
             }, 
            'list', 
            ['Employee.name', 'Employee.age', 'Employee.id'])
         self.assertEqual(expected2, t.results(
+            A = {"op": "<", "value": "Tom"},
+            B = {"value": 55} 
+        ))
+
+        expected2 = (
+            '/TEMPLATE-PATH', 
+            {
+             'name': 'TEST-TEMPLATE', 
+             'code1': 'A', 
+             'code2': 'B', 
+             'constraint1': 'Employee.name', 
+             'constraint2': 'Employee.age', 
+             'op1': '<',
+             'op2': '>', 
+             'value1': 'Tom', 
+             'value2': '55',
+             'start': 10,
+             'size': 200
+            }, 
+           'list', 
+           ['Employee.name', 'Employee.age', 'Employee.id'])
+        self.assertEqual(expected2, t.results(
+            start = 10,
+            size = 200,
+            A = {"op": "<", "value": "Tom"},
+            B = {"value": 55} 
+        ))
+        self.assertEqual(list(expected2), t.get_results_list(
+            start = 10,
+            size = 200,
             A = {"op": "<", "value": "Tom"},
             B = {"value": 55} 
         ))
@@ -420,7 +468,7 @@ class TestTSVResults(WebserviceTest):
     service = None
     PATH = "/testservice/tsvservice"
     FORMAT = "tsv"
-    EXPECTED_RESULTS = ['foo\tbar\tbaz\n', '123\t1.23\t-1.23\n']
+    EXPECTED_RESULTS = ['foo\tbar\tbaz', '123\t1.23\t-1.23']
 
     def get_test_root(self):
         return "http://localhost:" + str(self.TEST_PORT) + self.PATH
@@ -459,7 +507,29 @@ class TestCSVResults(TestTSVResults):
 
     PATH = "/testservice/csvservice"
     FORMAT = "csv"
-    EXPECTED_RESULTS = ['"foo","bar","baz"\n', '"123","1.23","-1.23"\n']
+    EXPECTED_RESULTS = ['"foo","bar","baz"', '"123","1.23","-1.23"']
+
+class TestCountResults(TestTSVResults):
+
+    PATH = "/testservice/countservice"
+    FORMAT = "count"
+    EXPECTED_RESULTS = ['25']
+    EXPECTED_COUNT = 25
+
+    def testCount(self):
+        """Should be able to get count as an integer"""
+        attempts = 0
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    self.assertEqual(self.query.count(), self.EXPECTED_COUNT)
+                    self.assertEqual(self.template.count(), self.EXPECTED_COUNT)
+                except IOError, e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
 
 class TestTemplates(WebserviceTest):
 

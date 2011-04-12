@@ -294,35 +294,10 @@ class Service(object):
         """
         return ResultIterator(self.root, path, params, rowformat, view, self.opener)
 
-    def get_results_list(self, path, params, rowformat, view):
-        """
-        Return a list of the rows of the results
-        ========================================
-
-        This method is called internally by the query objects
-        when they are called to get results. You will not 
-        normally need to call it directly
-
-        @param path: The resource path (eg: "/query/results")
-        @type path: string
-        @param params: The query parameters for this request as a dictionary
-        @type params: dict
-        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
-        @type rowformat: string
-        @param view: The output columns
-        @type view: list
-
-        @raise WebserviceError: for failed requests
-
-        @return: a list of rows of data
-        """
-        rows = self.get_results(path, params, rowformat, view)
-        return [r for r in rows]
-
 class ResultIterator(object):
     
     PARSED_FORMATS = frozenset(["list", "dict"])
-    STRING_FORMATS = frozenset(["tsv", "csv"])
+    STRING_FORMATS = frozenset(["tsv", "csv", "count"])
     JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
     ROW_FORMATS = PARSED_FORMATS | STRING_FORMATS | JSON_FORMATS
 
@@ -364,6 +339,7 @@ class ResultIterator(object):
         self.reader = {
             "tsv"         : lambda: FlatFileIterator(con, EchoParser()),
             "csv"         : lambda: FlatFileIterator(con, EchoParser()),
+            "count"       : lambda: FlatFileIterator(con, EchoParser()),
             "list"        : lambda: JSONIterator(con, ListValueParser()),
             "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
             "jsonobjects" : lambda: JSONIterator(con, EchoParser()),
@@ -407,7 +383,7 @@ class FlatFileIterator(object):
 
     def next(self):
         """Return a parsed line of data"""
-        line = self.connection.next()
+        line = self.connection.next().strip()
         if line.startswith("[ERROR]"):
             raise WebserviceError(line)
         return self.parser.parse(line)
@@ -533,8 +509,8 @@ class EchoParser(Parser):
     A result parser that echoes its input
     =====================================
 
-    Parses jsonrow formatted rows into lists
-    of values.
+    Use for parsing situations when you don't
+    actually want to change the data
     """
 
     def parse(self, data):
