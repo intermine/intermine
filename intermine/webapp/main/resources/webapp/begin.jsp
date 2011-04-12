@@ -173,12 +173,13 @@
             </div>
 
             <div id="api">
-                <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-                <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+                <h4>Perl, Java<span>&nbsp;&amp;&nbsp;</span>Python API</h4>
+                <img src="images/begin/perl-java-python-ico.png" alt="perl java python" />
                 <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
                 <ul>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do">Perl API</a>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java API</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python API</a>
                 </ul>
             </div>
 
