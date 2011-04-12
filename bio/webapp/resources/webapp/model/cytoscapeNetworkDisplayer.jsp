@@ -14,7 +14,7 @@
     /* use absolute value */
     #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0;
         -moz-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; float:left; }
-    #cwtabsbyside { display: none; float: right; width: 400px; }
+    #cwtabsbyside { display: none; float: right; width: 300px; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
     fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.5em; padding: 0.8em 1em; }
     label { vertical-align: middle; }
