@@ -34,13 +34,15 @@ import org.intermine.pathquery.PathException;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomologueDisplayer extends CustomDisplayer {
 
     private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi", "virilis",
             "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae", "erecta",
             "yakuba", "melanogaster", "sechellia", "simulans"});
-    private static final String HOMOLOGY_DATASET = "Drosophila 12 Genomes Consortium homology";
     protected static final Logger LOG = Logger.getLogger(OverlappingFeaturesDisplayer.class);
 
 
@@ -65,10 +67,20 @@ public class HomologueDisplayer extends CustomDisplayer {
         }
 
         Gene gene = (Gene) reportObject.getObject();
+        Set<String> dataSets = new HashSet<String>();
+        JSONObject params = config.getParameterJson();
+        try {
+			JSONArray dataSetsArray = params.getJSONArray("dataSets");
+			for (int i = 0; i < dataSetsArray.length(); i++) {
+				dataSets.add(dataSetsArray.getString(i));
+			}
+        } catch (JSONException e) {
+        	throw new RuntimeException("Error parsing configuration value 'dataSets'", e);
+		}
 
         for (Homologue homologue : gene.getHomologues()) {
             for (DataSet dataSet : homologue.getDataSets()) {
-                if (!HOMOLOGY_DATASET.equals(dataSet.getName())) {
+                if (dataSets.contains(dataSet.getName())) {
                     Organism org = homologue.getHomologue().getOrganism();
                     organismIds.put(org.getSpecies(), org.getId().toString());
                     try {
@@ -82,7 +94,7 @@ public class HomologueDisplayer extends CustomDisplayer {
                             addToMap(homologues, org.getShortName(), re);
                         }
                     } catch (PathException e) {
-                        LOG.error("Failed to resolved path: " + symbolPath + " for gene: " + gene);
+                        LOG.error("Failed to resolve path: " + symbolPath + " for gene: " + gene);
                     }
                 }
             }
