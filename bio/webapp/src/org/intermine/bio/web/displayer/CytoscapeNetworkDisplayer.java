@@ -1,8 +1,5 @@
 package org.intermine.bio.web.displayer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +22,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
@@ -125,7 +121,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
         try {
             WebResultsExecutor we = im.getWebResultsExecutor(profile);
             WebResults webResults = we.execute(q);
-            PagedTable pagedResults = new PagedTable(webResults, 10);
+            PagedTable pagedResults = new PagedTable(webResults, 10); // TODO only display 10 recs?
             pagedResults.setTableid("CytoscapeNetworkDisplayer");
             request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
         } catch (ObjectStoreException e) {
