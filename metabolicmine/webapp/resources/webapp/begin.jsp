@@ -395,12 +395,13 @@
     <div id="api" class="span-6 white-half">
         <div class="top"></div>
         <div class="center span-6 last">
-            <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-            <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+            <h4>Perl, Java<span>&nbsp;&amp;&nbsp;</span>Python API</h4>
+            <img src="images/begin/perl-java-python-ico.png" alt="perl java python" />
             <p>You can fetch data from metabolicMine directly from your own programs via a REST web service.  More information:</p>
             <ul>
                 <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=perl">Perl API</a></li>
                 <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=java">Java API</a></li>
+                <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=python">Python API</a></li>
             </ul>
         </div>
         <div class="bottom span-6 last"></div>
