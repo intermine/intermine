@@ -119,7 +119,7 @@ setup(
         name = "intermine",
         packages = ["intermine"],
         cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.96.00",
+        version = "0.97.00",
         description = "InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
@@ -128,7 +128,7 @@ setup(
         keywords = ["webservice", "genomic", "bioinformatics"],
         classifiers = [
             "Programming Language :: Python",
-            "Development Status :: 3 - Alpha",
+            "Development Status :: 4 - Beta",
             "Intended Audience :: Science/Research",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",

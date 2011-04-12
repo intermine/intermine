@@ -813,7 +813,7 @@ class Query(object):
                 subclass_dict[c.path] = c.subclass
         return subclass_dict
 
-    def results(self, row="list"):
+    def results(self, row="list", start=0, size=None):
         """
         Return an iterator over result rows
         ===================================
@@ -833,8 +833,56 @@ class Query(object):
         """
         path = self.get_results_path()
         params = self.to_query_params()
+        params["start"] = start
+        if size:
+            params["size"] = size
         view = self.views
         return self.service.get_results(path, params, row, view)
+
+    def get_results_list(self, *args, **kwargs):
+        """
+        Get a list of result rows
+        =========================
+
+        This method is a shortcut so that you do not have to
+        do a list comprehension yourself on the iterator that 
+        is normally returned. If you have a very large result 
+        set (and these can get up to 100's of thousands or rows
+        pretty easily) you will not want to
+        have the whole list in memory at once, but there may 
+        be other circumstances when you might want to keep the whole
+        list in one place.
+
+        It takes all the same arguments and parameters as Query.results
+
+        @see: L{intermine.query.results}
+
+        """
+        rows = self.results(*args, **kwargs)
+        return [r for r in rows]
+
+    def count(self):
+        """
+        Return the total number of rows this query returns
+        ==================================================
+
+        Obtain the number of rows a particular query will 
+        return, without having to fetch and parse all the 
+        actual data. This method makes a request to the server
+        to report the count for the query, and is sugar for a 
+        results call.
+
+        @rtype: int
+        @raise WebserviceError: if the request is unsuccessful.
+        """
+        count_str = ""
+        rows = self.results("count")
+        for row in rows:
+            count_str += row
+        try:
+            return int(count_str)
+        except ValueError:
+            raise WebserviceError("Server returned a non-integer count: " + count_str)
 
     def get_results_path(self):
         """
@@ -850,33 +898,6 @@ class Query(object):
         """
         return self.service.QUERY_PATH
 
-    def get_results_list(self, rowformat="list"):
-        """
-        Get a list of result rows
-        =========================
-
-        This method is a shortcut so that you do not have to
-        do a list comprehension yourself on the iterator that 
-        is normally returned. If you have a very large result 
-        set (in the millions of rows) you will not want to
-        have the whole list in memory at once, but there may 
-        be other circumstances when you might want to keep the whole
-        list in one place.
-
-        @param rowformat: the format for the row. Defaults to "list". Valid options are 
-            "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
-        @type rowformat: string
-
-        @rtype: list
-
-        @raise WebserviceError: if the request is unsuccessful
-
-        """
-        return self.service.get_results_list(
-                self.get_results_path(),
-                self.to_query_params(),
-                rowformat,
-                self.views)
 
     def children(self):
         """
@@ -1088,6 +1109,8 @@ class Template(Query):
                 - code[i]:       the code
                 - extra[i]:      the extra value for ternary constraints (optional)
 
+        
+        @rtype: dict
         """
         p = {'name' : self.name}
         i = 1
@@ -1144,7 +1167,7 @@ class Template(Query):
                 setattr(con, key, value)
         return clone
 
-    def results(self, row="list", **con_values):
+    def results(self, row="list", start=0, size=None, **con_values):
         """
         Get an iterator over result rows
         ================================
@@ -1172,9 +1195,9 @@ class Template(Query):
         @rtype: L{intermine.webservice.ResultIterator}
         """
         clone = self.get_adjusted_template(con_values)
-        return super(Template, clone).results(row)
+        return super(Template, clone).results(row, start, size)
 
-    def get_results_list(self, row="list", **con_values):
+    def get_results_list(self, row="list", start=0, size=None, **con_values):
         """
         Get a list of result rows
         =========================
@@ -1190,7 +1213,25 @@ class Template(Query):
 
         """
         clone = self.get_adjusted_template(con_values)
-        return super(Template, clone).get_results_list(row)
+        return super(Template, clone).get_results_list(row, start, size)
+
+    def count(self, **con_values):
+        """
+        Return the total number of rows this template returns
+        =====================================================
+
+        Obtain the number of rows a particular query will 
+        return, without having to fetch and parse all the 
+        actual data. This method makes a request to the server
+        to report the count for the query, and is sugar for a 
+        results call.
+
+        @rtype: int
+        @raise WebserviceError: if the request is unsuccessful.
+        """
+        clone = self.get_adjusted_template(con_values)
+        return super(Template, clone).count()
+
 
 class QueryError(ReadableException):
     pass
