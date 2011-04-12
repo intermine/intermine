@@ -50,7 +50,7 @@ public class HomologueDisplayer extends CustomDisplayer {
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-        request.setAttribute("parameters", config.getParameters());
+        request.setAttribute("parameters", config.getParameterString());
         Map<String, Set<ResultElement>> homologues =
             new TreeMap<String, Set<ResultElement>>();
         Map<String, String> organismIds = new HashMap<String, String>();
