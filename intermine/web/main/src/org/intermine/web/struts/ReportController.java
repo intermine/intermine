@@ -276,7 +276,7 @@ public class ReportController extends InterMineAction
         for (Tag tag : tags) {
             String tagName = tag.getTagName();
             if (!isSuperUser && tagName.equals(TagNames.IM_HIDDEN)) {
-                miscRefs.remove(fd.getName());
+                //miscRefs.remove(fd.getName());
                 // Maybe it was added already to some placement and
                 // that's why it must be removed
                 removeField(fd.getName(), placementRefsAndCollections);
@@ -286,10 +286,10 @@ public class ReportController extends InterMineAction
                 Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);
-                    miscRefs.remove(fd.getName());
+                    //miscRefs.remove(fd.getName());
                 }
             } else if (tagName.equals(TagNames.IM_SUMMARY)) {
-                miscRefs.remove(fd.getName());
+                //miscRefs.remove(fd.getName());
             }
         }
     }
