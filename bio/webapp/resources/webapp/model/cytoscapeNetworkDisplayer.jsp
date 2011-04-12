@@ -60,6 +60,10 @@
     <h3>Interaction Network</h3>
 </div>
 
+<c:if test="${empty WEB_PROPERTIES['project.baseurl']}">
+    <p style="color:red;">Some properties required for the network displayer are not set, expect glitches. Check <b>project.baseurl</b>, <b>project.path</b> are set.</p>
+</c:if>
+
 <div id="interactions-wrap">
   <div class="inside">
   <div id="cwtabsbyside">
@@ -88,7 +92,7 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
         <fieldset>
-          <label class="fakelink" onclick="window.open('${WEB_PROPERTIES['project.baseurl']}/${WEB_PROPERTIES['project.path']}/saveFromIdsToBag.do?type=Gene&ids="+fullInteractingGeneSet+"&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</lable>
+          <label class="fakelink" onclick="window.open(${WEB_PROPERTIES['project.baseurl']}+ '/' + ${WEB_PROPERTIES['project.path']} + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</lable>
         </fieldset>
         <fieldset>
           <label>View interaction data in a table</lable>
@@ -142,17 +146,17 @@
 
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
+
 <link href="model/jquery_svg/jquery.svg.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_svg/jquery.svg.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
-
     // from controller
     var fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
 
-    // var project_title = "${WEB_PROPERTIES['project.title']}";
+    //var project_title = "${WEB_PROPERTIES['project.title']}";
 
     var target = "#cwcontent";
 
@@ -166,8 +170,8 @@
                                .height(20)
                                .width(600);
     }
-    else {
 
+    else {
         // AJAX POST
         jQuery(target).html("Please wait while the network data loads...");
         jQuery.ajax({
@@ -184,7 +188,7 @@
                                              .width(60);
                 } else {
                     networkdata = response;
-                    displayNetwork(networkdata, fullInteractingGeneSet);
+                    displayNetwork(networkdata, fullInteractingGeneSet, "${WEB_PROPERTIES['project.title']}", "${WEB_PROPERTIES['project.baseurl']}", "${WEB_PROPERTIES['project.path']}");
                     jQuery("#cwtabsbyside").tabs();
                     jQuery("#cwtabsbyside").css('display', 'inline');
                 }
@@ -206,21 +210,22 @@
 
     jQuery("svg").height("100%").width("100%");
 
+    // 'export' is reserved! (http://www.quackit.com/javascript/javascript_reserved_words.cfm)
+    function exportNet(type) {
+        if (type=="tab" || type=="csv") {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet);
+        } else {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+        }
+    }
+
     jQuery("#exportoptions").change(function () {
-        export(jQuery("#exportoptions option:selected").val());
+        exportNet(jQuery("#exportoptions option:selected").val());
     });
 
     jQuery("#exportbutton").click(function () {
-    export(jQuery("#exportoptions option:selected").val());
+        exportNet(jQuery("#exportoptions option:selected").val());
     });
-
-    function export(type) {
-        if (type=="tab" || type=="csv") {
-      vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet); }
-        else {
-          vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type); }
-    }
-
 </script>
 
 <!-- /cytoscapeNetworkDisplayer.jsp -->

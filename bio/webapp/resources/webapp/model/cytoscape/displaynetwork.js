@@ -1,6 +1,6 @@
 // Functions for network display
 
-function displayNetwork(networkdata, fullInteractingGeneSet) {
+function displayNetwork(networkdata, fullInteractingGeneSet, projectTitle, projectBaseUrl, projectPath) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -41,9 +41,9 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     vis.panZoomControlVisible(true);
     vis.zoomToFit();
 
-    vis.addContextMenuItem("View ${WEB_PROPERTIES['project.title']} gene report...", "nodes", function(evt) {
+    vis.addContextMenuItem("View " + projectTitle + " gene report...", "nodes", function(evt) {
         var data = evt.target.data;
-        url = "${WEB_PROPERTIES['project.baseurl']}/${WEB_PROPERTIES['project.path']}/objectDetails.do?id=" + data.id;
+        url = projectBaseUrl + "/" + projectPath + "/objectDetails.do?id=" + data.id;
         window.open(url);
     })
 
