@@ -110,17 +110,17 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         // query each friendly mine, return matches.  value can be identifier or symbol
         // we only return one value even if there are multiple matches, the portal at the remote
         // mine will handle duplicates
-        Map<Mine, String> minesWithGene = olm.getObjectInOtherMines(encodedOrganism,
+        Map<Mine, String[]> minesWithGene = olm.getObjectInOtherMines(encodedOrganism,
                 primaryIdentifier);
 
         if (minesWithGene == null) {
             return;
         }
 
-        for (Map.Entry<Mine, String> entry : minesWithGene.entrySet()) {
+        for (Map.Entry<Mine, String[]> entry : minesWithGene.entrySet()) {
             Mine mine = entry.getKey();
-            String identifier = entry.getValue();
-            organisms.put(mine.getName(), getJSONOrganism(organismShortName, identifier, false));
+            String[] identifiers = entry.getValue();
+            organisms.put(mine.getName(), getJSONOrganism(organismShortName, identifiers, false));
         }
     }
 
@@ -157,16 +157,15 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
 
             // for default organism, do we have local orthologues?
             if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
-                Map<String, Set<String>> orthologueMap = new HashMap<String, Set<String>>();
+                Map<String, Set<String[]>> orthologueMap = new HashMap<String, Set<String[]>>();
                 for (String homologue : matchingHomologues) {
                     // if so, does remote mine have this gene?
-                    String homologueIdentifier = olm.getObjectInOtherMine(mine, URLEncoder.encode(""
-                            + remoteMineDefaultOrganism, "UTF-8"), homologue);
-                    // not sure it will ever be isEmpty as we pass "" beforehand
-                    if (!StringUtils.isEmpty(homologueIdentifier)
-                            && !"\"\"".equals(homologueIdentifier)) {
+                    String[] homologueIdentifiers = olm.getObjectInOtherMine(mine,
+                            URLEncoder.encode("" + remoteMineDefaultOrganism, "UTF-8"), homologue);
+                    if (homologueIdentifiers != null && homologueIdentifiers.length == 2
+                            && homologueIdentifiers[0] != null) {
                         Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
-                                homologueIdentifier);
+                                homologueIdentifiers);
                     }
                 }
                 if (!orthologueMap.isEmpty()) {
@@ -182,7 +181,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
              * - remote mine does not have corresponding gene for the orthologue found in local mine
              */
             if (queryRemoteMine) {
-                Map<String, Set<String>> remoteOrthologues = olm.runRelatedDataQuery(mine,
+                Map<String, Set<String[]>> remoteOrthologues = olm.runRelatedDataQuery(mine,
                         encodedOrganism, primaryIdentifier);
                 if (remoteOrthologues != null && !remoteOrthologues.isEmpty()) {
                     JSONObject organism = getJSONOrganism(remoteOrthologues, true);
@@ -207,34 +206,35 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         }
     }
 
-    private static JSONObject getJSONGene(String identifier, boolean isConverted)
+    private static JSONObject getJSONGene(String[] identifiers, boolean isOrthologue)
         throws JSONException {
         JSONObject gene = new JSONObject();
-        gene.put("identifier", identifier);
-        gene.put("isConverted", isConverted);
+        gene.put("primaryIdentifier", identifiers[0]);
+        gene.put("displayIdentifier", identifiers[1]);
+        gene.put("isOrthologue", isOrthologue);
         return gene;
     }
 
-    private static JSONObject getJSONOrganism(String organismName, String identifier,
+    private static JSONObject getJSONOrganism(String organismName, String[] identifiers,
             boolean isConverted)
         throws JSONException {
-        JSONObject gene = getJSONGene(identifier, isConverted);
+        JSONObject gene = getJSONGene(identifiers, isConverted);
         JSONObject organism = new JSONObject();
         organism.put("shortName", organismName);
         organism.put("orthologues", gene);
         return organism;
     }
 
-    private static JSONObject getJSONOrganism(Map<String, Set<String>> orthologueMap,
-            boolean isConverted)
+    private static JSONObject getJSONOrganism(Map<String, Set<String[]>> orthologueMap,
+            boolean isOrthologue)
         throws JSONException {
         String organismName = null;
         Set<JSONObject> genes = new HashSet<JSONObject>();
-        for (Map.Entry<String, Set<String>> entry : orthologueMap.entrySet()) {
+        for (Map.Entry<String, Set<String[]>> entry : orthologueMap.entrySet()) {
             organismName = entry.getKey();
-            Set<String> identifiers = entry.getValue();
-            for (String identifier : identifiers) {
-                JSONObject gene = getJSONGene(identifier, isConverted);
+            Set<String[]> identifierSets = entry.getValue();
+            for (String[] identifiers : identifierSets) {
+                JSONObject gene = getJSONGene(identifiers, isOrthologue);
                 genes.add(gene);
             }
         }

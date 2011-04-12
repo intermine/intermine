@@ -35,6 +35,7 @@
           if (entry['organisms'] != undefined) {
               // details dict
               var minePortalDetails = minePortals[entry['mineName'].toLowerCase()];
+              var identifier;
 
               // mine
               if (minePortalDetails["bgcolor"] != null && minePortalDetails["frontcolor"] != null) { // we have colors! aaaw, pretty...
@@ -49,18 +50,20 @@
                   jQuery(target + " li#mine-" + key + " ul.organisms").append("<li class='organism-" + organismKey + "'>" + organismEntry['shortName'] + "<ul class='entries'></ul></li>");
                   // gene item
                   if (organismEntry['genes'] != undefined) {
-                      jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + organismEntry['genes']['orthologues']['identifier'] + "</li>");
+                      jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + organismEntry['genes']['orthologues']['displayIdentifier'] + "</li>");
+                      identifier = organismEntry['genes']['orthologues']['primaryIdentifier'];
                   }
                   // orthologues list
                   if (organismEntry['orthologues'] != undefined) {
                       jQuery.each(organismEntry['orthologues'], function(orthoKey, orthoEntry) {
-                          jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + orthoEntry['identifier'] + "</li>");
+                          jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + orthoEntry['displayIdentifier'] + "</li>");
+                          identifier = orthoEntry['primaryIdentifier'];
                       });
                   }
                   // add separators & linkify
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
-                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + jQuery(this).text() + "&class=Gene&origin=FlyMine'>" + jQuery(this).text() + "</a>");
+                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + identifier + "&class=Gene&origin=FlyMine'>" + jQuery(this).text() + "</a>");
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());
