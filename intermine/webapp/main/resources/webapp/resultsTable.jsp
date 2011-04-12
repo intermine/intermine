@@ -82,27 +82,6 @@
                 <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
             </c:if>
             <span id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}" style="cursor:default;">
-            <script type="text/javascript" charset="utf-8">
-                jQuery(document).ready(function(){
-                    jQuery('#header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}').qtip({
-                       content: '${displayPath}',
-                       show: 'mouseover',
-                       hide: 'mouseout',
-                       position: {
-                           corner: {
-                              target: 'topLeft',
-                              tooltip: 'bottomLeft'
-                           }
-                       },
-                       style: {
-                          tip: 'bottomLeft',
-                          fontSize: '12px',
-                          name: 'cream',
-                          whiteSpace: 'nowrap'
-                       }
-                    });
-                });
-            </script>
             <em style="font-size:9px;">
             <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
               <c:choose>
