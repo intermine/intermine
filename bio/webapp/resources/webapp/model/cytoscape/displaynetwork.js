@@ -41,9 +41,9 @@ function displayNetwork(networkdata, fullInteractingGeneSet) {
     vis.panZoomControlVisible(true);
     vis.zoomToFit();
 
-    vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
+    vis.addContextMenuItem("View ${WEB_PROPERTIES['project.title']} gene report...", "nodes", function(evt) {
         var data = evt.target.data;
-        url = webapp_baseurl + "/" + webapp_path + "/report.do?id=" + data.id;
+        url = "${WEB_PROPERTIES['project.baseurl']}/${WEB_PROPERTIES['project.path']}/objectDetails.do?id=" + data.id;
         window.open(url);
     })
 
