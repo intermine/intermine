@@ -259,6 +259,7 @@
         <a name="other"><h2>Other</h2></a>
       </c:if>
     </c:if>
+
     <tiles:insert page="/reportUnplacedInlineLists.jsp">
       <tiles:put name="listOfUnplacedInlineLists" beanName="listOfUnplacedInlineLists" />
     </tiles:insert>
