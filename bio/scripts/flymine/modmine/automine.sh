@@ -904,9 +904,6 @@ then
 loadChadoSubs $P
 elif [ -n "$L" ]
 then
-echo "*********$IFS**"
-IFS=$','
-echo "*********$IFS**"
 for p in $L
 do 
 echo "---> $p"
@@ -915,7 +912,6 @@ loadChadoSubs $p
 IFS=$','
 done
 IFS=$'\t\n'
-echo "*********$IFS**"
 else
 loadChadoSubs
 fi
