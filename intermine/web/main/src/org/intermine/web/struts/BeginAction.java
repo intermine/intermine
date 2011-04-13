@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -69,7 +70,10 @@ public class BeginAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
-
+        String errorKey = SessionMethods.getErrorOnInitialiser(servletContext);
+        if (errorKey != null) {
+            recordError(new ActionMessage(errorKey), request);
+        }
         Properties properties = SessionMethods.getWebProperties(servletContext);
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read

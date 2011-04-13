@@ -14,7 +14,9 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +25,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,6 +35,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -49,12 +51,9 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
-import org.intermine.api.tracker.TrackerLogger;
-import org.intermine.api.tracker.factory.TrackerFactory;
-import org.intermine.api.tracker.track.Track;
+import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -68,8 +67,8 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
@@ -116,8 +115,6 @@ public class InitialiserPlugin implements PlugIn
 
         final ServletContext servletContext = servlet.getServletContext();
 
-        System.setProperty("java.awt.headless", "true");
-
         // initialise properties
         Properties webProperties = loadWebProperties(servletContext);
         SessionMethods.setWebProperties(servletContext, webProperties);
@@ -132,7 +129,7 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        TrackerDelegate trackerDelegate = initTrackers(webProperties, userprofileOSW);
+        TrackerDelegate trackerDelegate = initTrackers(servletContext, webProperties, userprofileOSW);
 //      TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
@@ -519,11 +516,38 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private TrackerDelegate initTrackers(Properties webProperties,
+    private TrackerDelegate initTrackers(ServletContext servletContext, Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
+        if (!verifyTrackTables(userprofileOSW.getObjectStore())) {
+            SessionMethods.setErrorOnInitialiser(servletContext, "errors.tracktable.runAnt");
+        }
         return getTrackerDelegate(webProperties, userprofileOSW);
     }
 
+    private boolean verifyTrackTables(ObjectStore uos) {
+        Connection con = null;
+        try {
+            con = ((ObjectStoreInterMineImpl) uos).getConnection();
+            if (DatabaseUtil.tableExists(con, TrackerUtil.TEMPLATE_TRACKER_TABLE)) {
+                ResultSet res = con.getMetaData().getColumns(null, null,
+                                TrackerUtil.TEMPLATE_TRACKER_TABLE, "timestamp");
+
+                while (res.next()) {
+                    if (res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
+                        && res.getString(4).equals("timestamp")
+                        && res.getInt(5) == Types.TIMESTAMP) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        } catch (SQLException sqle) {
+            LOG.error("Probelm retriving connection", sqle);
+        } finally {
+            ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
+        }
+        return true;
+    }
     /**
      * Returns the tracker manager of all trackers defined into the webapp configuration properties
      * @param webProperties the webapp configuration properties where the trackers are defined
