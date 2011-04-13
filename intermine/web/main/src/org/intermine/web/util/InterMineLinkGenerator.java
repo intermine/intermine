@@ -27,10 +27,10 @@ public abstract class InterMineLinkGenerator
      * Query other intermines for this object
      *
      * @param olm class resonsible for generating links
-     * @param mineMap map of friendly mines to query
      * @param filterValue value of query constraint, eg. organism or department name
      * @param identifier identifier for the object on this report page
+     * @return map of mines to objects to link to
      */
-    public abstract void getLinks(LinkManager olm, Map<String, JSONObject> mineMap,
-            String filterValue, String identifier);
+    public abstract Map<String, JSONObject> getLinks(LinkManager olm, String filterValue,
+            String identifier);
 }
