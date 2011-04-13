@@ -470,6 +470,10 @@ public class LinkManager
         try {
             webserviceURL = mine.getUrl() + valuesURL + WILDCARD;
             BufferedReader reader = runWebServiceQuery(webserviceURL);
+            if (reader == null) {
+                LOG.info("no values found for " + mine.getName());
+                return false;
+            }
             String line = null;
             while ((line = reader.readLine()) != null) {
                 names.add(line);
