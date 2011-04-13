@@ -177,9 +177,10 @@ div.custom-displayer p.switchers a.switcher.active { background:url('../images/r
 */
 div.custom-displayer p.switchers a.switcher { text-decoration:underline; }
 div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-decoration:none; }
-    div.custom-displayer table.displayer th { font-weight:normal; padding:6px; font-size:13px; }
-    div.custom-displayer table.displayer td { padding:6px; }
-        div.custom-displayer table.displayer tr.odd td { border-width:1px 0; border-style:solid; }
+    div.custom-displayer table.displayer { width:100%; }
+      div.custom-displayer table.displayer th { font-weight:normal; padding:6px; font-size:13px; }
+      div.custom-displayer table.displayer td { padding:6px; }
+          div.custom-displayer table.displayer tr.odd td { border-width:1px 0; border-style:solid; }
 
 /* links in other mines */
 #intermine_links.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
