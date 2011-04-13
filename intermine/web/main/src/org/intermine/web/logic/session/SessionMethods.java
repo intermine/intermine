@@ -1051,4 +1051,13 @@ public final class SessionMethods
     public static void setCategories(ServletContext servletContext, Set<String> categories) {
         servletContext.setAttribute(Constants.CATEGORIES, categories);
     }
+
+    public static void setErrorOnInitialiser(ServletContext servletContext, String errorKey) {
+        servletContext.setAttribute(Constants.INITIALISER_KEY_ERROR, errorKey);
+    }
+
+    public static String getErrorOnInitialiser(ServletContext servletContext) {
+        return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null) ?
+               (String) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
+    }
 }
