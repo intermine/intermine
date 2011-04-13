@@ -112,6 +112,11 @@
                         userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
+  <target name="update-templatetrack-table" depends="-init-properties, -init-build-db">
+    <update-templatetrack-table
+                        userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
   <!-- RELEASE / REMOVE FROM TOMCAT -->
 
   <target name="release-webapp" depends="-init-properties, init">
