@@ -365,6 +365,14 @@ ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
 #templates div.content p.more a, #low #rss p.more a { background: url("homepage/more-pitchurka.png") no-repeat scroll
   left center transparent; }
 
+/* bagUploadConfirm */
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#002575; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#EEF0F7;  }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tr.even td { background:#FBFDFE; border-top-color:#E2F5FE; border-bottom-color:#E2F5FE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
+#pagecontentcontainer.bagUploadConfirm-page h3 { color:#002575; background:#EEF0F7; border-top-color:#002575; }
+#pagecontentcontainer.bagUploadConfirm-page div.description { background:#EEF0F7; }
+
 /* report page */
 #header_wrap { background-color:#EEF0F7; background-image:url("report/header-bg.png"); }
 #object_header h1.title span { color:#5c0075; }
