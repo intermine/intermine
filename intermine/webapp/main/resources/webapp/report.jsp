@@ -119,6 +119,12 @@
         });
       </script>
   </div>
+
+  <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:put name="placement" value="top" />
+    <tiles:put name="reportObject" beanName="object" />
+  </tiles:insert>
+
   </div>
 </div>
 
