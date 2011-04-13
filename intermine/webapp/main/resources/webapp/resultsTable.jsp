@@ -212,22 +212,22 @@
         if (${pagedResults.exactSize} > 1) {
           // nasty hardcode
           if (${pagedResults.exactSize} < 10) {
-            var onclick = "jQuery('#${tableIdentifier} table').show();" +
+            var openOnclick = "jQuery('#${tableIdentifier} table').show();" +
             "jQuery('#${tableIdentifier} p.in_table a').show();" +
             "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
             "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
-            var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;"><span>Show all</span></a>';
+            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+'return false;"><span>Show all</span></a>';
           } else {
-            var onclick = "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
+            var openOnclick = "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
             "return showMoreRowsTemplate('#${tableIdentifier}', 1, 10);";
-            var toggle = '<a class="toggler" href="#" onclick="'+onclick+';"><span>Show 10 rows</span></a>';
+            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+';"><span>Show 10 rows</span></a>';
           }
         } else {
-            var onclick = "jQuery('#${tableIdentifier} table').show();" +
+            var openOnclick = "jQuery('#${tableIdentifier} table').show();" +
             "jQuery('#${tableIdentifier} p.in_table a').show();" +
             "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
             "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
-          var toggle = '<a class="toggler" href="#" onclick="'+onclick+'return false;"><span>Show 1 row</span></a>';
+            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+'return false;"><span>Show 1 row</span></a>';
         }
         jQuery('#${tableIdentifier} p.in_table').append(toggle);
       </script>
