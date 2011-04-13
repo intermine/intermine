@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -30,6 +31,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.CacheMap;
 import org.intermine.util.Util;
 import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
@@ -43,12 +45,16 @@ import org.json.JSONObject;
 public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
 {
     private static final Logger LOG = Logger.getLogger(BioInterMineLinkGenerator.class);
+    private static CacheMap<MultiKey, Map<String, JSONObject>> intermineLinkCache
+        = new CacheMap<MultiKey, Map<String, JSONObject>>();
+    private Map<String, JSONObject> filteredMines;
 
     /**
      * Constructor
      */
     public BioInterMineLinkGenerator() {
         super();
+        filteredMines = new HashMap<String, JSONObject>();
     }
 
     /**
@@ -59,24 +65,30 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * 3. if orthologue not found query remote mine for orthologues
      *
      * @param olm LinkManager
-     * @param filteredMines list of mines with genes
      * @param organismShortName organism.shortName, eg. C. elegans
      * @param primaryIdentifier identifier for gene
+     * @return map from mine to organism-->genes
      */
-    public void getLinks(LinkManager olm, Map<String, JSONObject> filteredMines,
-            String organismShortName, String primaryIdentifier) {
+    public Map<String, JSONObject> getLinks(LinkManager olm, String organismShortName,
+            String primaryIdentifier) {
+
+        MultiKey key = new MultiKey(primaryIdentifier, organismShortName);
+        if (intermineLinkCache.get(key) != null) {
+            return intermineLinkCache.get(key);
+        }
+
         Map<String, JSONObject> minesWithGene = new HashMap<String, JSONObject>();
         try {
             getMinesWithThisGene(olm, minesWithGene, organismShortName, primaryIdentifier);
             getMinesWithOrthologues(olm, filteredMines, minesWithGene, organismShortName,
                     primaryIdentifier);
+            intermineLinkCache.put(key, filteredMines);
         } catch (UnsupportedEncodingException e) {
             LOG.error("error encoding organism name", e);
-            return;
         } catch (JSONException e) {
             LOG.error("error generating JSON objects", e);
-            return;
         }
+        return filteredMines;
     }
 
     /**

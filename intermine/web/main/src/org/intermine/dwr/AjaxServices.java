@@ -640,7 +640,6 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         LinkManager olm = LinkManager.getInstance(im, webProperties);
-        Map<String, JSONObject> filteredMines = new HashMap<String, JSONObject>();
         InterMineLinkGenerator linkGen = null;
         Class<?> clazz
             = TypeUtil.instantiate("org.intermine.bio.web.util.BioInterMineLinkGenerator");
@@ -652,7 +651,8 @@ public class AjaxServices
             LOG.error("Failed to instantiate BioInterMineLinkGenerator because: " + e);
             return null;
         }
-        linkGen.getLinks(olm, filteredMines, organismName, primaryIdentifier);
+        Map<String, JSONObject> filteredMines
+            = linkGen.getLinks(olm, organismName, primaryIdentifier);
         // mine --> organism name --> genes|orthologues --> identifier|isOrthologue
         return filteredMines.values().toString();
     }
