@@ -194,3 +194,6 @@ div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-deco
 
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 .listsObjectIsIn { padding-top: 2px; padding-left: 10px; }
+
+/* external links */
+li.external a, #intermine_links ul li a { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
