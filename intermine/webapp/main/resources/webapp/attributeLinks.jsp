@@ -18,7 +18,7 @@
 
       <c:if
         test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
-        <li><c:choose>
+        <li class="external"><c:choose>
 
           <%-- GET form --%>
           <c:when test="${empty usePost}">
