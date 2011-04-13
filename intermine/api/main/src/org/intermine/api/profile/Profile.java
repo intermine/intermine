@@ -121,6 +121,17 @@ public class Profile
     }
 
     /**
+     * Return true if and only if the user logged is superuser
+     * @return Return true if superuser
+     */
+    public boolean isSuperuser() {
+        if (username != null && manager.getSuperuser().equals(username)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get the value of userId
      * @return an Integer
      */
