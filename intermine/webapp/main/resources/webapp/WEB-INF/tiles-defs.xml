@@ -261,7 +261,7 @@
     <put name="body" value="keywordsearchresults.tile"/>
     <put name="pageName" value="keywordsearchresults"/>
   </definition>
-
+  <definition name="track.tile" path="track.jsp" />
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
 
