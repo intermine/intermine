@@ -70,13 +70,13 @@ public class HomologueDisplayer extends CustomDisplayer {
         Set<String> dataSets = new HashSet<String>();
         JSONObject params = config.getParameterJson();
         try {
-			JSONArray dataSetsArray = params.getJSONArray("dataSets");
-			for (int i = 0; i < dataSetsArray.length(); i++) {
-				dataSets.add(dataSetsArray.getString(i));
-			}
+            JSONArray dataSetsArray = params.getJSONArray("dataSets");
+            for (int i = 0; i < dataSetsArray.length(); i++) {
+                dataSets.add(dataSetsArray.getString(i));
+            }
         } catch (JSONException e) {
-        	throw new RuntimeException("Error parsing configuration value 'dataSets'", e);
-		}
+            throw new RuntimeException("Error parsing configuration value 'dataSets'", e);
+        }
 
         for (Homologue homologue : gene.getHomologues()) {
             for (DataSet dataSet : homologue.getDataSets()) {

@@ -87,6 +87,7 @@
     </p>
 
     <!-- Nav trail -->
+<c:if test="${pageName != 'report'}">
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
     <p class="alignright">
@@ -102,6 +103,7 @@
     </c:if>
     <im:contextHelp/>
 </p>
+</c:if>
   </c:if>
  </div>
 
