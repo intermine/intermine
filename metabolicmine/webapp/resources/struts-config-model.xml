@@ -31,7 +31,7 @@
 <action path="/initSnpToGeneFormDisplayer"
   type="org.metabolicmine.web.SnpToGeneFormDisplayerController" />
 
-<action path="/snpToGeneAction" name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneAction" input="report">
+<action path="/snpToGeneAction" name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneAction" input="report" />
 
 <action path="/initCytoscapeNetworkDisplayer"
         type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
@@ -44,4 +44,4 @@
 
   <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
   <forward name="waiting" redirect="true" path="/pollQuery.do"/>
-</action>
+<!--</action>-->
