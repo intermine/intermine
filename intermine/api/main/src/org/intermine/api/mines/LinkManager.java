@@ -474,10 +474,7 @@ public class LinkManager
             while ((line = reader.readLine()) != null) {
                 names.add(line);
             }
-        } catch (MalformedURLException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
-            return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
             return false;
         }
@@ -527,7 +524,7 @@ public class LinkManager
         if (!mineMap.isEmpty()) {
             LOG.info("processing map for " + mine.getName());
         } else {
-            LOG.info("no map found for " + mine.getName());
+            LOG.info("no data found for " + mine.getName());
         }
     }
 
