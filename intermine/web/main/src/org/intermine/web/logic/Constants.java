@@ -203,4 +203,6 @@ public interface Constants
      * Key for the InterMine API object
      */
     String INTERMINE_API = "INTERMINE_API";
+
+    String INITIALISER_KEY_ERROR = "INITIALISER_KEY_ERROR";
 }
