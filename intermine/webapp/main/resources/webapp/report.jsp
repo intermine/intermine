@@ -93,6 +93,14 @@
       </div>
     </c:if>
 
+  <%-- shown @ top displayers --%>
+  <div id="displayers" class="table">
+    <tiles:insert page="/reportCustomDisplayers.jsp">
+      <tiles:put name="placement" value="top" />
+      <tiles:put name="reportObject" beanName="object" />
+    </tiles:insert>
+  </div>
+
     <%-- permalink --%>
     <%-- <p class="share">Share this page: <a href="${stableLink}">${stableLink}</a></p> --%>
     <div id="share">
@@ -119,11 +127,6 @@
         });
       </script>
   </div>
-
-  <tiles:insert page="/reportCustomDisplayers.jsp">
-    <tiles:put name="placement" value="top" />
-    <tiles:put name="reportObject" beanName="object" />
-  </tiles:insert>
 
   </div>
 </div>
