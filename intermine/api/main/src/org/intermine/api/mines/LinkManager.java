@@ -221,6 +221,7 @@ public class LinkManager
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + relatedDataTemplate + relatedDataConstraint1 + identifier
             + relatedDataConstraint2 + constraintValue;
+        Map<String, String[]> uniqueIdentifierMap = new HashMap<String, String[]>();
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
             if (reader == null) {
@@ -237,21 +238,7 @@ public class LinkManager
                     LOG.info(msg);
                     return null;
                 }
-                String key = bits[0];
-                String newIdentifier = bits[1];
-                String symbol = bits[2];
-
-                String[] identifiers = new String[2];
-                if (!StringUtils.isEmpty(newIdentifier)) {
-                    identifiers[0] = newIdentifier;
-                    identifiers[1] = newIdentifier;
-                }
-                if (!StringUtils.isEmpty(symbol)) {
-                    identifiers[1] = symbol;
-                }
-                if (identifiers[0] != null) {
-                    Util.addToSetMap(relatedDataMap, key, identifiers);
-                }
+                parseResults(relatedDataMap, bits, uniqueIdentifierMap);
             }
         } catch (MalformedURLException e) {
             LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
@@ -261,6 +248,35 @@ public class LinkManager
             return null;
         }
         return relatedDataMap;
+    }
+
+    private void parseResults(Map<String, Set<String[]>> relatedDataMap, String[] bits,
+            Map<String, String[]> uniqueIdentifierMap) {
+        String key = bits[0];
+        String primaryIdentifier = bits[1];
+        String symbol = bits[2];
+        if (StringUtils.isEmpty(primaryIdentifier) && StringUtils.isEmpty(symbol)) {
+            return;
+        }
+        String[] identifiers = new String[2];
+
+        // one identifier can have multiple symbols, append
+        if (!StringUtils.isEmpty(primaryIdentifier)) {
+//            if (uniqueIdentifierMap.get(primaryIdentifier) != null
+//                    && !StringUtils.isEmpty(symbol)) {
+//                identifiers = uniqueIdentifierMap.get(primaryIdentifier);
+//                identifiers[1] = identifiers[1] + ", " + symbol;
+//                // we've processed this primaryIdentifier already, move on
+//                return;
+//            }
+            identifiers[0] = primaryIdentifier;
+            identifiers[1] = (!StringUtils.isEmpty(symbol) ? symbol : primaryIdentifier);
+            Util.addToSetMap(uniqueIdentifierMap, primaryIdentifier, identifiers);
+        } else if (StringUtils.isEmpty(primaryIdentifier) && !StringUtils.isEmpty(symbol)) {
+            identifiers[0] = symbol;
+            identifiers[1] = symbol;
+        }
+        Util.addToSetMap(relatedDataMap, key, identifiers);
     }
 
     /**
