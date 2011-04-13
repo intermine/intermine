@@ -13,17 +13,21 @@ package org.intermine.api.tracker.track;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
-/**
+/**long
  * Class representing the track
  * @author dbutano
  */
 public abstract class TrackAbstract implements Track
 {
     private static final Logger LOG = Logger.getLogger(TrackAbstract.class);
-    protected long timestamp;
+
+    protected String userName;
+    protected String sessionIdentifier;
+    protected Timestamp timestamp;
 
     @Override
     public void store(Connection con) {
@@ -52,7 +56,27 @@ public abstract class TrackAbstract implements Track
         }
     }
 
-    public long getTimestamp() {
+    /**
+     * Return the timestamp of the event
+     * @return Timestamp the timestamp
+     */
+    public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * Return the user name
+     * @return String user name
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Return the session id
+     * @return String session id
+     */
+    public String getSessionIdentifier() {
+        return sessionIdentifier;
     }
 }

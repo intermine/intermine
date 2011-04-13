@@ -9,13 +9,15 @@ package org.intermine.api.tracker.track;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.util.TrackerUtil;
 
 public class LoginTrack extends TrackAbstract
 {
     private String user;
 
-    public LoginTrack(String user, long timestamp) {
+    public LoginTrack(String user, Timestamp timestamp) {
         this.user = user;
         this.timestamp = timestamp;
     }

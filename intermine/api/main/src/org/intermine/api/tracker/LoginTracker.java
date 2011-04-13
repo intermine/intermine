@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -34,8 +35,7 @@ public class LoginTracker extends TrackerAbstract
     * @param trackQueue the queue where the tracks are temporary stored
     */
     protected LoginTracker(Connection conn, Queue<Track> trackQueue) {
-        super(trackQueue, TrackerUtil.LOGIN_TRACKER_TABLE,
-                new String[] {"username", "timestamp"});
+        super(trackQueue, TrackerUtil.LOGIN_TRACKER_TABLE);
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
 
@@ -70,11 +70,11 @@ public class LoginTracker extends TrackerAbstract
      */
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(username text, timestamp bigint)";
+        return "CREATE TABLE " + trackTableName + "(username text, timestamp timestamp)";
     }
 
     protected void trackLogin(String username) {
-        LoginTrack loginTrack = new LoginTrack(username, System.currentTimeMillis());
+        LoginTrack loginTrack = new LoginTrack(username, new Timestamp(System.currentTimeMillis()));
         if (loginTracker  != null) {
             loginTracker.storeTrack(loginTrack);
         } else {

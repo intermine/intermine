@@ -13,13 +13,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.ListTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.ListBuildMode;
@@ -36,8 +36,7 @@ public class ListTracker extends TrackerAbstract
      * @param conn connection to the database
      */
     protected ListTracker(Connection conn, Queue<Track> trackQueue) {
-        super(trackQueue, TrackerUtil.LIST_TRACKER_TABLE,
-                new String[] {"type", "count", "buildmode", "event", "timestamp"});
+        super(trackQueue, TrackerUtil.LIST_TRACKER_TABLE);
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
     /**
@@ -62,8 +61,8 @@ public class ListTracker extends TrackerAbstract
      */
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName
-            + "(type text, count int, buildmode text, event text, timestamp bigint)";
+        return "CREATE TABLE " + trackTableName + "(type text, count int, buildmode text,"
+               + "event text, username text, sessionidentifier text, timestamp timestamp)";
     }
 
     /**
@@ -74,9 +73,14 @@ public class ListTracker extends TrackerAbstract
         return TrackerUtil.LIST_TRACKER;
     }
 
-    protected void trackList(String type, int count, ListBuildMode buildMode, ListTrackerEvent event) {
+    protected void trackList(String type, int count, ListBuildMode buildMode,
+                             ListTrackerEvent event, Profile profile, String sessionIdentifier) {
+        String userName = (profile.getUsername() != null)
+                          ? profile.getUsername()
+                          : "";
         ListTrack listTrack = new ListTrack(type, count, buildMode, event,
-                                           System.currentTimeMillis());
+                                           userName, sessionIdentifier,
+                                           new Timestamp(System.currentTimeMillis()));
         if (listTracker  != null) {
             listTracker.storeTrack(listTrack);
         } else {
@@ -95,8 +99,7 @@ public class ListTracker extends TrackerAbstract
         List<ListTrack> listOperations = new ArrayList<ListTrack>();
         try {
             stm = con.createStatement();
-            String sql = "SELECT type, count, buildmode, event"
-                        + " FROM listtrack";
+            String sql = "SELECT type, count, buildmode, event FROM listtrack";
             rs = stm.executeQuery(sql);
             while (rs.next()) {
                 listOperations.add(new ListTrack(rs.getString(1), rs.getInt(2),

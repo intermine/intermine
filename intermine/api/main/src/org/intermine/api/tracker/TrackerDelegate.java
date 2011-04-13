@@ -181,11 +181,15 @@ public class TrackerDelegate
      * @param type the type of the list
      * @param count the number of items contained
      * @param buildMode (from identifiers or from the querybuilder page)
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
      */
-    public void trackListCreation(String type, int count, ListBuildMode buildMode) {
+    public void trackListCreation(String type, int count, ListBuildMode buildMode, Profile profile,
+                                 String sessionIdentifier) {
         Tracker tracker = getTracker(TrackerUtil.LIST_TRACKER);
         if (tracker != null) {
-            ((ListTracker) tracker).trackList(type, count, buildMode, ListTrackerEvent.CREATION);
+            ((ListTracker) tracker).trackList(type, count, buildMode, ListTrackerEvent.CREATION,
+                                              profile, sessionIdentifier);
         }
     }
 
@@ -193,11 +197,15 @@ public class TrackerDelegate
      * Store into the database the list execution
      * @param type the type of the list
      * @param count the number of items contained
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
      */
-    public void trackListExecution(String type, int count) {
+    public void trackListExecution(String type, int count, Profile profile,
+                                   String sessionIdentifier) {
         Tracker tracker = getTracker(TrackerUtil.LIST_TRACKER);
         if (tracker != null) {
-            ((ListTracker) tracker).trackList(type, count, null, ListTrackerEvent.EXECUTION);
+            ((ListTracker) tracker).trackList(type, count, null, ListTrackerEvent.EXECUTION,
+                                              profile, sessionIdentifier);
         }
     }
 
@@ -255,14 +263,16 @@ public class TrackerDelegate
     /**
      * Store into the database the login event
      * @param keyword the keywords used for the search
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
      */
-    public void trackKeywordSearch(String keyword) {
+    public void trackKeywordSearch(String keyword, Profile profile,
+                                   String sessionIdentifier) {
         Tracker tracker = getTracker(TrackerUtil.SEARCH_TRACKER);
         if (tracker != null) {
-            ((KeySearchTracker) tracker).trackSearch(keyword);
+            ((KeySearchTracker) tracker).trackSearch(keyword, profile, sessionIdentifier);
         }
     }
-
 
     /**
      * Return the number of search for each keyword
@@ -287,13 +297,17 @@ public class TrackerDelegate
     /**
      * Store into the database the execution of a query (saved or temporary)
      * @param type the root type
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
      */
-    public void trackQuery(String type) {
+    public void trackQuery(String type, Profile profile,
+                           String sessionIdentifier) {
         Tracker tracker = getTracker(TrackerUtil.QUERY_TRACKER);
         if (tracker != null) {
-            ((QueryTracker) tracker).trackQuery(type);
+            ((QueryTracker) tracker).trackQuery(type, profile, sessionIdentifier);
         }
     }
+
     /**
      * Release the database connection
      * @param conn the connection to release

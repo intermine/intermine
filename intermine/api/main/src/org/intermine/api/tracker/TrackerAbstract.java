@@ -27,18 +27,13 @@ import org.intermine.sql.DatabaseUtil;
 public abstract class TrackerAbstract implements Tracker
 {
     private static final Logger LOG = Logger.getLogger(TrackerAbstract.class);
-    //protected Connection connection = null;
     protected Queue<Track> trackQueue = null;
     protected String trackTableName;
-    protected String[] trackTableColumns;
     protected TrackerLogger trackerLogger = null;
 
-    protected TrackerAbstract(/*Connection conn,*/ Queue<Track> trackQueue, String trackTableName,
-                              String[] trackTableColumns) {
-        //this.connection = conn;
+    protected TrackerAbstract(Queue<Track> trackQueue, String trackTableName) {
         this.trackQueue = trackQueue;
         this.trackTableName = trackTableName;
-        this.trackTableColumns = trackTableColumns;
     }
 
     /**

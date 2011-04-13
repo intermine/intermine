@@ -9,6 +9,8 @@ package org.intermine.api.tracker.track;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.util.TrackerUtil;
 /**
  * Class to represent the track for the templates objects.
@@ -18,9 +20,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  */
 public class TemplateTrack extends TrackAbstract
 {
-    private String userName;
     private String templateName;
-    private String sessionIdentifier;
 
     /**
      * Create a template track
@@ -30,7 +30,7 @@ public class TemplateTrack extends TrackAbstract
      * @param timestamp access time
      */
     public TemplateTrack(String templateName, String username,
-                        String sessionIdentifier, long timestamp) {
+                        String sessionIdentifier, Timestamp timestamp) {
         this.templateName = templateName;
         this.userName = username;
         this.sessionIdentifier = sessionIdentifier;
@@ -51,35 +51,11 @@ public class TemplateTrack extends TrackAbstract
     }
 
     /**
-     * Return the user name
-     * @return String user name
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
      * Return the template name
      * @return String template name
      */
     public String getTemplateName() {
         return templateName;
-    }
-
-    /**
-     * Return the time of access
-     * @return long the time of access
-     */
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Return the session id
-     * @return String session id
-     */
-    public String getSessionIdentifier() {
-        return sessionIdentifier;
     }
 
     /**
@@ -99,8 +75,7 @@ public class TemplateTrack extends TrackAbstract
      */
     @Override
     public Object[] getFormattedTrack() {
-        return new Object[] {templateName, userName,
-                             timestamp, sessionIdentifier};
+        return new Object[] {templateName, userName, sessionIdentifier, timestamp};
     }
 
     /**

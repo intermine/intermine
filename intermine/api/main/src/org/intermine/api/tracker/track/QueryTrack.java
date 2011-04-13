@@ -9,19 +9,23 @@ package org.intermine.api.tracker.track;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.util.TrackerUtil;
 
 public class QueryTrack extends TrackAbstract {
     private String type;
 
-    public QueryTrack(String type, long timestamp) {
+    public QueryTrack(String type, String username, String sessionIdentifier, Timestamp timestamp) {
         this.type = type;
+        this.userName = username;
+        this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
     }
 
     @Override
     public Object[] getFormattedTrack() {
-        return new Object[] {type, timestamp};
+        return new Object[] {type, userName, sessionIdentifier, timestamp};
     }
 
     @Override

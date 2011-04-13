@@ -13,11 +13,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.KeySearchTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
@@ -33,8 +35,7 @@ public class KeySearchTracker extends TrackerAbstract
         * @param trackQueue the queue where the tracks are temporary stored
         */
     protected KeySearchTracker(Connection conn, Queue<Track> trackQueue) {
-        super(trackQueue, TrackerUtil.SEARCH_TRACKER_TABLE,
-             new String[] {"keyword", "timestamp"});
+        super(trackQueue, TrackerUtil.SEARCH_TRACKER_TABLE);
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
 
@@ -63,11 +64,16 @@ public class KeySearchTracker extends TrackerAbstract
 
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(keyword text, timestamp bigint)";
+        return "CREATE TABLE " + trackTableName + "(keyword text, username text, sessionidentifier text,"
+               + " timestamp timestamp)";
     }
 
-    protected void trackSearch(String keyword) {
-        KeySearchTrack searchTrack = new KeySearchTrack(keyword, System.currentTimeMillis());
+    protected void trackSearch(String keyword, Profile profile, String sessionIdentifier) {
+        String userName = (profile.getUsername() != null)
+                          ? profile.getUsername()
+                          : "";
+        KeySearchTrack searchTrack = new KeySearchTrack(keyword, userName, sessionIdentifier,
+                                                       new Timestamp(System.currentTimeMillis()));
         if (searchTrack  != null) {
             searchTracker.storeTrack(searchTrack);
         } else {
