@@ -7,21 +7,19 @@
 table.collection {
   border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
 
-h3 { color: #5C0075; background:#F4EEF7; border-top:1px solid #5C0075; font-size:14px; padding:2px 6px;
-    text-shadow:1px 1px 1px #FFF; }
+h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px; text-shadow:1px 1px 1px #FFF; }
 
 /* tables */
 table.inlineResultsTable { font-size:12px; width:100%; }
-table.inlineResultsTable a { color:#5c0075; }
 table.inlineResultsTable td { padding:6px; }
     table.inlineResultsTable td.right { text-align:right; }
-table.inlineResultsTable thead td { border-bottom:1px solid #decce3; background:#f4eef7; padding:0 0 0 6px; font-size:13px; }
-table.inlineResultsTable tr.even td { background:#fcfafd; border-top:1px solid #dcc8e2; border-bottom:1px solid #dcc8e2; }
-table.inlineResultsTable td.identifier { color:#886644; font-weight:bold; }
+table.inlineResultsTable thead td { padding:0 0 0 6px; font-size:13px; }
+table.inlineResultsTable tr.even td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
+table.inlineResultsTable td.identifier { font-weight:bold; }
 
 
 /* description & add all */
-div.description { background:#F4EEF7; padding:0 6px; }
+div.description { padding:0 6px; }
 div.description div.sectionAddRemove { float:right; }
 
 table.collection t td {

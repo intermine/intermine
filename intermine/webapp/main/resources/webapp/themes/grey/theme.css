@@ -290,6 +290,14 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 
 #templates #tab-content #ribbon { background: url("../../themes/purple/homepage/ribbon-mars.png") no-repeat scroll right top transparent; }
 
+/* bagUploadConfirm */
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#004499; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#EBEBEB;  }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tr.even td { background:#FAFAFA; border-top-color:#F0F0F0; border-bottom-color:#F0F0F0; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
+#pagecontentcontainer.bagUploadConfirm-page h3 { color:#004499; background:#EBEBEB; border-top-color:#004499; }
+#pagecontentcontainer.bagUploadConfirm-page div.description { background:#EBEBEB; }
+
 /* report page */
 #header_wrap { background-color:#F5F5F5; background-image:url("report/header-bg.png"); }
 #object_header h1.title span { color:#5c0075; }
