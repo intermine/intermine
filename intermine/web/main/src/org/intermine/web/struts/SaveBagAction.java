@@ -121,7 +121,8 @@ public class SaveBagAction extends InterMineAction
             //tracks the list creation
             if ("saveNewBag".equals(operation)) {
                 InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                im.getTrackerDelegate().trackListCreation(bag.getType(), bag.getSize(), ListBuildMode.QUERY);
+                im.getTrackerDelegate().trackListCreation(bag.getType(), bag.getSize(),
+                                        ListBuildMode.QUERY, profile, session.getId());
             }
         } catch (ObjectStoreException e) {
             LOG.error("Failed to save bag", e);

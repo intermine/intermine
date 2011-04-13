@@ -86,7 +86,7 @@ public class BagUploadConfirmAction extends InterMineAction
         bag.addIdsToBag(contents, bagType);
         //track the list creation
         im.getTrackerDelegate().trackListCreation(bagType, bag.getSize(),
-                                                  ListBuildMode.IDENTIFIERS);
+                                ListBuildMode.IDENTIFIERS, profile, session.getId());
         session.removeAttribute("bagQueryResult");
         ForwardParameters forwardParameters
             = new ForwardParameters(mapping.findForward("bagDetails"));

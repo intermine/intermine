@@ -67,7 +67,7 @@ public class BagDetailsController extends TilesAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
+        Profile profile = SessionMethods.getProfile(session);
         ObjectStore os = im.getObjectStore();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         BagManager bagManager = im.getBagManager();
@@ -86,7 +86,6 @@ public class BagDetailsController extends TilesAction
         }
 
         if (scope.equals(Scope.USER) || scope.equals(Scope.ALL)) {
-            Profile profile = SessionMethods.getProfile(session);
             imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
                 myBag = Boolean.TRUE;
@@ -130,7 +129,8 @@ public class BagDetailsController extends TilesAction
         //tracks the list execution only if the list has'n just been created
         if (request.getParameter("trackExecution") == null
             || "true".equals(request.getParameter("trackExecution"))) {
-            im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize);
+            im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize, profile,
+                                                       session.getId());
         }
 
         // TODO this needs to be removed when InterMineBag can store the initial ids of when the

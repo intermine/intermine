@@ -134,7 +134,7 @@ public class ModifyBagAction extends InterMineAction
                 recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
                 //track the list creation
                 im.getTrackerDelegate().trackListCreation(origBag.getType(), origBag.getSize(),
-                                                          ListBuildMode.OPERATION);
+                                        ListBuildMode.OPERATION, profile, session.getId());
             }
         } else {
             if (newNameTextBox != null) {
@@ -221,7 +221,8 @@ public class ModifyBagAction extends InterMineAction
                     session);
             //track the list creation
             im.getTrackerDelegate().trackListCreation(BagOperations.getCommonBagType(
-                                    selectedBags), newBagSize, ListBuildMode.OPERATION);
+                                    selectedBags), newBagSize, ListBuildMode.OPERATION,
+                                    profile, session.getId());
         } else {
             SessionMethods.recordError(opText + " operation on lists "
                     + StringUtil.prettyList(Arrays.asList(selectedBagNames))
