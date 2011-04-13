@@ -46,6 +46,10 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
     /* header link */
     #headerLink { position:absolute; top:0; right:0; z-index:3; font-size:12px; }
 
+    /* top dispayers */
+    #object_header #displayers.table { margin:0; }
+        #object_header #displayers.table h3 { border:0; }
+
     /* share this */
     #object_header p.share { background:url('../images/report/share_tiny.png') no-repeat 3px; padding-left:14px;
      font-size:12px; }
