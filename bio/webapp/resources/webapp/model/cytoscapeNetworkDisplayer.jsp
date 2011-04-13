@@ -60,7 +60,7 @@
     <h3>Interaction Network</h3>
 </div>
 
-<c:if test="${empty WEB_PROPERTIES['project.baseurl']}">
+<c:if test="${empty WEB_PROPERTIES['project.baseurl'] || empty WEB_PROPERTIES['project.path']}">
     <p style="color:red;">Some properties required for the network displayer are not set, expect glitches. Check <b>project.baseurl</b>, <b>project.path</b> are set.</p>
 </c:if>
 
@@ -92,7 +92,7 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
         <fieldset>
-          <label class="fakelink" onclick="window.open(${WEB_PROPERTIES['project.baseurl']}+ '/' + ${WEB_PROPERTIES['project.path']} + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</lable>
+          <label class="fakelink" onclick="window.open(${WEB_PROPERTIES['project.baseurl']}+ '/' + ${WEB_PROPERTIES['project.path']} + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
         <fieldset>
           <label>View interaction data in a table</lable>
