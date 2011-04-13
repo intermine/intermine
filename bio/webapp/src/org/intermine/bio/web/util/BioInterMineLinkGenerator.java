@@ -93,8 +93,9 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    private static void getMinesWithThisGene(LinkManager olm, Map<String, JSONObject> organisms,
-            String organismShortName, String primaryIdentifier)
+    private static void getMinesWithThisGene(LinkManager olm,
+            Map<String, JSONObject> minesToGenes, String organismShortName,
+            String primaryIdentifier)
         throws JSONException, UnsupportedEncodingException {
         if (organismShortName == null) {
             LOG.error("error created links to other mines for this gene, no organism provided");
@@ -120,7 +121,8 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         for (Map.Entry<Mine, String[]> entry : minesWithGene.entrySet()) {
             Mine mine = entry.getKey();
             String[] identifiers = entry.getValue();
-            organisms.put(mine.getName(), getJSONOrganism(organismShortName, identifiers, false));
+            minesToGenes.put(mine.getName(),
+                    getJSONOrganism(organismShortName, identifiers, false));
         }
     }
 
@@ -170,7 +172,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
                 }
                 if (!orthologueMap.isEmpty()) {
                     queryRemoteMine = false;
-                    JSONObject organism = getJSONOrganism(orthologueMap, false);
+                    JSONObject organism = getJSONOrganism(orthologueMap);
                     organisms.add(organism);
                 }
             }
@@ -184,7 +186,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
                 Map<String, Set<String[]>> remoteOrthologues = olm.runRelatedDataQuery(mine,
                         encodedOrganism, primaryIdentifier);
                 if (remoteOrthologues != null && !remoteOrthologues.isEmpty()) {
-                    JSONObject organism = getJSONOrganism(remoteOrthologues, true);
+                    JSONObject organism = getJSONOrganism(remoteOrthologues);
                     organisms.add(organism);
                 }
             }
@@ -206,12 +208,11 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         }
     }
 
-    private static JSONObject getJSONGene(String[] identifiers, boolean isOrthologue)
+    private static JSONObject getJSONGene(String[] identifiers)
         throws JSONException {
         JSONObject gene = new JSONObject();
         gene.put("primaryIdentifier", identifiers[0]);
         gene.put("displayIdentifier", identifiers[1]);
-        gene.put("isOrthologue", isOrthologue);
         return gene;
     }
 
@@ -219,15 +220,14 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
     private static JSONObject getJSONOrganism(String organismName, String[] identifiers,
             boolean isConverted)
         throws JSONException {
-        JSONObject gene = getJSONGene(identifiers, isConverted);
+        JSONObject gene = getJSONGene(identifiers);
         JSONObject organism = new JSONObject();
         organism.put("shortName", organismName);
         organism.put("orthologues", gene);
         return organism;
     }
 
-    private static JSONObject getJSONOrganism(Map<String, Set<String[]>> orthologueMap,
-            boolean isOrthologue)
+    private static JSONObject getJSONOrganism(Map<String, Set<String[]>> orthologueMap)
         throws JSONException {
         String organismName = null;
         Set<JSONObject> genes = new HashSet<JSONObject>();
@@ -236,7 +236,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
             Set<String[]> identifierSets = entry.getValue();
 //            Collection<String[]> parsedIdentifierSets = removeDuplicateEntries(identifierSets);
             for (String[] identifiers : identifierSets) {
-                JSONObject gene = getJSONGene(identifiers, isOrthologue);
+                JSONObject gene = getJSONGene(identifiers);
                 genes.add(gene);
             }
         }

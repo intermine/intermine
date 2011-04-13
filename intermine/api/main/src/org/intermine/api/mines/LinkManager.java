@@ -50,7 +50,7 @@ import org.intermine.util.Util;
  */
 public class LinkManager
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static boolean cached = false;
     private static LinkManager linkManager = null;
     private static long lastCacheRefresh = 0;

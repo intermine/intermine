@@ -36,6 +36,7 @@
               // details dict
               var minePortalDetails = minePortals[entry['mineName'].toLowerCase()];
               var identifier;
+              var organismAttribute = '';   // only used for orthologue links
 
               // mine
               if (minePortalDetails["bgcolor"] != null && minePortalDetails["frontcolor"] != null) { // we have colors! aaaw, pretty...
