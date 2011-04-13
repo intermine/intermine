@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -52,9 +53,9 @@ public class TrackerLoggerTest extends TestCase {
     }
 
     public void testRun() throws SQLException, InterruptedException {
-        Queue<Track> trackQueue = new LinkedList<Track>();
         for (int index = 0; index < 100; index++) {
-            trackQueue.add(new LoginTrack("user" + index, System.currentTimeMillis()));
+            trackQueue.add(new LoginTrack("user" + index,
+                          new Timestamp(System.currentTimeMillis())));
         }
         trackerLogger = new TrackerLogger(con, trackQueue);
         new Thread(trackerLogger).start();

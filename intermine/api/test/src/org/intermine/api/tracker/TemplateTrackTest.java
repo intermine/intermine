@@ -10,6 +10,8 @@ package org.intermine.api.tracker;
  *
  */
 
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.track.TemplateTrack;
 
 import junit.framework.TestCase;
@@ -27,11 +29,11 @@ public class TemplateTrackTest extends TestCase
         assertEquals("templateName", tt1.getTemplateName());
         assertEquals("username", tt1.getUserName());
         assertEquals("sessionIdentifier", tt1.getSessionIdentifier());
-        assertEquals(0, tt1.getTimestamp());
+        assertNull(tt1.getTimestamp());
 
         long currenTime = System.currentTimeMillis();
-        TemplateTrack tt2 = new TemplateTrack("name", "username", "sessionIdentifier", currenTime);
-        assertEquals(currenTime, tt2.getTimestamp());
+        TemplateTrack tt2 = new TemplateTrack("name", "username", "sessionIdentifier", new Timestamp(currenTime));
+        assertEquals(currenTime, tt2.getTimestamp().getTime());
 
         assertEquals(true, new TemplateTrack("templateName", "username", "sessionIdentifier")
                                             .validate());
