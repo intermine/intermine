@@ -65,11 +65,12 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'report'}">
+  <c:if test="${pageName != 'report' && pageName != 'mymine'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
   <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
+  <script type="text/javascript" src="<html:rewrite page='/dwr/interface/TrackAjaxServices.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
