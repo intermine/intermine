@@ -11,9 +11,11 @@ package org.intermine.api.tracker;
  */
 
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.Queue;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.track.QueryTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
@@ -29,8 +31,7 @@ public class QueryTracker extends TrackerAbstract
     * @param trackQueue the queue where the tracks are temporary stored
     */
     protected QueryTracker(Connection conn, Queue<Track> trackQueue) {
-        super(trackQueue, TrackerUtil.QUERY_TRACKER_TABLE,
-                new String[] {"type", "timestamp"});
+        super(trackQueue, TrackerUtil.QUERY_TRACKER_TABLE);
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
 
@@ -65,11 +66,16 @@ public class QueryTracker extends TrackerAbstract
      */
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(type text, timestamp bigint)";
+        return "CREATE TABLE " + trackTableName + "(type text, username text, sessionidentifier text, "
+               + "timestamp timestamp)";
     }
 
-    protected void trackQuery(String type) {
-        QueryTrack queryTrack = new QueryTrack(type, System.currentTimeMillis());
+    protected void trackQuery(String type, Profile profile, String sessionIdentifier) {
+        String userName = (profile.getUsername() != null)
+                          ? profile.getUsername()
+                          : "";
+        QueryTrack queryTrack = new QueryTrack(type, userName, sessionIdentifier,
+                                              new Timestamp(System.currentTimeMillis()));
         if (queryTracker  != null) {
             queryTracker.storeTrack(queryTrack);
         } else {

@@ -9,19 +9,26 @@ package org.intermine.api.tracker.track;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.util.TrackerUtil;
+
+
 
 public class KeySearchTrack extends TrackAbstract {
     private String keyword;
 
-    public KeySearchTrack(String keyword, long timestamp) {
+    public KeySearchTrack(String keyword, String username,
+            String sessionIdentifier, Timestamp timestamp) {
         this.keyword = keyword;
+        this.userName = username;
+        this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
     }
 
     @Override
     public Object[] getFormattedTrack() {
-        return new Object[] {keyword, timestamp};
+        return new Object[] {keyword, userName, sessionIdentifier, timestamp};
     }
 
     @Override

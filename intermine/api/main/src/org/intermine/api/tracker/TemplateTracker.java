@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -47,8 +48,7 @@ public class TemplateTracker extends TrackerAbstract
      * @param conn connection to the database
      */
     protected TemplateTracker(Queue<Track> trackQueue) {
-        super(trackQueue, TrackerUtil.TEMPLATE_TRACKER_TABLE,
-             new String[] {"templatename", "username", "timestamp", "sessionidentifier"});
+        super(trackQueue, TrackerUtil.TEMPLATE_TRACKER_TABLE);
         templatesExecutionCache = new TemplatesExecutionMap();
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
@@ -106,11 +106,11 @@ public class TemplateTracker extends TrackerAbstract
      */
     protected void trackTemplate(String templateName, Profile profile,
                               String sessionIdentifier) {
-        String userName = (profile != null && profile.getUsername() != null)
+        String userName = (profile.getUsername() != null)
                           ? profile.getUsername()
                           : "";
         TemplateTrack templateTrack = new TemplateTrack(templateName,
-                                      userName, sessionIdentifier, System.currentTimeMillis());
+                                      userName, sessionIdentifier, new Timestamp(System.currentTimeMillis()));
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
             templatesExecutionCache.addExecution(templateTrack);
@@ -273,7 +273,7 @@ public class TemplateTracker extends TrackerAbstract
     @Override
     public String getStatementCreatingTable() {
         return "CREATE TABLE " + trackTableName
-            + "(templatename text, username text, timestamp bigint, sessionidentifier text)";
+            + "(templatename text, username text, sessionidentifier text, timestamp timestamp)";
     }
 
     /**

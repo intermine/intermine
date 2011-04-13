@@ -9,9 +9,12 @@ package org.intermine.api.tracker.track;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.sql.Timestamp;
+
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
+
 /**
  * Class to represent the track for the lists objects.
  * The track contains the type, the count of the items, the way used to build the list.
@@ -25,11 +28,13 @@ public class ListTrack extends TrackAbstract
     private ListTrackerEvent event;
 
     public ListTrack(String type, int count, ListBuildMode buildMode, ListTrackerEvent event,
-                    long timestamp) {
+                     String username, String sessionIdentifier, Timestamp timestamp) {
         this.type = type;
         this.count = count;
         this.buildMode = buildMode;
         this.event = event;
+        this.userName = username;
+        this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
     }
 
@@ -57,9 +62,9 @@ public class ListTrack extends TrackAbstract
     @Override
     public Object[] getFormattedTrack() {
         if (buildMode == null) {
-            return new Object[] {type, count, "", event, timestamp};
+            return new Object[] {type, count, "", event, userName, sessionIdentifier, timestamp};
         }
-        return new Object[] {type, count, buildMode, event, timestamp};
+        return new Object[] {type, count, buildMode, event, userName, sessionIdentifier, timestamp};
     }
 
     /**
@@ -84,14 +89,6 @@ public class ListTrack extends TrackAbstract
      */
     public ListBuildMode getBuildMode() {
         return buildMode;
-    }
-
-    /**
-     * Return the time of execution of the list
-     * @return long the time of execution
-     */
-    public long getTimestamp() {
-        return timestamp;
     }
 
     /**
