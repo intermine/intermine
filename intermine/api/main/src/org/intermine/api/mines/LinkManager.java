@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.config.Constants;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -59,9 +60,6 @@ public class LinkManager
     private static Mine localMine = null;
     private static final String WEBSERVICE_URL = "/service";
     private static final String RELEASE_VERSION_URL = "/version/release";
-    private static String valuesTemplate, mapTemplate, reportTemplate, relatedDataConstraint1,
-    relatedDataConstraint2, identifierConstraint, lookupConstraint, extraValueConstraint,
-    relatedDataTemplate;
     private static String valuesURL, mapURL;
     private static final String TEMPLATE_PATH = "/template/results?size=1000&format=tab&name=";
     private static Properties webProperties;
@@ -76,23 +74,10 @@ public class LinkManager
         LinkManager.webProperties = webProperties;
         LinkManager.im = im;
 
-        // TODO put in constants
-        valuesTemplate = (String) webProperties.get("intermine.template.queryableValues");
-        mapTemplate = (String) webProperties.get("intermine.template.queryableMap");
-        reportTemplate = (String) webProperties.get("intermine.template.report.otherMines");
-        relatedDataTemplate = (String) webProperties.get("intermine.template.report.relatedData");
-        identifierConstraint
-            = (String) webProperties.get("intermine.template.identifierConstraint");
-        lookupConstraint = (String) webProperties.get("intermine.template.lookupConstraint");
-        extraValueConstraint
-            = (String) webProperties.get("intermine.template.extraValueConstraint");
-        relatedDataConstraint1
-            = (String) webProperties.get("intermine.template.relatedDataConstraint1");
-        relatedDataConstraint2
-            = (String) webProperties.get("intermine.template.relatedDataConstraint2");
-
-        valuesURL = WEBSERVICE_URL + TEMPLATE_PATH + valuesTemplate + identifierConstraint;
-        mapURL = WEBSERVICE_URL + TEMPLATE_PATH + mapTemplate + identifierConstraint;
+        valuesURL = WEBSERVICE_URL + TEMPLATE_PATH + Constants.VALUES_TEMPLATE
+            + Constants.IDENTIFIER_CONSTRAINT;
+        mapURL = WEBSERVICE_URL + TEMPLATE_PATH + Constants.MAP_TEMPLATE
+            + Constants.IDENTIFIER_CONSTRAINT;
 
         final String localMineName = webProperties.getProperty("project.title");
         localMine = new Mine(localMineName);
@@ -166,8 +151,8 @@ public class LinkManager
 
     private String[] runReportQuery(Mine mine, String constraintValue, String identifier) {
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
-            + reportTemplate + lookupConstraint + identifier
-            + extraValueConstraint + constraintValue;
+            + Constants.REPORT_TEMPLATE + Constants.LOOKUP_CONSTRAINT + identifier
+            + Constants.EXTRA_VALUE_CONSTRAINT + constraintValue;
         String[] identifiers = new String[2];
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
@@ -219,8 +204,8 @@ public class LinkManager
             String identifier) {
         Map<String, Set<String[]>> relatedDataMap = new HashMap<String, Set<String[]>>();
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
-            + relatedDataTemplate + relatedDataConstraint1 + identifier
-            + relatedDataConstraint2 + constraintValue;
+            + Constants.RELATED_DATA_TEMPLATE + Constants.RELATED_DATA_CONSTRAINT_1 + identifier
+            + Constants.RELATED_DATA_CONSTRAINT_2 + constraintValue;
         Map<String, String[]> uniqueIdentifierMap = new HashMap<String, String[]>();
         try {
             BufferedReader reader = runWebServiceQuery(webserviceURL);
@@ -538,7 +523,7 @@ public class LinkManager
         ProfileManager profileManager = im.getProfileManager();
 
         // get values associated with this mine (eg. gene.organism)
-        String templateName = valuesTemplate;
+        String templateName = Constants.VALUES_TEMPLATE;
         TemplateQuery q = templateManager.getGlobalTemplate(templateName);
         if (q == null) {
             LOG.error(templateName + " template not found, unable to process intermine links");
@@ -554,7 +539,7 @@ public class LinkManager
         localMine.setMineValues(results);
 
         // get map of values for this mine (eg. gene.organism --> gene.homologue.organism)
-        templateName = mapTemplate;
+        templateName = Constants.MAP_TEMPLATE;
         q = templateManager.getGlobalTemplate(templateName);
         if (q == null) {
             LOG.error(templateName + " template not found, unable to process intermine links");

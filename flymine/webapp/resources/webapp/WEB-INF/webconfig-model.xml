@@ -186,7 +186,10 @@
     </fields>
     <longdisplayers>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-    </longdisplayers>o
+    </longdisplayers>
+    <bagdisplayers>
+      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
+   </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">

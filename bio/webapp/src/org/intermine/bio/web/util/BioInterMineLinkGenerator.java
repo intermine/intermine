@@ -215,6 +215,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         return gene;
     }
 
+    // used for genes, not homologues
     private static JSONObject getJSONOrganism(String organismName, String[] identifiers,
             boolean isConverted)
         throws JSONException {
@@ -233,6 +234,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         for (Map.Entry<String, Set<String[]>> entry : orthologueMap.entrySet()) {
             organismName = entry.getKey();
             Set<String[]> identifierSets = entry.getValue();
+//            Collection<String[]> parsedIdentifierSets = removeDuplicateEntries(identifierSets);
             for (String[] identifiers : identifierSets) {
                 JSONObject gene = getJSONGene(identifiers, isOrthologue);
                 genes.add(gene);
@@ -243,6 +245,21 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         organism.put("orthologues", genes);
         return organism;
     }
+
+//    private static Collection<String[]> removeDuplicateEntries(Set<String[]> identifierSets) {
+//        Map<String, String[]> seenIdentifiers = new HashMap<String, String[]>();
+//        for (String[] identifiers : identifierSets) {
+//            String primaryIdentifier = identifiers[0];
+//            if (seenIdentifiers.get(primaryIdentifier) == null) {
+//                seenIdentifiers.put(primaryIdentifier, identifiers);
+//            } else {
+//                // duplicate, don't add again, just append symbol to already-existing entry
+//                String[] existingIdentifierArray = seenIdentifiers.get(primaryIdentifier);
+//                existingIdentifierArray[1] = existingIdentifierArray[1] + ", " + identifiers[1];
+//            }
+//        }
+//        return seenIdentifiers.values();
+//    }
 
     // query local mine for orthologues
     private static Map<String, Set<String>> getLocalOrthologues(LinkManager olm,
@@ -255,21 +272,50 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String orthologuePrimaryIdentifier = (String) row.get(0).getField();
-            String orthologueSymbol = (String) row.get(1).getField();
+//            String orthologueSymbol = (String) row.get(1).getField();
             String organismName = (String) row.get(2).getField();
             String orthologueIdentifer = null;
             if (!StringUtils.isEmpty(orthologuePrimaryIdentifier)) {
                 orthologueIdentifer = orthologuePrimaryIdentifier;
             }
-            if (!StringUtils.isEmpty(orthologueSymbol)) {
-                orthologueIdentifer = orthologueSymbol;
-            }
+//            if (!StringUtils.isEmpty(orthologueSymbol)) {
+//                orthologueIdentifer = orthologueSymbol;
+//            }
             if (!StringUtils.isEmpty(orthologueIdentifer)) {
                 Util.addToSetMap(relatedDataMap, organismName, orthologueIdentifer);
             }
         }
         return relatedDataMap;
     }
+//
+//    private void parseResults(Map<String, Set<String[]>> relatedDataMap, String[] bits,
+//            Map<String, String[]> uniqueIdentifierMap) {
+//        String key = bits[0];
+//        String primaryIdentifier = bits[1];
+//        String symbol = bits[2];
+//        if (StringUtils.isEmpty(primaryIdentifier) && StringUtils.isEmpty(symbol)) {
+//            return;
+//        }
+//        String[] identifiers = new String[2];
+//
+//        // one identifier can have multiple symbols, append
+//        if (!StringUtils.isEmpty(primaryIdentifier)) {
+//            if (uniqueIdentifierMap.get(primaryIdentifier) != null
+//                    && !StringUtils.isEmpty(symbol)) {
+//                identifiers = uniqueIdentifierMap.get(primaryIdentifier);
+//                identifiers[1] = identifiers[1] + ", " + symbol;
+//                // we've processed this primaryIdentifier already, move on
+//                return;
+//            }
+//            identifiers[0] = primaryIdentifier;
+//            identifiers[1] = (!StringUtils.isEmpty(symbol) ? symbol : primaryIdentifier);
+//            Util.addToSetMap(uniqueIdentifierMap, primaryIdentifier, identifiers);
+//        } else if (StringUtils.isEmpty(primaryIdentifier) && !StringUtils.isEmpty(symbol)) {
+//            identifiers[0] = symbol;
+//            identifiers[1] = symbol;
+//        }
+//        Util.addToSetMap(relatedDataMap, key, identifiers);
+//    }
 
     private static PathQuery getLocalOrthologueQuery(InterMineAPI im, String identifier) {
         PathQuery q = new PathQuery(im.getModel());
