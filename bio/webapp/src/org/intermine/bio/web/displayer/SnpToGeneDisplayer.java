@@ -26,7 +26,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.SNP;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -64,7 +64,7 @@ public class SnpToGeneDisplayer extends CustomDisplayer
 
         InterMineObject object = (InterMineObject) request.getAttribute("object");
 
-        SNP snp = (SNP) object;
+        SequenceFeature snp = (SequenceFeature) object;
         query = snpToGene(snp.getPrimaryIdentifier(), query);
 
         Profile profile = SessionMethods.getProfile(session);
