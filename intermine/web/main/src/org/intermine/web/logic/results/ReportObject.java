@@ -562,7 +562,7 @@ public class ReportObject
         }
 
         if (newCollection != null) {
-            if (newCollection.getCollection().size() > 0) {
+            if (newCollection.getSize() > 0) {
                 collections.put(fd.getName(), newCollection);
             }
         }
