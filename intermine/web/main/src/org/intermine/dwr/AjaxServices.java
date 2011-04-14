@@ -666,7 +666,7 @@ public class AjaxServices
      * @param identifierList list of identifiers
      * @return the links to friendly intermines or an error message
      */
-    public static String getInterMineOrthologueLinks(String mineName, String organisms,
+    public static String getInterMineListLinks(String mineName, String organisms,
             String identifierList) {
         if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
                 || StringUtils.isEmpty(identifierList)) {
