@@ -130,28 +130,50 @@ public class CytoscapeNetworkService
 
             String sourcePID = (String) aRecode.get(0);
             String sourceSymbol = (String) aRecode.get(1);
-            Integer id = (Integer) aRecode.get(7);
+            String targetPID = (String) aRecode.get(3);
+            String targetSymbol = (String) aRecode.get(4);
+            Integer sourceId = (Integer) aRecode.get(7);
+            Integer targetId = (Integer) aRecode.get(8);
 
             // === New Node ===
-            CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
+            CytoscapeNetworkNodeData sourceNode = new CytoscapeNetworkNodeData();
+            CytoscapeNetworkNodeData targetNode = new CytoscapeNetworkNodeData();
 
-            aNode.setInterMineId(id);
-            aNode.setSoureceId(String.valueOf(id)); // Use intermine id for source id
+            sourceNode.setInterMineId(sourceId);
+            sourceNode.setSoureceId(String.valueOf(sourceId)); // Use intermine id for source id
 
             Object sourceGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
-                    .getObjectById(id), im.getClassKeys());
+                    .getObjectById(sourceId), im.getClassKeys());
 
             if (sourceSymbol != null) {
-                aNode.setSourceLabel(sourceSymbol);
+            	sourceNode.setSourceLabel(sourceSymbol);
             } else if (sourcePID != null) {
-                aNode.setSourceLabel(sourcePID);
+            	sourceNode.setSourceLabel(sourcePID);
             } else if (sourceGenekeyFldVal != null) {
-                aNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
+            	sourceNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
             } else {
-                aNode.setSourceLabel("(Unknown Name)");
+            	sourceNode.setSourceLabel("(Unknown Name)");
             }
 
-            interactionNodeMap.put(String.valueOf(id), aNode);
+            interactionNodeMap.put(String.valueOf(sourceId), sourceNode);
+
+            targetNode.setInterMineId(targetId);
+            targetNode.setSoureceId(String.valueOf(targetId)); // Use intermine id for source id
+
+            Object targetGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
+                    .getObjectById(targetId), im.getClassKeys());
+
+            if (targetSymbol != null) {
+            	targetNode.setSourceLabel(targetSymbol);
+            } else if (targetPID != null) {
+            	targetNode.setSourceLabel(targetPID);
+            } else if (targetGenekeyFldVal != null) {
+            	targetNode.setSourceLabel(String.valueOf(targetGenekeyFldVal));
+            } else {
+            	targetNode.setSourceLabel("(Unknown Name)");
+            }
+
+            interactionNodeMap.put(String.valueOf(targetId), targetNode);
         }
 
         return interactionNodeMap;
