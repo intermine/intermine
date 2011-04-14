@@ -136,6 +136,7 @@
   <class className="org.intermine.model.bio.Gene">
     <inlinelist>
       <table path="synonyms.value" showInHeader="true" lineLength="100" />
+      <table path="pathways.name" showLinksToObjects="true" />
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
