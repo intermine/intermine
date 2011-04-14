@@ -229,6 +229,8 @@ table.results tr th.columnHeader { font-size:16px; background:#F5F5F5 !important
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#1F7492; background:#F5F5F5; border-top-color:#1F7492; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#F5F5F5; }
+#pagecontentcontainer.bagUploadConfirm-page #chooseName,
+#pagecontentcontainer.bagUploadConfirm-page #additionalMatches { background:#FEFEFE; }
 
 /* report page */
 #header_wrap { background-color:#F5F5F5; background-image:url("report/header-bg.png"); }

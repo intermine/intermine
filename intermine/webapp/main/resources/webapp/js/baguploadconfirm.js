@@ -105,7 +105,11 @@ function updateCount(element, amount) {
 function updateFurtherMatchesDisplay() {
   // update the text of the button that saves our list
   if (jQuery('input#saveList').length > 0) {
-    jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+    if (matchCount > 1) {
+      jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType + "s");
+    } else {
+      jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+    }
     // "further matches" text
     if (jQuery('p#furtherMatches').length > 0) {
       if (matchCount < totalCount) {
@@ -273,6 +277,11 @@ function toggleBagLink(issue, action) {
   if (issue != 'all') {
     addAllLink = issue + addAllLink;
     removeAllLink = issue + removeAllLink;
+
+    // update individual adders in the sidebar as well
+    if (jQuery('#sidebar').length > 0) {
+      jQuery('#sidebar ul li.' + issue).toggleClass('added');
+    }
   }
   if (action == 'remove') {
     setLinkState(addAllLink, 'active');
