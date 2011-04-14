@@ -14,15 +14,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.tracker.util.TrackerUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * Task to read an templatetrack XML file of a webapp and saved into the userprofile database.
@@ -58,30 +62,32 @@ public class UpdateTemplateTrackTableTask extends Task
             userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             connection = ((ObjectStoreInterMineImpl) userProfileOS).getDatabase().getConnection();
-            Statement stm = connection.createStatement();
-            String sql1 = "ALTER TABLE templatetrack ADD COLUMN timestamp_backup bigint";
-            stm.executeUpdate(sql1);
-            String sql2 = "UPDATE templatetrack SET timestamp_backup=timestamp, timestamp=null";
-            stm.executeUpdate(sql2);
-            String sql3 = "ALTER TABLE templatetrack DROP COLUMN timestamp";
-            stm.executeUpdate(sql3);
-            String sql4 = "ALTER TABLE templatetrack ADD COLUMN timestamp timestamp";
-            stm.executeUpdate(sql4);
-            String sql5= "SELECT timestamp_backup FROM templatetrack";
-            ResultSet rs = stm.executeQuery(sql5);
-            List<Long> timestampList = new ArrayList<Long>();
-            while (rs.next()) {
-                timestampList.add(rs.getLong(1));
+            if (!verifyColumnType(connection)) {
+                Statement stm = connection.createStatement();
+                String sql1 = "ALTER TABLE templatetrack ADD COLUMN timestamp_backup bigint";
+                stm.executeUpdate(sql1);
+                String sql2 = "UPDATE templatetrack SET timestamp_backup=timestamp, timestamp=null";
+                stm.executeUpdate(sql2);
+                String sql3 = "ALTER TABLE templatetrack DROP COLUMN timestamp";
+                stm.executeUpdate(sql3);
+                String sql4 = "ALTER TABLE templatetrack ADD COLUMN timestamp timestamp";
+                stm.executeUpdate(sql4);
+                String sql5= "SELECT timestamp_backup FROM templatetrack";
+                ResultSet rs = stm.executeQuery(sql5);
+                List<Long> timestampList = new ArrayList<Long>();
+                while (rs.next()) {
+                    timestampList.add(rs.getLong(1));
+                }
+                for (Long timestamp_long : timestampList) {
+                    Timestamp timestamp = new Timestamp(timestamp_long);
+                    String sql6 = "UPDATE templatetrack SET timestamp='" + timestamp.toString() + "' WHERE timestamp_backup=" + timestamp_long;
+                    stm.executeUpdate(sql6);
+                }
+                String sql7 = "UPDATE templatetrack SET timestamp_backup=null";
+                stm.executeUpdate(sql7);
+                String sql8 = "ALTER TABLE templatetrack DROP COLUMN timestamp_backup";
+                stm.executeUpdate(sql8);
             }
-            for (Long timestamp_long : timestampList) {
-                Timestamp timestamp = new Timestamp(timestamp_long);
-                String sql6 = "UPDATE templatetrack SET timestamp='" + timestamp.toString() + "' WHERE timestamp_backup=" + timestamp_long;
-                stm.executeUpdate(sql6);
-            }
-            String sql7 = "UPDATE templatetrack SET timestamp_backup=null";
-            stm.executeUpdate(sql7);
-            String sql8 = "ALTER TABLE templatetrack DROP COLUMN timestamp_backup";
-            stm.executeUpdate(sql8);
         } catch (ObjectStoreException ose) {
             ose.printStackTrace();
         } catch (SQLException sqle) {
@@ -89,5 +95,26 @@ public class UpdateTemplateTrackTableTask extends Task
         }  finally {
             ((ObjectStoreInterMineImpl) userProfileOS).releaseConnection(connection);
         }
+    }
+
+    private boolean verifyColumnType (Connection con) {
+        try {
+            if (DatabaseUtil.tableExists(con, TrackerUtil.TEMPLATE_TRACKER_TABLE)) {
+                ResultSet res = con.getMetaData().getColumns(null, null,
+                                TrackerUtil.TEMPLATE_TRACKER_TABLE, "timestamp");
+
+                while (res.next()) {
+                    if (res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
+                        && res.getString(4).equals("timestamp")
+                        && res.getInt(5) == Types.TIMESTAMP) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return true;
     }
 }
