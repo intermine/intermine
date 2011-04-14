@@ -233,6 +233,14 @@
   <tiles:insert name="otherMinesLink.tile" />
   <tiles:insert name="attributeLinks.tile" />
   <c:set var="object" value="${object_bk}"/>
+
+  <%-- shown in a sidebar displayers --%>
+  <div id="displayers" class="table">
+    <tiles:insert page="/reportCustomDisplayers.jsp">
+      <tiles:put name="placement" value="sidebar" />
+      <tiles:put name="reportObject" beanName="object" />
+    </tiles:insert>
+  </div>
 </div>
 
 <div class="box grid_10">
