@@ -1,5 +1,15 @@
 package org.intermine.bio.web.displayer;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +63,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
 
         //=== Handle object ===
         // From gene report page
-        InterMineObject object = (InterMineObject) request.getAttribute("object");
+        InterMineObject object = (InterMineObject) reportObject.getObject();
         // From list analysis page
         InterMineBag bag = (InterMineBag) request.getAttribute("bag"); // OrthologueLinkController
 
@@ -89,7 +99,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer {
         // Check if interaction data available for the organism
         Gene hubGene;
         try {
-            hubGene = (Gene) os.getObjectById((Integer) startingFeatureSet.toArray()[0]);
+            hubGene = (Gene) os.getObjectById((Integer) fullInteractingGeneSet.toArray()[0]);
             String orgName = hubGene.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
                 String orgWithNoDataMessage = "No interaction data found for "
