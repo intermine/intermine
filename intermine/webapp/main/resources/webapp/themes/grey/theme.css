@@ -297,6 +297,8 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#004499; background:#EBEBEB; border-top-color:#004499; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#EBEBEB; }
+#pagecontentcontainer.bagUploadConfirm-page #chooseName,
+#pagecontentcontainer.bagUploadConfirm-page #additionalMatches { background:#FFF; }
 
 /* report page */
 #header_wrap { background-color:#F5F5F5; background-image:url("report/header-bg.png"); }

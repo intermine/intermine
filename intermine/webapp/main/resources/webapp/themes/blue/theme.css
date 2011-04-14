@@ -372,6 +372,8 @@ ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#002575; background:#EEF0F7; border-top-color:#002575; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#EEF0F7; }
+#pagecontentcontainer.bagUploadConfirm-page #chooseName,
+#pagecontentcontainer.bagUploadConfirm-page #additionalMatches { background:#FFF; }
 
 /* report page */
 #header_wrap { background-color:#EEF0F7; background-image:url("report/header-bg.png"); }
