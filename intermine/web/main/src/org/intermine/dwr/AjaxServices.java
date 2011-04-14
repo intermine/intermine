@@ -633,7 +633,7 @@ public class AjaxServices
      * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      */
-    public static String getInterMineLinks(String organismName,
+    public static String getInterMineReportLinks(String organismName,
             String primaryIdentifier, String symbol) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
@@ -651,10 +651,7 @@ public class AjaxServices
             LOG.error("Failed to instantiate BioInterMineLinkGenerator because: " + e);
             return null;
         }
-        Map<String, JSONObject> filteredMines
-            = linkGen.getLinks(olm, organismName, primaryIdentifier);
-        // mine --> organism name --> genes|orthologues --> identifier|isOrthologue
-        return filteredMines.values().toString();
+        return linkGen.getLinks(olm, organismName, primaryIdentifier).toString();
     }
 
 
