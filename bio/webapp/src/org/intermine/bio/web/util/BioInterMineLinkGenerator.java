@@ -12,6 +12,7 @@ package org.intermine.bio.web.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,12 +70,12 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * @param primaryIdentifier identifier for gene
      * @return map from mine to organism-->genes
      */
-    public Map<String, JSONObject> getLinks(LinkManager olm, String organismShortName,
+    public Collection<JSONObject> getLinks(LinkManager olm, String organismShortName,
             String primaryIdentifier) {
 
         MultiKey key = new MultiKey(primaryIdentifier, organismShortName);
         if (intermineLinkCache.get(key) != null) {
-            return intermineLinkCache.get(key);
+            return intermineLinkCache.get(key).values();
         }
 
         Map<String, JSONObject> minesWithGene = new HashMap<String, JSONObject>();
@@ -88,7 +89,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         } catch (JSONException e) {
             LOG.error("error generating JSON objects", e);
         }
-        return filteredMines;
+        return filteredMines.values();
     }
 
     /**

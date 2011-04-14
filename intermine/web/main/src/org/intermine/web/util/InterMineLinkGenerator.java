@@ -10,7 +10,7 @@ package org.intermine.web.util;
  *
  */
 
-import java.util.Map;
+import java.util.Collection;
 
 import org.intermine.api.mines.LinkManager;
 import org.json.JSONObject;
@@ -31,6 +31,6 @@ public abstract class InterMineLinkGenerator
      * @param identifier identifier for the object on this report page
      * @return map of mines to objects to link to
      */
-    public abstract Map<String, JSONObject> getLinks(LinkManager olm, String filterValue,
+    public abstract Collection<JSONObject> getLinks(LinkManager olm, String filterValue,
             String identifier);
 }

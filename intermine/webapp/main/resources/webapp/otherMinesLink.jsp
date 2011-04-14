@@ -16,7 +16,7 @@
   </c:forEach>
 
   function getInterMineLinks(organismShortName, identifier, symbol) {
-      AjaxServices.getInterMineLinks(organismShortName, identifier, symbol, function(mines) {
+      AjaxServices.getInterMineReportLinks(organismShortName, identifier, symbol, function(mines) {
           // switch off loading img
           jQuery('#intermine_links').toggleClass('loading');
           // parse to JSON (requires jQuery 1.4.1+)
