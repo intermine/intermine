@@ -7,7 +7,7 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <script type="text/javascript" charset="utf-8">
-function getInterMineOrthologueLinks(mine, organisms, identifierList) {
+function getInterMineListLinks(mine, organisms, identifierList) {
     AjaxServices.getInterMineOrthologueLinks(mine, organisms, identifierList, function(mineString) {
         if (mineString != null && mineString != '') {
             jQuery('#intermine_orthologue_links_' + mine).html(mineString);
@@ -24,10 +24,10 @@ function getInterMineOrthologueLinks(mine, organisms, identifierList) {
 <tiles:importAttribute />
 
 <c:forEach items="${mines}" var="mine">
-    <div id="intermine_orthologue_links_${mine}_waiting"><b>${mine}<img src="images/wait30.gif" title="Searching..."/></div>
+    <div id="intermine_orthologue_links_${mine}_waiting"><b>${mine}</b><img src="images/wait30.gif" title="Searching..."/></div>
     <div id="intermine_orthologue_links_${mine}"></div>
       <script type="text/javascript" charset="utf-8">
-        getInterMineOrthologueLinks('${mine}', '${organisms}', '${identifierList}');
+        getInterMineListLinks('${mine}', '${organisms}', '${identifierList}');
       </script>
 </c:forEach>
 
