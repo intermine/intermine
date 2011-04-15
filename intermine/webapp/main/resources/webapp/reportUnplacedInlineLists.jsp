@@ -28,7 +28,7 @@
         <c:choose>
           <c:when test="${list.showLinksToObjects}">
             <c:forEach items="${list.items}" var="item" varStatus="status">
-              <a class="theme-1-color" href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}" target="new"
+              <a class="theme-1-color" href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}"
               title="Show '${item.value}' detail">${item.value}</a><c:if test="${status.count < list.size}">, </c:if>
             </c:forEach>
           </c:when>
