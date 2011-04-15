@@ -61,7 +61,7 @@
 </div>
 
 <c:if test="${empty WEB_PROPERTIES['project.baseurl'] || empty WEB_PROPERTIES['project.path']}">
-    <p style="color:red;">Some properties required for the network displayer are not set, expect glitches. Check <b>project.baseurl</b>, <b>project.path</b> are set.</p>
+    <!-- Some properties required for the network displayer are not set, expect glitches. Check project.baseurl, project.path are set. -->
 </c:if>
 
 <div id="interactions-wrap">

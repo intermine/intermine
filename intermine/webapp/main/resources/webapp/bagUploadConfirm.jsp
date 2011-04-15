@@ -96,7 +96,7 @@ function toggleForm(matchCount) {
       <div style="clear:both;"></div>
       <div class="formik">
       <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
-        <span>(e.g. McCarthy &amp; Finch 2009)</span>
+        <span>(e.g. Smith 2009)</span>
       </div>
       <div style="clear:both"></div>
     </div>
