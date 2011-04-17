@@ -123,12 +123,6 @@
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
       <fieldconfig fieldExpr="embargoDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="submissionDisplayer.tile"/>
-      <!-- displayer src="attributeLinkDisplayer.tile"/>-->
-      <displayer src="tracksDisplayer.tile"/>
-      <displayer src="submissionProtocolsDisplayer.tile" showOnLeft="true"/>
-    </longdisplayers>
     <bagdisplayers>
       <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
     </bagdisplayers>
@@ -666,6 +660,40 @@
 
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+
+  <reportdisplayers>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
+                         jspName="model/submissionDetailsDisplayer.jsp"
+                         replacesFields="lab,project,organism,experiment"
+                         placement="top"
+                         types="Submission"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
+                         jspName="model/submissionGeneratedFeaturesDisplayer.jsp"
+                         replacesFields=""
+                         placement="modENCODE"
+                         types="Submission"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGBrowseTracksDisplayer"
+                         jspName="model/submissionGBrowseTracksDisplayer.jsp"
+                         replacesFields=""
+                         placement="Genomics"
+                         types="Submission"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
+                         jspName="model/submissionProtocolsDisplayer.jsp"
+                         replacesFields="protocols,appliedProtocols"
+                         placement="modENCODE"
+                         types="Submission"/>
+
+	  <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
+	                     jspName="model/submissionPropertiesDisplayer.jsp"
+	                     replacesFields="properties,experimentalFactors,developmentalStages,arrays,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts"
+	                     placement="modENCODE"
+	                     types="Submission"/>
+
+  </reportdisplayers>
 
    <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
