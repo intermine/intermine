@@ -11,16 +11,16 @@
      <c:set var="organism" value="${track.organism}"/>
      <c:choose>
      <c:when test="${track_status.first}">
-          <c:set var="urlabels" value="${track.track}/${track.subTrack}" /> 
+          <c:set var="urlabels" value="${track.track}/${track.subTrack}" />
      </c:when>
      <c:otherwise>
      <%-- checking if coming from different tracks --%>
      <c:choose>
      <c:when test="${fn:contains(urlabels,track.track)}">
-          <c:set var="urlabels" value="${urlabels}-${track.subTrack}" /> 
+          <c:set var="urlabels" value="${urlabels}-${track.subTrack}" />
      </c:when>
      <c:otherwise>
-          <c:set var="urlabels" value="${urlabels}-${track.track}/${track.subTrack}" /> 
+          <c:set var="urlabels" value="${urlabels}-${track.track}/${track.subTrack}" />
      </c:otherwise>
      </c:choose>
      </c:otherwise>
@@ -28,7 +28,7 @@
 </c:forEach>
 
 <c:if test="${!empty tracks}">
-<html:link
+<html:link styleId="sub-all-tracks"
   href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${urlabels}" target="_blank" title="Titolo">
   <html:img src="model/images/${organism}_gb.png" title="View all tracks for submission ${dccId} in GBrowse"/>
 </html:link>

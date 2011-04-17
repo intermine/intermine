@@ -8,11 +8,12 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
   prefix="str"%>
 
+<!-- submissionProtocolsDisplayer.jsp -->
+
 <tiles:importAttribute />
 
 <html:xhtml />
 
-<!-- submissionProtocolsDisplayer.jsp -->
 <style type="text/css">
 div#submissionProtocols h3 {
   color: black;
