@@ -49,10 +49,6 @@ public class WebConfig
     private List<ReportDisplayerConfig> reportDisplayerConfigs =
         new ArrayList<ReportDisplayerConfig>();
 
-    public List<ReportDisplayerConfig> getReportDisplayerConfigs() {
-        return reportDisplayerConfigs;
-    }
-
     /**
      * Parse a WebConfig XML file
      *
@@ -273,6 +269,11 @@ public class WebConfig
         }
     }
 
+    /**
+     * Add config for a custom report page displayer.  This checks that a type has been specified
+     * before adding the config.
+     * @param reportDisplayerConfig config for an individual report page displayer
+     */
     public void addReportDisplayer(ReportDisplayerConfig reportDisplayerConfig) {
         Set<String> displayForTypes = reportDisplayerConfig.getConfiguredTypes();
         if (displayForTypes.isEmpty()) {
@@ -281,6 +282,15 @@ public class WebConfig
         } else {
             reportDisplayerConfigs.add(reportDisplayerConfig);
         }
+    }
+
+
+    /**
+     * Fetch config for the custom report page displayers.
+     * @return custom report page displayer config in the order specified in the config file
+     */
+    public List<ReportDisplayerConfig> getReportDisplayerConfigs() {
+        return reportDisplayerConfigs;
     }
 
     /**
