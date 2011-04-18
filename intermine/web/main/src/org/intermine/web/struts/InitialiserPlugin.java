@@ -92,6 +92,7 @@ public class InitialiserPlugin implements PlugIn
     private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
 
     ProfileManager profileManager;
+    TrackerDelegate trackerDelegate;
 
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
@@ -129,8 +130,7 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        TrackerDelegate trackerDelegate = initTrackers(servletContext, webProperties, userprofileOSW);
-//      TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
+        trackerDelegate = initTrackers(servletContext, webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
         SessionMethods.setInterMineAPI(servletContext, im);
@@ -470,6 +470,7 @@ public class InitialiserPlugin implements PlugIn
     public void destroy() {
         try {
             profileManager.close();
+            trackerDelegate.close();
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
