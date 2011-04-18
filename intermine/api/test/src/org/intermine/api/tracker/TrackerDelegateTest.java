@@ -46,8 +46,8 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-import org.junit.Test;
-import org.junit.*;
+//import org.junit.Test;
+//import org.junit.*;
 
 public class TrackerDelegateTest extends TestCase
 {
