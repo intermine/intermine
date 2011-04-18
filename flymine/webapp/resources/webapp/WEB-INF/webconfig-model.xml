@@ -37,14 +37,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.BlastMatch">
-    <fields>
-      <fieldconfig fieldExpr="query.primaryIdentifier"/>
-      <fieldconfig fieldExpr="hit.primaryIdentifier"/>
-      <fieldconfig fieldExpr="EValue"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -94,8 +86,6 @@
     </fields>
   </class>
 
-
-
   <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
@@ -131,8 +121,7 @@
 
   <class className="org.intermine.model.bio.Disease">
     <fields>
-      <fieldconfig fieldExpr="omimId"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
