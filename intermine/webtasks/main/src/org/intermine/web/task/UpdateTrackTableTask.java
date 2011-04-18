@@ -95,6 +95,9 @@ public class UpdateTrackTableTask extends Task
             for (String tableToVerify : tablesToVerify) {
                 if (!verifyTrackColumnType(connection, tableToVerify)) {
                     String sql = "DROP TABLE " + tableToVerify;
+                    if (stm == null) {
+                        stm = connection.createStatement();
+                    }
                     stm.executeUpdate(sql);
                 }
             }
