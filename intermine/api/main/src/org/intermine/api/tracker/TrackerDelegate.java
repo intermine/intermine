@@ -38,7 +38,8 @@ public class TrackerDelegate
 {
     private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
-    ObjectStoreWriter osw;
+    protected ObjectStoreWriter osw;
+    protected Connection connection = null;
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -48,7 +49,6 @@ public class TrackerDelegate
     public TrackerDelegate(String[] trackerClassNames, ObjectStoreWriter osw) {
         Queue<Track> trackQueue = new LinkedList<Track>();
         this.osw = osw;
-        Connection connection = null;
         try {
             connection = getConnection();
             Tracker tracker;
@@ -64,18 +64,10 @@ public class TrackerDelegate
         } catch (SQLException sqle) {
             LOG.error("Problems retrieving connection. The tracker "
                       + " hasn't been instatiated", sqle);
-        } finally {
-            releaseConnection(connection);
         }
 
-        try {
-            connection = getConnection();
-            TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
-            new Thread(trackerLogger).start();
-        } catch (SQLException sqle) {
-            LOG.error("Problems retrieving conn for TrackerDelegate or TrackerLogger", sqle);
-            releaseConnection(connection);
-        }
+        TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
+        new Thread(trackerLogger).start();
     }
 
     /**
@@ -333,5 +325,9 @@ public class TrackerDelegate
     private Connection getConnection() throws SQLException {
         ObjectStoreWriterInterMineImpl uosw = (ObjectStoreWriterInterMineImpl) osw;
         return uosw.getDatabase().getConnection();
+    }
+
+    public void close() {
+        releaseConnection(connection);
     }
 }
