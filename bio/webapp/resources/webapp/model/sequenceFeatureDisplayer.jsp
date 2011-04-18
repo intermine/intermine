@@ -21,11 +21,9 @@
 
 <table border="0" cellspacing="0">
   <tr>
-    <td>Feature:</td>
-    <td><strong><c:out value="${feature.symbol} ${feature.primaryIdentifier}"/></strong></td>
     <c:choose>
       <c:when test="${!empty feature.sequenceOntologyTerm}">
-        <td class="border-left">Sequence ontology type:</td>
+        <td class="theme-3-border theme-6-background">Sequence ontology type:</td>
         <td>
           <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
           <img alt="?" title="${feature.sequenceOntologyTerm.description}"
@@ -36,6 +34,18 @@
       <c:otherwise>
         <td colspan="2"></td>
       </c:otherwise>
+    </c:choose>
+    <c:choose>
+      <c:when test="${!empty feature.length}">
+        <td class="theme-3-border theme-6-background border-left">Length:</td>
+        <td class="theme-3-border theme-6-background">
+          <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
+          <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
+            <tiles:put name="expr" value="length" />
+          </tiles:insert>
+        </td>
+      </c:when>
+      <c:otherwise></c:otherwise>
     </c:choose>
   </tr>
   <tr class="even">
@@ -108,16 +118,15 @@
       </c:choose>
     </td>
     <c:choose>
-      <c:when test="${!empty feature.length}">
-        <td class="theme-3-border theme-6-background border-left">Length:</td>
+      <c:when test="${!empty cytoLocation}">
+        <td class="theme-3-border theme-6-background border-left">Cyto location:</td>
         <td class="theme-3-border theme-6-background">
-          <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
-          <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
-            <tiles:put name="expr" value="length" />
-          </tiles:insert>
+          <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
-      <c:otherwise></c:otherwise>
+      <c:otherwise>
+        <td class="theme-3-border theme-6-background border-left" colspan="2"></td>
+      </c:otherwise>
     </c:choose>
   </tr>
 </table>

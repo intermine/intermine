@@ -6,7 +6,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.web.model.GeneModel;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
@@ -26,6 +28,8 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
     public void display(HttpServletRequest request, ReportObject reportObject) {
         InterMineObject imObj = reportObject.getObject();
         Object loc = null;
+
+
 
         try {
             loc = imObj.getFieldValue("chromosomeLocation");
@@ -62,6 +66,16 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+
+        // check if cytoLocation field exists and display it
+        try {
+            String cytoLocation = (String) imObj.getFieldValue("cytoLocation");
+            if (!StringUtils.isBlank(cytoLocation)) {
+                request.setAttribute("cytoLocation", cytoLocation);
+            }
+        } catch (IllegalAccessException e) {
+            // this is expected for classes that don't have a cytoLocation attribute
         }
     }
 }
