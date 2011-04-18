@@ -62,8 +62,9 @@ public class UpdateTrackTableTask extends Task
             userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             connection = ((ObjectStoreInterMineImpl) userProfileOS).getDatabase().getConnection();
+            Statement stm = null;
             if (!verifyTrackColumnType(connection, TrackerUtil.TEMPLATE_TRACKER_TABLE)) {
-                Statement stm = connection.createStatement();
+                stm = connection.createStatement();
                 String sql1 = "ALTER TABLE templatetrack ADD COLUMN timestamp_backup bigint";
                 stm.executeUpdate(sql1);
                 String sql2 = "UPDATE templatetrack SET timestamp_backup=timestamp, timestamp=null";
@@ -94,6 +95,7 @@ public class UpdateTrackTableTask extends Task
             for (String tableToVerify : tablesToVerify) {
                 if (!verifyTrackColumnType(connection, tableToVerify)) {
                     String sql = "DROP TABLE " + tableToVerify;
+                    stm.executeUpdate(sql);
                 }
             }
         } catch (ObjectStoreException ose) {
