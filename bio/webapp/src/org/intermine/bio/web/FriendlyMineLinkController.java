@@ -40,7 +40,7 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Julie Sullivan
  */
-public class OrthologueLinkController  extends TilesAction
+public class FriendlyMineLinkController  extends TilesAction
 {
     private static final String IDENTIFIER = "primaryIdentifier";
     private static final String ALTERNATIVE_IDENTIFIER = "ensemblIdentifier";

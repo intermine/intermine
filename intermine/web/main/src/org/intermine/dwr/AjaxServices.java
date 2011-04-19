@@ -15,12 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,8 +47,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.mines.LinkManager;
-import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -633,81 +631,64 @@ public class AjaxServices
      * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      */
-    public static String getInterMineReportLinks(String organismName,
+    public static String getFriendlyMineReportLinks(String organismName,
             String primaryIdentifier, String symbol) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        LinkManager olm = LinkManager.getInstance(im, webProperties);
+        FriendlyMineManager olm = FriendlyMineManager.getInstance(im, webProperties);
         InterMineLinkGenerator linkGen = null;
         Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.util.BioInterMineLinkGenerator");
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
         Constructor<?> constructor;
         try {
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
         } catch (Exception e) {
-            LOG.error("Failed to instantiate BioInterMineLinkGenerator because: " + e);
+            LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
-        return linkGen.getLinks(olm, organismName, primaryIdentifier).toString();
+        return linkGen.getLinks(olm, null, organismName, primaryIdentifier).toString();
     }
-
-
 
     /**
      * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
      *
-     * TODO merge with getInterMineLinks()? similar but for list pages
-     *
      * @param mineName name of a friendly mine
      * @param organisms list of organisms for genes in this list
-     * @param identifierList list of identifiers
+     * @param identifiers list of identifiers of genes in this list
      * @return the links to friendly intermines or an error message
      */
-    public static String getInterMineListLinks(String mineName, String organisms,
-            String identifierList) {
+    public static String getFriendlyMineListLinks(String mineName, String organisms,
+            String identifiers) {
         if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
-                || StringUtils.isEmpty(identifierList)) {
+                || StringUtils.isEmpty(identifiers)) {
             return null;
         }
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final String errMsg = "No orthologues found in " + mineName;
 
-        LinkManager olm = LinkManager.getInstance(im, webProperties);
-        List<String> organismList = StringUtil.tokenize(organisms, ",");
-
-        Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
-        if (mineValues == null || mineValues.isEmpty()) {
-            return errMsg;
+        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
+        Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
+            return null;
         }
-        Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
-        Mine mine = entry.getKey();
-        Set<String> orthologues = entry.getValue();
-
-        if (mine == null || orthologues.isEmpty()) {
-            return errMsg;
+        Collection<JSONObject> results = linkGen.getLinks(
+                linkManager, mineName, organisms, identifiers);
+        if (results == null || results.isEmpty()) {
+            return null;
         }
-
-        // TODO merge with getInterMineLinks which is used on the report page
-        StringBuffer sb = new StringBuffer(mineName + "<ul>");
-        for (String orthologue : orthologues) {
-            String encodedOrthologue = null;
-            try {
-                encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("error while encoding: " + orthologue, e);
-            }
-            String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                + identifierList + "&orthologue=" + encodedOrthologue;
-            sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
-        }
-        sb.append("</ul>");
-        return sb.toString();
+        return results.toString();
     }
 
 

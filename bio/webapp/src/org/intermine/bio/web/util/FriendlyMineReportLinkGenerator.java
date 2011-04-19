@@ -23,7 +23,8 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.mines.LinkManager;
+import org.intermine.api.mines.FriendlyMineManager;
+import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
@@ -43,9 +44,9 @@ import org.json.JSONObject;
  *
  * @author Julie Sullivan
  */
-public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
+public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerator
 {
-    private static final Logger LOG = Logger.getLogger(BioInterMineLinkGenerator.class);
+    private static final Logger LOG = Logger.getLogger(FriendlyMineReportLinkGenerator.class);
     private static CacheMap<MultiKey, Map<String, JSONObject>> intermineLinkCache
         = new CacheMap<MultiKey, Map<String, JSONObject>>();
     private Map<String, JSONObject> filteredMines;
@@ -53,7 +54,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
     /**
      * Constructor
      */
-    public BioInterMineLinkGenerator() {
+    public FriendlyMineReportLinkGenerator() {
         super();
         filteredMines = new HashMap<String, JSONObject>();
     }
@@ -68,10 +69,11 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * @param olm LinkManager
      * @param organismShortName organism.shortName, eg. C. elegans
      * @param primaryIdentifier identifier for gene
+     * @param mineName NULL
      * @return map from mine to organism-->genes
      */
-    public Collection<JSONObject> getLinks(LinkManager olm, String organismShortName,
-            String primaryIdentifier) {
+    public Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
+            String organismShortName, String primaryIdentifier) {
 
         MultiKey key = new MultiKey(primaryIdentifier, organismShortName);
         if (intermineLinkCache.get(key) != null) {
@@ -106,7 +108,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    private static void getMinesWithThisGene(LinkManager olm,
+    private static void getMinesWithThisGene(FriendlyMineManager olm,
             Map<String, JSONObject> minesToGenes, String organismShortName,
             String primaryIdentifier)
         throws JSONException, UnsupportedEncodingException {
@@ -124,7 +126,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         // query each friendly mine, return matches.  value can be identifier or symbol
         // we only return one value even if there are multiple matches, the portal at the remote
         // mine will handle duplicates
-        Map<Mine, String[]> minesWithGene = olm.getObjectInOtherMines(encodedOrganism,
+        Map<Mine, String[]> minesWithGene = getObjectInOtherMines(olm, encodedOrganism,
                 primaryIdentifier);
 
         if (minesWithGene == null) {
@@ -134,9 +136,30 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         for (Map.Entry<Mine, String[]> entry : minesWithGene.entrySet()) {
             Mine mine = entry.getKey();
             String[] identifiers = entry.getValue();
-            minesToGenes.put(mine.getName(),
-                    getJSONOrganism(organismShortName, identifiers, false));
+            minesToGenes.put(mine.getName(), getJSONOrganism(organismShortName, identifiers));
         }
+    }
+
+    /**
+     * Returns list of friendly mines that contain value of interest.  Used for
+     * the links on the report page.
+     *
+     * @param constraintValue optional additional constraint, eg. organism
+     * @param identifier identifier to query
+     * @param collection list of friendly mines
+     * @return the list of valid mines for the given list
+     */
+    private static Map<Mine, String[]> getObjectInOtherMines(FriendlyMineManager olm,
+            String constraintValue, String identifier) {
+        Map<Mine, String[]> minesWithData = new HashMap<Mine, String[]>();
+        for (Mine mine : olm.getFriendlyMines()) {
+            String[] identifiers = FriendlyMineQueryRunner.getObjectInOtherMine(mine,
+                    constraintValue, identifier);
+            if (identifiers != null && identifiers.length == 2 && identifiers[0] != null) {
+                minesWithData.put(mine, identifiers);
+            }
+        }
+        return minesWithData;
     }
 
     /**
@@ -153,7 +176,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
      * @throws JSONException if we have JSON problems
      * @throws UnsupportedEncodingException
      */
-    private static void getMinesWithOrthologues(LinkManager olm,
+    private static void getMinesWithOrthologues(FriendlyMineManager olm,
             Map<String, JSONObject> filteredMines, Map<String, JSONObject> mines,
             String organismShortName, String primaryIdentifier)
         throws JSONException, UnsupportedEncodingException {
@@ -162,7 +185,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         Map<String, Set<String>> localHomologues = getLocalOrthologues(olm, organismShortName,
                 primaryIdentifier);
 
-        for (Mine mine : LinkManager.getFriendlyMines()) {
+        for (Mine mine : olm.getFriendlyMines()) {
             final JSONObject jsonMine = getJSONMine(filteredMines, mine.getName());
             Set<JSONObject> organisms = new HashSet<JSONObject>();
             addCurrentOrganism(organisms, mines, mine.getName(), organismShortName);
@@ -175,8 +198,9 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
                 Map<String, Set<String[]>> orthologueMap = new HashMap<String, Set<String[]>>();
                 for (String homologue : matchingHomologues) {
                     // if so, does remote mine have this gene?
-                    String[] homologueIdentifiers = olm.getObjectInOtherMine(mine,
-                            URLEncoder.encode("" + remoteMineDefaultOrganism, "UTF-8"), homologue);
+                    String[] homologueIdentifiers = FriendlyMineQueryRunner.getObjectInOtherMine(
+                            mine, URLEncoder.encode("" + remoteMineDefaultOrganism, "UTF-8"),
+                            homologue);
                     if (homologueIdentifiers != null && homologueIdentifiers.length == 2
                             && homologueIdentifiers[0] != null) {
                         Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
@@ -196,8 +220,9 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
              * - remote mine does not have corresponding gene for the orthologue found in local mine
              */
             if (queryRemoteMine) {
-                Map<String, Set<String[]>> remoteOrthologues = olm.runRelatedDataQuery(mine,
-                        encodedOrganism, primaryIdentifier);
+                Map<String, Set<String[]>> remoteOrthologues
+                    = FriendlyMineQueryRunner.runRelatedDataQuery(mine, encodedOrganism,
+                            primaryIdentifier);
                 if (remoteOrthologues != null && !remoteOrthologues.isEmpty()) {
                     JSONObject organism = getJSONOrganism(remoteOrthologues);
                     organisms.add(organism);
@@ -230,8 +255,7 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
     }
 
     // used for genes, not homologues
-    private static JSONObject getJSONOrganism(String organismName, String[] identifiers,
-            boolean isConverted)
+    private static JSONObject getJSONOrganism(String organismName, String[] identifiers)
         throws JSONException {
         JSONObject gene = getJSONGene(identifiers);
         JSONObject organism = new JSONObject();
@@ -259,23 +283,8 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         return organism;
     }
 
-//    private static Collection<String[]> removeDuplicateEntries(Set<String[]> identifierSets) {
-//        Map<String, String[]> seenIdentifiers = new HashMap<String, String[]>();
-//        for (String[] identifiers : identifierSets) {
-//            String primaryIdentifier = identifiers[0];
-//            if (seenIdentifiers.get(primaryIdentifier) == null) {
-//                seenIdentifiers.put(primaryIdentifier, identifiers);
-//            } else {
-//                // duplicate, don't add again, just append symbol to already-existing entry
-//                String[] existingIdentifierArray = seenIdentifiers.get(primaryIdentifier);
-//                existingIdentifierArray[1] = existingIdentifierArray[1] + ", " + identifiers[1];
-//            }
-//        }
-//        return seenIdentifiers.values();
-//    }
-
     // query local mine for orthologues
-    private static Map<String, Set<String>> getLocalOrthologues(LinkManager olm,
+    private static Map<String, Set<String>> getLocalOrthologues(FriendlyMineManager olm,
             String constraintValue, String identifier) {
         Map<String, Set<String>> relatedDataMap = new HashMap<String, Set<String>>();
         InterMineAPI im = olm.getInterMineAPI();
@@ -300,35 +309,6 @@ public final class BioInterMineLinkGenerator extends InterMineLinkGenerator
         }
         return relatedDataMap;
     }
-//
-//    private void parseResults(Map<String, Set<String[]>> relatedDataMap, String[] bits,
-//            Map<String, String[]> uniqueIdentifierMap) {
-//        String key = bits[0];
-//        String primaryIdentifier = bits[1];
-//        String symbol = bits[2];
-//        if (StringUtils.isEmpty(primaryIdentifier) && StringUtils.isEmpty(symbol)) {
-//            return;
-//        }
-//        String[] identifiers = new String[2];
-//
-//        // one identifier can have multiple symbols, append
-//        if (!StringUtils.isEmpty(primaryIdentifier)) {
-//            if (uniqueIdentifierMap.get(primaryIdentifier) != null
-//                    && !StringUtils.isEmpty(symbol)) {
-//                identifiers = uniqueIdentifierMap.get(primaryIdentifier);
-//                identifiers[1] = identifiers[1] + ", " + symbol;
-//                // we've processed this primaryIdentifier already, move on
-//                return;
-//            }
-//            identifiers[0] = primaryIdentifier;
-//            identifiers[1] = (!StringUtils.isEmpty(symbol) ? symbol : primaryIdentifier);
-//            Util.addToSetMap(uniqueIdentifierMap, primaryIdentifier, identifiers);
-//        } else if (StringUtils.isEmpty(primaryIdentifier) && !StringUtils.isEmpty(symbol)) {
-//            identifiers[0] = symbol;
-//            identifiers[1] = symbol;
-//        }
-//        Util.addToSetMap(relatedDataMap, key, identifiers);
-//    }
 
     private static PathQuery getLocalOrthologueQuery(InterMineAPI im, String identifier) {
         PathQuery q = new PathQuery(im.getModel());

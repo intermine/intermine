@@ -12,11 +12,11 @@ package org.intermine.web.util;
 
 import java.util.Collection;
 
-import org.intermine.api.mines.LinkManager;
+import org.intermine.api.mines.FriendlyMineManager;
 import org.json.JSONObject;
 
 /**
- * Helper class for intermine links generated on report pages
+ * Helper class for intermine links generated on report and list pages
  *
  * @author Julie Sullivan
  */
@@ -27,10 +27,11 @@ public abstract class InterMineLinkGenerator
      * Query other intermines for this object
      *
      * @param olm class resonsible for generating links
-     * @param filterValue value of query constraint, eg. organism or department name
-     * @param identifier identifier for the object on this report page
+     * @param filterValue value of query constraint, eg. organism(s) or department name
+     * @param identifier identifier(s) for the object on report page or in list
+     * @param mineName name of mine (NULL if all mines are being queried)
      * @return map of mines to objects to link to
      */
-    public abstract Collection<JSONObject> getLinks(LinkManager olm, String filterValue,
-            String identifier);
+    public abstract Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
+            String filterValue, String identifier);
 }
