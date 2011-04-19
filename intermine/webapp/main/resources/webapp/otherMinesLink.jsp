@@ -15,8 +15,8 @@
       minePortals["<c:out value='${fn:toLowerCase(portal.key)}'/>"] = mineDetails;
   </c:forEach>
 
-  function getInterMineLinks(organismShortName, identifier, symbol) {
-      AjaxServices.getInterMineReportLinks(organismShortName, identifier, symbol, function(mines) {
+  function getMineLinks(organismShortName, identifier, symbol) {
+      AjaxServices.getFriendlyMineReportLinks(organismShortName, identifier, symbol, function(mines) {
           // switch off loading img
           jQuery('#intermine_links').toggleClass('loading');
           // parse to JSON (requires jQuery 1.4.1+)
@@ -79,6 +79,6 @@
   <h3>Link to other InterMines</h3>
       <div id="intermine_links" class="loading">&nbsp;</div><br>
         <script type="text/javascript" charset="utf-8">
-          getInterMineLinks('${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');
+          getMineLinks('${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');
         </script>
 </c:if>
