@@ -49,6 +49,7 @@ import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
+import org.jfree.util.Log;
 
 /**
  * New objectDetails.
@@ -57,10 +58,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ReportController extends InterMineAction
 {
-    private InterMineObject requestedObject;
-    private ReportObject reportObject;
-    private InterMineAPI im;
-    private HttpSession session;
 
     /**
      * {@inheritDoc}
@@ -70,10 +67,14 @@ public class ReportController extends InterMineAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
+        HttpSession session = request.getSession();
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         // fetch & set requested object
-        if (isRequestedObjectValid(request)) {
+        InterMineObject requestedObject = getRequestedObject(im, request);
+        if (requestedObject != null) {
             ReportObjectFactory reportObjectFactory = SessionMethods.getReportObjects(session);
-            reportObject = reportObjectFactory.get(requestedObject);
+            ReportObject reportObject = reportObjectFactory.get(requestedObject);
             //request.setAttribute("reportObject", reportObject);
             request.setAttribute("object", reportObject);
             session.setAttribute("reportObject", reportObject);
@@ -86,8 +87,9 @@ public class ReportController extends InterMineAction
             ObjectStore os = im.getObjectStore();
             String superuser = im.getProfileManager().getSuperuser();
 
-            // place InlineLists based on TagManager as reportObject is cached while Controller is not
-            Map<String, List<InlineList>> placedInlineLists = new TreeMap<String, List<InlineList>>();
+            // place InlineLists based on TagManager, reportObject is cached while Controller is not
+            Map<String, List<InlineList>> placedInlineLists =
+                new TreeMap<String, List<InlineList>>();
             // traverse all unplaced (non-header) InlineLists
             List<InlineList> unplacedInlineLists = reportObject.getNormalInlineLists();
             if (unplacedInlineLists != null) {
@@ -106,8 +108,9 @@ public class ReportController extends InterMineAction
                     } else {
                         // OMG, now what?
                     }
-                    List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
-                            + "." + fd.getName(), taggedType, superuser);
+                    List<Tag> tags =
+                        tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                                + "." + fd.getName(), taggedType, superuser);
                     for (Tag tag : tags) {
                         String tagName = tag.getTagName();
                         // aspect much?
@@ -134,9 +137,11 @@ public class ReportController extends InterMineAction
 
             Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
                 Map<String, DisplayField>>();
-            Set<String> aspects = new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
+            Set<String> aspects =
+                new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
 
-            Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(requestedObject.getClass());
+            Set<ClassDescriptor> cds =
+                os.getModel().getClassDescriptorsForClass(requestedObject.getClass());
 
             for (String aspect : aspects) {
                 placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
@@ -170,7 +175,8 @@ public class ReportController extends InterMineAction
             String type = reportObject.getType();
             request.setAttribute("objectType", type);
 
-            String stableLink = PortalHelper.generatePortalLink(reportObject.getObject(), im, request);
+            String stableLink =
+                PortalHelper.generatePortalLink(reportObject.getObject(), im, request);
             if (stableLink != null) {
                 request.setAttribute("stableLink", stableLink);
             }
@@ -220,36 +226,18 @@ public class ReportController extends InterMineAction
         return null;
     }
 
-    /**
-     * Setup session, API, ObjectStore and set object requested
-     * @param request
-     * @return true if object is setup OK
-     */
-    private boolean isRequestedObjectValid(HttpServletRequest request) {
-        // get parameter
+    private InterMineObject getRequestedObject(InterMineAPI im, HttpServletRequest request) {
+
         String idString = request.getParameter("id");
-        // parse to integer
         Integer id = new Integer(Integer.parseInt(idString));
-        // get session
-        session = request.getSession();
-        // get API
-        im = SessionMethods.getInterMineAPI(session);
-        // get ObjectStore
         ObjectStore os = im.getObjectStore();
-        // set object
+        InterMineObject requestedObject = null;
         try {
             requestedObject = os.getObjectById(id);
         } catch (ObjectStoreException e) {
-            e.printStackTrace();
+            Log.warn("Accessed report page with id: " + id + " but failed to find object.", e);
         }
-        return requestedObject != null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, String> getClassDescriptions() {
-        // assert session needs to be set already!
-        ServletContext servletContext = session.getServletContext();
-        return (Map<String, String>) servletContext.getAttribute("classDescriptions");
+        return requestedObject;
     }
 
     /**
