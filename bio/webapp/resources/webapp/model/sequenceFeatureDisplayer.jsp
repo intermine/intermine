@@ -24,7 +24,7 @@
     <c:choose>
       <c:when test="${!empty feature.sequenceOntologyTerm}">
         <td class="theme-3-border theme-6-background">Sequence ontology type:</td>
-        <td>
+        <td class="theme-3-border theme-6-background">
           <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
           <img alt="?" title="${feature.sequenceOntologyTerm.description}"
           src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
