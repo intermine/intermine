@@ -34,6 +34,7 @@ public class UniprotConfig
     private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
     private String geneDesignation = "gene designation";
 
+
     /**
      * read configuration file
      */
@@ -63,6 +64,18 @@ public class UniprotConfig
      * @return the unique identifier for this organism
      */
     public String getUniqueIdentifier(String taxonId) {
+        ConfigEntry entry = entries.get(taxonId);
+        if (entry == null) {
+            return null;
+        }
+        return entry.getUniqueIdentifier();
+    }
+
+    /**
+     * @param taxonId taxonid
+     * @return the taxonId of the strain to use
+     */
+    public String getStrain(String taxonId) {
         ConfigEntry entry = entries.get(taxonId);
         if (entry == null) {
             return null;
@@ -111,9 +124,8 @@ public class UniprotConfig
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {
-                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
-                    + ".  This line has not been processed.";
-                LOG.error(msg);
+                LOG.error("Problem processing properties '" + PROP_FILE + "' on line "
+                        + key + ".  This line has not been processed.");
             }
         }
     }
@@ -166,6 +178,18 @@ public class UniprotConfig
     }
 
     /**
+     * @param taxonId organism for this gene
+     * @return taxonId of strain
+     */
+    protected String getString(String taxonId) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            return null;
+        }
+        return configEntry.getStrain();
+    }
+
+    /**
      * Set the gene designation string.
      *
      * @param geneDesignation string to use to get the gene identifier
@@ -192,6 +216,7 @@ public class UniprotConfig
     {
         private String uniqueIdentifier = null;
         private Map<String, IdentifierConfig> identifiers = new HashMap<String, IdentifierConfig>();
+        private String strain = null;
 
         /**
          * @return the uniqueIdentifier
@@ -204,6 +229,19 @@ public class UniprotConfig
          */
         protected void setUniqueIdentifier(String uniqueIdentifier) {
             this.uniqueIdentifier = uniqueIdentifier;
+        }
+
+        /**
+         * @return the strain
+         */
+        public String getStrain() {
+            return strain;
+        }
+        /**
+         * @param strain the strain to set
+         */
+        public void setStrain(String strain) {
+            this.strain = strain;
         }
 
         /**
