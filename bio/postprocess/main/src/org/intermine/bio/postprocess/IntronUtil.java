@@ -27,7 +27,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
-import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
@@ -138,15 +137,6 @@ public class IntronUtil
         q.addFrom(qcTran);
         q.addToSelect(qcTran);
 
-        // add transcript.gene
-        QueryClass qcGene = new QueryClass(model.getClassDescriptorByName("Gene").getType());
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-
-        // join transcript and gene
-        QueryObjectReference qor = new QueryObjectReference(qcTran, "gene");
-        cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qcGene));
-
         // Include the referenced chromosomeLocation of the Transcript
         QueryClass qcTranLoc = new QueryClass(Location.class);
         q.addFrom(qcTranLoc);
@@ -209,7 +199,7 @@ public class IntronUtil
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
 
-        SequenceFeature gene = null;
+
         osw.beginTransaction();
         while (resultsIter.hasNext()) {
             // Results is a list of ResultsRows, each ResultsRow contains the objects/fields
@@ -217,7 +207,6 @@ public class IntronUtil
             // as they were added to the select list.
             ResultsRow<?> rr = (ResultsRow<?>) resultsIter.next();
             SequenceFeature thisTran = (SequenceFeature) rr.get(0);
-            gene = (SequenceFeature) rr.get(1);
 
             if (lastTran == null) {
                 lastTran = thisTran;
@@ -226,7 +215,7 @@ public class IntronUtil
 
             if (!thisTran.getId().equals(lastTran.getId())) {
                 tranCount++;
-                intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc, gene);
+                intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
                 exonCount += locationSet.size();
                 if ((tranCount % 1000) == 0) {
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
@@ -240,7 +229,7 @@ public class IntronUtil
         }
 
         if (lastTran != null) {
-            intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc, gene);
+            intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
             tranCount++;
             exonCount += locationSet.size();
         }
@@ -277,12 +266,11 @@ public class IntronUtil
      * @param locationSet a set of Locations for the exonss on a particular transcript
      * @param transcript Transcript that the Locations refer to
      * @param tranLoc The Location of the Transcript
-     * @param gene gene attached to this Transcript
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     protected int createIntronFeatures(Set<Location> locationSet, SequenceFeature transcript,
-            Location tranLoc, SequenceFeature gene)
+            Location tranLoc)
         throws ObjectStoreException {
         if (locationSet.size() == 1 || tranLoc == null || transcript == null
                 || transcript.getLength() == null) {
@@ -368,15 +356,5 @@ public class IntronUtil
             intronTranscripts.put(intron, transcripts);
         }
         transcripts.add(transcript);
-    }
-
-    /**
-     * Object representing a transcript
-     * @author Julie Sullivan
-     */
-    protected class Transcript
-    {
-        protected String identifier;
-        protected Gene gene;
     }
 }
