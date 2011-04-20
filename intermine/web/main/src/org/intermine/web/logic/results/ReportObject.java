@@ -32,7 +32,6 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
@@ -81,9 +80,6 @@ public class ReportObject
     private Map<String, DisplayCollection> collections = null;
     private Map<String, DisplayField> refsAndCollections = null;
 
-    /** @var ObjectStore so we can use PathQueryResultHelper.queryForTypesInCollection */
-    private ObjectStore os = null;
-
     private HeaderConfigLink headerLink;
 
     /**
@@ -99,15 +95,14 @@ public class ReportObject
         this.webConfig = webConfig;
         this.im = im;
 
-        this.os = im.getObjectStore();
-
         // infer dynamic type of IM object
         this.objectType = DynamicUtil.getSimpleClass(object).getSimpleName();
     }
 
     /**
-     *
-     * @return Map
+     * Get a map from placement (header, summary or a data category) to custom report displayers for
+     * that placement.
+     * @return map from placement to displayers
      */
     public Map<String, List<CustomDisplayer>> getReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
@@ -176,22 +171,16 @@ public class ReportObject
             // temporary track of fieldConfigs so we know which attributes were missed out
             Set<String> fieldConfigPaths = new HashSet<String>();
 
-            // traverse all path expressions for the fields that should be used when
-            //  summarising the object
+            //  1. add all fields configured with showInSummary=true
             for (FieldConfig fc : getFieldConfigs()) {
                 // get fieldName
                 String fieldName = fc.getFieldExpr();
 
-                // only non-replaced fields
                 if (!replacedFields.contains(stripTail(fieldName))) {
-                    // get fieldValue
-                    Object fieldValue = getFieldValue(fieldName);
 
-                    // get displayer
-                    //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
+                    Object fieldValue = getFieldValue(fieldName);
                     String fieldDisplayer = fc.getDisplayer();
 
-                    // new ReportObjectField
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
                             fieldName,
@@ -200,7 +189,7 @@ public class ReportObject
                             fc.getDoNotTruncate()
                     );
 
-                    // show in summary...
+                    // summary fields should go first
                     if (fc.getShowInSummary()) {
                         objectSummaryFields.add(rof);
                     } else { // show in summary also, but not right now...
@@ -210,24 +199,23 @@ public class ReportObject
                 }
             }
 
-            // append the other fields
+            // 2. then add configured fields that don't have showInSummary=true
             objectSummaryFields.addAll(objectOtherSummaryFields);
 
-            // add any attributes that were missed out completely
-            for (String attributeName : attributes.keySet()) {
-                if (!fieldConfigPaths.contains(attributeName)) {
-                    // new ReportObjectField
+            // 3. any attributes not configured at all are shown last
+            for (String attName : attributes.keySet()) {
+                if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
 
                     Object fieldValue = null;
                     try {
-                        fieldValue = object.getFieldValue(attributeName);
+                        fieldValue = object.getFieldValue(attName);
                     } catch (IllegalAccessException e) {
                         // this shouldn't happen
                     }
 
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
-                            attributeName,
+                            attName,
                             fieldValue,
                             null,
                             false
@@ -235,7 +223,6 @@ public class ReportObject
                     objectSummaryFields.add(rof);
                 }
             }
-
         }
 
         return objectSummaryFields;
@@ -565,7 +552,7 @@ public class ReportObject
 
         // determine the types in the collection
         List<Class<?>> listOfTypes = PathQueryResultHelper.
-        queryForTypesInCollection(object, fd.getName(), os);
+        queryForTypesInCollection(object, fd.getName(), im.getObjectStore());
 
         DisplayCollection newCollection = null;
         try {
