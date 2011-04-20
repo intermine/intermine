@@ -960,6 +960,7 @@ public class UniprotEntry
             UniprotGene gene = iter.next();
             UniprotEntry entry = new UniprotEntry(primaryAccession);
             entry.setDatasetRefId(datasetRefId);
+            entry.setTaxonId(taxonId);
 
             // since there are two genes, only return dbrefs that have the matching gene
             // designation
