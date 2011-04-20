@@ -297,6 +297,10 @@ public class ReportObject
         }
     }
 
+    /**
+     * Get the unqualified class name for the report object.
+     * @return an unqualified class name
+     */
     public String getType() {
         return objectType;
     }
@@ -618,8 +622,12 @@ public class ReportObject
         }
 
         // make a combined Map
-        if (references != null) refsAndCollections.putAll(references);
-        if (collections != null) refsAndCollections.putAll(collections);
+        if (references != null) {
+            refsAndCollections.putAll(references);
+        }
+        if (collections != null) {
+            refsAndCollections.putAll(collections);
+        }
     }
 
     /**
@@ -634,37 +642,34 @@ public class ReportObject
     }
 
     /**
-    *
-    * @return Set
-    */
-   public Set<String> getReplacedFieldExprs() {
-       Set<String> replacedFieldExprs = new HashSet<String>();
-       for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
-           replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
-       }
-       return replacedFieldExprs;
-   }
+     * Get fields and paths that are replaced by custom report displayers and should not be shown
+     * in the report page.
+     * @return fields that should not be shown
+     */
+    public Set<String> getReplacedFieldExprs() {
+        Set<String> replacedFieldExprs = new HashSet<String>();
+        for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
+            replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
+        }
+        return replacedFieldExprs;
+    }
 
-   /**
-   *
-   * @return Set
-   */
-  public Set<CustomDisplayer> getAllReportDisplayers() {
-      DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
-      String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
-      return displayerManager.getAllReportDisplayersForType(clsName);
-  }
+    private Set<CustomDisplayer> getAllReportDisplayers() {
+        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
+        return displayerManager.getAllReportDisplayersForType(clsName);
+    }
 
-  /**
-   * Get attribute descriptors.
-   * @return map of attribute descriptors
-   */
-  public Map<String, FieldDescriptor> getAttributeDescriptors() {
-      if (attributeDescriptors == null) {
-          initialise();
-      }
-      return attributeDescriptors;
-  }
+    /**
+     * Get attribute descriptors.
+     * @return map of attribute descriptors
+     */
+    public Map<String, FieldDescriptor> getAttributeDescriptors() {
+        if (attributeDescriptors == null) {
+            initialise();
+        }
+        return attributeDescriptors;
+    }
 
     /**
      * Set Descriptor (for placement) on an InlineList, only done for normal lists
