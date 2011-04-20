@@ -218,6 +218,12 @@ public class UniprotConverter extends BioDirectoryConverter
     public void setUniprotOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
+
+        addStrains();
+    }
+
+    private void addStrains() {
+
     }
 
     /* converts the XML into UniProt entry objects.  run once per file */
