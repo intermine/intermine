@@ -201,3 +201,8 @@ img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 
 /* external links */
 li.external a, #intermine_links ul li a { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
+
+/* object not found */
+#pagecontent #wrap { padding:20px; }
+#pagecontent #wrap p, #pagecontent #wrap ol { font-size:18px; line-height:30px; margin:20px 0; }
+#pagecontent #wrap a { color:#004499; text-decoration:underline; }
