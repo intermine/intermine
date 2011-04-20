@@ -10,6 +10,9 @@
 <!-- report.jsp -->
 <html:xhtml/>
 
+<c:choose>
+  <c:when test="${object != null}">
+
 <link rel="stylesheet" type="text/css" href="css/960gs.css" />
 <link rel="stylesheet" type="text/css" href="css/report.print.css" media="print" />
 
@@ -289,5 +292,23 @@
 </div>
 
 </div>
-
 </div>
+
+  </c:when>
+  <c:otherwise>
+    <script type="text/javascript">
+        <%-- fudge the layout I can? --%>
+        jQuery("#pagecontentmax").attr('id', "pagecontent");
+    </script>
+    <div id="wrap">
+      <h1>Object not found</h1>
+      <p>That which you were looking for does not exist. Try...
+        <ol>
+          <li>going to the <a href="/">home page</a></li>
+          <li>using the <a href="/keywordSearchResults.do">quicksearch</a></li>
+          <li>or <a onclick="showContactForm()">Contact us</a> at support [at] flymine.org</li>
+        </ol>
+      </p>
+    </div>
+  </c:otherwise>
+</c:choose>
