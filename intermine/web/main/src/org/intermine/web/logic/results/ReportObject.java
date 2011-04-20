@@ -38,7 +38,6 @@ import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
@@ -77,8 +76,6 @@ public class ReportObject
     private List<InlineList> inlineListsNormal = null;
 
     private Map<String, Object> attributes = null;
-    private Map<String, String> longAttributes = null;
-    private Map<String, Object> longAttributesTruncated = null;
     private Map<String, FieldDescriptor> attributeDescriptors = null;
     private Map<String, DisplayReference> references = null;
     private Map<String, DisplayCollection> collections = null;
@@ -484,10 +481,6 @@ public class ReportObject
         // bags
         attributes = (attributes != null) ? attributes
                 : new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
-        longAttributes = (longAttributes != null) ? longAttributes
-                : new HashMap<String, String>();
-        longAttributesTruncated = (longAttributesTruncated != null) ? longAttributesTruncated
-                : new HashMap<String, Object>();
         attributeDescriptors = (attributeDescriptors != null) ? attributeDescriptors
                 : new HashMap<String, FieldDescriptor>();
 
@@ -509,18 +502,6 @@ public class ReportObject
 
             attributes.put(fd.getName(), fieldValue);
             attributeDescriptors.put(fd.getName(), fd);
-            if (fieldValue instanceof String) {
-                String fieldString = (String) fieldValue;
-                if (fieldString.length() > 30) {
-                    StringUtil.LineWrappedString lws = StringUtil.wrapLines(
-                            fieldString, 50, 3, 11);
-                    longAttributes.put(fd.getName(), lws.getString()
-                            .replace("\n", "<BR>"));
-                    if (lws.isTruncated()) {
-                        longAttributesTruncated.put(fd.getName(), Boolean.TRUE);
-                    }
-                }
-            }
         }
     }
 
