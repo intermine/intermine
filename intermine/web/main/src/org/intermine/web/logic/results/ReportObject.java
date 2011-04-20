@@ -109,59 +109,59 @@ public class ReportObject
     }
 
     /**
-    *
-    * @return Map
-    */
-   public Map<String, List<CustomDisplayer>> getReportDisplayers() {
-       DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
-       return displayerManager.getReportDisplayersForType(objectType);
-   }
+     *
+     * @return Map
+     */
+    public Map<String, List<CustomDisplayer>> getReportDisplayers() {
+        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+        return displayerManager.getReportDisplayersForType(objectType);
+    }
 
-   /**
-    * Get the id of this object
-    * @return the id
-    */
-   public int getId() {
-       return object.getId().intValue();
-   }
+    /**
+     * Get the id of this object
+     * @return the id
+     */
+    public int getId() {
+        return object.getId().intValue();
+    }
 
-   /**
-    * Get the attribute fields and values for this object
-    * @return the attributes
-    */
-   public Map<String, Object> getAttributes() {
-       if (attributes == null) {
-           initialise();
-       }
-       return attributes;
-   }
+    /**
+     * Get the attribute fields and values for this object
+     * @return the attributes
+     */
+    public Map<String, Object> getAttributes() {
+        if (attributes == null) {
+            initialise();
+        }
+        return attributes;
+    }
 
-   /**
-    * Get the class descriptor for this object
-    * @return one class descriptor
-    */
-   public ClassDescriptor getClassDescriptor() {
-       return im.getModel().getClassDescriptorByName(objectType);
-   }
+    /**
+     * Get the class descriptor for this object
+     * @return one class descriptor
+     */
+    public ClassDescriptor getClassDescriptor() {
+        return im.getModel().getClassDescriptorByName(objectType);
+    }
 
-   /**
-    * Get the collection fields and values for this object
-    * @return the collections
-    */
-   public Map<String, DisplayCollection> getCollections() {
-       if (collections == null) {
-           initialise();
-       }
-       return collections;
-   }
+    /**
+     * Get the collection fields and values for this object
+     * @return the collections
+     */
+    public Map<String, DisplayCollection> getCollections() {
+        if (collections == null) {
+            initialise();
+        }
+        return collections;
+    }
 
-   private String stripTail(String input) {
-           Integer dot = input.indexOf(".");
-           if (dot > 0) {
-               return input.substring(0, dot);
-           }
-           return input;
-   }
+    private String stripTail(String input) {
+        Integer dot = input.indexOf(".");
+        if (dot > 0) {
+            return input.substring(0, dot);
+        }
+        return input;
+    }
 
     /**
      * A listing of object fields as pieced together from the various ReportObject methods
@@ -175,6 +175,9 @@ public class ReportObject
 
             // to make sure we do not show fields that are replaced elsewhere
             Set<String> replacedFields = getReplacedFieldExprs();
+
+            // temporary track of fieldConfigs so we know which attributes were missed out
+            Set<String> fieldConfigPaths = new HashSet<String>();
 
             // traverse all path expressions for the fields that should be used when
             //  summarising the object
@@ -206,10 +209,36 @@ public class ReportObject
                     } else { // show in summary also, but not right now...
                         objectOtherSummaryFields.add(rof);
                     }
+                    fieldConfigPaths.add(fc.getFieldExpr());
                 }
             }
+
             // append the other fields
             objectSummaryFields.addAll(objectOtherSummaryFields);
+
+            // add any attributes that were missed out completely
+            for (String attributeName : attributes.keySet()) {
+                if (!fieldConfigPaths.contains(attributeName)) {
+                    // new ReportObjectField
+
+                    Object fieldValue = null;
+                    try {
+                        fieldValue = object.getFieldValue(attributeName);
+                    } catch (IllegalAccessException e) {
+                        // this shouldn't happen
+                    }
+
+                    ReportObjectField rof = new ReportObjectField(
+                            objectType,
+                            attributeName,
+                            fieldValue,
+                            null,
+                            false
+                    );
+                    objectSummaryFields.add(rof);
+                }
+            }
+
         }
 
         return objectSummaryFields;
