@@ -194,7 +194,7 @@ public class SequenceExporter implements Exporter
             headerBits.add(locString);
 
             for (ResultElement re : row) {
-                if (re.getObject().equals(object)) {
+                if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
                         headerBits.add("-");
@@ -214,7 +214,7 @@ public class SequenceExporter implements Exporter
         } else if (object instanceof Protein) {
 
             for (ResultElement re : row) {
-                if (re.getObject().equals(object)) {
+                if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
                         headerBits.add("-");
