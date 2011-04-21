@@ -456,6 +456,15 @@ function fillChado {
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
 EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
 
+# check if the sub is already in chado: in case skip!
+ISIN=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select experiment_id from experiment_prop where name = 'dcc_id' and  value='$DCCID';"`
+if [ -n "$ISIN" ]
+then
+echo "Submission $DCCID is already in chado: skipping it.."
+echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo " already in chado!! skipping it.." >> $LOG
+else
+
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
 echo >> $LOG
@@ -511,6 +520,7 @@ echo
 STAGFAIL=y
 fi
 
+fi
 }
 
 function processOneChadoSub {
@@ -697,6 +707,7 @@ interact "START WGET NOW"
 
 for sub in $LOOPVAR
 do
+
  wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 
 cd $PATCHDIR
@@ -904,12 +915,14 @@ then
 loadChadoSubs $P
 elif [ -n "$L" ]
 then
+IFS=$','
 for p in $L
 do 
 echo "---> $p"
 IFS=$'\t\n'
 loadChadoSubs $p
 IFS=$','
+echo "====" >> $LOG
 done
 IFS=$'\t\n'
 else
