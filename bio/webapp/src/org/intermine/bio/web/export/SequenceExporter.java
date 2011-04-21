@@ -187,7 +187,7 @@ public class SequenceExporter implements Exporter
             // add the sequence location info at the second place in the header
             SequenceFeature feature = (SequenceFeature) object;
 
-            String chr = feature.getChromosome().getPrimaryIdentifier();
+            String chr = feature.getChromosomeLocation().getLocatedOn().getPrimaryIdentifier();
             Integer start = feature.getChromosomeLocation().getStart();
             Integer end = feature.getChromosomeLocation().getEnd();
             String locString = chr + ':' + start + '-' + end;
