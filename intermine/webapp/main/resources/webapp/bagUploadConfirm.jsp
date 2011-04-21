@@ -12,9 +12,9 @@
 
 <div id="sidebar">
   <div class="wrap">
-    <div class="button">
+    <div class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
-          value='Save a list of ${matchCount} ${bagUploadConfirmForm.bagType}<c:if test="${matchCount > 1}">s</c:if>'
+          value='Save a list of ${matchCount} ${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
           onclick="javascript:validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
     </div>
     <div style="clear:both;"></div>
@@ -27,7 +27,7 @@
 
   <h2>In your list</h2>
   <ul>
-    <li class="added">${matchCount} ${bagUploadConfirmForm.bagType}<c:if test="${matchCount > 1}">s</c:if></li>
+    <li class="added">${matchCount} ${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if></li>
     <c:if test="${! empty lowQualityMatches}">
       <li class="lowQ"><a>Add</a> ${fn:length(lowQualityMatches)} Synonym match<c:if test="${fn:length(lowQualityMatches) > 1}">es</c:if></li>
       <script type="text/javascript">
@@ -35,13 +35,13 @@
       </script>
     </c:if>
     <c:if test="${! empty duplicates}">
-      <li class="duplicate"><a>Add</a> ${fn:length(duplicates)} Duplicate match<c:if test="${fn:length(duplicates) > 1}">es</c:if></li>
+      <li class="duplicate"><a>Add</a> ${fn:length(duplicates)} Duplicate match<c:if test="${fn:length(duplicates) != 1}">es</c:if></li>
       <script type="text/javascript">
         jQuery('#sidebar ul li.duplicate a').click(function(e) { addAll('duplicate', '${flatDuplicate}'); });
       </script>
     </c:if>
     <c:if test="${! empty convertedObjects}">
-      <li class="converted"><a>Add</a> ${fn:length(convertedObjects)} Converted type<c:if test="${fn:length(convertedObjects) > 1}">s</c:if></li>
+      <li class="converted"><a>Add</a> ${fn:length(convertedObjects)} Converted type<c:if test="${fn:length(convertedObjects) != 1}">s</c:if></li>
       <script type="text/javascript">
         jQuery('#sidebar ul li.converted a').click(function(e) { addAll('converted', '${flatConverted}'); });
       </script>
@@ -51,25 +51,10 @@
 
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
+
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
-<script type="text/javascript">
- <!--
-window.onload = function() { toggleForm(${matchCount}); }
 
-function toggleForm(matchCount) {
-  if (matchCount > 0) {
-    document.bagUploadConfirmForm.newBagName.disabled = false;
-    document.bagUploadConfirmForm.confirmBagUpload.disabled = false;
-  } else {
-    document.bagUploadConfirmForm.newBagName.disabled = true;
-    document.bagUploadConfirmForm.confirmBagUpload.disabled = true;
-  }
-}
-
-// -->
-</script>
-
-<c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>
+<c:set var="totalIdCount" value="${fn:length (duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>
 <div class="body">
 
     <c:choose>
@@ -95,7 +80,24 @@ function toggleForm(matchCount) {
       <h2><c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">a) </c:if>Choose a name for the list</h2>
       <div style="clear:both;"></div>
       <div class="formik">
-      <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
+      <input id="newBagName" type="text" name="newBagName" value="${bagName}">
+      <script type="text/javascript">
+        // on keypress
+        jQuery('input#newBagName').keypress(function(e) {
+          var code = (e.keyCode ? e.keyCode : e.which);
+          if (code == 13) { // Enter
+            validateBagName('bagUploadConfirmForm');
+            e.preventDefault();
+          }
+        });
+
+        if (jQuery('input#newBagName').val().length == 0) {
+          // if we do not have a name of the list generate one from user's time
+          var t = new Date();
+          var m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+          jQuery('input#newBagName').val("${bagUploadConfirmForm.bagType} list " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "h " + t.getMinutes() + "m");
+        }
+      </script>
         <span>(e.g. Smith 2009)</span>
       </div>
       <div style="clear:both"></div>
@@ -108,7 +110,7 @@ function toggleForm(matchCount) {
     <c:set var="totalRowCount" value="0" scope="request" />
 
     <div id="additionalMatches" class="body">
-    <div class="oneline"
+    <div class="oneline">
       <h2>b) Add additional matches</h2>
       <p class="inline h2"><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> |
       <span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
