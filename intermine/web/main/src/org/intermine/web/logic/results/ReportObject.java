@@ -205,18 +205,10 @@ public class ReportObject
             // 3. any attributes not configured at all are shown last
             for (String attName : attributes.keySet()) {
                 if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
-
-                    Object fieldValue = null;
-                    try {
-                        fieldValue = object.getFieldValue(attName);
-                    } catch (IllegalAccessException e) {
-                        // this shouldn't happen
-                    }
-
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
                             attName,
-                            fieldValue,
+                            attributes.get(attName),
                             null,
                             false
                     );
@@ -563,9 +555,7 @@ public class ReportObject
         }
 
         if (newCollection != null) {
-            if (newCollection.getSize() > 0) {
-                collections.put(fd.getName(), newCollection);
-            }
+            collections.put(fd.getName(), newCollection);
         }
     }
 
