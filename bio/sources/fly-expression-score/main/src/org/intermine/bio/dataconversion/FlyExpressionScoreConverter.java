@@ -44,7 +44,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 
     private static final String CELL_LINE = "cell line";
     private static final String DEVELOPMENTAL_STAGE = "developmental stage";
-    private static final String DCCID = "3305";
+    private static final String DCCID = "modENCODE_3305";
     private static final String FLY_TAX_ID = "7227";
 
     private static Map<String, String> cellLines = null;
