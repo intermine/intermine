@@ -40,17 +40,8 @@
         <c:set var="transcript" value="${geneModel.transcript}"/>
 
         <c:choose>
-          <c:when test="${rowStatus.count % 2 == 0}">
-            <c:set var="rowClass" value="even"/>
-          </c:when>
-          <c:otherwise>
-            <c:set var="rowClass" value="odd"/>
-          </c:otherwise>
-        </c:choose>
-
-        <c:choose>
           <c:when test="${actualId == transcript.id}">
-            <tr class="highlight ${rowClass}">
+            <tr class="highlight">
           </c:when>
           <c:otherwise>
             <tr class="${rowClass}">
@@ -59,15 +50,18 @@
             <tiles:insert page="/model/displaySequenceFeature.jsp">
                 <tiles:put name="feature" beanName="transcript"/>
             </tiles:insert>
-          <td>
+          <td class="main theme-3-border">
+            <c:set var="count" value="0" scope="page" />
+
             <c:if test="${!empty geneModel.exons}">
-              <table>
+              <table cellspacing="0" class="theme-6-background">
                 <c:forEach items="${geneModel.exons}" var="exon">
                   <tr>
                     <tiles:insert page="/model/displaySequenceFeature.jsp">
                       <tiles:put name="feature" beanName="exon"/>
                       <tiles:put name="idToHighlight" beanName="actualId"/>
                       <tiles:put name="singleLine" value="true"/>
+                      <tiles:put name="alternate" value="true"/>
                     </tiles:insert>
                   </tr>
                 </c:forEach>
@@ -76,7 +70,7 @@
           </td>
           <td>
             <c:if test="${!empty geneModel.introns}">
-              <table>
+              <table cellspacing="0">
                 <c:forEach items="${geneModel.introns}" var="intron">
                   <tr>
                     <tiles:insert page="/model/displaySequenceFeature.jsp">
@@ -88,34 +82,48 @@
               </table>
             </c:if>
           </td>
-          <c:choose>
-            <c:when test="${!empty geneModel.fivePrimeUTR}">
-              <c:set var="fivePrimeUTR" value="${geneModel.fivePrimeUTR}"/>
-              <tiles:insert page="/model/displaySequenceFeature.jsp">
-                <tiles:put name="feature" beanName="fivePrimeUTR"/>
-              </tiles:insert>
-            </c:when>
-            <c:otherwise><td>&nbsp;</td></c:otherwise>
-          </c:choose>
-          <c:choose>
-            <c:when test="${!empty geneModel.threePrimeUTR}">
-              <c:set var="threePrimeUTR" value="${geneModel.threePrimeUTR}"/>
-              <tiles:insert page="/model/displaySequenceFeature.jsp">
-                <tiles:put name="feature" beanName="threePrimeUTR"/>
-              </tiles:insert>
-            </c:when>
-            <c:otherwise><td>&nbsp;</td></c:otherwise>
-          </c:choose>
-          <c:choose>
-            <c:when test="${!empty geneModel.CDSs}">
-              <c:forEach items="${geneModel.CDSs}" var="cds">
-                <tiles:insert page="/model/displaySequenceFeature.jsp">
-                  <tiles:put name="feature" beanName="cds"/>
-                </tiles:insert>
-              </c:forEach>
-            </c:when>
-            <c:otherwise><td>&nbsp;</td></c:otherwise>
-          </c:choose>
+          <td class="main theme-3-border">
+            <table cellspacing="0" class="theme-6-background">
+              <c:choose>
+                <c:when test="${!empty geneModel.fivePrimeUTR}">
+                  <c:set var="fivePrimeUTR" value="${geneModel.fivePrimeUTR}"/>
+                  <tiles:insert page="/model/displaySequenceFeature.jsp">
+                    <tiles:put name="feature" beanName="fivePrimeUTR"/>
+                    <tiles:put name="alternate" value="true"/>
+                  </tiles:insert>
+                </c:when>
+                <c:otherwise><td>&nbsp;</td></c:otherwise>
+              </c:choose>
+            </table>
+          </td>
+          <td>
+            <table cellspacing="0">
+              <c:choose>
+                <c:when test="${!empty geneModel.threePrimeUTR}">
+                  <c:set var="threePrimeUTR" value="${geneModel.threePrimeUTR}"/>
+                  <tiles:insert page="/model/displaySequenceFeature.jsp">
+                    <tiles:put name="feature" beanName="threePrimeUTR"/>
+                  </tiles:insert>
+                </c:when>
+                <c:otherwise><td>&nbsp;</td></c:otherwise>
+              </c:choose>
+            </table>
+          </td>
+          <td class="main theme-3-border">
+            <table cellspacing="0" class="theme-6-background">
+              <c:choose>
+                <c:when test="${!empty geneModel.CDSs}">
+                  <c:forEach items="${geneModel.CDSs}" var="cds">
+                    <tiles:insert page="/model/displaySequenceFeature.jsp">
+                      <tiles:put name="feature" beanName="cds"/>
+                      <tiles:put name="alternate" value="true"/>
+                    </tiles:insert>
+                  </c:forEach>
+                </c:when>
+                <c:otherwise><td>&nbsp;</td></c:otherwise>
+              </c:choose>
+            </table>
+          </td>
         </tr>
 
 

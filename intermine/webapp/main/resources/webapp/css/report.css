@@ -158,7 +158,7 @@ td.centered { text-align:center; }
 /* genome feature */
 div.feature span.smallnote { line-height:auto !important; }
 div.feature h3 { margin-bottom:0; }
-div.feature table { width:100%; }
+div.feature table { width:100%; height:100%; }
 div.feature table td { padding:6px; }
 div.feature table tr.even td { border-width:1px 0; border-style:solid; }
 div.feature table td.border-left { border-left-width:1px !important; border-left-style:solid !important; }
@@ -195,6 +195,8 @@ div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-deco
 .container_12 table.compact-table table td { border:0 !important; padding:0 !important; }
 .container_12 .compact-table a { text-decoration:none !important; }
 .container_12 .compact-table a:hover { text-decoration:underline !important; }
+div.feature table.compact-table td.main { border-width:0 1px; border-style:solid; padding:0 !important; }
+div.feature table.compact-table td.main table { padding: 0 6px; }
 
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 .listsObjectIsIn { padding-top: 2px; padding-left: 10px; }
