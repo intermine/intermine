@@ -105,10 +105,20 @@ function updateCount(element, amount) {
 function updateFurtherMatchesDisplay() {
   // update the text of the button that saves our list
   if (jQuery('input#saveList').length > 0) {
-    if (matchCount > 1) {
-      jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType + "s");
+    if (matchCount > 0) {
+      // button style
+      jQuery('input#saveList').parent().removeClass('inactive');
+      // button text
+      if (matchCount > 1) {
+        jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType + "s");
+      } else {
+        jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+      }
     } else {
-      jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+      // button style
+      jQuery('input#saveList').parent().addClass('inactive');
+      // button text
+      jQuery('input#saveList').val("0 " + listType);
     }
     // "further matches" text
     if (jQuery('p#furtherMatches').length > 0) {

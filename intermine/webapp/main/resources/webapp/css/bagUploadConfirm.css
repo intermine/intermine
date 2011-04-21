@@ -64,6 +64,13 @@ div.formik input[type="text"] { background:#FFF3D3; padding:6px; width:360px; }
             width:20px; display:inline-block; height:32px; float:left; }
         #sidebar div.button div.right { background:url('../images/progress/green-btn-right.png') no-repeat left;
             width:20px; display:inline-block; height:32px; float:left; }
+
+    #sidebar div.button.inactive input { background:url('../images/progress/gray-btn-center.png') repeat-x left; }
+    #sidebar div.button.inactive div.left { background:url('../images/progress/gray-btn-left.png') no-repeat left; }
+    #sidebar div.button.inactive div.right { background:url('../images/progress/gray-btn-right.png') no-repeat left; }
+
+    #sidebar div.button.inactive input { cursor:default; }
+
     #sidebar p#furtherMatches { font-weight:normal; font-size:12px; margin:6px 0 0 0; }
     #sidebar h2 { width:100%; float:none; margin-bottom:10px; }
     #sidebar ul { list-style:none; }
