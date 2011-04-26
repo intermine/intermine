@@ -91,47 +91,31 @@ public class ReportController extends InterMineAction
             Map<String, List<InlineList>> placedInlineLists =
                 new TreeMap<String, List<InlineList>>();
             // traverse all unplaced (non-header) InlineLists
-            List<InlineList> unplacedInlineLists = reportObject.getNormalInlineLists();
-            if (unplacedInlineLists != null) {
-                for (Integer i = 0; i < unplacedInlineLists.size(); i++) {
-                    InlineList list = unplacedInlineLists.get(i);
-                    // Descriptor, assume not null
-                    FieldDescriptor fd = list.getDescriptor();
-                    // type
-                    String taggedType = null;
-                    if (fd.isCollection()) {
-                        taggedType = "collection";
-                    } else if (fd.isReference()) {
-                        taggedType = "reference";
-                    } else if (fd.isAttribute()) {
-                        taggedType = "attribute";
-                    } else {
-                        // OMG, now what?
-                    }
-                    List<Tag> tags =
-                        tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
-                                + "." + fd.getName(), taggedType, superuser);
-                    for (Tag tag : tags) {
-                        String tagName = tag.getTagName();
-                        // aspect much?
-                        if (AspectTagUtil.isAspectTag(tagName)) {
-                            List<InlineList> l = null;
-                            if (placedInlineLists.containsKey(tagName)) {
-                                // we already have aspect like this...
-                                l = placedInlineLists.get(tagName);
-                            } else {
-                                // we do not
-                                l = new ArrayList<InlineList>();
-                            }
-                            // save, save, save!
-                            l.add(list);
-                            placedInlineLists.put(tagName, l);
-                            // remove!
-                            unplacedInlineLists.remove(list);
+            for (InlineList list : reportObject.getNormalInlineLists()) {
+                FieldDescriptor fd = list.getDescriptor();
+                String taggedType = getTaggedType(fd);
+
+                // assign lists to any aspects they are tagged to or put in unplaced lists
+                List<Tag> tags =
+                    tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                            + "." + fd.getName(), taggedType, superuser);
+                for (Tag tag : tags) {
+                    String tagName = tag.getTagName();
+                    if (AspectTagUtil.isAspectTag(tagName)) {
+                        List<InlineList> listsForAspect = placedInlineLists.get(tagName);
+                        if (listsForAspect == null) {
+                            listsForAspect = new ArrayList<InlineList>();
+                            placedInlineLists.put(tagName, listsForAspect);
                         }
+                        listsForAspect.add(list);
                     }
                 }
             }
+            // any lists that aren't tagged will be 'unplaced'
+            List<InlineList> unplacedInlineLists =
+                new ArrayList<InlineList>(reportObject.getNormalInlineLists());
+            unplacedInlineLists.removeAll(placedInlineLists.values());
+
             session.setAttribute("mapOfInlineLists", placedInlineLists);
             session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
@@ -238,6 +222,16 @@ public class ReportController extends InterMineAction
             Log.warn("Accessed report page with id: " + id + " but failed to find object.", e);
         }
         return requestedObject;
+    }
+
+
+    private String getTaggedType(FieldDescriptor fd) {
+        if (fd.isCollection()) {
+            return "collection";
+        } else if (fd.isReference()) {
+            return "reference";
+        }
+        return "attribute";
     }
 
     /**
