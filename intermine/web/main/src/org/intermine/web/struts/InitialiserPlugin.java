@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -93,7 +94,7 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
     TrackerDelegate trackerDelegate;
-
+    Set<String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
 
@@ -115,6 +116,8 @@ public class InitialiserPlugin implements PlugIn
         // webapp to fail to deploy with no error message.
 
         final ServletContext servletContext = servlet.getServletContext();
+        blockingErrorKeys = new LinkedHashSet<String>();
+        SessionMethods.setErrorOnInitialiser(servletContext, blockingErrorKeys);
 
         // initialise properties
         Properties webProperties = loadWebProperties(servletContext);
@@ -130,7 +133,7 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        trackerDelegate = initTrackers(servletContext, webProperties, userprofileOSW);
+        trackerDelegate = initTrackers(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
         SessionMethods.setInterMineAPI(servletContext, im);
@@ -517,10 +520,10 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private TrackerDelegate initTrackers(ServletContext servletContext, Properties webProperties,
+    private TrackerDelegate initTrackers(Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
         if (!verifyTrackTables(userprofileOSW.getObjectStore())) {
-            SessionMethods.setErrorOnInitialiser(servletContext, "errors.tracktable.runAnt");
+            blockingErrorKeys.add("errors.tracktable.runAnt");
         }
         return getTrackerDelegate(webProperties, userprofileOSW);
     }

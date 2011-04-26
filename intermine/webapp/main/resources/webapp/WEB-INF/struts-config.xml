@@ -144,6 +144,7 @@
     </action>
     <action path="/begin" type="org.intermine.web.struts.BeginAction">
       <forward name="begin" path="begin.page"/>
+      <forward name="blockingError" path="/blockingError.jsp"/>
     </action>
     <action path="/query" type="org.intermine.web.struts.CurrentQueryAction">
       <forward name="query" path="query.page"/>

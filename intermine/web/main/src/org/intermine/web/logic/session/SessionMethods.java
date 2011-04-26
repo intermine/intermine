@@ -1052,12 +1052,24 @@ public final class SessionMethods
         servletContext.setAttribute(Constants.CATEGORIES, categories);
     }
 
-    public static void setErrorOnInitialiser(ServletContext servletContext, String errorKey) {
+    /**
+     * Sets the blocking error codes into the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @param errorKey the Set of error codes
+     */
+    public static void setErrorOnInitialiser(ServletContext servletContext, Set<String> errorKey) {
         servletContext.setAttribute(Constants.INITIALISER_KEY_ERROR, errorKey);
     }
 
-    public static String getErrorOnInitialiser(ServletContext servletContext) {
-        return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null) ?
-               (String) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
+    /**
+     * Gets the error codes from the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @return a Set of blocking error codes
+     */
+    public static Set<String> getErrorOnInitialiser(ServletContext servletContext) {
+        return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null)
+               ? (Set<String>) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
     }
 }
