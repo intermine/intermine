@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
@@ -28,7 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
 {
-    private Map<String, SequenceFeature> chrMap = new HashMap<String, SequenceFeature>();
+    private Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
 
     /**
      * Return a Chromosome object for the given item.
@@ -37,12 +38,12 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @return the Chromosome
      * @throws ObjectStoreException if problem fetching Chromosome
      */
-    protected SequenceFeature getChromosome(String chromosomeId, Organism organism)
+    protected Chromosome getChromosome(String chromosomeId, Organism organism)
         throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         }
-        SequenceFeature chr = getDirectDataLoader().createObject(SequenceFeature.class);
+        Chromosome chr = getDirectDataLoader().createObject(Chromosome.class);
         chr.setPrimaryIdentifier(chromosomeId);
         chr.setOrganism(organism);
         chr.addDataSets(getDataSet());
@@ -80,8 +81,10 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
                 loc.setStrand("1");
             }
             loc.setFeature(lsf);
-            loc.setLocatedOn(getChromosome(chromosomeId, organism));
+            Chromosome chromosome = getChromosome(chromosomeId, organism);
+            loc.setLocatedOn(chromosome);
             lsf.setChromosomeLocation(loc);
+            lsf.setChromosome(chromosome);
             return loc;
         }
         throw new RuntimeException("header doesn't match pattern \"" + regexp + "\": " + header);
