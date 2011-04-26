@@ -155,6 +155,7 @@
     <put name="body" value="passwordReset.tile"/>
     <put name="pageName" value="passwordReset"/>
   </definition>
+  <definition name="blockingError.page" path="/blockingError.jsp"/>
 
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
   <!--tiles-->
