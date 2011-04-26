@@ -3421,6 +3421,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         FIELD_NAME_MAP.put("Data Type", "category");
         FIELD_NAME_MAP.put("Assay Type", "experimentType");
+        FIELD_NAME_MAP.put("Release Reservations", "notice");
+        
         FIELD_NAME_MAP.put("RNAsize", "RNAsize");
         // these are names in name/value couples for ReadCount
         FIELD_NAME_MAP.put("Total Read Count", "totalReadCount");
