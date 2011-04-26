@@ -187,4 +187,12 @@ public class InlineList
         return (showInHeader);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "path=" + path + " showLinksToObjects=" + showLinksToObjects + " fieldDescriptor="
+            + fieldDescriptor;
+    }
+
 }
