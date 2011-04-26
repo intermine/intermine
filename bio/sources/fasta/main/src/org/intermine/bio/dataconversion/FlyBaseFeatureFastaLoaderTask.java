@@ -42,8 +42,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         }
-        SequenceFeature chr = (SequenceFeature) getDirectDataLoader().createObject(
-                SequenceFeature.class);
+        SequenceFeature chr = getDirectDataLoader().createObject(SequenceFeature.class);
         chr.setPrimaryIdentifier(chromosomeId);
         chr.setOrganism(organism);
         chr.addDataSets(getDataSet());
@@ -72,7 +71,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             String locationString = m.group(2);
             int min = getMin(locationString);
             int max = getMax(locationString);
-            Location loc = (Location) getDirectDataLoader().createObject(Location.class);
+            Location loc = getDirectDataLoader().createObject(Location.class);
             loc.setStart(new Integer(min));
             loc.setEnd(new Integer(max));
             if (isComplement(locationString)) {
