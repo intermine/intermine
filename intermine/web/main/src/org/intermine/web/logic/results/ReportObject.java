@@ -411,12 +411,6 @@ public class ReportObject
             InlineList list,
             HashMap<String, Boolean> bagOfInlineListNames
     ) {
-        // bags
-        inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader
-                : new ArrayList<InlineList>();
-        inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal
-                : new ArrayList<InlineList>();
-
         // soon to be list of values
         Set<Object> listOfListObjects = null;
         String columnToDisplayBy = null;
@@ -670,6 +664,8 @@ public class ReportObject
     */
     public List<InlineList> getNormalInlineLists() {
         if (inlineListsNormal == null) {
+            inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal
+                    : new ArrayList<InlineList>();
             initialise();
         }
         return inlineListsNormal;
@@ -681,6 +677,8 @@ public class ReportObject
      */
     public List<InlineList> getHeaderInlineLists() {
         if (inlineListsHeader == null) {
+            inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader
+                    : new ArrayList<InlineList>();
             initialise();
         }
         return inlineListsHeader;
