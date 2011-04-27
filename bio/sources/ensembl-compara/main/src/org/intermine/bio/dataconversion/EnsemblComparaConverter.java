@@ -24,10 +24,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.BioFileConverter;
-import org.intermine.bio.dataconversion.FlyBaseIdResolverFactory;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverFactory;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -36,8 +32,8 @@ import org.intermine.xml.full.Item;
 
 
 /**
- *
- * @author
+ * Converter that process 4 column text file and produces homologues.
+ * @author Julie Sullivan
  */
 public class EnsemblComparaConverter extends BioFileConverter
 {
@@ -51,9 +47,8 @@ public class EnsemblComparaConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "Ensembl";
     private Map<String, String> genes = new HashMap<String, String>();
     protected IdResolver resolver;
-    private Map<String, Config> configs = new HashMap<String, Config>();
+    private Map<String, String> configs = new HashMap<String, String>();
     private static String evidenceRefId = null;
-    protected enum ColumnType { ensembl, entrez, name }
 
     /**
      * Constructor
@@ -67,10 +62,19 @@ public class EnsemblComparaConverter extends BioFileConverter
         resolver = resolverFactory.getIdResolver(false);
     }
 
+    /**
+     * Process all homologues for this organism.
+     * @param taxonIds list of taxon IDs to process
+     */
     public void setEnsemblComparaOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
+    /**
+     * Sets the list of organisms to process only if the genes are homologues for organism of
+     * interest.  Otherwise ignore.
+     * @param taxonIds list of taxon IDs to process
+     */
     public void setEnsemblComparaHomologues(String taxonIds) {
         this.homologues = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
@@ -84,33 +88,13 @@ public class EnsemblComparaConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
-
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
-
-            String[] attributes = key.split("\\.");
-            if (attributes.length != 2) {
+            if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
-                                           + key);
+                                           + key + " = " + value);
             }
-
-            String taxonId = attributes[0];
-            Config config = configs.get(taxonId);
-            if (config == null) {
-                config = new Config();
-                configs.put(taxonId, config);
-            }
-            String fieldName = attributes[1];
-            if ("primaryIdentifier".equals(fieldName)) {
-                config.primaryIdentifier = value;
-            } else if ("secondaryIdentifier".equals(fieldName)) {
-                config.secondaryIdentifier = value;
-            } else if ("symbol".equals(fieldName)) {
-                config.symbol = value;
-            } else {
-                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
-                        + fieldName);
-            }
+            configs.put(key, value);
         }
     }
 
@@ -144,12 +128,12 @@ public class EnsemblComparaConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            if (line.length <= 8) {
-                throw new RuntimeException("Invalid line, should be 8 columns but is '"
-                        + line + "' instead");
+            if (line.length != 4 && StringUtils.isNotEmpty(line.toString())) {
+                throw new RuntimeException("Invalid line, should be 4 columns but is '"
+                        + line.length + "' instead");
             }
-            String refId1 = parseGene(line, 0);
-            String refId2 = parseGene(line, 4);
+            String refId1 = parseGene(line[0], line[1]);
+            String refId2 = parseGene(line[2], line[3]);
 
             if (refId1 == null || refId2 == null) {
                 continue;
@@ -157,7 +141,67 @@ public class EnsemblComparaConverter extends BioFileConverter
 
             // store homologues
             processHomologue(refId1, refId2);
+            processHomologue(refId2, refId1);
         }
+    }
+
+    // save homologue pair
+    private void processHomologue(String gene1, String gene2)
+        throws ObjectStoreException {
+        Item homologue = createItem("Homologue");
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        homologue.setAttribute("type", "homologue");
+        store(homologue);
+    }
+
+    private String parseGene(String taxonId, String identifier)
+        throws ObjectStoreException {
+        String newIdentifier = identifier;
+        if ("7227".equals(taxonId)) {
+            newIdentifier = resolveGene(taxonId, identifier);
+            if (newIdentifier == null) {
+                return null;
+            }
+        }
+        String refId = genes.get(newIdentifier);
+        if (refId == null) {
+            String fieldName = getConfig(taxonId);
+            if (fieldName == null) {
+                throw new IllegalArgumentException("no config found");
+            }
+            Item item = createItem("Gene");
+            item.setAttribute(fieldName, newIdentifier);
+            item.setReference("organism", getOrganism(taxonId));
+            store(item);
+            refId = item.getIdentifier();
+            genes.put(newIdentifier, refId);
+        }
+        return refId;
+    }
+
+    private String resolveGene(String taxonId, String identifier) {
+        String id = identifier;
+        if ("7227".equals(taxonId) && resolver != null) {
+            int resCount = resolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                        + identifier + " count: " + resCount + " FBgn: "
+                        + resolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            id = resolver.resolveId(taxonId, identifier).iterator().next();
+        }
+        return id;
+    }
+
+    private String getConfig(String taxonId) {
+        String identifierField = configs.get(taxonId);
+        if (identifierField == null) {
+            identifierField  = configs.get("default");
+        }
+        return identifierField;
     }
 
     private String getEvidence()
@@ -185,107 +229,5 @@ public class EnsemblComparaConverter extends BioFileConverter
             evidenceRefId = item.getIdentifier();
         }
         return evidenceRefId;
-    }
-
-    // save homologue pair
-    private void processHomologue(String gene1, String gene2)
-        throws ObjectStoreException {
-        Item homologue = createItem("Homologue");
-        homologue.setReference("gene", gene1);
-        homologue.setReference("homologue", gene2);
-        homologue.addToCollection("evidence", getEvidence());
-        homologue.setAttribute("type", "homologue");
-        try {
-            store(homologue);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-    }
-
-    private String parseGene(String[] line, int index)
-        throws ObjectStoreException {
-        int i = index;
-        String taxonId = line[i++];
-        String ensembl = line[i++];
-        String name = line[i++];
-        String entrez = line[i];
-
-        String newIdentifier = ensembl;
-        if ("7227".equals(taxonId)) {
-            newIdentifier = resolveGene(taxonId, ensembl);
-            if (newIdentifier == null) {
-                return null;
-            }
-        }
-        String refId = genes.get(newIdentifier);
-        if (refId == null) {
-            Config config = getConfig(taxonId);
-            if (config == null) {
-                throw new IllegalArgumentException("no config found");
-            }
-            Item item = createItem("Gene");
-            if (config.primaryIdentifier != null) {
-                String identifier = getIdentifier(config.primaryIdentifier, ensembl, name, entrez);
-                item.setAttribute("primaryIdentifier", identifier);
-            }
-            if (config.secondaryIdentifier != null) {
-                String identifier = getIdentifier(
-                            config.secondaryIdentifier, ensembl, name, entrez);
-                item.setAttribute("secondaryIdentifier", identifier);
-            }
-            if (config.symbol != null) {
-                String identifier = getIdentifier(config.symbol, ensembl, name, entrez);
-                item.setAttribute("symbol", identifier);
-            }
-            item.setReference("organism", getOrganism(taxonId));
-            store(item);
-            refId = item.getIdentifier();
-            genes.put(newIdentifier, refId);
-        }
-        return refId;
-    }
-
-    private String getIdentifier(String identifierField, String ensembl, String name,
-            String entrez) {
-        if (identifierField.equals(ColumnType.ensembl)) {
-            return ensembl;
-        }
-        if (identifierField.equals(ColumnType.name)) {
-            return name;
-        }
-        if (identifierField.equals(ColumnType.entrez)) {
-            return entrez;
-        }
-        throw new IllegalArgumentException("invalid config: " + identifierField);
-    }
-
-    private Config getConfig(String taxonId) {
-        Config config = configs.get(taxonId);
-        if (config == null) {
-            config = configs.get("default");
-        }
-        return config;
-    }
-
-    private String resolveGene(String taxonId, String identifier) {
-        String id = identifier;
-        if ("7227".equals(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + identifier + " count: " + resCount + " FBgn: "
-                        + resolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            id = resolver.resolveId(taxonId, identifier).iterator().next();
-        }
-        return id;
-    }
-
-    public class Config
-    {
-        protected String primaryIdentifier = null;
-        protected String secondaryIdentifier = null;
-        protected String symbol = null;
     }
 }
