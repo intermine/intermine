@@ -10,13 +10,12 @@
     <reference name="publication" referenced-type="Publication"/>
     <reference name="gene" referenced-type="Gene" reverse-reference="mRNAExpressionResults"/>
     <reference name="dataSet" referenced-type="DataSet"/>
-    <collection name="mRNAExpressionTerms" referenced-type="MRNAExpressionTerm"/>
-    <collection name="stages" referenced-type="Stage"/>
+    <collection name="mRNAExpressionTerms" referenced-type="OntologyTerm"/>
+    <collection name="stages" referenced-type="DevelopmentTerm"/>
   </class>
   <class name="Gene" is-interface="true">
     <collection name="mRNAExpressionResults" referenced-type="MRNAExpressionResult" reverse-reference="gene"/>
   </class>
-  <class name="Stage" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
-  </class>
+  <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true"/>
+
 </classes>
