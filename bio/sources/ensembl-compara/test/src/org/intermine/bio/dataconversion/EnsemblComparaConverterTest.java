@@ -49,8 +49,8 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
 
         File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
         converter.setCurrentFile(currentFile);
-        converter.setEnsemblComparaOrganisms("10116 6239 7227");
-        converter.setEnsemblComparaHomologues("9606");
+        converter.setEnsemblcomparaOrganisms("10116 6239 7227");
+        converter.setEnsemblcomparaHomologues("9606");
         converter.process(new StringReader(input));
         converter.close();
 
