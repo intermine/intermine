@@ -19,16 +19,16 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Intron;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Synonym;
 import org.intermine.model.bio.Transcript;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -89,15 +89,15 @@ public class IntronTest extends TestCase{
         IntronUtil iru = new IntronUtil(osw);
 
         Transcript t1 = createTranscriptT1(100);
-        int is1 = iru.createIntronFeatures(locationSet1, t1, t1.getChromosomeLocation());
+        int is1 = iru.createIntronFeatures(locationSet1, t1, t1.getChromosomeLocation(), t1.getGene());
         assertEquals(2, is1);
 
         Transcript t2 = createTranscriptT2(100);
-        int is2 = iru.createIntronFeatures(locationSet2, t2, t2.getChromosomeLocation());
+        int is2 = iru.createIntronFeatures(locationSet2, t2, t2.getChromosomeLocation(), t2.getGene());
         assertEquals(3, is2);
 
         Transcript t3 = createTranscriptT3(100);
-        int is3 = iru.createIntronFeatures(locationSet3, t3, t3.getChromosomeLocation());
+        int is3 = iru.createIntronFeatures(locationSet3, t3, t3.getChromosomeLocation(), t3.getGene());
         assertEquals(0, is3);
 
     }
@@ -120,7 +120,6 @@ public class IntronTest extends TestCase{
         q.addToSelect(qc);
         SingletonResults res = os.executeSingleton(q);
         Iterator resIter = res.iterator();
-
 
         Set introns = new HashSet(IteratorUtils.toList(resIter));
 
@@ -145,6 +144,9 @@ public class IntronTest extends TestCase{
             assertNotNull(loc.getStrand());
             assertEquals(1, loc.getDataSets().size());
 
+            Set<Gene> genes = ir.getGenes();
+            assertFalse(genes.isEmpty());
+            assertEquals(1, genes.size());
 
 //            assertEquals(1, ir.getSynonyms().size());
 //            Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
@@ -176,12 +178,20 @@ public class IntronTest extends TestCase{
         chr.setOrganism(organism);
         toStore.add(chr);
 
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        gene.setPrimaryIdentifier("FBgn00001");
+        gene.setLength(new Integer(10000));
+        gene.setId(new Integer(1001));
+        gene.setOrganism(organism);
+        toStore.add(gene);
+
         Transcript t1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t1.setLength(new Integer(1000));
         t1.setId(new Integer(10));
         t1.setPrimaryIdentifier("ENST00000306601");
         t1.setOrganism(organism);
         t1.setChromosome(chr);
+        t1.setGene(gene);
         Location location = createLocation(chr, t1, "1", 1, 1000);
         t1.setChromosomeLocation(location);
         toStore.add(location);
@@ -236,12 +246,20 @@ public class IntronTest extends TestCase{
         chr.setOrganism(organism);
         toStore.add(chr);
 
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        gene.setPrimaryIdentifier("FBgn00002");
+        gene.setLength(new Integer(10000));
+        gene.setId(new Integer(1002));
+        gene.setOrganism(organism);
+        toStore.add(gene);
+
         Transcript t2 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t2.setLength(new Integer(1050));
         t2.setId(new Integer(11));
         t2.setPrimaryIdentifier("ENST00000306610");
         t2.setOrganism(organism);
         t2.setChromosome(chr);
+        t2.setGene(gene);
         Location location = createLocation(chr, t2, "1", 1, 1150);
         t2.setChromosomeLocation(location);
         toStore.add(location);
