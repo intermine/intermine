@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.Ontology;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
@@ -50,6 +49,7 @@ public class BDGPInsituConverter extends BioFileConverter
 //    private Set<String> badTerms;
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
+    private Item ontology = null;
 
     /**
      * Construct a new instance of BDGPInsituConverter.
@@ -72,6 +72,9 @@ public class BDGPInsituConverter extends BioFileConverter
         stages = getStages();
         stageDescriptions = getStageDescriptions();
 //        badTerms = getBadTerms();
+
+        ontology = createItem("Ontology");
+        ontology.setAttribute("name", "GO");
 
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -110,7 +113,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
-                if (image != null && !"".equals(image)) {
+                if (StringUtils.isNotEmpty(image)) {
                     setImage(result, URL + image);
                 }
             }
@@ -215,9 +218,9 @@ public class BDGPInsituConverter extends BioFileConverter
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("MRNAExpressionTerm");
+        Item termItem = createItem("GOTerm");
         termItem.setAttribute("name", name);
-        termItem.setAttribute("type", "ImaGO");
+        termItem.setReference("ontology", ontology);
         store(termItem);
         terms.put(name, termItem);
         return termItem;
@@ -269,13 +272,13 @@ public class BDGPInsituConverter extends BioFileConverter
 
     private String[] getStages() throws ObjectStoreException {
         String[] stageItems = new String[17];
-        Item ontology = createItem("Ontology");
-        ontology.setAttribute("name", "Fly Development");
-        store(ontology);
+        Item item = createItem("Ontology");
+        item.setAttribute("name", "Fly Development");
+        store(item);
         for (int i = 1; i <= 16; i++) {
             Item stage = createItem("DevelopmentTerm");
             stage.setAttribute("name", "embryonic stage " + i);
-            stage.setReference("ontology", ontology);
+            stage.setReference("ontology", item);
             stageItems[i] = stage.getIdentifier();
             store(stage);
         }

@@ -12,7 +12,7 @@
     <reference name="gene" referenced-type="Gene" reverse-reference="mRNAExpressionResults"/>
     <collection name="images" referenced-type="Image"/>
     <collection name="stages" referenced-type="DevelopmentTerm"/>
-    <collection name="mRNAExpressionTerms" referenced-type="MRNAExpressionTerm"/>
+    <collection name="mRNAExpressionTerms" referenced-type="OntologyTerm"/>
   </class>
   <class name="Gene" is-interface="true">
     <collection name="mRNAExpressionResults" referenced-type="MRNAExpressionResult" reverse-reference="gene"/>
@@ -21,4 +21,5 @@
     <attribute name="url" type="java.lang.String"/>
   </class>
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true"/>
+  <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>
