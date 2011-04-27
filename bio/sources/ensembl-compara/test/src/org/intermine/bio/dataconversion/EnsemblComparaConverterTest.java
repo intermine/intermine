@@ -37,8 +37,8 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new EnsemblComparaConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
+        resolverFactory.addResolverEntry("7227", "FBgn0013672", Collections.singleton("FBgn0013672"));
+        resolverFactory.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
         converter.resolver = resolverFactory.getIdResolver(false);
     }
 
@@ -58,7 +58,6 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         //writeItemsFile(itemWriter.getItems(), "ensembl-compara-tgt-items.xml");
 
         Set expected = readItemSet("EnsemblComparaConverterTest_tgt.xml");
-// FIXME
-//        assertEquals(expected, itemWriter.getItems());
+        assertEquals(expected, itemWriter.getItems());
     }
 }
