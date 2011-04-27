@@ -91,30 +91,35 @@ public class ReportController extends InterMineAction
             Map<String, List<InlineList>> placedInlineLists =
                 new TreeMap<String, List<InlineList>>();
             // traverse all unplaced (non-header) InlineLists
-            for (InlineList list : reportObject.getNormalInlineLists()) {
-                FieldDescriptor fd = list.getDescriptor();
-                String taggedType = getTaggedType(fd);
+            List<InlineList> normalInlineLists = reportObject.getNormalInlineLists();
+            if (normalInlineLists != null) {
+                for (InlineList list : normalInlineLists) {
+                    FieldDescriptor fd = list.getDescriptor();
+                    String taggedType = getTaggedType(fd);
 
-                // assign lists to any aspects they are tagged to or put in unplaced lists
-                List<Tag> tags =
-                    tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
-                            + "." + fd.getName(), taggedType, superuser);
-                for (Tag tag : tags) {
-                    String tagName = tag.getTagName();
-                    if (AspectTagUtil.isAspectTag(tagName)) {
-                        List<InlineList> listsForAspect = placedInlineLists.get(tagName);
-                        if (listsForAspect == null) {
-                            listsForAspect = new ArrayList<InlineList>();
-                            placedInlineLists.put(tagName, listsForAspect);
+                    // assign lists to any aspects they are tagged to or put in unplaced lists
+                    List<Tag> tags =
+                        tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                                + "." + fd.getName(), taggedType, superuser);
+                    for (Tag tag : tags) {
+                        String tagName = tag.getTagName();
+                        if (AspectTagUtil.isAspectTag(tagName)) {
+                            List<InlineList> listsForAspect = placedInlineLists.get(tagName);
+                            if (listsForAspect == null) {
+                                listsForAspect = new ArrayList<InlineList>();
+                                placedInlineLists.put(tagName, listsForAspect);
+                            }
+                            listsForAspect.add(list);
                         }
-                        listsForAspect.add(list);
                     }
                 }
             }
             // any lists that aren't tagged will be 'unplaced'
             List<InlineList> unplacedInlineLists =
                 new ArrayList<InlineList>(reportObject.getNormalInlineLists());
-            unplacedInlineLists.removeAll(placedInlineLists.values());
+            if (unplacedInlineLists != null) {
+                unplacedInlineLists.removeAll(placedInlineLists.values());
+            }
 
             session.setAttribute("mapOfInlineLists", placedInlineLists);
             session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
