@@ -9,9 +9,15 @@
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="MRNAExpressionTerm">
-<attribute name="name" value="cat_term:global_finito"/>
-<attribute name="type" value="ImaGO"/>
+<item id="10_2" class="GOTerm">
+<attribute name="name" value="subset"/>
+<reference name="ontology" ref_id="0_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_3" class="GOTerm">
+<attribute name="name" value="yolk nuclei"/>
+<reference name="ontology" ref_id="0_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_15" class="DevelopmentTerm">
 <attribute name="name" value="embryonic stage 15"/>
@@ -60,14 +66,6 @@
 <attribute name="name" value="embryonic stage 3"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="10_3" class="MRNAExpressionTerm">
-<attribute name="name" value="yolk nuclei"/>
-<attribute name="type" value="ImaGO"/>
-</item>
-<item id="10_2" class="MRNAExpressionTerm">
-<attribute name="name" value="subset"/>
-<attribute name="type" value="ImaGO"/>
 </item>
 <item id="5_10" class="DevelopmentTerm">
 <attribute name="name" value="embryonic stage 10"/>
@@ -126,6 +124,11 @@
 <item id="5_6" class="DevelopmentTerm">
 <attribute name="name" value="embryonic stage 6"/>
 <reference name="ontology" ref_id="0_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_1" class="GOTerm">
+<attribute name="name" value="cat_term:global_finito"/>
+<reference name="ontology" ref_id="0_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_16" class="DevelopmentTerm">
