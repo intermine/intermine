@@ -132,8 +132,8 @@ public class EnsemblComparaConverter extends BioFileConverter
                 throw new RuntimeException("Invalid line, should be 4 columns but is '"
                         + line.length + "' instead");
             }
-            String refId1 = parseGene(line[0], line[1]);
-            String refId2 = parseGene(line[2], line[3]);
+            String refId1 = parseGene(bits[0], line[0]);
+            String refId2 = parseGene(bits[1], line[1]);
 
             if (refId1 == null || refId2 == null) {
                 continue;
