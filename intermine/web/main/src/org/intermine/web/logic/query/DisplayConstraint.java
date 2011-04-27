@@ -610,7 +610,9 @@ public class DisplayConstraint
             Map<String, InterMineBag> bags =
                 bagManager.getUserOrGlobalBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
-                return new ArrayList<String>(bags.keySet());
+                List<String> bagList = new ArrayList<String>(bags.keySet());
+                Collections.sort(bagList);
+                return bagList;
             }
         }
         return null;
