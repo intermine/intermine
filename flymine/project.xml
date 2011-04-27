@@ -125,6 +125,12 @@
       <property name="treefam.homologues" value="9606 10090 10116 7955"/>
     </source>
 
+    <source name="ensembl-compara" type="ensembl-compara">
+      <property name="src.data.dir" location="/shared/data/ensembl/compara"/>
+      <property name="ensemblcompara.organisms" value="7227"/>
+      <property name="ensemblcompara.homologues" value="9606"/>
+    </source>
+
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>

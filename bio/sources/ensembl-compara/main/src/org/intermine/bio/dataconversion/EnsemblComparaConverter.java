@@ -66,7 +66,7 @@ public class EnsemblComparaConverter extends BioFileConverter
      * Process all homologues for this organism.
      * @param taxonIds list of taxon IDs to process
      */
-    public void setEnsemblComparaOrganisms(String taxonIds) {
+    public void setEnsemblcomparaOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
@@ -75,7 +75,7 @@ public class EnsemblComparaConverter extends BioFileConverter
      * interest.  Otherwise ignore.
      * @param taxonIds list of taxon IDs to process
      */
-    public void setEnsemblComparaHomologues(String taxonIds) {
+    public void setEnsemblcomparaHomologues(String taxonIds) {
         this.homologues = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
@@ -128,8 +128,8 @@ public class EnsemblComparaConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            if (line.length != 4 && StringUtils.isNotEmpty(line.toString())) {
-                throw new RuntimeException("Invalid line, should be 4 columns but is '"
+            if (line.length != 3 && StringUtils.isNotEmpty(line.toString())) {
+                throw new RuntimeException("Invalid line, should be 3 columns but is '"
                         + line.length + "' instead");
             }
             String refId1 = parseGene(bits[0], line[0]);
