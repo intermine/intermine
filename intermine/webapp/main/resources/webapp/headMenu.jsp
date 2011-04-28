@@ -141,21 +141,26 @@
           <c:if test="${tabArray[0] == tab}">
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
-              <li id="subactive_${tab}"
+              <%-- open li element --%>
+        <li id="subactive_${tab}"
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
                 </c:choose>
-              >
+              > <%-- Close li element --%>
                 <div><span><fmt:message key="${tabArray[1]}" /></span></div>
               </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
+              <%-- open li --%>
               <li
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-                </c:choose>><div>
+                </c:choose>
+        >
+        <%-- close li --%>
+        <div>
                 <span onclick="alert('You need to log in'); return false;">
                   <fmt:message key="${tabArray[1]}"/>
                 </span>
@@ -163,11 +168,14 @@
               </li>
             </c:when>
             <c:otherwise>
+              <%-- open li --%>
               <li
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
                 </c:choose>
+        >
+        <%-- close li --%>
                 <div>
                 <a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
                   <fmt:message key="${tabArray[1]}"/>
