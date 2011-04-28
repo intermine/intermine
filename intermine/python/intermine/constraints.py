@@ -4,28 +4,100 @@ from .pathfeatures import PathFeature, PATH_PATTERN
 from .util import ReadableException
 
 class Constraint(PathFeature):
+    """
+    A class representing constraints on a query
+    ===========================================
+
+    All constraints inherit from this class, which
+    simply defines the type of element for the 
+    purposes of serialisation.
+    """
     child_type = "constraint"
 
 class LogicNode(object):
+    """
+    A class representing nodes in a logic graph
+    ===========================================
+
+    Objects which can be represented as nodes 
+    in the AST of a constraint logic graph should
+    inherit from this class, which defines 
+    methods for overloading built-in operations.
+    """
+
     def __add__(self, other):
+        """
+        Overloads +
+        ===========
+
+        Logic may be defined by using addition to sum
+        logic nodes::
+
+            > query.set_logic(con_a + con_b + con_c)
+            > str(query.logic)
+            ... A and B and C
+
+        """
         if not isinstance(other, LogicNode):
             return NotImplemented
         else:
             return LogicGroup(self, 'AND', other)
+
     def __and__(self, other):
+        """
+        Overloads &
+        ===========
+
+        Logic may be defined by using the & operator::
+
+            > query.set_logic(con_a & con_b)
+            > sr(query.logic)
+            ... A and B
+
+        """
         if not isinstance(other, LogicNode):
             return NotImplemented
         else:
             return LogicGroup(self, 'AND', other)
+
     def __or__(self, other):
+        """
+        Overloads |
+        ===========
+
+        Logic may be defined by using the | operator::
+
+            > query.set_logic(con_a | con_b)
+            > str(query.logic)
+            ... A or B
+
+        """
         if not isinstance(other, LogicNode):
             return NotImplemented
         else:
             return LogicGroup(self, 'OR', other)
 
 class LogicGroup(LogicNode):
+    """
+    A logic node that represents two sub-nodes joined in some way
+    =============================================================
+
+    A logic group is a logic node with two child nodes, which are
+    either connected by AND or by OR logic.
+    """
+
     LEGAL_OPS = frozenset(['AND', 'OR'])
+
     def __init__(self, left, op, right, parent=None):
+        """
+        Constructor
+        ===========
+
+        Makes a new node composes of two nodes (left and right),
+        and some operator.
+
+        Groups may have a reference to their parent.
+        """
         if not op in self.LEGAL_OPS:
             raise TypeError(op + " is not a legal logical operation")
         self.parent = parent
@@ -37,11 +109,23 @@ class LogicGroup(LogicNode):
                 node.parent = self
             
     def __repr__(self):
+        """
+        Provide a sensible representation of a node
+        """
         return '<' + self.__class__.__name__ + ': ' + str(self) + '>'
+
     def __str__(self):
+        """
+        Provide a human readable version of the group. The 
+        string version should be able to be parsed back into the
+        original logic group.
+        """
         core = ' '.join(map(str, [self.left, self.op.lower(), self.right]))
         return '(' + core + ')' if self.parent and self.op != self.parent.op else core
     def get_codes(self):
+        """
+        Get a list of all constraint codes used in this group.
+        """
         codes = []
         for node in [self.left, self.right]:
             if isinstance(node, LogicGroup):
@@ -51,17 +135,64 @@ class LogicGroup(LogicNode):
         return codes
 
 class LogicParseError(ReadableException):
+    """
+    An error representing problems in parsing constraint logic.
+    """
     pass
 
 class LogicParser(object):
+    """
+    Parses logic strings into logic groups
+    ======================================
+
+    Instances of this class are used to parse logic strings into
+    abstract syntax trees, and then logic groups. This aims to provide
+    robust parsing of logic strings, with the ability to identify syntax 
+    errors in such strings.
+    """
 
     def __init__(self, query):
+        """
+        Constructor
+        ===========
+
+        Parsers need access to the query they are parsing for, in
+        order to reference the constraints on the query.
+
+        @param query: The parent query object
+        @type query: intermine.query.Query
+        """
         self._query = query
 
     def get_constraint(self, code):
+        """
+        Get the constraint with the given code
+        ======================================
+
+        This method fetches the constraint from the
+        parent query with the matching code.
+
+        @see: intermine.query.Query.get_constraint
+        @rtype: intermine.constraints.CodedConstraint
+        """
         return self._query.get_constraint(code) 
 
     def get_priority(self, op):
+        """
+        Get the priority for a given operator
+        =====================================
+
+        Operators have a specific precedence, from highest
+        to lowest:
+          - () 
+          - AND 
+          - OR
+
+        This method returns an integer which can be 
+        used to compare operator priorities. 
+
+        @rtype: int
+        """
         return {
         "AND": 2,
         "OR" : 1,
@@ -81,6 +212,24 @@ class LogicParser(object):
     }
 
     def parse(self, logic_str):
+        """
+        Parse a logic string into an abstract syntax tree
+        =================================================
+
+        Takes a string such as "A and B or C and D", and parses it
+        into a structure which represents this logic as a binary
+        abstract syntax tree. The above string would parse to
+        "(A and B) or (C and D)", as AND binds more tightly than OR.
+
+        Note that only singly rooted trees are parsed.
+
+        @param logic_str: The logic defininition as a string
+        @type logic_str: string
+
+        @rtype: LogicGroup
+
+        @raise LogicParseError: if there is a syntax error in the logic
+        """
         def flatten(l): 
             ret = []
             for item in l:
@@ -99,6 +248,22 @@ class LogicParser(object):
         return abstract_syntax_tree
 
     def check_syntax(self, infix_tokens):
+        """
+        Check the syntax for errors before parsing
+        ==========================================
+
+        Syntax is checked before parsing to provide better errors, 
+        which should hopefully lead to more informative error messages.
+
+        This checks for:
+         - correct operator positions (cannot put two codes next to each other without intervening operators)
+         - correct grouping (all brackets are matched, and contain valid expressions)
+
+        @param infix_tokens: The input parsed into a list of tokens.
+        @type infix_tokens: iterable
+
+        @raise LogicParseError: if there is a problem.
+        """
         need_an_op = False
         need_binary_op_or_closing_bracket = False
         processed = []
@@ -138,6 +303,18 @@ class LogicParser(object):
             raise LogicParseError(message + '"' + ' '.join(infix_tokens) + '"')
         
     def infix_to_postfix(self, infix_tokens):
+        """
+        Convert a list of infix tokens to postfix notation
+        ==================================================
+
+        Take in a set of infix tokens and return the set parsed 
+        to a postfix sequence.
+
+        @param infix_tokens: The list of tokens
+        @type infix_tokens: iterable
+
+        @rtype: list
+        """
         stack = []
         postfix_tokens = []
         for token in infix_tokens:
@@ -166,6 +343,20 @@ class LogicParser(object):
         return postfix_tokens
 
     def postfix_to_tree(self, postfix_tokens):
+        """
+        Convert a set of structured tokens to a single LogicGroup
+        =========================================================
+
+        Convert a set of tokens in postfix notation to a single
+        LogicGroup object.
+
+        @param postfix_tokens: A list of tokens in postfix notation.
+        @type postfix_tokens: list
+
+        @rtype: LogicGroup
+
+        @raise AssertionError: is the tree doesn't have a unique root.
+        """
         stack = []
         for token in postfix_tokens:
             if token not in self.ops:
@@ -181,29 +372,116 @@ class LogicParser(object):
         return stack.pop()
 
 class CodedConstraint(Constraint, LogicNode):
+    """
+    A parent class for all constraints that have codes
+    ==================================================
+
+    Constraints that have codes are the principal logical 
+    filters on queries, and need to be refered to individually
+    (hence the codes). They will all have a logical operation they
+    embody, and so have a reference to an operator.
+
+    This class is not meant to be instantiated directly, but instead
+    inherited from to supply default behaviour.
+    """
+
     OPS = set([])
+
     def __init__(self, path, op, code="A"):
+        """
+        Constructor
+        ===========
+
+        @param path: The path to constrain
+        @type path: string
+
+        @param op: The operation to apply - must be in the OPS set
+        @type op: string
+        """
         if op not in self.OPS:
             raise TypeError(op + " not in " + str(self.OPS))
         self.op = op
         self.code = code
         super(CodedConstraint, self).__init__(path)
+
     def __str__(self):
+        """
+        Stringify to the code they are refered to by.
+        """
         return self.code
     def to_string(self):
+        """
+        Provide a human readable representation of the logic. 
+        This method is called by repr.
+        """
         s = super(CodedConstraint, self).to_string()
         return " ".join([s, self.op])
+
     def to_dict(self):
+        """
+        Return a dict object which can be used to construct a 
+        DOM element with the appropriate attributes.
+        """
         d = super(CodedConstraint, self).to_dict()
         d.update(op=self.op, code=self.code)
         return d
     
 class UnaryConstraint(CodedConstraint):
+    """
+    Constraints which have just a path and an operator
+    ==================================================
+
+    These constraints are simple assertions about the 
+    object/value refered to by the path. The set of valid 
+    operators is:
+     - IS NULL
+     - IS NOT NULL
+
+    """
     OPS = set(['IS NULL', 'IS NOT NULL'])
 
 class BinaryConstraint(CodedConstraint):
+    """
+    Constraints which have an operator and a value
+    ==============================================
+
+    These constraints assert a relationship between the
+    value represented by the path (it must be a representation
+    of a value, ie an Attribute) and another value - ie. the 
+    operator takes two parameters.
+
+    In all case the 'left' side of the relationship is the path,
+    and the 'right' side is the supplied value.
+
+    Valid operators are:
+     - =        (equal to)
+     - !=       (not equal to)
+     - <        (less than)
+     - >        (greater than)
+     - <=       (less than or equal to)
+     - >=       (greater than or equal to)
+     - LIKE     (same as equal to, but with implied wildcards)
+     - NOT LIKE (same as not equal to, but with implied wildcards)
+
+    """
     OPS = set(['=', '!=', '<', '>', '<=', '>=', 'LIKE', 'NOT LIKE'])
     def __init__(self, path, op, value, code="A"):
+        """
+        Constructor
+        ===========
+
+        @param path: The path to constrain
+        @type path: string
+
+        @param op: The relationship between the value represented by the path and the value provided (must be a valid operator)
+        @type op: string
+
+        @param value: The value to compare the stored value to
+        @type value: string or number
+
+        @param code: The code for this constraint (default = "A")
+        @type code: string
+        """
         self.value = value
         super(BinaryConstraint, self).__init__(path, op, code)
 
@@ -216,6 +494,23 @@ class BinaryConstraint(CodedConstraint):
         return d
 
 class ListConstraint(CodedConstraint):
+    """
+    Constraints which refer to an objects membership of lists
+    =========================================================
+
+    These constraints assert a membership relationship between the
+    object represented by the path (it must always be an object, ie.
+    a Reference or a Class) and a List. Lists are collections of 
+    objects in the database which are stored in InterMine 
+    datawarehouses. These lists must be set up before the query is run, either
+    manually in the webapp or by using the webservice API list 
+    upload feature.
+
+    Valid operators are:
+     - IN 
+     - NOT IN
+
+     """
     OPS = set(['IN', 'NOT IN'])
     def __init__(self, path, op, list_name, code="A"):
         self.list_name = list_name
@@ -230,9 +525,37 @@ class ListConstraint(CodedConstraint):
         return d
 
 class LoopConstraint(CodedConstraint):
+    """
+    Constraints with refer to object identity
+    =========================================
+
+    These constraints assert that two paths refer to the same
+    object. 
+
+    Valid operators:
+     - IS
+     - IS NOT
+
+    """
     OPS = set(['IS', 'IS NOT'])
     SERIALISED_OPS = {'IS':'=', 'IS NOT':'!='}
     def __init__(self, path, op, loopPath, code="A"):
+        """
+        Constructor
+        ===========
+
+        @param path: The path to constrain
+        @type path: string
+
+        @param op: The relationship between the path and the path provided (must be a valid operator)
+        @type op: string
+
+        @param loopPath: The path to check for identity against
+        @type value: string
+
+        @param code: The code for this constraint (default = "A")
+        @type code: string
+        """
         self.loopPath = loopPath
         super(LoopConstraint, self).__init__(path, op, code)
 
