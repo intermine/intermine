@@ -19,6 +19,12 @@
     background-color: #E0E0E0;
 }
 
+p.apology {
+    border: 1px solid #E0E0E0;
+    padding: 10px;
+    margin: 10px;
+}
+
 </style>
 
 <script type="text/javascript">
