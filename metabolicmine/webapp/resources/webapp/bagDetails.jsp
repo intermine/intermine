@@ -97,6 +97,18 @@
       });
     </script>
 
+    <%-- tags --%>
+    <c:if test="${PROFILE.loggedIn}">
+      <div class="tags">
+        <c:set var="taggable" value="${bag}"/>
+        <tiles:insert name="inlineTagEditor.tile">
+          <tiles:put name="taggable" beanName="taggable"/>
+          <tiles:put name="vertical" value="true"/>
+          <tiles:put name="show" value="true"/>
+        </tiles:insert>
+      </div>
+    </c:if>
+
     <%-- meta --%>
     <table class="fields">
       <tr>
@@ -192,21 +204,10 @@
           });
         </script>
       </tr>
-
-      <%-- tags --%>
-      <c:if test="${PROFILE.loggedIn}">
-        <tr class="tags">
-          <td>
-          <c:set var="taggable" value="${bag}"/>
-          <tiles:insert name="inlineTagEditor.tile">
-            <tiles:put name="taggable" beanName="taggable"/>
-            <tiles:put name="vertical" value="true"/>
-            <tiles:put name="show" value="true"/>
-          </tiles:insert>
-          </td>
-        </tr>
-      </c:if>
     </table>
+
+    <div class="clear"></div>
+
   </div>
 
 </div>
