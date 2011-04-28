@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Moose;
-use InterMine::TypeLibrary qw(Query);
+use Webservice::InterMine::Types qw(Query);
 use MooseX::Types::Moose qw(HashRef Int Str);
 use Webservice::InterMine::LogicalOperator;
 use Webservice::InterMine::LogicalSet;

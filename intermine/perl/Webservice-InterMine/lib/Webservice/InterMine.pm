@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9605";
+our $VERSION = "0.9700";
 
 =head1 NAME
 
@@ -86,8 +86,9 @@ Please see L<Webservice::InterMine::Query>
 
 sub new_query {
     my $class = shift;
-    my $service_args = ( ref $_[0] ) ? shift : [];
-    return $class->get_service(@$service_args)->new_query(@_);
+    my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->new_query(%args);
 }
 
 =head2 load_query([\@service_args], source_file|source_string => $source, %opts )

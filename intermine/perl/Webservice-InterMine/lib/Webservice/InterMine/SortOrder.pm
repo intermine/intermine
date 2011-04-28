@@ -3,7 +3,7 @@ package Webservice::InterMine::SortOrder;
 use Moose;
 extends 'Webservice::InterMine::PathFeature';
 
-use InterMine::TypeLibrary qw(SortDirection);
+use Webservice::InterMine::Types qw(SortDirection);
 
 around BUILDARGS => sub {
     my $orig  = shift;

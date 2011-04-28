@@ -6,7 +6,12 @@ requires qw(service name editable_constraints);
 
 sub resource_path {
     my $self = shift;
-    return $self->service->TEMPLATEQUERY_PATH;
+    return $self->service->TEMPLATE_QUERY_PATH;
+}
+
+sub upload_path {
+    my $self = shift;
+    return $self->service->TEMPLATE_SAVE_PATH;
 }
 
 sub get_request_parameters {

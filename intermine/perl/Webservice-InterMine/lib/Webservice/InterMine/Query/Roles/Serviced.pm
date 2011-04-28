@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Roles::Serviced;
 
 use Moose::Role;
-use InterMine::TypeLibrary qw(Service);
+use Webservice::InterMine::Types qw(Service);
 
 # Declare our generated subs so other can consume them
 sub service            { }

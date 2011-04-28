@@ -49,7 +49,7 @@ package Webservice::InterMine::LogicalSet;
 
 use Moose;
 use Webservice::InterMine::Role::Logical;
-use InterMine::TypeLibrary qw(LogicOperator LogicGroup);
+use Webservice::InterMine::Types qw(LogicOperator LogicGroup);
 with 'Webservice::InterMine::Role::Logical';
 
 has op => (

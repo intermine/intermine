@@ -9,6 +9,11 @@ sub resource_path {
     return $self->service->QUERY_PATH;
 }
 
+sub upload_path {
+    my $self = shift;
+    return $self->service->QUERY_SAVE_PATH;
+}
+
 sub get_request_parameters {
     my $self = shift;
     

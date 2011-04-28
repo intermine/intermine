@@ -1,3 +1,4 @@
+package Webservice::InterMine::Service;
 
 =head1 NAME
 
@@ -25,8 +26,6 @@ objects you can use for running queries.
 
 =cut
 
-package Webservice::InterMine::Service;
-
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
 use Net::HTTP;
@@ -34,8 +33,9 @@ use URI;
 use LWP;
 use MIME::Base64;
 use MooseX::Types::Moose qw/Str Int/;
-use InterMine::TypeLibrary
-  qw(VersionNumber ServiceRootUri Model TemplateFactory SavedQueryFactory ListFactory);
+use Webservice::InterMine::Types
+  qw(ServiceVersion ServiceRootUri TemplateFactory SavedQueryFactory ListFactory);
+use InterMine::Model::Types qw(Model);
 
 
 =head2 new( $url, [$user, $pass] )
@@ -64,15 +64,17 @@ around BUILDARGS => sub {
 };
 
 use constant {
-    QUERY_PATH         => '/query/results',
-    MODEL_PATH         => '/model',
-    TEMPLATES_PATH     => '/templates/xml',
-    TEMPLATEQUERY_PATH => '/template/results',
-    VERSION_PATH       => '/version',
-    USER_AGENT         => 'WebserviceInterMinePerlAPIClient',
-    LIST_PATH          => '/lists/xml',
-    SAVEDQUERY_PATH    => '/savedqueries/xml',
-    RELEASE_PATH       => '/version/release',
+    QUERY_PATH          => '/query/results',
+    QUERY_SAVE_PATH     => '/query/upload',
+    MODEL_PATH          => '/model/xml',
+    TEMPLATES_PATH      => '/templates/xml',
+    TEMPLATE_QUERY_PATH => '/template/results',
+    TEMPLATE_SAVE_PATH  => '/template/upload',
+    VERSION_PATH        => '/version',
+    USER_AGENT          => 'WebserviceInterMinePerlAPIClient',
+    LIST_PATH           => '/lists/json',
+    SAVEDQUERY_PATH     => '/savedqueries/xml',
+    RELEASE_PATH        => '/version/release',
 };
 
 =head1 CONSTRUCTION
@@ -139,6 +141,7 @@ sub new_query {
     my $query = Webservice::InterMine::Query->new(
         service => $self,
         model   => $self->model,
+        %args,
     );
     return apply_roles( $query, $roles );
 }
@@ -168,6 +171,10 @@ sub new_from_xml {
 
 This checks to see if there is a template of this name in the
 webservice, and returns it to you if it exists.
+
+=head2 get_templates() 
+
+Returns all the templates available from the service as a list. 
 
 =cut
 
@@ -206,6 +213,7 @@ has _saved_queries => (
     },
     handles => { saved_query => 'get_saved_query_by_name', },
 );
+
 has _lists => (
     is      => 'ro',
     isa     => ListFactory,
@@ -215,7 +223,10 @@ has _lists => (
         my $self = shift;
         $self->fetch( $self->root . LIST_PATH );
     },
-    handles => { list => 'get_list_by_name', },
+    handles => { 
+        list => 'get_list_by_name', 
+        lists => 'get_lists', 
+    },
 );
 
 =head2 model
@@ -242,7 +253,7 @@ which serves to validate the webservice.
 
 has version => (
     is       => 'ro',
-    isa      => VersionNumber,
+    isa      => ServiceVersion,
     required => 1,
     default  => sub {
         my $self = shift;
@@ -273,12 +284,20 @@ sub agent {
     my $ua = LWP::UserAgent->new;
     $ua->env_proxy;
     $ua->agent(USER_AGENT);
-    if ($self->has_user and $self->has_pass) {
-        my $auth_string = join(':', $self->user, $self->pass);
-        $ua->default_header( Authorization => encode_base64($auth_string) );
+    if (my $auth = $self->get_authstring) {
+        $ua->default_header( Authorization => $auth);
     }
 
     return $ua;
+}
+
+sub get_authstring {
+    my $self = shift;
+    if ($self->has_user and $self->has_pass) {
+        my $auth_string = join(':', $self->user, $self->pass);
+        return encode_base64($auth_string);
+    }
+    return undef;
 }
 
 # Applies user supplied roles to object instances at runtime
@@ -295,35 +314,52 @@ sub apply_roles {
     return $instance;
 }
 
-# Returns a ResultIterator to process the query results with
+=head2 get_results_iterator($url, $view_list, $row_format, $json_format, $roles)
+
+Returns a results iterator that iterates over result rows in 
+the requested format. 
+
+Parameters:
+
+=over 4
+
+=item $url: The path to the requested resource
+=item $query_form: A hashref of query parameters
+=item $view_list: an array-ref of view-paths
+=item $row_format: the format for each parsed row
+=item $json_format: how to handle json results
+=item $roles: an optional array-ref of roles to apply
+
+=back 
+
+Returns a L<Webservice::InterMine::ResultIterator>
+
+=cut
+
 sub get_results_iterator {
     require Webservice::InterMine::ResultIterator;
-    my $self      = shift;
-    my $url       = shift;
-    my $view_list = shift;
-    my $roles     = shift;
+    my $self        = shift;
 
-    # my $connection = Net::HTTP->new(Host => $self->host) or
-    #   confess "Could not connect to host $@";
-    # $connection->write_request(
-    # 	GET => $url,
-    # 	'User-Agent' => USER_AGENT
-    # );
-    my $resp    = $self->agent->get($url);
-    my $content = $resp->content;
-    open( my $io, '<', \$content ) or confess "$!";
+    my $url         = shift; # The path to the resource
+    my $query_form  = shift; # The query params, as a hashref
+    my $view_list   = shift; # The output columns, as an arrayref
+    my $row_format  = shift; # The requested row format (str)
+    my $json_format = shift; # How to handle json results
+    my $roles       = shift; # An optional list of roles
+
     my $response = Webservice::InterMine::ResultIterator->new(
-
-        #	connection => $connection,
+        url           => $url,
+        parameters    => $query_form,
         view_list     => $view_list,
-        error_code    => $resp->code,
-        error_message => $resp->message,
-        content       => $io,
+        row_format    => $row_format,
+        json_format   => $json_format,
+        authorization => $self->get_authstring(),
     );
-    confess $response->status_line, $resp->content
+    confess $response->status_line, $response->content
       if $response->is_error;
     return apply_roles( $response, $roles );
 }
+
 
 # Fetch files from the webservice (used to fetch the model and the
 # templates with - in the future also for saved queries and lists
@@ -343,12 +379,14 @@ sub fetch {
 # not designed to be accessed directly,
 # but through the upload method on various objects
 sub send_off {
-    confess "NOT IMPLEMENTED YET";
     my $self = shift;
     my ( $xml, $url ) = @_;
     my $form = { xml => $xml, };
     my $resp = $self->agent->post( $url, $form );
-    return $resp;
+    if ( $resp->is_error ) {
+        confess $resp->status_line, "\n", $resp->content;
+    } 
+    return $resp->content;
 }
 
 __PACKAGE__->meta->make_immutable;

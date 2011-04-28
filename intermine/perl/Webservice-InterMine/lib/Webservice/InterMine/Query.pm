@@ -10,6 +10,7 @@ with(
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::WriteOutLegacy',
     'Webservice::InterMine::Query::Roles::Serviced',
+    'Webservice::InterMine::Query::Roles::Templateable',
 );
 
 __PACKAGE__->meta->make_immutable;
