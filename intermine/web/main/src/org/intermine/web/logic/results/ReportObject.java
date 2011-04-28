@@ -561,6 +561,11 @@ public class ReportObject
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
 
         /** InlineLists **/
+        inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader
+                : new ArrayList<InlineList>();
+        inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal
+                : new ArrayList<InlineList>();
+
         Type type = webConfig.getTypes().get(getClassDescriptor().getName());
         // init lists from WebConfig Type
         List<InlineList> inlineListsWebConfig = type.getInlineLists();
@@ -664,8 +669,6 @@ public class ReportObject
     */
     public List<InlineList> getNormalInlineLists() {
         if (inlineListsNormal == null) {
-            inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal
-                    : new ArrayList<InlineList>();
             initialise();
         }
         return inlineListsNormal;
@@ -677,8 +680,6 @@ public class ReportObject
      */
     public List<InlineList> getHeaderInlineLists() {
         if (inlineListsHeader == null) {
-            inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader
-                    : new ArrayList<InlineList>();
             initialise();
         }
         return inlineListsHeader;
