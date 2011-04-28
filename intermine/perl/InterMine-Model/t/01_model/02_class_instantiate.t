@@ -94,7 +94,7 @@ subtest "Test field type constraints" => sub {
         note "\ntesting longs";
         plan tests => 9;
 
-        my $error = qr/Validation failed for 'InterMine::TypeLibrary::BigInt' with value Foo/;
+        my $error = qr/Validation failed for 'InterMine::Model::Types::BigInt' with value Foo/;
         throws_ok {$types->setLongType("Foo")}  $error, 
             "and it throws errors when you try to put something into the wrong slot"
                 or diag($types->getLongType);

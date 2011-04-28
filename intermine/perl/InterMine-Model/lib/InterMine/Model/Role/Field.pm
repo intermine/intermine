@@ -1,3 +1,4 @@
+package InterMine::Model::Role::Field;
 
 =head1 NAME
 
@@ -57,11 +58,10 @@ under the same terms as Perl itself.
 
 =cut 
 
-package InterMine::Model::Role::Field;
 
 use Moose::Role;
 
-use InterMine::TypeLibrary qw(ClassDescriptor);
+use InterMine::Model::Types qw(ClassDescriptor);
 use MooseX::Types::Moose qw(Str);
 use Scalar::Util qw(refaddr);
 
