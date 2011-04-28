@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2011 metabolicMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -56,17 +56,9 @@ public class UniProtCommentsDisplayer extends CustomDisplayer
     }
 
     // allowed comment types
-    private String allowedCommentTypes[] = new String []{
-            "similarity",
-            "function",
-            "tissue specificity",
-            "subcellular location",
-            "catalytic activity",
-            "disease",
-            "developmental stage",
-            "pathway",
-            "pharmaceutical"
-            };
+    private final String[] allowedCommentTypes = new String []{"similarity", "function",
+        "tissue specificity", "subcellular location", "catalytic activity", "disease",
+        "developmental stage", "pathway", "pharmaceutical"};
 
     @SuppressWarnings("unchecked")
     @Override
@@ -131,43 +123,45 @@ public class UniProtCommentsDisplayer extends CustomDisplayer
         // resulting HashMap <comment.text, the rest...>
         LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
 
-        listing:
-            while (values.hasNext()) {
-                List<ResultElement> row = values.next();
+    LISTING:
+        while (values.hasNext()) {
+            List<ResultElement> row = values.next();
                 // XXX: no guarantee on order! Expect the unexpected...
-                HashMap<String, Object> columns = new HashMap<String, Object>();
+            HashMap<String, Object> columns = new HashMap<String, Object>();
 
                 // Gene.proteins.comments.text
-                String commentText = ((ResultElement) row.get(posCommentText)).getField().toString();
-                // comment is already there...
-                if (result.containsKey(commentText)) {
+            String commentText = ((ResultElement) row.get(posCommentText)).getField().toString();
+            // comment is already there...
+            if (result.containsKey(commentText)) {
                     // ... add the protein ID to an existing "row"
-                    columns = (HashMap<String, Object>) result.get(commentText);
-                    // fetch the values already there...
-                    HashMap<String, String> proteins = (HashMap<String, String>)columns.get("proteins");
-                    proteins.put(row.get(posObjectID).getField().toString(), row.get(posProteinID).getField().toString());
-                    // add the new protein
-                    columns.put("proteins", proteins);
+                columns = (HashMap<String, Object>) result.get(commentText);
+                // fetch the values already there...
+                HashMap<String, String> proteins = (HashMap<String, String>)
+                    columns.get("proteins");
+                proteins.put(row.get(posObjectID).getField().toString(),
+                        row.get(posProteinID).getField().toString());
+                // add the new protein
+                columns.put("proteins", proteins);
 
-                    // skip...
-                    continue listing;
-                } else {
-                    // save new entry under "proteins"
-                    HashMap<String, String> proteins = new HashMap<String, String>();
-                    proteins.put(row.get(posObjectID).getField().toString(), row.get(posProteinID).getField().toString());
-                    columns.put("proteins", proteins);
+                // skip...
+                continue LISTING;
+            } else {
+                // save new entry under "proteins"
+                HashMap<String, String> proteins = new HashMap<String, String>();
+                proteins.put(row.get(posObjectID).getField().toString(),
+                        row.get(posProteinID).getField().toString());
+                columns.put("proteins", proteins);
 
-                    // save the comment text (again...)
-                    columns.put("text", commentText);
+                // save the comment text (again...)
+                columns.put("text", commentText);
 
                     // save the comment type
-                    columns.put("type", row.get(posCommentType).getField().toString());
+                columns.put("type", row.get(posCommentType).getField().toString());
 
                     // save back to results
-                    result.put(commentText, columns);
-                }
+                result.put(commentText, columns);
             }
-
+        }
         return result;
     }
 
@@ -189,7 +183,8 @@ public class UniProtCommentsDisplayer extends CustomDisplayer
             List<ResultElement> row = values.next();
 
             // save back to results
-            result.put(row.get(posCommentText).getField().toString(), row.get(posCommentType).getField().toString());
+            result.put(row.get(posCommentText).getField().toString(),
+                    row.get(posCommentType).getField().toString());
         }
 
         return result;
@@ -209,11 +204,11 @@ public class UniProtCommentsDisplayer extends CustomDisplayer
                 "Gene.proteins.primaryIdentifier",
                 "Gene.proteins.id",
                 "Gene.proteins.comments.type",
-                "Gene.primaryIdentifier"
-                );
+                "Gene.primaryIdentifier");
         query.addOrderBy("Gene.proteins.comments.type", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Gene.id", geneID));
-        query.addConstraint(Constraints.oneOfValues("Gene.proteins.comments.type", Arrays.asList(allowedCommentTypes)));
+        query.addConstraint(Constraints.oneOfValues("Gene.proteins.comments.type",
+                Arrays.asList(allowedCommentTypes)));
 
         return query;
     }
@@ -230,13 +225,11 @@ public class UniProtCommentsDisplayer extends CustomDisplayer
         query.addViews(
                 "Protein.comments.text",
                 "Protein.comments.type",
-                "Protein.primaryIdentifier"
-                );
+                "Protein.primaryIdentifier");
         query.addOrderBy("Protein.comments.type", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Protein.id", proteinID));
-        query.addConstraint(Constraints.oneOfValues("Protein.comments.type", Arrays.asList(allowedCommentTypes)));
-
+        query.addConstraint(Constraints.oneOfValues("Protein.comments.type",
+                Arrays.asList(allowedCommentTypes)));
         return query;
     }
-
 }
