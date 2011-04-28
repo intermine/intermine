@@ -21,12 +21,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Runs the query Upload Service to handle user query uploads.
- * @author Alexis Kalderimis
+ * Runs the query-to-list service to run queries and save them as lists.
+ * @author Alex Kalderimis
  *
  */
-public class QueryUploadServlet extends HttpServlet
-{
+public class QueryToListServlet extends HttpServlet {
 
     /**
      * Eclipse made me do it!!
@@ -62,6 +61,7 @@ public class QueryUploadServlet extends HttpServlet
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new QueryUploadService(im).service(request, response);
+        new QueryToListService(im).service(request, response);
     }
+
 }

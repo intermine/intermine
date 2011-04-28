@@ -12,6 +12,9 @@ import org.intermine.webservice.exceptions.BadRequestException;
 
 public class ListDeletionService extends ListUploadService {
 
+    /**
+     * Usage information to help users who provide incorrect input.
+     */
     public static final String USAGE =
           "List Deletion Service\n"
         + "=====================\n"
