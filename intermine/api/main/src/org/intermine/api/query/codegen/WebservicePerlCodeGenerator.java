@@ -52,32 +52,38 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     protected static final String ENDL = System.getProperty("line.separator");
 
     protected static final String BOILERPLATE =
-    	"#!/usr/bin/perl" + ENDL
-    	+ ENDL
-    	+ "use strict;" + ENDL
-    	+ "use warnings;" + ENDL + ENDL;
+        "#!/usr/bin/perl" + ENDL
+        + ENDL
+        + "use strict;" + ENDL
+        + "use warnings;" + ENDL + ENDL;
 
     protected static final String INTRO =
           "######################################################################" + ENDL
         + "# This is an automatically generated script to run your query." + ENDL
-    	+ "# To use it you will require the InterMine Perl client libraries." + ENDL
-    	+ "# These can be installed from CPAN, using your preferred client, eg:" + ENDL
-    	+ "#" + ENDL
-    	+ "#" + INDENT + "sudo cpan Webservice::InterMine" + ENDL
-    	+ "#" + ENDL
-    	+ "# For help using these modules, please see these resources:" + ENDL
-    	+ "#" + ENDL
-    	+ "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
+        + "# To use it you will require the InterMine Perl client libraries." + ENDL
+        + "# These can be installed from CPAN, using your preferred client, eg:" + ENDL
+        + "#" + ENDL
+        + "#" + INDENT + "sudo cpan Webservice::InterMine" + ENDL
+        + "#" + ENDL
+        + "# For help using these modules, please see these resources:" + ENDL
+        + "#" + ENDL
+        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
         + "#       - API reference " + ENDL
-    	+ "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
+        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
         + "#       - A How-To manual" + ENDL
-    	+ "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
+        + "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
         + "#       - General Usage" + ENDL
-    	+ "#  * http://www.intermine.org/wiki/WebService" + ENDL
+        + "#  * http://www.intermine.org/wiki/WebService" + ENDL
         + "#       - Reference documentation for the underlying REST API" + ENDL
         + "#" + ENDL
         + "######################################################################" + ENDL
-    	+ ENDL;
+        + ENDL;
+
+    protected static final String RESULTS_PRINTING =
+           "while (<$results>) {" + ENDL
+         + INDENT + "print $_, \"\\n\";" + ENDL
+         + "}" + ENDL
+         + ENDL;
     /**
      * This method will generate web service source code in Perl from a path query
      * or template query.
@@ -85,6 +91,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
      * @param wsCodeGenInfo a WebserviceCodeGenInfo object
      * @return web service source code in a string
      */
+    @Override
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
@@ -100,20 +107,23 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
         StringBuffer sb = new StringBuffer(BOILERPLATE).append(INTRO);
-    	sb.append("# Passing a url to the import statement sets this webservice as your default" + ENDL);
-    	if (wsCodeGenInfo.isPublic()) {
-    		sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "';" + ENDL);
-    	} else {
-    		sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "', "
-    				+ "'" + wsCodeGenInfo.getUserName() + "', YOUR-PASSWORD;" + ENDL);
-    	}
+        sb.append("# The following import statement sets " + projectTitle + " as your default"
+                + ENDL);
+        if (wsCodeGenInfo.isPublic()) {
+            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "';"
+                    + ENDL);
+        } else {
+            sb.append("# You must also supply your login details here to access this query" + ENDL);
+            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "', "
+                    + "'" + wsCodeGenInfo.getUserName() + "', YOUR-PASSWORD;" + ENDL);
+        }
         sb.append(ENDL);
 
         if ("PathQuery".equals(queryClassName)) {
             // Import the client library
 
             if (query.getDescription() != null && !"".equals(query.getDescription())) {
-            	printLine(sb, "# ", "Description: " + query.getDescription());
+                printLine(sb, "# ", "Description: " + query.getDescription());
                 sb.append(ENDL);
             }
 
@@ -137,12 +147,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
                 if ( // The default
                     query.getOrderBy().size() == 1
-                    && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
-                    && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                    sb.append("# Uncomment end edit the line below (the default) to select a custom sort order:" + ENDL);
+                        && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
+                        && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
+                    sb.append("# edit the line below to change the sort order:" + ENDL);
                     sb.append("# ");
                 } else {
-                    sb.append("# Your custom sort order is specified with the following code:" + ENDL);
+                    sb.append("# Your custom sort order is specified with the following code:"
+                            + ENDL);
                 }
                 for (OrderElement oe : query.getOrderBy()) {
                     sb.append("$query->add_sort_order(");
@@ -157,24 +168,24 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 // Add comments for constraints
                 sb.append("# You can edit the constraint values below" + ENDL);
 
-                int coded_queries = 0;
-                List<String> uncoded_query_texts = new ArrayList<String>();
-                List<String> coded_query_texts = new ArrayList<String>();
+                int codedQueries = 0;
+                List<String> uncodedQueryTexts = new ArrayList<String>();
+                List<String> codedQueryTexts = new ArrayList<String>();
 
                 for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
                     PathConstraint pc = entry.getKey();
                     if (entry.getValue() != null) {
-                        coded_queries++;
-                        coded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
+                        codedQueries++;
+                        codedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
                     } else {
-                        uncoded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
+                        uncodedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
                     }
                 }
                 // Subclass constraints must come first or the query will break
-                for (String text: uncoded_query_texts) {
+                for (String text: uncodedQueryTexts) {
                     sb.append(text);
                 }
-                for (String text: coded_query_texts) {
+                for (String text: codedQueryTexts) {
                     sb.append(text);
                 }
                 sb.append(ENDL);
@@ -183,10 +194,11 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 if (query.getConstraintLogic() != null
                     && !"".equals(query.getConstraintLogic())) {
                     String logic = query.getConstraintLogic();
-                    if (coded_queries <= 1 || logic.indexOf("or") == -1) {
-                        sb.append("# Uncomment and edit the code below to specify your own custom logic:" + ENDL + "# ");
+                    if (codedQueries <= 1 || logic.indexOf("or") == -1) {
+                        sb.append("# Edit the code below to specify your own custom logic:" + ENDL
+                                + "# ");
                     } else {
-                        sb.append("# Your custom constraint logic is specified with the code below:" + ENDL);
+                        sb.append("# Your custom logic is specified with the code below:" + ENDL);
                     }
                     sb.append("$query->set_logic(\"" + logic + "\");" + ENDL + ENDL);
                 }
@@ -206,34 +218,31 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
 
             // Add print results
-            sb.append("print $query->results(as => 'string'), \"\\n\";");
-            sb.append(ENDL);
+            sb.append("my $results = $query->results_iterator;" + ENDL + ENDL);
+
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
-        	TemplateQuery template = (TemplateQuery) query;
+            TemplateQuery template = (TemplateQuery) query;
             String templateName = template.getName();
             String description = template.getDescription();
             Map<PathConstraint, String> allConstraints = template.getConstraints();
             List<PathConstraint> editableConstraints = template.getEditableConstraints();
-            StringBuffer constraints = new StringBuffer();
-            StringBuffer constraintComments = new StringBuffer();
 
             if (description != null && !"".equals(description)) {
-            	printLine(sb, "# ", "Description: " + description);
-            	sb.append(ENDL);
+                printLine(sb, "# ", "Description: " + description);
+                sb.append(ENDL);
             }
 
             sb.append("my $template = Webservice::InterMine->template('"
                             + templateName + "')" + ENDL)
                 .append(INDENT + "or die 'Could not find template';" + ENDL)
                 .append(ENDL)
-                .append(constraintComments.toString() + ENDL)
-                .append("my $results = $template->results_with(" + ENDL)
-                .append(INDENT + "as     => 'string'," + ENDL);
+                .append("my $results = $template->results_iterator_with(" + ENDL)
+                .append(INDENT + "as     => 'tsv'," + ENDL);
 
             for (PathConstraint pc : editableConstraints) {
-            	sb.append(ENDL);
+                sb.append(ENDL);
 
                 // Add comments for constraints
                 String path = pc.getPath();
@@ -256,10 +265,10 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 sb.append(templateConstraintUtil(pc, opCode));
             }
 
-            sb.append(");" + ENDL)
-              .append(ENDL)
-              .append("print $results.\"\\n\";" + ENDL);
+            sb.append(");" + ENDL + ENDL);
         }
+
+        sb.append(RESULTS_PRINTING);
 
         return sb.toString();
     }
@@ -324,12 +333,12 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintBag".equals(className)) {
             String list = ((PathConstraintBag) pc).getBag();
             return
-            	"$query->add_constraint(" + ENDL
-            	+ INDENT + "path  => '" + path + "'," + ENDL
-            	+ INDENT + "op    => '" + op.toString() + "'," + ENDL
-            	+ INDENT + "value => '" + list + "'," + ENDL
+                "$query->add_constraint(" + ENDL
+                + INDENT + "path  => '" + path + "'," + ENDL
+                + INDENT + "op    => '" + op.toString() + "'," + ENDL
+                + INDENT + "value => '" + list + "'," + ENDL
                 + INDENT + "code  => '" + code + "'," + ENDL
-            	+ ");" + ENDL;
+                + ");" + ENDL;
         }
 
         if ("PathConstraintIds".equals(className)) {
@@ -375,9 +384,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             String loopPath = ((PathConstraintLoop) pc).getLoopPath();
             String opStr = op.toString();
             if (ConstraintOp.EQUALS.equals(op)) {
-            	opStr = "IS";
+                opStr = "IS";
             } else if (ConstraintOp.NOT_EQUALS.equals(op)) {
-            	opStr = "IS NOT";
+                opStr = "IS NOT";
             }
             return
                 "$query->add_constraint(" + ENDL
@@ -413,10 +422,10 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             String value = ((PathConstraintLookup) pc).getValue();
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
             String ret =
-            	INDENT + "op" + opCode + "    => 'LOOKUP'," + ENDL
+                INDENT + "op" + opCode + "    => 'LOOKUP'," + ENDL
                 + INDENT + "value" + opCode + " => '" + value + "'," + ENDL;
             if (extraValue != null && !"".equals(extraValue)) {
-            	ret += INDENT + "extra_value" + opCode + " => '" + extraValue + "'," + ENDL;
+                ret += INDENT + "extra_value" + opCode + " => '" + extraValue + "'," + ENDL;
             }
             return ret;
         }

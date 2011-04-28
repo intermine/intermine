@@ -48,7 +48,7 @@ public class Profile
 
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository;
+    private final SearchRepository searchRepository;
 
     /**
      * Construct a Profile
@@ -214,7 +214,7 @@ public class Profile
      * Delete a template and its tags, rename the template tracks adding the prefix "deleted_"
      * to the previous name. If trackerDelegate is null, the template tracks are not renamed
      * @param name the template name
-     * @param trackerDelegate used to rename the template tracks. 
+     * @param trackerDelegate used to rename the template tracks.
      */
     public void deleteTemplate(String name, TrackerDelegate trackerDelegate) {
         savedTemplates.remove(name);
@@ -350,10 +350,14 @@ public class Profile
     /**
      * Delete a bag from the user account, if user is logged in also deletes from the userprofile
      * database.
+     * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @throws ObjectStoreException if problems deleting bag
      */
     public void deleteBag(String name) throws ObjectStoreException {
+        if (!savedBags.containsKey(name)) {
+            throw new BagDoesNotExistException(name + " not found");
+        }
         InterMineBag bagToDelete = savedBags.get(name);
         if (isLoggedIn()) {
             bagToDelete.delete();
@@ -375,8 +379,7 @@ public class Profile
      */
     public void renameBag(String oldName, String newName) throws ObjectStoreException {
         if (!savedBags.containsKey(oldName)) {
-            throw new IllegalArgumentException("Attempting to rename a bag that doesn't"
-                    + " exist: " + oldName);
+            throw new BagDoesNotExistException("Attempting to rename " + oldName);
         }
         if (savedBags.containsKey(newName)) {
             throw new ProfileAlreadyExistsException("Attempting to rename a bag to a new name that"
