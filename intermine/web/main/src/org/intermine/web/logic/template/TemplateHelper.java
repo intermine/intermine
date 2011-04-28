@@ -86,7 +86,7 @@ public final class TemplateHelper
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
-            sb.append("'" + name + "':" + templates.get(name).toJSON());
+            sb.append("\"" + name + "\":" + templates.get(name).toJSON());
             if (keys.hasNext()) {
                 sb.append(",");
             }
@@ -175,7 +175,7 @@ public final class TemplateHelper
         ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
         if (parValue != null && ret == null) {
             throw new IllegalArgumentException(
-            		"Problem with parameter '" + parName + "': '" + parValue + "' is not a valid operator.");
+                    "Problem with parameter '" + parName + "': '" + parValue + "' is not a valid operator.");
         }
         return ret;
     }
