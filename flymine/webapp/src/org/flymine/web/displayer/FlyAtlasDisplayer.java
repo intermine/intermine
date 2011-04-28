@@ -1,11 +1,18 @@
 package org.flymine.web.displayer;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,16 +26,22 @@ import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONResultsIterator;
-import org.intermine.webservice.server.output.JSONRowIterator;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class FlyAtlasDisplayer extends CustomDisplayer {
+/**
+ * Displayer for flyatlas expression data.
+ * @author Alex
+ */
+public class FlyAtlasDisplayer extends CustomDisplayer
+{
 
-
-
+    /**
+     * @param config configuration object
+     * @param im intermine API
+     */
     public FlyAtlasDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
