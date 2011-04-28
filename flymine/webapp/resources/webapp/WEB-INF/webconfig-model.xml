@@ -621,12 +621,6 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
-   <class className="org.intermine.model.bio.Stage">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-
    <class className="org.intermine.model.bio.Stock">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
