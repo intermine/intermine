@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -286,14 +285,12 @@ public class Model
 
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("name:\"" + modelName + "\"," + ENDL + "classes:{" + ENDL);
-        Iterator<ClassDescriptor> iter = getClassDescriptors().iterator();
+        sb.append("\"name\":\"" + modelName + "\",\"classes\":{");
         boolean needsComma = false;
-        while (iter.hasNext()) {
-            ClassDescriptor cld = iter.next();
+        for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 if (needsComma) {
-                    sb.append("," + ENDL);
+                    sb.append(",");
                 }
                 sb.append(cld.toJSONString());
                 needsComma = true;
