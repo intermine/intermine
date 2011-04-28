@@ -33,6 +33,8 @@ public class JSONFormatter extends Formatter {
     private boolean hasCallback = false;
     private String outro = "";
     private boolean shouldQuote = false;
+    private boolean hasPrintedSomething = false;
+    private boolean isExpectingPrimitive = false;
 
     /**
      * The key for the callback
@@ -84,6 +86,8 @@ public class JSONFormatter extends Formatter {
             sb.append(attributes.get(KEY_INTRO));
             if (attributes.containsKey(KEY_OUTRO)) {
                 outro = attributes.get(KEY_OUTRO).toString();
+            } else {
+                isExpectingPrimitive = true;
             }
         }
         if (attributes != null && attributes.containsKey(KEY_QUOTE)) {
@@ -130,6 +134,7 @@ public class JSONFormatter extends Formatter {
             }
             buffer.append(",").append(next);
         }
+        hasPrintedSomething = true;
         return buffer.toString();
     }
 
@@ -149,6 +154,9 @@ public class JSONFormatter extends Formatter {
     @Override
     public String formatFooter(String errorMessage, int errorCode) {
         StringBuilder sb = new StringBuilder(outro);
+        if (!hasPrintedSomething && isExpectingPrimitive) {
+            sb.append("null");
+        }
         sb.append(",\"wasSuccessful\":");
         if (errorCode != Output.SC_OK) {
             sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJavaScript(errorMessage) + "\"");

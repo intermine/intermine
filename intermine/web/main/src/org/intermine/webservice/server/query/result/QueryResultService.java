@@ -11,8 +11,6 @@ package org.intermine.webservice.server.query.result;
  */
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +19,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -49,6 +44,7 @@ import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
+import org.intermine.webservice.server.query.AbstractQueryService;
 import org.jfree.util.Log;
 import org.json.JSONArray;
 
@@ -64,10 +60,8 @@ import org.json.JSONArray;
  * @author Jakub Kulaviak
  */
 
-public class QueryResultService extends WebService
+public class QueryResultService extends AbstractQueryService
 {
-
-    private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
 
     private static final int BATCH_SIZE = 5000;
 
@@ -99,21 +93,6 @@ public class QueryResultService extends WebService
                 input, null, input.getLayout());
     }
 
-    private PathQueryBuilder getQueryBuilder(String xml, HttpServletRequest req) {
-        HttpSession session = req.getSession();
-        Profile profile = SessionMethods.getProfile(session);
-        BagManager bagManager = this.im.getBagManager();
-
-        Map<String, InterMineBag> savedBags = bagManager
-                .getUserAndGlobalBags(profile);
-
-        if (getFormat() == WebService.JSON_OBJ_FORMAT) {
-            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(),
-                    savedBags);
-        } else {
-            return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
-        }
-    }
 
     /**
      * Returns the path portion of a link to the results for
@@ -366,17 +345,6 @@ public class QueryResultService extends WebService
         return executor;
     }
 
-    private String getXMLSchemaUrl() {
-        try {
-            String relPath = request.getContextPath() + "/"
-                    + XML_SCHEMA_LOCATION;
-            URL url = new URL(request.getScheme(), request.getServerName(),
-                    request.getServerPort(), relPath);
-            return url.toString();
-        } catch (MalformedURLException e) {
-            throw new InternalErrorException(e);
-        }
-    }
 
     private QueryResultInput getInput() {
         return new QueryResultRequestParser(request).getInput();

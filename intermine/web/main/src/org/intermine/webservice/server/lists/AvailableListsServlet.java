@@ -39,4 +39,15 @@ public class AvailableListsServlet extends HttpServlet
         new ListUploadService(im).service(request, response);
     }
 
+    @Override
+    public void doDelete(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        deleteList(request, response);
+    }
+
+    private void deleteList(HttpServletRequest request, HttpServletResponse response) {
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        new ListDeletionService(im).service(request, response);
+    }
+
 }

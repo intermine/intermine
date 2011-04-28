@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.query;
+package org.intermine.webservice.server.template;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -21,12 +21,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Runs the query Upload Service to handle user query uploads.
- * @author Alexis Kalderimis
+ * Runs the template-to-list service to run templates and save them as lists.
+ * @author Alex Kalderimis
  *
  */
-public class QueryUploadServlet extends HttpServlet
-{
+public class TemplateToListServlet extends HttpServlet {
 
     /**
      * Eclipse made me do it!!
@@ -62,6 +61,8 @@ public class QueryUploadServlet extends HttpServlet
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new QueryUploadService(im).service(request, response);
+        new TemplateToListService(im).service(request, response);
     }
+
+
 }
