@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
@@ -47,9 +47,9 @@ public class TemplateManager
 {
 
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
-    private Profile superProfile;
-    private Model model;
-    private TagManager tagManager;
+    private final Profile superProfile;
+    private final Model model;
+    private final TagManager tagManager;
     private TemplateTracker templateTracker;
 
     /**
@@ -134,7 +134,7 @@ public class TemplateManager
      * @param profile the user to fetch templates
      * @return a map of template name to template query, the map will be empty if no templates found
      */
-    protected Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+    public Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
         // where name collisions occur user templates take precedence
         Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
 
@@ -375,6 +375,7 @@ public class TemplateManager
         List<Entry<String, Double>> listOrdered =
             new LinkedList<Entry<String, Double>>(templateLnRank.entrySet());
         Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
+            @Override
             public int compare (Entry<String, Double> e1, Entry<String, Double> e2) {
                 return -e1.getValue().compareTo(e2.getValue());
             }
@@ -432,11 +433,12 @@ public class TemplateManager
 
     private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
     {
-        private List<String> mostPopularTemplateNames;
+        private final List<String> mostPopularTemplateNames;
 
         public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
             this.mostPopularTemplateNames = mostPopularTemplateNames;
         }
+        @Override
         public int compare(TemplateQuery template1, TemplateQuery template2) {
             String templateName1 = template1.getName();
             String templateName2 = template2.getName();
