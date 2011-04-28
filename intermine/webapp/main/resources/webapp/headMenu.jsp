@@ -159,7 +159,7 @@
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-                </c:choose>>
+                </c:choose>
                 <div>
                 <a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
                   <fmt:message key="${tabArray[1]}"/>
