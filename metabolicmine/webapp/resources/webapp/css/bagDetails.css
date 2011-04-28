@@ -33,7 +33,11 @@ div.aspectBlock { margin-bottom:25px; }
     #object_header table.fields { width:70%; }
     #object_header td.description a { color:#1F7492; }
     #object_header td.description div.text p { display:inline; }
-  #object_header td.description div.text p span.hidden { display:none; }
+        #object_header td.description div.text p span.hidden { display:none; }
+    #object_header table.fields { float:left; }
+
+    /* tags */
+    #object_header div.tags { float:right; }
 
     /* header inline lists */
     #object_header h2 { font-size:16px; margin:10px 0; !important; }
@@ -142,3 +146,7 @@ div.widgetcontainer span.widgetcloser a { padding-left:16px; text-decoration:non
     background:url("../images/icons/toggle-collapse-16.png") no-repeat scroll left center transparent; }
 div.widgetcontainer fieldset li { float:right; margin-bottom:6px; margin-left:10px; }
 div.widgetcontainer ul li { margin-left: 10px; }
+
+@media only screen and (max-width:1024px) {
+    div.container_12 { width:100%; margin-left:0%; margin-right:0%; }
+}
