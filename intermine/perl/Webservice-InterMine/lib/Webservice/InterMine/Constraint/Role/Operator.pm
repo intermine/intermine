@@ -5,7 +5,7 @@ with 'Webservice::InterMine::Role::Logical';
 
 use Carp;
 use MooseX::Types::Moose qw(Str);
-use InterMine::TypeLibrary qw(ConstraintCode);
+use Webservice::InterMine::Types qw(ConstraintCode);
 
 my $next_code = 'A';
 my @used_codes;

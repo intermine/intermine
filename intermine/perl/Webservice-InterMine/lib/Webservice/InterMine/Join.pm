@@ -3,7 +3,7 @@ package Webservice::InterMine::Join;
 use Moose;
 extends 'Webservice::InterMine::PathFeature';
 
-use InterMine::TypeLibrary qw(JoinStyle);
+use Webservice::InterMine::Types qw(JoinStyle);
 
 around BUILDARGS => sub {
     my $orig  = shift;

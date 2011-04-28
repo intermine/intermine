@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Handler;
 
 use Moose;
-use InterMine::TypeLibrary qw(Query);
+use Webservice::InterMine::Types qw(Query);
 use MooseX::Types::Moose qw(HashRef ArrayRef Str);
 
 has query => (
@@ -216,6 +216,7 @@ sub process_constraint_attr {
     $args{value}       = $attr->{value}
       if ( exists $attr->{value} and $attr->{value} ne 'null' );
     $args{type} = $attr->{type} if $attr->{type};
+    $args{loop_path} = $attr->{loopPath} if $attr->{loopPath};
 
     # Workarounds for legacy operators which may be present in old xml
     if ($args{op}) {

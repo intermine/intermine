@@ -4,9 +4,9 @@ use Moose;
 
 extends 'Webservice::InterMine::Constraint';
 with 'Webservice::InterMine::Constraint::Role::Operator';
-use InterMine::TypeLibrary qw(UnaryOperator);
+use Webservice::InterMine::Types qw(UnaryOperator);
 
-has '+op' => ( isa => UnaryOperator, );
+has '+op' => ( isa => UnaryOperator, coerce => 1);
 
 override to_string => sub {
     my $self = shift;

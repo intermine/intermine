@@ -2,7 +2,7 @@ package Webservice::InterMine::Query::TemplateHandler;
 
 use Moose;
 extends 'Webservice::InterMine::Query::Handler';
-use InterMine::TypeLibrary qw(Template);
+use Webservice::InterMine::Types qw(Template);
 
 has '+query' => ( isa => Template, );
 
