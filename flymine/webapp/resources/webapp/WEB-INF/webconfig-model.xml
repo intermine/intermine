@@ -737,6 +737,12 @@
                      placement="Regulation"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+                     jspName="model/uniProtCommentsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene,Protein"/>
+
   </reportdisplayers>
 
    <widgets>
