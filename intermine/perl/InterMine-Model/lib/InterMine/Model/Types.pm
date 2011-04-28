@@ -2,9 +2,26 @@ package InterMine::Model::Types;
 
 
 # Declare Our Own Types
-use MooseX::Types -declare => ["ISO8601DateStamp"];
+use MooseX::Types -declare => [
+    qw(
+        ISO8601DateStamp
 
-use MooseX::Types::Moose qw/Str Bool Object/;
+        JoinedPathString PathString PathList PathHash
+
+        Model
+
+        ClassDescriptor ClassDescriptorList MaybeClassDescriptor
+
+        Field FieldList MaybeField FieldHash
+
+        BigInt
+    )
+];
+
+use MooseX::Types::Moose qw/Str Bool Object ArrayRef HashRef Maybe/;
+use Math::BigInt;
+
+# FOR INTERNAL USE
 
 subtype ISO8601DateStamp, as Str, 
     where {/ 
@@ -15,6 +32,57 @@ subtype ISO8601DateStamp, as Str,
     message {"Value provided ('$_') was not in the ISO8601 time stamp format"};
 
 coerce Bool, from Object, via {$$_};
+
+# MODEL
+
+class_type Model,   { class => 'InterMine::Model', };
+coerce Model, from Str, via {
+    require InterMine::Model;
+    InterMine::Model->new( string => $_ );
+};
+
+# CLASSES
+
+class_type ClassDescriptor,
+    { class => 'InterMine::Model::ClassDescriptor', };
+subtype MaybeClassDescriptor, as Maybe    [ClassDescriptor];
+subtype ClassDescriptorList,  as ArrayRef [ClassDescriptor];
+
+# FIELDS
+
+role_type Field, { role => 'InterMine::Model::Role::Field', };
+subtype MaybeField, as Maybe[Field];
+subtype FieldList,  as ArrayRef[Field];
+subtype FieldHash,  as HashRef[Field];
+
+# PATH
+
+subtype JoinedPathString, as Str, where { /^[[:alnum:]\.,\s]+$/ };
+subtype PathString,
+    as Str, where { /^[[[:alnum:]\.]*[[:alnum:]]$/ },
+    message {
+    (defined)
+        ? "PathString can only contain 'A-Z', '0-9' and '.', not '$_'"
+        : "PathString must be defined";
+    };
+subtype PathList, as ArrayRef [PathString];
+subtype PathHash, as HashRef  [PathString];
+coerce PathList, from JoinedPathString, via { [ split /[,\s]+/ ] };
+coerce PathString, from JoinedPathString,
+    via { ( split /[\s]+/ )[0] };
+
+# Attribute values
+
+class_type BigInt, {class => "Math::BigInt"};
+
+coerce BigInt, from Str, via {
+    my $coerced = Math::BigInt->new($_);
+    if ($coerced->is_nan) {
+        return $_; # We almost certainly failed here...
+    } else {
+        return $coerced;
+    }
+};
 
 1;
 

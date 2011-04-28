@@ -12,7 +12,7 @@ InterMine::Model::Role::Descriptor - Provides the common behaviour of descriptor
 =cut
 
 use MooseX::Role::WithOverloading;
-use InterMine::TypeLibrary qw(Model);
+use InterMine::Model::Types qw(Model);
 
 requires qw(to_string);
 

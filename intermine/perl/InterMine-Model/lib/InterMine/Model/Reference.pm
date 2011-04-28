@@ -31,7 +31,7 @@ with (
 );
 
 use MooseX::Types::Moose qw(Str Maybe);
-use InterMine::TypeLibrary qw(
+use InterMine::Model::Types qw(
     ClassDescriptor MaybeClassDescriptor MaybeField
 );
 
