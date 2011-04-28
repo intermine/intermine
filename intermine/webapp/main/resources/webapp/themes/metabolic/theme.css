@@ -35,7 +35,6 @@ h1 a:hover,h1 a:visited:hover{color:#333;text-decoration:underline;}
 html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;}
 table.results tfoot tr td{background-color:#000;color:#FFF;}
 table.results tr td.highlightCell,table.results tr.even td.highlightCell{background-color:#888;border-right:1px solid #FFF;}
-table.results tr td.highlightObject{background-color:#888;}
 table.results tr th{background-color:#000;color:#FFF;font-size:12px;}
 table.results tr.odd TD{border-bottom:1px solid #CACACA;border-right:1px solid #CACACA;}
 ul#nav{font-size:13px;margin-left:-5px;margin-top:10px;}
@@ -68,14 +67,6 @@ div.filterBar { background:#FFFCD9; border-color:#E3D85A; }
 div#filter_tool_bar { border-color:#E3D85A; }
 
 div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
-
-/* bagDetails.do textarea edit */
-#bagDescriptionDiv { cursor:pointer; }
-
-/* bagDetails.do sidebar */
-#convertList.listtoolbox, #linkOuts.listtoolbox { padding:0; border:1px solid #D2D2D2; }
-  #convertList.listtoolbox h3, #linkOuts.listtoolbox h3 { padding:4px 10px; margin:0; margin-bottom:10px; background:#EEE; }
-  #convertList.listtoolbox p { margin-bottom:10px; }
 
 /* lists results page when logged in */
 #listTags { background-color: #E6F7FE; border:1px solid #BEDCE4; margin-left: 10px; padding: 3px 10px; }
@@ -180,7 +171,7 @@ ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-
 table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:93.5%; }
   table.results a { color:#1F7492; }
   table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
-  table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }
+  table.results tr.odd td, div.table table.results tr.even td { border:none; }
   table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
   table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
   table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
@@ -191,7 +182,7 @@ table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; wid
 
 /* external links on objectDetails (and bagDetails!!!) */
 div.externalLinks { ; }
-  div.externalLinks h3 { color:#4896B2; margin-bottom:4px; font-size:13px; }
+  div.externalLinks h3 { color:#4896B2; margin-bottom:4px; }
   div.externalLinks ul { list-style:none; }
     div.externalLinks ul li { display:inline; margin:0; margin-right:6px; float:left; }
       div.externalLinks ul li a { line-height:27px; height:27px; }
@@ -262,30 +253,30 @@ div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; }
 #object_header p.share a { color:#1F7492; }
 
 /* theme color classes (used on Report page currently) */
-div.table .theme-1-color, div.box .theme-1-color { color:#1F7492 !important; } /* Matisse */
-div.table .theme-1-background, div.box .theme-1-background { background-color:#1F7492 !important; } /* Matisse */
-div.table .theme-1-border, div.box .theme-1-border { border-color:#1F7492 !important; } /* Matisse */
+div.report-page div.table .theme-1-color, div.report-page div.box .theme-1-color { color:#1F7492 !important; } /* Matisse */
+div.report-page div.table .theme-1-background, div.report-page div.box .theme-1-background { background-color:#1F7492 !important; } /* Matisse */
+div.report-page div.table .theme-1-border, div.report-page div.box .theme-1-border { border-color:#1F7492 !important; } /* Matisse */
 
-div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
-div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
-div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
+div.report-page div.table .theme-2-color, div.report-page div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
+div.report-page div.table .theme-2-background, div.report-page div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
+div.report-page div.table .theme-2-border, div.report-page div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
 
-div.table .theme-3-color, div.box .theme-3-color { color:#E6F7FE !important; } /* Lily White */
-div.table .theme-3-background, div.box .theme-3-background { background-color:#E6F7FE !important; } /* Lily White */
-div.table .theme-3-border, div.box .theme-3-border { border-color:#E6F7FE !important; } /* Lily White */
+div.report-page div.table .theme-3-color, div.report-page div.box .theme-3-color { color:#E6F7FE !important; } /* Lily White */
+div.report-page div.table .theme-3-background, div.report-page div.box .theme-3-background { background-color:#E6F7FE !important; } /* Lily White */
+div.report-page div.table .theme-3-border, div.report-page div.box .theme-3-border { border-color:#E6F7FE !important; } /* Lily White */
 
-div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
-div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
-div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
+div.report-page div.table .theme-4-color, div.report-page div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
+div.report-page div.table .theme-4-background, div.report-page div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
+div.report-page div.table .theme-4-border, div.report-page div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
 
-div.table .theme-5-color, div.box .theme-5-color { color:#F5F5F5 !important; } /* Wild Sand */
-div.table .theme-5-background, div.box .theme-5-background { background-color:#F5F5F5 !important; } /* Wild Sand */
-div.table .theme-5-border, div.box .theme-5-border { border-color:#F5F5F5 !important; } /* Wild Sand */
+div.report-page div.table .theme-5-color, div.report-page div.box .theme-5-color { color:#F5F5F5 !important; } /* Wild Sand */
+div.report-page div.table .theme-5-background, div.report-page div.box .theme-5-background { background-color:#F5F5F5 !important; } /* Wild Sand */
+div.report-page div.table .theme-5-border, div.report-page div.box .theme-5-border { border-color:#F5F5F5 !important; } /* Wild Sand */
 
-div.table .theme-6-color, div.box .theme-6-color { color:#F6FCFE !important; } /* Foam */
-div.table .theme-6-background, div.box .theme-6-background { background-color:#F6FCFE !important; } /* Foam */
-div.table .theme-6-border, div.box .theme-6-border { border-color:#F6FCFE !important; } /* Foam */
+div.report-page div.table .theme-6-color, div.report-page div.box .theme-6-color { color:#F6FCFE !important; } /* Foam */
+div.report-page div.table .theme-6-background, div.report-page div.box .theme-6-background { background-color:#F6FCFE !important; } /* Foam */
+div.report-page div.table .theme-6-border, div.report-page div.box .theme-6-border { border-color:#F6FCFE !important; } /* Foam */
 
-div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
-div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
-div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+div.report-page div.table .theme-7-color, div.report-page div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
+div.report-page div.table .theme-7-background, div.report-page div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
+div.report-page div.table .theme-7-border, div.report-page div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */

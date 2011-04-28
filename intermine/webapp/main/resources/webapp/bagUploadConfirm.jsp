@@ -95,7 +95,7 @@
           // if we do not have a name of the list generate one from user's time
           var t = new Date();
           var m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-          jQuery('input#newBagName').val("${bagUploadConfirmForm.bagType} list " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "h " + t.getMinutes() + "m");
+          jQuery('input#newBagName').val("${bagUploadConfirmForm.bagType} list " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
         }
       </script>
         <span>(e.g. Smith 2009)</span>
