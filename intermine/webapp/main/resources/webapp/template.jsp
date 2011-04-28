@@ -356,11 +356,14 @@
     </td>
     <td>
       <div class="heading" style="border:none">
-          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="javascript:getWebserviceUrl();"
+          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="" onclick="javascript:getWebserviceUrl();return false;"
     title="Get a URL to run this template from the command line or a script">web service URL</a>
     <div class="popup" style="display:none;">
       <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
-    <p style="width:80%;">Use the URL below to fetch results for this template from the command line or a script:</p>
+      <p style="width:95%;">
+      Use the URL below to fetch results for this template from the command line or a script 
+      <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+      </p>
     <input type="text" value="None">
     </div>
   </div>
