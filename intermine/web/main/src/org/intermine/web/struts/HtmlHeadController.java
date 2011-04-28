@@ -124,7 +124,6 @@ public class HtmlHeadController extends TilesAction
             String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";
 
-            /*
             if (dobj.getAttributes().get("primaryIdentifier") != null) {
                 String primaryIdentifier = dobj.getAttributes().get("primaryIdentifier").toString();
 
@@ -153,7 +152,6 @@ public class HtmlHeadController extends TilesAction
             if (StringUtils.isNotEmpty(idForPageTitle)) {
                 htmlPageTitle = className + " report for " + idForPageTitle;
             }
-            */
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
         return null;
