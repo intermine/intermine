@@ -38,14 +38,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class HomologueDisplayer extends CustomDisplayer {
+/**
+ * Displayer for Drosphila homologues
+ * @author rns
+ */
+public class HomologueDisplayer extends CustomDisplayer
+{
 
     private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi", "virilis",
-            "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae", "erecta",
-            "yakuba", "melanogaster", "sechellia", "simulans"});
+        "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae", "erecta",
+        "yakuba", "melanogaster", "sechellia", "simulans"});
     protected static final Logger LOG = Logger.getLogger(OverlappingFeaturesDisplayer.class);
 
-
+    /**
+     * Construct with config information read from webconfig-model.xml and the API.
+     * @param config config information
+     * @param im the InterMine API
+     */
     public HomologueDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }

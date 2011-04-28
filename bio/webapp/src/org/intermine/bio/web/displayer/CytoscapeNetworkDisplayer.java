@@ -36,12 +36,22 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class CytoscapeNetworkDisplayer extends CustomDisplayer {
+/**
+ * Displayer for gene/protein interactions using cytoscape plugin
+ * @author Fengyuan
+ */
+public class CytoscapeNetworkDisplayer extends CustomDisplayer
+{
 
+    /**
+     * Construct with config and the InterMineAPI.
+     * @param config to describe the report displayer
+     * @param im the InterMine API
+     */
     public CytoscapeNetworkDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }

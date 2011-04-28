@@ -43,11 +43,12 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 {
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();
-    private static final Map<String, String> evidenceCodes= new HashMap<String, String>();
+    private static final Map<String, String> EVIDENCE_CODES = new HashMap<String, String>();
 
     /**
-     * @param config config
-     * @param im API
+     * Construct with config and the InterMineAPI.
+     * @param config to describe the report displayer
+     * @param im the InterMine API
      */
     public GeneOntologyDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
@@ -58,24 +59,24 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         ONTOLOGIES.add("GO:0003674");
         ONTOLOGIES.add("GO:0005575");
 
-        evidenceCodes.put("EXP", "Inferred from Experiment");
-        evidenceCodes.put("IDA", "Inferred from Direct Assay");
-        evidenceCodes.put("IPI", "Inferred from Physical Interaction");
-        evidenceCodes.put("IMP", "Inferred from Mutant Phenotype");
-        evidenceCodes.put("IGI", "Inferred from Genetic Interaction");
-        evidenceCodes.put("IEP", "Inferred from Expression Pattern");
-        evidenceCodes.put("ISS", "Inferred from Sequence or Structural Similarity");
-        evidenceCodes.put("ISO", "Inferred from Sequence Orthology");
-        evidenceCodes.put("ISA", "Inferred from Sequence Alignment");
-        evidenceCodes.put("ISM", "Inferred from Sequence Model");
-        evidenceCodes.put("IGC", "Inferred from Genomic Context");
-        evidenceCodes.put("RCA", "Inferred from Reviewed Computational Analysis");
-        evidenceCodes.put("TAS", "Traceable Author Statement");
-        evidenceCodes.put("NAS", "Non-traceable Author Statement");
-        evidenceCodes.put("IC", "Inferred by Curator");
-        evidenceCodes.put("ND", "No biological Data available");
-        evidenceCodes.put("IEA", "Inferred from Electronic Annotation");
-        evidenceCodes.put("NR", "Not Recorded ");
+        EVIDENCE_CODES.put("EXP", "Inferred from Experiment");
+        EVIDENCE_CODES.put("IDA", "Inferred from Direct Assay");
+        EVIDENCE_CODES.put("IPI", "Inferred from Physical Interaction");
+        EVIDENCE_CODES.put("IMP", "Inferred from Mutant Phenotype");
+        EVIDENCE_CODES.put("IGI", "Inferred from Genetic Interaction");
+        EVIDENCE_CODES.put("IEP", "Inferred from Expression Pattern");
+        EVIDENCE_CODES.put("ISS", "Inferred from Sequence or Structural Similarity");
+        EVIDENCE_CODES.put("ISO", "Inferred from Sequence Orthology");
+        EVIDENCE_CODES.put("ISA", "Inferred from Sequence Alignment");
+        EVIDENCE_CODES.put("ISM", "Inferred from Sequence Model");
+        EVIDENCE_CODES.put("IGC", "Inferred from Genomic Context");
+        EVIDENCE_CODES.put("RCA", "Inferred from Reviewed Computational Analysis");
+        EVIDENCE_CODES.put("TAS", "Traceable Author Statement");
+        EVIDENCE_CODES.put("NAS", "Non-traceable Author Statement");
+        EVIDENCE_CODES.put("IC", "Inferred by Curator");
+        EVIDENCE_CODES.put("ND", "No biological Data available");
+        EVIDENCE_CODES.put("IEA", "Inferred from Electronic Annotation");
+        EVIDENCE_CODES.put("NR", "Not Recorded ");
     }
 
 
@@ -112,7 +113,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         }
 
         request.setAttribute("goTerms", goTermsByOntology);
-        request.setAttribute("codes", evidenceCodes);
+        request.setAttribute("codes", EVIDENCE_CODES);
     }
 
     private void addToOntologyMap(Map<String, Map<GOTerm, Set<String>>> goTermsByOntology,
