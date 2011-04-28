@@ -311,7 +311,7 @@ fi
 
 if [ "$CHADOAPPEND" = "n" ]
 then 
-dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
+dropdb -e "$CHADODB" -h "$DBHOST" -U "$DBUSER";
 createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 # initialise it
 cd $MINEDIR
@@ -468,7 +468,7 @@ else
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
 echo >> $LOG
-echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo -n "`date "+%y%m%d.%H%M"`  $DCCID " >> $LOG
 
 ## we should test more the use with this option (according to profiler is cheaper)
 #stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
@@ -508,7 +508,7 @@ then
 echo -n "  ** ERROR loading patch file **" >> $LOG
 fi
 else
-echo -n " no patch file " >> $LOG
+echo -n "  no patch file " >> $LOG
 echo "$DCCID: no patch file."
 fi
 
@@ -922,7 +922,8 @@ echo "---> $p"
 IFS=$'\t\n'
 loadChadoSubs $p
 IFS=$','
-echo "====" >> $LOG
+echo " " >> $LOG
+echo " " >> $LOG
 done
 IFS=$'\t\n'
 else
@@ -933,7 +934,6 @@ interact
 else
 echo "Using previously loaded chado..."
 fi # if $STAG=y
-
 
 
 #---------------------------------------
