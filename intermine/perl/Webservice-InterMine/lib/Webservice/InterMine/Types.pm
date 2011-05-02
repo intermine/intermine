@@ -86,6 +86,7 @@ use MooseX::Types -declare => [
         SavedQuery SavedQueryFactory
 
         ListFactory List ListName
+        ListOfLists ListOfListableQueries
 
         RowParser
         RowFormat
@@ -256,6 +257,7 @@ enum QueryType, [ 'template', 'saved-query', ];
 class_type QueryHandler, { class => 'Webservice::InterMine::Query::Handler', };
 class_type Query,        { class => 'Webservice::InterMine::Query::Core', };
 subtype ListableQuery, as Query, where {$_->does('Webservice::InterMine::Query::Roles::Listable')};
+subtype ListOfListableQueries, as ArrayRef[ListableQuery];
 coerce QueryName, from IllegalQueryName, 
     via { 
         s/[^a-zA-Z0-9_,. -]/_/g; 
@@ -279,6 +281,7 @@ coerce TemplateFactory, from ArrayRef, via {
 class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
 subtype ListName, as Str;
+subtype ListOfLists, as ArrayRef[List];
 
 coerce ListFactory, from HashRef, via {
     require Webservice::InterMine::ListFactory;
