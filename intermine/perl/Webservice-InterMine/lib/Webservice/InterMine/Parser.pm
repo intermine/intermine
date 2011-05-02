@@ -1,19 +1,33 @@
 package Webservice::InterMine::Parser;
 
-use Moose;
+use Moose::Role;
 
-sub header_is_parsed {
-    confess "This method must be overriden in the implementing class";
-}
+=head1 Webservice::InterMine::Parser 
 
-sub parse_header {
-    confess "This method must be overriden in the implementing class";
-}
+Defines the common parser interface.
 
-sub parse_line {
-    confess "This method must be overriden in the implementing class";
-}
+=head1 REQUIRED METHODS
+
+The following methods must be provided by consumers:
+
+=over 4
+
+=item * header_is_parsed()
+report whether the header has been parsed yet.
+
+=item * parse_header($line) 
+Parse a line from the connection as header information. 
+This method may be called multiple times, depending on 
+the return value of C<header_is_parsed>.
+
+=item * parse_line($line)
+Given a line of text, return whatever the parser returns.
+
+=back
+
+=cut
+
+requires qw/header_is_parsed parse_header parse_line/;
 
 no Moose;
-__PACKAGE__->meta->make_immutable;
 1;

@@ -14,6 +14,16 @@ sub upload_path {
     return $self->service->TEMPLATE_SAVE_PATH;
 }
 
+sub list_upload_path {
+    my $self = shift;
+    return $self->service->TEMPLATE_LIST_PATH;
+}
+
+sub list_append_path {
+    my $self = shift;
+    return $self->service->TEMPLATE_LIST_APPEND_PATH;
+}
+
 sub get_request_parameters {
     my $self = shift;
     

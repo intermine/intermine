@@ -55,6 +55,7 @@ under the same terms as Perl itself.
 =cut
 
 use DateTime::Format::ISO8601;
+use Carp qw(confess);
 
 use MooseX::Types -declare => [
     qw(
@@ -78,13 +79,13 @@ use MooseX::Types -declare => [
         ServiceVersion
         ServiceRootUri ServiceRoot NotServiceRoot
 
-        Query QueryType QueryName QueryHandler IllegalQueryName
+        Query QueryType QueryName QueryHandler IllegalQueryName ListableQuery
 
         Template TemplateFactory TemplateHash
 
         SavedQuery SavedQueryFactory
 
-        ListFactory List
+        ListFactory List ListName
 
         RowParser
         RowFormat
@@ -95,6 +96,10 @@ use MooseX::Types -declare => [
         NotAllLowerCase
 
         Date
+
+        UserAgent
+
+        ResultIterator
     )
 ];
 
@@ -250,11 +255,13 @@ subtype IllegalQueryName, as Str, where { /[^\w\.,\s-]/ };
 enum QueryType, [ 'template', 'saved-query', ];
 class_type QueryHandler, { class => 'Webservice::InterMine::Query::Handler', };
 class_type Query,        { class => 'Webservice::InterMine::Query::Core', };
+subtype ListableQuery, as Query, where {$_->does('Webservice::InterMine::Query::Roles::Listable')};
 coerce QueryName, from IllegalQueryName, 
     via { 
         s/[^a-zA-Z0-9_,. -]/_/g; 
         return $_; 
     };
+
 
 # TEMPLATES
 
@@ -271,11 +278,26 @@ coerce TemplateFactory, from ArrayRef, via {
 
 class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
+subtype ListName, as Str;
 
-coerce ListFactory, from Str, via {
+coerce ListFactory, from HashRef, via {
     require Webservice::InterMine::ListFactory;
-    Webservice::InterMine::ListFactory->new( string => $_ );
+    Webservice::InterMine::ListFactory->new( $_ );
 };
+
+coerce ListName, from ListableQuery, via {
+    require Webservice::InterMine::Path;
+    my $service = $_->service;
+    if ($_->view_size != 1) {
+        confess "Cannot convert this query to a list";
+    }
+    my $path = $_->view->[0];
+    my $type = Webservice::InterMine::Path::last_class_type($_->model, $path);
+
+    my $list = $service->new_list(type => $type, content => $_);
+    return $list->name;
+};
+coerce ListName, from List, via {$_->name};
 
 # SAVED QUERIES
 
@@ -293,10 +315,12 @@ coerce SavedQueryFactory, from Str, via {
 
 # RESULT ITERATION
 
-class_type RowParser, {class => "Webservice::InterMine::Parser"};
+role_type RowParser, {role => "Webservice::InterMine::Parser"};
 enum RowFormat, ['arrayrefs', 'hashrefs', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'count'];
 enum JsonFormat, ['perl', 'inflate', 'instantiate'];
 enum RequestFormat, ['tab', 'tsv', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml'];
+
+class_type ResultIterator, {class => 'Webservice::InterMine::ResultIterator'};
 
 coerce RowFormat, from NotAllLowerCase, via { lc($_) };
 coerce JsonFormat, from NotAllLowerCase, via { lc($_) };
@@ -306,5 +330,10 @@ coerce RequestFormat, from NotAllLowerCase, via { lc($_) };
 
 class_type Date, {class => 'DateTime'};
 coerce Date, from Str, via {DateTime::Format::ISO8601->parse_datetime($_)};
+
+# LWP
+
+class_type UserAgent, {class => 'LWP::UserAgent'};
+
 
 1;
