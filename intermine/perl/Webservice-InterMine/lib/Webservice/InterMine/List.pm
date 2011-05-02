@@ -33,8 +33,12 @@ union, intersection, symmetric difference, and subtraction whicj create new list
 
 use Moose;
 with 'Webservice::InterMine::Role::Serviced';
-use InterMine::Model::Types qw(PathString);
-use Webservice::InterMine::Types qw(Date ListFactory ResultIterator Query);
+use InterMine::Model::Types qw(PathString );
+use Webservice::InterMine::Types qw(
+    Date ListFactory ResultIterator Query
+    List ListableQuery ListOfLists ListOfListableQueries
+);
+use Moose::Util::TypeConstraints;
 require Set::Object;
 
 use constant LIST_APPEND_PATH => '/lists/append/json';
@@ -170,30 +174,22 @@ sub overload_intersecting {
 
 sub interpret_other_operand {
     my $self = shift;
+    my $fac  = $self->factory;
     my $other = shift;
-    # It is another list
-    if (blessed $other and $other->isa(__PACKAGE__)) {
-        return [$other];
-    # It is a listable query
-    } elsif (blessed $other and $other->does(LISTABLE)) {
-        return [$other];
-    # It is the name of a list
-    } elsif ($self->factory->get_list($other)) {
-        return [$other];
-    } elsif (ref $other eq 'ARRAY' and (
-        # It contains at least one list name
-        grep({$self->factory->get_list($_)} @$other)
-            or 
-        # It contains at least one list
-        grep({blessed $_ and $_->isa(__PACKAGE__)} @$other)
-            or 
-        # It contains at least one listable query
-        grep({blessed $_ and $_->does(LISTABLE)} @$other)
-        )) {
-            return $other;
-    } else {
-        return [$self->factory->new_list(type => $self->type, content => $other)];
-    } 
+    match_on_type $other => (
+        List, sub { [$_] },
+        ListableQuery, sub { [$_] },
+        ListOfLists, sub { $_ },
+        ListOfListableQueries, sub { $_ },
+        sub { 
+            if (ref $_ eq 'Array' and grep({$fac->get_list($_)} @$_)) {
+                return $_;
+            }
+            return $fac->get_list($_) 
+                ? [$_] 
+                : [$fac->new_list(type => $self->type, content => $_)];
+        }
+    );
 }
 
 sub intersect_with {
