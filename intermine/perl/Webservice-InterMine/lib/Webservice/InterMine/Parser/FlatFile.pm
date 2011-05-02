@@ -1,15 +1,29 @@
 package Webservice::InterMine::Parser::FlatFile;
 
 use Moose;
-extends 'Webservice::InterMine::Parser';
+with 'Webservice::InterMine::Parser';
 
-override header_is_parsed => sub {
-    return 1;
-};
+=head2 header_is_parsed
 
-override parse_header => sub {};
+Always returns true - as flat-file results do not have 
+a special header section.
 
-override parse_line => sub {
+=head2 parse_header 
+
+No-op stub. 
+
+=head2 parse_line
+
+Returns the line given, checking that it does not contain a
+report of an error.
+
+=cut
+
+sub header_is_parsed {1}
+
+sub parse_header {}
+
+sub parse_line {
     my $self = shift;
     my $line = shift;
     if ($line and $line =~ /^\[ERROR/) {
@@ -17,7 +31,7 @@ override parse_line => sub {
     } else{
         return $line;
     }
-};
+}
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

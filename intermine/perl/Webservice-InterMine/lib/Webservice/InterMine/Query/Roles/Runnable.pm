@@ -1,18 +1,24 @@
 package Webservice::InterMine::Query::Roles::Runnable;
 
-use Moose::Role;
+use MooseX::Role::WithOverloading;
 requires qw(view service model get_request_parameters resource_path
             upload_path);
 
 use MooseX::Types::Moose qw(Str);
 use Perl6::Junction qw/any/;
 use Webservice::InterMine::Service;
+use Webservice::InterMine::Types qw(ResultIterator);
 use Webservice::InterMine::ResultObject;
 use IO::Handle;
 
 use constant {
     DEFAULT_FORMAT => 'tab',
 };
+
+use overload (
+    '<>' => 'next_result',
+    fallback => 1,
+);
 
 around BUILDARGS => sub {
     my $orig  = shift;
@@ -81,6 +87,20 @@ data structure. (default is C<perl>).
 =back
 
 =cut
+
+has _iterator => (
+    is => 'ro',
+    isa => ResultIterator,
+    lazy_build => 1,
+    builder => 'results_iterator',
+);
+
+sub next_result {
+    my $self = shift;
+    my $next = $self->_iterator->next;
+    $self->_clear_iterator unless (defined $next);
+    return $next;
+}
 
 sub results_iterator {
     my $self  = shift;

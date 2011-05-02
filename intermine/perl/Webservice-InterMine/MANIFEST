@@ -6,6 +6,8 @@ ignore.txt
 lib/Webservice/InterMine.pm
 lib/Webservice/InterMine/Constraint.pm
 lib/Webservice/InterMine/Constraint/Binary.pm
+lib/Webservice/InterMine/Constraint/List.pm
+lib/Webservice/InterMine/Constraint/Loop.pm
 lib/Webservice/InterMine/Constraint/Multi.pm
 lib/Webservice/InterMine/Constraint/Role/Logical.pm
 lib/Webservice/InterMine/Constraint/Role/Operator.pm
@@ -28,9 +30,16 @@ lib/Webservice/InterMine/Cookbook/Recipe8.pod
 lib/Webservice/InterMine/Cookbook/Templates/Recipe1.pod
 lib/Webservice/InterMine/Cookbook/Templates/Recipe2.pod
 lib/Webservice/InterMine/Join.pm
+lib/Webservice/InterMine/List.pm
+lib/Webservice/InterMine/ListFactory.pm
 lib/Webservice/InterMine/LogicalOperator.pm
 lib/Webservice/InterMine/LogicalSet.pm
 lib/Webservice/InterMine/LogicParser.pm
+lib/Webservice/InterMine/Parser.pm
+lib/Webservice/InterMine/Parser/FlatFile.pm
+lib/Webservice/InterMine/Parser/JSON.pm
+lib/Webservice/InterMine/Parser/JSON/ArrayRefs.pm
+lib/Webservice/InterMine/Parser/JSON/HashRefs.pm
 lib/Webservice/InterMine/Path.pm
 lib/Webservice/InterMine/PathDescription.pm
 lib/Webservice/InterMine/PathFeature.pm
@@ -39,13 +48,17 @@ lib/Webservice/InterMine/Query/Core.pm
 lib/Webservice/InterMine/Query/Handler.pm
 lib/Webservice/InterMine/Query/Roles/ExtendedQuery.pm
 lib/Webservice/InterMine/Query/Roles/HTMLTable.pm
+lib/Webservice/InterMine/Query/Roles/Listable.pm
+lib/Webservice/InterMine/Query/Roles/QueryParameters.pm
 lib/Webservice/InterMine/Query/Roles/QueryUrl.pm
 lib/Webservice/InterMine/Query/Roles/ReadInAble.pm
 lib/Webservice/InterMine/Query/Roles/Runnable.pm
 lib/Webservice/InterMine/Query/Roles/Saved.pm
 lib/Webservice/InterMine/Query/Roles/ScriptAble.pm
 lib/Webservice/InterMine/Query/Roles/Serviced.pm
+lib/Webservice/InterMine/Query/Roles/Templateable.pm
 lib/Webservice/InterMine/Query/Roles/Templated.pm
+lib/Webservice/InterMine/Query/Roles/TemplateParameters.pm
 lib/Webservice/InterMine/Query/Roles/Uploadable.pm
 lib/Webservice/InterMine/Query/Roles/WriteExcel.pm
 lib/Webservice/InterMine/Query/Roles/WriteOutAble.pm
@@ -63,10 +76,16 @@ lib/Webservice/InterMine/Role/Described.pm
 lib/Webservice/InterMine/Role/Logical.pm
 lib/Webservice/InterMine/Role/ModelOwner.pm
 lib/Webservice/InterMine/Role/Named.pm
+lib/Webservice/InterMine/Role/Serviced.pm
 lib/Webservice/InterMine/Service.pm
+lib/Webservice/InterMine/Simple.pm
+lib/Webservice/InterMine/Simple/Query.pm
+lib/Webservice/InterMine/Simple/Service.pm
+lib/Webservice/InterMine/Simple/Template.pm
 lib/Webservice/InterMine/SortOrder.pm
 lib/Webservice/InterMine/TemplateConstraintFactory.pm
 lib/Webservice/InterMine/TemplateFactory.pm
+lib/Webservice/InterMine/Types.pm
 Makefile.PL
 MANIFEST			This list of files
 README
@@ -93,6 +112,7 @@ t/10_acceptance/01_live_test.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml
+t/data/employee_summary.xml
 t/data/good_xml.txt
 t/data/loadable_query.xml
 t/data/mock_bad_results
@@ -132,4 +152,3 @@ t/tests/Test/Webservice/InterMine/SortOrder.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraintFactory.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraints.pm
 t/tests/Test/Webservice/InterMine/TemplateFactory.pm
-META.yml
