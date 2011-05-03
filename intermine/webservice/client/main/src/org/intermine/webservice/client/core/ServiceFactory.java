@@ -97,7 +97,7 @@ public class ServiceFactory
      * Return a new AvailableTemplatesService for getting lists of templates from.
      * @return available templates service
      */
-    public AvailableTemplatesService getFindTemplatesService() {
+    public AvailableTemplatesService getAvailableTemplatesService() {
         return new AvailableTemplatesService(rootUrl, applicationName);
     }
 
