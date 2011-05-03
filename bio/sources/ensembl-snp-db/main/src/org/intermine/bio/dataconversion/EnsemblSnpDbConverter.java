@@ -42,6 +42,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private final Map<String, Set<String>> pendingSnpConsequences =
         new HashMap<String, Set<String>>();
     private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
+    private final Map<String, String> storedSnpIdentifiers = new HashMap<String, String>();
     private String dbSnpSourceId;
 
     // TODO move this to a parser argument
@@ -150,7 +151,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     loc.setAttribute("start", "" + chrStart);
                     loc.setAttribute("end", "" + chrEnd);
                     loc.setAttribute("strand", "" + strand);
-                    loc.setReference("feature", currentSnp);
+                    if (storeSnp) {
+                        loc.setReference("feature", currentSnp);
+                    } else {
+                        loc.setReference("feature", storedSnpIdentifiers.get(rsNumber));
+                    }
                     loc.setReference("locatedOn", getChromosome(chrName, taxonId));
                     store(loc);
                 }
@@ -170,6 +175,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                             Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET,
                                     snpSynonyms);
                             storedSnpIds.put(previousRsNumber, storedSnpId);
+                            storedSnpIdentifiers.put(previousRsNumber, currentSnp.getIdentifier());
                         }
                     }
 
