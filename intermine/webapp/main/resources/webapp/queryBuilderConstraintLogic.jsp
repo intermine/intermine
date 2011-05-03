@@ -14,9 +14,12 @@ jQuery(document).ready(function(){
     jQuery('#constraintLogic').toggle();
     jQuery('#editConstraintLogic').toggle();
   });
-  jQuery('#editconstraintlogic').click(function() {
-    setConstraintLogic(jQuery('#expr').val());
+
+    jQuery('#editconstraintlogic').click(function() {
+      setConstraintLogic(jQuery('#expr').val());
   });
+
+    jQuery('#constraintLogic').text(jQuery('#expr').val());
 });
 </script>
 
@@ -35,9 +38,10 @@ jQuery(document).ready(function(){
       <div class="smallnote altmessage"><fmt:message key="query.noConstraints"/></div>
     </c:when>
     <c:otherwise>
+      <c:out value="${constraintLogicExpr}"/><br/><br/>
       <span id="constraintLogic" title="Click to Edit" alt="Click to Edit">${constraintLogicExpr}</span>
       <span id="editConstraintLogic" style="display: none">
-        <input type="test" name="expr" id="expr" size="20" value="${constraintLogicExpr}"/>
+        <input type="text" name="expr" id="expr" size="20" value="${constraintLogicExpr}"/>
           <input id="editconstraintlogic" type="button" style="font-size: 11px" value="<fmt:message key="query.logicUpdate"/>" />
       </span>
     </c:otherwise>
