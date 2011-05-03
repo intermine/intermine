@@ -34,7 +34,7 @@ public class QueryToListService extends AbstractQueryService {
 
     private static final String TEMP = "_temp";
 
-    private final BagManager bagManager;
+    protected final BagManager bagManager;
 
     public QueryToListService(InterMineAPI im) {
         super(im);
@@ -126,10 +126,10 @@ public class QueryToListService extends AbstractQueryService {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
         }
         if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"newListSize\":");
+            attributes.put(JSONFormatter.KEY_INTRO, "\"listSize\":");
         }
         Map<String, String> kvPairs = new HashMap<String, String>();
-        kvPairs.put("newListName", name);
+        kvPairs.put("listName", name);
         attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         output.setHeaderAttributes(attributes);
     }
