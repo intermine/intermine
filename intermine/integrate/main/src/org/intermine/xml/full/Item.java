@@ -389,6 +389,11 @@ public class Item implements Comparable<Item>
      * @param item the item to refer to
      */
     public void setReference(String name, Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Attempt to set reference '" + name + "' to null"
+                    + " in '" + className + "' item with identifier: " + identifier);
+            
+        }
         addReference(new Reference(name, item.getIdentifier()));
     }
 
