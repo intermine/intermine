@@ -217,12 +217,14 @@
  <c:set value="${fn:length(CATEGORIES)}" var="aspectCount" /> <c:set
   var="templateIdPrefix" value="reportTemplate${objectType}" /> <c:set
   var="miscId" value="reportMisc${objectType}" /> <%-- All other references and collections --%>
+
 <script type="text/javascript">
-      <!--//<![CDATA[
-        var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
-        var detailsType = 'object';
-      //]]>-->
-      </script> <script type="text/javascript" src="js/inlinetemplate.js"></script>
+<!--//<![CDATA[
+    var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
+    var detailsType = 'object';
+//]]>-->
+</script>
+<script type="text/javascript" src="js/inlinetemplate.js"></script>
 
 <div style="float:right;" class="box grid_2 sidebar">
   <div id="in-lists">

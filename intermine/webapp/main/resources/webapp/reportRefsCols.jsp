@@ -176,11 +176,6 @@ jQuery(document).ready(function() {
   loadInView();
 });
 
-// on scroll
-jQuery(window).scroll(function() {
-  loadInView();
-});
-
 //script that will load tables as they get into the viewport
 function loadInView() {
     // for all divs that are to be loaded on scroll
@@ -199,15 +194,18 @@ function loadInView() {
     });
 
     function isElementInView(e) {
-        // fetch the dimensions of the viewport
-        var docViewTop = jQuery(window).scrollTop();
-        var docViewBottom = docViewTop + jQuery(window).height();
+        // #im_aspect_GenomicsCDSs_table failing...
+        if (jQuery(e).length > 0) {
+          // fetch the dimensions of the viewport
+          var docViewTop = jQuery(window).scrollTop();
+          var docViewBottom = docViewTop + jQuery(window).height();
 
-        // fetch the element dimensions
-        var eTop = jQuery(e).offset().top;
-        var eBottom = eTop + jQuery(e).height();
+          // fetch the element dimensions
+          var eTop = jQuery(e).offset().top;
+          var eBottom = eTop + jQuery(e).height();
 
-        return ((eBottom >= docViewTop) && (eTop <= docViewBottom));
+          return ((eBottom >= docViewTop) && (eTop <= docViewBottom));
+        }
     }
 }
 

@@ -36,7 +36,7 @@ html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,G
 table.results tfoot tr td{background-color:#000;color:#FFF;}
 table.results tr td.highlightCell,table.results tr.even td.highlightCell{background-color:#888;border-right:1px solid #FFF;}
 table.results tr th{background-color:#000;color:#FFF;font-size:12px;}
-table.results tr.odd TD{border-bottom:1px solid #CACACA;border-right:1px solid #CACACA;}
+/*table.results tr.odd TD{border-bottom:1px solid #CACACA;border-right:1px solid #CACACA;}*/
 ul#nav{font-size:13px;margin-left:-5px;margin-top:10px;}
 ul#nav a{color:#4B3F4B;font-weight:700;text-decoration:none;}
 ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 8px;}
@@ -98,7 +98,7 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 div.resultsPage table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:93.5%; }
   div.resultsPage table.results a { color:#1F7492; }
   div.resultsPage table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
-  div.resultsPage table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }
+  /*div.resultsPage table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }*/
   div.resultsPage table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
   div.resultsPage table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
   div.resultsPage table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
@@ -163,15 +163,15 @@ ul#loginbar li { border-right-color:#004499; }
 /* topnav */
 ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-space:nowrap; list-style:none; text-transform:capitalize; }
   ul#topnav.smallScreen { right:40px; }
-  ul#topnav li { display:inline; border-right:1px solid #505050; padding:0 6px 0 3px; margin:0; }
+  ul#topnav li { display:inline; border-right:1px solid #505050; padding0 6px 0 3px; margin:0; }
     ul#topnav li.last { border:none; }
   ul#topnav a:link, ul#topnav a:visited { color:#505050; }
 
 /* results table on objectDetails? */
-table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:93.5%; }
+table.results { border:1px solid #DFDFDF; border-top:0; border-left:0; margin-bottom:10px; width:93.5%; }
   table.results a { color:#1F7492; }
   table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
-  table.results tr.odd td, div.table table.results tr.even td { border:none; }
+  /*table.results tr.odd td, div.table table.results tr.even td { border:none; }*/
   table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
   table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
   table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
