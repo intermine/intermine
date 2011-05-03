@@ -262,7 +262,7 @@
   </tiles:insert>
 --%>
   <c:forEach items="${categories}" var="aspect" varStatus="status">
-    <div id="${aspect}Category" class="aspectBlock">
+    <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
       <tiles:insert name="reportAspect.tile">
         <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
         <tiles:put name="placement" value="im:aspect:${aspect}" />
