@@ -323,6 +323,7 @@ div.feature table td.border-left { border-left-color:#F7F5DA !important; }
 .container_12 .highlight { background-color: #FFF3D3; }
 div.box div.inner { border-color:#FCFAFD; }
 div.box div.inner h4 { background-color:#FCFAFD; }
+div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; background:#F6F5F7 !important; }
 
 /* theme color classes (used on Report page currently) */
 div.table .theme-1-color, div.box .theme-1-color { color:#004499 !important; } /* Matisse */
@@ -352,3 +353,6 @@ div.table .theme-6-border, div.box .theme-6-border { border-color:#FAFAFA !impor
 div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
 div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
 div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+
+/* redefine for inline lists/boxes with no results (gray) */
+div.box.gray h3 { color:#ABABAB; border-top-color:#6E6E6E !important; background:#F6F5F7 !important; }

@@ -13,20 +13,20 @@
 <c:forEach items="${mapOfInlineLists}" var="lists">
   <c:if test="${lists.key == placement}">
     <c:forEach items="${lists.value}" var="list" varStatus="status">
-      <c:if test="${list.size > 0}">
-        <div class="box">
-          <h3 class="theme-5-background theme-1-border">
-            <c:if test="${IS_SUPERUSER}">
-              <span class="tag-editor">
-                <c:set var="descriptor" value="${list.descriptor}" />
-                <tiles:insert name="inlineTagEditor.tile">
-                  <tiles:put name="taggable" beanName="descriptor" />
-                  <tiles:put name="show" value="true" />
-                </tiles:insert>
-              </span>
-            </c:if>
-            ${list.size} ${list.prefix}
-          </h3>
+      <div class='box <c:if test="${list.size == 0}">gray</c:if>'>
+        <h3 class="theme-5-background theme-1-border">
+          <c:if test="${IS_SUPERUSER}">
+            <span class="tag-editor">
+              <c:set var="descriptor" value="${list.descriptor}" />
+              <tiles:insert name="inlineTagEditor.tile">
+                <tiles:put name="taggable" beanName="descriptor" />
+                <tiles:put name="show" value="true" />
+              </tiles:insert>
+            </span>
+          </c:if>
+          ${list.size} ${list.prefix}
+        </h3>
+        <c:if test="${list.size > 0}">
           <c:choose>
             <c:when test="${list.showLinksToObjects}">
               <c:forEach items="${list.items}" var="item" varStatus="status">
@@ -40,9 +40,9 @@
               </c:forEach>
             </c:otherwise>
           </c:choose>
-        </div>
-        <div style="clear:both;">&nbsp;</div>
-    </c:if>
+        </c:if>
+      </div>
+      <div style="clear:both;">&nbsp;</div>
     </c:forEach>
   </c:if>
 </c:forEach>

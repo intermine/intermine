@@ -11,10 +11,9 @@
 
 <tiles:importAttribute name="listOfUnplacedInlineLists" ignore="true" />
 
-<c:out value="unplaced lists size ${fn:length(listOfUnplacedInlineLists)}"/>
 <c:if test="${!empty listOfUnplacedInlineLists}">
   <c:forEach items="${listOfUnplacedInlineLists}" var="list" varStatus="status">
-    <div class="box">
+    <div class='box <c:if test="${list.size == 0}">gray</c:if>'>
       <h3 class="theme-5-background theme-1-border">
         <c:if test="${IS_SUPERUSER}">
           <span class="tag-editor">
