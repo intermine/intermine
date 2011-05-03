@@ -436,7 +436,7 @@
                               <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
                             </c:when>
                             <c:when test="${row.key == 'name'}">
-                              <p>Search for <c:out value="${fn:toLowerCase(row.value)}" />:</p>
+                              <p>Search for <c:out value="${row.value}" />:</p>
                             </c:when>
                             <c:when test="${row.key == 'templates'}">
                               <table>
