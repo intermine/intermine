@@ -18,7 +18,7 @@
       >Summary</html:link>
 
       <c:forEach items="${categories}" var="aspect">
-        <c:set var="target" value="${fn:toLowerCase(aspect)}"/>
+        <c:set var="target" value="${fn:replace(fn:toLowerCase(aspect), ' ', '_')}"/>
         <html:link
         action="/report.do?id=${object.id}#${target}"
         onclick="jQuery('a[name=${target}]').scrollTo('slow', 'swing', -21);return false;"

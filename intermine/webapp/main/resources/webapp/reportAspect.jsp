@@ -30,7 +30,7 @@
     !empty templates}">
   <c:set var="templateCount" value="${fn:length(templates)}" />
 
-  <a name="<c:out value="${fn:toLowerCase(aspect)}"/>"><h2>${aspect}</h2></a>
+  <a name="<c:out value="${fn:toLowerCase(fn:replace(aspect, ' ', '_'))}"/>"><h2>${aspect}</h2></a>
   <c:if test="${!empty reportObject}">
     <tiles:insert page="/reportCustomDisplayers.jsp">
       <tiles:put name="placement" value="${aspect}" />
