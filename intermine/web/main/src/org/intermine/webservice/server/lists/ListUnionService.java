@@ -57,7 +57,7 @@ public class ListUnionService extends WebService {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
         }
         if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"newListSize\":");
+            attributes.put(JSONFormatter.KEY_INTRO, "\"listSize\":");
         }
         return attributes;
     }
@@ -84,7 +84,7 @@ public class ListUnionService extends WebService {
 
         Map<String, Object> attributes = getHeaderAttributes();
         Map<String, String> kvPairs = new HashMap<String, String>();
-        kvPairs.put("newListName", name);
+        kvPairs.put("listName", name);
         attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         output.setHeaderAttributes(attributes);
 
