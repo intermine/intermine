@@ -30,14 +30,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
-<c:choose>
-  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin' || pageName == 'report' || pageName == 'bagDetails'}">
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
-  </c:when>
-  <c:otherwise>
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
-  </c:otherwise>
-</c:choose>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.5.1.min.js'/>"></script>
+
 
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
@@ -71,15 +65,19 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'report'}">
+  <c:if test="${pageName != 'report' && pageName != 'mymine'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
   <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
+  <script type="text/javascript" src="<html:rewrite page='/dwr/interface/TrackAjaxServices.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery-syntax/jquery.syntax.js'/>"></script>
+  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/js/jquery-syntax/jquery.syntax.layout.list.css'/>">
+  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/js/jquery-syntax/jquery.syntax.core.css'/>">
 
   <script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
 

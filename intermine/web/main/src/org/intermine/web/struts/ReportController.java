@@ -77,7 +77,7 @@ public class ReportController extends InterMineAction
             ReportObject reportObject = reportObjectFactory.get(requestedObject);
             //request.setAttribute("reportObject", reportObject);
             request.setAttribute("object", reportObject);
-            session.setAttribute("reportObject", reportObject);
+            request.setAttribute("reportObject", reportObject);
 
             request.setAttribute("requestedObject", requestedObject);
 
@@ -116,8 +116,8 @@ public class ReportController extends InterMineAction
                 new ArrayList<InlineList>(reportObject.getNormalInlineLists());
             unplacedInlineLists.removeAll(placedInlineLists.values());
 
-            session.setAttribute("mapOfInlineLists", placedInlineLists);
-            session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
+            request.setAttribute("mapOfInlineLists", placedInlineLists);
+            request.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
             Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
                 Map<String, DisplayField>>();
