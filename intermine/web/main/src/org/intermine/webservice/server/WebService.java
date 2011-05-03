@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
@@ -77,6 +78,10 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  */
 public abstract class WebService
 {
+
+    /** Default jsonp callback **/
+    public static final String DEFAULT_CALLBACK = "callback";
+
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
 
@@ -212,7 +217,7 @@ public abstract class WebService
         try {
             output.flush();
         } catch (Throwable t) {
-            logger.debug("Error flushing " + t);
+            logError(t, "Error flushing", 500);
         }
 
     }
@@ -353,6 +358,15 @@ public abstract class WebService
         }
     }
 
+    public boolean formatIsXML() {
+        return (getFormat() == XML_FORMAT);
+    }
+
+    protected Output makeXMLOutput(PrintWriter out) {
+        ResponseUtil.setXMLHeader(response, "result.xml");
+        return new StreamedOutput(out, new XMLFormatter());
+    }
+
     private void initOutput(HttpServletResponse response) {
         PrintWriter out;
         try {
@@ -365,8 +379,7 @@ public abstract class WebService
         int format = getFormat();
         switch (format) {
             case XML_FORMAT:
-                output = new StreamedOutput(out, new XMLFormatter());
-                ResponseUtil.setXMLHeader(response, "result.xml");
+                output = makeXMLOutput(out);
                 break;
             case TSV_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
@@ -456,16 +469,41 @@ public abstract class WebService
         }
     }
 
+    private String parseFormatFromPathInfo() {
+        String pathInfo = request.getPathInfo();
+        pathInfo = StringUtil.trimSlashes(pathInfo);
+        if ("xml".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_XML;
+        } else if ("json".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
+        } else if ("jsonp".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
+        } else if ("tsv".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_TAB;
+        } else if ("csv".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_CSV;
+        }
+        return null;
+    }
+
+    protected int getDefaultFormat() {
+        return TSV_FORMAT;
+    }
+
     /**
      * Returns required output format.
      *
      * @return format
      */
     public int getFormat() {
-        String format = request
-                .getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        String format;
+        if (request.getPathInfo() != null) {
+            format = parseFormatFromPathInfo();
+        } else {
+           format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        }
         if (StringUtils.isEmpty(format)) {
-            return TSV_FORMAT;
+            return getDefaultFormat();
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_XML
                 .equalsIgnoreCase(format)) {
@@ -532,7 +570,12 @@ public abstract class WebService
      */
     public String getCallback() {
         if (formatIsJSONP()) {
-            return request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
+            String cb = request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
+            if (cb == null || "".equals(cb)) {
+                return DEFAULT_CALLBACK;
+            } else {
+                return cb;
+            }
         } else {
             return null;
         }

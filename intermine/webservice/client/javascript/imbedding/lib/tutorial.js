@@ -1,7 +1,7 @@
 availableTemplates = null;
 var model = {};
 var baseUrl = "http://squirrel.flymine.org/intermine-test";
-var flyMineBase = "http://preview.flymine.org/preview";
+var flyMineBase = "http://squirrel.flymine.org/report-page";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";
@@ -239,7 +239,8 @@ function loadTable4e() {
         mineLinkText: "Guarda in Mine",
         resultsDescriptionText: "il risultato della loro interrogazione",
         queryTitleText: "Organismo --> Tutti genia con un dominio specifico",
-        countText: "[x] righe"
+        countText: "[x] righe",
+        thousandsSeparator: "."
     };
     IMBedding.loadTemplate(
         {
@@ -303,7 +304,11 @@ function loadGraph1() {
     IMBedding.loadQuery(
         {
             select: ["Employee.age", "Employee.department.company.name"],
-            from: "testmodel"
+            from: "testmodel",
+            where: [
+                {path: "Employee.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Employee.department.company.name", op: "!=", value: "Company*"}
+            ]
         },
         {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
@@ -435,7 +440,11 @@ function loadGraph2() {
     IMBedding.loadQuery(
         {
             select: ["Manager.age", "Manager.seniority", "Manager.name"],
-            where: [{path: "Manager.age", op: ">", value: 30}],
+            where: [
+                {path: "Manager.age", op: ">", value: 30},
+                {path: "Manager.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Manager.department.company.name", op: "!=", value: "Company*"}
+                ],
             from: "testmodel"
         },
         {size: 1000, format: "jsonpobjects"},
@@ -475,7 +484,9 @@ function loadGraph2() {
                         y = item.datapoint[1].toFixed(2);
                     var key = parseInt(x) + "-" + parseInt(y);
                     var manager = managers[key];
-                    showTooltip(item.pageX, item.pageY, manager.name);
+                    if (manager) {
+                        showTooltip(item.pageX, item.pageY, manager.name);
+                    }
                 }
                 else {
                     $("#tooltip").remove();
@@ -978,8 +989,7 @@ $(function() {
             loadTemplateInfo(
                 "http://squirrel.flymine.org/intermine-test/service/templates");
         } else if (this.value == "flymine") {
-            loadTemplateInfo(
-                "http://preview.flymine.org/preview/service/templates");
+            loadTemplateInfo(flyMineBase + "/service/templates");
         }
     });
     $('#source-radios-q').buttonset();
@@ -988,8 +998,7 @@ $(function() {
             loadModel(
                 "http://squirrel.flymine.org/intermine-test/service/model");
         } else if (this.value == "flymine") {
-            loadModel(
-                "http://preview.flymine.org/preview/service/model");
+            loadModel(flyMineBase + "/service/model");
         }
     });
     $('#sortOrderSelector').button();
@@ -1484,12 +1493,12 @@ var loadTemplateInfo = function(url) {
             format: "jsonp"
         },
         success: function( data ) {
-            window.availableTemplates = data;
+            window.availableTemplates = data.templates;
             var names = [];
-            for (name in data) {
+            for (name in data.templates) {
                 names.push({
                     value: name,
-                    label: data[name].title
+                    label: data.templates[name].title
                 });
             }
             $('#templateName').autocomplete({
@@ -1543,7 +1552,6 @@ var loadModel = function(url) {
 
 
 $(function() {
-    loadTemplateInfo(
-        "http://preview.flymine.org/preview/service/templates");
-    loadModel("http://preview.flymine.org/preview/service/model");
+    loadTemplateInfo(flyMineBase + "/service/templates");
+    loadModel(flyMineBase + "/service/model");
 });

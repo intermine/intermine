@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -56,6 +58,11 @@ public class QueryBuilderViewAction extends InterMineAction
         String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
 
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
+
+        //track the query execution
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
 
         return new ForwardParameters(mapping.findForward("waiting"))
                             .addParameter("trail", "|query")

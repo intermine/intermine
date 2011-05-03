@@ -29,7 +29,7 @@
 
 <c:if test="${!empty tracks}">
 <html:link styleId="sub-all-tracks"
-  href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${urlabels}" target="_blank" title="Titolo">
+  href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${urlabels}" target="_blank" title="${dccId}">
   <html:img src="model/images/${organism}_gb.png" title="View all tracks for submission ${dccId} in GBrowse"/>
 </html:link>
 </c:if>

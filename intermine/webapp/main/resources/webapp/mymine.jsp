@@ -38,6 +38,11 @@
         <tiles:put name="type" value="template"/>
       </tiles:insert>
     </c:when>
+
+    <%-- tracks --%>    
+    <c:when test="${subtabs[subtabName]  =='tracks'}">
+      <tiles:insert name="tracks.jsp"/>
+    </c:when>
     
     <%-- password --%> 
     <c:when test="${subtabs[subtabName]  =='password'}">
@@ -47,7 +52,7 @@
 
   <%-- tag actions for super user --%>
   <div class="body">
-    <c:if test="${IS_SUPERUSER}">
+    <c:if test="${IS_SUPERUSER && subtabs[subtabName]!='tracks'}">
       <span class="smallnote">
           <html:link action="/exportTags">
             <fmt:message key="history.exportTags"/>

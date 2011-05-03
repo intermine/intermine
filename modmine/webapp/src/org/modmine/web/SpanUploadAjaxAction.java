@@ -29,9 +29,9 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.util.StringUtil;
 import org.json.JSONObject;
-import org.modmine.web.model.Span;
 import org.modmine.web.model.SpanQueryResultRow;
 import org.modmine.web.model.SpanUploadConstraint;
 
@@ -57,8 +57,8 @@ public class SpanUploadAjaxAction extends Action
         String spanUUIDString = (String) request.getParameter("spanUUIDString");
 
         @SuppressWarnings("unchecked")
-        Map<String, Map<Span, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
-             (Map<String, Map<Span, List<SpanQueryResultRow>>>) request
+        Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
+             (Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>>) request
                             .getSession().getAttribute("spanOverlapFullResultMap");
 
         @SuppressWarnings("unchecked")
@@ -67,8 +67,8 @@ public class SpanUploadAjaxAction extends Action
             .getSession().getAttribute("spanConstraintMap");
 
         @SuppressWarnings("unchecked")
-        Map<String, Map<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>>>
-        gbrowseFullTrackMap = (HashMap<String, Map<Span, LinkedHashMap<String,
+        Map<String, Map<GenomicRegion, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>>>
+        gbrowseFullTrackMap = (HashMap<String, Map<GenomicRegion, LinkedHashMap<String,
                 LinkedHashSet<GBrowseTrackInfo>>>>) request.getSession()
                     .getAttribute("gbrowseFullTrackMap");
 
@@ -89,7 +89,7 @@ public class SpanUploadAjaxAction extends Action
             int toIdx = Integer.parseInt((String) request.getParameter("toIdx"));
 
             // get span list from spanConstraintMap in the session
-            List<Span> spanList = null;
+            List<GenomicRegion> spanList = null;
             for (Entry<SpanUploadConstraint, String> e : spanConstraintMap.entrySet()) {
                 if (e.getValue().equals(spanUUIDString)) {
                     spanList = e.getKey().getSpanList();
@@ -148,16 +148,19 @@ public class SpanUploadAjaxAction extends Action
      * @return a String
      */
     private String convertResultMapToJSONString(
-            Map<Span, List<SpanQueryResultRow>> resultMap, List<Span> spanList, int fromIdx,
-            int toIdx, Map<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> trackMap,
+            Map<GenomicRegion, List<SpanQueryResultRow>> resultMap,
+            List<GenomicRegion> spanList,
+            int fromIdx,
+            int toIdx,
+            Map<GenomicRegion, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> trackMap,
             String orgName) {
 
         Map<String, Object> jsonMap = new LinkedHashMap<String, Object>();
         List<Map<String, Object>> resultArray = new ArrayList<Map<String, Object>>();
 
-        List<Span> subSpanList = spanList.subList(fromIdx, toIdx + 1);
+        List<GenomicRegion> subSpanList = spanList.subList(fromIdx, toIdx + 1);
 
-        for (Span s : subSpanList) {
+        for (GenomicRegion s : subSpanList) {
             Map<String, Object> m = new LinkedHashMap<String, Object>();
             m.put("span", s.toString());
             m.put("organism", orgName);
@@ -202,7 +205,7 @@ public class SpanUploadAjaxAction extends Action
      * @param r a SpanQueryResultRow object
      * @return matched base count as String
      */
-    private String getMatchedBaseCount(Span s, SpanQueryResultRow r) {
+    private String getMatchedBaseCount(GenomicRegion s, SpanQueryResultRow r) {
 
         int spanStart = s.getStart();
         int spanEnd = s.getEnd();
@@ -238,8 +241,8 @@ public class SpanUploadAjaxAction extends Action
      * @return String
      */
     private String getGbrowseTrackURL(
-            Map<Span, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> trackMap,
-            Span span) {
+            Map<GenomicRegion, LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>>> trackMap,
+            GenomicRegion span) {
 
         Set<String> subURLSet = new LinkedHashSet<String>();
 
@@ -252,7 +255,23 @@ public class SpanUploadAjaxAction extends Action
                 }
             }
 
-            return StringUtil.join(subURLSet, "-");
+            // TODO whether add flanks
+            /*
+            int spanLength = span.getEnd() - span.getStart();
+            int flank = (int) Math.rint(spanLength * 0.1); // 10%
+                // TODO overflow not tested
+            int newStart = span.getStart() - flank; // newStart >= 0
+            int newEnd = span.getEnd() + flank; // newEnd <= the length of the chr
+            */
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("start=" + span.getStart() + ";")
+                .append("end=" + span.getEnd() + ";")
+                .append("ref=" + span.getChr() + ";")
+                .append("label=Genes;")
+                .append("label=" + StringUtil.join(subURLSet, "-"));
+
+            return sb.toString();
         }
 
         return null;
@@ -279,11 +298,11 @@ public class SpanUploadAjaxAction extends Action
      * @return String
      */
     private String getSpanOverlapFeatures(String spanUUIDString, String spanString,
-            Map<Span, List<SpanQueryResultRow>> resultMap) {
+            Map<GenomicRegion, List<SpanQueryResultRow>> resultMap) {
 
         Set<String> featureSet = new HashSet<String>();
 
-        Span spanToExport = new Span(spanString);
+        GenomicRegion spanToExport = new GenomicRegion(spanString);
         for (SpanQueryResultRow r : resultMap.get(spanToExport)) {
             featureSet.add(r.getFeaturePID());
         }
@@ -297,7 +316,7 @@ public class SpanUploadAjaxAction extends Action
      * @param resultMap
      * @return String
      */
-    private String isEmptyFeature(Map<Span, List<SpanQueryResultRow>> resultMap) {
+    private String isEmptyFeature(Map<GenomicRegion, List<SpanQueryResultRow>> resultMap) {
         for (List<SpanQueryResultRow> l : resultMap.values()) {
             if (l != null) {
                 return "hasFeature";

@@ -58,7 +58,28 @@ An individual 'submission' is a single instance of an experiment which tests var
     </c:forEach>
   </td>
 
-  <td><h4><html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
+  <%-- TMP FIX for 
+  http://intermine.modencode.org/release-22/experiment.do?experiment=Stranded%20Cell%20Line%20Transcriptional%20Profiling%20Using%20Illumina%20poly%2528A%2529%252B%20RNA-seq
+  escaping the url encoding
+  --%>
+<td><h4>  
+  <c:choose>
+  <c:when test="${fn:startsWith(exp.name, 'Stranded Cell Line Transcriptional Profiling Using Illumina')}">
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
+  Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+  </html:link></h4>
+  </c:when>
+  <c:otherwise>
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}
+  </html:link></h4>
+  </c:otherwise>
+  </c:choose>
+
+  
+  <%-- END FIX , substitute
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
+  --%>
+
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>
 Project:${exp.projectName } &nbsp;&nbsp;(${exp.pi })&nbsp;&nbsp;
@@ -108,7 +129,7 @@ Labs:
       <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count > 1 }"><br> </c:if>
 
-     <%-- TEMP patch until data is corrected. it should be (otherwise) --%>
+     <%-- TEMP patch until data is corrected. it should be (otherwise) 
      <c:choose>
      <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators'
   && fc.featureType == 'ProteinBindingSite'}">
@@ -118,7 +139,11 @@ Labs:
       ${fc.featureType}:&nbsp;${fc.featureCounts}
      </c:otherwise>
      </c:choose>
+     --%>
 <%-- END --%>
+
+${fc.featureType}:&nbsp;${fc.featureCounts}
+
 
 <%-- too crowded: rm here, still available in the experiment page
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">

@@ -211,6 +211,10 @@ public class ModMineSearch
 
                 // submission details
                 addToDocument(doc, subId, "dCCid", sub.getdCCid().toString());
+                if (dccId.startsWith("modENCODE_")) {
+                    addToDocument(doc, subId, "dCCid",
+                            sub.getdCCid().substring("modENCODE_".length()));
+                }
                 addToDocument(doc, subId, "title", sub.getTitle());
                 addToDocument(doc, subId, "description", sub.getDescription());
 

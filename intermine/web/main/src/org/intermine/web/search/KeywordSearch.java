@@ -354,6 +354,7 @@ class InterMineObjectFetcher extends Thread
     private Set<String> normFields = new HashSet<String>();
     final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
+    private Map<String, String> attributePrefixes = null;
 
     Field idField = null;
     Field categoryField = null;
@@ -384,7 +385,8 @@ class InterMineObjectFetcher extends Thread
             ObjectPipe<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
             Map<Class<? extends InterMineObject>, String[]> specialReferences,
-            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets) {
+            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
+            Map<String, String> attributePrefixes) {
         super();
 
         this.os = os;
@@ -394,6 +396,7 @@ class InterMineObjectFetcher extends Thread
         this.specialReferences = specialReferences;
         this.classBoost = classBoost;
         this.facets = facets;
+        this.attributePrefixes = attributePrefixes;
     }
 
     /**
@@ -700,6 +703,14 @@ class InterMineObjectFetcher extends Thread
                                 values.add(new ObjectValueContainer(classAttributes.getClassName(),
                                         att.getName(), string));
                             }
+
+                            String prefix =
+                                getAttributePrefix(classAttributes.getClassName(), att.getName());
+                            if (prefix != null) {
+                                String unPrefixedValue = string.substring(prefix.length());
+                                values.add(new ObjectValueContainer(classAttributes.getClassName(),
+                                        att.getName(), unPrefixedValue));
+                            }
                         }
                     }
                 } catch (IllegalAccessException e) {
@@ -709,6 +720,27 @@ class InterMineObjectFetcher extends Thread
         }
 
         return values;
+    }
+
+    private String getAttributePrefix(String className, String attributeName) {
+        if (attributePrefixes == null) {
+            return null;
+        }
+        // for performance avoid joining strings in most cases
+        Set<String> classesWithPrefix = null;
+        if (classesWithPrefix == null) {
+            classesWithPrefix = new HashSet<String>();
+            for (String clsAndAtt : attributePrefixes.keySet()) {
+                String clsWithPrefix = clsAndAtt.substring(0, clsAndAtt.indexOf('.'));
+                classesWithPrefix.add(clsWithPrefix);
+            }
+        }
+        if (classesWithPrefix.contains(className)) {
+            StringBuilder clsAndAttribute = new StringBuilder();
+            clsAndAttribute.append(className).append('.').append(attributeName);
+            return attributePrefixes.get(clsAndAttribute.toString());
+        }
+        return null;
     }
 
     private Field addToDocument(Document doc, String fieldName, String value, float boost,
@@ -872,6 +904,7 @@ public final class KeywordSearch
     private static Map<ClassDescriptor, Float> classBoost;
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
+    private static Map<String, String> attributePrefixes = null;
 
     private KeywordSearch() {
         //don't
@@ -960,6 +993,9 @@ public final class KeywordSearch
                             LOG.error("keyword_search.properties: classDescriptor for '"
                                     + classToBoost + "' not found!");
                         }
+                    } else if (key.startsWith("index.prefix")) {
+                        String classAndAttribute = key.substring("index.prefix.".length());
+                        addAttributePrefix(classAndAttribute, value);
                     } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
                         debugOutput =
                                 "1".equals(value) || "true".equals(value.toLowerCase())
@@ -994,9 +1030,31 @@ public final class KeywordSearch
                     + facet.getType().toString());
         }
 
+        LOG.info("Indexing with and without attribute prefixes:");
+        if (attributePrefixes != null) {
+            for (String clsAndAttribute : attributePrefixes.keySet()) {
+                LOG.info("- class and attribute: " + clsAndAttribute + " with prefix: "
+                        + attributePrefixes.get(clsAndAttribute));
+            }
+        }
+
         LOG.info("Search - Debug mode: " + debugOutput);
         LOG.info("Indexing - Temp Dir: " + tempDirectory);
     }
+
+    private static void addAttributePrefix(String classAndAttribute, String prefix) {
+        if (StringUtils.isBlank(classAndAttribute) || classAndAttribute.indexOf(".") == -1
+                || StringUtils.isBlank(prefix)) {
+            LOG.warn("Invalid search.prefix configuration: '" + classAndAttribute + "' = '"
+                    + prefix + "'. Should be className.attributeName = prefix.");
+        } else {
+            if (attributePrefixes == null) {
+                attributePrefixes = new HashMap<String, String>();
+            }
+            attributePrefixes.put(classAndAttribute, prefix);
+        }
+    }
+
 
     /**
      * loads or creates the lucene index
@@ -1512,7 +1570,7 @@ public final class KeywordSearch
         LOG.info("Starting fetcher thread...");
         InterMineObjectFetcher fetchThread =
                 new InterMineObjectFetcher(os, classKeys, indexingQueue, ignoredClasses,
-                        specialReferences, classBoost, facets);
+                        specialReferences, classBoost, facets, attributePrefixes);
         fetchThread.start();
 
         // index the docs queued by the fetchers

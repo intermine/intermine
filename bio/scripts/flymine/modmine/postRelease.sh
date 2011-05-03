@@ -13,8 +13,9 @@ INTERACT=y
 DOIT=y
 
 #PRO="celniker waterston"
-#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
-PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
+#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white"
 
 progname=$0
 
@@ -168,7 +169,7 @@ echo
 function do_branch {
 # do branch 
 RETURNDIR=$PWD
-svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL
+svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL -m "modmine $REL branch"
 cd /home/modmine/svn
 svn co svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL modmine-$REL
 cd $RETURNDIR

@@ -91,7 +91,7 @@ public class ProteinAtlasConverter extends BioFileConverter
             Item expression = createItem("ProteinAtlasExpression");
             expression.setAttribute("cellType", cellType);
             expression.setAttribute("level", level);
-            expression.setAttribute("expressionType", getExpressionType(expressionType));
+            expression.setAttribute("expressionType", alterExpressionType(expressionType));
             expression.setAttribute("reliability", reliability);
             expression.setReference("gene", geneId);
             expression.setReference("tissue", tissueId);
@@ -124,7 +124,22 @@ public class ProteinAtlasConverter extends BioFileConverter
         return geneId;
     }
 
-    private String getExpressionType(String expressionType) {
+    private String alterScore(String score) {
+        if ("very low".equalsIgnoreCase(score) || "none".equalsIgnoreCase(score)) {
+            return "0 - " + score;
+        } else if ("low".equalsIgnoreCase(score) || "not supportive".equalsIgnoreCase(score)) {
+            return "1 - " + score;
+        } else if ("medium".equalsIgnoreCase(score) || "unsupportive".equalsIgnoreCase(score)) {
+            return "2 - " + score;
+        } else if ("high".equalsIgnoreCase(score) || "supportive".equalsIgnoreCase(score)) {
+            return "3 - " + score;
+        } else {
+            throw new RuntimeException("Score '" + score + "' could not be assigned to category" +
+                    " update the code to handle a new score type");
+        }
+    }
+    
+    private String alterExpressionType(String expressionType) {
         if ("APE".equals(expressionType)) {
             return "APE - two or more antibodies";
         } else if ("Staining".equals(expressionType)) {

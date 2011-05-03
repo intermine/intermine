@@ -77,7 +77,9 @@ public class DisplayExperiment
         this.piSurname = proj.getSurnamePI();
         if (!StringUtils.isBlank(proj.getName())) {
             this.projectName = proj.getName();
-        } else {
+        }
+        /*
+        else {
             // This is a temporary fix for modMine 20 to cope with un-merged Projects
             if ("Celniker".equals(piSurname)) {
                 this.projectName = "The Drosophila Transcriptome";
@@ -91,7 +93,8 @@ public class DisplayExperiment
                 this.projectName = "The 3' UTRome";
             }
         }
-
+         */
+        
         Set<String> expTypes = new HashSet<String>();
 
         for (Submission submission : exp.getSubmissions()) {
@@ -315,6 +318,20 @@ public class DisplayExperiment
         return unloc;
     }
 
+    /**
+     * @return a map of features with sequence for this experiment
+     */
+    public Set<String> getSequenced() {
+        Map<String, List<String>> seq = MetadataCache.getSequencedFeatureTypes(os);
+
+        Set<String> sequenced = new HashSet<String>();
+        for (Submission s : submissions) {
+            if (seq.get(s.getdCCid()) != null) {
+                sequenced.addAll(seq.get(s.getdCCid()));
+            }
+        }
+        return sequenced;
+    }
 
     /**
      * adds the elements of a list i to a list l only if they are not yet

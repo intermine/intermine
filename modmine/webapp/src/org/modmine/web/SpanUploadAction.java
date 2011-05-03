@@ -32,12 +32,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.modmine.web.logic.SpanOverlapQueryRunner;
 import org.modmine.web.logic.SpanValidator;
-import org.modmine.web.model.Span;
 
 /**
  * @author Fengyuan Hu
@@ -70,6 +70,11 @@ public class SpanUploadAction extends InterMineAction
 
         SpanUploadForm spanUploadForm = (SpanUploadForm) form;
         String orgName = spanUploadForm.getOrgName();
+
+        if ("".equals(orgName)) {
+            return mapping.findForward("spanUploadOptions");
+        }
+
         String isInterBaseCoordinate = spanUploadForm.getIsInterBaseCoordinate();
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
@@ -178,16 +183,13 @@ public class SpanUploadAction extends InterMineAction
 
         // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
         // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
-        List<Span> spanList = new ArrayList<Span>();
+        List<GenomicRegion> spanList = new ArrayList<GenomicRegion>();
         for (String spanStr : spanStringSet) {
-            Span aSpan = new Span();
+            GenomicRegion aSpan = new GenomicRegion();
             // >>> Use regular expression to validate user's input
-            // span in the form of "chr:start..end" as in a pattern
-            // [^:]+:\d+\.{2,}\d+
-            // span in the form of "chr:start-end" as in a pattern
-            // [^:]+:\d+\-\d+
-            // span in the form of "chr(tab)start(tab)end" as in a pattern
-            // [^\t]+\t\d+\t\d+
+            // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            // "chr:start-end" - [^:]+:\d+\-\d+
+            // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
             String ddotsRegex = "[^:]+:\\d+\\.\\.\\d+";
             String tabRegex = "[^\\t]+\\t\\d+\\t\\d+";
             String dashRegex = "[^:]+:\\d+\\-\\d+";
@@ -232,7 +234,7 @@ public class SpanUploadAction extends InterMineAction
                 .runSpanValidationQuery(im);
 
         // Chromesome starts with "chr" - UCSC formats
-        for (Span aSpan : spanList) {
+        for (GenomicRegion aSpan : spanList) {
             if (aSpan.getChr().startsWith("chr")) {
                 aSpan.setChr(aSpan.getChr().substring(3));
             }
@@ -262,18 +264,20 @@ public class SpanUploadAction extends InterMineAction
 
         } else { // Validate spans
             SpanValidator v = new SpanValidator();
-            Map<String, List<Span>> resultMap = v.runSpanValidation(orgName, spanList, chrInfoMap);
+            Map<String, List<GenomicRegion>> resultMap = v.runSpanValidation(
+                    orgName, spanList, chrInfoMap);
 
             String errorMsg = "";
             if (resultMap.get("error").size() == 0) {
                 errorMsg = null;
             } else {
                 String spanString = "";
-                for (Span span : resultMap.get("error")) {
+                for (GenomicRegion span : resultMap.get("error")) {
                     spanString = spanString + span.getChr() + ":" + span.getStart()
-                            + ".." + span.getEnd() + ",";
+                            + ".." + span.getEnd() + ", ";
                 }
-                errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
+                errorMsg = "<b>Invalid spans in <i>" + orgName + "</i>:</b> "
+                        + spanString.substring(0, spanString.lastIndexOf(","));
             }
 
             if (resultMap.get("error").size() == spanList.size()) { // all spans are wrong
@@ -290,10 +294,18 @@ public class SpanUploadAction extends InterMineAction
                     String gbrowseDefaultUrl = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
                     String gbrowseBaseUrl = GBrowseParser.getGBrowsePrefix();
 
+                    String gbrowseImageDefaultUrl =
+                        "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse_img/";
+                    String gbrowseImageBaseUrl = gbrowseBaseUrl.replaceFirst(
+                            "gbrowse", "gbrowse_img");
+
                     if (gbrowseBaseUrl == null || gbrowseBaseUrl.isEmpty()) {
                         request.getSession().setAttribute("GBROWSE_BASE_URL", gbrowseDefaultUrl);
+                        request.getSession().setAttribute("GBROWSE_IMAGE_URL",
+                                gbrowseImageDefaultUrl);
                     } else {
                         request.getSession().setAttribute("GBROWSE_BASE_URL", gbrowseBaseUrl);
+                        request.getSession().setAttribute("GBROWSE_IMAGE_URL", gbrowseImageBaseUrl);
                     }
                 }
             }

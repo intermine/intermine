@@ -22,16 +22,18 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.bio.constants.ModMineCacheKeys;
+import org.intermine.metadata.Model;
+import org.intermine.model.bio.BindingSite;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.CellLine;
 import org.intermine.model.bio.DatabaseRecord;
@@ -40,21 +42,25 @@ import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.GeneExpressionScore;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
@@ -78,10 +84,16 @@ public final class MetadataCache
     private static Map<String, Integer> submissionIdCache = null;
     private static Map<String, List<GBrowseTrack>> submissionTracksCache = null;
 
+//    private static Map<String, Map<String, Long>> submissionFileSourceCounts = null;
+    private static Map<String, Map<String, Map<String, Long>>> submissionFileSourceCounts = null;
+
     private static Map<String, Set<ResultFile>> submissionFilesCache = null;
     private static Map<String, Integer> filesPerSubmissionCache = null;
     private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<String, List<String>> submissionUnlocatedFeatureTypes = null;
+    private static Map<String, List<String>> submissionSequencedFeatureTypes = null;
+
+    
     private static Map<String, List<String[]>> submissionRepositedCache = null;
 
     private static Map<String, String> featDescriptionCache = null;
@@ -108,33 +120,6 @@ public final class MetadataCache
             readExperiments(os);
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
-    }
-
-    /**
-     * Fetch experiment and submission details for spanUpload.
-     * @param os the production objectStore
-     * @return a map of experiment name as key and a set of submission ids as value
-     */
-    public static synchronized Map<String, Set<String>>
-    getExperimentSubmissionDCCids(ObjectStore os) {
-        if (experimentCache == null) {
-            readExperiments(os);
-        }
-
-        Map<String, Set<String>> experimentSubmissionsMap =
-            new HashMap<String, Set<String>>();
-
-        for (Entry<String, DisplayExperiment> e : experimentCache.entrySet()) {
-
-            Set<String> dCCidSet = new HashSet<String>();
-            for (Submission s : e.getValue().getSubmissions()) {
-                dCCidSet.add(s.getdCCid());
-            }
-
-            experimentSubmissionsMap.put(e.getKey(), dCCidSet);
-        }
-
-        return experimentSubmissionsMap;
     }
 
     /**
@@ -200,9 +185,9 @@ public final class MetadataCache
 
 
     /**
-     * Fetch unlocated feature types per submission.
+     * Fetch located feature types per submission.
      * @param os the production objectStore
-     * @return map of unlocated feature types
+     * @return map of located feature types
      */
     public static synchronized Map<String, List<String>> getLocatedFeatureTypes(ObjectStore os) {
         if (submissionLocatedFeatureTypes == null) {
@@ -238,6 +223,20 @@ public final class MetadataCache
         return uf;
     }
 
+    /**
+     * Fetch located feature types per submission.
+     * @param os the production objectStore
+     * @return map of located feature types
+     */
+    public static synchronized Map<String, List<String>> getSequencedFeatureTypes(ObjectStore os) {
+        if (submissionSequencedFeatureTypes == null) {
+            readSubmissionSequencedFeature(os);
+        }
+        return submissionSequencedFeatureTypes;
+    }
+
+    
+    
     /**
      * Fetch the collection of ResultFiles per submission.
      * @param os the production objectStore
@@ -341,6 +340,35 @@ public final class MetadataCache
         }
     }
 
+    
+    /**
+     * Fetch experiment and submission details for spanUpload.
+     * @param os the production objectStore
+     * @return a map of experiment name as key and a set of submission ids as value
+     */
+    public static synchronized Map<String, Set<String>>
+    getExperimentSubmissionDCCids(ObjectStore os) {
+        if (experimentCache == null) {
+            readExperiments(os);
+        }
+        
+        Map<String, Set<String>> experimentSubmissionsMap =
+            new HashMap<String, Set<String>>();
+        
+        for (Entry<String, DisplayExperiment> e : experimentCache.entrySet()) {
+            
+            Set<String> dCCidSet = new HashSet<String>();
+            for (Submission s : e.getValue().getSubmissions()) {
+                dCCidSet.add(s.getdCCid());
+            }
+            
+            experimentSubmissionsMap.put(e.getKey(), dCCidSet);
+        }
+        
+        return experimentSubmissionsMap;
+    }
+    
+    
     /**
      * Fetch a list of file names for a given submission.
      * @param servletContext servletContext
@@ -352,6 +380,19 @@ public final class MetadataCache
             readFeatTypeDescription(servletContext);
         }
         return featDescriptionCache;
+    }
+
+    /**
+     * Fetch a list of file names for a given submission.
+     * @param ObjectStore os
+     * @return a list of file names
+     */
+    public static synchronized
+    Map<String, Map<String, Map<String, Long>>> getSubFileSourceCounts(ObjectStore os) {
+        if (submissionFileSourceCounts == null) {
+            readSubmissionFileSourceCounts(os);
+        }
+        return submissionFileSourceCounts;
     }
 
     /**
@@ -1028,6 +1069,25 @@ public final class MetadataCache
     }
 
 
+    private static void readSubmissionSequencedFeature(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        submissionSequencedFeatureTypes = new LinkedHashMap<String, List<String>>();
+        Properties props = extractProperties(os, ModMineCacheKeys.SUB_SEQUENCED_FEATURE_TYPE);
+
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
+
+            String[] token = keyString.split("\\.");
+            String dccId = token[0];
+            String feature = (String) props.get(key);
+
+            addToMap(submissionSequencedFeatureTypes, dccId, feature);
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed sequenced features cache, took: " + timeTaken + "ms size = "
+                + submissionSequencedFeatureTypes.size());
+    }
+
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<String, List<String>>();
@@ -1344,6 +1404,221 @@ public final class MetadataCache
                 + submissionFilesCache.size());
     }
 
+/*
+    private static void readSubmissionFileSourceCount(ObjectStore os) {
+
+        long startTime = System.currentTimeMillis();
+
+        Model model = os.getModel();
+
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcSub = new QueryClass(model.getClassDescriptorByName("Submission").getType());
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
+        QueryClass qcLoc = new QueryClass(Location.class);
+
+        QueryField qfDccId = new QueryField(qcSub, "DCCid");
+        QueryField qfClass = new QueryField(qcLsf, "class");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcLoc);
+
+        q.addToSelect(qfDccId);
+        q.addToSelect(qfClass);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+
+        // submission.features featureType
+        QueryField featureType = new QueryField(qcLsf, "featureType");
+        cs.addConstraint(new SimpleConstraint(featureType, ConstraintOp.EQUALS,
+                                              new QueryValue("ProteinBindingSite")));
+        
+        QueryObjectReference location = new QueryObjectReference(qcLsf, "chromosomeLocation");
+        ContainsConstraint ccLocs = new ContainsConstraint(location, ConstraintOp.CONTAINS, qcLoc);
+        cs.addConstraint(ccLocs);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        // for each classes set the values for jsp
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            String dccId = (String) row.get(0);
+            Class<?> feat = (Class<?>) row.get(1);
+
+            String key = ModMineCacheKeys.SUB_PROTEIN_BINDING_SITE
+                + "." + dccId + "." + TypeUtil.unqualifiedName(feat.getName());
+            LOG.info("PBS: " + key);
+
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read located features types, took: " + timeTaken + " ms.");
+    }
+*/
+    
+//    private static void readSubProteinBindingSite(ObjectStore os, Properties props) {
+//
+//        long startTime = System.currentTimeMillis();
+//
+//        Model model = os.getModel();
+//
+//        Query q = new Query();
+//        q.setDistinct(true);
+//
+//        QueryClass qcSub = new QueryClass(model.getClassDescriptorByName("Submission").getType());
+//        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
+//        QueryClass qcLoc = new QueryClass(Location.class);
+//
+//        QueryField qfDccId = new QueryField(qcSub, "DCCid");
+//        QueryField qfClass = new QueryField(qcLsf, "class");
+//
+//        q.addFrom(qcSub);
+//        q.addFrom(qcLsf);
+//        q.addFrom(qcLoc);
+//
+//        q.addToSelect(qfDccId);
+//        q.addToSelect(qfClass);
+//
+//        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+//
+//        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+//        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+//        cs.addConstraint(ccFeats);
+//
+//
+//        // submission.features featureType
+//        QueryField featureType = new QueryField(qcLsf, "featureType");
+//        cs.addConstraint(new SimpleConstraint(featureType, ConstraintOp.EQUALS,
+//                                              new QueryValue("ProteinBindingSite")));
+//        
+//        QueryObjectReference location = new QueryObjectReference(qcLsf, "chromosomeLocation");
+//        ContainsConstraint ccLocs = new ContainsConstraint(location, ConstraintOp.CONTAINS, qcLoc);
+//        cs.addConstraint(ccLocs);
+//
+//        q.setConstraint(cs);
+//
+//        Results results = os.execute(q);
+//
+//        // for each classes set the values for jsp
+//        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+//            (Iterator) results.iterator();
+//        while (iter.hasNext()) {
+//            ResultsRow<?> row = iter.next();
+//            String dccId = (String) row.get(0);
+//            Class<?> feat = (Class<?>) row.get(1);
+//
+//            String key = ModMineCacheKeys.SUB_PROTEIN_BINDING_SITE
+//                + "." + dccId + "." + TypeUtil.unqualifiedName(feat.getName());
+//            props.put(key, "" + TypeUtil.unqualifiedName(feat.getName()));
+//
+//        }
+//        long timeTaken = System.currentTimeMillis() - startTime;
+//        LOG.info("Read located features types, took: " + timeTaken + " ms.");
+//    }
+    
+//    private static void readSubmissionFileSourceCounts(ObjectStore os,
+//            Properties props) {
+
+    
+    private static void readSubmissionFileSourceCounts(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        
+        Model model = os.getModel();
+        Query q = new Query();
+        q.setDistinct(false);
+        
+        QueryClass qcSub = new QueryClass(model.getClassDescriptorByName("Submission").getType());
+        QueryClass qcLsf = new QueryClass(BindingSite.class);
+//        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
+//        QueryClass qcEL =
+//            new QueryClass(model.getClassDescriptorByName("BindingSite").getType());
+        
+        QueryField qfDccId = new QueryField(qcSub, "DCCid");
+        QueryField qfClass = new QueryField(qcLsf, "class");
+        QueryField qfFile = new QueryField(qcLsf, "sourceFile");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+//        q.addFrom(qcEL);
+
+        q.addToSelect(qfDccId);
+        q.addToSelect(qfClass);
+        q.addToSelect(qfFile);
+        q.addToSelect(new QueryFunction());
+
+        q.addToGroupBy(qfDccId);
+        q.addToGroupBy(qfClass);
+        q.addToGroupBy(qfFile);
+
+        q.addToOrderBy(qfDccId);
+        q.addToOrderBy(qfClass);
+        q.addToOrderBy(qfFile);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+        //        QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
+        //        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
+        //        cs.addConstraint(ccEl);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+        submissionFileSourceCounts = new HashMap<String, Map<String, Map<String, Long>>>();
+        
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            String dccId = (String) row.get(0);
+            Class<?> feat = (Class<?>) row.get(1);
+            String fileName = (String) row.get(2);
+            Long count = (Long) row.get(3);
+
+            String featName = TypeUtil.unqualifiedName(feat.getName());
+            LOG.debug("PBS: " + dccId + ":" + featName + "|" + fileName + "=" + count);
+            
+            addToMap (submissionFileSourceCounts, dccId, featName, fileName, count);
+        }
+
+        //            String key = ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT + "."
+//                + dccId + "." + TypeUtil.unqualifiedName(feat.getName());
+//            props.put(key, "" + count);
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read submissionFileSourceCounts cache, took: " + timeTaken + "ms");
+    }
+  
+
+    private static void addToMap(Map<String, Map<String, Map<String, Long>>> m, String k1,
+            String k2, String k3, Long l) {
+
+        Map<String, Long> sl = new HashMap<String, Long>();
+        Map<String, Map<String, Long>> ssl = new HashMap<String, Map<String, Long>>();
+
+        if (m.containsKey(k1)) {
+            ssl = m.get(k1);
+        }
+        if (ssl.containsKey(k2)) {
+            sl = ssl.get(k2);
+        }
+
+        sl.put(k3, l);
+        ssl.put(k2, sl);
+        m.put(k1, ssl);
+    }
 
 
 }

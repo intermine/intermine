@@ -13,12 +13,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -26,6 +28,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.tracker.track.TemplateTrack;
+import org.intermine.api.tracker.track.Track;
+import org.intermine.api.tracker.util.TrackerUtil;
 
 /**
  * Class for tracking the templates execution by the users. When a user executes a template,
@@ -36,21 +41,14 @@ public class TemplateTracker extends TrackerAbstract
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static TemplateTracker templateTracker = null;
-    /**
-     * TRACKER_NAME the tracker name
-     */
-    public static final String TRACKER_NAME = "TemplateTracker";
     private static TemplatesExecutionMap templatesExecutionCache;
 
     /**
      * Build a template tracker
      * @param conn connection to the database
      */
-    protected TemplateTracker(Connection conn) {
-        this.connection = conn;
-        trackTableName = "templatetrack";
-        trackTableColumns =
-            new String[] {"templatename", "username", "timestamp", "sessionidentifier"};
+    protected TemplateTracker(Queue<Track> trackQueue) {
+        super(trackQueue, TrackerUtil.TEMPLATE_TRACKER_TABLE);
         templatesExecutionCache = new TemplatesExecutionMap();
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
@@ -60,23 +58,15 @@ public class TemplateTracker extends TrackerAbstract
      * @param con connection to the database
      * @return TemplateTracker the template tracker
      */
-    public static TemplateTracker getInstance(Connection con) {
+    public static TemplateTracker getInstance(Connection con, Queue<Track> trackQueue) {
         if (templateTracker == null) {
-            templateTracker = new TemplateTracker(con);
+            templateTracker = new TemplateTracker(trackQueue);
             try {
-                templateTracker.createTrackerTable();
+                templateTracker.createTrackerTable(con);
             } catch (Exception e) {
                 LOG.error("Error creating the table associated to the TemplateTracker" + e);
             }
-            templateTracker.loadTemplatesExecutionCache();
-        } else {
-            try {
-                if (templateTracker.connection.isClosed()) {
-                    templateTracker.connection = con;
-                }
-            } catch (SQLException sqle) {
-                LOG.error("Error restriving connection status of the template tracker", sqle);
-            }
+            templateTracker.loadTemplatesExecutionCache(con);
         }
         return templateTracker;
     }
@@ -84,11 +74,11 @@ public class TemplateTracker extends TrackerAbstract
     /**
      * Load the tracks retrieved from the database into TemplateExecutionMap object
      */
-    private void loadTemplatesExecutionCache() {
+    private void loadTemplatesExecutionCache(Connection con) {
         Statement stm = null;
         ResultSet rs = null;
         try {
-            stm = connection.createStatement();
+            stm = con.createStatement();
             String sql = "SELECT tt.templatename, tt.username, tt.sessionidentifier, t.tagname "
                          + "FROM templatetrack tt LEFT JOIN tag t "
                          + "ON tt.templatename = t.objectidentifier "
@@ -104,8 +94,6 @@ public class TemplateTracker extends TrackerAbstract
             }
         } catch (SQLException sqle) {
             LOG.error("Error during loading template tracks into the cache", sqle);
-        } finally {
-            releaseResources(rs, stm);
         }
     }
 
@@ -116,13 +104,13 @@ public class TemplateTracker extends TrackerAbstract
      * @param profile the user profile
      * @param sessionIdentifier the session id
      */
-    public void trackTemplate(String templateName, Profile profile,
+    protected void trackTemplate(String templateName, Profile profile,
                               String sessionIdentifier) {
-        String userName = (profile != null && profile.getUsername() != null)
+        String userName = (profile.getUsername() != null)
                           ? profile.getUsername()
                           : "";
         TemplateTrack templateTrack = new TemplateTrack(templateName,
-                                      userName, sessionIdentifier, System.currentTimeMillis());
+                                      userName, sessionIdentifier, new Timestamp(System.currentTimeMillis()));
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
             templatesExecutionCache.addExecution(templateTrack);
@@ -135,12 +123,12 @@ public class TemplateTracker extends TrackerAbstract
      * Return the number of executions for each public template
      * @return map with key the template name and executions number
      */
-    public Map<String, Integer> getAccessCounter() {
+    protected Map<String, Integer> getAccessCounter(Connection con) {
         ResultSet rs = null;
         Statement stm = null;
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
         try {
-            stm = connection.createStatement();
+            stm = con.createStatement();
             String sql = "SELECT tt.templatename, COUNT(tt.templatename) as accessnumbers "
                         + "FROM templatetrack tt, tag t "
                         + "WHERE tt.templatename=t.objectidentifier "
@@ -169,7 +157,7 @@ public class TemplateTracker extends TrackerAbstract
      * @param templateManager the template manager used to retrieve the global templates
      * @return map with key the template name and rank
      */
-    public Map<String, Integer> getRank(TemplateManager templateManager) {
+    protected Map<String, Integer> getRank(TemplateManager templateManager) {
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
         Map<String, Double> templateMergedRank = templatesExecutionCache.getLogarithmMap(null,
                                                                               templateManager);
@@ -252,32 +240,16 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Close the result set and statement objects specified in input
-     * @param rs the ResultSet object to close
-     * @param stm the STatement object to close
-     */
-    private void releaseResources(ResultSet rs, Statement stm) {
-        if (rs != null) {
-            try {
-                rs.close();
-                if (stm != null) {
-                    stm.close();
-                }
-            } catch (SQLException e) {
-                LOG.error("Problem closing  resources.", e);
-            }
-        }
-    }
-
-    /**
      * Update the template name value into the database
      * @param oldTemplateName the old name
      * @param newTemplateName the new name
+     * @param con the connection
      */
-    public void updateTemplateName(String oldTemplateName, String newTemplateName) {
+    protected void updateTemplateName(String oldTemplateName, String newTemplateName,
+                                      Connection con) {
         Statement stm = null;
         try {
-            stm = connection.createStatement();
+            stm = con.createStatement();
             String sql = "UPDATE " + trackTableName
                         + " SET templatename = '" + newTemplateName + "'"
                         + " WHERE templatename = '" + oldTemplateName + "'";
@@ -296,36 +268,19 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Generate the sql statement to create the templatetrack table used by the template tracker
-     * @return String sql statement
+     * {@inheritDoc}
      */
+    @Override
     public String getStatementCreatingTable() {
         return "CREATE TABLE " + trackTableName
-            + "(templatename text, username text, timestamp bigint, sessionidentifier text)";
+            + "(templatename text, username text, sessionidentifier text, timestamp timestamp)";
     }
 
     /**
-     * Format the template track into an array of Objects to be saved in the database
-     * The order is the same of the trackTableColumns
-     * @param track the template track to format
-     * @return Object[] an array of Objects
+     * {@inheritDoc}
      */
-    public Object[] getFormattedTrack(Track track) {
-        if (track instanceof TemplateTrack) {
-            TemplateTrack tti = (TemplateTrack) track;
-            return new Object[] {tti.getTemplateName(), tti.getUserName(),
-                                tti.getTimestamp(), tti.getSessionIdentifier()};
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Return the tracker's name
-     * @return String tracker's name
-     */
+    @Override
     public String getName() {
-        return TRACKER_NAME;
+        return TrackerUtil.TEMPLATE_TRACKER;
     }
-
 }

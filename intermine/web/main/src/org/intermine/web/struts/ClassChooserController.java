@@ -70,7 +70,8 @@ public class ClassChooserController extends TilesAction
         }
         for (String className : qualifiedTypes) {
             String unqualifiedName = TypeUtil.unqualifiedName(className);
-            if (oss.getClassCount(className) > 0) {
+            if (oss.getClassCount(className) > 0
+                && !"InterMineObject".equalsIgnoreCase(unqualifiedName)) {
                 String helpKey = unqualifiedName;
                 String helpText = classDescrs.get(helpKey);
                 if (helpText != null) {

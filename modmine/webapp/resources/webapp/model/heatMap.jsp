@@ -15,6 +15,8 @@
 
 <tiles:importAttribute />
 
+<link rel="stylesheet" type="text/css" href="model/bioheatmap/css/bioHeatMap.css"/>
+
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {});
@@ -41,9 +43,12 @@
          <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
              data_body.addRows(1);
              data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+             // note: tooltip works only for setCell, so we cannot have them in the columns name
+             // -> removed from rows name
+             // data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}", null, { tooltip: '${ges.key}' });
 
              <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
+                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore}, null, { tooltip: '${geScores.logScore}' });
              </c:forEach>
          </c:forEach>
 
@@ -51,17 +56,36 @@
                                                                                  endColor: {r:255, g:255, b:0, a:1},
                                                                                  passThroughBlack: false,
                                                                                  numberOfColors: 256,
-                                                                                 cellHeight: 10,
-                                                                                 cellWidth: 10,
-                                                                                 fontHeight: 7,
+                                                                                 cellHeight: 14,
+                                                                                 cellWidth: 14,
+                                                                                 fontHeight: 9,
                                                                                  drawBorder: false});
 
-          google.visualization.events.addListener(heatmap, 'select', function() {
-                    var rowNo = heatmap.getSelection()[0].row;
-                    var colNo = heatmap.getSelection()[0].column;
-                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
-                });
+//          google.visualization.events.addListener(heatmap, 'select', function() {
+//                    var rowNo = heatmap.getSelection()[0].row;
+//                    var colNo = heatmap.getSelection()[0].column;
+//                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
+//                });
 
+          
+          google.visualization.events.addListener(heatmap, 'select', function() {
+
+              var selectionObj = heatmap.getSelection();           
+              var gene = data_body.getValue(selectionObj[0].row,0);
+              var cl   = data_body.getColumnLabel(selectionObj[0].column);   
+              var score = data_body.getValue(selectionObj[0].row,selectionObj[0].column);
+
+              //var cl = cll.replace(' ', '+'); 
+              
+   geneW=window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + gene, "gene", "menubar=1,resizable=1,scrollbars=1, width=1000,height=450" );
+
+//   clW=window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=CellLine&externalids=' + cl, "condition", "menubar=1,resizable=1,scrollbars=1, width=1000,height=450" );
+//   clW.moveTo(0,500);
+              
+//              alert('Expression score: ' + gene + '-' + cl);
+          });
+
+          
         //============= Heatmap legend =============
         var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
 

@@ -171,7 +171,8 @@ public class OmimConverter extends BioDirectoryConverter
 
         int lineCount = 0;
         int resolvedCount = 0;
-        class CountPair {
+        class CountPair
+        {
             protected int resolved = 0;
             protected int total = 0;
         }
@@ -261,10 +262,12 @@ public class OmimConverter extends BioDirectoryConverter
         LOG.info("Resolved " + resolvedCount + " of " + lineCount + " gene symbols from file.");
         String mapTypesMessage = "Counts of resolved genes/ total for each map type: ";
         for (Map.Entry<String, CountPair> pair : counts.entrySet()) {
-            mapTypesMessage += pair.getKey() + ": " + pair.getValue().resolved + " / " + pair.getValue().total + "  ";
+            mapTypesMessage += pair.getKey() + ": " + pair.getValue().resolved
+                + " / " + pair.getValue().total + "  ";
         }
         LOG.info(mapTypesMessage);
-        LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size() + " unique diseases from " + lineCount + " line file.");
+        LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size()
+                + " unique diseases from " + lineCount + " line file.");
     }
 
     private String resolveGene(String symbol) {
@@ -304,10 +307,10 @@ public class OmimConverter extends BioDirectoryConverter
         }
     }
 
-    private void addPubCollection(String mimNumber, List<String> pubs) {
+    private void addPubCollection(String mimNumber, List<String> newPubs) {
         if (!pubs.isEmpty()) {
             Item disease = getDisease(mimNumber);
-            disease.setCollection("publications", pubs);
+            disease.setCollection("publications", newPubs);
         }
     }
 
@@ -347,18 +350,5 @@ public class OmimConverter extends BioDirectoryConverter
             }
         }
         return geneIdentifier;
-    }
-
-    private String getGeneId(String symbol) throws ObjectStoreException {
-        String geneId = genes.get(symbol);
-        if (geneId == null) {
-            Item gene = createItem("Gene");
-            gene.setAttribute("symbol", symbol);
-            gene.setReference("organism", organism);
-            geneId = gene.getIdentifier();
-            genes.put(symbol, geneId);
-            store(gene);
-        }
-        return geneId;
     }
 }

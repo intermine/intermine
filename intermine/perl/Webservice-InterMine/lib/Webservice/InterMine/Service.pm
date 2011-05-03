@@ -1,3 +1,4 @@
+package Webservice::InterMine::Service;
 
 =head1 NAME
 
@@ -25,19 +26,17 @@ objects you can use for running queries.
 
 =cut
 
-package Webservice::InterMine::Service;
-
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
-use Webservice::InterMine::Query;
-use Webservice::InterMine::ResultIterator;
 use Net::HTTP;
 use URI;
 use LWP;
 use MIME::Base64;
 use MooseX::Types::Moose qw/Str Int/;
-use InterMine::TypeLibrary
-  qw(VersionNumber ServiceRootUri Model TemplateFactory SavedQueryFactory ListFactory);
+use Webservice::InterMine::Types
+  qw(ServiceVersion ServiceRootUri TemplateFactory SavedQueryFactory ListFactory UserAgent);
+use InterMine::Model::Types qw(Model);
+use Carp qw(croak confess);
 
 
 =head2 new( $url, [$user, $pass] )
@@ -66,15 +65,27 @@ around BUILDARGS => sub {
 };
 
 use constant {
-    QUERY_PATH         => '/query/results',
-    MODEL_PATH         => '/model',
-    TEMPLATES_PATH     => '/templates/xml',
-    TEMPLATEQUERY_PATH => '/template/results',
-    VERSION_PATH       => '/version',
-    USER_AGENT         => 'WebserviceInterMinePerlAPIClient',
-    LIST_PATH          => '/lists/xml',
-    SAVEDQUERY_PATH    => '/savedqueries/xml',
-    RELEASE_PATH       => '/version/release',
+    QUERY_PATH                 => '/query/results',
+    QUERY_SAVE_PATH            => '/query/upload',
+    QUERY_LIST_PATH            => '/query/tolist/json',
+    QUERY_LIST_APPEND_PATH     => '/query/append/tolist/json',
+
+    MODEL_PATH                 => '/model/xml',
+
+    TEMPLATES_PATH             => '/templates/xml',
+    TEMPLATE_QUERY_PATH        => '/template/results',
+    TEMPLATE_SAVE_PATH         => '/template/upload',
+    TEMPLATE_LIST_PATH         => '/template/tolist/json',
+    TEMPLATE_LIST_APPEND_PATH  => '/template/append/tolist/json',
+
+    VERSION_PATH               => '/version',
+    RELEASE_PATH               => '/version/release',
+
+    LIST_PATH                  => '/lists/json',
+
+    SAVEDQUERY_PATH            => '/savedqueries/xml',
+
+    USER_AGENT                 => 'WebserviceInterMinePerlAPIClient',
 };
 
 =head1 CONSTRUCTION
@@ -94,7 +105,7 @@ You do not have to obtain a service object: simply call the methods
 on the Webservice::InterMine factory class to obtain new queries,
 fetch templates and load saved queries.
 
-=head1 METHODS
+=head1 ATTRIBUTES
 
 =head2 root | user | pass
 
@@ -124,14 +135,104 @@ has pass => (
     predicate => 'has_pass',
 );
 
+=head2 model
+
+The data model for the webservice. This model is required
+by many modules for checking validity with the webservice
+database schema. See L<InterMine::Model>
+
+=cut
+
+sub _build_model {
+    my $self = shift;
+    $self->fetch( $self->root . MODEL_PATH );
+}
+
+=head2 version
+
+The version of the webservice - used for determining
+compatibility with different query formats. The version is always
+an integer. An attempt to get the version is made on instantiation, 
+which serves to validate the webservice.
+
+=cut
+
+has version => (
+    is       => 'ro',
+    isa      => ServiceVersion,
+    required => 1,
+    default  => sub {
+        my $self = shift;
+        $self->fetch( $self->root . VERSION_PATH );
+    },
+);
+
+=head2 release
+
+The release string of the webservice. The release is the version
+of the data-warehouse, and should change for any data added to it.
+
+=cut
+
+has release => (
+    is => 'ro',
+    isa => Str,
+    required => 1,
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        $self->fetch( $self->root . RELEASE_PATH );
+    },
+);
+
+=head2 agent
+
+An LWP::UserAgent suitable for getting and posting with. This agent
+will authenticate to the given user and password credentials if given.
+
+=cut
+
+has agent => (
+    is => 'ro', 
+    isa => UserAgent,
+    lazy_build => 1,
+    handles => ['get', 'post'],
+);
+
+sub _build_agent {
+    my $self = shift;
+    my $ua = LWP::UserAgent->new;
+    $ua->env_proxy;
+    $ua->agent(USER_AGENT);
+    if (my $auth = $self->get_authstring) {
+        $ua->default_header( Authorization => $auth);
+    }
+
+    return $ua;
+}
+
+sub get_authstring {
+    my $self = shift;
+    if ($self->has_user and $self->has_pass) {
+        my $auth_string = join(':', $self->user, $self->pass);
+        return encode_base64($auth_string);
+    }
+    return undef;
+}
+
+=head1 METHODS
+
 =head2 new_query
 
 This returns a new query object for you to define
 by adding constraints and a view to.
 
+See L<Webservice::InterMine::Query>
+
 =cut
 
 sub new_query {
+    require Webservice::InterMine::Query;
     my $self = shift;
     my %args = @_;
 
@@ -140,9 +241,18 @@ sub new_query {
     my $query = Webservice::InterMine::Query->new(
         service => $self,
         model   => $self->model,
+        %args,
     );
     return apply_roles( $query, $roles );
 }
+
+=head2 new_from_xml(source_file => $file_name)
+
+Returns a new query by unmarshalling a serialised xml query.
+
+See L<Webservice::InterMine::Query>
+
+=cut
 
 sub new_from_xml {
     my $self = shift;
@@ -162,7 +272,19 @@ sub new_from_xml {
 =head2 template( $name [$roles] )
 
 This checks to see if there is a template of this name in the
-webservice, and returns it to you if it exists.
+webservice, and returns it to you if it exists. If the user
+has provided user credentials, then that user's private templates
+will also be accessible.
+
+See L<Webservice::InterMine::Query::Template>
+
+=head2 get_templates() 
+
+Returns all the templates available from the service as a list.  If 
+the user has provided user credentials, then that user's private templates
+will also be accessible.
+
+See L<Webservice::InterMine::Query::Template>
 
 =cut
 
@@ -201,6 +323,124 @@ has _saved_queries => (
     },
     handles => { saved_query => 'get_saved_query_by_name', },
 );
+
+=head2 LIST METHODS
+
+For handling list objects, see L<Webservice::InterMine::List>.
+
+=over 4
+
+=item list( $name )
+
+Get the list with the given name, if it exists. Returns undef
+if the given list is not accessible (either because it does not
+exist or because the service is not authenticated to the correct
+user account).
+
+=item lists()
+
+Get all the lists that this service has access to.
+
+=item list_names()
+
+Get all the names of the lists this service has access to.
+
+=item new_list(content => $content, [type => $class], [name => $name], [description => $description])
+
+Make a new list on the server with the given content and return
+a L<Webservice::InterMine::List> object referring to it.
+
+Args:
+
+=over 2
+
+=item * content
+
+can be a filename, an array ref of identifiers, a string 
+containing identifiers (separated by whitespace and quoted, if
+necessary by double-quotes), or a L<Webservice::InterMine::Query>
+(specifically, a L<Webservice::InterMine::Query::Roles::Listable>
+query.
+
+=item * type (required, unless the content is a query)
+
+The type of the items in this list. The type must be one of the
+of the classes in the model.
+
+=item * name [optional]
+
+The name of the list to create. If not name is supplied, one 
+will be generated for you, and the resulting list will be cleaned
+up (deleted) when the program exits. (Renaming the list later
+will prevent this clean up, as will setting the $CLEAN_UP variable
+in L<Webservice::InterMine>.)
+
+=item * description [optional]
+
+A long form description of the nature of this list. Optional. One will 
+be generated if none is provided.
+
+=item * path [required if the content is a Template]
+
+The path to determine the list type for Templates.
+
+=back
+
+=item join_lists(\@lists, [$name, $description)
+
+Join the given lists to create a new one (with the optional name
+and description) from their union. The lists can be given as
+L<Webservice::InterMine::List> objects,
+L<Webservice::InterMine::Query::Roles::Listable> queries,
+or the names of the lists to join.
+
+=item subtract_lists(\@from, \@to_be_subtracted, [$name, $description])
+
+Subtract the lists to be subtracted from the union of the
+list of lists to subtract from, creating a new one 
+(with the optional name and description). The lists can be given as
+L<Webservice::InterMine::List> objects,
+L<Webservice::InterMine::Query::Roles::Listable> queries,
+or the names of lists the service has access to.
+
+=item intersect_lists(\@lists, [$name, $description)
+
+Intersect the given lists to create a new one (with the optional name
+and description) from their intersection. The lists can be given as
+L<Webservice::InterMine::List> objects,
+L<Webservice::InterMine::Query::Roles::Listable> queries,
+or the names of lists the service has access to.
+
+=item diff_lists(\@lists, [$name, $description)
+
+Calculate the symmetric difference of the given lists 
+to create a new one (with the optional name
+and description). The lists can be given as
+L<Webservice::InterMine::List> objects,
+L<Webservice::InterMine::Query::Roles::Listable> queries,
+or the names of lists the service has access to.
+
+=item delete_lists(@lists)
+
+Delete the given lists from the service. If the lists don't exist,
+an error will be thrown. Consider also calling the 
+C<delete> method directly on L<Webservice::InterMine::List>
+objects.
+
+=item delete_temp_lists()
+
+Delete all anonymous list created by the programme. This method
+is automatically called on programme exist unless the variable 
+C<$Webservice::InterMine::CLEAN_UP> is set to a false value.
+
+=item get_list_data() 
+
+Get the string containing list data from the service. 
+
+=back
+
+=cut
+
 has _lists => (
     is      => 'ro',
     isa     => ListFactory,
@@ -208,74 +448,30 @@ has _lists => (
     lazy    => 1,
     default => sub {
         my $self = shift;
-        $self->fetch( $self->root . LIST_PATH );
+        return {service => $self};
     },
-    handles => { list => 'get_list_by_name', },
+    writer => '_set_lists',
+    handles => { 
+        list => 'get_list', 
+        lists => 'get_lists', 
+        list_names => 'get_list_names',
+        new_list => 'new_list',
+        join_lists => 'union',
+        subtract_lists => 'subtract',
+        intersect_lists => 'intersect',
+        diff_lists => 'symmetric_difference',
+        delete_lists => 'delete_lists',
+        delete_temp_lists => 'clean_up',
+    },
 );
 
-=head2 model
-
-returns the model for the webservice. This model is required
-by many modules for checking validity with the webservice
-database schema. See L<InterMine::Model>
-
-=cut
-
-sub _build_model {
+sub get_list_data {
     my $self = shift;
-    $self->fetch( $self->root . MODEL_PATH );
-}
-
-=head2 version
-
-Returns the version of the webservice - used for determining
-compatibility with different query formats. The version is always
-an integer. An attempt to get the version is made on instantiation, 
-which serves to validate the webservice.
-
-=cut
-
-has version => (
-    is       => 'ro',
-    isa      => VersionNumber,
-    required => 1,
-    default  => sub {
-        my $self = shift;
-        $self->fetch( $self->root . VERSION_PATH );
-    },
-);
-
-=head2 release
-
-Returns the release string of the webservice
-
-=cut
-
-has release => (
-    is => 'ro',
-    isa => Str,
-    required => 1,
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        $self->fetch( $self->root . RELEASE_PATH );
-    },
-);
-
-# Returns a LWP::UserAgent suitable for getting and posting with
-sub agent {
-    my $self = shift;
-    my $ua = LWP::UserAgent->new;
-    $ua->env_proxy;
-    $ua->agent(USER_AGENT);
-    if ($self->has_user and $self->has_pass) {
-        my $auth_string = join(':', $self->user, $self->pass);
-        $ua->default_header( Authorization => encode_base64($auth_string) );
+    if ($self->version < 4) {
+        croak "This webservice does not support list operations";
     }
-
-    return $ua;
+    return $self->fetch( $self->root . LIST_PATH );
 }
-
 # Applies user supplied roles to object instances at runtime
 sub apply_roles {
     my $instance = shift;
@@ -290,37 +486,70 @@ sub apply_roles {
     return $instance;
 }
 
-# Returns a ResultIterator to process the query results with
+=head2 INTERNAL METHODS
+
+=over 4
+
+=item * get_results_iterator($url, $view_list, $row_format, $json_format, $roles)
+
+Returns a results iterator that iterates over result rows in 
+the requested format. 
+
+Parameters:
+
+=over 4
+
+=item * $url: The path to the requested resource
+
+=item * $query_form: A hashref of query parameters
+
+=item * $view_list: an array-ref of view-paths
+
+=item * $row_format: the format for each parsed row
+
+=item * $json_format: how to handle json results
+
+=item * $roles: an optional array-ref of roles to apply
+
+=back 
+
+Returns a L<Webservice::InterMine::ResultIterator>
+
+=cut
+
 sub get_results_iterator {
-    my $self      = shift;
-    my $url       = shift;
-    my $view_list = shift;
-    my $roles     = shift;
+    require Webservice::InterMine::ResultIterator;
+    my $self        = shift;
 
-    # my $connection = Net::HTTP->new(Host => $self->host) or
-    #   confess "Could not connect to host $@";
-    # $connection->write_request(
-    # 	GET => $url,
-    # 	'User-Agent' => USER_AGENT
-    # );
-    my $resp    = $self->agent->get($url);
-    my $content = $resp->content;
-    open( my $io, '<', \$content ) or confess "$!";
+    my $url         = shift; # The path to the resource
+    my $query_form  = shift; # The query params, as a hashref
+    my $view_list   = shift; # The output columns, as an arrayref
+    my $row_format  = shift; # The requested row format (str)
+    my $json_format = shift; # How to handle json results
+    my $roles       = shift; # An optional list of roles
+
     my $response = Webservice::InterMine::ResultIterator->new(
-
-        #	connection => $connection,
+        url           => $url,
+        parameters    => $query_form,
         view_list     => $view_list,
-        error_code    => $resp->code,
-        error_message => $resp->message,
-        content       => $io,
+        row_format    => $row_format,
+        json_format   => $json_format,
+        authorization => $self->get_authstring(),
     );
-    confess $response->status_line, $resp->content
+    confess $response->status_line, $response->content
       if $response->is_error;
     return apply_roles( $response, $roles );
 }
 
-# Fetch files from the webservice (used to fetch the model and the
-# templates with - in the future also for saved queries and lists
+=item * fetch($url)
+
+A simple data fetch method, for getting data as represented
+by a url and doing basic error checks on the response before
+returning the content. Used internally for obtaining several
+items of data from the service.
+
+=cut
+
 sub fetch {
     my $self = shift;
     my $url  = shift;
@@ -328,22 +557,33 @@ sub fetch {
     $uri->query_form( format => 'text' );
     my $resp = $self->agent->get($uri);
     if ( $resp->is_error ) {
-        confess $resp->status_line;
+        confess $resp->status_line, $resp->content;
     } else {
         return $resp->content;
     }
 }
 
-# not designed to be accessed directly,
-# but through the upload method on various objects
+=item * send_off($xml, $url)
+
+Send xml data to the webservice, checking the response for errors.
+This is used internally to save templates and queries.
+
+=cut
+
 sub send_off {
-    confess "NOT IMPLEMENTED YET";
     my $self = shift;
     my ( $xml, $url ) = @_;
     my $form = { xml => $xml, };
-    my $resp = $self->agent->post( $url, $form );
-    return $resp;
+    my $resp = $self->post( $url, $form );
+    if ( $resp->is_error ) {
+        confess $resp->status_line, "\n", $resp->content;
+    } 
+    return $resp->content;
 }
+
+=back
+
+=cut
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
@@ -364,7 +604,7 @@ Please report any bugs or feature requests to C<dev@intermine.org>.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Webservice::InterMine
+    perldoc Webservice::InterMine::Service
 
 You can also look for information at:
 
@@ -376,7 +616,7 @@ L<http://www.intermine.org>
 
 =item * Documentation
 
-L<http://www.intermine.org/perlapi>
+L<http://intermine.org/wiki/PerlWebServiceAPI>
 
 =back
 
@@ -387,5 +627,4 @@ Copyright 2006 - 2011 FlyMine, all rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=cut
 

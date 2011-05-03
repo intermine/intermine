@@ -2,7 +2,7 @@ package Webservice::InterMine::Query::SavedHandler;
 
 use Moose;
 extends 'Webservice::InterMine::Query::Handler';
-use InterMine::TypeLibrary qw(SavedQuery);
+use Webservice::InterMine::Types qw(SavedQuery);
 
 has '+query' => ( isa => SavedQuery, );
 

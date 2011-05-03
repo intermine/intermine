@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Roles::ReadInAble;
 
 use Moose::Role;
-use InterMine::TypeLibrary qw(File QueryHandler);
+use Webservice::InterMine::Types qw(File QueryHandler);
 use MooseX::Types::Moose qw(Str);
 
 use XML::Parser::PerlSAX;

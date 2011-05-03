@@ -224,6 +224,13 @@ table.results tfoot tr td {
 
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
 
+/* =TRACKS
+--------------------------*/
+.trackscontainer {
+  border:1px solid #D0B5D7;
+  background: #feffff url('grad_box.png') repeat-x top;
+}
+
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #F5F0FF; border-bottom: 1px solid #F5F0FF; }
     .keywordSearchResults .resultTableContainer table.dbsources th { background:#5C0075; color:#FFF; font-size:13px; padding:2px 8px;

@@ -63,6 +63,13 @@
 
    function orgNameChanged(org) {
 
+     // Change genome build
+     if (org == "D. melanogaster") {
+        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.fly']}</i>");
+     } else if (org == "C. elegans") {
+        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.worm']}</i>");
+     }
+
      // Reset textarea and file input
      resetInputs();
 
@@ -172,6 +179,13 @@
 
      // Get the current organism name in the dropbox
      var orgSelected = jQuery('#orgSelector').find('option').filter(':selected').text();
+
+     // Add genome build
+     if (orgSelected == "D. melanogaster") {
+        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.fly']}</i>");
+     } else if (orgSelected == "C. elegans") {
+        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.worm']}</i>");
+     }
 
      // Show the tree of selected organism
      loadOrgTree(orgSelected);
@@ -416,6 +430,8 @@
           <html:option value="${orgName}">${orgName}</html:option>
       </c:forEach>
       </html:select>
+      <span id="genomeVersion" style="padding:10px;">
+      </span>
    </li>
    <%-- organism --%>
    <br/>

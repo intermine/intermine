@@ -20,7 +20,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.util.HttpClient;
 import org.intermine.web.util.URLUtil;
-import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 
 /**
@@ -35,30 +34,37 @@ public class TabLinkPreviewAction extends InterMineAction
      * @param mapping not used
      * @param form not used
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         PrintWriter writer = response.getWriter();
         String link = request.getParameter("link");
-        String content;
-        try {
-            String url = prepareURL(link);
-            HttpClient client = new HttpClient();
-            byte[] data = client.download(url);
-            writer.println("<html>");
+        if (link != null && !"".equals(link)) {
+            String content;
+            try {
+                String url = prepareURL(link);
+                HttpClient client = new HttpClient();
+                byte[] data = client.download(url);
+                writer.println("<html>");
 
-            if (data.length == 0) {
-                content = "There are no results for this query."
-                        + "Please notice, that this message is displayed only for preview. "
-                        + "Empty output is returned in case of downloading data with script.";
-            } else {
-                content = new String(data);
+                if (data.length == 0) {
+                    content = "There are no results for this query.<br>"
+                            + "Please notice, that this message is displayed only for preview.<br>"
+                            + "Empty output is returned in case of downloading data with script.<br>";
+                } else {
+                    content = new String(data);
+                }
+                printPage(content, writer);
+            } catch (Exception e) {
+                e.printStackTrace();
+                writer.println("<html>");
+                content =
+                    "Please examine your template, there might be some invalid characters, e.g. \"%\".";
+                printPage(content, writer);
             }
-            printPage(content, writer);
-        } catch (Exception e) {
-            e.printStackTrace();
-            writer.println("<html>");
-            content =
-                "Please examine your template, there might be some invalid characters, e.g. \"%\".";
+        }
+        String content = request.getParameter("content");
+        if (content != null && !"".equals(content)) {
             printPage(content, writer);
         }
         return null;
@@ -67,8 +73,6 @@ public class TabLinkPreviewAction extends InterMineAction
     private String prepareURL(String link) {
         String url = link.replaceAll("qwertyui", "&");
         url = URLUtil.encodeURL(url);
-        url = url + "&" + WebServiceRequestParser.OUTPUT_PARAMETER + "="
-            + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
         return url;
     }
 

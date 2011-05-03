@@ -23,11 +23,10 @@ public class NameUtilTest extends TestCase {
         assertTrue(NameUtil.isValidName("dot.dot.dot"));
         assertTrue(NameUtil.isValidName("dash-dash-dash"));
         assertTrue(NameUtil.isValidName("colon:colon:colon"));
-
-        String badChars  = "¬!£$%^&*()+}{@~?<,/;'#][";
-
-        for (int i = 0; i < badChars.length(); i++) {
-            char c = badChars.charAt(i);
+        assertFalse(NameUtil.isValidName("Hello World!"));
+        char[]  badChars  = {'¬','!','£','$','%','^','&','*','(',')','+','}','{','@','~','?','<',',','/',';','\'','#',']','['};
+        for (int i = 0; i < badChars.length; i++) {
+            char c = badChars[i];
             String badName = c + "invalid " + c;
             assertFalse(NameUtil.isValidName(badName));
         }
@@ -59,7 +58,7 @@ public class NameUtilTest extends TestCase {
         listNames.add(correctedBadListName);
         assertEquals(correctedBadListName + "_1", NameUtil.validateName(listNames, badListName));
 
-        assertEquals("ab", NameUtil.validateName(listNames, "a`b"));
+        assertEquals("ab", NameUtil.validateName(listNames, "a$b"));
     }
 
     public void testFindNewQueryName() {

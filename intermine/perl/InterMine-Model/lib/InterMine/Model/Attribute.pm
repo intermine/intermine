@@ -28,8 +28,7 @@ with (
 );
 
 use MooseX::Types::Moose qw(Str Int Num Bool Value);
-use InterMine::TypeLibrary qw(BigInt);
-use InterMine::Model::Types qw(ISO8601DateStamp);
+use InterMine::Model::Types qw(BigInt ISO8601DateStamp);
 
 =head1 ATTRIBUTES
 

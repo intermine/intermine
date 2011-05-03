@@ -31,6 +31,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
+import org.intermine.api.template.SwitchOffAbility;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -147,6 +149,18 @@ public class GalaxyExportOptionsController extends TilesAction
                             path, classKeySet.toString().substring(1,
                                     classKeySet.toString().length() - 1), null);
                     query.replaceConstraint(constraint, newConstraint);
+                }
+            }
+        }
+
+        if (query instanceof TemplateQuery) {
+            TemplateQuery templateQuery = (TemplateQuery) query;
+            Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
+                                                   templateQuery.getConstraintSwitchOffAbility();
+            for (Map.Entry<PathConstraint, SwitchOffAbility> entry
+                : constraintSwitchOffAbilityMap.entrySet()) {
+                if (entry.getValue().compareTo(SwitchOffAbility.OFF) == 0) {
+                    templateQuery.removeConstraint(entry.getKey());
                 }
             }
         }

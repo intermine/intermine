@@ -12,7 +12,7 @@ sub methods : Test(2) {
     can_ok($test->{object}, (qw/requirements_are_met_by/));
 }
 
-sub inheritance : Test(2) {
+sub inheritance : Test(1) {
     my $test = shift;
     my $parent = 'Webservice::InterMine::PathFeature';
     ok($test->{object}->isa($parent), "Inherits from $parent");

@@ -54,6 +54,8 @@ public class HeatMapController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(HeatMapController.class);
 
+    private static final String DCC_PREFIX = "modENCODE_";
+
     private static final String[] EXPRESSION_ORDERED_CONDITION = {"CME L1", "Sg4", "ML-DmD11",
         "ML-DmD20-c2", "ML-DmD20-c5", "Kc167", "GM2", "S2-DRSC", "S2R+", "S1", "1182-4H",
         "ML-DmD16-c3", "ML-DmD32", "ML-DmD17-c3", "ML-DmD8", "CME W1 Cl.8+", "ML-DmD9",
@@ -143,7 +145,7 @@ public class HeatMapController extends TilesAction
             Map<String, List<ExpressionScore>> geneExpressionScoreMap =
                 new LinkedHashMap<String, List<ExpressionScore>>();
 
-            Integer dCCid = null; // 3305
+            String dCCid = null; // 3305
             String prevGene = null;
             List<String> expressionConditionsInOrder = Arrays.asList(EXPRESSION_ORDERED_CONDITION);
             List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
@@ -161,10 +163,14 @@ public class HeatMapController extends TilesAction
                 Double score = (Double) row.get(2).getField();
                 String cellLine = (String) row.get(3).getField();
                 String developmentalStage = (String) row.get(4).getField();
-                Integer dccId = (Integer) row.get(5).getField();
+                String dccId = (String) row.get(5).getField();
 
-                dCCid = dccId;
-
+                if (!dccId.startsWith(DCC_PREFIX)) {
+                    dCCid = DCC_PREFIX + dccId;
+                } else {
+                    dCCid = dccId;
+                }
+                
                 if (geneSymbol == null) {
                     geneSymbol = geneId;
                 }
@@ -222,7 +228,7 @@ public class HeatMapController extends TilesAction
             Map<String, List<ExpressionScore>> exonExpressionScoreMap =
                 new LinkedHashMap<String, List<ExpressionScore>>();
 
-            Integer dCCid = null; // 3305
+            String dCCid = null; // 3305
             String prevExon = null;
             List<String> expressionConditionsInOrder = Arrays.asList(EXPRESSION_ORDERED_CONDITION);
             List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
@@ -240,7 +246,7 @@ public class HeatMapController extends TilesAction
                 Double score = (Double) row.get(2).getField();
                 String cellLine = (String) row.get(3).getField();
                 String developmentalStage = (String) row.get(4).getField();
-                Integer dccId = (Integer) row.get(5).getField();
+                String dccId = (String) row.get(5).getField();
 
                 dCCid = dccId;
 

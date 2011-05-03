@@ -21,7 +21,7 @@ sub args {
     return (@superargs, type => 'Manager');
 }
 
-sub inheritance : Test(3) {
+sub inheritance : Test(2) {
     my $test = shift;
     $test->SUPER::inheritance;
     my $parent = 'Webservice::InterMine::Constraint';

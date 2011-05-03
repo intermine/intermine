@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -55,17 +54,17 @@ public class WebserviceCodeGenAction extends InterMineAction
     protected static final Logger LOG = Logger.getLogger(WebserviceCodeGenAction.class);
 
     private WebserviceCodeGenerator getCodeGenerator(String method) {
-    	if ("perl".equals(method)) {
-    		return new WebservicePerlCodeGenerator();
-    	} else if ("java".equals(method)) {
+        if ("perl".equals(method)) {
+            return new WebservicePerlCodeGenerator();
+        } else if ("java".equals(method)) {
             return new WebserviceJavaCodeGenerator();
-    	} else if ("python".equals(method)) {
+        } else if ("python".equals(method)) {
             return new WebservicePythonCodeGenerator();
-    	} else if ("javascript".equals(method)) {
+        } else if ("javascript".equals(method)) {
             return new WebserviceJavaScriptCodeGenerator();
-    	} else {
-    		throw new IllegalArgumentException("Unknown code generation language: " + method);
-    	}
+        } else {
+            throw new IllegalArgumentException("Unknown code generation language: " + method);
+        }
     }
 
     @Override
@@ -92,20 +91,20 @@ public class WebserviceCodeGenAction extends InterMineAction
 
             WebserviceCodeGenInfo info = null;
             if ("templateQuery".equals(source)) {
-            	TemplateQuery template = getTemplateQuery(im, profile, request, session);
-            	info = getWebserviceCodeGenInfo(
-            			template,
-            			serviceBaseURL,
-            			projectTitle,
-            			perlWSModuleVer,
-            			templateIsPublic(template, im, profile),
-            			profile.getUsername());
+                TemplateQuery template = getTemplateQuery(im, profile, request, session);
+                info = getWebserviceCodeGenInfo(
+                        template,
+                        serviceBaseURL,
+                        projectTitle,
+                        perlWSModuleVer,
+                        templateIsPublic(template, im, profile),
+                        profile.getUsername());
 
             } else if ("pathQuery".equals(source)) {
-            	PathQuery pq = getPathQuery(session);
-            	info = getWebserviceCodeGenInfo(
-            			pq,
-            			serviceBaseURL,
+                PathQuery pq = getPathQuery(session);
+                info = getWebserviceCodeGenInfo(
+                        pq,
+                        serviceBaseURL,
                         projectTitle,
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
@@ -148,7 +147,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                                      ? templateManager.getTemplate(profile, name, scope)
                                      : (TemplateQuery) SessionMethods.getQuery(session);
             if (template != null) {
-            	return template;
+                return template;
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
                         + scope);
@@ -182,13 +181,13 @@ public class WebserviceCodeGenAction extends InterMineAction
      * user's profile, and whether the underlying query is itself public.
      * @param t The template
      * @param im A reference to the API
-     * @param p A reference to the Profile
+     * @param p A reference to the current user's Profile
      * @return whether or not Joe Public could run this without logging in.
      */
-    private boolean templateIsPublic(TemplateQuery t, InterMineAPI im, Profile p) {
-    	Map<String, TemplateQuery> templates = p.getSavedTemplates();
+    protected static boolean templateIsPublic(TemplateQuery t, InterMineAPI im, Profile p) {
+        Map<String, TemplateQuery> templates = p.getSavedTemplates();
 
-		return !templates.keySet().contains(t.getName()) && pathQueryIsPublic(t, im, p);
+        return !templates.keySet().contains(t.getName()) && pathQueryIsPublic(t, im, p);
     }
 
     /**
@@ -196,18 +195,20 @@ public class WebserviceCodeGenAction extends InterMineAction
      * PathQueries are accessibly publicly as long as they do not reference
      * private lists.
      * @param pq The query to interrogate
+     * @param im A reference to the InterMine API
+     * @param p A user's profile
      * @return whether the query is accessible publicly or not
      */
-    private boolean pathQueryIsPublic(PathQuery pq, InterMineAPI im, Profile p) {
-    	Set<String> listNames = pq.getBagNames();
-    	TagManager tm = im.getTagManager();
-    	for (String name: listNames) {
-    		Set<String> tags = tm.getObjectTagNames(name, TagTypes.BAG, p.getUsername());
-    		if (!tags.contains(TagNames.IM_PUBLIC)) {
-    			return false;
-    		}
-    	}
-    	return true;
+    protected static boolean pathQueryIsPublic(PathQuery pq, InterMineAPI im, Profile p) {
+        Set<String> listNames = pq.getBagNames();
+        TagManager tm = im.getTagManager();
+        for (String name: listNames) {
+            Set<String> tags = tm.getObjectTagNames(name, TagTypes.BAG, p.getUsername());
+            if (!tags.contains(TagNames.IM_PUBLIC)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -255,15 +256,15 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @return the extension to use
      */
     private static String getExtension(String method) {
-    	if ("perl".equalsIgnoreCase(method)) {
-    		return "pl";
-    	}
-    	if ("python".equalsIgnoreCase(method)) {
-    		return "py";
-    	}
-    	if ("javascript".equalsIgnoreCase(method)) {
-    		return "html"; // javascript is meant to be embedded
-    	}
-    	return method;
+        if ("perl".equalsIgnoreCase(method)) {
+            return "pl";
+        }
+        if ("python".equalsIgnoreCase(method)) {
+            return "py";
+        }
+        if ("javascript".equalsIgnoreCase(method)) {
+            return "html"; // javascript is meant to be embedded
+        }
+        return method;
     }
 }

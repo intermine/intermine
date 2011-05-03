@@ -81,6 +81,10 @@ public class ExperimentController extends TilesAction
             MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
 
+        Map<String, List<String>> sequencedFeatureTypes =
+            MetadataCache.getSequencedFeatureTypes(os);
+        request.setAttribute("sequencedFeat", sequencedFeatureTypes);
+
         Map<String, String> expFeatureDescription =
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
@@ -92,6 +96,10 @@ public class ExperimentController extends TilesAction
         Map<String, Map<String, Long>> expFeatEL =
             MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
         request.setAttribute("expFeatEL", expFeatEL);
+
+        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+            MetadataCache.getSubFileSourceCounts(os);
+        request.setAttribute("subFeatFileSource", subFeatFileSource);
 
         return null;
     }

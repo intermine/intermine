@@ -57,7 +57,7 @@ our %EXPORT_TAGS = ( validate => \@validators );
 
 use strict;
 use InterMine::Model::Attribute;
-use Carp qw/confess/;
+use Carp qw/confess croak/;
 
 =head2 validate_path
 
@@ -103,6 +103,22 @@ sub last_bit {
     my ( $model, $path_string ) = @_;
     my @bits = _parse( $model, $path_string );
     return $bits[-1] || $bits[0];
+}
+
+sub last_bit_but_one {
+    my ( $model, $path_string ) = @_;
+    my @bits = _parse( $model, $path_string );
+    return $bits[-2] || $bits[0];
+}
+
+sub last_class_type {
+    my ( $model, $path_string ) = @_;
+    my $end = last_bit_but_one( $model, $path_string );
+    if ( $end->isa('InterMine::Model::Reference') ) {
+        return $end->referenced_type_name;
+    } else {
+        return $end->name();    # because it's clearly a class
+    }
 }
 
 =head2 type_of
@@ -239,7 +255,11 @@ sub _parse {
                         $bit,
                         $current_class->name(),
                     );
-                    confess $message;
+                    if ($ENV{DEBUG}) {
+                        confess $message;
+                    } else {
+                        croak $message;
+                    }
                 }
             }
             push @parts, $current_field;

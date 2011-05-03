@@ -61,19 +61,18 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * Generates TemplateResultService web service link.
      * @param baseUrl base url that doesn't terminate with '/' ,
      * e.g. http://www.flymine.org/release-12.0
-     * @param template template for which the link generate
-     * @param highlighted
+     * @param template template for which the link is generated
+     * @param hl Whether or not to highlight the parameters of this link.
      * @return generated link
      */
     public String getHtmlLink(String baseUrl, TemplateQuery template) {
         return getHtmlLinkInternal(baseUrl, template, false);
     }
 
-    private String getHtmlLinkInternal(String baseUrl, TemplateQuery template,
-            boolean highlighted) {
-        String ret = getLink(baseUrl, template, highlighted);
+    private String getHtmlLinkInternal(String baseUrl, TemplateQuery template, boolean hl) {
+        String ret = getLink(baseUrl, template, WebServiceRequestParser.FORMAT_PARAMETER_HTML, hl);
         ret += "&size=";
-        ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
+        ret += format("" + DEFAULT_RESULT_SIZE, hl);
         ret += "&" + QueryResultRequestParser.LAYOUT_PARAMETER + "=minelink|paging";
         return ret;
     }
@@ -83,12 +82,11 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
       @see #getLink(String, TemplateQuery)
      * @param baseUrl base url
      * @param template template
-     * @return highlighted link
+     * @return a url
      */
     public String getTabLink(String baseUrl, TemplateQuery template) {
         String ret = getLink(baseUrl, template, false);
-        ret += "&size=";
-        ret += format("" + DEFAULT_RESULT_SIZE, false);
+        ret += "&size=" + DEFAULT_RESULT_SIZE;
         return ret;
     }
 
@@ -178,15 +176,18 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         return getHtmlLinkInternal(baseUrl, template, true);
     }
 
-    private String getLink(String baseUrl, TemplateQuery template,
+    private String getLink(String baseUrl, TemplateQuery template, boolean hl) {
+        return getLink(baseUrl, template, WebServiceRequestParser.FORMAT_PARAMETER_TAB, hl);
+    }
+
+    private String getLink(String baseUrl, TemplateQuery template, String format,
             boolean highlighted) {
         if (template.getBagNames().size() > 0) {
             error = "This template contains list constraints. The service for this "
                 + "special template is not implemented yet. Solution: Don't use list contraint.";
             return null;
         }
-        String ret = baseUrl + getLinkPath(template,
-                WebServiceRequestParser.FORMAT_PARAMETER_TAB, highlighted);
+        String ret = baseUrl + getLinkPath(template, format, highlighted);
         return ret;
     }
 

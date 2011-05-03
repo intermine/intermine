@@ -27,16 +27,16 @@ import org.intermine.pathquery.PathQueryBinding;
  */
 public class WebserviceJavaCodeGeneratorTest extends TestCase {
 
-    private String INDENT = WebserviceJavaCodeGenerator.INDENT;
-    private String SPACE = WebserviceJavaCodeGenerator.SPACE;
-    private String ENDL = WebserviceJavaCodeGenerator.ENDL;
+    private final String INDENT = WebserviceJavaCodeGenerator.INDENT;
+    private final String SPACE = WebserviceJavaCodeGenerator.SPACE;
+    private final String ENDL = WebserviceJavaCodeGenerator.ENDL;
 
-    private String INVALID_QUERY = WebserviceJavaCodeGenerator.INVALID_QUERY;
-    private String NULL_QUERY = WebserviceJavaCodeGenerator.NULL_QUERY;
-    private String TEMPLATE_BAG_CONSTRAINT = WebserviceJavaCodeGenerator.TEMPLATE_BAG_CONSTRAINT;
+    private final String INVALID_QUERY = WebserviceJavaCodeGenerator.INVALID_QUERY;
+    private final String NULL_QUERY = WebserviceJavaCodeGenerator.NULL_QUERY;
+    private final String TEMPLATE_BAG_CONSTRAINT = WebserviceJavaCodeGenerator.TEMPLATE_BAG_CONSTRAINT;
 
-    private String serviceRootURL = "http://newt.flymine.org:8080/modminepreview";
-    private String projectTitle = "modMine_Test-2.M";
+    private final String serviceRootURL = "http://newt.flymine.org:8080/modminepreview";
+    private final String projectTitle = "modMine_Test-2.M";
 
     private WebserviceJavaCodeGenerator cg;
 
@@ -48,6 +48,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Sets up the test fixture.
      * (Called before every test case method.)
      */
+    @Override
     public void setUp() {
         cg = new WebserviceJavaCodeGenerator();
     }
@@ -56,8 +57,14 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Tears down the test fixture.
      * (Called after every test case method.)
      */
+    @Override
     public void tearDown() {
 
+    }
+
+    private WebserviceCodeGenInfo getGenInfo(PathQuery pq) {
+        return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, null,
+                true, null);
     }
 
     //****************************** Test PathQuery *********************************
@@ -67,9 +74,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithNullQuery() {
         PathQuery pathQuery = null;
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery); getGenInfo(pathQuery);
         String expected = NULL_QUERY;
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -94,8 +100,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         // Mock up
         pathQuery.clearView();
@@ -119,8 +125,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -190,8 +196,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -268,8 +274,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -345,8 +351,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -418,8 +424,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -497,8 +503,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -576,8 +582,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -655,8 +661,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -734,8 +740,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -813,8 +819,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -892,8 +898,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -971,8 +977,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1050,8 +1056,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1129,8 +1135,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1209,8 +1215,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1278,7 +1284,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Test PathQuery:
      * <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName" sortOrder="Gene.primaryIdentifier asc">
      *   <constraint path="Gene.organism.commonName" op="ONE OF">
-     *	   <value>fruit fly
+     *       <value>fruit fly
      *     </value>
      *     <value>honey bee
      *     </value>
@@ -1295,8 +1301,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1367,7 +1373,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Test PathQuery:
      * <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName" sortOrder="Gene.primaryIdentifier asc">
      *   <constraint path="Gene.organism.commonName" op="NONE OF">
-     *	   <value>fruit fly
+     *       <value>fruit fly
      *     </value>
      *     <value>honey bee
      *     </value>
@@ -1383,8 +1389,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1466,8 +1472,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1545,8 +1551,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1630,8 +1636,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 
 //        pathQuery.addConstraint(Constraints.equalToLoop("Gene.proteins.genes", "Gene"));
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1712,8 +1718,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 
 //        pathQuery.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "Gene"));
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1803,8 +1809,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 //        pathQuery.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "Gene"), "A");
 //        pathQuery.setConstraintLogic("(A or B) and C");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1915,8 +1921,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testTemplateQueryCodeGenerationWithNullQuery() {
         TemplateQuery templateQuery = null;
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = NULL_QUERY;
 
@@ -1935,10 +1941,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -1995,10 +2001,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2055,10 +2061,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2115,10 +2121,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2175,10 +2181,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2235,10 +2241,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
+        TemplateQuery templateQuery = tqs.get("im_available_organisms");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2295,10 +2301,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
+        TemplateQuery templateQuery = tqs.get("Organism_Gene");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2356,10 +2362,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
+        TemplateQuery templateQuery = tqs.get("Organism_Gene");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2418,10 +2424,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Clone_gene");
+        TemplateQuery templateQuery = tqs.get("Clone_gene");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2482,10 +2488,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
+        TemplateQuery templateQuery = tqs.get("Gene_ExonLocation2");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -2507,10 +2513,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
+        TemplateQuery templateQuery = tqs.get("Gene_ExonLocation2");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -2532,10 +2538,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
+        TemplateQuery templateQuery = tqs.get("Organism_Gene");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2596,10 +2602,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
+        TemplateQuery templateQuery = tqs.get("Organism_Gene");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2657,10 +2663,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
+        TemplateQuery templateQuery = tqs.get("AAANotNull");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2716,10 +2722,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
+        TemplateQuery templateQuery = tqs.get("AAANotNull");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2780,10 +2786,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "</template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_OrthologueOrganism_new");
+        TemplateQuery templateQuery = tqs.get("Gene_OrthologueOrganism_new");
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
+
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +

@@ -40,8 +40,8 @@ public class BDGPInsituConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap());
         converter = new BDGPInsituConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn1", Collections.singleton("CG1"));
-        resolverFactory.addResolverEntry("7227", "FBgn2", Collections.singleton("CG2"));
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG10002"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG100022"));
         converter.resolverFactory = resolverFactory;
     }
 
@@ -51,7 +51,7 @@ public class BDGPInsituConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("BDGPInsituConverterTest_src.csv"));
+        String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("bdgp-insitu-mysql"));
 
         converter.process(new StringReader(input));
         converter.close();

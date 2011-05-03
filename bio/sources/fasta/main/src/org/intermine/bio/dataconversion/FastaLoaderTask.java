@@ -254,7 +254,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         return org;
     }
 
-
     /**
      * Create a FlyMine Sequence and an object of type className for the given BioJava Sequence.
      * @param organism the Organism to reference from new objects
@@ -323,31 +322,17 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSet());
 
-        Synonym synonym = null;
-        if (dataSource != null) {
-            synonym = getDirectDataLoader().createObject(Synonym.class);
-            synonym.setValue(attributeValue);
-            synonym.setSubject(imo);
-        }
-
         if (StringUtils.isEmpty(dataSetTitle)) {
             throw new RuntimeException("DataSet title (fasta.dataSetTitle) not set");
         }
 
         DataSet dataSet = getDataSet();
         imo.addDataSets(dataSet);
-        if (synonym != null) {
-            synonym.addDataSets(dataSet);
-        }
 
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
             storeCount += 2;
-            if (synonym != null) {
-                getDirectDataLoader().store(synonym);
-                storeCount += 1;
-            }
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
@@ -383,11 +368,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
-    protected void  extraProcessing(@SuppressWarnings("unused") Sequence bioJavaSequence,
-            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
-            @SuppressWarnings("unused") BioEntity bioEntity,
-            @SuppressWarnings("unused") Organism organism,
-            @SuppressWarnings("unused") DataSet dataSet) throws ObjectStoreException {
+    protected void  extraProcessing(Sequence bioJavaSequence, org.intermine.model.bio.Sequence
+            flymineSequence, BioEntity bioEntity, Organism organism, DataSet dataSet)
+        throws ObjectStoreException {
         // default - no extra processing
     }
 

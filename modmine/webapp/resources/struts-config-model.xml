@@ -102,30 +102,18 @@
 <!-- End of Cytoscape Web configuration -->
 
 <!-- Begining of Span Upload configuration -->
-<action path="/spanUploadOptions" forward="spanUploadOptions.page">
-</action>
+<action path="/spanUploadOptions" forward="spanUploadOptions.page" />
 
-<action path="/spanUploadResults" forward="spanUploadResults.page">
-</action>
+<action path="/spanUploadResults" forward="spanUploadResults.page" />
 
 <action path="/initSpanUploadOptions"
   type="org.modmine.web.SpanUploadOptionsController" />
-
-<action path="/initSpanUploadResults"
-  type="org.modmine.web.SpanUploadResultsController" />
 
 <action input="/spanUploadOptions.jsp" name="spanUploadForm" path="/spanUploadAction" scope="request" type="org.modmine.web.SpanUploadAction" >
     <!-- Not use redirect="true". here it is doing a forward, not redirecting. Redirecting causes the browser to make a new request, and that's why the things I put in the request aren't there anymore. -->
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
     <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
-
-<action path="/spanDisplayAction" scope="request" type="org.modmine.web.SpanDisplayAction" >
-    <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
-</action>
-
-<action path="/spanUploadValidation"
-        type="org.modmine.web.SpanUploadValidationAction"/>
 
 <action path="/spanUploadAjax"
         type="org.modmine.web.SpanUploadAjaxAction"/>

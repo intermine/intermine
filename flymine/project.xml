@@ -97,11 +97,8 @@
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
 
-    <source name="homophila" type="homophila">
-      <property name="src.data.dir" location="/shared/data/homophila/current"/>
-      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
-      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
-      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
+    <source name="omim" type="omim">
+      <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
@@ -126,6 +123,12 @@
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239 7165 4932"/>
       <property name="treefam.homologues" value="9606 10090 10116 7955"/>
+    </source>
+
+    <source name="ensembl-compara" type="ensembl-compara">
+      <property name="src.data.dir" location="/shared/data/ensembl/compara"/>
+      <property name="ensemblcompara.organisms" value="7227"/>
+      <property name="ensemblcompara.homologues" value="9606"/>
     </source>
 
     <source name="tiffin" type="tiffin">
@@ -181,11 +184,6 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
-    </source>
-
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
-      <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="src.data.dir" location="/shared/data/drsc/current"/>
@@ -469,9 +467,19 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
     </source>
 
+<!-- text files, didn't see a gain from BioPAX 
     <source name="reactome" type="reactome">
       <property name="src.data.dir" location="/shared/data/reactome/current"/>
       <property name="reactome.organisms" value="7227 4932 6239"/>
+    </source>
+-->
+
+    <source name="reactome" type="biopax">
+      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
+      <property name="biopax.organisms" value="7227 6239 4932"/>
+      <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
+      <property name="biopax.curated" value="true"/>
     </source>
 
     <source name="reactome-curated" type="biopax">

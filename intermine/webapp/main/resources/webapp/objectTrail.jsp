@@ -8,7 +8,7 @@
 
 <html:xhtml/>
 <link rel="stylesheet" type="text/css" href="css/objectTrail.css"/>
-<c:if test="${!empty trailElements && templateQuery.name != WEB_PROPERTIES['begin.browse.template']}">
+<c:if test="${!empty trailElements}">
   <div class="body objectTrail">
     Trail:
     <c:forEach items="${trailElements}" var="item" varStatus="status">
