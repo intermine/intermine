@@ -8,20 +8,26 @@
 
   <sources>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/shared/data/metabolic/ensembl-ids/data"/>
-    </source>
-    <source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/shared/data/metabolic/ensembl-ids/current"/>
+    </source> 
+     <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
      <property name="organisms" value="9606"/>
     </source>
-    <source name="mgi-identifiers" type="mgi-identifiers">
+    <source name="ncbi-summaries" type="ncbi-summaries">
+     <property name="src.data.dir" location="/shared/data/metabolic/gene-summaries/current/"/>
+    </source>
+   <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/shared/data/mgi/current"/>
+    </source>
+   <source name="rgd-identifiers" type="rgd-identifiers">
+      <property name="src.data.dir" location="/shared/data/metabolic/rgd-identifiers/current"/>
     </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source> 
     <source name="protein-atlas" type="protein-atlas">
-     <property name="src.data.dir" location="/shared/data/metabolic/protein-atlas"/>
+     <property name="src.data.dir" location="/shared/data/metabolic/protein-atlas/current"/>
     </source>
     <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/human/current"/>
@@ -65,7 +71,7 @@
       <property name="src.data.includes" value="**/gene_association*"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/kegg/2010-10-20"/>
+      <property name="src.data.dir" location="/shared/data/metabolic/kegg/current"/>
       <property name="kegg.organisms" value="9606 10090"/>
     </source>
     <source name="reactome" type="biopax">
