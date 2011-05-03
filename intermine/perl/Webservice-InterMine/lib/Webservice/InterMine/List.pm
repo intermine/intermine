@@ -32,19 +32,25 @@ union, intersection, symmetric difference, and subtraction whicj create new list
 =cut
 
 use Moose;
+with 'Webservice::InterMine::Role::HasQuery';
 with 'Webservice::InterMine::Role::Serviced';
-use InterMine::Model::Types qw(PathString );
-use Webservice::InterMine::Types qw(
-    Date ListFactory ResultIterator Query
+with 'Webservice::InterMine::Role::Showable';
+
+use Moose::Util::TypeConstraints qw(match_on_type);
+use MooseX::Types::Moose         qw/ArrayRef/;
+use InterMine::Model::Types      qw/PathString/;
+use Webservice::InterMine::Types qw/
+    Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
-);
-use Moose::Util::TypeConstraints;
+/;
 require Set::Object;
 
-use constant LIST_APPEND_PATH => '/lists/append/json';
-use constant RENAME_PATH => '/lists/rename/json';
-use constant LISTABLE => 'Webservice::InterMine::Query::Roles::Listable';
-use constant LIST => 'Webservice::InterMine::List';
+use constant {
+    LIST_APPEND_PATH => '/lists/append/json',
+    RENAME_PATH => '/lists/rename/json',
+    LISTABLE => 'Webservice::InterMine::Query::Roles::Listable',
+    LIST => 'Webservice::InterMine::List',
+};
 
 =head1 OVERLOADED OPERATIONS
 
@@ -112,6 +118,7 @@ sub _update_name {
     );
     my $resp = $self->service->get($uri);
     my $new_list = $self->factory->parse_upload_response($resp);
+    $self->clear_query;
 }; 
 
 has 'size' => (
@@ -223,8 +230,13 @@ sub overload_subtraction {
         } else {
             confess "Both arguments to list subtraction must be lists";
         }
+    } elsif (not defined $reversed) {
+        my $subtraction = $self->subtract($other);
+        $self->delete;
+        $subtraction->name($self->name);
+        return $subtraction;
     } else {
-        $self->subtract($other);
+        return $self->subtract($other);
     }
 }
 
@@ -248,24 +260,12 @@ sub to_query {
     return $query;
 }
 
-has attribute_query => (
-    is => 'ro',
-    isa => Query,
-    lazy_build => 1,
-    builder => 'get_attribute_query',
-    handles => [qw/
-        views view_size add_view add_views 
-        results_iterator
-        table_format
-    /],
-);
-
-sub get_attribute_query {
+sub build_query {
     my $self = shift;
     my $q = $self->to_query;
     my @attributes = sort $q->model
-                       ->get_classdescriptor_by_name($self->type)
-                       ->attributes();
+                    ->get_classdescriptor_by_name($self->type)
+                    ->attributes();
     $q->clear_view;
     $q->add_views(@attributes);
     return $q;
@@ -291,31 +291,25 @@ sub append {
     my $path = shift || "";
     my $name = $self->name;
     my $resp;
-    if (blessed $content and $content->isa(__PACKAGE__)) {
-        $content = $content->to_query;
-    }
-    if (blessed $content and $content->does(LISTABLE)) {
-        my $uri = URI->new($content->get_list_append_uri);
-        $uri->query_form(
-            listName => $name, 
-            path => $path, 
-            $content->get_request_parameters,
-        );
-        $resp = $self->service->get($uri);
-    } else {
-        my $uri = URI->new($self->service_root . LIST_APPEND_PATH);
-        $uri->query_form(name => $name);
-        my ($identifiers, $content_type) = ($content, "text/plain");
-        if (ref $content eq 'ARRAY') {
-            $identifiers = join("\n", @$content);  
-        } elsif (-f $content) {
-            $identifiers = [identifiers => [$content]];
-            $content_type = "form-data",
+    my ($ids, $content_type) = ($content, "text/plain");
+    match_on_type $content => (
+        List,     sub {$ids = $_->to_query},
+        ArrayRef, sub {$ids = join("\n", @$_)},
+        File,     sub {$ids = [identifiers => [$content]]; $content_type = "form-data";},
+        sub {}
+    );
+    match_on_type $ids => (
+        ListableQuery, sub {
+            my $uri = URI->new($_->get_list_append_uri);
+            $uri->query_form(listName => $name, path => $path, $_->get_request_parameters);
+            $resp = $self->service->get($uri);
+        },
+        sub {
+            my $uri = URI->new($self->service_root . LIST_APPEND_PATH);
+            $uri->query_form(name => $name);
+            $resp = $self->service->post($uri, 'Content-Type' => $content_type, Content => $_);
         }
-        $resp = $self->service->post($uri,
-            'Content-Type' => $content_type, 
-            Content => $identifiers);
-    }
+    );
     my $new_list = $self->factory->parse_upload_response($resp);
     $self->add_unmatched_ids($new_list->get_unmatched_ids);
     $self->_set_size($new_list->size);
@@ -331,6 +325,7 @@ sub to_string {
     );
     return $ret;
 }
+
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

@@ -536,8 +536,7 @@ sub get_results_iterator {
         json_format   => $json_format,
         authorization => $self->get_authstring(),
     );
-    confess $response->status_line, $response->content
-      if $response->is_error;
+    confess $response->status_line if $response->is_error;
     return apply_roles( $response, $roles );
 }
 

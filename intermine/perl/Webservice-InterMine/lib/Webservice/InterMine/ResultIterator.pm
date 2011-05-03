@@ -209,7 +209,7 @@ sub _build_row_parser {
         return Webservice::InterMine::Parser::JSON->new(
             json_format => $json_format, model => $self->model);
     } else {
-        confess "Unknown row format", $row_format;
+        confess "Unknown row format '" . $row_format . "'"
     }
 }
 
@@ -360,6 +360,17 @@ sub set_headers {
         $self->_set_error_message($phrase) if $phrase;
     }
     $self->_set_headers( \%headers );
+    if (HTTP::Status::is_error( $self->error_code )) {
+        $self->_find_real_error_message();
+    }
+}
+
+sub _find_real_error_message {
+    my $self = shift;
+    eval {$self->get_all};
+    if (my $e = $@) {
+        $self->_set_error_message($e);
+    }
 }
 
 =back
@@ -490,7 +501,6 @@ sub read_line {
     }
 
     if ( defined $line ) {
-        $line = encode_utf8($line);
         $line =~ s/$CRLF//;
     }
 
