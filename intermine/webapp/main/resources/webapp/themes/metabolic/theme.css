@@ -249,7 +249,7 @@ div.box div.inner h4 { background-color:#FCFAFD; }
 #object_header #headerLink a { color:#1F7492; }
 #fixed-menu div.links a.current { background:#1F7492; color:#FFF; }
 div.table.template p.in_table a span { background-color:#FFF; color:#1F7492; }
-div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; }
+div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; background:#F6F5F7 !important; }
 #object_header p.share a { color:#1F7492; }
 
 /* theme color classes (used on Report page currently) */
@@ -280,3 +280,6 @@ div.report-page div.table .theme-6-border, div.report-page div.box .theme-6-bord
 div.report-page div.table .theme-7-color, div.report-page div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
 div.report-page div.table .theme-7-background, div.report-page div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
 div.report-page div.table .theme-7-border, div.report-page div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+
+/* redefine for inline lists/boxes with no results (gray) */
+div.box.gray h3 { color:#ABABAB; border-top-color:#6E6E6E !important; background:#F6F5F7 !important; }
