@@ -44,32 +44,21 @@ public class ListAppendService extends ListUploadService {
         if (!this.isAuthenticated()) {
             throw new BadRequestException("Not authenticated.\n" + USAGE);
         }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
-        Properties webProperties
-            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);;
 
+        Profile profile = SessionMethods.getProfile(request.getSession());
         String name = request.getParameter("name");
         String extraFieldValue = request.getParameter("extraValue");
 
-        if (StringUtils.isEmpty(name)) {
-            throw new BadRequestException("Name is blank." + USAGE);
-        }
+        setListName(name);
+        setHeaderAttributes(Arrays.asList(name));
 
-        output.setHeaderAttributes(getHeaderAttributes());
-
-        String bagUploadDelims =
-            (String) webProperties.get("list.upload.delimiters") + " ";
-        StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
-        if (!"text/plain".equals(request.getContentType())) {
-            throw new BadRequestException("Bad content type - " + request.getContentType() + USAGE);
-        }
-        BufferedReader r = request.getReader();
+        BufferedReader r = getReader(request);
 
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
         InterMineBag bag = profile.getSavedBags().get(name);
+        StrMatcher matcher = getMatcher(request);
         if (bag == null) {
             throw new BadRequestException(name + " is not a list you have access to");
         }

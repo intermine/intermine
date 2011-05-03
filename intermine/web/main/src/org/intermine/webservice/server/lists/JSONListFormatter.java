@@ -25,6 +25,7 @@ public class JSONListFormatter implements ListFormatter {
         listMap.put("name", list.getName());
         listMap.put("type", list.getType());
         listMap.put("title", list.getTitle());
+        listMap.put("description", list.getDescription());
         if (list.getDateCreated() != null) {
             Date createdOn = list.getDateCreated();
             listMap.put("dateCreated", iso8601.format(createdOn));
