@@ -105,7 +105,7 @@ sub DEMOLISH {
 
 sub _build__sort_order {
     my $self = shift;
-    return $self->get_view(0) || [];
+    return $self->get_view(0);
 }
 
 sub set_sort_order {
@@ -115,7 +115,7 @@ sub set_sort_order {
 
 sub table_format {
     my $self = shift;
-    my $format = "%-22s" x $self->view_size;
+    my $format = "%-24s" x $self->view_size;
     return $format . "\n";
 }
 
@@ -517,6 +517,22 @@ sub clean_out_SCCs {
             $self->remove($_); # remove it because it is constraine to itself
         }
     }
+}
+
+sub to_string {
+    my $self = shift;
+    my $ret = '';
+    $ret .= 'VIEW: [' . $self->joined_view(', ') . ']';
+    if ($self->constraints) {
+        $ret .= ', CONSTRAINTS: [';
+        for my $con ($self->constraints) {
+            $ret .= '[' . $con->to_string . '],';
+        }
+        $ret .= ']';
+    }
+    $ret .= ', LOGIC: ' . $self->logic->code;
+    $ret .= ', SORT_ORDER: ' . $self->joined_so(' ');
+    return $ret;
 }
 
 #########################

@@ -83,7 +83,10 @@ sub header_is_parsed {
 sub check_status {
     my $self = shift;
     my $container_text = $self->header . $self->footer;
-    my $container = $self->decode($container_text);
+    my $container = eval {$self->decode($container_text)};
+    unless ($container) {
+        confess "Problem decoding container", $@, $container_text;
+    }
     confess "Results returned error:", $container->{statusCode}, $container->{error}
         unless ($container->{wasSuccessful});
 }
