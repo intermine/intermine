@@ -1,0 +1,5 @@
+.syntax .bash .prompt {
+  color: #00cc00;
+  font-weight: bold; }
+.syntax .bash .command {
+  color: #003300; }

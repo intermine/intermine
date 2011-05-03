@@ -12,12 +12,14 @@ use List::Util qw/reduce/;
 use List::MoreUtils qw/uniq/;
 
 use MooseX::Types::Moose qw/Str Bool/;
-use InterMine::TypeLibrary qw(
-  PathList PathHash SortOrder SortOrderList
+use InterMine::Model::Types qw/PathList PathHash PathString/;
+use Webservice::InterMine::Types qw(
+  SortOrder SortOrderList
   ConstraintList LogicOrStr JoinList
   QueryName PathDescriptionList
   ConstraintFactory
 );
+
 use Webservice::InterMine::Join;
 use Webservice::InterMine::PathDescription;
 use Webservice::InterMine::Path qw(:validate type_of);
@@ -30,6 +32,19 @@ our @EXPORT_OK = qw(AND OR);
 has '+name' => ( 
     isa => QueryName, 
     coerce => 1,
+);
+
+has root_path => (
+    init_arg  => 'class', 
+    isa       => PathString, 
+    is        => 'ro',
+    coerce    => 1,
+    predicate => 'has_root_path',
+    trigger    => sub {
+        my ($self, $root) = @_;
+        my $err = validate_path( $self->model, $root, $self->type_dict );
+        confess $err if $err;
+    },
 );
 
 has _sort_order => (
@@ -53,10 +68,22 @@ has _sort_order => (
     },
 );
 
+sub prefix_pathfeature {
+    my ($self, $pf) = @_;
+    if ($self->has_root_path) {
+        my $root = $self->root_path;
+        unless ($pf->path =~ /^$root/) {
+            my $new_path = $self->root_path . '.' . $pf->path;
+            $pf->set_path($new_path);
+        }
+    }
+}
+
 sub add_sort_order {
     my $self = shift;
     my @args = @_;
     my $so = Webservice::InterMine::SortOrder->new(@args);
+    $self->prefix_pathfeature($so);
     $self->push_sort_order($so);
 }
 
@@ -78,12 +105,18 @@ sub DEMOLISH {
 
 sub _build__sort_order {
     my $self = shift;
-    return $self->get_view(0);
+    return $self->get_view(0) || [];
 }
 
 sub set_sort_order {
     my $self = shift;
     $self->_set_sort_order( join( ' ', @_ ) );
+}
+
+sub table_format {
+    my $self = shift;
+    my $format = "%-22s" x $self->view_size;
+    return $format . "\n";
 }
 
 has view => (
@@ -96,18 +129,28 @@ has view => (
     writer  => '_set_view',
     handles => {
         views         => 'elements',
-        add_view      => 'push',
+        _add_views    => 'push',
         get_view      => 'get',
         joined_view   => 'join',
         view_is_empty => 'is_empty',
         clear_view    => 'clear',
+        view_size     => 'count',
     },
 );
 
-after add_view => sub {
+sub add_views {
     my $self = shift;
-    $self->_set_view( $self->joined_view(' ') );
-};
+    return $self->add_view(@_);
+}
+
+sub add_view {
+    my $self = shift;
+    my @views = map {split} @_;
+    if ($self->has_root_path) {
+        @views = map {$self->root_path . '.' . $_} @views;
+    }
+    $self->_add_views(@views);
+}
 
 after qr/^add_/ => sub {
     my $self = shift;
@@ -240,6 +283,7 @@ Possible join styles are INNER and OUTER.
 sub add_join {
     my $self = shift;
     my $join = Webservice::InterMine::Join->new(@_);
+    $self->prefix_pathfeature($join);
     $self->push_join($join);
     return $self;
 }
@@ -275,6 +319,7 @@ has path_descriptions => (
 sub add_pathdescription {
     my $self = shift;
     my $pd   = Webservice::InterMine::PathDescription->new(@_);
+    $self->prefix_pathfeature($pd);
     $self->push_path_description($pd);
     return $self;
 }
@@ -411,6 +456,7 @@ sub add_constraint {
             $constraint->set_code( ++$code );
         }
     }
+    $self->prefix_pathfeature($constraint);
     $self->push_constraint($constraint);
     return $constraint;
 }
@@ -496,6 +542,13 @@ sub _validate {    # called internally, obeys is_validating
     croak join( '', @errs ) if @errs;
 }
 
+before _validate => sub {
+    my $self = shift;
+    if ($self->has_root_path and $self->view_is_empty) {
+        $self->add_view('id');
+    }
+};
+
 sub validate_paths {
     my $self = shift;
     my @paths = ( $self->all_paths, $self->subclasses );
@@ -520,9 +573,11 @@ sub validate_consistency {
 sub validate_sort_order {
     my $self = shift;
     return if $self->view_is_empty;
-    for my $so ($self->sort_orders) {
-        unless ( grep { $so->path eq $_ } $self->views ) {
-            return $so->path . " is not in the view\n";
+    if ($self->has_sort_order) {
+        for my $so ($self->sort_orders) {
+            unless ( grep { $so->path eq $_ } $self->views ) {
+                return $so->path . " is not in the view\n";
+            }
         }
     }
     return;

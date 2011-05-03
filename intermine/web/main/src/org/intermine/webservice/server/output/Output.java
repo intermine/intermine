@@ -25,7 +25,7 @@ public abstract class Output
 {
 
     private Map<String, Object> headerAttributes;
-    
+
     private String errorMessage = null;
     private int status = SC_OK;
 
@@ -58,22 +58,30 @@ public abstract class Output
      * Resource not found http status code.
      */
     public static final int SC_NOT_FOUND = 404;
-    
+
     /**
      * Sets the error message
      * @param message
      */
     public void setError(String message, int code) {
-    	errorMessage = message;
-    	status = code;
+        errorMessage = message;
+        status = code;
     }
-    
+
+    /**
+     * Gets the error message.
+     * @return The error message
+     */
     protected String getError() {
-    	return errorMessage;
+        return errorMessage;
     }
-    
+
+    /**
+     * Gets the error code
+     * @return the HTTP error code
+     */
     protected int getCode() {
-    	return status;
+        return status;
     }
 
     /**

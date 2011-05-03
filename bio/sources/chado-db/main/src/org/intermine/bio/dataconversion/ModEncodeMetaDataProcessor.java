@@ -721,19 +721,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         List<Integer> nextIterationProtocols = new ArrayList<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
             List<Integer> outputs = new ArrayList<Integer>();
             List<Integer> inputs = new ArrayList<Integer>();
             Integer currentId = pap.next();
-
+            
             // add the DAG level here only if these are the first AP
             if (step == 1) {
                 appliedProtocolMap.get(currentId).step = step;
             }
-
+            
             outputs.addAll(appliedProtocolMap.get(currentId).outputs);
             Integer submissionId = appliedProtocolMap.get(currentId).submissionId;
             Iterator<Integer> od = outputs.iterator();
@@ -749,7 +749,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         // this is a leaf!!
                     }
                 }
-
+                
                 // to fill submission-dataId map
                 // this is needed, otherwise inputs to AP that are not outputs
                 // of a previous protocol are not considered
@@ -3043,8 +3043,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Set<String> subFiles = new HashSet<String>();
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
-                if (StringUtils.containsIgnoreCase(ad.type, "result")
-                        && StringUtils.containsIgnoreCase(ad.type, "file")) {
+                // now checking only for 'file', not 'result file'
+                if (StringUtils.containsIgnoreCase(ad.type, "file")) {
                     if (!StringUtils.isBlank(ad.value)
                             && !subFiles.contains(ad.value)) {
                         createResultFile(ad.value, ad.name, submissionId);
@@ -3421,6 +3421,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         FIELD_NAME_MAP.put("Data Type", "category");
         FIELD_NAME_MAP.put("Assay Type", "experimentType");
+        FIELD_NAME_MAP.put("Release Reservations", "notice");
+        
         FIELD_NAME_MAP.put("RNAsize", "RNAsize");
         // these are names in name/value couples for ReadCount
         FIELD_NAME_MAP.put("Total Read Count", "totalReadCount");

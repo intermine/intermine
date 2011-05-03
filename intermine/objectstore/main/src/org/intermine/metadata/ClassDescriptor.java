@@ -791,7 +791,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
         String name = className.substring(className.lastIndexOf(".") + 1);
-        sb.append(name + ":{\"name\":\"" + name + "\",\"extends\":[");
+        sb.append("\"" + name + "\":{\"name\":\"" + name + "\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
             sb.append("\"");

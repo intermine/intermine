@@ -43,7 +43,7 @@
 <attribute name="name" value="GenomeNet"/>
 </item>
 <item id="3_1" class="Gene">
-<attribute name="ncbiGeneNumber" value="124"/>
+<attribute name="secondaryIdentifier" value="124"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>

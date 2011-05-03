@@ -51,7 +51,7 @@ under the same terms as Perl itself.
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
 use MooseX::Types::Moose qw/Str HashRef/;
-use InterMine::TypeLibrary qw/File Service Template/;
+use Webservice::InterMine::Types qw/File Service Template/;
 use Webservice::InterMine::Query::Template;
 
 around BUILDARGS => sub {
@@ -129,6 +129,7 @@ sub process_xml {
     confess "Can't find any template strings in the xml I was passed: $xml"
       unless @template_strings;
     for (@template_strings) {
+        warn "Processing $_" if $ENV{DEBUG};
         my $t = eval {
             Webservice::InterMine::Query::Template->new(
                 service       => $self->service,
@@ -136,7 +137,10 @@ sub process_xml {
                 source_string => $_,
             );
         };
-        next unless ( defined $t );
+        unless (defined $t) {
+            warn $@ if ($@ and $ENV{DEBUG});
+            next;
+        }
         my $name = $t->name;
         confess "Made two templates with the same name - $name"
           if $self->get_template_by_name($name);

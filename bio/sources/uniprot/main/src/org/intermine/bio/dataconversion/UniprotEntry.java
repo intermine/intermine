@@ -887,13 +887,6 @@ public class UniprotEntry
             dbrefMap.put(type, value);
             return dbrefMap;
         }
-
-        /**
-         * @return string representation of dbref
-         */
-        public String toString() {
-            return "type:" + type + " value:" + value;
-        }
     }
 
     /**
@@ -965,8 +958,9 @@ public class UniprotEntry
         Iterator<UniprotGene> iter = geneEntries.iterator();
         while (iter.hasNext()) {
             UniprotGene gene = iter.next();
-            UniprotEntry entry = new UniprotEntry();
+            UniprotEntry entry = new UniprotEntry(primaryAccession);
             entry.setDatasetRefId(datasetRefId);
+            entry.setTaxonId(taxonId);
 
             // since there are two genes, only return dbrefs that have the matching gene
             // designation
@@ -982,8 +976,6 @@ public class UniprotEntry
         }
         return dummyEntries;
     }
-
-
 
     /**
      * no:

@@ -50,7 +50,7 @@ public class ColumnSummaryAction extends InterMineAction
         String tableName = request.getParameter("tableName");
         String summaryPath = request.getParameter("summaryPath");
         WebTable webTable = (SessionMethods.getResultsTable(session, tableName)).getWebTable();
-        PathQuery q = webTable.getPathQuery();
+        PathQuery q = webTable.getPathQuery().clone();
         q.clearOrderBy();
         q.clearView();
         q.clearDescriptions();

@@ -21,12 +21,21 @@ jQuery(document).ready(function() {
 //]]>-->
 </script>
 
+<style type="text/css">
+  pre {
+    background-color: black;
+    color: white;
+    padding: 10px;
+  }
+</style>
+
 <im:boxarea titleKey="api.perl.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiPerl">
 
 <div>
   <p>
     The Perl web service API makes it easy to run queries in <c:out value="${WEB_PROPERTIES['project.title']}"/> directly from Perl programs.
-    You can use the Perl API to construct any query you could run from web interface and fetch the results as tab-separated values.
+    You can use the Perl API to construct any query you could run from web interface and fetch the results
+    in a number of formats, including native Perl data structures and objects, and TSV/CSV strings.
   </p>
 </div>
 <br>
@@ -43,11 +52,13 @@ jQuery(document).ready(function() {
         CPAN (the comprehensive Perl archive network). This is a public
         repository of thousands of modules. Using CPAN will ensure you
         get the latest version, and that your dependencies are
-        automatically managed for you. To install the InterMine Perl
+        automatically managed for you.
+     </p><p>
+       To install the InterMine Perl
         client library type the following command into a shell:
-        <br><br>
-            <span style="padding:"><i>&gt; sudo cpan Webservice::InterMine</i></span>
-        <br><br>
+     </p>
+        <pre>&gt; sudo cpan Webservice::InterMine</pre>
+        <p>
             (you may be asked to configure cpan here if you have not used it
             before). More detailed instructions regarding the installation
             of Perl modules can be found <a href="http://www.intermine.org/wiki/InstallingPerlModules" target="_blank">here</a>.
@@ -64,14 +75,15 @@ jQuery(document).ready(function() {
     <p style="padding-top:3px; padding-bottom:3px;">
     You can run the downloaded script by running the following
     command in a shell:
-    <br><br>
-    <span><i>&gt; perl path/to/downloaded/script.pl</i></span>
-    <br><br>
-    If you get an error saying "Cannot find Webservice::InterMine in
-    @INC" then see 'Prerequisites' above.
-
-    Feel free to edit the script - these are designed to be
-    springboards to help you get where you want to. See the <a href="http://search.cpan.org/~intermine/Webservice-InterMine/lib/Webservice/InterMine/Cookbook.pod" target="_blank">Cookbook</a>,
+  </p>
+    <pre>&gt; perl path/to/downloaded/script.pl</pre>
+    <p>
+    If you get an error saying <code>Cannot find Webservice::InterMine in @INC</code>, or similar
+    then see 'Prerequisites' above.
+  </p>
+    <p>
+    Feel free to edit the script - these are designed to be spring-boards to help you get where you
+    want to. See the <a href="http://search.cpan.org/~intermine/Webservice-InterMine/lib/Webservice/InterMine/Cookbook.pod" target="_blank">Cookbook</a>,
      which contains a set of short tutorial 'recipes' that demonstrate particular features of the Perl API,
     for ways to edit the scripts, and even extend their
     functionality.

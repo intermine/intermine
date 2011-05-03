@@ -586,8 +586,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("relationship", "Allele", "alleleof", "Gene"),
                     Arrays.asList(new SetFieldConfigAction("gene")));
 
-
-
             // Set the protein reference in the MRNA - "rev_relationship" means that the
             // relationship table actually has Protein, producedby, MRNA.  We configure like
             // this so we can set a reference in MRNA rather than protein

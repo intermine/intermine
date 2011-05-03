@@ -31,13 +31,9 @@
       recordCurrentConstraintsOrder();
   });
 
-    function codeGenTemplate(method) {
-        jQuery('#actionType').val(method);
-        jquery('#templateForm').submit();
-    }
-
 </script>
 </c:if>
+
 <c:choose>
 <c:when test="${!empty templateQuery}">
 <%-- object trail --%>
@@ -61,6 +57,7 @@
         <%-- constraint list --%>
             <c:forEach items="${dcl}" var="dec" >
                 <c:set var="index" value="${index+1}"/>
+                <input type="hidden" name="constraint${index}" value="${dec.path}">
                 <li id="constraintElement${index}_${index}">
                 <%-- builder=yes means we are in template preview --%>
                 <c:if test="${!empty builder && builder=='yes'}">
@@ -262,7 +259,7 @@
             <%--Contained in bag:--%>
             <html:select property="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
-                <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
+                <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>
                   <c:out value="${bagOp.label}" />
                 </option>
               </c:forEach>
@@ -334,6 +331,19 @@
 </c:if>
 </html:form>
 
+<script language="javascript">
+    function getWebserviceUrl() {
+        jQuery('#actionType').val("webserviceURL");
+        var data = jQuery('#templateForm').serialize();
+        var url = "<html:rewrite page='/templateAction.do'/>";
+        var callback = function(data) {
+            jQuery('div.popup').show().find('input').val(data).select();
+        };
+        jQuery.get(url, data, callback, "text");
+        return false;
+    }
+</script>
+
 <div class="templateActions">
 <table>
   <tr>
@@ -345,7 +355,18 @@
       <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
     </td>
     <td>
-      <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
+      <div class="heading" style="border:none">
+          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="" onclick="javascript:getWebserviceUrl();return false;"
+    title="Get a URL to run this template from the command line or a script">web service URL</a>
+    <div class="popup" style="display:none;">
+      <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
+      <p style="width:95%;">
+      Use the URL below to fetch results for this template from the command line or a script 
+      <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+      </p>
+    <input type="text" value="None">
+    </div>
+  </div>
     </td>
     <td>
       <c:choose>

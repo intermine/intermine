@@ -3,10 +3,10 @@ package Webservice::InterMine::Constraint::Ternary;
 use Moose;
 extends 'Webservice::InterMine::Constraint::Binary';
 
-use InterMine::TypeLibrary qw(TernaryOperator);
+use Webservice::InterMine::Types qw(TernaryOperator);
 use MooseX::Types::Moose qw(Str);
 
-has '+op' => ( isa => TernaryOperator, );
+has '+op' => ( isa => TernaryOperator, coerce => 1);
 
 has 'extra_value' => (
     is  => 'ro',

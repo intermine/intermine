@@ -119,7 +119,7 @@ sub _methods : Test(2) {
     my $test = shift;
     $test->SUPER::_methods;
     my @methods = (
-	qw/url results results_iterator to_xml service_root query_path/
+	qw/url results results_iterator to_xml service_root/
     );
     can_ok($test->class, @methods);
 }
@@ -137,7 +137,7 @@ sub _inheritance : Test(3) {
     }
 }
 
-sub service_methods : Test(4) {
+sub service_methods : Test(2) {
     my $test = shift;
     my $obj = $test->{filled_obj};
     my $service = $test->{service};
@@ -149,8 +149,6 @@ sub service_methods : Test(4) {
     )->mock(
 	version => sub {2},
     );
-    is($obj->service_root, 'FAKEROOT', "Delegates root correctly");
-    is($obj->query_path, 'FAKEPATH', "... and querypath likewise");
     is_deeply(
 	[$obj->results_iterator],
 	[

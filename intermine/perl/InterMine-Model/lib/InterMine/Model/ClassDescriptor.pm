@@ -32,7 +32,7 @@ use Moose;
 extends qw/Moose::Meta::Class/;
 with 'InterMine::Model::Role::Descriptor';
 
-use InterMine::TypeLibrary qw(
+use InterMine::Model::Types qw(
     FieldHash ClassDescriptorList ClassDescriptor BigInt
 );
 use MooseX::Types::Moose qw(ArrayRef Str Bool);

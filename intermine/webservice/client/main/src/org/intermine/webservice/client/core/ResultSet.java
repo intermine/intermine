@@ -48,6 +48,10 @@ public abstract class ResultSet
         reader = getNewReader();
     }
 
+    protected BufferedReader getReader() {
+        return reader;
+    }
+
     private BufferedReader getNewReader() {
         if (connection != null) {
             return new BufferedReader(new InputStreamReader(connection

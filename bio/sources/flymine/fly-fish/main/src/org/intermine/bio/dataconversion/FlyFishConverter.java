@@ -84,7 +84,7 @@ public class FlyFishConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
-        String headerArray[] = StringUtils.split(line, ';');
+        String[] headerArray = StringUtils.split(line, ';');
 
         HeaderConfig[] config = new HeaderConfig[headerArray.length];
         for (int i = 0; i < headerArray.length; i++) {
@@ -107,7 +107,7 @@ public class FlyFishConverter extends BioFileConverter
             config[i].expression = expression;
         }
         while ((line = br.readLine()) != null) {
-            String lineBits[] = StringUtils.split(line, ';');
+            String[] lineBits = StringUtils.split(line, ';');
             String geneCG = lineBits[0];
             Item gene = getGene(geneCG);
 
@@ -117,7 +117,7 @@ public class FlyFishConverter extends BioFileConverter
                 continue;
             }
 
-            Item mRNAExpressionResults[] = new Item[4];
+            Item[] mRNAExpressionResults = new Item[4];
             for (int stageNum = 1; stageNum <= 4; stageNum++) {
 
                 Item result = createItem("MRNAExpressionResult");
@@ -229,8 +229,8 @@ public class FlyFishConverter extends BioFileConverter
     private String[] getStages() throws ObjectStoreException {
         String[] stageItems = new String[17];
         for (int i = 1; i <= 16; i++) {
-            Item stage = createItem("Stage");
-            stage.setAttribute("name", "Stage " + i);
+            Item stage = createItem("DevelopmentTerm");
+            stage.setAttribute("name", "embryonic stage " + i);
             stageItems[i] = stage.getIdentifier();
             store(stage);
         }

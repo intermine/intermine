@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -59,6 +60,9 @@ public class LoginAction extends LoginHandler
         Map<String, String> renamedBags = doLogin(request, response, session, pm, lf.getUsername(),
                 lf.getPassword());
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
+        //track the user login
+        im.getTrackerDelegate().trackLogin(lf.getUsername());
+
         if (renamedBags.size() > 0) {
             for (String initName : renamedBags.keySet()) {
                 recordMessage(new ActionMessage("login.renamedbags", initName,

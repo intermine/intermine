@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -69,7 +71,13 @@ public class BeginAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
-
+        Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
+        if (errorKeys != null && !errorKeys.isEmpty()) {
+            for (String errorKey : errorKeys) {
+                recordError(new ActionMessage(errorKey), request);
+            }
+            return mapping.findForward("blockingError");
+        }
         Properties properties = SessionMethods.getWebProperties(servletContext);
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read

@@ -4,10 +4,7 @@ use Moose::Role;
 use URI;
 use List::MoreUtils qw/uniq/;
 
-requires(
-    qw/name service description results _validate
-      service_root templatequery_path get_constraint/
-);
+requires(qw/name description results _validate get_constraint/);
 
 # allows us to add this role to instances at run-time
 use Moose::Meta::Class;
@@ -50,27 +47,115 @@ sub show_constraints {
     return join( "\n", @editables );
 }
 
+=head2 results_iterator_with(as => $row_format, %parameters)
+
+Get an iterator over the rows of the result set. This is a more
+memory efficient way to deal with large result sets that would
+otherwise be difficult or impractical to hold in memory.
+
+Parameters:
+=over 4
+=item as => tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count: 
+How each line should be returned.
+=item size => Int: 
+How many results to return (default: undef -> all)
+=item start => Int: 
+The index of the first result to return (default: 0)
+=item addheaders => Bool/friendly/path: 
+Whether to add headers to the output (default: false)
+=item json => inflate|instantiate|perl: 
+How to handle json (default: perl)
+=item %parameters: 
+The template parameters
+=back
+
+Returns: A L<Webservice::InterMine::ResultIterator> object.
+
+=cut
+
+sub results_iterator_with {
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/as size start addheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    return $clone->results_iterator(zip(@keys, @values));
+}
+
+=head2 results_with(as => $row_format, %parameters)
+
+Get the results of the template back in the requested format.
+
+Parameters:
+=over 4
+=item as => tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count: 
+How each line should be returned.
+=item size => Int: 
+How many results to return (default: undef -> all)
+=item start => Int: 
+The index of the first result to return (default: 0)
+=item addheaders => Bool/friendly/path: 
+Whether to add headers to the output (default: false)
+=item json => inflate|instantiate|perl: 
+How to handle json (default: perl)
+=item %parameters: 
+The template parameters
+=back
+
+Returns: An arrayref of rows in the requested format
+
+=cut
+
 sub results_with {
-    my $self   = shift;
-    my %args   = @_;
-    my $format = $args{as} and delete $args{as} if ( $args{as} );
-    my %new_value_for;
-    my %new_op_for;
-    my %new_extra_value_for;
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/as size start addheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    return $clone->results(zip(@keys, @values));
+}
+
+sub print_results_with {
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/to as size start addheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    $clone->print_results(zip(@keys, @values));
+}
+
+sub get_count_with {
+    my $self = shift;
+    my $clone = $self->get_adjusted_template(@_);
+    return $clone->get_count;
+}
+
+=head2 get_adjusted_template(%parameters)
+
+Returns a clone of the current template with the values adjusted
+to match those of the passed in template parameters.
+
+=cut
+
+sub get_adjusted_template {
+    my $self = shift;
+    my %template_parameters = @_;
+
     my $error_format = "'%s' is not a valid parameter to run_with";
-    for ( keys %args ) {
+    my (%new_value_for, %new_op_for, %new_extra_value_for);
+    for ( keys %template_parameters ) {
         if (/^value/) {
             my ($code) = /^value([A-Z]{1,2})$/;
             confess sprintf( $error_format, $_ ) unless $code;
-            $new_value_for{$code} = $args{$_};
+            $new_value_for{$code} = $template_parameters{$_};
         } elsif (/^op/) {
             my ($code) = /^op([A-Z]{1,2})$/;
             confess sprintf( $error_format, $_ ) unless $code;
-            $new_op_for{$code} = $args{$_};
+            $new_op_for{$code} = $template_parameters{$_};
         } elsif (/^extra_value/) {
             my ($code) = /^extra_value([A-Z]{1,2})$/;
             confess sprintf( $error_format, $_ ) unless $code;
-            $new_extra_value_for{$code} = $args{$_};
+            $new_extra_value_for{$code} = $template_parameters{$_};
         } else {
             confess sprintf( $error_format, $_ );
         }
@@ -80,7 +165,7 @@ sub results_with {
     for my $code ( uniq( keys(%new_value_for), keys(%new_op_for) ) ) {
         if ( my $con = $clone->get_constraint($code) ) {
             confess
-"You can only change values and operators for editable constraints"
+              "You can only change values and operators for editable constraints"
               unless $con->is_editable;
             my %attr = %$con;
             $attr{value} = $new_value_for{$code}
@@ -95,37 +180,7 @@ sub results_with {
             confess "no constraint with code $code on this query";
         }
     }
-
-    my $results = $clone->results( as => $format );
-    return $results;
-}
-
-sub url {
-    my $self       = shift;
-    my %args = @_;
-    my $format = $args{format} || "tab";
-    my $url        = $self->service_root . $self->templatequery_path;
-    my $uri        = URI->new($url);
-    my %query_form = (
-        format => $format,
-        name   => $self->name,
-    );
-    for my $opt (qw/start size/) {
-        $query_form{$opt} = $args{$opt} if ($args{$opt});
-    }
-
-    my $i = 1;
-    for my $constraint ( $self->editable_constraints ) {
-        next unless $constraint->switched_on;
-        my %hash = $constraint->query_hash;
-        while ( my ( $k, $v ) = each %hash ) {
-            $query_form{ $k . $i } = $v;
-        }
-        $i++;
-    }
-    $uri->query_form(%query_form);
-    warn $uri if $ENV{DEBUG};
-    return $uri;
+    return $clone;
 }
 
 around _validate => sub {

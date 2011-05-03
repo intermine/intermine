@@ -18,15 +18,23 @@ import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.Request;
+import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
-import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 
 
 /**
- * The ModelService is service returning model used by InterMine instance.
+ * This class represents a connection to the RESTful resource on an InterMine server which
+ * provides information about the service's data model. This is a structure which is serialised
+ * and transmitted in XML, and contains information about the tables within the database in
+ * a highly abstract manner. The data model is required for constructing queries with, in order
+ * to validate them appropriately.
+ *
+ * @see org.intermine.metadata.Model
+ * @see org.intermine.pathquery.PathQuery
+ * @see org.intermine.webservice.client.services.QueryService
  *
  * @author Jakub Kulaviak
  **/
@@ -41,7 +49,9 @@ public class ModelService extends Service
     private static Map<String, Model> models = new HashMap<String, Model>();
 
     /**
-     * Use {@link ServiceFactory} instead of constructor for creating this service .
+     * Please do not instantiate this class yourself directly - instead use the
+     * {@link ServiceFactory} - this will ensure maintainability of your code.
+     *
      * @param rootUrl root URL
      * @param applicationName application name
      */
@@ -50,8 +60,8 @@ public class ModelService extends Service
     }
 
     /**
-     * Returns model used by InterMine instance to which the service
-     * is connected.
+     * Returns the model used by the InterMine instance which the service is connected to.
+     *
      * @return model
      */
     public Model getModel() {
@@ -79,9 +89,9 @@ public class ModelService extends Service
     }
 
     /**
-     * Fetches the xml for the model from the server.
+     * An method used internally to fetch the XML for the model from the server.
      *
-     * @return the model in XML format
+     * @return the serialised representation of the data model.
      */
     protected String getModelXml() {
         Request request = new RequestImpl(RequestType.GET, getUrl(),

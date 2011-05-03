@@ -23,7 +23,7 @@ import java.util.Set;
 public class CytoscapeNetworkEdgeData
 {
     private String id; // as in a form of "<sourceId>-<targetId>"
-    private String soureceId; // Use InterMine Id
+    private String sourceId; // Use InterMine Id
     private String sourceLabel; // sometimes no values
     private String targetId; // Use InterMine Id
     private String targetLabel; // sometimes no values
@@ -38,14 +38,14 @@ public class CytoscapeNetworkEdgeData
      * @return interactionString a record in format of "source<tab>interactionType<tab>target"
      */
     public String generateInteractionString() {
-        return soureceId + "\\t" + interactionType + "\\t" + targetId;
+        return sourceId + "\\t" + interactionType + "\\t" + targetId;
     }
 
     /**
      * @return interactionString a record in format of "target<tab>interactionType<tab>source"
      */
     public String generateReverseInteractionString() {
-        return targetId + "\\t" + interactionType + "\\t" + soureceId;
+        return targetId + "\\t" + interactionType + "\\t" + sourceId;
     }
 
     /**
@@ -65,15 +65,15 @@ public class CytoscapeNetworkEdgeData
     /**
      * @return the soureceId
      */
-    public String getSoureceId() {
-        return soureceId;
+    public String getSourceId() {
+        return sourceId;
     }
 
     /**
      * @param soureceId the soureceId to set
      */
-    public void setSoureceId(String soureceId) {
-        this.soureceId = soureceId;
+    public void setSourceId(String soureceId) {
+        this.sourceId = soureceId;
     }
 
     /**
@@ -192,6 +192,6 @@ public class CytoscapeNetworkEdgeData
      */
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return (sourceId + "-" + targetId).hashCode();
     }
 }

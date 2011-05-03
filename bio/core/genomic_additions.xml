@@ -17,6 +17,7 @@
       <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
       <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
       <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
+      <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
     </class>
 
     <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
@@ -29,6 +30,10 @@
     <class name="IntergenicRegion" is-interface="true">
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
+
+    <class name="Intron" is-interface="true">
+      <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
+    </class>
 
     <class name="Protein" is-interface="true">
       <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>

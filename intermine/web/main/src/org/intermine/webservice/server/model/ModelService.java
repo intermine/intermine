@@ -11,6 +11,7 @@ package org.intermine.webservice.server.model;
  */
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,9 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
+import org.intermine.webservice.server.output.StreamedOutput;
 
 /**
  * Web service that returns xml representation of model.
@@ -35,13 +39,29 @@ public class ModelService extends WebService
 
     private static final String FILE_BASE_NAME = "model";
 
+    /**
+     * Constructor.
+     * @param im The API settings bundle
+     */
     public ModelService(InterMineAPI im) {
         super(im);
+    }
+
+    @Override
+    protected Output makeXMLOutput(PrintWriter out) {
+        ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
+        return new StreamedOutput(out, new PlainFormatter());
+    }
+
+    @Override
+    protected int getDefaultFormat() {
+        return XML_FORMAT;
     }
 
     /**
      * {@inheritDoc}}
      */
+    @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response) {
         Model model = this.im.getModel();
         try {
@@ -55,10 +75,11 @@ public class ModelService extends WebService
                     }
                     attributes.put(JSONFormatter.KEY_CALLBACK, callback);
                 }
+                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
+                attributes.put(JSONFormatter.KEY_OUTRO, "}");
                 output.setHeaderAttributes(attributes);
                 output.addResultItem(Arrays.asList(model.toJSONString()));
             } else {
-                ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
                 response.getWriter().append(model.toString());
             }
         } catch (IOException e) {

@@ -155,6 +155,7 @@
     <put name="body" value="passwordReset.tile"/>
     <put name="pageName" value="passwordReset"/>
   </definition>
+  <definition name="blockingError.page" path="/blockingError.jsp"/>
 
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
   <!--tiles-->
@@ -234,6 +235,7 @@
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="apiJava.tile" path="apiJava.jsp" controllerUrl="/initApiJava.do" />
   <definition name="apiPerl.tile" path="apiPerl.jsp" controllerUrl="/initApiPerl.do" />
+  <definition name="apiPython.tile" path="apiPython.jsp" controllerUrl="/initApiPython.do" />
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />
   <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />
@@ -263,7 +265,7 @@
     <put name="pageName" value="keywordsearchresults"/>
   </definition>
   <definition name="customDisplayer.tile" path="/customDisplayer.jsp" controllerUrl="/initCustomDisplayer.do"/>
-
+  <definition name="track.tile" path="track.jsp" />
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
 

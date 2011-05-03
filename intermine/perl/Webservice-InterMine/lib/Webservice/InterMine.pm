@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9604";
+our $VERSION = "0.9700";
 
 =head1 NAME
 
@@ -59,6 +59,8 @@ intending to access multiple services, the latter form is recommended.
 
 use Webservice::InterMine::Service;
 
+our $CLEAN_UP = 1;
+
 my $service_url;
 
 my %services;
@@ -74,7 +76,7 @@ sub import {
     }
 }
 
-=head2 new_query( [\@service_args], [%query_args] )
+=head2 new_query( [from => \@service_args], [%query_args] )
 
 returns a new query object for you to fill in with constraints before
 being run to get its results. If you pass a url, it constructs a query
@@ -86,9 +88,26 @@ Please see L<Webservice::InterMine::Query>
 
 sub new_query {
     my $class = shift;
-    my $service_args = ( ref $_[0] ) ? shift : [];
-    return $class->get_service(@$service_args)->new_query(@_);
+    my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->new_query(%args);
 }
+
+=head2 new_list( %list_args, [from => \@service_args] )
+
+Creates a new list with the content specified by the list arguments. The
+C<content> key-word parameter will always be required. For a full 
+specification of creating lists, see: L<Webservice::InterMine::ListFactory>.
+
+=cut
+
+sub new_list {
+    my $class = shift;
+    my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->new_list(%args);
+}
+
 
 =head2 load_query([\@service_args], source_file|source_string => $source, %opts )
 
@@ -160,9 +179,6 @@ queries and fetch templates and saved queries. If a url is
 passed, the webservice for that url is returned, otherwise the
 service for the url given to C<use> is returned.
 
-Please note: user and password based authentication has not yet
-been implemented.
-
 Please see: L<Webservice::InterMine::Service>
 
 =cut
@@ -184,6 +200,26 @@ sub get_service {
         my $service = Webservice::InterMine::Service->new( $url, $user, $pass );
         $services{$url} = $service;
         return $service;
+    }
+}
+
+=head2 clean_temp_lists()
+
+Deletes all automatically created anonymous lists. Any
+renamed lists will be spared the clean-up.
+
+=cut
+
+sub clean_temp_lists() {
+    my $self = shift;
+    for my $service (values %services) {
+        $service->delete_temp_lists();
+    }
+}
+
+END {
+    if ($CLEAN_UP) {
+        __PACKAGE__->clean_temp_lists();
     }
 }
 

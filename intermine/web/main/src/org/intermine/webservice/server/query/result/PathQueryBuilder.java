@@ -67,8 +67,10 @@ public class PathQueryBuilder
                 }
             }
             if (!missingBags.isEmpty()) {
-                throw new BadRequestException("XML is well formatted but saved Lists (bags) used "
-                        + "by this query don't exist: " + missingBags + " query: " + xml);
+                throw new BadRequestException(
+                        "XML is well formatted but saved Lists used "
+                        + "by this query don't exist: " + missingBags 
+                        + " query: " + xml);
             }
         } else {
             throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));

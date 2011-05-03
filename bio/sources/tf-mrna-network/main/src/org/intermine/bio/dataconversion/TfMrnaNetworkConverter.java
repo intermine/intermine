@@ -31,7 +31,7 @@ import org.intermine.xml.full.Item;
 /**
  * DataConverter to create items from modENCODE fly TF-miRNA regulatory network files.
  * TFs have three data fields: symbol, primaryId, level.
- * miRNAs have three dta fields: symbol, full names, position.
+ * miRNAs have three data fields: symbol, full names, position.
  *
  * @author Fengyuan Hu
  */

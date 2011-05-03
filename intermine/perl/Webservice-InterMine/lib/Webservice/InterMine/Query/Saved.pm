@@ -12,8 +12,8 @@ extends 'Webservice::InterMine::Query::Core';
 with(
     'Webservice::InterMine::Query::Roles::Saved',
     'Webservice::InterMine::Query::Roles::Runnable',
-    'Webservice::InterMine::Query::Roles::QueryUrl',
-    'Webservice::InterMine::Query::Roles::Serviced',
+    'Webservice::InterMine::Query::Roles::QueryParameters',
+    'Webservice::InterMine::Role::Serviced',
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::WriteOutLegacy',

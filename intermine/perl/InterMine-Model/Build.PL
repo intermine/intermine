@@ -12,7 +12,6 @@ my $build = Module::Build->new(
         'Carp'                          => 0,
         'Moose::Util::TypeConstraints'  => 0,
         'MooseX::Role::WithOverloading' => 0,
-        'InterMine::TypeLibrary',       => '0.9600',
         'MooseX::Types'                 => 0,
         'Moose'                         => 0.95,
         'Scalar::Util'                  => 0,

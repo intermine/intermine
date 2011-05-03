@@ -11,7 +11,7 @@ sub _build_handler {
 with(
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::ScriptAble',
-    'Webservice::InterMine::Query::Roles::Serviced',
+    'Webservice::InterMine::Role::Serviced',
 );
 
 __PACKAGE__->meta->make_immutable;

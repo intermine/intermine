@@ -1,7 +1,7 @@
 package Webservice::InterMine::Role::ModelOwner;
 
 use Moose::Role;
-use InterMine::TypeLibrary qw(Model);
+use InterMine::Model::Types qw(Model);
 
 has model => (
     is         => 'ro',

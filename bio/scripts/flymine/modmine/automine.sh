@@ -311,7 +311,7 @@ fi
 
 if [ "$CHADOAPPEND" = "n" ]
 then 
-dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
+dropdb -e "$CHADODB" -h "$DBHOST" -U "$DBUSER";
 createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 # initialise it
 cd $MINEDIR
@@ -456,10 +456,19 @@ function fillChado {
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
 EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
 
+# check if the sub is already in chado: in case skip!
+ISIN=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select experiment_id from experiment_prop where name = 'dcc_id' and  value='$DCCID';"`
+if [ -n "$ISIN" ]
+then
+echo "Submission $DCCID is already in chado: skipping it.."
+echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo " already in chado!! skipping it.." >> $LOG
+else
+
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
 echo >> $LOG
-echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo -n "`date "+%y%m%d.%H%M"`  $DCCID " >> $LOG
 
 ## we should test more the use with this option (according to profiler is cheaper)
 #stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
@@ -499,7 +508,7 @@ then
 echo -n "  ** ERROR loading patch file **" >> $LOG
 fi
 else
-echo -n " no patch file " >> $LOG
+echo -n "  no patch file " >> $LOG
 echo "$DCCID: no patch file."
 fi
 
@@ -511,6 +520,7 @@ echo
 STAGFAIL=y
 fi
 
+fi
 }
 
 function processOneChadoSub {
@@ -697,6 +707,7 @@ interact "START WGET NOW"
 
 for sub in $LOOPVAR
 do
+
  wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 
 cd $PATCHDIR
@@ -904,18 +915,17 @@ then
 loadChadoSubs $P
 elif [ -n "$L" ]
 then
-echo "*********$IFS**"
 IFS=$','
-echo "*********$IFS**"
 for p in $L
 do 
 echo "---> $p"
 IFS=$'\t\n'
 loadChadoSubs $p
 IFS=$','
+echo " " >> $LOG
+echo " " >> $LOG
 done
 IFS=$'\t\n'
-echo "*********$IFS**"
 else
 loadChadoSubs
 fi
@@ -924,7 +934,6 @@ interact
 else
 echo "Using previously loaded chado..."
 fi # if $STAG=y
-
 
 
 #---------------------------------------

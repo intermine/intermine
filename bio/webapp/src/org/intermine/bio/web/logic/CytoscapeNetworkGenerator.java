@@ -11,6 +11,10 @@ package org.intermine.bio.web.logic;
  */
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,6 +22,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
+import org.json.JSONObject;
 
 /**
  * This class has the logics to generate different interaction data formats such as SIF, XGMML,
@@ -49,6 +54,8 @@ public class CytoscapeNetworkGenerator
         sb = addNodesToGeneNetworkInXGMML(sb, interactionNodeMap);
         sb = addEdgesToGeneNetworkInXGMML(sb, interactionEdgeMap);
         sb = addTailToNetworkInXGMML(sb);
+
+        LOG.info("NetworkModel >>>>>\n" + createGeneNetworkInJSON(interactionNodeMap, interactionEdgeMap));
 
         return sb.toString();
     }
@@ -137,8 +144,8 @@ public class CytoscapeNetworkGenerator
     private StringBuffer addEdgesToGeneNetworkInXGMML(StringBuffer sb,
             Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap) {
         for (CytoscapeNetworkEdgeData edge : interactionEdgeMap.values()) {
-            sb.append("<edge source=\"" + edge.getSoureceId() + "\" directed=\"true\" "
-                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSoureceId() + " ("
+            sb.append("<edge source=\"" + edge.getSourceId() + "\" directed=\"true\" "
+                    + "target=\"" + edge.getTargetId() + "\" id=\"" + edge.getSourceId() + " ("
                     + edge.getInteractionType() + ") " + edge.getTargetId() + "\" "
                     + "label=\"" + edge.getInteractionType() + "\">");
 
@@ -198,5 +205,110 @@ public class CytoscapeNetworkGenerator
     // Separate modMine specific logics from bio, created RegulatoryNetworkDataFormatUtil in modMine
 
     //============ for JSON format ============
-    // TODO to be implemented
+    /**
+     * Convert a set of CytoscapeNetworkData to String in JSON format.
+     *
+     * @param interactionNodeMap a map of CytoscapeNetworkNodeData objects
+     * @param interactionEdgeMap a map of CytoscapeNetworkEdgeData objects
+     * @return the network in JSON string
+     */
+    @SuppressWarnings("unchecked")
+    public String createGeneNetworkInJSON(
+            Map<String, CytoscapeNetworkNodeData> interactionNodeMap,
+            Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap) {
+
+        // Create Network Model
+        Map<String, Object> networkModel = new HashMap<String, Object>();
+
+        // Create dataSchema
+        Map<String, Object> dataSchema =  new HashMap<String, Object>();
+        List<Map<String, Object>> nodesSchema =  new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> edgesSchema =  new ArrayList<Map<String, Object>>();
+
+        Map<String, Object> nodeAttrLabel =  new HashMap<String, Object>();
+        nodeAttrLabel.put("name", "label");
+        nodeAttrLabel.put("type", "string");
+
+        nodesSchema.add(nodeAttrLabel);
+
+        Map<String, Object> edgeAttrDirected =  new HashMap<String, Object>();
+        Map<String, Object> edgeAttrInteraction =  new HashMap<String, Object>();
+
+        edgeAttrDirected.put("name", "directed");
+        edgeAttrDirected.put("type", "boolean");
+        edgeAttrDirected.put("defValue", true);
+
+        edgeAttrInteraction.put("name", "interaction");
+        edgeAttrInteraction.put("type", "object");
+
+        edgesSchema.addAll(Arrays.asList(edgeAttrDirected, edgeAttrInteraction));
+
+        dataSchema.put("nodes", nodesSchema);
+        dataSchema.put("edges", edgesSchema);
+        networkModel.put("dataSchema", dataSchema);
+
+        // Create data
+        Map<String, Object> data =  new HashMap<String, Object>();
+        List<Map<String, Object>> nodesData =  new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> edgesData =  new ArrayList<Map<String, Object>>();
+
+        // Add nodes
+        for (CytoscapeNetworkNodeData n : interactionNodeMap.values()) {
+            Map<String, Object> node = new HashMap<String, Object>();
+            if (n.getSourceLabel() == null || "".equals(n.getSourceLabel())) {
+                node.put("id", n.getSoureceId());
+                node.put("label", n.getSoureceId());
+            } else {
+                node.put("id", n.getSoureceId());
+                node.put("label", n.getSourceLabel());
+            }
+            nodesData.add(node);
+        }
+
+        // Add edges
+        for (CytoscapeNetworkEdgeData e : interactionEdgeMap.values()) {
+            Map<String, Object> edge = new HashMap<String, Object>();
+            Map<String, Object> interaction = new HashMap<String, Object>();
+            List<Map<String, Object>> dataSourceList =  new ArrayList<Map<String, Object>>();
+
+            for (Entry<String, Set<String>> d : e.getDataSources().entrySet()) {
+                Map<String, Object> dataSource = new HashMap<String, Object>();
+                List<Map<String, Object>> interactionNameList =
+                    new ArrayList<Map<String, Object>>();
+
+                dataSource.put("name", d.getKey());
+
+                for (String n : (Set<String>) d.getValue()) {
+                    Map<String, Object> interactionName = new HashMap<String, Object>();
+
+                    interactionName.put("value", n);
+                    interactionNameList.add(interactionName);
+                }
+
+                dataSource.put("interactionName", interactionNameList);
+                dataSourceList.add(dataSource);
+            }
+
+            interaction.put("interactionType", e.getInteractionType());
+            interaction.put("dataSource", dataSourceList);
+
+            edge.put("id", e.getSourceId() + " (" + e.getInteractionType()
+                    + ") " + e.getTargetId());
+            edge.put("source", e.getSourceId());
+            edge.put("target", e.getTargetId());
+            edge.put("label", e.getInteractionType());
+            edge.put("interaction", interaction);
+
+            edgesData.add(edge);
+        }
+
+        data.put("nodes", nodesData);
+        data.put("edges", edgesData);
+        networkModel.put("data", data);
+
+        JSONObject jo = new JSONObject(networkModel);
+
+        return jo.toString();
+
+    }
 }
