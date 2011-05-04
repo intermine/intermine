@@ -96,7 +96,7 @@ public class ModifyBagAction extends InterMineAction
         Properties properties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
         String exampleName = properties.getProperty("lists.input.example");
-        if (StringUtils.isEmpty(newBagName) && newBagName.equalsIgnoreCase(exampleName)) {
+        if (StringUtils.isEmpty(newBagName) || newBagName.equalsIgnoreCase(exampleName)) {
             return null;
         }
         return newBagName;
