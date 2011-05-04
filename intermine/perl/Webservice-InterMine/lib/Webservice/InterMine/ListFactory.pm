@@ -77,6 +77,7 @@ has lists => (
         get_list => 'get',
         get_lists => 'values',
         get_list_names => 'keys',
+        list_count => 'count',
     },
 );
 

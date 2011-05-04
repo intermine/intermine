@@ -2,7 +2,7 @@ package Webservice::InterMine::Query::Roles::Runnable;
 
 use MooseX::Role::WithOverloading;
 requires qw(view service model get_request_parameters resource_path
-            upload_path);
+            upload_path to_xml validate);
 
 use MooseX::Types::Moose qw(Str);
 use Perl6::Junction qw/any/;
@@ -105,6 +105,8 @@ sub next_result {
 sub results_iterator {
     my $self  = shift;
     my %args  = @_;
+
+    $self->validate;
 
     my $row_format  = delete($args{as})   || "arrayrefs";
     $row_format = 'tsv' if ($row_format eq 'string');
@@ -274,6 +276,7 @@ sub get_upload_url {
 sub save {
     my $self = shift;
     my %args = @_;
+    $self->validate;
     $self->name( $args{name} ) if ( exists $args{name} );
     my $xml  = $self->to_xml;
     my $url  = $self->get_upload_url;
