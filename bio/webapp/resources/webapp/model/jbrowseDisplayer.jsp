@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<!-- jBrowse.jsp -->
+<!-- jBrowseDisplayer.jsp -->
 
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
@@ -32,4 +32,4 @@
 </div>
 
 </c:if>
-<!-- /jBrowse.jsp -->
+<!-- /jBrowseDisplayer.jsp -->
