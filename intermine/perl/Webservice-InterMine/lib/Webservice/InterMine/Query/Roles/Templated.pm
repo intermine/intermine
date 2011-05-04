@@ -2,7 +2,7 @@ package Webservice::InterMine::Query::Roles::Templated;
 
 use Moose::Role;
 use URI;
-use List::MoreUtils qw/uniq/;
+use List::MoreUtils qw/uniq zip/;
 
 requires(qw/name description results _validate get_constraint/);
 

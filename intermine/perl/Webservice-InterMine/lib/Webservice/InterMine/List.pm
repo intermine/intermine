@@ -37,11 +37,12 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::Showable';
 
 use Moose::Util::TypeConstraints qw(match_on_type);
-use MooseX::Types::Moose         qw/ArrayRef/;
+use MooseX::Types::Moose         qw/ArrayRef Undef/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
+    ListOperable ListOfListOperables
 /;
 require Set::Object;
 
@@ -102,9 +103,10 @@ has description => (
 );
 
 has name => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Str',
     trigger => \&_update_name,
+    writer => 'rename',
 );
 
 sub _update_name {
@@ -156,6 +158,25 @@ has factory => (
     isa => ListFactory,
 );
 
+sub interpret_other_operand {
+    my $self = shift;
+    my $fac  = $self->factory;
+    my $other = shift;
+    match_on_type $other => (
+        ListOperable, sub { [$_] },
+        ListOfListOperables, sub { $_ },
+        Undef, sub { confess "Cannot perform list operations on an undefined value"},
+        sub { 
+            if (ref $_ eq 'Array' and grep({$fac->get_list($_)} @$_)) {
+                return $_;
+            }
+            return $fac->get_list($_) 
+                ? [$_] 
+                : [$fac->new_list(type => $self->type, content => $_)];
+        }
+    );
+}
+
 sub delete {
     my $self = shift;
     return $self->factory->delete_lists($self);
@@ -176,27 +197,12 @@ sub join_with {
 
 sub overload_intersecting {
     my ($self, $other, $reversed) = @_;
-    $self->intersect_with($other);
-}
-
-sub interpret_other_operand {
-    my $self = shift;
-    my $fac  = $self->factory;
-    my $other = shift;
-    match_on_type $other => (
-        List, sub { [$_] },
-        ListableQuery, sub { [$_] },
-        ListOfLists, sub { $_ },
-        ListOfListableQueries, sub { $_ },
-        sub { 
-            if (ref $_ eq 'Array' and grep({$fac->get_list($_)} @$_)) {
-                return $_;
-            }
-            return $fac->get_list($_) 
-                ? [$_] 
-                : [$fac->new_list(type => $self->type, content => $_)];
-        }
-    );
+    my $intersection = $self->intersect_with($other);
+    unless (defined $reversed) {
+        $self->delete;
+        $intersection->rename($self->name);
+    }
+    return $intersection;
 }
 
 sub intersect_with {
@@ -209,7 +215,12 @@ sub intersect_with {
 
 sub overload_diffing {
     my ($self, $other, $reversed) = @_;
-    $self->difference_with($other);
+    my $diff = $self->difference_with($other);
+    unless (defined $reversed) {
+        $self->delete;
+        $diff->rename($self->name);
+    }
+    return $diff;
 }
 
 sub difference_with {
@@ -224,20 +235,20 @@ sub overload_subtraction {
     my ($self, $other, $reversed) = @_;
     if ($reversed) {
         if (blessed $other and $other->isa(LIST)) {
-            $other->subtract($self);
+            return $other->subtract($self);
         } elsif (ref $other eq 'ARRAY') {
-            $self->factory->subtract($other, [$self]);
+            return $self->factory->subtract($other, [$self]);
         } else {
             confess "Both arguments to list subtraction must be lists";
         }
-    } elsif (not defined $reversed) {
-        my $subtraction = $self->subtract($other);
-        $self->delete;
-        $subtraction->name($self->name);
-        return $subtraction;
     } else {
-        return $self->subtract($other);
-    }
+        my $subtraction = $self->subtract($other);
+        if (not defined $reversed) {
+            $self->delete;
+            $subtraction->rename($self->name);
+        }
+        return $subtraction;
+    } 
 }
 
 sub subtract {
@@ -294,6 +305,7 @@ sub append {
     my ($ids, $content_type) = ($content, "text/plain");
     match_on_type $content => (
         List,     sub {$ids = $_->to_query},
+        ListOfListOperables, sub {$ids = $self->factory->union($_)->to_query},
         ArrayRef, sub {$ids = join("\n", @$_)},
         File,     sub {$ids = [identifiers => [$content]]; $content_type = "form-data";},
         sub {}

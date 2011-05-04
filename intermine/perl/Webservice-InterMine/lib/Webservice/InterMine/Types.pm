@@ -88,6 +88,8 @@ use MooseX::Types -declare => [
         ListFactory List ListName
         ListOfLists ListOfListableQueries
 
+        ListOperable ListOfListOperables 
+
         RowParser
         RowFormat
         JsonFormat
@@ -282,6 +284,9 @@ class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
 subtype ListName, as Str;
 subtype ListOfLists, as ArrayRef[List];
+
+subtype ListOperable, as List|ListableQuery;
+subtype ListOfListOperables, as ArrayRef[ListOperable];
 
 coerce ListFactory, from HashRef, via {
     require Webservice::InterMine::ListFactory;

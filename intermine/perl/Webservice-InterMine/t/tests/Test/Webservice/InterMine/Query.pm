@@ -216,8 +216,8 @@ sub results : Test(4) {
         my $self = shift;
         my $args = [@_];
         return bless $args, 'MockedResIt';
-	},
-    );
+	});
+
     is_deeply(
         $obj->results(as => 'string'), 
         [

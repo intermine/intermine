@@ -462,6 +462,7 @@ has _lists => (
         diff_lists => 'symmetric_difference',
         delete_lists => 'delete_lists',
         delete_temp_lists => 'clean_up',
+        list_count => 'list_count',
     },
 );
 
