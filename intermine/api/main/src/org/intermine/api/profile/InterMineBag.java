@@ -136,7 +136,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Delete this bag from the userprofile database, bag should not be used after this method has
-     * been called.
+     * been called. Delete the ids from the production database too. 
      * @throws ObjectStoreException if problem deleting bag
      */
     protected void delete() throws ObjectStoreException {
@@ -144,6 +144,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
                     SavedBag.class);
             uosw.delete(savedBag);
+            removeIdsFromBag(getContentsAsIds());
             this.profileId = null;
             this.savedBagId = null;
         }
