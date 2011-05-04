@@ -88,7 +88,6 @@ jQuery(document).ready(function () {
 
 <tr class="<c:out value="${pRowClass}"/>">
 
-
     <td>${prot.type}</td>
     <td><html:link
     href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prot.id}">
@@ -260,8 +259,7 @@ jQuery(document).ready(function () {
                         </c:when>
 
                         <c:when
-                        test="${fn:startsWith(fn:trim(resultElement.field), 'GSM')
-                            }">
+                        test="${fn:startsWith(fn:trim(resultElement.field), 'GSM')}">
                         <a href="${geoUrl}${resultElement.field}" class="value extlink">
                         <c:out
                             value="${resultElement.field}" />
@@ -274,7 +272,17 @@ jQuery(document).ready(function () {
                         </c:when>
                         
                         <c:when test="${doLink}">
+
+                        <c:forEach items="${files}" var="file" varStatus="f_status">
+                        <c:if 
+                        test="${resultElement.field == file.name}">
+                        <c:set var="url" value="${file.url}" />
+                        </c:if>
+                        </c:forEach>
+                        <a href="${url}" title="Download file ${resultElement.field}" class="value extlink"> 
+                        <%--
                         <a href="${WEB_PROPERTIES['ftp.url']}/get_file/${dccNumber}/extracted/${resultElement.field}" class="value extlink">
+                        --%>
                         <c:out value="${resultElement.field}" /> </a></td>
                         <c:set var="doLink" value="false" />
                         </c:when>
