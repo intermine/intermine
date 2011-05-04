@@ -95,52 +95,40 @@ public class ListSubtractionService extends ListUnionService {
         Set<String> bagsToDelete = new HashSet<String>(
                 Arrays.asList(tempName, leftName, rightName, symDiffName, intersectName));
         try {
-            InterMineBag newList = profile.createBag(tempName, type, description);
-            InterMineBag leftList = profile.createBag(leftName, type, description);
-            InterMineBag rightList = profile.createBag(rightName, type, description);
+            final Collection<InterMineBag> leftBags = ListServiceUtils.castBagsToCommonType(referenceBags, type, bagsToDelete, profile);
+            final Collection<InterMineBag> rightBags = ListServiceUtils.castBagsToCommonType(bagsToSubtract, type, bagsToDelete, profile);
+            final int leftSize = BagOperations.union(leftBags, leftName, profile);
+            final int rightSize = BagOperations.union(rightBags, rightName, profile);
 
-            for (InterMineBag bag: referenceBags) {
-                Query q = new Query();
-                q.addToSelect(bag.getOsb());
-                leftList.addToBagFromQuery(q);
+            int finalBagSize = 0;
+
+            if (leftSize + rightSize > 0) {
+                final InterMineBag leftList = profile.getSavedBags().get(leftName);
+                final InterMineBag rightList = profile.getSavedBags().get(rightName);
+                final int sizeOfSymDiff = BagOperations.subtract(Arrays.asList(leftList, rightList), symDiffName, profile);
+
+                if (sizeOfSymDiff != 0) {
+                    final InterMineBag diffBag = profile.getSavedBags().get(symDiffName);
+
+                    finalBagSize = BagOperations.intersect(Arrays.asList(diffBag, leftList), intersectName, profile);
+                }
             }
 
-            for (InterMineBag bag: bagsToSubtract) {
-                Query q = new Query();
-                q.addToSelect(bag.getOsb());
-                rightList.addToBagFromQuery(q);
+            InterMineBag newList;
+            if (finalBagSize == 0) {
+                newList = profile.createBag(tempName, type, description);
+            } else {
+                newList = profile.getSavedBags().get(intersectName);
+                if (description != null) {
+                    newList.setDescription(description);
+                }
             }
-
-            int sizeOfSymDiff = BagOperations.subtract(
-                    Arrays.asList(leftList, rightList), symDiffName, profile);
-
-            if (sizeOfSymDiff == 0) {
-                output.addResultItem(Arrays.asList("0"));
-                throw new BadRequestException("No list created - list would be of size 0");
-            }
-
-            InterMineBag diffBag = profile.getSavedBags().get(symDiffName);
-
-            int sizeOfIntersection = BagOperations.intersect(
-                    Arrays.asList(diffBag, leftList), intersectName, profile);
-
-            if (sizeOfIntersection == 0) {
-                output.addResultItem(Arrays.asList("0"));
-                throw new BadRequestException("No list created - list would be of size 0");
-            }
-
-            InterMineBag intersectList = profile.getSavedBags().get(intersectName);
-
-            Query q = new Query();
-            q.addToSelect(intersectList.getOsb());
-            newList.addToBagFromQuery(q);
-
             output.addResultItem(Arrays.asList("" + newList.size()));
 
             if (replace) {
                 ListServiceUtils.ensureBagIsDeleted(profile, name);
             }
-            profile.renameBag(tempName, name);
+            profile.renameBag(newList.getName(), name);
         } finally {
             for (String delendum: bagsToDelete) {
                 ListServiceUtils.ensureBagIsDeleted(profile, delendum);
