@@ -54,7 +54,7 @@
 
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
 
-<c:set var="totalIdCount" value="${fn:length (duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>
+<c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>
 <div class="body">
 
     <c:choose>
