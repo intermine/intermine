@@ -207,6 +207,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private String actualValue;
         private String type;
         private String name;
+        private String url;  // in particular, it stores the dccid of the related sub needed for
+                             // linking to a result file
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
         private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
@@ -260,7 +262,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDag(connection);
         findScoreProtocols();
 
-        processFeatures(connection, submissionMap);
+//        processFeatures(connection, submissionMap);
 
         // set references
         setSubmissionRefs(connection);
@@ -1509,6 +1511,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String heading = res.getString("heading");
             String value = res.getString("value");
             String typeId = res.getString("type_id");
+            String url = res.getString("url");
 
             // check if this datum has an official name:
             ResultSet oName = getOfficialName(connection, dataId);
@@ -1550,6 +1553,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.dataId = dataId;
             aData.type = heading;
             aData.name = name;
+            aData.url = url;
             appliedDataMap.put(dataId, aData);
             count++;
         }
@@ -1582,8 +1586,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws SQLException {
         String query =
             "SELECT d.data_id,"
-            + " d.heading, d.name, d.value, d.type_id"
-            + " FROM data d";
+            + " d.heading, d.name, d.value, d.type_id, z.url"
+            + " FROM data d"
+            + " LEFT JOIN dbxref as y ON (d.dbxref_id = y.dbxref_id)"
+            + " LEFT JOIN db as z ON (y.db_id = z.db_id)";
         return doQuery(connection, query, "getAppliedData");
     }
 
@@ -3047,7 +3053,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (StringUtils.containsIgnoreCase(ad.type, "file")) {
                     if (!StringUtils.isBlank(ad.value)
                             && !subFiles.contains(ad.value)) {
-                        createResultFile(ad.value, ad.name, submissionId);
+                        String direction = null;
+                        
+                        if (StringUtils.containsIgnoreCase(ad.type, "result")) {
+                            direction = "result";
+                        } else {
+                            direction = "input";
+                        }
+                        
+                        
+                        createResultFile(ad.value, ad.name, ad.url, direction, submissionId);
                         subFiles.add(ad.value);
                     }
                 }
@@ -3056,20 +3071,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME creating ResultFile objects: " + (System.currentTimeMillis() - bT) + " ms");
     }
 
-    private void createResultFile(String fileName, String type, Integer submissionId)
-        throws ObjectStoreException {
+    private void createResultFile(String fileName, String type, String relDccId, String direction,
+            Integer submissionId)
+    throws ObjectStoreException {
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
         if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
-            // note: on ftp site submission directories are named with the digits only
-            String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
-            url = FILE_URL + dccId + "/extracted/" + fileName;
+            
+            if (relDccId != null) { // the file actually belongs to a related sub
+                url = FILE_URL + relDccId + "/extracted/" + fileName;                
+            } else {
+                // note: on ftp site submission directories are named with the digits only
+                String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
+                url = FILE_URL + dccId + "/extracted/" + fileName;
+            }
         }
         resultFile.setAttribute("url", url);
         resultFile.setAttribute("type", type);
+        resultFile.setAttribute("direction", direction);
         resultFile.setReference("submission", submissionMap.get(submissionId).itemIdentifier);
         getChadoDBConverter().store(resultFile);
     }
@@ -3087,8 +3109,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 addRelatedSubmissions(relatedSubs, submissionId, ref.referencedSubmissionId);
                 addRelatedSubmissions(relatedSubs, ref.referencedSubmissionId, submissionId);
             }
-            LOG.debug("RRSS11 " + relatedSubs.size() + "|" + relatedSubs.keySet() + "|" +
-                    relatedSubs.values());
+            LOG.debug("RRSS11 " + relatedSubs.size() + "|" + relatedSubs.keySet() + "|"
+                    + relatedSubs.values());
         }
         for (Map.Entry<Integer, Set<String>> entry : relatedSubs.entrySet()) {
             ReferenceList related = new ReferenceList("relatedSubmissions",
