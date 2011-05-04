@@ -79,17 +79,18 @@ public class ListDifferenceService extends ListUnionService {
 
             int sizeOfDifference = BagOperations.subtract(diffBags, tempName, profile);
 
+            InterMineBag newList;
             if (sizeOfDifference == 0) {
                 output.addResultItem(Arrays.asList("0"));
-                throw new BadRequestException("No list created - list would be of size 0");
+                newList = profile.createBag(tempName, type, description);
+            } else {
+                newList = profile.getSavedBags().get(tempName);
+                if (description != null) {
+                    newList.setDescription(description);
+                }
+                output.addResultItem(Arrays.asList("" + newList.size()));
             }
 
-            InterMineBag newList = profile.getSavedBags().get(tempName);
-            if (description != null) {
-                newList.setDescription(description);
-            }
-
-            output.addResultItem(Arrays.asList("" + newList.size()));
             if (replace) {
                 ListServiceUtils.ensureBagIsDeleted(profile, name);
             }
