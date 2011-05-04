@@ -262,7 +262,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDag(connection);
         findScoreProtocols();
 
-//        processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
 
         // set references
         setSubmissionRefs(connection);
