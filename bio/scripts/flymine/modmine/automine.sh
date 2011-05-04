@@ -461,8 +461,7 @@ ISIN=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select experiment_id from
 if [ -n "$ISIN" ]
 then
 echo "Submission $DCCID is already in chado: skipping it.."
-echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
-echo " already in chado!! skipping it.." >> $LOG
+echo "`date "+%y%m%d.%H%M"` $DCCID already loaded, skipping it.." >> $LOG
 else
 
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
@@ -514,7 +513,7 @@ fi
 
 else
 echo
-echo -n "  ERROR: stag-storenode FAILED, skipping submission." >> $LOG
+echo -n "  ERROR: stag-storenode FAILED." >> $LOG
 echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
 echo
 STAGFAIL=y
