@@ -443,8 +443,8 @@
                      placement="Genomics"
                      types="SequenceFeature"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
-                     jspName="model/gbrowseDisplayer.jsp"
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+                     jspName="model/jbrowseDisplayer.jsp"
                      replacesFields=""
                      placement="Genomics"
                      types="SequenceFeature"/>
