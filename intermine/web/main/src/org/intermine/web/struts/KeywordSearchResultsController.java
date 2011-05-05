@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +35,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -113,7 +110,8 @@ public class KeywordSearchResultsController extends TilesAction
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
         //track the keyword search
         Profile profile = SessionMethods.getProfile(request.getSession());
-        im.getTrackerDelegate().trackKeywordSearch(searchTerm, profile, request.getSession().getId());
+        im.getTrackerDelegate().trackKeywordSearch(
+                searchTerm, profile, request.getSession().getId());
 
         // search in bag (list)
         List<Integer> ids = null;
