@@ -28,7 +28,7 @@ public class TableExportForm extends ActionForm
 
     private Map<String, Object> extraParams = new HashMap<String, Object>();
 
-    // type of export, "tab", "excel", etc.
+    // type of export, "tab", etc.
     private String type = null;
 
     private String pathsString = null;
@@ -63,7 +63,7 @@ public class TableExportForm extends ActionForm
     }
 
     /**
-     * Return the export type: "tab", "excel", etc.
+     * Return the export type: "tab", etc.
      * @return the type
      */
     public String getType() {
