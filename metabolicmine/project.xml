@@ -125,11 +125,13 @@
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
-      <!-- will load all genes for human, rat and mouse -->
       <property name="treefam.organisms" value="9606 10090 10116"/>
-      <!-- will only load gene if it is a homologue for human, rat or mouse -->
-      <property name="treefam.homologues" value="9606 10090 10116"/>
     </source>
+    <source name="ensembl-compara" type="ensembl-compara">
+      <property name="src.data.dir" location="/shared/data/metabolic/ensembl-compara"/>
+      <property name="ensemblcompara.organisms" value="9606 10090 10116"/>
+    </source>
+
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
