@@ -172,8 +172,8 @@
           href="#"><strong>zen</strong></a>,
         <a onclick="preFillInput('pha-4', 'input#dataSearch');return false;" title="Search for pha-4"
           href="#"><strong>pha-4</strong></a>,
-        <a onclick="preFillInput('"DNA binding"', 'input#dataSearch');return false;" title="Search for DNA binding"
-          href="#"><strong>DNA binding</strong></a>).
+        <a onclick="preFillInput('DNA-binding', 'input#dataSearch');return false;" title="Search for DNA-binding"
+          href="#"><strong>DNA-binding</strong></a>).
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
           <input id="dataSearch" class="input" type="text" name="searchTerm" value="e.g. zen, pha-4" />
           <input type="submit" value="Search" />
