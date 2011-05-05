@@ -128,8 +128,8 @@ public class EnsemblComparaConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            if (line.length != 3 && StringUtils.isNotEmpty(line.toString())) {
-                throw new RuntimeException("Invalid line, should be 3 columns but is '"
+            if (line.length < 2 && StringUtils.isNotEmpty(line.toString())) {
+                throw new RuntimeException("Invalid line, should be 2 columns but is '"
                         + line.length + "' instead");
             }
             String refId1 = parseGene(bits[0], line[0]);
