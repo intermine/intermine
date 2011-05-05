@@ -172,7 +172,7 @@
           href="#"><strong>zen</strong></a>,
         <a onclick="preFillInput('pha-4', 'input#dataSearch');return false;" title="Search for pha-4"
           href="#"><strong>pha-4</strong></a>,
-        <a onclick="preFillInput('DNA binding', 'input#dataSearch');return false;" title="Search for DNA binding"
+        <a onclick="preFillInput('"DNA binding"', 'input#dataSearch');return false;" title="Search for DNA binding"
           href="#"><strong>DNA binding</strong></a>).
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
           <input id="dataSearch" class="input" type="text" name="searchTerm" value="e.g. zen, pha-4" />
@@ -180,8 +180,8 @@
         </form>
 
         <br />Or search <strong>modENCODE experiments</strong> by type, lab name, antibody, etc. (e.g.
-        <a onclick="preFillInput('RNA seq', 'input#exptSearch');return false;" title="Search for RNA-seq"
-         href="#"><strong>RNA-seq</strong></a>,
+        <a onclick="preFillInput('ChIP-seq', 'input#exptSearch');return false;" title="Search for ChIP-seq"
+         href="#"><strong>ChIP-seq</strong></a>,
         <a onclick="preFillInput('Snyder', 'input#exptSearch');return false;" title="Search for Snyder"
           href="#"><strong>Snyder</strong></a>,
         <a onclick="preFillInput('CP190', 'input#exptSearch');return false;" title="Search for CP190"
@@ -190,7 +190,7 @@
         <!-- <p>[Supports AND, OR, NOT and wildcard*]</p> -->
         <br />
          <html:form action="/modMineSearchAction">
-            <input id="exptSearch" name="searchTerm" type="text" class="input" value="e.g. RNA-seq, CP190">
+            <input id="exptSearch" name="searchTerm" type="text" class="input" value="e.g. ChIP-seq, CP190">
             <html:submit>Experiment Search</html:submit>
         </html:form>
 
@@ -399,7 +399,7 @@ the new list. You can also use any of modMine's queries to create a list.
 
    // placeholder value for search boxes
    var dataPlaceholder = 'e.g. zen, pha-4';
-   var exptPlaceholder = 'e.g. RNA-seq, CP190';
+   var exptPlaceholder = 'e.g. ChIP-seq, CP190';
    var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
    // class used when toggling placeholder
    var inputToggleClass = 'eg';
