@@ -92,19 +92,7 @@ jQuery(document).ready(function() {
     <!-- Nav trail -->
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-    <p class="alignright">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
-    <c:if test="${! empty tab }">
-      &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
-      <c:if test="${pageName != tab}">
-        <fmt:message key="${pageName}.title" var="pageTitle">
-          <fmt:param value="${param.name}"/>
-        </fmt:message>
-        &nbsp;&gt;&nbsp;<c:out value="${pageTitle}" />
-      </c:if>
-    </c:if>
-    <im:contextHelp/>
-</p>
+    <p class="alignright"><im:contextHelp/></p>
   </c:if>
  </div>
 
