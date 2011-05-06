@@ -1,0 +1,9 @@
+Build.PL
+Changes
+MANIFEST
+README
+lib/Webservice/InterMine/Bio.pm
+t/00-load.t
+t/manifest.t
+t/pod-coverage.t
+t/pod.t
