@@ -1,5 +1,16 @@
 package org.flymine.web.displayer;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +33,22 @@ import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
-public class DrosophilaHomologueDisplayer extends CustomDisplayer {
+/**
+ * Displayer for drosophila homologue data
+ * @author rns
+ */
+public class DrosophilaHomologueDisplayer extends CustomDisplayer
+{
 
-    private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi", "virilis",
-            "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae", "erecta",
-            "yakuba", "melanogaster", "sechellia", "simulans"});
+    private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi",
+        "virilis", "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae",
+        "erecta", "yakuba", "melanogaster", "sechellia", "simulans"});
     private static final String HOMOLOGY_DATASET = "Drosophila 12 Genomes Consortium homology";
 
+    /**
+     * @param config report object config
+     * @param im intermine API
+     */
     public DrosophilaHomologueDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
@@ -47,17 +67,18 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
         }
 
         Gene gene = (Gene) reportObject.getObject();
-        Boolean isRecentred = new Boolean(!"melanogaster".equals(gene.getOrganism().getSpecies()));
+        boolean isRecentred = !"melanogaster".equals(gene.getOrganism().getSpecies());
         String thisSpecies = gene.getOrganism().getSpecies();
         if (isRecentred) {
             request.setAttribute("origSymbol", gene.getSymbol());
-            HOMOLOGUES: for (Homologue homologue : gene.getHomologues()) {
+        HOMOLOGUES:
+            for (Homologue homologue : gene.getHomologues()) {
                 for (DataSet dataSet : homologue.getDataSets()) {
                     if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
                         String species = homologue.getHomologue().getOrganism().getSpecies();
                         if ("melanogaster".equals(species)) {
                             ResultElement re = new ResultElement(homologue.getHomologue(),
-                                    symbolPath, true);
+                                       symbolPath, true);
                             addToMap(homologues, species, re);
                             gene = homologue.getHomologue();
                             break HOMOLOGUES;
@@ -88,7 +109,7 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer {
     }
 
     private Map<String, Set<ResultElement>> initMap() {
-        Map homologues = new ListOrderedMap();
+        Map<String, Set<ResultElement>> homologues = new ListOrderedMap();
         for (String species : SPECIES) {
             addToMap(homologues, species, null);
         }
