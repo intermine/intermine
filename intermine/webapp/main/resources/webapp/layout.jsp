@@ -75,12 +75,6 @@
 
   <!-- contact us -->
 
-<script type="text/javascript">
-jQuery(document).ready(function() {
-  jQuery("p#contactUsLink").toggle();
-});
-</script>
-
     <p id="contactUsLink" style="display:none;" class="alignleft">
     <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
     </p>
@@ -110,6 +104,13 @@ jQuery(document).ready(function() {
       </tiles:insert>
 
       <tiles:get name="body"/>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+  jQuery("p#contactUsLink").toggle();
+  jQuery("#${tabName}").addClass("activelink");
+});
+</script>
 
       <%-- Render messages --%>
       <tiles:get name="errorMessages"/>
