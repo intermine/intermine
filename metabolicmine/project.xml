@@ -121,17 +121,10 @@
       <property name="fasta.includes" value="*.fa"/>
       <property name="src.data.dir" location="/shared/data/ensembl/mus_musculus/current_core/fasta"/>
     </source>
-    <source name="treefam" type="treefam">
-      <property name="src.data.dir" location="/shared/data/treefam/current"/>
-      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="9606 10090 10116"/>
-    </source>
-    <source name="ensembl-compara" type="ensembl-compara">
+    <source name="ensembl-compara" type="ensembl-compara" dump="true">
       <property name="src.data.dir" location="/shared/data/metabolic/ensembl-compara"/>
       <property name="ensemblcompara.organisms" value="9606 10090 10116"/>
     </source>
-
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
