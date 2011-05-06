@@ -11,7 +11,10 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
@@ -49,6 +52,10 @@ public class RgdIdentifiersConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         // Read all lines into id pairs, track any ensembl ids or symbols that appear twice
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+
+        // remove header line
+        // check symbol and ncbiGeneNumber unique
+        
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String rgdId = line[0];
@@ -71,10 +78,24 @@ public class RgdIdentifiersConverter extends BioFileConverter
             if (!StringUtils.isBlank(entrez)) {
                 gene.setAttribute("ncbiGeneNumber", entrez);
             }
-            if (!StringUtils.isBlank(ensembl)) {
+            
+            Set<String> ensembls = parseEnsemblIds(ensembl);
+            if (ensembls.size() == 1) {
                 gene.setAttribute("primaryIdentifier", ensembl);
+            } else {
+                for (String ensemblId : ensembls) {
+                    createSynonym(gene.getIdentifier(), ensemblId, true);
+                }
             }
             store(gene);
         }
+    }
+    
+    private Set<String> parseEnsemblIds(String fromFile) {
+        Set<String> ensembls = new HashSet<String>();
+        if (!StringUtils.isBlank(fromFile)) {
+            ensembls.addAll(Arrays.asList(fromFile.split(";")));
+        }
+        return ensembls;
     }
 }
