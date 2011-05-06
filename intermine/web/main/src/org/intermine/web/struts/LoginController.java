@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -38,6 +39,9 @@ public class LoginController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute("prevTabName", session.getAttribute("tabName"));
+        session.setAttribute("tabName", "mymine");
         LoginForm loginForm = (LoginForm) form;
         String returnToString = request.getParameter("returnto");
         loginForm.setReturnToString(returnToString);
