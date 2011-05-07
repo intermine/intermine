@@ -227,7 +227,7 @@ data structure. (default is C<perl>).
 sub print_results {
     my $self = shift;
     my %args = @_;
-    my $to = delete($args{to}) or confess "No 'to' option supplied to print_results";
+    my $to = delete($args{to}) || \*STDOUT;
     $args{as} ||= 'tsv'; # For printing, we default to TSV.
     my $out; 
     if ($to) {
