@@ -12,21 +12,22 @@ $SIG{__WARN__} = \&Carp::cluck;
 
 my $do_live_tests = $ENV{RELEASE_TESTING};
 
+my($service, $initial_list_count);
+
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
     plan( tests => 104 );
-}
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
 
 use_ok($module);
 
-my $service = Webservice::InterMine->get_service(
+$service = Webservice::InterMine->get_service(
     'squirrel.flymine.org/intermine-test', 'intermine-test-user', 'intermine-test-user-password');
 
-my $initial_list_count = $service->list_count;
+$initial_list_count = $service->list_count;
 
 note "\nNo of lists to start with: " . $initial_list_count;
 
@@ -297,9 +298,12 @@ RENAME_DELETE: {
 }
 
 note "\nNo of lists made: " . ($service->list_count - $initial_list_count);
+}
 
 END {
-    is $service->list_count, $initial_list_count, "The service cleaned up after itself.";
+    if ($service) {
+        is $service->list_count, $initial_list_count, "The service cleaned up after itself.";
+    }
 }
 
 __END__
