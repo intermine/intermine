@@ -213,8 +213,20 @@ renamed lists will be spared the clean-up.
 sub clean_temp_lists() {
     my $self = shift;
     for my $service (values %services) {
-        $service->delete_temp_lists();
+        $service->delete_temp_lists() if $service->_has_lists;
     }
+}
+
+sub AUTOLOAD {
+    my $self = shift;
+    my $method = our $AUTOLOAD;
+    my @args = @_;
+    $method =~ s/.*:://;
+    my ($get, $service_name) = split(/_/, $method, 2);
+    if ($get and $service_name and $get eq 'get') {
+        return $self->get_service($service_name, @_);
+    }
+    confess "no method named $method in " . __PACKAGE__;
 }
 
 END {
