@@ -445,11 +445,7 @@ has _lists => (
     is      => 'ro',
     isa     => ListFactory,
     coerce  => 1,
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        return {service => $self};
-    },
+    lazy_build => 1,
     writer => '_set_lists',
     handles => { 
         list => 'get_list', 
@@ -465,6 +461,11 @@ has _lists => (
         list_count => 'list_count',
     },
 );
+
+sub _build__lists {
+    my $self = shift;
+    return {service => $self};
+}
 
 sub get_list_data {
     my $self = shift;
