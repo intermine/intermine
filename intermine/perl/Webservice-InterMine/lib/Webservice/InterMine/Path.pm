@@ -52,7 +52,7 @@ under the same terms as Perl itself.
 use Exporter 'import';
 
 my @validators = qw(validate_path end_is_class b_is_subclass_of_a a_is_subclass_of_b root);
-our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class');
+our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class', 'resolve');
 our %EXPORT_TAGS = ( validate => \@validators );
 
 use strict;
@@ -100,14 +100,14 @@ sub validate_path {
 =cut
 
 sub last_bit {
-    my ( $model, $path_string ) = @_;
-    my @bits = _parse( $model, $path_string );
+    my ( $model, $path_string, $types) = @_;
+    my @bits = _parse( $model, $path_string, $types);
     return $bits[-1] || $bits[0];
 }
 
 sub last_bit_but_one {
-    my ( $model, $path_string ) = @_;
-    my @bits = _parse( $model, $path_string );
+    my ( $model, $path_string, $types) = @_;
+    my @bits = _parse( $model, $path_string, $types);
     return $bits[-2] || $bits[0];
 }
 
@@ -119,6 +119,18 @@ sub last_class_type {
     } else {
         return $end->name();    # because it's clearly a class
     }
+}
+
+=head2 resolve
+
+Resolves a path to a class descriptor, or an attribute descriptor.
+
+=cut 
+
+sub resolve {
+    my ( $model, $string, $types) = @_;
+    my $bit = last_bit($model, $string, $types);
+    return class_of($bit) || $bit;
 }
 
 =head2 type_of
@@ -218,6 +230,8 @@ sub root {
 
 sub _parse {
     my ( $model, $path_string, $type_hashref ) = @_;
+
+    $type_hashref ||= {};
 
     # split Path.string into 'Path', 'string'
     my @bits = split /\./, $path_string;
