@@ -1,5 +1,6 @@
 package Webservice::InterMine::ResultIterator;
 
+use strict;
 use Moose;
 
 use InterMine::Model::Types qw(PathList);
@@ -23,8 +24,10 @@ my @SIMPLE_FORMATS = (qw/ tsv tab csv count /);
 sub BUILD {
     my $self = shift;
     unless ($self->has_content) {
+        warn "CONNECTING" if $ENV{DEBUG};
         $self->connect();
     }
+    warn "SETTING HEADERS" if $ENV{DEBUG};
     $self->set_headers();
 }
 
@@ -292,7 +295,28 @@ has headers => (
         my $te   = $self->get_header('Transfer-Encoding');
         $self->_is_chunked(1)
           if ( $te and $te eq 'chunked' );
+        my $ct = $self->get_content_type;
+        $self->_is_binary(1)
+            if ($ct =~ /octet-stream/);
     },
+);
+
+sub get_content_type {
+    my $self = shift;
+    return $self->get_header('Content-Type');
+}
+
+=item * content_is_binary: ro, Bool
+
+Whether or not the content should be treated as binary data,
+for example if it is gzipped.
+
+=cut
+
+has content_is_binary => (
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_is_binary',
 );
 
 =item * is_chunked: ro, Bool
@@ -356,13 +380,16 @@ sub set_headers {
             chomp( ( $key, $value ) = split( /:\s*/, $line, 2 ) );
         }
         $headers{$key} = $value if $key;
+        warn "HEADER $key = $value" if $ENV{DEBUG};
         $self->_set_error_code($code)      if $code;
         $self->_set_error_message($phrase) if $phrase;
     }
     $self->_set_headers( \%headers );
     if (HTTP::Status::is_error( $self->error_code )) {
+        warn "GETTING REAL ERROR MESSAGE" if $ENV{DEBUG};
         $self->_find_real_error_message();
     }
+    warn "FINISHED SETTING HEADERS" if $ENV{DEBUG};
 }
 
 sub _find_real_error_message {
@@ -462,6 +489,7 @@ in the correct encoding, with the new line characters stripped.
 =cut
 
 sub read_line {
+    warn "READING LINE" if $ENV{DEBUG};
     my $self = shift;
     my $line;
     if ( $self->has_content ) {
@@ -492,7 +520,8 @@ sub read_line {
                 $self->subtract_from_current_chunk( length($line) );
                 if ( $self->chunk_bytes_left < 0 )
                 {    # run on line, usually records a value of -2
-                    $line =~ s/$CRLF//;
+                    $line = trim_and_decode($line) 
+                        unless $self->content_is_binary;
                     my $next_line = $self->read_line;
                     $line .= $next_line if $next_line;
                 }
@@ -501,10 +530,18 @@ sub read_line {
     }
 
     if ( defined $line ) {
-        $line =~ s/$CRLF//;
+        $line = trim_and_decode($line) unless $self->content_is_binary;
     }
+    warn "RETURNING LINE: $line\n" if $ENV{DEBUG};
 
     return $line;
+}
+
+sub trim_and_decode {
+    my $string = shift;
+    $string = decode_utf8($string);
+    $string =~ s/$CRLF//;
+    return $string;
 }
 
 =head2 connect
@@ -527,6 +564,7 @@ sub connect {
     if (my $auth = $self->authorization) {
         $headers{Authorization} = $auth;
     }
+    warn "GETTING $uri" if $ENV{DEBUG};
     $connection->write_request(GET => "$uri", %headers);
     $self->set_connection($connection);
 }
