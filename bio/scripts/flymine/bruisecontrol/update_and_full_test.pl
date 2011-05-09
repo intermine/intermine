@@ -380,6 +380,7 @@ open my $prev_junit_failures, '<', $PREVIOUS_JUNIT_FAIL_FILE;
 close $prev_junit_failures or die "can't close $PREVIOUS_JUNIT_FAIL_FILE\n";
 
 my $recipients = join ', ', @blame;
+$recipients .= ', julie@flymine.org';
 
 my $message = <<"__START__";
 To: $recipients
