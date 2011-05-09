@@ -37,7 +37,11 @@ use Webservice::InterMine::Types
   qw(ServiceVersion ServiceRootUri TemplateFactory SavedQueryFactory ListFactory UserAgent);
 use InterMine::Model::Types qw(Model);
 use Carp qw(croak confess);
+use Moose::Meta::Role;
+use Perl6::Junction qw(any);
 
+my @JSON_FORMATS = (qw/jsonobjects jsonrows/);
+my @SIMPLE_FORMATS = (qw/ tsv tab csv count /);
 
 =head2 new( $url, [$user, $pass] )
 
@@ -84,6 +88,8 @@ use constant {
     LIST_PATH                  => '/lists/json',
 
     SAVEDQUERY_PATH            => '/savedqueries/xml',
+
+    RESOURCE_AVAILABILITY_PATH => '/check',
 
     USER_AGENT                 => 'WebserviceInterMinePerlAPIClient',
 };
@@ -478,13 +484,13 @@ sub get_list_data {
 sub apply_roles {
     my $instance = shift;
     my $roles    = shift;
+    return $instance unless $roles;
     for (@$roles) {
-        next unless ( defined $_ );
-
-        # eval'ed to deal with the bareword rule
         eval "require $_";
-        $_->meta->apply($instance);
+        confess $@ if $@;
     }
+    my $combined_roles = Moose::Meta::Role->combine(map {[$_]} @$roles);
+    $combined_roles->apply($instance);
     return $instance;
 }
 
@@ -530,16 +536,49 @@ sub get_results_iterator {
     my $json_format = shift; # How to handle json results
     my $roles       = shift; # An optional list of roles
 
+    my $parser = $self->create_row_parser($row_format, $view_list, $json_format);
+    my $request_format = $self->get_request_format($row_format);
+
     my $response = Webservice::InterMine::ResultIterator->new(
         url           => $url,
         parameters    => $query_form,
-        view_list     => $view_list,
-        row_format    => $row_format,
-        json_format   => $json_format,
+        row_parser    => $parser,
         authorization => $self->get_authstring(),
+        request_format => $request_format,
     );
     confess $response->status_line if $response->is_error;
     return apply_roles( $response, $roles );
+}
+
+sub get_request_format {
+    my $self = shift;
+    my $row_format = shift;
+    if ($row_format eq any(@SIMPLE_FORMATS, @JSON_FORMATS)) {
+        return $row_format;
+    } else {
+        return "jsonrows";
+    }
+}
+
+sub create_row_parser {
+    my $self = shift;
+    my ($row_format, $view_list, $json_format) = @_;
+    if ($row_format eq any(@SIMPLE_FORMATS)) {
+        require Webservice::InterMine::Parser::FlatFile;
+        return Webservice::InterMine::Parser::FlatFile->new();
+    } elsif ($row_format eq "arrayrefs") {
+        require Webservice::InterMine::Parser::JSON::ArrayRefs;
+        return Webservice::InterMine::Parser::JSON::ArrayRefs->new();
+    } elsif ($row_format eq "hashrefs") {
+        require Webservice::InterMine::Parser::JSON::HashRefs;
+        return Webservice::InterMine::Parser::JSON::HashRefs->new(view => $view_list);
+    } elsif ($row_format eq any(@JSON_FORMATS)) {
+        require Webservice::InterMine::Parser::JSON;
+        return Webservice::InterMine::Parser::JSON->new(
+            json_format => $json_format, model => $self->model);
+    } else {
+        confess "Unknown row format '" . $row_format . "'"
+    }
 }
 
 =item * fetch($url)
@@ -561,6 +600,34 @@ sub fetch {
         confess $resp->status_line, $resp->content;
     } else {
         return $resp->content;
+    }
+}
+
+has resource_paths => (
+    is => 'ro',
+    isa => 'HashRef[Str]',
+    default => sub { {} },
+    traits => ['Hash'],
+    handles => {
+        _get_resource_path => 'get',
+        put_resource_path => 'set',
+    },
+);
+
+sub get_resource_path {
+    my $self = shift;
+    my $resource = shift;
+    confess "No resource requested" unless $resource;
+    if (my $path = $self->_get_resource_path($resource)) {
+        return $path;
+    } else {
+        my $uri = URI->new($self->root . RESOURCE_AVAILABILITY_PATH . '/' . $resource);
+        my $path = eval {$self->fetch($uri)};
+        warn "RECEIVED $path from a request to $uri" if $ENV{DEBUG};
+        confess "This webservice does not support the operation you requested: $resource" 
+            unless ($path and $path =~ m|^/[a-z0-9/]+[a-z0-9]$|mi);
+        $self->put_resource_path($resource, $path);
+        return $path;
     }
 }
 
