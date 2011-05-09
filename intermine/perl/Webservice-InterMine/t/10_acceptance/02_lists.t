@@ -8,7 +8,7 @@ use Test::Exception;
 require Carp;
 use List::Util qw(reduce);
 
-$SIG{__WARN__} = \&Carp::cluck;
+#$SIG{__WARN__} = \&Carp::cluck;
 
 my $do_live_tests = $ENV{RELEASE_TESTING};
 
@@ -17,7 +17,7 @@ my($service, $initial_list_count);
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 104 );
+    plan( tests => 105 );
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
@@ -278,6 +278,22 @@ SHOWING: {
     # Make spaces visible for diagnostics
     $body =~ s/ /./g;
     is $body, $expected_body,  "Can show a summary of a list";
+}
+
+PRINTING: {
+    my $list = $service->new_list(type => "Employee", content => $id_file);
+    my $buffer = '';
+    open(my $fh, '>', \$buffer) or die "Horribly, $!";
+    $list->print_results(to => $fh, columnheaders => 1);
+    close $fh or die "$!";
+    my $expected = qq|Employee > age\tEmployee > end\tEmployee > fullTime\tEmployee > name
+30\t6\tfalse\tKarim
+33\t1\tfalse\tJennifer Schirrmann
+58\t6\ttrue\tJean-Marc
+62\t""\tfalse\tDavid Brent
+68\t""\tfalse\tFrank Möllers
+|;
+    is $buffer, $expected, "Can print a list";
 }
 
 RENAME_DELETE: {

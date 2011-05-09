@@ -17,7 +17,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 59 );
+    plan( tests => 67 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -27,13 +27,20 @@ my @view = ('Employee.name', 'Employee.age', 'Employee.fullTime',
     'Employee.address.address', 'Employee.department.name',
     'Employee.department.company.name',
     'Employee.department.manager.name',
-    );
+);
+
 use_ok($module, ($url));
 
 isa_ok($module->get_service, 'Webservice::InterMine::Service', "The service it makes");
 
 throws_ok(
     sub {$module->get_service("not.a.good.url")},
+    qr/Could not resolve/,
+    "Throws an error at bad urls",
+);
+
+throws_ok(
+    sub {$module->get_service("not.a.good.url/with/path")},
     qr/Can't connect/,
     "Throws an error at bad urls",
 );
@@ -44,7 +51,7 @@ throws_ok(
     "Throws an error at bad urls",
 );
 
-is($module->get_service->version, 3, "Service version is correct");
+is($module->get_service->version, 4, "Service version is correct");
 isa_ok($module->get_service->model, 'InterMine::Model', "The model the service makes");
 my $q;
 lives_ok(sub {$q = $module->new_query}, "Makes a new query ok");
@@ -54,58 +61,58 @@ lives_ok(sub {$q->add_view(@view)}, "Adds a view to the query ok");
 is_deeply($q->view, \@view, "Sets view correctly");
 
 lives_ok(
-sub {
-    $q->add_constraint(
-    path => 'Employee.age',
-    op   => '>',
-    value => 16,
-    );
-},
-"Adds a binary constraint to the query ok",
+    sub {
+        $q->add_constraint(
+            path => 'Employee.age',
+            op   => '>',
+            value => 16,
+        );
+    },
+    "Adds a binary constraint to the query ok",
 );
 
 lives_ok(
-sub {
-    $q->add_constraint(
-    path => 'Employee.department',
-    op   => 'IS NOT NULL',
-    );
-},
-"Adds a unary constraint to the query ok",
-);
-
-
-lives_ok(
-sub {
-    $q->add_constraint(
-    path => 'Employee.department',
-    op   => 'LOOKUP',
-    value => 'Catering'
-    );
-},
-"Adds a lookup constraint to the query ok",
+    sub {
+        $q->add_constraint(
+            path => 'Employee.department',
+            op   => 'IS NOT NULL',
+        );
+    },
+    "Adds a unary constraint to the query ok",
 );
 
 
 lives_ok(
-sub {
-    $q->add_constraint(
-    path => 'Employee.name',
-    op   => 'ONE OF',
-    values => [qw/Susan John Miguel/],
-    );
-},
-"Adds a multi constraint to the query ok",
+    sub {
+        $q->add_constraint(
+            path => 'Employee.department',
+            op   => 'LOOKUP',
+            value => 'Catering'
+        );
+    },
+    "Adds a lookup constraint to the query ok",
+);
+
+
+lives_ok(
+    sub {
+        $q->add_constraint(
+            path => 'Employee.name',
+            op   => 'ONE OF',
+            values => [qw/Susan John Miguel/],
+        );
+    },
+    "Adds a multi constraint to the query ok",
 );
 
 lives_ok(
-sub {
-    $q->add_constraint(
-    path => 'Employee',
-    type => 'CEO',
-    );
-},
-"Adds a subclass constraint to the query ok",
+    sub {
+        $q->add_constraint(
+            path => 'Employee',
+            type => 'CEO',
+        );
+    },
+    "Adds a subclass constraint to the query ok",
 );
 
 is($q->all_constraints, 5, "All constraints added fine");
@@ -143,7 +150,7 @@ is(ref $res->[0], 'ARRAY', "An array of arrays in fact");
 is($res->[1][1], "20", "With the right fields - Int") or diag(explain $res);;
 is($res->[1][3], "Employee Street, AVille", "With the right fields - Str") or diag(explain $res);;
 
-my $res_slice = [[
+my $res_slice = [
   'EmployeeA2',
   '20',
   'true',
@@ -151,7 +158,7 @@ my $res_slice = [[
   'DepartmentA1',
   'CompanyA',
   'EmployeeA1'
-]];
+];
 
 is_deeply($q->results(size => 1, start => 1), $res_slice, "Can handle start and size");
 
@@ -184,10 +191,16 @@ lives_ok(
     sub {$res = $q->results(as => 'jsonobjects', json => 'raw')},
     "Queries for results as a raw text",
 );
+my $expected = [
+    qr|\Q{"address":{"address":"Employee Street, AVille","objectId":\E\d+\Q,"class":"Address"},"objectId":\E\d+\Q,"department":{"manager":{"objectId":\E\d+\Q,"name":"EmployeeA1","class":"Manager"},"objectId":\E\d+\Q,"name":"DepartmentA1","company":{"objectId":\E\d+\Q,"name":"CompanyA","class":"Company"},"class":"Department"},"age":10,"name":"EmployeeA1","class":"Manager","fullTime":true}|,
+    qr|\Q{"address":{"address":"Employee Street, AVille","objectId":\E\d+\Q,"class":"Address"},"objectId":\E\d+\Q,"department":{"manager":{"objectId":\E\d+\Q,"name":"EmployeeA1","class":"Manager"},"objectId":\E\d+\Q,"name":"DepartmentA1","company":{"objectId":\E\d+\Q,"name":"CompanyA","class":"Company"},"class":"Department"},"age":20,"name":"EmployeeA2","class":"Employee","fullTime":true}|,
+    qr|\Q{"address":{"address":"Employee Street, AVille","objectId":\E\d+\Q,"class":"Address"},"objectId":\E\d+\Q,"department":{"manager":{"objectId":\E\d+\Q,"name":"EmployeeA1","class":"Manager"},"objectId":\E\d+\Q,"name":"DepartmentA1","company":{"objectId":\E\d+\Q,"name":"CompanyA","class":"Company"},"class":"Department"},"age":30,"name":"EmployeeA3","class":"Employee","fullTime":false}|,
+];
 
-my $expected_re = qr/\Q{'rootClass':'Employee','modelName':'testmodel','start':0,'views':["Employee.age","Employee.fullTime","Employee.name","Employee.address.address","Employee.department.name","Employee.department.company.name","Employee.department.manager.name"],'results':[{"address":{"address":"Employee Street, AVille","objectId":3000019,"class":"Address"},"objectId":3000015,"department":{"manager":{"objectId":3000015,"name":"EmployeeA1","class":"Manager"},"objectId":3000014,"name":"DepartmentA1","company":{"objectId":3000000,"name":"CompanyA","class":"Company"},"class":"Department"},"age":10,"name":"EmployeeA1","class":"Manager","fullTime":true},{"address":{"address":"Employee Street, AVille","objectId":3000019,"class":"Address"},"objectId":3000020,"department":{"manager":{"objectId":3000015,"name":"EmployeeA1","class":"Manager"},"objectId":3000014,"name":"DepartmentA1","company":{"objectId":3000000,"name":"CompanyA","class":"Company"},"class":"Department"},"age":20,"name":"EmployeeA2","class":"Employee","fullTime":true},{"address":{"address":"Employee Street, AVille","objectId":3000019,"class":"Address"},"objectId":3000021,"department":{"manager":{"objectId":3000015,"name":"EmployeeA1","class":"Manager"},"objectId":3000014,"name":"DepartmentA1","company":{"objectId":3000000,"name":"CompanyA","class":"Company"},"class":"Department"},"age":30,"name":"EmployeeA3","class":"Employee","fullTime":false}],'executionTime':'\E\d{4}\.\d{2}\.\d{2} \d{2}\:\d{2}\:\:\d{2}\Q'}/;
-
-like($res, $expected_re, "and it has the right content");
+is (scalar(@$res), scalar(@$expected), "It has the right number of rows");
+for (0 .. $#{$expected}) {
+    like($res->[$_], $expected->[$_], "And row $_ looks good");
+}
 
 lives_ok(
     sub {$res = $q->results(as => 'jsonobjects', json => 'inflate')},
@@ -209,6 +222,39 @@ is($res->[1]->getAge, 20, "with the right fields - Int");
 is($res->[1]->getAddress->getAddress, "Employee Street, AVille", "with the right fields - Str");
 ok($res->[1]->getFullTime, "with the right fields - Bool");
 
+PRINTING: {
+    my $buffer = '';
+    open(my $fh, '>', \$buffer) or die "Horribly, $!";
+    $q->print_results(to => $fh, columnheaders => 1);
+    close $fh or die "$!";
+    my $expected = qq|Employee > name\tEmployee > age\tEmployee > fullTime\tEmployee > address > address\tEmployee > department > name\tEmployee > department > company > name\tEmployee > department > manager > name
+EmployeeA1\t10\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+EmployeeA2\t20\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+EmployeeA3\t30\tfalse\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+|;
+    for ($buffer, $expected) {
+        s/\t/[TAB]/g;
+        s/ /./g;
+        s/\r/[CR]/g;
+        s/\n/¬\n/g;
+    }
+    is $buffer, $expected, "Can print a query";
+}
+
+SHOWING: {
+    my $buffer = '';
+    open(my $fh, '>', \$buffer) or die "Horribly, $!";
+    $q->show($fh);
+    close $fh or die "$!";
+    my $expected = q|VIEW: [Employee.name, Employee.age, Employee.fullTime, Employee.address.address, Employee.department.name, Employee.department.company.name, Employee.department.manager.name], CONSTRAINTS: [[Employee.department.company LOOKUP "CompanyA" IN "NULL"],[Employee.age < "35"],], LOGIC: A and B, SORT_ORDER: Employee.name asc
+Employee.name           Employee.age            Employee.fullTime       Employee.address.addressEmployee.department.nameEmployee.department.company.nameEmployee.department.manager.name
+EmployeeA1              10                      true                    Employee Street, AVille DepartmentA1            CompanyA                EmployeeA1              
+EmployeeA2              20                      true                    Employee Street, AVille DepartmentA1            CompanyA                EmployeeA1              
+EmployeeA3              30                      false                   Employee Street, AVille DepartmentA1            CompanyA                EmployeeA1              
+|; 
+    is $buffer, $expected, "Can show a query";
+}
+
 my $t;
 lives_ok(
     sub {$t = $module->template('employeesFromCompanyAndDepartment');},
@@ -225,41 +271,25 @@ lives_ok(
 ) or diag($t->url);
 
 my $exp_res = [
-[
-    'EmployeeB1',
-    '40'
-],
-[
-    'EmployeeB2',
-    '50'
-],
-[
-    'EmployeeB3',
-    '60'
-]
+    ['EmployeeB1','40'],
+    ['EmployeeB2','50'],
+    ['EmployeeB3', '60']
 ];
 
 is_deeply($res, $exp_res, "With the right fields")
     or diag($t->url, explain $res), diag $t->show_constraints;
 
 $exp_res = [
-[
-    'EmployeeA1',
-    '10'
-],
-[
-    'EmployeeA2',
-    '20'
-],
-[
-    'EmployeeA3',
-    '30'
-]
+    ['EmployeeA1','10'],
+    ['EmployeeA2','20'],
+    ['EmployeeA3','30']
 ];
 
-is_deeply($t->results,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
+$res = $t->results;
 
-$exp_res = [['EmployeeA2',20]];
+is_deeply($res,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
+
+$exp_res = ['EmployeeA2',20];
 
 is_deeply($t->results(size => 1, start => 1), $exp_res, "And it handles start and size");
 
@@ -299,17 +329,44 @@ subtest "and for json rows" => sub {
     is($res->[2][0]->value, "EmployeeA3") or diag(explain $res->[2]);
 };
 
+SHOWING_TEMPLATES: {
+    my $buffer = '';
+    open(my $fh, '>', \$buffer) or die "Horribly, $!";
+    $t->show_with(valueA => 'companyB', to => $fh);
+    close $fh or die "$!";
+    my $expected = q|View all the employees that work within a certain department of the specified company - employeesFromCompanyAndDepartment VIEW: [Employee.name, Employee.age], CONSTRAINTS: [[Employee.department.name = "Department*" (locked)],[Employee.department.company.name = "companyB" (locked)],], LOGIC: B and A, SORT_ORDER: Employee.name asc
+Employee.name...........Employee.age............
+EmployeeB1..............40......................
+EmployeeB2..............50......................
+EmployeeB3..............60......................
+|;
+    $buffer =~ s/ /./g;
+    $expected =~ s/ /./g;
+    
+    is $buffer, $expected, "Can show a template";
+}
+
+PRINTING_TEMPLATES: {
+    my $buffer = '';
+    open(my $fh, '>', \$buffer) or die "Horribly, $!";
+    $t->print_results_with(valueA => 'companyB', to => $fh, columnheaders => 1);
+    close $fh or die "$!";
+    my $expected = qq|Employee.>.name\tEmployee.>.age
+EmployeeB1\t40
+EmployeeB2\t50
+EmployeeB3\t60
+|;
+    $buffer =~ s/ /./g;
+    $expected =~ s/ /./g;
+    
+    is $buffer, $expected, "Can print a template";
+}
+
 my $loaded;
 lives_ok {$loaded = $module->load_query(source_file => "t/data/loadable_query.xml")} 
     "Can load a query";
 
-$exp_res = 
-[
-   [
-     'EmployeeA1',
-     'DepartmentA1'
-   ]
-];
+$exp_res = [ ['EmployeeA1','DepartmentA1'] ];
 
 $res = $loaded->results;
 is_deeply($res, $exp_res, "Can get results for queries loaded from xml")
