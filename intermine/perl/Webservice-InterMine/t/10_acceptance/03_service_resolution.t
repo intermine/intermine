@@ -21,14 +21,14 @@ my $service;
 lives_ok {$service = Webservice::InterMine->get_service('flymine');}
     "Fetches a service by name";
 
-ok($service->version > 1);
+ok($service->version > 1, "The service seems valid");
 
 my $autoloaded_service;
 
 lives_ok{$autoloaded_service = Webservice::InterMine->get_flymine;}
     "Fetches a service by name using autoloading";
 
-ok($autoloaded_service->version > 1);
+ok($autoloaded_service->version > 1, "The service seems valid");
 
 is(Webservice::InterMine::ServiceResolver->get_fetch_count, 1,
     "Caches the data properly");
