@@ -148,7 +148,7 @@ public class PathQueryUnmarshalTest extends  TestCase
         try {
             pq = createQuery("EmptyValueTag.xml");
         } catch (Exception e) {
-            assertEquals("No value provided in value tag",
+            assertEquals("No value provided in value tag. Failed for template query: unnamed_query on constraint: Employee.name",
                 e.getCause().getMessage());
             return;
         }
