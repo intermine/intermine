@@ -10,6 +10,7 @@ with(
     'Webservice::InterMine::Query::Roles::Runnable',
     'Webservice::InterMine::Query::Roles::TemplateParameters',
     'Webservice::InterMine::Role::Serviced',
+    'Webservice::InterMine::Role::Showable',
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::ExtendedQuery',
