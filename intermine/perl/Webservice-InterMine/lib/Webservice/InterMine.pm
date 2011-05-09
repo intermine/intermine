@@ -61,6 +61,8 @@ use Webservice::InterMine::Service;
 
 our $CLEAN_UP = 1;
 
+use constant CONFIG_FILE => $ENV{HOME} . '/.intermine-webservice.config';
+
 my $service_url;
 
 my %services;
@@ -79,10 +81,27 @@ sub import {
 =head2 new_query( [from => \@service_args], [%query_args] )
 
 returns a new query object for you to fill in with constraints before
-being run to get its results. If you pass a url, it constructs a query
-for the specified webservice.
+being run to get its results. 
 
-Please see L<Webservice::InterMine::Query>
+Parameters:
+
+=over
+
+=item * from => [url, user, pass]
+
+An array ref of arguments to pass to get_service. This information
+can be used to specify a different service than the one named on import, or
+to specify one when none was named on import. 
+
+=item * %query_args
+
+Key value pairs of arguments to pass to the query constructor in
+L<Webservice::InterMine::Service>. This methid serves as sugar for the
+factory method in that class.
+
+=back
+
+Please see L<Webservice::InterMine::Query>, L<Webservice::InterMine::Service>.
 
 =cut
 
@@ -98,6 +117,24 @@ sub new_query {
 Creates a new list with the content specified by the list arguments. The
 C<content> key-word parameter will always be required. For a full 
 specification of creating lists, see: L<Webservice::InterMine::ListFactory>.
+
+Parameters:
+
+=over
+
+=item * from => [url, user, pass]
+
+An array ref of arguments to pass to get_service. This information
+can be used to specify a different service than the one named on import, or
+to specify one when none was named on import. 
+
+=item * %list_args
+
+Key value pairs of arguments to pass to the list constructor in
+L<Webservice::InterMine::Service>. This methid serves as sugar for the
+factory method in that class.
+
+=back
 
 =cut
 
@@ -122,11 +159,11 @@ For a string:
 
 If you want a specific service, call it thus:
 
-  load_query(service_args => [$name, $user, $pass], source_string => $string);
+  load_query(from => [$name, $user, $pass], source_string => $string);
 
 OR: 
 
-  load_query([$name, $user, $pass], source_string => $string);
+  load_query(from => [$name, $user, $pass], source_string => $string);
 
 Please see L<Webservice::InterMine::Query::Saved>
 
@@ -134,11 +171,12 @@ Please see L<Webservice::InterMine::Query::Saved>
 
 sub load_query {
     my $class = shift;
-    my $service_args = ( ref $_[0] ) ? shift : [];
-    return $class->get_service(@$service_args)->new_from_xml(@_);
+    my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->new_from_xml(%args);
 }
 
-=head2 template( $name, [\@service_args], [%opts] )
+=head2 template( $name, [from => \@service_args], [%opts] )
 
 returns the named template (if it exists - if not it returns undef).
 If you pass a url, it returns the named template from the specified webservice.
@@ -150,11 +188,12 @@ Please see L<Webservice::InterMine::Query::Template>
 sub template {
     my $class        = shift;
     my $name         = shift;
-    my $service_args = ( ref $_[0] eq 'ARRAY' ) ? shift : [];
+    my %args         = @_;
+    my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->template( $name, @_ );
 }
 
-=head2 saved_query( $name, [$url] ) B<NOT IMPLEMENTED YET>
+=head2 saved_query( $name, [from => \@service_args], %options ) B<NOT IMPLEMENTED YET>
 
 returns the named saved_query (if it exists - if not it returns undef).
 If you pass a url, it returns the named query from the specified webservice.
@@ -168,16 +207,21 @@ Please see L<Webservice::InterMine::Query::Saved>
 
 sub saved_query {
     my $class = shift;
-    my $name  = shift;
-    return $class->get_service(@_)->saved_query($name);
+    my $name         = shift;
+    my %args         = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@_)->saved_query($name, %args);
 }
 
-=head2 get_service( [$url, $user, $pass] )
+=head2 get_service( $url, $user, $pass )
 
 returns a webservice object, which is used to construct
 queries and fetch templates and saved queries. If a url is
 passed, the webservice for that url is returned, otherwise the
 service for the url given to C<use> is returned.
+
+If a service for a url has been created previously, that one is returned,
+even if different login details are provided.
 
 Please see: L<Webservice::InterMine::Service>
 
@@ -185,28 +229,62 @@ Please see: L<Webservice::InterMine::Service>
 
 sub get_service {
     my $class = shift;
+
     my $url = shift || $service_url;
-    my ( $user, $pass ) = @_;
     croak "No url provided - either directly or on 'use'"
       unless $url;
     if ( $services{$url} ) {
         return $services{$url};
     }
-    else {
-        if ( $user and $pass ) {
-            $user_for{$url} = $user;
-            $pass_for{$url} = $pass;
-        }
-        my $service = Webservice::InterMine::Service->new( $url, $user, $pass );
-        $services{$url} = $service;
-        return $service;
+
+    my ( $user, $pass ) = @_;
+    unless ($user and $pass) {
+        ($user, $pass) = get_saved_user_info($url);
     }
+
+    if ( $user and $pass ) {
+        $user_for{$url} = $user;
+        $pass_for{$url} = $pass;
+    }
+    my $service = Webservice::InterMine::Service->new( $url, $user, $pass );
+    $services{$url} = $service;
+    return $service;
+}
+
+=head2 get_saved_user_info($mine_name/$mine_url)
+
+Returns saved user name and passwords from the webservice config file
+if it exists. This file should be located at ~/.intermine-webservices.config,
+and should have the following format:
+
+  flymine                        user@somewhere.edu password
+  metabolicmine                  user@somewhere.edu another-password
+  http://yeastmine.org/yeastmine user@somewhere.org A v3rj d1EE!kvlt 0n3
+
+ie., whitespace separated fields. The password may contain whitespace characters, but no
+new-lines. The mine-name/url needs to identical to the name used to request the service.
+
+=cut
+
+sub get_saved_user_info {
+    my $key = shift;
+    if (-f CONFIG_FILE) {
+        open(my $in, '<', CONFIG_FILE) or confess "$!";
+        while (<$in>) {
+            my ($url, $user, $pass) = split(/\s+/, $_, 3);
+            return($user, $pass) if ($url eq $key);
+        }
+        close $in or confess "$!";
+    }
+    return;
 }
 
 =head2 clean_temp_lists()
 
 Deletes all automatically created anonymous lists. Any
-renamed lists will be spared the clean-up.
+renamed lists will be spared the clean-up. This method is called
+on system exit, unless the variable $Webservice::InterMine::CLEAN_UP is 
+set to a false value.
 
 =cut
 
@@ -216,6 +294,14 @@ sub clean_temp_lists() {
         $service->delete_temp_lists() if $service->_has_lists;
     }
 }
+
+=head2 get_{minename}(user, pass)
+
+An unknown method preceded with 'get_' will be interpreted
+as a mine name, and an attempt will be made to return a service with
+that name.
+
+=cut
 
 sub AUTOLOAD {
     my $self = shift;
@@ -239,15 +325,19 @@ END {
 
 =over 4
 
-=item * L<Webservice::InterMine::Cookbook> for guide on how to use these modules.
+=item * L<Webservice::InterMine::Cookbook> for a guide on how to use these modules.
 
 =item * L<Webservice::InterMine::Query>
 
 =item * L<Webservice::InterMine::Service>
 
+=item * L<Webservice::InterMine::List>
+
 =item * L<Webservice::InterMine::Query::Template>
 
 =item * L<Webservice::InterMine::Query::Saved>
+
+=item * L<Webservice::InterMine::Bio> Biologically specific roles.
 
 =back
 
