@@ -109,7 +109,7 @@ sub parse_line {
                 "error" => $@, "problem line" => $line
             });
         }
-        return $self->process($json);
+        return $self->process($json) || $line;
     } else {
         return undef;
     }
@@ -119,6 +119,9 @@ sub parse_line {
 
 Process a parsed json data structure into either a perl structure 
 (which is what it now is), or two different flavours of object.
+
+If this method returns a false value, it indicates that the line
+parser should return the line as it was received.
 
 =cut
 
@@ -130,6 +133,8 @@ sub process {
         return inflate($perl);
     } elsif ($self->json_format eq "instantiate") {
         return $self->model->make_new($perl)
+    } elsif ($self->json_format eq "raw") {
+        return undef;
     } else {
         return $perl;
     }
