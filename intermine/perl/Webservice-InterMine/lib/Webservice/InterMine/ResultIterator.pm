@@ -8,18 +8,13 @@ use Webservice::InterMine::Types qw(Uri HTTPCode NetHTTP RowFormat JsonFormat Re
 use MooseX::Types::Moose qw(Str HashRef Bool Num GlobRef Maybe);
 
 use HTTP::Status qw(status_message);
-use List::MoreUtils qw(zip);
 use Encode;
-use Perl6::Junction qw(any);
 use overload (
     '<>' => 'next',
     fallback => 1,
 );
 
 my $CRLF = qr{\015?\012};
-
-my @JSON_FORMATS = (qw/jsonobjects jsonrows/);
-my @SIMPLE_FORMATS = (qw/ tsv tab csv count /);
 
 sub BUILD {
     my $self = shift;
@@ -80,45 +75,6 @@ has parameters => (
     default => sub { {} },
 );
 
-=item * row_format: ro, Str
-
-The format each row should be returned in. 
-
-=cut
-
-has row_format => (
-    is => 'ro',
-    isa => RowFormat,
-    required => 1,
-    coerce => 1,
-);
-
-=item * json_format: ro, Str
-
-How JSON results should be handled (when the row format is 
-jsonrows or jsonobjects).
-
-=cut
-
-has json_format => (
-    is => 'ro',
-    isa => JsonFormat,
-    default => 'perl',
-    coerce => 1,
-);
-
-=item * view_list: ro, PathList
-
-The list of paths in the view for the query that to be run.
-
-=cut
-
-has view_list => (
-    is       => 'ro',
-    isa      => PathList,
-    required => 1,
-);
-
 =item * authorization: ro, Str
 
 A base 64 encoded string to use as the authorization header for 
@@ -130,6 +86,40 @@ has authorization => (
     is => 'ro',
     isa => Maybe[Str],
 );
+
+=item * request_format: ro, RequestFormat
+
+The format that will be actually requested from the server.
+
+=cut
+
+has request_format => (
+    is => 'ro',
+    isa => RequestFormat,
+    required => 1,
+    coerce => 1,
+);
+
+=item * row_parser: ro, Webservice::InterMine::Parser
+
+The parser to return a formatted row of data.
+
+=cut
+
+has row_parser => (
+    is => 'ro',
+    isa => RowParser,
+    required => 1,
+);
+
+=back
+
+=head1 ATTRIBUTES
+
+Other properties of the object. These attributes are derived from the 
+original construction arguments.
+
+=over 4
 
 =item * user_agent: ro, Str,
 
@@ -149,72 +139,6 @@ sub _build_user_agent {
     return "Webservice::InterMine-" . $Webservice::InterMine::VERSION;
 }
 
-=back
-
-=head1 ATTRIBUTES
-
-Other properties of the object. These attributes are derived from the 
-original construction arguments.
-
-=over 4
-
-=item * request_format: ro, RequestFormat
-
-The format that will be actually requested from the server.
-
-=cut
-
-has request_format => (
-    is => 'ro',
-    isa => RequestFormat,
-    lazy_build => 1,
-    coerce => 1,
-);
-
-sub _build_request_format {
-    my $self = shift;
-    my $row_format = $self->row_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS, @JSON_FORMATS)) {
-        return $row_format;
-    } else {
-        return "jsonrows";
-    }
-}
-
-=item * row_parser: ro, Webservice::InterMine::Parser
-
-The parser to return a formatted row of data.
-
-=cut
-
-has row_parser => (
-    is => 'ro',
-    isa => RowParser,
-    lazy_build => 1,
-);
-
-sub _build_row_parser {
-    my $self        = shift;
-    my $row_format  = $self->row_format;
-    my $view        = $self->view_list;
-    my $json_format = $self->json_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS)) {
-        require Webservice::InterMine::Parser::FlatFile;
-        return Webservice::InterMine::Parser::FlatFile->new();
-    } elsif ($row_format eq "arrayrefs") {
-        require Webservice::InterMine::Parser::JSON::ArrayRefs;
-        return Webservice::InterMine::Parser::JSON::ArrayRefs->new();
-    } elsif ($row_format eq "hashrefs") {
-        require Webservice::InterMine::Parser::JSON::HashRefs;
-        return Webservice::InterMine::Parser::JSON::HashRefs->new(view => $view);
-    } elsif ($row_format eq any(@JSON_FORMATS)) {
-        require Webservice::InterMine::Parser::JSON;
-        return Webservice::InterMine::Parser::JSON->new(
-            json_format => $json_format, model => $self->model);
-    } else {
-        confess "Unknown row format '" . $row_format . "'"
-    }
-}
 
 =item * connection: ro, Net::HTTP
 
