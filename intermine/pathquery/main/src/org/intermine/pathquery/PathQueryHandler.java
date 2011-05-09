@@ -90,7 +90,7 @@ public class PathQueryHandler extends DefaultHandler
             }
             query = new PathQuery(model);
 
-            if (attrs.getValue("title") != null && ! attrs.getValue("title").isEmpty()) {
+            if (attrs.getValue("title") != null && !attrs.getValue("title").isEmpty()) {
                 query.setTitle(attrs.getValue("title"));
             }
 
