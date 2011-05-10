@@ -89,11 +89,17 @@ public abstract class TrackerAbstract implements Tracker
      */
     public abstract String getName();
 
+    public void setTrackQueue(Queue<Track> trackQueue) {
+        this.trackQueue = trackQueue;
+    }
+
     /**
      * Generate the sql statement to create the table used by the tracker
      * @return String sql statement
      */
     public abstract String getStatementCreatingTable();
+    
+    
 
     /**
      * Close the result set and statement objects specified in input
