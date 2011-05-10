@@ -32,7 +32,7 @@ public class WebServiceRequestParser
     private static final Integer DEFAULT_START = new Integer(0);
 
     /** 10 000 000 default size actually means that web service will return all results */
-    private static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
+    public static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
 
     private static final Integer MAX_COUNT_LIMIT = new Integer(10000000);
 
