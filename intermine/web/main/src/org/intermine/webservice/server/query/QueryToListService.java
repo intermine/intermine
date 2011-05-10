@@ -26,6 +26,12 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
+/**
+ * A service for transforming a query, represented as a PathQuery serialised
+ * to XML, to a list.
+ * @author Alex Kalderimis
+ *
+ */
 public class QueryToListService extends AbstractQueryService {
 
     private static final String XML_PARAM = "query";
@@ -36,6 +42,10 @@ public class QueryToListService extends AbstractQueryService {
 
     protected final BagManager bagManager;
 
+    /**
+     * Constructor.
+     * @param im
+     */
     public QueryToListService(InterMineAPI im) {
         super(im);
         bagManager = im.getBagManager();
