@@ -91,7 +91,7 @@ public class ChartRenderer extends InterMineAction
         Method method = getClass().getMethod(request.getParameter("method"), SIG);
         if (!"execute".equals(method.getName())) { // avoid infinite loop
             return (ActionForward) method.invoke(this, new Object[] {mapping, form, request,
-                    response});
+                response});
         }
         LOG.error("bad method parameter \"" + request.getParameter("method") + "\"");
         return null;
@@ -108,11 +108,8 @@ public class ChartRenderer extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward microarray(
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward microarray(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Map<String, String> graphImageCache = new HashMap<String, String>();
@@ -194,7 +191,7 @@ public class ChartRenderer extends InterMineAction
         renderer.setSeriesOutlinePaint(0, barColor.darker());
     }
 
-    private void configureXaxis(Axis axis, @SuppressWarnings("unused") HttpServletRequest request) {
+    private void configureXaxis(Axis axis, HttpServletRequest request) {
         if ("microarray".equals(request.getParameter("method"))) {
             ((CategoryAxis) axis).setMaximumCategoryLabelLines(7);
             axis.setLabelAngle(0);
