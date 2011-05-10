@@ -113,6 +113,7 @@ public class TrackerDelegateTest extends TestCase
         }
         pm.close();
         trackerDelegate.close();
+        trackerDelegate.finalize();
     }
 
     private void removeUserProfile(String username) throws ObjectStoreException {
@@ -138,7 +139,7 @@ public class TrackerDelegateTest extends TestCase
         trackerDelegate.trackTemplate("template1", superUser, "sessionId2");
         trackerDelegate.trackTemplate("template1", user, "sessionId3");
         trackerDelegate.trackTemplate("template2", user, "sessionId3");
-        Thread.sleep(4000);
+        Thread.sleep(3000);
         String sql = "SELECT COUNT(*) FROM templatetrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
@@ -200,40 +201,40 @@ public class TrackerDelegateTest extends TestCase
     }
 
     public void testTrackLogin() throws SQLException, InterruptedException {
-        for (int index = 0; index < 50; index++) {
+        for (int index = 0; index < 20; index++) {
             trackerDelegate.trackLogin("user" + index);
         }
-        Thread.sleep(3000);
+        Thread.sleep(4000);
         String sql = "SELECT COUNT(*) FROM logintrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        assertEquals(50, rs.getInt(1));
+        assertEquals(20, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
     public void testGetUserLogin() throws SQLException{
-        assertEquals(50, trackerDelegate.getUserLogin().size());
+        assertEquals(20, trackerDelegate.getUserLogin().size());
         deleteTrack(TrackerUtil.LOGIN_TRACKER_TABLE);
     }
 
     public void testTrackKeywordSearch() throws SQLException, InterruptedException {
-        for (int index = 0; index < 50; index++) {
+        for (int index = 0; index < 20; index++) {
             trackerDelegate.trackKeywordSearch("keyword" + index, superUser, "sessionId1");
         }
-        Thread.sleep(3000);
+        Thread.sleep(4000);
         String sql = "SELECT COUNT(*) FROM searchtrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        assertEquals(50, rs.getInt(1));
+        assertEquals(20, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
     public void testGetKeywordSearches() throws SQLException{
-        assertEquals(50, trackerDelegate.getKeywordSearches().size());
+        assertEquals(20, trackerDelegate.getKeywordSearches().size());
         deleteTrack(TrackerUtil.SEARCH_TRACKER_TABLE);
     }
 }

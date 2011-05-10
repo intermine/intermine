@@ -40,6 +40,7 @@ public class TrackerDelegate
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
     protected ObjectStoreWriter osw;
     protected Connection connection = null;
+    protected Thread trackerLoggerThread;
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -67,7 +68,8 @@ public class TrackerDelegate
         }
 
         TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
-        new Thread(trackerLogger).start();
+        trackerLoggerThread = new Thread(trackerLogger);
+        trackerLoggerThread.start();
     }
 
     /**
@@ -329,5 +331,14 @@ public class TrackerDelegate
 
     public void close() {
         releaseConnection(connection);
+    }
+
+    public void finalize() {
+        trackerLoggerThread.interrupt();
+        try {
+            trackerLoggerThread.join();
+        } catch (InterruptedException ie) {
+            LOG.error(ie);
+        }
     }
 }
