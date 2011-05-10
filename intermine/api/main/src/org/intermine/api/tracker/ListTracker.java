@@ -52,6 +52,8 @@ public class ListTracker extends TrackerAbstract
             } catch (Exception e) {
                 LOG.error("Error creating the table associated to the ListTracker" + e);
             }
+        } else {
+            listTracker.setTrackQueue(trackQueue);
         }
         return listTracker;
     }
