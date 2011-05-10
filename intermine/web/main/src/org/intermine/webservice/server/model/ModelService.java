@@ -10,7 +10,6 @@ package org.intermine.webservice.server.model;
  *
  */
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
@@ -64,26 +62,22 @@ public class ModelService extends WebService
     @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response) {
         Model model = this.im.getModel();
-        try {
-            if (formatIsJSON()) {
-                ResponseUtil.setJSONHeader(response, FILE_BASE_NAME + ".json");
-                Map<String, Object> attributes = new HashMap<String, Object>();
-                if (formatIsJSONP()) {
-                    String callback = getCallback();
-                    if (callback == null || "".equals(callback)) {
-                        callback = DEFAULT_CALLBACK;
-                    }
-                    attributes.put(JSONFormatter.KEY_CALLBACK, callback);
+        if (formatIsJSON()) {
+            ResponseUtil.setJSONHeader(response, FILE_BASE_NAME + ".json");
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            if (formatIsJSONP()) {
+                String callback = getCallback();
+                if (callback == null || "".equals(callback)) {
+                    callback = DEFAULT_CALLBACK;
                 }
-                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
-                attributes.put(JSONFormatter.KEY_OUTRO, "}");
-                output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(model.toJSONString()));
-            } else {
-                response.getWriter().append(model.toString());
+                attributes.put(JSONFormatter.KEY_CALLBACK, callback);
             }
-        } catch (IOException e) {
-            throw new InternalErrorException(e);
+            attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
+            attributes.put(JSONFormatter.KEY_OUTRO, "}");
+            output.setHeaderAttributes(attributes);
+            output.addResultItem(Arrays.asList(model.toJSONString()));
+        } else {
+            output.addResultItem(Arrays.asList(model.toString()));
         }
     }
 }
