@@ -3075,18 +3075,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId)
     throws ObjectStoreException {
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
-        resultFile.setAttribute("name", fileName);
+        resultFile.setAttribute("name", unversionName(fileName));
         String url = null;
         if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
-            
+
             if (relDccId != null) { // the file actually belongs to a related sub
-                url = FILE_URL + relDccId + "/extracted/" + fileName;                
+                url = FILE_URL + relDccId + "/extracted/" + unversionName(fileName);                
             } else {
                 // note: on ftp site submission directories are named with the digits only
                 String dccId = dccIdMap.get(submissionId).substring(DCC_PREFIX.length());
-                url = FILE_URL + dccId + "/extracted/" + fileName;
+                url = FILE_URL + dccId + "/extracted/" + unversionName(fileName);
             }
         }
         resultFile.setAttribute("url", url);
@@ -3094,6 +3094,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         resultFile.setAttribute("direction", direction);
         resultFile.setReference("submission", submissionMap.get(submissionId).itemIdentifier);
         getChadoDBConverter().store(resultFile);
+    }
+
+    /**
+     * @param fileName
+     */
+    private String unversionName(String fileName) {
+        
+        String versionRegex = "\\.*_*[WS|ws]+\\d\\d\\d+";
+        LOG.debug("FFFF: " + fileName + "--->>" +
+                "====>" + fileName.replaceAll(versionRegex, ""));        
+        return fileName.replaceAll(versionRegex, "");
     }
 
     private void createRelatedSubmissions(Connection connection) throws ObjectStoreException {
