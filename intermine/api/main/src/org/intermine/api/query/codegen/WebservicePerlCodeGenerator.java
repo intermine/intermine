@@ -218,7 +218,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
 
             // Add print results
-            sb.append("my $results = $query->results_iterator;" + ENDL + ENDL);
+            sb.append("$query->show;" + ENDL + ENDL);
 
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -238,7 +238,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                             + templateName + "')" + ENDL)
                 .append(INDENT + "or die 'Could not find template';" + ENDL)
                 .append(ENDL)
-                .append("my $results = $template->results_iterator_with(" + ENDL)
+                .append("$template->show_with(" + ENDL)
                 .append(INDENT + "as     => 'tsv'," + ENDL);
 
             for (PathConstraint pc : editableConstraints) {
@@ -267,8 +267,6 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
             sb.append(");" + ENDL + ENDL);
         }
-
-        sb.append(RESULTS_PRINTING);
 
         return sb.toString();
     }

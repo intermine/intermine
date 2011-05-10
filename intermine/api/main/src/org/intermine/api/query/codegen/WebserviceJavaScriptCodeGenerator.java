@@ -1,59 +1,66 @@
 package org.intermine.api.query.codegen;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import  java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
-import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 
+/**
+ * A Class for generating JavaScript that would run a given query.
+ * @author Alexis Kalderimis
+ *
+ */
 public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerator
 {
 
-    protected static final String INVALID_QUERY           = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY              = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
+    protected static final String NULL_QUERY    = "Invalid query. Query can not be null...";
 
-    protected static final String INDENT                  = "    ";
-    protected static final String SPACE                   = " ";
-    protected static final String ENDL                    = System.getProperty("line.separator");
+    protected static final String INDENT        = "    ";
+    protected static final String INDENT2       = INDENT + INDENT;
+    protected static final String SPACE         = " ";
+    protected static final String ENDL          = System.getProperty("line.separator");
 
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-                                                              + "constraint, which is currently not supported...";
+                                                + "constraint, which is currently not supported...";
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
     protected static final String SCRIPT_IMPORTS          =
-		"<!-- You need to import the following client libraries: -->" + ENDL
-		+ "<!-- jQuery (hosted by Google) -->" + ENDL
-        + "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" type=\"text/javascript\"></script>" + ENDL
-        + "<!-- jquery-jsonp (available from the googlecode repository) -->" + ENDL
-        + "<script src=\"http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js\" type=\"text/javascript\"></script>" + ENDL
-        + "<!-- IMbedding (hosted for your convenience on intermine.org) -->" + ENDL
-        + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.min.js\" type=\"text/javascript\"></script>" + ENDL + ENDL;
+          "<!-- You need to import the IMBedding client library - this is hosted at intermine.org for your convenience: -->" + ENDL
+          + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
+          + "<!-- We also need to import a stylesheet - you can choose from light, dark or bold-->" + ENDL
+          + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.1/style/light.css\">" + ENDL
+          + ENDL;
 
     protected static final String PRELUDE =
         "<!-- This is an automatically generated code snippet to run your query" + ENDL
-      + " using the intermine JavaScript client library. It is assumed that you" + ENDL
-      + " will be wanting to run this query from a webpage, and so the code is " + ENDL
-      + " formatted such that you can just cut and paste it into any webpage -->" + ENDL + ENDL;
+        + " using the intermine JavaScript client library. It is assumed that you" + ENDL
+        + " will be wanting to run this query from a webpage, and so the code is " + ENDL
+        + " formatted such that you can just cut and paste it into any webpage -->" + ENDL + ENDL;
 
     protected static final String PLACEHOLDER =
-    	"<!-- You need to set a place holder element in your page to hold the resultant table: -->" + ENDL
-      + "<div id=\"queryplaceholder\">The table will go here</div>" + ENDL + ENDL;
+        "<!-- You need to set a place holder element in your page to hold the resultant table - this can also hold apology text/content -->" + ENDL
+        + "<div id=\"queryplaceholder\"><p class=\"apology\">We are very sorry that your table could not be loaded - please note that at present we are not able to embed private templates or queries that refer to private lists.</p></div>" + ENDL + ENDL;
 
     protected static final String BOILERPLATE = "<script type=\"text/javascript\">" + ENDL;
     protected static final String QUERY_METHOD = "IMBedding.loadQuery(query, ";
@@ -63,14 +70,14 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
      * This method will generate code that will run using the python webservice
      * client library.
      *
-     * @param wsCodeGeninfo
-     *            a WebserviceCodeGenInfo object
+     * @param wsCodeGenInfo a WebserviceCodeGenInfo object
      * @return the code as a string
      */
+    @Override
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
-        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL() + "/service";
+        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
 
         // query is null
         if (query == null) {
@@ -80,9 +87,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
         StringBuffer sb = new StringBuffer().append(PRELUDE)
-        					                .append(SCRIPT_IMPORTS)
-        					                .append(PLACEHOLDER)
-        					                .append(BOILERPLATE);
+                                            .append(SCRIPT_IMPORTS)
+                                            .append(PLACEHOLDER)
+                                            .append(BOILERPLATE);
 
         if ("PathQuery".equals(queryClassName)) {
 
@@ -95,7 +102,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
-        	TemplateQuery template = (TemplateQuery) query;
+            TemplateQuery template = (TemplateQuery) query;
 
             String templateName = template.getName();
             String description = template.getDescription();
@@ -105,9 +112,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             sb.append(TEMPLATE_METHOD + ENDL);
             sb.append(INDENT + "{" + ENDL);
             if (description != null && !"".equals(description)) {
-            	printLine(sb, INDENT + INDENT + "// ", description);
+                printLine(sb, INDENT2 + "// ", description);
             }
-            sb.append(INDENT + INDENT + getFormattedObjKey("name:") + "\"" + templateName + "\"," + ENDL);
+            sb.append(INDENT2 + getFormattedObjKey("name:") + "\"" + templateName + "\"," + ENDL);
 
             Iterator<PathConstraint> conIter = editableConstraints.iterator();
             int constraintNo = 1;
@@ -117,7 +124,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                 String constraintDes = template.getConstraintDescription(pc);
                 sb.append(ENDL);
                 if (constraintDes != null && !"".equals(constraintDes)) {
-                	sb.append(INDENT + INDENT + "// " + constraintDes + ENDL);
+                    sb.append(INDENT + INDENT + "// " + constraintDes + ENDL);
                 }
 
                 String className = TypeUtil.unqualifiedName(pc.getClass().toString());
@@ -128,18 +135,18 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                     return LOOP_CONSTRAINT;
                 }
 
-                String opCode = allConstraints.get(pc);
-                Map<String, String> templateParams = templateConstraintUtil(pc, opCode, constraintNo);
+                String code = allConstraints.get(pc);
+                Map<String, String> templateParams = templateConstraintUtil(pc, code, constraintNo);
 
                 Iterator<Entry<String, String>> entryIter = templateParams.entrySet().iterator();
                 while (entryIter.hasNext()) {
-                	Entry<String, String> pair = entryIter.next();
-                	sb.append(INDENT + INDENT + getFormattedObjKey(pair.getKey() + ":"));
-                	sb.append("\"" + pair.getValue() + "\"");
-                	if (entryIter.hasNext() || conIter.hasNext()) {
-                		sb.append(",");
-                	}
-                	sb.append(ENDL);
+                    Entry<String, String> pair = entryIter.next();
+                    sb.append(INDENT + INDENT + getFormattedObjKey(pair.getKey() + ":"));
+                    sb.append("\"" + pair.getValue() + "\"");
+                    if (entryIter.hasNext() || conIter.hasNext()) {
+                        sb.append(",");
+                    }
+                    sb.append(ENDL);
                 }
 
                 constraintNo++;
@@ -156,11 +163,11 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
     }
 
     private static String getFormattedObjKey(String key) {
-    	StringBuffer sb = new StringBuffer(key);
-    	while (sb.length() < 15) {
-    		sb.append(" ");
-    	}
-    	return sb.toString();
+        StringBuffer sb = new StringBuffer(key);
+        while (sb.length() < 15) {
+            sb.append(" ");
+        }
+        return sb.toString();
     }
 
     private static void listFormatUtil(StringBuffer sb, Collection<String> coll) {
@@ -203,7 +210,8 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
      *            operation code
      * @return A map that contains the parameters for this constraint
      */
-    private static Map<String, String> templateConstraintUtil(PathConstraint pc, String opCode, int constraintNo) {
+    private static Map<String, String> templateConstraintUtil(PathConstraint pc,
+            String opCode, int constraintNo) {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String path = pc.getPath();
         String op = pc.getOp().toString();
@@ -215,7 +223,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
 
         if ("PathConstraintAttribute".equals(className)) {
             String value = ((PathConstraintAttribute) pc).getValue();
-        	ret.put("value" + constraintNo, value);
+            ret.put("value" + constraintNo, value);
         }
 
         if ("PathConstraintLookup".equals(className)) {
@@ -233,7 +241,8 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             // can not test from webapp
         }
 
-        if ("PathConstraintMultiValue".equals(className)) {            StringBuffer sb = new StringBuffer();
+        if ("PathConstraintMultiValue".equals(className)) {
+            StringBuffer sb = new StringBuffer();
             Collection<String> values = ((PathConstraintMultiValue) pc).getValues();
             listFormatUtil(sb, values);
             ret.put("value" + constraintNo, sb.toString());
