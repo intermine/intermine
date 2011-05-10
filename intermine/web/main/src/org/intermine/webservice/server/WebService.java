@@ -10,13 +10,18 @@ package org.intermine.webservice.server;
  *
  */
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -81,6 +86,10 @@ public abstract class WebService
 
     /** Default jsonp callback **/
     public static final String DEFAULT_CALLBACK = "callback";
+
+    public static final int EMPTY_FORMAT = -1;
+
+    public static final int UNKNOWN_FORMAT = -2;
 
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
@@ -367,79 +376,172 @@ public abstract class WebService
         return new StreamedOutput(out, new XMLFormatter());
     }
 
+    private static final String COMPRESS = "compress";
+    private static final String GZIP = "gzip";
+    private static final String ZIP = "zip";
+
+    protected boolean isGzip() {
+        return GZIP.equalsIgnoreCase(request.getParameter(COMPRESS));
+    }
+
+    protected boolean isZip() {
+        return ZIP.equalsIgnoreCase(request.getParameter(COMPRESS));
+    }
+
+    protected boolean isUncompressed() {
+        return StringUtils.isEmpty(request.getParameter(COMPRESS));
+    }
+
+    protected String getExtension() {
+        if (isGzip()) {
+            return ".gz";
+        } else if (isZip()) {
+            return ".zip";
+        } else {
+            return "";
+        }
+    }
+
     private void initOutput(HttpServletResponse response) {
         PrintWriter out;
+        OutputStream os;
         try {
             // set reasonable buffer size
             response.setBufferSize(8 * 1024);
-            out = response.getWriter();
+            os = response.getOutputStream();
+            if (isGzip()) {
+                os = new GZIPOutputStream(os);
+            } else if (isZip()) {
+                os = new ZipOutputStream(new BufferedOutputStream(os));
+            }
+            out = new PrintWriter(os);
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
         int format = getFormat();
+        String filename = getDefaultFileName();
         switch (format) {
             case XML_FORMAT:
                 output = makeXMLOutput(out);
                 break;
             case TSV_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
-                ResponseUtil.setTabHeader(response, "result.tsv");
+                filename = "result.tsv";
+                if (isUncompressed()) {
+                    ResponseUtil.setTabHeader(response, filename);
+                }
                 break;
             case CSV_FORMAT:
                 output = new StreamedOutput(out, new CSVFormatter());
-                ResponseUtil.setCSVHeader(response, "result.csv");
+                filename = "result.csv";
+                if (isUncompressed()) {
+                    ResponseUtil.setCSVHeader(response, filename);
+                }
                 break;
             case COUNT_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
-                ResponseUtil.setPlainTextHeader(response, "resultcount.txt");
+                filename = "resultcount.txt";
+                if (isUncompressed()) {
+                    ResponseUtil.setPlainTextHeader(response, filename);
+                }
                 break;
             case JSON_FORMAT:
                 output = new StreamedOutput(out, new JSONFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_FORMAT:
                 output = new StreamedOutput(out, new JSONFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "result.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_OBJ_FORMAT:
                 output = new StreamedOutput(out, new JSONObjectFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_OBJ_FORMAT:
                 output = new StreamedOutput(out, new JSONObjectFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "result.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_TABLE_FORMAT:
                 output = new StreamedOutput(out, new JSONTableFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_TABLE_FORMAT:
                 output = new StreamedOutput(out, new JSONTableFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "resulttable.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_ROW_FORMAT:
                 output = new StreamedOutput(out, new JSONRowFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                ResponseUtil.setJSONHeader(response,
+                        "result.json" + getExtension());
                 break;
             case JSONP_ROW_FORMAT:
                 output = new StreamedOutput(out, new JSONRowFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                ResponseUtil.setJSONPHeader(response,
+                        "result.json" + getExtension());
                 break;
             case JSON_COUNT_FORMAT:
                 output = new StreamedOutput(out, new JSONCountFormatter());
-                ResponseUtil.setJSONHeader(response, "resultcount.json");
+                filename = "resultcount.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_COUNT_FORMAT:
                 output = new StreamedOutput(out, new JSONCountFormatter());
-                ResponseUtil.setJSONPHeader(response, "resultcount.json");
+                filename = "resultcount.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case HTML_FORMAT:
                 output = new HTMLOutput(out);
-                ResponseUtil.setHTMLContentType(response);
+                filename = "results.html";
+                if (isUncompressed()) {
+                    ResponseUtil.setHTMLContentType(response);
+                }
                 break;
             default:
-                throw new BadRequestException("Invalid format.");
+                output = getDefaultOutput(out, os);
         }
+        if (!isUncompressed()) {
+            filename += getExtension();
+            ResponseUtil.setGzippedHeader(response, filename);
+            if (isZip()) {
+                try {
+                    ((ZipOutputStream) os).putNextEntry(new ZipEntry(filename));
+                } catch (IOException e) {
+                    throw new InternalErrorException(e);
+                }
+            }
+        }
+    }
+
+    protected String getDefaultFileName() {
+        return "result.tsv";
+    }
+
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+        output = new StreamedOutput(out, new TabFormatter());
+        ResponseUtil.setTabHeader(response, getDefaultFileName());
+        return output;
     }
 
     /**
@@ -487,7 +589,7 @@ public abstract class WebService
     }
 
     protected int getDefaultFormat() {
-        return TSV_FORMAT;
+        return EMPTY_FORMAT;
     }
 
     /**
@@ -512,6 +614,10 @@ public abstract class WebService
         if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
                 .equalsIgnoreCase(format)) {
             return HTML_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_TAB
+                .equalsIgnoreCase(format)) {
+            return TSV_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
                 .equalsIgnoreCase(format)) {
@@ -561,7 +667,7 @@ public abstract class WebService
                 .equalsIgnoreCase(format)) {
             return JSON_COUNT_FORMAT;
         }
-        return TSV_FORMAT;
+        return UNKNOWN_FORMAT;
     }
 
     /**
