@@ -25,7 +25,7 @@ public interface Exporter
     /** Windows line separator  CR+LF **/
     String WINDOWS_SEPARATOR = "\r\n";
 
-    /** Windows line separator  only LF **/
+    /** Unix line separator  only LF **/
     String UNIX_SEPARATOR = "\n";
 
     /**
