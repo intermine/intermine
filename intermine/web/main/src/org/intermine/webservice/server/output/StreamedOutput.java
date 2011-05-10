@@ -86,6 +86,7 @@ public class StreamedOutput extends Output
         ensureHeaderIsPrinted();
         writer.print(formatter.formatFooter(getError(), getCode()));
         writer.flush();
+        writer.close();
     }
 
     /**
