@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2009 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,28 +12,34 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
 
 /**
- *
- * @author
+ * Read RGD RAT_GENES identifiers file to create canonical rat genes with correct identifiers.
+ * @author Richard Smith
  */
 public class RgdIdentifiersConverter extends BioFileConverter
 {
     //
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private static final String DATASET_TITLE = "RGD gene identifiers";
+    private static final String DATA_SOURCE_NAME = "Rat Genome Database";
 
     private static final String RAT_TAXON = "10116";
+
+    protected static final Logger LOG = Logger.getLogger(RgdIdentifiersConverter.class);
 
     /**
      * Constructor
@@ -50,14 +56,24 @@ public class RgdIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+
+        Set<String> seenEnsembls = new HashSet<String>();
+        Set<String> duplicateEnsembls = new HashSet<String>();
+        Map<String, Integer> storedGeneIds = new HashMap<String, Integer>();
+        Map<String, String> geneEnsemblIds = new HashMap<String, String>();
+
         // Read all lines into id pairs, track any ensembl ids or symbols that appear twice
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // remove header line
         // check symbol and ncbiGeneNumber unique
-        
+
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+
+            if (line[0].startsWith("GENE_RGD_ID")) {
+                continue;
+            }
             String rgdId = line[0];
             String symbol = line[1];
             String name = line[2];
@@ -69,6 +85,25 @@ public class RgdIdentifiersConverter extends BioFileConverter
             gene.setReference("organism", getOrganism(RAT_TAXON));
             gene.setAttribute("secondaryIdentifier", rgdId);
             gene.setAttribute("symbol", symbol);
+
+            Set<String> ensemblIds = parseEnsemblIds(ensembl);
+            for (String ensemblId : ensemblIds) {
+                if (seenEnsembls.contains(ensemblId)) {
+                    duplicateEnsembls.add(ensemblId);
+                } else {
+                    seenEnsembls.add(ensemblId);
+                }
+            }
+            // if there was exactly one ensemblId we may be able to set primaryIdentifier
+            if (ensemblIds.size() == 1) {
+                geneEnsemblIds.put(gene.getIdentifier(), ensemblIds.iterator().next());
+            } else {
+                // if more than one we have to create synonyms
+                for (String ensemblId : ensemblIds) {
+                    createSynonym(gene.getIdentifier(), ensemblId, true);
+                }
+            }
+
             if (!StringUtils.isBlank(name)) {
                 gene.setAttribute("name", name);
             }
@@ -78,19 +113,24 @@ public class RgdIdentifiersConverter extends BioFileConverter
             if (!StringUtils.isBlank(entrez)) {
                 gene.setAttribute("ncbiGeneNumber", entrez);
             }
-            
-            Set<String> ensembls = parseEnsemblIds(ensembl);
-            if (ensembls.size() == 1) {
-                gene.setAttribute("primaryIdentifier", ensembl);
-            } else {
-                for (String ensemblId : ensembls) {
-                    createSynonym(gene.getIdentifier(), ensemblId, true);
-                }
+
+            Integer storedGeneId = store(gene);
+            storedGeneIds.put(gene.getIdentifier(), storedGeneId);
+        }
+
+        LOG.info("ENSEMBL: duplicateEnsemblIds.size() = " + duplicateEnsembls.size());
+        LOG.info("ENSEMBL: duplicateEnsemblIds = " + duplicateEnsembls);
+        // now check that we only saw each ensembl id once
+        for (Map.Entry<String, String> entry : geneEnsemblIds.entrySet()) {
+            String geneIdentifier = entry.getKey();
+            String ensemblId = entry.getValue();
+            if (!duplicateEnsembls.contains(ensemblId)) {
+                Attribute att = new Attribute("primaryIdentifier", ensemblId);
+                store(att, storedGeneIds.get(geneIdentifier));
             }
-            store(gene);
         }
     }
-    
+
     private Set<String> parseEnsemblIds(String fromFile) {
         Set<String> ensembls = new HashSet<String>();
         if (!StringUtils.isBlank(fromFile)) {
