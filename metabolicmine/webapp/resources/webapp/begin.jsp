@@ -369,6 +369,11 @@
                         <option value="Protein">Protein</option>
                         <option value="SNP">SNP</option>
                       </select>
+                      <select name="extraFieldValue">
+                        <option value="H. sapiens">H. sapiens</option>
+                        <option value="M. musculus">M. musculus</option>
+                        <option value="R. norvegicus">R. norvegicus</option>
+                      </select>
                       <div class="textarea">
                         <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                       </div>
