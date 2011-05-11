@@ -6,7 +6,7 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="chado-db-flybase-dmel" type="chado-db" >
+    <source name="chado-db-flybase-dmel" type="chado-db"  dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -23,7 +23,7 @@
         <property name="processors" value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="chado-db-flybase-others" type="chado-db" dump="true">
+    <source name="chado-db-flybase-others" type="chado-db" >
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dsim Dvir Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
