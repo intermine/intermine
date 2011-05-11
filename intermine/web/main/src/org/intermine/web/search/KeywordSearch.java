@@ -1308,13 +1308,9 @@ public final class KeywordSearch
 
     /**
      * perform a keyword search using bobo-browse for faceting and pagination
-     * @param searchString
-     *            string to search for
-     * @param offset
-     *            display offset
-     * @param facetValues
-     *            map of 'facet field name' to 'value to restrict field to'
-     *            (optional)
+     * @param searchString string to search for
+     * @param offset display offset
+     * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
      * @param ids ids to research the search to (for search in list)
      * @return bobo browse result or null if failed
      */
@@ -1325,15 +1321,11 @@ public final class KeywordSearch
             return result;
         }
         long time = System.currentTimeMillis();
-
         String queryString = parseQueryString(searchString);
 
         try {
-            Analyzer analyzer =
-                    new SnowballAnalyzer(Version.LUCENE_30, "English",
-                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-
-            org.apache.lucene.search.Query query;
+            Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
             // pass entire list of field names to the multi-field parser
             // => search through all fields
@@ -1343,7 +1335,8 @@ public final class KeywordSearch
             QueryParser queryParser =
                     new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer);
             queryParser.setDefaultOperator(Operator.AND);
-            query = queryParser.parse(queryString);
+            queryParser.setAllowLeadingWildcard(true);
+            org.apache.lucene.search.Query query = queryParser.parse(queryString);
 
             // required to expand search terms
             query = query.rewrite(reader);
@@ -1425,7 +1418,9 @@ public final class KeywordSearch
 
     private static String parseQueryString(String qs) {
         String queryString = qs;
+        // keep strings separated by spaces together
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
+        // replace single quotes with double.  maybe.
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
         return queryString;
     }
