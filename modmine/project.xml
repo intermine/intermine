@@ -114,7 +114,7 @@
     </source>
     <source name="psi-intact" type="psi">
         <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-        <property name="intact.organisms" value="7227 6239 7237 7230 46245 7240 7244 7245"/>
+        <property name="intact.organisms" value="7227 6239 7230 46245 7240 7244 7245"/>
     </source>
     <source name="biogrid" type="biogrid">
         <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
