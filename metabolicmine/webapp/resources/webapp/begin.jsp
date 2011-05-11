@@ -369,6 +369,11 @@
                         <option value="Protein">Protein</option>
                         <option value="SNP">SNP</option>
                       </select>
+                      <select name="extraFieldValue">
+                        <option value="H. sapiens">H. sapiens</option>
+                        <option value="M. musculus">M. musculus</option>
+                        <option value="R. norvegicus">R. norvegicus</option>
+                      </select>
                       <div class="textarea">
                         <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                       </div>
@@ -436,7 +441,7 @@
                               <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
                             </c:when>
                             <c:when test="${row.key == 'name'}">
-                              <p>Search for <c:out value="${fn:toLowerCase(row.value)}" />:</p>
+                              <p>Search for <c:out value="${row.value}" />:</p>
                             </c:when>
                             <c:when test="${row.key == 'templates'}">
                               <table>

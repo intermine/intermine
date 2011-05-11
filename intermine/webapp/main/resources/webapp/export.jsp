@@ -17,15 +17,6 @@
 </html:link>
 <br/>
 
-<c:if test="${pagedTable.estimatedSize <= WEB_PROPERTIES['max.excel.export.size']}">
-  <html:link action="/exportOptions?table=${tableName}&amp;type=excel&amp;trail=${queryTrailLink}|${tableName}">
-    <fmt:message key="exporter.excel.description">
-      <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
-    </fmt:message>
-  </html:link>
-  <br/>
-</c:if>
-
     <html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
       <fmt:message key="exporter.galaxy.description"/>
     </html:link>

@@ -42,6 +42,26 @@
                         <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
                       </c:forEach>
                     </select>
+
+            <c:if test="${!empty WEB_PROPERTIES['begin.listUpload.values']}">
+            <tr>
+                <td align="right" class="label">
+                       <label>
+                         <fmt:message key="bagBuild.extraConstraint">
+                               <fmt:param value="${extraBagQueryClass}"/>
+                         </fmt:message>
+                       </label>
+                   </td>
+                   <td>
+                     <select name="extraFieldValue">
+                      <c:forEach var="value" items="${WEB_PROPERTIES['begin.listUpload.values']}">
+                        <option value="<c:out value="${value}" />"><c:out value="${value}" /></option>
+                      </c:forEach>
+                    </select>
+                 </td>
+            </tr>
+        </c:if>
+
                     <div class="textarea">
                       <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                     </div>

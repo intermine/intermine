@@ -42,7 +42,7 @@ public class EnsemblComparaConverter extends BioFileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private Set<String> taxonIds;
-    private Set<String> homologues;
+    private Set<String> homologues = new HashSet<String>();
     private static final String DATASET_TITLE = "Ensembl Compara data set";
     private static final String DATA_SOURCE_NAME = "Ensembl";
     private Map<String, String> genes = new HashMap<String, String>();
@@ -115,7 +115,7 @@ public class EnsemblComparaConverter extends BioFileConverter
         for (String bit : bits) {
             if (taxonIds.contains(bit)) {
                 processFile = true;
-            } else if (!homologues.contains(bit)) {
+            } else if (!homologues.isEmpty() && !homologues.contains(bit)) {
                 // this file contains an organism not listed in the project XML file
                 return;
             }
@@ -128,12 +128,21 @@ public class EnsemblComparaConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            if (line.length != 3 && StringUtils.isNotEmpty(line.toString())) {
-                throw new RuntimeException("Invalid line, should be 3 columns but is '"
+            if (line.length < 2 && StringUtils.isNotEmpty(line.toString())) {
+                throw new RuntimeException("Invalid line, should be 2 columns but is '"
                         + line.length + "' instead");
             }
-            String refId1 = parseGene(bits[0], line[0]);
-            String refId2 = parseGene(bits[1], line[1]);
+
+            String gene1 = line[0];
+            String gene2 = line[1];
+
+            if (gene1.startsWith("Ensembl")) {
+                // skip header that biomart starts with
+                continue;
+            }
+
+            String refId1 = parseGene(bits[0], gene1);
+            String refId2 = parseGene(bits[1], gene2);
 
             if (refId1 == null || refId2 == null) {
                 continue;

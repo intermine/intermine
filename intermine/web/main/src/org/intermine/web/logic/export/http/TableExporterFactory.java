@@ -26,7 +26,6 @@ public class TableExporterFactory
 {
     private static final String TAB = "tab";
     private static final String CSV = "csv";
-    private static final String EXCEL = "excel";
     private static Map<String, String> exporters = new HashMap<String, String>();
     private Map<String, TableExportConfig> configs = new HashMap<String, TableExportConfig>();
 
@@ -38,7 +37,6 @@ public class TableExporterFactory
         try {
             register(TAB, TabHttpExporter.class.getCanonicalName());
             register(CSV, CSVHttpExporter.class.getCanonicalName());
-            register(EXCEL, ExcelHttpExporter.class.getCanonicalName());
             processConfig(webConfig);
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);

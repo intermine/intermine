@@ -44,7 +44,7 @@ public class GeneMicroArrayDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         try {
-            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
             Gene gene = (Gene) request.getAttribute("object");
             Results results =

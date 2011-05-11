@@ -202,8 +202,8 @@ sub results : Test(4) {
     $service->mock(
 	get_results_iterator => sub {
 	    return $test->{iterator};
-	},
-    );
+	});
+
     is(
 	$obj->results(as => 'string'),
 	"string\nstring\nstring",

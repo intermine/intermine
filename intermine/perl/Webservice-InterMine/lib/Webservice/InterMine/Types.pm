@@ -77,7 +77,7 @@ use MooseX::Types -declare => [
 
         Service
         ServiceVersion
-        ServiceRootUri ServiceRoot NotServiceRoot
+        ServiceRootUri ServiceRoot NotServiceRoot SlashedPath
 
         Query QueryType QueryName QueryHandler IllegalQueryName ListableQuery
 
@@ -87,6 +87,8 @@ use MooseX::Types -declare => [
 
         ListFactory List ListName
         ListOfLists ListOfListableQueries
+
+        ListOperable ListOfListOperables 
 
         RowParser
         RowFormat
@@ -225,7 +227,8 @@ subtype ServiceVersion, as Int, where {$_ > 0},
 subtype ServiceRootUri, as Uri, where {$_->path =~ m|/service$| && $_->scheme},
     message { "Uri does not look like a service url: got $_" };
 subtype ServiceRoot, as Str, where {m|^https?://.*/service$|};
-subtype NotServiceRoot, as Str, where {! m|^http.*/service$|};
+subtype SlashedPath, as Str, where {m|/|};
+subtype NotServiceRoot, as Str;
 
 coerce ServiceRootUri, from Uri, via {
     if ($_->path !~ m|/service$|) {
@@ -239,10 +242,14 @@ coerce ServiceRootUri, from Uri, via {
 coerce ServiceRootUri, from ServiceRoot, via {
     URI->new($_);
 };
-coerce ServiceRootUri, from NotServiceRoot, via {
+coerce ServiceRootUri, from SlashedPath, via {
     my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
     my $suffix = (m|/service$|) ? '' : '/service';
     URI->new($prefix . $_ . $suffix);
+};
+coerce ServiceRootUri, from NotServiceRoot, via {
+    require Webservice::InterMine::ServiceResolver;
+    return URI->new(Webservice::InterMine::ServiceResolver->new->resolve($_));
 };
 
 # QUERIES
@@ -282,6 +289,9 @@ class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
 subtype ListName, as Str;
 subtype ListOfLists, as ArrayRef[List];
+
+subtype ListOperable, as List|ListableQuery;
+subtype ListOfListOperables, as ArrayRef[ListOperable];
 
 coerce ListFactory, from HashRef, via {
     require Webservice::InterMine::ListFactory;

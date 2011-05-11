@@ -1,5 +1,6 @@
 package Webservice::InterMine::ResultIterator;
 
+use strict;
 use Moose;
 
 use InterMine::Model::Types qw(PathList);
@@ -7,9 +8,7 @@ use Webservice::InterMine::Types qw(Uri HTTPCode NetHTTP RowFormat JsonFormat Re
 use MooseX::Types::Moose qw(Str HashRef Bool Num GlobRef Maybe);
 
 use HTTP::Status qw(status_message);
-use List::MoreUtils qw(zip);
 use Encode;
-use Perl6::Junction qw(any);
 use overload (
     '<>' => 'next',
     fallback => 1,
@@ -17,14 +16,13 @@ use overload (
 
 my $CRLF = qr{\015?\012};
 
-my @JSON_FORMATS = (qw/jsonobjects jsonrows/);
-my @SIMPLE_FORMATS = (qw/ tsv tab csv count /);
-
 sub BUILD {
     my $self = shift;
     unless ($self->has_content) {
+        warn "CONNECTING" if $ENV{DEBUG};
         $self->connect();
     }
+    warn "SETTING HEADERS" if $ENV{DEBUG};
     $self->set_headers();
 }
 
@@ -77,45 +75,6 @@ has parameters => (
     default => sub { {} },
 );
 
-=item * row_format: ro, Str
-
-The format each row should be returned in. 
-
-=cut
-
-has row_format => (
-    is => 'ro',
-    isa => RowFormat,
-    required => 1,
-    coerce => 1,
-);
-
-=item * json_format: ro, Str
-
-How JSON results should be handled (when the row format is 
-jsonrows or jsonobjects).
-
-=cut
-
-has json_format => (
-    is => 'ro',
-    isa => JsonFormat,
-    default => 'perl',
-    coerce => 1,
-);
-
-=item * view_list: ro, PathList
-
-The list of paths in the view for the query that to be run.
-
-=cut
-
-has view_list => (
-    is       => 'ro',
-    isa      => PathList,
-    required => 1,
-);
-
 =item * authorization: ro, Str
 
 A base 64 encoded string to use as the authorization header for 
@@ -127,6 +86,40 @@ has authorization => (
     is => 'ro',
     isa => Maybe[Str],
 );
+
+=item * request_format: ro, RequestFormat
+
+The format that will be actually requested from the server.
+
+=cut
+
+has request_format => (
+    is => 'ro',
+    isa => RequestFormat,
+    required => 1,
+    coerce => 1,
+);
+
+=item * row_parser: ro, Webservice::InterMine::Parser
+
+The parser to return a formatted row of data.
+
+=cut
+
+has row_parser => (
+    is => 'ro',
+    isa => RowParser,
+    required => 1,
+);
+
+=back
+
+=head1 ATTRIBUTES
+
+Other properties of the object. These attributes are derived from the 
+original construction arguments.
+
+=over 4
 
 =item * user_agent: ro, Str,
 
@@ -146,72 +139,6 @@ sub _build_user_agent {
     return "Webservice::InterMine-" . $Webservice::InterMine::VERSION;
 }
 
-=back
-
-=head1 ATTRIBUTES
-
-Other properties of the object. These attributes are derived from the 
-original construction arguments.
-
-=over 4
-
-=item * request_format: ro, RequestFormat
-
-The format that will be actually requested from the server.
-
-=cut
-
-has request_format => (
-    is => 'ro',
-    isa => RequestFormat,
-    lazy_build => 1,
-    coerce => 1,
-);
-
-sub _build_request_format {
-    my $self = shift;
-    my $row_format = $self->row_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS, @JSON_FORMATS)) {
-        return $row_format;
-    } else {
-        return "jsonrows";
-    }
-}
-
-=item * row_parser: ro, Webservice::InterMine::Parser
-
-The parser to return a formatted row of data.
-
-=cut
-
-has row_parser => (
-    is => 'ro',
-    isa => RowParser,
-    lazy_build => 1,
-);
-
-sub _build_row_parser {
-    my $self        = shift;
-    my $row_format  = $self->row_format;
-    my $view        = $self->view_list;
-    my $json_format = $self->json_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS)) {
-        require Webservice::InterMine::Parser::FlatFile;
-        return Webservice::InterMine::Parser::FlatFile->new();
-    } elsif ($row_format eq "arrayrefs") {
-        require Webservice::InterMine::Parser::JSON::ArrayRefs;
-        return Webservice::InterMine::Parser::JSON::ArrayRefs->new();
-    } elsif ($row_format eq "hashrefs") {
-        require Webservice::InterMine::Parser::JSON::HashRefs;
-        return Webservice::InterMine::Parser::JSON::HashRefs->new(view => $view);
-    } elsif ($row_format eq any(@JSON_FORMATS)) {
-        require Webservice::InterMine::Parser::JSON;
-        return Webservice::InterMine::Parser::JSON->new(
-            json_format => $json_format, model => $self->model);
-    } else {
-        confess "Unknown row format", $row_format;
-    }
-}
 
 =item * connection: ro, Net::HTTP
 
@@ -292,7 +219,28 @@ has headers => (
         my $te   = $self->get_header('Transfer-Encoding');
         $self->_is_chunked(1)
           if ( $te and $te eq 'chunked' );
+        my $ct = $self->get_content_type;
+        $self->_is_binary(1)
+            if ($ct =~ /octet-stream/);
     },
+);
+
+sub get_content_type {
+    my $self = shift;
+    return $self->get_header('Content-Type');
+}
+
+=item * content_is_binary: ro, Bool
+
+Whether or not the content should be treated as binary data,
+for example if it is gzipped.
+
+=cut
+
+has content_is_binary => (
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_is_binary',
 );
 
 =item * is_chunked: ro, Bool
@@ -356,10 +304,24 @@ sub set_headers {
             chomp( ( $key, $value ) = split( /:\s*/, $line, 2 ) );
         }
         $headers{$key} = $value if $key;
+        warn "HEADER $key = $value" if $ENV{DEBUG};
         $self->_set_error_code($code)      if $code;
         $self->_set_error_message($phrase) if $phrase;
     }
     $self->_set_headers( \%headers );
+    if (HTTP::Status::is_error( $self->error_code )) {
+        warn "GETTING REAL ERROR MESSAGE" if $ENV{DEBUG};
+        $self->_find_real_error_message();
+    }
+    warn "FINISHED SETTING HEADERS" if $ENV{DEBUG};
+}
+
+sub _find_real_error_message {
+    my $self = shift;
+    eval {$self->get_all};
+    if (my $e = $@) {
+        $self->_set_error_message($e);
+    }
 }
 
 =back
@@ -451,6 +413,7 @@ in the correct encoding, with the new line characters stripped.
 =cut
 
 sub read_line {
+    warn "READING LINE" if $ENV{DEBUG};
     my $self = shift;
     my $line;
     if ( $self->has_content ) {
@@ -481,7 +444,8 @@ sub read_line {
                 $self->subtract_from_current_chunk( length($line) );
                 if ( $self->chunk_bytes_left < 0 )
                 {    # run on line, usually records a value of -2
-                    $line =~ s/$CRLF//;
+                    $line = trim_and_decode($line) 
+                        unless $self->content_is_binary;
                     my $next_line = $self->read_line;
                     $line .= $next_line if $next_line;
                 }
@@ -490,11 +454,18 @@ sub read_line {
     }
 
     if ( defined $line ) {
-        $line = encode_utf8($line);
-        $line =~ s/$CRLF//;
+        $line = trim_and_decode($line) unless $self->content_is_binary;
     }
+    warn "RETURNING LINE: $line\n" if $ENV{DEBUG};
 
     return $line;
+}
+
+sub trim_and_decode {
+    my $string = shift;
+    $string = decode_utf8($string);
+    $string =~ s/$CRLF//;
+    return $string;
 }
 
 =head2 connect
@@ -517,6 +488,7 @@ sub connect {
     if (my $auth = $self->authorization) {
         $headers{Authorization} = $auth;
     }
+    warn "GETTING $uri" if $ENV{DEBUG};
     $connection->write_request(GET => "$uri", %headers);
     $self->set_connection($connection);
 }

@@ -294,6 +294,20 @@
     <url-pattern>/service/version/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-check-resource</servlet-name>
+    <servlet-class>org.intermine.webservice.server.AvailableServicesServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-check-resource</servlet-name>
+    <url-pattern>/service/check/*</url-pattern>
+  </servlet-mapping>
+
 <!-- ================================================================================= -->
 
   <session-config>
@@ -343,4 +357,6 @@
     <error-code>404</error-code>
     <location>/pagenotfound.do</location>
   </error-page>
+
+  <!--@MODEL_INCLUDE@-->
 </web-app>

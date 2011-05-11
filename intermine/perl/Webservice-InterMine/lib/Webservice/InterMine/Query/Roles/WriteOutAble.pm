@@ -130,6 +130,7 @@ an error with be thrown.
 sub to_xml {
     my $self = shift;
     if ($self->needs_writing) {
+        $self->validate;
         $self->cache_xml($self->to_DOM->toString);
         $self->mark_written;
     }

@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +41,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private final Map<String, Set<String>> pendingSnpConsequences =
         new HashMap<String, Set<String>>();
     private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
+    private final Map<String, String> storedSnpItemIdentifiers = new HashMap<String, String>();
     private String dbSnpSourceId;
 
     // TODO move this to a parser argument
@@ -64,7 +64,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     public EnsemblSnpDbConverter(Database database, Model model, ItemWriter writer) {
         super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
     }
-
 
     /**
      * {@inheritDoc}
@@ -118,68 +117,40 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Item currentSnp = null;
         Set<String> seenLocsForSnp = new HashSet<String>();
         String previousRsNumber = null;
+        Boolean previousUniqueLocation = true;
         Set<String> consequenceIdentifiers = new HashSet<String>();
-        boolean storeSnp = true;
+        boolean storeSnp = false;
+        String currentSnpIdentifier = null;
         Set<String> snpSynonyms = new HashSet<String>();
-
+        
+        
         while (res.next()) {
             counter++;
             String rsNumber = res.getString("variation_name");
-
-            // we're on the same SNP but maybe a new location
-            if (rsNumber.equals(previousRsNumber)) {
-                int start = res.getInt("seq_region_start");
-                int end = res.getInt("seq_region_end");
-                int strand = res.getInt("seq_region_strand");
-
-                int chrStart = Math.min(start, end);
-                int chrEnd = Math.max(start, end);
-
-                if (currentSnp == null) {
-                    LOG.error("currentSNP is null.  vf.variation_feature_id: "
-                            + res.getString("variation_feature_id") + " rsNumber: " + rsNumber
-                            + " previousRsNumber: " + previousRsNumber + " storeSnp: " + storeSnp);
-                }
-
-                String chrLocStr = chrName + ":" + chrStart;
-                if (!seenLocsForSnp.contains(chrLocStr)) {
-                    seenLocsForSnp.add(chrLocStr);
-
-                    // if this location is on a chromosome we want, store it
-                    Item loc = createItem("Location");
-                    loc.setAttribute("start", "" + chrStart);
-                    loc.setAttribute("end", "" + chrEnd);
-                    loc.setAttribute("strand", "" + strand);
-                    loc.setReference("feature", currentSnp);
-                    loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                    store(loc);
-                }
-            }
-            if (!rsNumber.equals(previousRsNumber)) {
+            boolean newSnp = rsNumber.equals(previousRsNumber) ? false : true;
+            
+            if (newSnp) {
                 // starting a new SNP, store the previous one
 
-                if (currentSnp != null) {
-                    Boolean uniqueLocation =
-                        Boolean.parseBoolean(currentSnp.getAttribute("uniqueLocation").getValue());
+                Integer storedSnpId = storedSnpIds.get(previousRsNumber);
 
-                    if (storeSnp) {
-                        snpCounter++;
-                        if (uniqueLocation) {
-                            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
-                        } else {
-                            Integer storedSnpId = storeSnp(currentSnp, Collections.EMPTY_SET,
-                                    snpSynonyms);
-                            storedSnpIds.put(previousRsNumber, storedSnpId);
-                        }
+                if (storeSnp && storedSnpId == null) {
+                    storedSnpId = storeSnp(currentSnp, snpSynonyms);
+                    snpCounter++;
+                }
+                
+                if (previousUniqueLocation) {
+                    storeSnpCollections(storedSnpId, consequenceIdentifiers);
+                } else {
+                    Set<String> snpConsequences = pendingSnpConsequences.get(previousRsNumber);
+                    if (snpConsequences == null) {
+                        snpConsequences = new HashSet<String>();
+                        pendingSnpConsequences.put(previousRsNumber, snpConsequences);
                     }
-
-                    if (!uniqueLocation) {
-                        Set<String> snpConsequences = pendingSnpConsequences.get(previousRsNumber);
-                        if (snpConsequences == null) {
-                            snpConsequences = new HashSet<String>();
-                            pendingSnpConsequences.put(previousRsNumber, snpConsequences);
-                        }
-                        snpConsequences.addAll(consequenceIdentifiers);
+                    snpConsequences.addAll(consequenceIdentifiers);
+                    if (!storedSnpIds.containsKey(previousRsNumber)) {
+                        storedSnpIds.put(previousRsNumber, storedSnpId);
+                        storedSnpItemIdentifiers.put(previousRsNumber, currentSnp.getIdentifier());
                     }
                 }
 
@@ -194,11 +165,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 // are sometimes fewer locations than the map_weight indicates
                 int mapWeight = res.getInt("map_weight");
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
-
+                previousUniqueLocation = uniqueLocation;
+                
                 // if not a unique location and we've seen the SNP before, don't store
                 if (!uniqueLocation && pendingSnpConsequences.containsKey(rsNumber)) {
                     LOG.info("Not storing SNP second time: " + rsNumber);
                     storeSnp = false;
+                    currentSnpIdentifier = storedSnpItemIdentifiers.get(rsNumber);
                 }
 
                 if (!uniqueLocation) {
@@ -211,6 +184,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     currentSnp.setReference("organism", getOrganismItem(taxonId));
                     currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
+                    currentSnpIdentifier = currentSnp.getIdentifier();
+                    
                     String alleles = res.getString("allele_string");
                     currentSnp.setAttribute("alleles", alleles);
 
@@ -234,7 +209,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     loc.setAttribute("end", "" + chrEnd);
                     loc.setAttribute("strand", "" + chrStrand);
                     loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                    loc.setReference("feature", currentSnp);
+                    loc.setReference("feature", currentSnpIdentifier);
                     store(loc);
 
                     // if mapWeight is 1 there is only one chromosome location, so set shortcuts
@@ -256,6 +231,40 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     }
                 }
             }
+
+            int mapWeight = res.getInt("map_weight");
+            boolean uniqueLocation = (mapWeight == 1) ? true : false;
+            
+            // we're on the same SNP but maybe a new location
+            
+            int start = res.getInt("seq_region_start");
+            int end = res.getInt("seq_region_end");
+            int strand = res.getInt("seq_region_strand");
+            
+            int chrStart = Math.min(start, end);
+            int chrEnd = Math.max(start, end);
+            
+            if (currentSnp == null) {
+                LOG.error("currentSNP is null.  vf.variation_feature_id: "
+                        + res.getString("variation_feature_id") + " rsNumber: " + rsNumber
+                        + " previousRsNumber: " + previousRsNumber + " storeSnp: " + storeSnp);
+            }
+            
+            String chrLocStr = chrName + ":" + chrStart;
+            if (!seenLocsForSnp.contains(chrLocStr)) {
+                seenLocsForSnp.add(chrLocStr);
+                
+                // if this location is on a chromosome we want, store it
+                Item loc = createItem("Location");
+                loc.setAttribute("start", "" + chrStart);
+                loc.setAttribute("end", "" + chrEnd);
+                loc.setAttribute("strand", "" + strand);
+                loc.setReference("feature", currentSnpIdentifier);
+                loc.setReference("locatedOn", getChromosome(chrName, taxonId));
+                store(loc);
+            }
+            
+
             // CONSEQUENCE TYPES
             // for SNPs without a uniqueLocation there will be different consequences at each one.
             // some consequences will need to stored a the end
@@ -284,7 +293,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
 
             // SYNONYMS
-            // we may see the same synonym on multiple row but Set will make them unique
+            // we may see the same synonym on multiple row but the Set will make them unique
             String synonym = res.getString("vs.name");
             if (!StringUtils.isBlank(synonym)) {
                 snpSynonyms.add(synonym);
@@ -296,22 +305,29 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
 
         if (currentSnp != null) {
-            storeSnp(currentSnp, consequenceIdentifiers, snpSynonyms);
+            Integer storedSnpId = storeSnp(currentSnp, snpSynonyms);
+            if (!storedSnpIds.containsKey(storedSnpId)) {
+                storeSnpCollections(storedSnpId, consequenceIdentifiers);
+            }
         }
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
     }
 
-
-    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers, Set<String> synonyms)
-        throws ObjectStoreException {
-        if (!consequenceIdentifiers.isEmpty()) {
-            snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
-        }
+    private Integer storeSnp(Item snp, Set<String> synonyms) throws ObjectStoreException {
         for (String synonym : synonyms) {
             createSynonym(snp.getIdentifier(), synonym, true);
         }
         return store(snp);
+    }
+    
+    private void storeSnpCollections(Integer storedSnpId, Set<String> consequenceIdentifiers)
+        throws ObjectStoreException {
+        if (!consequenceIdentifiers.isEmpty()) {
+            ReferenceList col =
+                new ReferenceList("consequences", new ArrayList<String>(consequenceIdentifiers));
+            store(col, storedSnpId);
+        }
     }
 
     /**
@@ -454,6 +470,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " AND sr.name = '" + chrName + "'"
             + " ORDER BY vf.variation_id";
 
+        LOG.warn(query);
+        System.out.println(query);
+        
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;

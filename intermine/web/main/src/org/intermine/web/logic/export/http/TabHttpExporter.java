@@ -22,7 +22,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
 
 /**
- * Exporter that exports table with results in excel format.
+ * Exporter that exports table with results in tab format.
  * @author Jakub Kulaviak
  **/
 public class TabHttpExporter extends StandardHttpExporter
@@ -30,7 +30,9 @@ public class TabHttpExporter extends StandardHttpExporter
     /**
      * Constructor.
      */
-    public TabHttpExporter() { }
+    public TabHttpExporter() {
+        // nothing to do
+    }
 
     /**
      * {@inheritDoc}

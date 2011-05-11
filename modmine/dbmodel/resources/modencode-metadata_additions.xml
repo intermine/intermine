@@ -242,6 +242,7 @@
   <attribute name="type" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
   <attribute name="url" type="java.lang.String"/>
+  <attribute name="direction" type="java.lang.String"/>
   <reference name="submission" referenced-type="Submission" reverse-reference="resultFiles"/>
 </class>
 

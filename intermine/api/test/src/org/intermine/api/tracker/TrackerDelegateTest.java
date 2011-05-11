@@ -17,8 +17,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -46,21 +44,20 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-//import org.junit.Test;
-//import org.junit.*;
+
+import junit.framework.TestCase;
 
 public class TrackerDelegateTest extends TestCase
 {
-    static TrackerDelegate trackerDelegate;
-    static ObjectStore os;
-    static ObjectStoreWriter uosw;
-    static ProfileManager pm;
-    static Profile superUser, user;
+    TrackerDelegate trackerDelegate;
+    ObjectStore os;
+    ObjectStoreWriter uosw;
+    Profile superUser, user;
+    ProfileManager pm;
     Connection conn;
 
-/*    @BeforeClass
-    public static void init() throws Exception {
-        System.out.println("Test setUpGlobals");
+    protected void setUp() throws Exception {
+        super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
@@ -74,19 +71,10 @@ public class TrackerDelegateTest extends TestCase
                 new HashMap(), new HashMap());
         user = new Profile(pm, "user", null, "password", new HashMap(),
                 new HashMap(), new HashMap());
-    }
-    
-    @AfterClass
-    public static void cleanAll() throws ObjectStoreException {
-        trackerDelegate.close();
-        pm.close();
-    }
-
-   @Before
-   public void setUp() throws Exception {
         pm.createProfile(superUser);
         pm.createProfile(user);
         pm.setSuperuser("superuser");
+
         createTemplates();
         if (uosw instanceof ObjectStoreWriterInterMineImpl) {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getDatabase().getConnection();
@@ -114,8 +102,8 @@ public class TrackerDelegateTest extends TestCase
         user.saveTemplate("template2", template2);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
+        super.tearDown();
         superUser.deleteTemplate("template1", null);
         user.deleteTemplate("template2", null);
         removeUserProfile("superuser");
@@ -123,6 +111,9 @@ public class TrackerDelegateTest extends TestCase
         if (conn != null) {
             conn.close();
         }
+        pm.close();
+        trackerDelegate.close();
+        trackerDelegate.finalize();
     }
 
     private void removeUserProfile(String username) throws ObjectStoreException {
@@ -142,29 +133,20 @@ public class TrackerDelegateTest extends TestCase
         }
     }
 
-    @Test
     public void testTrackTemplate() throws SQLException, InterruptedException {
         trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
         trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
         trackerDelegate.trackTemplate("template1", superUser, "sessionId2");
         trackerDelegate.trackTemplate("template1", user, "sessionId3");
         trackerDelegate.trackTemplate("template2", user, "sessionId3");
-        Thread.sleep(4000);
+        Thread.sleep(3000);
         String sql = "SELECT COUNT(*) FROM templatetrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        Assert.assertEquals(5, rs.getInt(1));
+        assertEquals(5, rs.getInt(1));
         rs.close();
         stm.close();
-    }
-    
-    @Test
-    public void testGetAccessCounter() throws SQLException, InterruptedException {
-        //template1 is public, template2 not
-        Assert.assertEquals(4, trackerDelegate.getAccessCounter().get("template1").intValue());
-        Assert.assertNull(trackerDelegate.getAccessCounter().get("template2"));
-        deleteTrack(TrackerUtil.TEMPLATE_TRACKER_TABLE);
     }
 
     private void deleteTrack(String tableName) throws SQLException {
@@ -173,15 +155,19 @@ public class TrackerDelegateTest extends TestCase
         stm.executeUpdate(sql);
         stm.close();
     }
-
-    @Test
-    public void testGetRank() {
-        TemplateManager templateManager = new TemplateManager(superUser, uosw.getModel());
-        Assert.assertEquals(1, trackerDelegate.getRank(templateManager).get("template1").intValue());
-        Assert.assertNull(trackerDelegate.getRank(templateManager).get("template2"));
+    public void testGetAccessCounter() throws SQLException, InterruptedException {
+        //template1 is public, template2 not
+        assertEquals(4, trackerDelegate.getAccessCounter().get("template1").intValue());
+        assertNull(trackerDelegate.getAccessCounter().get("template2"));
+        deleteTrack(TrackerUtil.TEMPLATE_TRACKER_TABLE);
     }
 
-    @Test
+    public void testGetRank() {
+        TemplateManager templateManager = new TemplateManager(superUser, uosw.getModel());
+        assertEquals(1, trackerDelegate.getRank(templateManager).get("template1").intValue());
+        assertNull(trackerDelegate.getRank(templateManager).get("template2"));
+    }
+
     public void testTrackListCreation() throws SQLException, InterruptedException {
         trackerDelegate.trackListCreation("Address", 10, ListBuildMode.IDENTIFIERS, superUser, "sessionId1");
         trackerDelegate.trackListCreation("Address", 20, ListBuildMode.QUERY, superUser, "sessionId1");
@@ -191,12 +177,11 @@ public class TrackerDelegateTest extends TestCase
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        Assert.assertEquals(3, rs.getInt(1));
+        assertEquals(3, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
-    @Test
     public void testTrackListExecution() throws SQLException, InterruptedException {
         trackerDelegate.trackListExecution("Address", 10, superUser, "sessionId1");
         trackerDelegate.trackListExecution("Address", 10, superUser, "sessionId1");
@@ -205,57 +190,52 @@ public class TrackerDelegateTest extends TestCase
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        Assert.assertEquals(2, rs.getInt(1));
+        assertEquals(2, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
-    @Test
     public void testGetListOperations() throws SQLException {
-        Assert.assertEquals(5, trackerDelegate.getListOperations().size());
+        assertEquals(5, trackerDelegate.getListOperations().size());
         deleteTrack(TrackerUtil.LIST_TRACKER_TABLE);
     }
 
-    @Test
     public void testTrackLogin() throws SQLException, InterruptedException {
-        for (int index = 0; index < 50; index++) {
+        for (int index = 0; index < 20; index++) {
             trackerDelegate.trackLogin("user" + index);
         }
-        Thread.sleep(3000);
+        Thread.sleep(4000);
         String sql = "SELECT COUNT(*) FROM logintrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        Assert.assertEquals(50, rs.getInt(1));
+        assertEquals(20, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
-    @Test
     public void testGetUserLogin() throws SQLException{
-        Assert.assertEquals(50, trackerDelegate.getUserLogin().size());
+        assertEquals(20, trackerDelegate.getUserLogin().size());
         deleteTrack(TrackerUtil.LOGIN_TRACKER_TABLE);
     }
 
-    @Test
     public void testTrackKeywordSearch() throws SQLException, InterruptedException {
-        for (int index = 0; index < 50; index++) {
+        for (int index = 0; index < 20; index++) {
             trackerDelegate.trackKeywordSearch("keyword" + index, superUser, "sessionId1");
         }
-        Thread.sleep(3000);
+        Thread.sleep(4000);
         String sql = "SELECT COUNT(*) FROM searchtrack";
         Statement stm = conn.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        Assert.assertEquals(50, rs.getInt(1));
+        assertEquals(20, rs.getInt(1));
         rs.close();
         stm.close();
     }
 
-    @Test
-    public void testGetKeywordSearches() throws SQLException {
-        Assert.assertEquals(50, trackerDelegate.getKeywordSearches().size());
+    public void testGetKeywordSearches() throws SQLException{
+        assertEquals(20, trackerDelegate.getKeywordSearches().size());
         deleteTrack(TrackerUtil.SEARCH_TRACKER_TABLE);
-    }*/
+    }
 }
 

@@ -53,6 +53,8 @@ public class LoginTracker extends TrackerAbstract
             } catch (Exception e) {
                 LOG.error("Error creating the table associated to the ListTracker" + e);
             }
+        } else {
+            loginTracker.setTrackQueue(trackQueue);
         }
         return loginTracker;
     }

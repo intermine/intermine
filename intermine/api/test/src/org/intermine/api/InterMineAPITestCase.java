@@ -111,6 +111,7 @@ public class InterMineAPITestCase extends TestCase {
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
         }
+        osw.close();
     }
 
     private void clearUserprofile() throws Exception {
@@ -121,7 +122,6 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         ObjectStore uos = uosw.getObjectStore();
         SingletonResults res = uos.executeSingleton(q, 1000, false, false, false);
-
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             UserProfile userProfile = (UserProfile) resIter.next();
