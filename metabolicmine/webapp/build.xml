@@ -43,6 +43,13 @@
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
 
+    <loadfile property="model.web" srcFile="./resources/web-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/web.xml" value="${model.web}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
  <!-- merge InterMine and model internationalisation properties files --> 
  <concat destfile="${build.dir}/webapp/WEB-INF/classes/InterMineWebApp.properties" append="yes"> 
    <fileset file="resources/model.properties"/> 
