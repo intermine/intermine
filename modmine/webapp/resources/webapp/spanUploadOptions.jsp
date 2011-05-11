@@ -57,7 +57,7 @@
       if (jQuery("#orgSelector").val() == "C. elegans") {
         jQuery('#pasteInput').val("I:2145137..2146137\nchrII:3631105-3631106\nIII\t8245810\t8245811\nchrIV\t2263659\t2263660");}
       else {
-        jQuery('#pasteInput').val("2L:10345..12409");}
+        jQuery('#pasteInput').val("2L:10345..12409\n3R:1000..7000");}
       return false;
     }
 

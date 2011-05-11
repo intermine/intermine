@@ -47,7 +47,7 @@ public class ProteinAtlasConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "ProteinAtlasConverterTest.xml");
+        //writeItemsFile(itemWriter.getItems(), "protein-atlas-tgt.xml");
 
         assertEquals(readItemSet("ProteinAtlasConverterTest.xml"), itemWriter.getItems());
     }

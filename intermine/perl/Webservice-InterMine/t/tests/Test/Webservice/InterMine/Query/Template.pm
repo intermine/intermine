@@ -1,5 +1,7 @@
 package Test::Webservice::InterMine::Query::Template;
 
+use strict;
+
 use base ('Test::Webservice::InterMine::Query::Core');
 use Test::MockObject;
 use Test::MockObject::Extends;
@@ -38,7 +40,7 @@ sub exp_head {
 	comment => '',
     );
 }
-sub exp_url {'FAKEROOTFAKEPATH?constraint1=Employee.department.name&format=tab&value1=FOO&name=employeesFromCompanyAndDepartment&op1=%3D&code1=B'}
+sub exp_url {'FAKEROOTFAKEPATH'}
 
 sub args {
     my $test = shift;
@@ -86,7 +88,7 @@ sub startup {
 	},
     );
     $service->mock(
-	TEMPLATEQUERY_PATH => sub {
+	TEMPLATE_QUERY_PATH => sub {
 	    return 'FAKEPATH';
 	},
     );
@@ -184,26 +186,59 @@ sub url : Test {
 sub results : Test(4) {
     my $test = shift;
     my $obj  = $test->{object};
+    my $service = $test->{service};
+    $service->mock(
+	  get_results_iterator => sub {
+        sub MockedResIt::get_all {return shift}
+        my $self = shift;
+        my $args = [@_];
+        return bless $args, 'MockedResIt';
+	});
 
-    is(
-	$obj->results(as => 'string'),
-	"string\nstring\nstring",
-	"returns new-line joined string for string results",
+    is_deeply(
+        $obj->results(as => 'string'),
+        [
+            "FAKEROOTFAKEPATH", 
+            {
+                'constraint1' => 'Employee.department.name',
+                'value1' => 'FOO',
+                name => 'employeesFromCompanyAndDepartment',
+                op1 => '=',
+                code1 => 'B',
+            },
+            $obj->view, 'tsv', 'perl', undef
+        ],
+        "Produces appropriate arguments for string results",
     );
     is_deeply(
-	$obj->results(as => 'arrayref'),
-	['arrayref', 'arrayref', 'arrayref'],
-	"returns array ref of arrayrefs for arrayref results",
+        $obj->results(as => 'arrayref'),
+        [
+            "FAKEROOTFAKEPATH", 
+            {
+                'constraint1' => 'Employee.department.name',
+                'value1' => 'FOO',
+                name => 'employeesFromCompanyAndDepartment',
+                op1 => '=',
+                code1 => 'B',
+            },
+            $obj->view, 'arrayref', 'perl', undef
+        ],
+        "Produces appropriate arguments for other formats",
     );
     is_deeply(
-	$obj->results(as => 'hashref'),
-	['hashref', 'hashref', 'hashref'],
-	"returns array ref of hashrefs for hashref results",
-    );
-    is_deeply(
-	$obj->results(),
-	['arrayref', 'arrayref', 'arrayref'],
-	"Default as per arrayref",
+        $obj->results(),
+        [
+            "FAKEROOTFAKEPATH", 
+            {
+                'constraint1' => 'Employee.department.name',
+                'value1' => 'FOO',
+                name => 'employeesFromCompanyAndDepartment',
+                op1 => '=',
+                code1 => 'B',
+            },
+            $obj->view, 'arrayrefs', 'perl', undef
+        ],
+        "Default as per arrayref",
     );
 }
 
@@ -214,34 +249,36 @@ sub results_with : Test(14) {
     my $before  = $obj->show_constraints;
     $obj = Test::MockObject::Extends->new($obj);
     $obj->mock(
-	results => sub {
-	    return [@_];
-	},
+        results => sub {
+            return [@_];
+        },
     );
     my $results;
     lives_ok(
-	sub {$results = $obj->results_with();},
-	"Runs results_with with no args OK",
+        sub {$results = $obj->results_with();},
+        "Runs results_with with no args OK",
     ) or diag( $obj->show_constraints );
     is_xml(
-	$results->[0]->to_xml,
-	$exp_xml,
-	"The xml comes out as expected",
+        $results->[0]->to_xml,
+        $exp_xml,
+        "The xml comes out as expected",
     );
     lives_ok(
-	sub {$results = $obj->results_with(valueB => 'BAR');},
-	"Runs results_with OK with a value",
+        sub {$results = $obj->results_with(valueB => 'BAR');},
+        "Runs results_with OK with a value",
     );
     my $after = $obj->show_constraints;
     is($after, $before, "and does not change the obj's constraints");
     $exp_xml =~ s/FOO/BAR/;
     is_xml(
-	$results->[0]->to_xml,
-	$exp_xml,
-	"The xml comes out as expected",
+        $results->[0]->to_xml,
+        $exp_xml,
+        "The xml comes out as expected",
     );
     is_deeply(
-	[$results->[1], $results->[2]], ['as', undef], "the format arg is correct",
+        [$results->[1], $results->[2]], 
+        ['as', undef], 
+        "the format arg is correct",
     );
     lives_ok(
         sub {$results = $obj->results_with(opB => '=');},
@@ -288,9 +325,9 @@ sub results_with : Test(14) {
     ) or diag($exp_xml);
 
     throws_ok(
-	sub {$obj->results_with(valueA => 'foo')},
-	qr/You can only change values and operators for editable constraints/,
-	"Catches attempts to apply values to non editable constraints",
+        sub {$obj->results_with(valueA => 'foo')},
+        qr/You can only change values and operators for editable constraints/,
+        "Catches attempts to apply values to non editable constraints",
     );
 }
 

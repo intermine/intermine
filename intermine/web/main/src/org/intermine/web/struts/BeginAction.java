@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -69,6 +70,7 @@ public class BeginAction extends InterMineAction
         throws Exception {
 
         HttpSession session = request.getSession();
+        session.setAttribute("tabName", "home");
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
         Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
@@ -162,6 +164,17 @@ public class BeginAction extends InterMineAction
         }
         request.setAttribute("preferredBags", preferredBags);
 
+        // organism dropdown on list upload
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+        if (extraClassName != null) {
+            request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
+
+            List extraClassFieldValues = BagBuildController.getFieldValues(im.getObjectStore(),
+                    im.getObjectStoreSummary(), extraClassName, bagQueryConfig.getConstrainField());
+            request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+        }
+
         // cookie business
         if (!hasUserVisited(request)) {
             // set cookie
@@ -206,5 +219,4 @@ public class BeginAction extends InterMineAction
         response.addCookie(cookie);
         return response;
     }
-
 }

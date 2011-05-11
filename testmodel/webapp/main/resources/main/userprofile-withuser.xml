@@ -1,0 +1,40 @@
+<userprofile username="intermine-test-user" password="intermine-test-user-password">
+    <items>
+        <item id="1" class="Manager">
+            <attribute name="name" value="David Brent"/>
+        </item>
+        <item id="2" class="Manager">
+            <attribute name="name" value="Bernd Stromberg"/>
+        </item>
+        <item id="3" class="Manager">
+            <attribute name="name" value="Timo Becker"/>
+        </item>
+        <item id="4" class="Manager">
+            <attribute name="name" value="Neil Godwin"/>
+        </item>
+    </items>
+    <bags>
+        <bag name="My-Favourite-Employees" type="Manager">
+            <bagElement id="1"/>
+            <bagElement id="2"/>
+            <bagElement id="3"/>
+            <bagElement id="4"/>
+        </bag>
+    </bags>
+    <template-queries>
+        <template name="private-template-1" title="A private template for testing" 
+            longDescription="Find all full time basic employees for a certain company, and present them sorted by department name">
+            <query name="private-template-1" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc">
+                <constraint path="Employee.department.company.name" op="=" value="*" editable="true" code="A"/>
+                <constraint path="Employee.fullTime" op="=" value="true" editable="false" code="B"/>
+                <constraint path="Employee" op="!=" loopPath="Employee.department.manager" editable="false" code="C"/>
+            </query>
+        </template>
+        <template name="private-template-2" title="Another private template" longDescription="Display info about companies associated with a particular VAT number">
+            <query name="private-template-2" model="testmodel" view="Company.name Company.address.address Company.vatNumber">
+                <constraint path="Company.vatNumber" op="&gt;=" value="0" editable="true" code="A"/>
+                <constraint path="Company.name" op="!=" value="Diffic*" editable="false" code="B"/>
+            </query>
+        </template>
+    </template-queries>
+</userprofile>

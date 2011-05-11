@@ -19,8 +19,6 @@ import java.util.Queue;
 
 import org.intermine.api.tracker.track.LoginTrack;
 import org.intermine.api.tracker.track.Track;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -28,7 +26,6 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import junit.framework.TestCase;
 
 public class TrackerLoggerTest extends TestCase {
-    ObjectStore os;
     ObjectStoreWriter uosw;
     Connection con;
     Queue<Track> trackQueue;
@@ -36,7 +33,6 @@ public class TrackerLoggerTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         if (uosw instanceof ObjectStoreWriterInterMineImpl) {
             con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();

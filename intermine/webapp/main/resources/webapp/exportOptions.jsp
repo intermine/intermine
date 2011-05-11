@@ -54,18 +54,10 @@
   <c:otherwise>
     <html:form action="/${type}ExportAction" onsubmit="updatePathsString();">
     <fieldset>
-    <legend><c:choose>
-      <c:when test="${type == 'csv' || type == 'excel'}">
-        <fmt:message key="exporter.${type}.description">
-          <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
-        </fmt:message>
-        <fmt:message var="exportReorderMessage" key="export.reorder.columns"/>
-      </c:when>
-      <c:otherwise>
+    <legend>
         <fmt:message var="exportReorderMessage" key="export.reorder"/>
         <fmt:message key="exporter.${type}.description"/>
-      </c:otherwise>
-    </c:choose></legend>
+     </legend>
 
     <!-- exporting type: ${type} -->
     <ol>
@@ -78,9 +70,6 @@
             <li><html:radio property="format" value="tab"/><label>Tab separated values</label></li>
           </ol>
 
-        </c:when>
-        <c:when test="${type == 'excel'}">
-          <%-- no extra options --%>
         </c:when>
         <c:otherwise>
           <c:set var="tileName" value="${type}ExportOptions.tile"/>

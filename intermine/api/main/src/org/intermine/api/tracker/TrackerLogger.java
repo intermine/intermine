@@ -45,7 +45,7 @@ public class TrackerLogger implements Runnable
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ie) {
-                    
+                    return;
                 }
             }
         }

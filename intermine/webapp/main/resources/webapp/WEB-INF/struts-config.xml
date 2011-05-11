@@ -30,7 +30,6 @@
     <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
     <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
-    <form-bean name="excelExportForm" type="org.intermine.web.struts.TableExportForm"/>
     <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
@@ -166,7 +165,6 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/csvExportAction" name="csvExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
-    <action path="/excelExportAction" name="excelExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
@@ -401,6 +399,14 @@
     <action path="/initReportAspect" type="org.intermine.web.struts.ReportAspectController">
     </action>
     <action path="/initTree" type="org.intermine.web.struts.TreeController">
+    </action>
+    <action path="/initBags" type="org.intermine.web.struts.InitBagsController">
+    </action>
+    <action path="/initApi" type="org.intermine.web.struts.InitApiController">
+    </action>
+    <action path="/initCustomQuery" type="org.intermine.web.struts.InitCustomQueryController">
+    </action>
+    <action path="/initDataCategories" type="org.intermine.web.struts.InitDataCategoriesController">
     </action>
     <action path="/initExport" type="org.intermine.web.struts.ExportController">
     </action>

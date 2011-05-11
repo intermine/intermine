@@ -2,9 +2,9 @@ package Webservice::InterMine::Query::Roles::Templated;
 
 use Moose::Role;
 use URI;
-use List::MoreUtils qw/uniq/;
+use List::MoreUtils qw/uniq zip/;
 
-requires(qw/name description results _validate get_constraint/);
+requires(qw/name description results _validate get_constraint show get_count print_results/);
 
 # allows us to add this role to instances at run-time
 use Moose::Meta::Class;
@@ -15,6 +15,16 @@ has [ 'comment', 'title', ] => (
     isa     => Str,
     default => '',
 );
+
+around 'to_string' => sub {
+    my $orig = shift;
+    my $self = shift;
+    my $retval = $self->$orig();
+    if ($self->title) {
+        return $self->title . ' - ' . $retval;
+    }
+    return $retval;
+};
 
 sub type { 'template' }
 
@@ -109,20 +119,53 @@ Returns: An arrayref of rows in the requested format
 sub results_with {
     my $self = shift;
     my %args = @_;
-    my @keys = qw/as size start addheaders json/;
+    my @keys = qw/as size start columnheaders json/;
     my @values = delete(@args{@keys});
     my $clone = $self->get_adjusted_template(%args);
     return $clone->results(zip(@keys, @values));
 }
 
+=head2 print_results_with(%template_values, %options)
+
+Prints out the results of the query to the given file-handle
+(or STDOUT if none is provided). This method is a convenience
+method to be used when results should be saved directly to a file.
+
+=cut
+
 sub print_results_with {
     my $self = shift;
     my %args = @_;
-    my @keys = qw/to as size start addheaders json/;
+    my @keys = qw/to as size start columnheaders json/;
     my @values = delete(@args{@keys});
     my $clone = $self->get_adjusted_template(%args);
     $clone->print_results(zip(@keys, @values));
 }
+
+=head2 show_with(%template_values, [to => $FH])
+
+Print out a user-friendly view of the results, with the 
+template values set to the given values, with the output
+going to the provided file-handle, or STDOUT if none is 
+provided.
+
+=cut
+
+sub show_with {
+    my $self = shift;
+    my %args = @_;
+    my $to = delete($args{to});
+    my $clone = $self->get_adjusted_template(%args);
+    $clone->show($to);
+}
+
+=head2 get_count_with(%template_values)
+
+Get the total number of result rows for the result
+set for this template when run the given template
+values.
+
+=cut
 
 sub get_count_with {
     my $self = shift;

@@ -67,6 +67,8 @@ public class TemplateTracker extends TrackerAbstract
                 LOG.error("Error creating the table associated to the TemplateTracker" + e);
             }
             templateTracker.loadTemplatesExecutionCache(con);
+        } else {
+            templateTracker.setTrackQueue(trackQueue);
         }
         return templateTracker;
     }

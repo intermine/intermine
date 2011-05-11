@@ -53,6 +53,8 @@ public class KeySearchTracker extends TrackerAbstract
             } catch (Exception e) {
                 LOG.error("Error creating the table associated to the ListTracker" + e);
             }
+        } else {
+            searchTracker.setTrackQueue(trackQueue);
         }
         return searchTracker;
     }

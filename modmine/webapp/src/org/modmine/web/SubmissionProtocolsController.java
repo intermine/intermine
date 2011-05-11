@@ -30,6 +30,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Protocol;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -86,6 +87,7 @@ public class SubmissionProtocolsController extends TilesAction
         // rm the outer join for i/o: check if ok. if not add
         q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
         q.setOuterJoinStatus("Submission.appliedProtocols.outputs", OuterJoinStatus.OUTER);
+        
         q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
 
         Profile profile = SessionMethods.getProfile(session);
@@ -115,7 +117,9 @@ public class SubmissionProtocolsController extends TilesAction
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
 
+         // and dccId, protocols
         String dccId = null;
+        Set<ResultFile> rf = new HashSet<ResultFile>();
         Set<Protocol> pt = new HashSet<Protocol>();
 
         Iterator i = result.iterator();
@@ -123,9 +127,12 @@ public class SubmissionProtocolsController extends TilesAction
             Submission sub = (Submission) i.next();
             dccId = sub.getdCCid();
             pt = sub.getProtocols();
+            rf = sub.getResultFiles();
         }
+        
         request.setAttribute("DCCid", dccId);
         request.setAttribute("protocols", pt);
+        request.setAttribute("files", rf);
 
         return null;
     }

@@ -32,19 +32,26 @@ union, intersection, symmetric difference, and subtraction whicj create new list
 =cut
 
 use Moose;
+with 'Webservice::InterMine::Role::HasQuery';
 with 'Webservice::InterMine::Role::Serviced';
-use InterMine::Model::Types qw(PathString );
-use Webservice::InterMine::Types qw(
-    Date ListFactory ResultIterator Query
+with 'Webservice::InterMine::Role::Showable';
+
+use Moose::Util::TypeConstraints qw(match_on_type);
+use MooseX::Types::Moose         qw/ArrayRef Undef/;
+use InterMine::Model::Types      qw/PathString/;
+use Webservice::InterMine::Types qw/
+    Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
-);
-use Moose::Util::TypeConstraints;
+    ListOperable ListOfListOperables
+/;
 require Set::Object;
 
-use constant LIST_APPEND_PATH => '/lists/append/json';
-use constant RENAME_PATH => '/lists/rename/json';
-use constant LISTABLE => 'Webservice::InterMine::Query::Roles::Listable';
-use constant LIST => 'Webservice::InterMine::List';
+use constant {
+    LIST_APPEND_PATH => '/lists/append/json',
+    RENAME_PATH => '/lists/rename/json',
+    LISTABLE => 'Webservice::InterMine::Query::Roles::Listable',
+    LIST => 'Webservice::InterMine::List',
+};
 
 =head1 OVERLOADED OPERATIONS
 
@@ -96,9 +103,10 @@ has description => (
 );
 
 has name => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Str',
     trigger => \&_update_name,
+    writer => 'rename',
 );
 
 sub _update_name {
@@ -112,6 +120,7 @@ sub _update_name {
     );
     my $resp = $self->service->get($uri);
     my $new_list = $self->factory->parse_upload_response($resp);
+    $self->clear_query;
 }; 
 
 has 'size' => (
@@ -149,6 +158,25 @@ has factory => (
     isa => ListFactory,
 );
 
+sub interpret_other_operand {
+    my $self = shift;
+    my $fac  = $self->factory;
+    my $other = shift;
+    match_on_type $other => (
+        ListOperable, sub { [$_] },
+        ListOfListOperables, sub { $_ },
+        Undef, sub { confess "Cannot perform list operations on an undefined value"},
+        sub { 
+            if (ref $_ eq 'Array' and grep({$fac->get_list($_)} @$_)) {
+                return $_;
+            }
+            return $fac->get_list($_) 
+                ? [$_] 
+                : [$fac->new_list(type => $self->type, content => $_)];
+        }
+    );
+}
+
 sub delete {
     my $self = shift;
     return $self->factory->delete_lists($self);
@@ -169,27 +197,12 @@ sub join_with {
 
 sub overload_intersecting {
     my ($self, $other, $reversed) = @_;
-    $self->intersect_with($other);
-}
-
-sub interpret_other_operand {
-    my $self = shift;
-    my $fac  = $self->factory;
-    my $other = shift;
-    match_on_type $other => (
-        List, sub { [$_] },
-        ListableQuery, sub { [$_] },
-        ListOfLists, sub { $_ },
-        ListOfListableQueries, sub { $_ },
-        sub { 
-            if (ref $_ eq 'Array' and grep({$fac->get_list($_)} @$_)) {
-                return $_;
-            }
-            return $fac->get_list($_) 
-                ? [$_] 
-                : [$fac->new_list(type => $self->type, content => $_)];
-        }
-    );
+    my $intersection = $self->intersect_with($other);
+    unless (defined $reversed) {
+        $self->delete;
+        $intersection->rename($self->name);
+    }
+    return $intersection;
 }
 
 sub intersect_with {
@@ -202,7 +215,12 @@ sub intersect_with {
 
 sub overload_diffing {
     my ($self, $other, $reversed) = @_;
-    $self->difference_with($other);
+    my $diff = $self->difference_with($other);
+    unless (defined $reversed) {
+        $self->delete;
+        $diff->rename($self->name);
+    }
+    return $diff;
 }
 
 sub difference_with {
@@ -217,15 +235,20 @@ sub overload_subtraction {
     my ($self, $other, $reversed) = @_;
     if ($reversed) {
         if (blessed $other and $other->isa(LIST)) {
-            $other->subtract($self);
+            return $other->subtract($self);
         } elsif (ref $other eq 'ARRAY') {
-            $self->factory->subtract($other, [$self]);
+            return $self->factory->subtract($other, [$self]);
         } else {
             confess "Both arguments to list subtraction must be lists";
         }
     } else {
-        $self->subtract($other);
-    }
+        my $subtraction = $self->subtract($other);
+        if (not defined $reversed) {
+            $self->delete;
+            $subtraction->rename($self->name);
+        }
+        return $subtraction;
+    } 
 }
 
 sub subtract {
@@ -248,24 +271,12 @@ sub to_query {
     return $query;
 }
 
-has attribute_query => (
-    is => 'ro',
-    isa => Query,
-    lazy_build => 1,
-    builder => 'get_attribute_query',
-    handles => [qw/
-        views view_size add_view add_views 
-        results_iterator
-        table_format
-    /],
-);
-
-sub get_attribute_query {
+sub build_query {
     my $self = shift;
     my $q = $self->to_query;
     my @attributes = sort $q->model
-                       ->get_classdescriptor_by_name($self->type)
-                       ->attributes();
+                    ->get_classdescriptor_by_name($self->type)
+                    ->attributes();
     $q->clear_view;
     $q->add_views(@attributes);
     return $q;
@@ -291,31 +302,26 @@ sub append {
     my $path = shift || "";
     my $name = $self->name;
     my $resp;
-    if (blessed $content and $content->isa(__PACKAGE__)) {
-        $content = $content->to_query;
-    }
-    if (blessed $content and $content->does(LISTABLE)) {
-        my $uri = URI->new($content->get_list_append_uri);
-        $uri->query_form(
-            listName => $name, 
-            path => $path, 
-            $content->get_request_parameters,
-        );
-        $resp = $self->service->get($uri);
-    } else {
-        my $uri = URI->new($self->service_root . LIST_APPEND_PATH);
-        $uri->query_form(name => $name);
-        my ($identifiers, $content_type) = ($content, "text/plain");
-        if (ref $content eq 'ARRAY') {
-            $identifiers = join("\n", @$content);  
-        } elsif (-f $content) {
-            $identifiers = [identifiers => [$content]];
-            $content_type = "form-data",
+    my ($ids, $content_type) = ($content, "text/plain");
+    match_on_type $content => (
+        List,     sub {$ids = $_->to_query},
+        ListOfListOperables, sub {$ids = $self->factory->union($_)->to_query},
+        ArrayRef, sub {$ids = join("\n", @$_)},
+        File,     sub {$ids = [identifiers => [$content]]; $content_type = "form-data";},
+        sub {}
+    );
+    match_on_type $ids => (
+        ListableQuery, sub {
+            my $uri = URI->new($_->get_list_append_uri);
+            $uri->query_form(listName => $name, path => $path, $_->get_request_parameters);
+            $resp = $self->service->get($uri);
+        },
+        sub {
+            my $uri = URI->new($self->service_root . LIST_APPEND_PATH);
+            $uri->query_form(name => $name);
+            $resp = $self->service->post($uri, 'Content-Type' => $content_type, Content => $_);
         }
-        $resp = $self->service->post($uri,
-            'Content-Type' => $content_type, 
-            Content => $identifiers);
-    }
+    );
     my $new_list = $self->factory->parse_upload_response($resp);
     $self->add_unmatched_ids($new_list->get_unmatched_ids);
     $self->_set_size($new_list->size);
@@ -331,6 +337,7 @@ sub to_string {
     );
     return $ret;
 }
+
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
