@@ -537,7 +537,8 @@ public class UniprotConverter extends BioDirectoryConverter
             }
 
             // TODO there are uniparc entries so check for swissprot-trembl datasets
-            if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()) {
+            if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()
+                    && !uniprotEntry.isDuplicate()) {
 
                 setDataSet(uniprotEntry.getDatasetRefId());
                 for (String isoformAccession: uniprotEntry.getIsoforms()) {
