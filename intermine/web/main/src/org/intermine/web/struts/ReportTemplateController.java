@@ -65,14 +65,13 @@ public class ReportTemplateController extends TilesAction
         InterMineBag interMineBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         TemplateQuery template = (TemplateQuery) context.getAttribute("templateQuery");
-        template = updateView(template);
 
         // this is either a report page for an InterMineObject or a list analysis page
-
         TemplateQuery populatedTemplate;
         try {
             if (reportObject != null) {
                 InterMineObject obj = reportObject.getObject();
+                template = updateView(template);
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
