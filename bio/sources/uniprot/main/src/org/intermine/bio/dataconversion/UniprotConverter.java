@@ -60,7 +60,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
 
     // don't allow duplicate identifiers
-    private Set<String> geneIdentifiers = new HashSet<String>();
+    private Set<String> identifiers = new HashSet<String>();
 
     private boolean createInterpro = false;
     private boolean creatego = false;
@@ -145,7 +145,6 @@ public class UniprotConverter extends BioDirectoryConverter
         // reset all variables here, new organism
         sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
-        geneIdentifiers = new HashSet<String>();
     }
 
     /*
@@ -435,7 +434,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     && "primaryIdentifier".equals(attName)) {
                 entry.setPrimaryIdentifier(attValue.toString());
             } else if ("accession".equals(qName)) {
-                entry.addAccession(attValue.toString());
+                String accession = attValue.toString();
+                entry.addAccession(accession);
+                checkUniqueIdentifier(entry, accession);
             } else if (StringUtils.isNotEmpty(attName) && "component".equals(attName)
                     && "fullName".equals(qName)
                     && "recommendedName".equals(previousQName)
@@ -661,6 +662,8 @@ public class UniprotConverter extends BioDirectoryConverter
             String primaryAccession = uniprotEntry.getPrimaryAccession();
             protein.setAttribute("primaryAccession", primaryAccession);
 
+
+
             String primaryIdentifier = uniprotEntry.getPrimaryIdentifier();
             protein.setAttribute("uniprotName", primaryIdentifier);
 
@@ -870,15 +873,12 @@ public class UniprotConverter extends BioDirectoryConverter
                      * if the protein is an isoform, this gene has already been processed so the
                      * identifier will always be a duplicate in this case.
                      */
-                    if (!uniprotEntry.isIsoform() && geneIdentifiers.contains(identifier)) {
-                        // TODO this should create a synonym
-                        LOG.error("not assigning duplicate identifier:  " + identifier);
+                    if (!uniprotEntry.isIsoform() && !isUniqueIdentifier(identifier)) {
                         continue;
                         // if the canonical protein is processed and the gene has a duplicate
                         // identifier, we need to flag so the gene won't be created for the isoform
                         // either.
                     }
-                    geneIdentifiers.add(identifier);
                     gene.setAttribute(geneField, identifier);
                 }
 
@@ -937,8 +937,8 @@ public class UniprotConverter extends BioDirectoryConverter
                         LOG.error(msg);
                         return null;
                     }
-                    List<String> identifiers = dbrefs.get(value);
-                    if (identifiers == null || identifiers.isEmpty()) {
+                    List<String> geneIdentifiers = dbrefs.get(value);
+                    if (geneIdentifiers == null || geneIdentifiers.isEmpty()) {
                         LOG.error(msg);
                         return null;
                     }
@@ -1155,5 +1155,22 @@ public class UniprotConverter extends BioDirectoryConverter
             return attrs.getValue(name).trim();
         }
         return null;
+    }
+
+    private void checkUniqueIdentifier(UniprotEntry entry, String identifier) {
+        if (StringUtils.isNotEmpty(identifier)) {
+            if (!isUniqueIdentifier(identifier)) {
+                entry.setDuplicate(true);
+            }
+        }
+    }
+
+    private boolean isUniqueIdentifier(String identifier) {
+        if (identifiers.contains(identifier)) {
+            LOG.error("not assigning duplicate identifier:  " + identifier);
+            return false;
+        }
+        identifiers.add(identifier);
+        return true;
     }
 }
