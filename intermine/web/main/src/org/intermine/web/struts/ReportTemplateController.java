@@ -27,8 +27,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
-import org.intermine.api.search.Scope;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
