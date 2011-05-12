@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry kind="src" path="/bio-postprocess-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
