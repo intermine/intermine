@@ -16,16 +16,16 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
-    <source name="chado-db-flybase-dpse-dmoj" type="chado-db">
+    <source name="chado-db-flybase-dpse" type="chado-db">
         <property name="source.db.name" value="flybase"/>
-        <property name="organisms" value="7237 7230"/>
+        <property name="organisms" value="7237"/>
         <property name="dataSourceName" value="FlyBase"/>
         <property name="processors" value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
     <source name="chado-db-flybase-others" type="chado-db" >
       <property name="source.db.name" value="flybase"/>
-      <property name="organisms" value="Dana Dsim Dvir Dyak"/>
+      <property name="organisms" value="Dmoj Dana Dsim Dvir Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
