@@ -13,14 +13,31 @@ package org.intermine.bio.web.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 
@@ -37,7 +54,9 @@ public final class GeneModelCache
     private static CacheMap<Integer, List<GeneModel>> cache =
         new CacheMap<Integer, List<GeneModel>>();
     protected static final Logger LOG = Logger.getLogger(GeneModelCache.class);
-
+    private static Map<String, GeneModelSettings> organismSettings =
+        new HashMap<String, GeneModelSettings>();
+    
     private GeneModelCache() {
     }
 
@@ -99,12 +118,105 @@ public final class GeneModelCache
                 LOG.error("Error accessing transcripts collection for gene: "
                         + gene.getPrimaryIdentifier() + ", " + gene.getId());
             }
-        } else {
-            LOG.info("GENE MODELS cache hit");
         }
         return geneModels;
     }
 
+    public static GeneModelSettings getGeneModelOrganismSettings(String organismName,
+            ObjectStore os) {
+        if (!organismSettings.containsKey(organismName)) {
+            GeneModelSettings settings = determineOrganismSettings(organismName, os);
+            organismSettings.put(organismName, settings);
+        }
+        return organismSettings.get(organismName);
+
+    }
+    
+    private static GeneModelSettings determineOrganismSettings(String organism, ObjectStore os) {
+        GeneModelSettings settings = new GeneModelSettings(organism);
+
+        Query query = new Query();
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        query.setConstraint(cs);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        query.addFrom(qcGene);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        query.addFrom(qcOrganism);
+        QueryObjectReference orgRef = new QueryObjectReference(qcGene, "organism");
+        QueryField qfOrgName = new QueryField(qcOrganism, "name");
+        cs.addConstraint(new SimpleConstraint(qfOrgName, ConstraintOp.EQUALS,
+                new QueryValue(organism)));
+        cs.addConstraint(new ContainsConstraint(orgRef, ConstraintOp.CONTAINS, qcOrganism));
+        
+        query.addToSelect(new QueryValue("1"));
+        
+        settings.hasGenes = returnsResults(query, os);
+        
+        Model model = os.getModel();
+        QueryClass qcTranscript =
+            new QueryClass(model.getClassDescriptorByName("Transcript").getType());
+        query.addFrom(qcTranscript);
+        QueryCollectionReference transcriptsCol =
+            new QueryCollectionReference(qcGene, "transcripts");
+        cs.addConstraint(new ContainsConstraint(transcriptsCol,
+                ConstraintOp.CONTAINS, qcTranscript));
+        
+        settings.hasTranscripts = returnsResults(query, os);
+        
+        // each call modifies the main query then returns it to the original state
+        settings.hasExons = doesTranscriptHave("Exon", "exons", qcTranscript, query, os);
+        settings.hasIntrons = doesTranscriptHave("Intron", "introns", qcTranscript, query, os);
+        settings.hasThreePrimeUTRs = doesTranscriptHave("ThreePrimeUTR", "threePrimeUTR",
+                qcTranscript, query, os);
+        settings.hasFivePrimeUTRs = doesTranscriptHave("FivePrimeUTR", "fivePrimeUTR",
+                qcTranscript, query, os);
+        settings.hasCDSs = doesTranscriptHave("CDS", "CDSs", qcTranscript, query, os);
+        
+        return settings;
+    }
+    
+    private static boolean doesTranscriptHave(String clsName, String fieldName,
+            QueryClass qcTranscript, Query q, ObjectStore os) {
+        Model model = os.getModel();
+        if (os.getModel().hasClassDescriptor(clsName)) {
+            ClassDescriptor cldTranscript =
+                model.getClassDescriptorByName(qcTranscript.getType().getName());
+            FieldDescriptor fld = cldTranscript.getFieldDescriptorByName(fieldName);
+            if (fld != null && !fld.isAttribute()) {
+                QueryClass qcTarget =
+                    new QueryClass(model.getClassDescriptorByName(clsName).getType());
+                q.addFrom(qcTarget);
+                ConstraintSet cs = (ConstraintSet) q.getConstraint();
+                ContainsConstraint cc = null;
+                if (fld.isReference()) {
+                    QueryObjectReference ref = new QueryObjectReference(qcTranscript, fieldName);
+                    cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcTarget);
+                    cs.addConstraint(cc);
+                } else if (fld.isCollection()) {
+                    QueryCollectionReference col = new QueryCollectionReference(qcTranscript,
+                            fieldName);
+                    cc = new ContainsConstraint(col, ConstraintOp.CONTAINS, qcTarget);
+                    ((ConstraintSet) q.getConstraint()).addConstraint(cc);
+                }
+
+                boolean hasResults = returnsResults(q, os);
+                
+                // clean up the query again
+                q.setConstraint(cs.removeConstraint(cc));
+                q.deleteFrom(qcTarget);
+                
+                return hasResults;
+            }
+        }
+        return false;
+    }
+    
+    private static boolean returnsResults(Query q, ObjectStore os) {
+        Results res = os.execute(q,1, true, false, false);
+        return res.iterator().hasNext();
+    }
+    
+    
     /**
      * Look up the gene models for a given gene or gene model component and return the ids of all
      * objects involved.  If no gene model is found or object is not a gene model component and

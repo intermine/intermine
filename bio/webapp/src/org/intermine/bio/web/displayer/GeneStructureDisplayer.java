@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GeneModel;
 import org.intermine.bio.web.model.GeneModelCache;
+import org.intermine.bio.web.model.GeneModelSettings;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -50,6 +52,10 @@ public class GeneStructureDisplayer extends CustomDisplayer
             Gene gene = geneModels.get(0).getGene();
             request.setAttribute("gene", gene);
         }
+        String organismName = ((SequenceFeature) reportObject.getObject()).getOrganism().getName();
+        GeneModelSettings settings =
+            GeneModelCache.getGeneModelOrganismSettings(organismName, im.getObjectStore());
+        request.setAttribute("settings", settings);
         request.setAttribute("geneModels", geneModels);
         request.setAttribute("actualId", reportObject.getId());
     }

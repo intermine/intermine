@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.bio.web.model.GeneModel;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
