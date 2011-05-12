@@ -60,7 +60,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
 
     // don't allow duplicate identifiers
-    private Set<String> identifiers = new HashSet<String>();
+    private Set<String> identifiers = null;
 
     private boolean createInterpro = false;
     private boolean creatego = false;
@@ -857,6 +857,9 @@ public class UniprotConverter extends BioDirectoryConverter
             }
             String geneRefId = genes.get(uniqueIdentifierValue);
             if (geneRefId == null) {
+                if (!uniprotEntry.isIsoform() && !isUniqueIdentifier(uniqueIdentifierValue)) {
+                    return null;
+                }
                 Item gene = createItem("Gene");
                 genes.put(uniqueIdentifierValue, gene.getIdentifier());
                 gene.setAttribute(uniqueIdentifierFieldType, uniqueIdentifierValue);
@@ -873,7 +876,6 @@ public class UniprotConverter extends BioDirectoryConverter
                         LOG.error("Couldn't process gene, no " + geneField);
                         continue;
                     }
-
                     /*
                      * if the protein is an isoform, this gene has already been processed so the
                      * identifier will always be a duplicate in this case.
@@ -1171,7 +1173,9 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private boolean isUniqueIdentifier(String identifier) {
-        if (identifiers.contains(identifier)) {
+        if (identifiers == null) {
+            identifiers = new HashSet<String>();
+        } else if (identifiers.contains(identifier)) {
             LOG.error("not assigning duplicate identifier:  " + identifier);
             return false;
         }
