@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,10 +27,16 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -59,6 +67,7 @@ public class ReportTemplateController extends TilesAction
         InterMineBag interMineBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         TemplateQuery template = (TemplateQuery) context.getAttribute("templateQuery");
+        template = updateView(template);
 
         // this is either a report page for an InterMineObject or a list analysis page
 
@@ -93,5 +102,35 @@ public class ReportTemplateController extends TilesAction
             context.putAttribute("resultsTable", pagedResults);
         }
         return null;
+    }
+
+    /*
+     * Removed from the view all the direct attributes that aren't editable constraints
+     */
+    private TemplateQuery updateView(TemplateQuery template) {
+        TemplateQuery templateQuery = template.clone();
+        List<String> viewPaths = templateQuery.getView();
+        PathQuery pathQuery = templateQuery.getPathQuery();
+        String rootClass = null;
+        try {
+            rootClass = templateQuery.getRootClass();
+            for (String viewPath : viewPaths) {
+                Path path = pathQuery.makePath(viewPath);
+                if (path.getElementClassDescriptors().size() == 1
+                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
+                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
+                        templateQuery.removeView(viewPath);
+                        for (OrderElement oe : templateQuery.getOrderBy()) {
+                            if (oe.getOrderPath().equals(viewPath)) {
+                                templateQuery.removeOrderBy(viewPath);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PathException pe) {
+            LOG.error("Error updating the template's view", pe);
+        }
+        return templateQuery;
     }
 }
