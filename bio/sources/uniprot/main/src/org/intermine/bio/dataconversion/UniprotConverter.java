@@ -351,12 +351,16 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = "keyword";
             } else if ("dbReference".equals(qName) && "entry".equals(previousQName)) {
                 entry.addDbref(getAttrValue(attrs, "type"), getAttrValue(attrs, "id"));
+
             } else if ("property".equals(qName) && "dbReference".equals(previousQName)) {
+                String type = getAttrValue(attrs, "type");
+                if (type.equals(CONFIG.getGeneDesignation())) {
                 // if the dbref has no gene designation value, it is discarded.
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
-                String value = getAttrValue(attrs, "value");
-                entry.addGeneDesignation(value);
+                    String value = getAttrValue(attrs, "value");
+                    entry.addGeneDesignation(value);
+                }
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
             } else if ("evidence".equals(qName) && "entry".equals(previousQName)) {
