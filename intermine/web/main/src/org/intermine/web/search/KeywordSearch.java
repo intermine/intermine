@@ -345,6 +345,7 @@ class InterMineObjectFetcher extends Thread
     final Map<String, List<FieldDescriptor>> classKeys;
     final ObjectPipe<Document> indexingQueue;
     final Set<Class<? extends InterMineObject>> ignoredClasses;
+    final Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
     final Map<Class<? extends InterMineObject>, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
     final Vector<KeywordSearchFacetData> facets;
@@ -384,6 +385,7 @@ class InterMineObjectFetcher extends Thread
     public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             ObjectPipe<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
             Map<Class<? extends InterMineObject>, String[]> specialReferences,
             Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
             Map<String, String> attributePrefixes) {
@@ -393,6 +395,7 @@ class InterMineObjectFetcher extends Thread
         this.classKeys = classKeys;
         this.indexingQueue = indexingQueue;
         this.ignoredClasses = ignoredClasses;
+        this.ignoredFields = ignoredFields;
         this.specialReferences = specialReferences;
         this.classBoost = classBoost;
         this.facets = facets;
@@ -686,11 +689,15 @@ class InterMineObjectFetcher extends Thread
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
-
+        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getSimpleClass(obj));
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
-                    // only index strings
+                    // some fields are configured to ignore
+                    if (fieldsToIgnore != null && fieldsToIgnore.contains(att.getName())) {
+                        continue;
+                    }
+                    // only index strings and integers
                     if ("java.lang.String".equals(att.getType())
                             || "java.lang.Integer".equals(att.getType())) {
                         Object value = obj.getFieldValue(att.getName());
@@ -901,6 +908,7 @@ public final class KeywordSearch
     private static String tempDirectory = null;
     private static Map<Class<? extends InterMineObject>, String[]> specialReferences;
     private static Set<Class<? extends InterMineObject>> ignoredClasses;
+    private static Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
     private static Map<ClassDescriptor, Float> classBoost;
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
@@ -919,6 +927,7 @@ public final class KeywordSearch
         specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
         ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
         classBoost = new HashMap<ClassDescriptor, Float>();
+        ignoredFields = new HashMap<Class<? extends InterMineObject>, Set<String>>();
         facets = new Vector<KeywordSearchFacetData>();
         debugOutput = false;
 
@@ -945,6 +954,34 @@ public final class KeywordSearch
                                 LOG.error("Unknown class in config file: " + className);
                             } else {
                                 addCldToIgnored(ignoredClasses, cld);
+                            }
+                        }
+                    } else  if ("index.ignore.fields".equals(key) && !StringUtils.isBlank(value)) {
+                        String[] ignoredPaths = value.split("\\s+");
+                        
+                        for (String ignoredPath : ignoredPaths) {
+                            if (StringUtils.countMatches(ignoredPath, ".") != 1) {
+                                LOG.error("Fields to ignore specified by 'index.ignore.fields'"
+                                        + " should contain Class.field, e.g. Company.name");
+                            } else {
+                                String clsName = ignoredPath.split("\\.")[0];
+                                String fieldName = ignoredPath.split("\\.")[1];
+                                
+                                ClassDescriptor cld =
+                                    os.getModel().getClassDescriptorByName(clsName);
+                                if (cld != null) {
+                                    FieldDescriptor fld = cld.getFieldDescriptorByName(fieldName);
+                                    if (fld != null) {
+                                        addToIgnoredFields(ignoredFields, cld, fieldName);
+                                    } else {
+                                        LOG.error("Field name '" + fieldName + "' not found for"
+                                                + " class '" + clsName + "' specified in"
+                                                + "'index.ignore.fields'");
+                                    }
+                                } else {
+                                    LOG.error("Class name specified in 'index.ignore.fields'"
+                                            + " not found: " + clsName);
+                                }
                             }
                         }
                     } else if (key.startsWith("index.references.")) {
@@ -1054,7 +1091,6 @@ public final class KeywordSearch
             attributePrefixes.put(classAndAttribute, prefix);
         }
     }
-
 
     /**
      * loads or creates the lucene index
@@ -1570,7 +1606,7 @@ public final class KeywordSearch
         LOG.info("Starting fetcher thread...");
         InterMineObjectFetcher fetchThread =
                 new InterMineObjectFetcher(os, classKeys, indexingQueue, ignoredClasses,
-                        specialReferences, classBoost, facets, attributePrefixes);
+                        ignoredFields, specialReferences, classBoost, facets, attributePrefixes);
         fetchThread.start();
 
         // index the docs queued by the fetchers
@@ -1688,6 +1724,35 @@ public final class KeywordSearch
         }
     }
 
+    private static void addToIgnoredFields(
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields, ClassDescriptor cld,
+            String fieldName) {
+        if (cld == null) {
+            LOG.error("ClassDesriptor was null when attempting to add an ignored field.");
+        } else if (InterMineObject.class.isAssignableFrom(cld.getType())) {
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+            clds.add(cld);
+            for (ClassDescriptor subCld : cld.getSubDescriptors()) {
+                clds.add(subCld);
+            }
+            
+            for (ClassDescriptor ignoreCld : clds) {
+                Set<String> fields = ignoredFields.get(cld.getType());
+                Class<? extends InterMineObject> cls = 
+                    (Class<? extends InterMineObject>) cld.getType();
+                if (fields == null) {
+                    fields = new HashSet<String>();
+                    ignoredFields.put(cls, fields);
+                }
+                fields.add(fieldName);
+            }
+        } else {
+            LOG.error("cld " + cld + " is not IMO!");
+        }
+    }
+    
+    
+    
     /**
      * get list of facet fields and names
      * @return map of internal fieldname -> displayed name
