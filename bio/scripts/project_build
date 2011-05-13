@@ -6,14 +6,11 @@
 # The database to dump will be found by reading the properties from $HOME/.intermine/<mine_name>.properties
 # where <mine_name> is the name of the directory where the script is run
 
-BEGIN {
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/InterMine-Util/lib');
-}
+use lib '../../intermine/perl/InterMine-Util/lib';
 
 use strict;
 use warnings;
 
-use Expect;
 use Getopt::Std;
 use Cwd;
 
@@ -34,7 +31,7 @@ my $final_marker = 'final';
 
 sub usage
 {
-  die <<"EOF";
+  die <<"HELP";
 usage:
   $0 [-v] [-b] [-l | -r] [-T] [-u | -U] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
 
@@ -75,7 +72,7 @@ project.xml that has dump="true" set.  A final dump is also made.
 
 example:
   $0 prod1 /tmp/production_dump
-EOF
+HELP
 }
 
 if (!-f $project_file) {
@@ -146,11 +143,11 @@ if ($opts{D}) {
 
 my $build_userprofile_db;
 if ($opts{u} or $opts{U}) {
-    $build_userprofile_db = 1;
+#    $build_userprofile_db = 1;
 }
 my $overwrite_userprofile_ok;
 if ($opts{U}) {
-    $overwrite_userprofile_ok = 1;
+#    $overwrite_userprofile_ok = 1;
 }
 
 if (exists $opts{a}) {
@@ -271,16 +268,14 @@ sub spawn
   if ($dry_run) {
     log_and_print "command to run: @spawn_args\n";
   } else {
-    my $exp = new Expect;
-
-    $exp->raw_pty(1);
-    $exp->spawn("@spawn_args; echo __FINISHED__")
-      or die "Cannot spawn @spawn_args: $!\n";
-
-    $exp->expect(9999999,
-                 [qr/error/i, sub {die "Error returned by @spawn_args\n"}],
-                 "__FINISHED__\n");
-    $exp->soft_close();
+    my $pid = open(my $PROCESS, '-|', @spawn_args) 
+        or die "Could not execute @spawn_args\n";
+    while (<$PROCESS>) {
+        if (/error/i) {
+            die "Error returned by @spawn_args\n";
+        } 
+    }
+    close $PROCESS;
   }
 }
 
@@ -495,7 +490,7 @@ sub load_db
   log_and_print "finished analysing\n\n";
 }
 
-package ProjectXML::Hander;
+package ProjectXML::Handler;
 
 use vars qw{ $AUTOLOAD };
 
@@ -647,7 +642,7 @@ sub userprofile_db_already_populated {
 
 sub get_actions
 {
-  my $handler = ProjectXML::Hander->new();
+  my $handler = ProjectXML::Handler->new();
   my $parser = XML::Parser::PerlSAX->new(Handler => $handler);
 
   
