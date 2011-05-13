@@ -1,14 +1,14 @@
 <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp"
-        controllerUrl="/initGeneMicroArrayDisplayer.do"/>
+  controllerUrl="/initGeneMicroArrayDisplayer.do" />
 
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
-        controllerUrl="/initAttributeLinkDisplayer.do"/>
+  controllerUrl="/initAttributeLinkDisplayer.do" />
 
 <definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
-        controllerUrl="/initSequenceExportOptions.do"/>
+  controllerUrl="/initSequenceExportOptions.do" />
 
 <definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
-        controllerUrl="/initGalaxyExportOptions.do"/>
+  controllerUrl="/initGalaxyExportOptions.do" />
 
 <definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
 
@@ -16,7 +16,20 @@
 <definition name="pathwayLinkDisplayer.tile" path="/model/pathwayLinkDisplayer.jsp" />
 
 <definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
-        controllerUrl="/initOrthologueLinkDisplayer.do"/>
+  controllerUrl="/initOrthologueLinkDisplayer.do" />
 
 <definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
-        controllerUrl="/initCytoscapeNetworkDisplayer.do"/>
+  controllerUrl="/initCytoscapeNetworkDisplayer.do" />
+
+<definition name="genomicRegionSearchOptions.page" extends="layout.template">
+  <put name="body" value="genomicRegionSearchOptions.tile" />
+  <put name="pageName" value="genomicRegionSearchOptions" />
+</definition>
+
+<definition name="genomicRegionSearchOptions.tile" path="/model/genomicRegionSearchOptionsBase.jsp"
+  controllerUrl="/initGenomicRegionSearchOptions.do" />
+
+<definition name="genomicRegionSearchResults.page" extends="layout.template">
+  <put name="body" value="/model/genomicRegionSearchResultsBase.jsp" />
+  <put name="pageName" value="genomicRegionSearchResults" />
+</definition>
