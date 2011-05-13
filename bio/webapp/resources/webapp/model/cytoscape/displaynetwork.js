@@ -43,7 +43,7 @@ function displayNetwork(networkdata, fullInteractingGeneSet, projectTitle, proje
 
     vis.addContextMenuItem("View " + projectTitle + " gene report...", "nodes", function(evt) {
         var data = evt.target.data;
-        url = projectBaseUrl + "/" + projectPath + "/objectDetails.do?id=" + data.id;
+        url = projectBaseUrl + "/" + projectPath + "/report.do?id=" + data.id;
         window.open(url);
     })
 

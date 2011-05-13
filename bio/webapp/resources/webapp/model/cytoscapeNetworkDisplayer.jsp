@@ -56,13 +56,18 @@
     #interactions-wrap div.inside { min-width:1040px; }
 
 </style>
+
+<script type="text/javascript">
+
+    var project_title = "${WEB_PROPERTIES['project.title']}";
+    var project_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+    var project_path = "${WEB_PROPERTIES['webapp.path']}";
+
+</script>
+
 <div id="cwhead">
     <h3>Interaction Network</h3>
 </div>
-
-<c:if test="${empty WEB_PROPERTIES['project.baseurl'] || empty WEB_PROPERTIES['project.path']}">
-    <!-- Some properties required for the network displayer are not set, expect glitches. Check project.baseurl, project.path are set. -->
-</c:if>
 
 <div id="interactions-wrap">
   <div class="inside">
@@ -92,7 +97,7 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
         <fieldset>
-          <label class="fakelink" onclick="window.open(${WEB_PROPERTIES['project.baseurl']}+ '/' + ${WEB_PROPERTIES['project.path']} + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
+          <label class="fakelink" onclick="window.open(project_baseurl+ '/' + project_path + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
         <fieldset>
           <label>View interaction data in a table</lable>
@@ -156,8 +161,6 @@
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
 
-    //var project_title = "${WEB_PROPERTIES['project.title']}";
-
     var target = "#cwcontent";
 
     if (dataNotIncludedMessage != "") {
@@ -188,7 +191,7 @@
                                              .width(60);
                 } else {
                     networkdata = response;
-                    displayNetwork(networkdata, fullInteractingGeneSet, "${WEB_PROPERTIES['project.title']}", "${WEB_PROPERTIES['project.baseurl']}", "${WEB_PROPERTIES['project.path']}");
+                    displayNetwork(networkdata, fullInteractingGeneSet, project_title, project_baseurl, project_path);
                     jQuery("#cwtabsbyside").tabs();
                     jQuery("#cwtabsbyside").css('display', 'inline');
                 }
