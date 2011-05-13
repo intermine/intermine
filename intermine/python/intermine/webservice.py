@@ -1,8 +1,10 @@
 from urlparse import urlunsplit, urljoin
 from xml.dom import minidom
 import urllib
+from urlparse import urlparse
 import csv
 import base64
+import httplib
 
 # Use core json for 2.6+, simplejson for <=2.5
 try:
@@ -14,6 +16,7 @@ except ImportError:
 from .query import Query, Template
 from .model import Model
 from .util import ReadableException
+from .lists import ListManager
 
 """
 Webservice Interaction Routines for InterMine Webservices
@@ -81,16 +84,21 @@ class Service(object):
 
     @see: L{intermine.query}
     """
-    QUERY_PATH         = '/query/results'
-    MODEL_PATH         = '/model'
-    TEMPLATES_PATH     = '/templates/xml'
-    TEMPLATEQUERY_PATH = '/template/results'
-    VERSION_PATH       = '/version'
-    USER_AGENT         = 'WebserviceInterMinePerlAPIClient'
-    LIST_PATH          = '/lists/xml'
-    SAVEDQUERY_PATH    = '/savedqueries/xml'
-    RELEASE_PATH       = '/version/release'
-    SCHEME             = 'http://'
+    QUERY_PATH             = '/query/results'
+    QUERY_LIST_UPLOAD_PATH = '/query/tolist/json'
+    QUERY_LIST_APPEND_PATH = '/query/append/tolist/json'
+    MODEL_PATH             = '/model'
+    TEMPLATES_PATH         = '/templates/xml'
+    TEMPLATEQUERY_PATH     = '/template/results'
+    VERSION_PATH           = '/version'
+    USER_AGENT             = 'WebserviceInterMinePerlAPIClient'
+    LIST_PATH              = '/lists/json'
+    LIST_CREATION_PATH     = '/lists/json'
+    LIST_RENAME_PATH       = '/lists/rename/json'
+    LIST_APPENDING_PATH    = '/lists/append/json'
+    SAVEDQUERY_PATH        = '/savedqueries/xml'
+    RELEASE_PATH           = '/version/release'
+    SCHEME                 = 'http://'
 
     def __init__(self, root, username=None, password=None):
         """
@@ -113,9 +121,11 @@ class Service(object):
         self._model = None
         self._version = None
         self._release = None
+        self._list_manager = ListManager(self)
+        self.__missing_method_name = None
         if username:
             if not password:
-                raise ValueError("No password supplied")
+                raise ValueError("Username given, but no password supplied")
             self.opener = InterMineURLOpener((username, password))
         else:
             self.opener = InterMineURLOpener()
@@ -125,6 +135,27 @@ class Service(object):
 #           self.version
 #       except ServiceError:
 #           raise ServiceError("Could not validate service - is the root url correct?")
+
+    # Delegated list methods
+
+    LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists", "get_all_list_names",
+        "create_list", "get_list_count", "delete_lists"])
+
+    def __getattribute__(self, name):
+        return object.__getattribute__(self, name)
+    
+    def __getattr__(self, name):
+        self.__missing_method_name = name # Could also be a property
+        return getattr(self, '__methodmissing__')
+
+    def __methodmissing__(self, *args, **kwargs):
+        if self.__missing_method_name in self.LIST_MANAGER_METHODS:
+            method = getattr(self._list_manager, self.__missing_method_name)
+        self.__missing_method_name = None
+        return method(*args, **kwargs)
+
+    def __del__(self):
+        self._list_manager.delete_temporary_lists()
 
     @property
     def version(self):
@@ -585,12 +616,39 @@ class InterMineURLOpener(urllib.FancyURLopener):
         Return a new url-opener with the appropriate credentials
         """
         urllib.FancyURLopener.__init__(self)
+        self.plain_post_header = {
+            "Content-Type": "text/plain; charset=utf-8",
+            "UserAgent": Service.USER_AGENT
+        }
         if credentials and len(credentials) == 2:
             base64string = base64.encodestring('%s:%s' % credentials)[:-1]
             self.addheader("Authorization", base64string)
+            self.plain_post_header["Authorization"] = base64string
             self.using_authentication = True
         else: 
             self.using_authentication = False
+
+    def post_plain_text(self, url, body):
+        o = urlparse(url)
+        con = httplib.HTTPConnection(o.hostname, o.port)
+        con.request('POST', url, body, self.plain_post_header)
+        resp = con.getresponse()
+        content = resp.read()
+        con.close()
+        if resp.status != 200:
+            raise WebserviceError(resp.status, resp.reason, content)
+        return content
+
+    def delete(self, url):
+        o = urlparse(url)
+        con = httplib.HTTPConnection(o.hostname, o.port)
+        con.request('DELETE', url, None, self.plain_post_header)
+        resp = con.getresponse()
+        content = resp.read()
+        con.close()
+        if resp.status != 200:
+            raise WebserviceError(resp.status, resp.reason, content)
+        return content
 
     def http_error_default(self, url, fp, errcode, errmsg, headers):
         """Re-implementation of http_error_default, with content now supplied by default"""
