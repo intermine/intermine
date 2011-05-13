@@ -253,7 +253,7 @@ html, body {
 
 #boxes div.inner {
     background: #FFF url("../themes/purple/homepage/bochs-bottom-grad.png") repeat-x 0 200px;
-    min-height: 255px;
+    min-height: 275px;
     border-bottom: 1px solid #dfdfdf;
     margin-bottom: 2px;
     padding-bottom: 14px;
