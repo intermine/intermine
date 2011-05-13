@@ -6,8 +6,6 @@
 # The database to dump will be found by reading the properties from $HOME/.intermine/<mine_name>.properties
 # where <mine_name> is the name of the directory where the script is run
 
-use lib '../../intermine/perl/InterMine-Util/lib';
-
 use strict;
 use warnings;
 
