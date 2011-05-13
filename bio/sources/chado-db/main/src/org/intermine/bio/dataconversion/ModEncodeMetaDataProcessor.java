@@ -54,6 +54,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
     private static final String FILE_URL = "http://submit.modencode.org/submit/public/get_file/";
     private static final String DCC_PREFIX = "modENCODE_";
+    private static final String NA_PROP = "not applicable";
     private static final Set<String> DB_RECORD_TYPES =
         Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
                 "GEO_record",
@@ -1726,6 +1727,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     IOException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
+        final String ANTIBOY_SP = "antibody";
+        final String CELLLINE_SP = "cell line";
+        final String ARRAY_SP = "array";
+        final String DEVSTAGE_SP = "developmental stage";
+  
+        
         ResultSet res = getAppliedDataAll(connection);
         final String comma = ",";
         String reportName = "build/"
@@ -1858,6 +1865,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             "cell id.developmental stage"
                         }));
             }
+            if (devStageItems.isEmpty()) {
+                addNotApplicable(devStageItems, "DevelopmentalStage","developmental stage" );
+            }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageItems);
             if (!devStageItems.isEmpty() && exFactorNames.contains("developmental stage")) {
                 createExperimentalFactors(submissionId, "developmental stage", devStageItems);
@@ -1870,8 +1880,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             strainItems.addAll(createFromWikiPage(
                     dccId, "Strain", typeToProp, makeLookupList("strain")));
 
+            if (strainItems.isEmpty()) {
+                addNotApplicable(strainItems, "Strain", "strain");
+            }
             storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
-            if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
+//            if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
+            if (exFactorNames.contains("strain")) {
                 createExperimentalFactors(submissionId, "strain", strainItems);
                 exFactorNames.remove("strain");
             }
@@ -1892,8 +1906,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             + dccId + " ARRAY ");
                 }
             }
+            if (arrayItems.isEmpty()) {
+                addNotApplicable(arrayItems, "Array", "array");
+            }
             storeSubmissionCollection(storedSubmissionId, "arrays", arrayItems);
-            if (!arrayItems.isEmpty() && exFactorNames.contains("array")) {
+//            if (!arrayItems.isEmpty() && exFactorNames.contains("array")) {
+            if (exFactorNames.contains("array")) {
                 createExperimentalFactors(submissionId, "array", arrayItems);
                 exFactorNames.remove("array");
             }
@@ -1903,8 +1921,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<Item> lineItems = new ArrayList<Item>();
             lineItems.addAll(createFromWikiPage(dccId, "CellLine", typeToProp,
                     makeLookupList("cell line")));
+            
+            if (lineItems.isEmpty()) {
+                addNotApplicable(lineItems, "CellLine", "cell line");
+            }
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineItems);
-            if (!lineItems.isEmpty() && exFactorNames.contains("cell line")) {
+//            if (!lineItems.isEmpty() && exFactorNames.contains("cell line")) {
+            if (exFactorNames.contains("cell line")) {
                 createExperimentalFactors(submissionId, "cell line", lineItems);
                 exFactorNames.remove("cell line");
             }
@@ -1935,8 +1958,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             + dccId + " ANTIBODY ");
                 }
             }
+            if (antibodyItems.isEmpty()) {
+                addNotApplicable(antibodyItems, "Antibody", "antibody");
+            }
             storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyItems);
-            if (!antibodyItems.isEmpty() && exFactorNames.contains("antibody")) {
+//            if (!antibodyItems.isEmpty() && exFactorNames.contains("antibody")) {
+            if (exFactorNames.contains("antibody")) {
                 createExperimentalFactors(submissionId, "antibody", antibodyItems);
                 exFactorNames.remove("antibody");
             }
@@ -1958,8 +1985,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             + dccId + " TISSUE");
                 }
             }
+            if (tissueItems.isEmpty()) {
+                addNotApplicable(tissueItems, "Tissue", "tissue");
+            }
             storeSubmissionCollection(storedSubmissionId, "tissues", tissueItems);
-            if (!tissueItems.isEmpty() && exFactorNames.contains("tissue")) {
+//            if (!tissueItems.isEmpty() && exFactorNames.contains("tissue")) {
+            if (exFactorNames.contains("tissue")) {
                 createExperimentalFactors(submissionId, "tissue", tissueItems);
                 exFactorNames.remove("tissue");
             }
@@ -1989,6 +2020,51 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("PROCESS TIME submission properties: "
                 + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+//    /**
+//     * @param submissionId
+//     * @param exFactorNames
+//     * @param devStageItems
+//     * @param clsName
+//     * @param propName
+//     * @throws ObjectStoreException
+//     */
+//    private void finishProp(Integer submissionId, Integer storedSubmissionId, 
+//            Set<String> exFactorNames,
+//            List<Item> devStageItems, String clsName, String propName)
+//            throws ObjectStoreException {
+//        if (devStageItems.isEmpty()) {
+//            addNotApplicable(devStageItems, clsName, propName);
+//            storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageItems);
+//        } else {
+//            if (exFactorNames.contains(propName)) {
+//                createExperimentalFactors(submissionId, propName, devStageItems);
+//                exFactorNames.remove(propName);                    
+//            }
+//        }
+//    }
+
+    /**
+     * @param devStageItems
+     * @param qq
+     * @throws ObjectStoreException 
+     */
+//    private void addNotApplicable(List<Item> items, String propName) {
+//        Item subProperty = getChadoDBConverter().createItem("SubmissionProperty");
+//        subProperty.setAttribute("type", propName);
+//        subProperty.setAttribute("name", NA_PROP);
+//        items.add(subProperty);
+//    }
+
+    private void addNotApplicable(List<Item> items, String clsName, String propName)
+    throws ObjectStoreException {        
+        Item subProperty = getChadoDBConverter().createItem(clsName);
+        subProperty.setAttribute("type", propName);
+        subProperty.setAttribute("name", NA_PROP);
+        items.add(subProperty);
+        getChadoDBConverter().store(subProperty);
+        LOG.info("NANA " + propName + ": " + items);
     }
 
     // Traverse DAG following previous applied protocol links to build a list of all AppliedData
