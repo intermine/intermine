@@ -34,15 +34,21 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
+
+    <source name="ensembl-identifiers" type="ensembl-identifiers">
+      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
+      <property name="ensembl.organisms" value="9606 10090 10116"/>
+    </source>
+
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 7237 6239 7165 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="fasta.taxonId" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -131,10 +137,6 @@
       <property name="ensemblcompara.homologues" value="9606"/>
     </source>
 
-    <source name="ensembl-identifiers" type="ensembl-identifiers">
-      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
-      <property name="ensembl.organisms" value="9606 10090 10116"/>
-    </source>
 
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
