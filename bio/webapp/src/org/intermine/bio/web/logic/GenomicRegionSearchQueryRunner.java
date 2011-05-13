@@ -1,0 +1,375 @@
+package org.intermine.bio.web.logic;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.model.ChromosomeInfo;
+import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SOTerm;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
+
+/**
+ * This class has all database query logics for genomic region search.
+ *
+ * @author Fengyuan Hu
+ */
+public class GenomicRegionSearchQueryRunner implements Runnable
+{
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
+
+    private HttpServletRequest request = null;
+    private String spanUUIDString = null;
+    private GenomicRegionSearchConstraint grsc = null;
+    private Map<GenomicRegion, Query> queryMap = null;
+
+    /**
+     * Constructor
+     *
+     * @param request HttpServletRequest
+     * @param spanUUIDString UUID
+     * @param grsc GenomicRegionSearchConstraint
+     * @param queryMap map of span and its query
+     */
+    public GenomicRegionSearchQueryRunner(HttpServletRequest request, String spanUUIDString,
+            GenomicRegionSearchConstraint grsc, Map<GenomicRegion, Query> queryMap) {
+
+        this.request = request;
+        this.spanUUIDString = spanUUIDString;
+        this.grsc = grsc;
+        this.queryMap = queryMap;
+    }
+
+    /**
+     * Main body of db search
+     */
+    public void search() {
+
+        // Use spanConstraintMap to check whether the spanUpload is duplicated, the map is saved in
+        // the session
+        @SuppressWarnings("unchecked")
+        Map<GenomicRegionSearchConstraint, String> spanConstraintMap =
+            (HashMap<GenomicRegionSearchConstraint, String>)  request
+            .getSession().getAttribute("spanConstraintMap");
+
+        if (spanConstraintMap == null) {
+            spanConstraintMap = new HashMap<GenomicRegionSearchConstraint, String>();
+        }
+
+        if (spanConstraintMap.size() == 0) {
+            spanConstraintMap.put(grsc, spanUUIDString);
+        } else {
+            if (spanConstraintMap.containsKey(grsc)) {
+                spanUUIDString = spanConstraintMap.get(grsc);
+                request.setAttribute("spanUUIDString", spanUUIDString);
+            } else {
+                spanConstraintMap.put(grsc, spanUUIDString);
+            }
+        }
+
+        request.getSession().setAttribute("spanConstraintMap", spanConstraintMap);
+        request.setAttribute("spanQueryTotalCount", grsc.getSpanList().size());
+
+        (new Thread(this)).start();
+    }
+
+    @Override
+    public void run() {
+        queryExecutor();
+    }
+
+    /**
+     * The method to run all the queries.
+     */
+    @SuppressWarnings("rawtypes")
+    private void queryExecutor() {
+
+        // Use spanOverlapFullResultMap to store the data in the session
+        @SuppressWarnings("unchecked")
+        Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap =
+             (Map<String, Map<GenomicRegion, List<List<String>>>>) request
+                            .getSession().getAttribute("spanOverlapFullResultMap");
+
+        if (spanOverlapFullResultMap == null) {
+            spanOverlapFullResultMap =
+                new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
+        }
+
+        Map<GenomicRegion, List<List<String>>> spanOverlapResultDisplayMap = Collections
+                .synchronizedMap(new LinkedHashMap<GenomicRegion, List<List<String>>>());
+
+        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
+            spanOverlapFullResultMap.put(spanUUIDString, spanOverlapResultDisplayMap);
+            request.getSession().setAttribute("spanOverlapFullResultMap", spanOverlapFullResultMap);
+
+            try {
+                ObjectStore os = SessionMethods.getInterMineAPI(
+                        request.getSession()).getObjectStore();
+
+                for (Entry<GenomicRegion, Query> e : queryMap.entrySet()) {
+                    Results results = os.execute(e.getValue());
+
+                    List<List<String>> spanResults = new ArrayList<List<String>>();
+                    if (results == null || results.isEmpty()) {
+                        spanOverlapResultDisplayMap.put(e.getKey(), null);
+                    }
+                    else {
+                        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                            List<String> resultRow = new ArrayList<String>();
+
+                            for (Object o : row) {
+                                String item = new String();
+
+                                if (o instanceof Class) {
+                                    item = ((Class) o).getSimpleName();
+                                } else {
+                                    item = o.toString();
+                                }
+
+                                resultRow.add(item);
+                            }
+                            spanResults.add(resultRow);
+                        }
+                        spanOverlapResultDisplayMap.put(e.getKey(), spanResults);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Query the information of all the organisms and their chromosomes' names and length. The
+     * results is stored in a Map. The result data will be used to validate users' span data.
+     * For each span, its chromosome must match the chrPID and range must not go beyond the length.
+     *
+     * @param im - the InterMineAPI
+     * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
+     */
+    public static Map<String, List<ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
+
+        // a Map contains orgName and its chrInfo accordingly
+        // e.g. <D.Melanogaster, (D.Melanogaster, X, 5000)...>
+        Map<String, List<ChromosomeInfo>> chrInfoMap =
+            new HashMap<String, List<ChromosomeInfo>>();
+
+        try {
+            Query q = new Query();
+
+            QueryClass qcOrg = new QueryClass(Organism.class);
+            QueryClass qcChr = new QueryClass(Chromosome.class);
+
+            // Result columns
+            QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+            QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
+            QueryField qfChrLength = new QueryField(qcChr, "length");
+
+            // As in SQL SELECT ?,?,?
+            q.addToSelect(qfOrgName);
+            q.addToSelect(qfChrPID);
+            q.addToSelect(qfChrLength);
+
+            // As in SQL FROM ?,?
+            q.addFrom(qcChr);
+            q.addFrom(qcOrg);
+
+            // As in SQL WHERE ?
+            QueryObjectReference organism = new QueryObjectReference(qcChr,
+                    "organism");
+            ContainsConstraint ccOrg = new ContainsConstraint(organism,
+                    ConstraintOp.CONTAINS, qcOrg);
+            q.setConstraint(ccOrg);
+
+            Results results = im.getObjectStore().execute(q);
+
+            // a List contains all the chrInfo (organism, chrPID, length)
+            List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
+            // a Set contains all the orgName
+            Set<String> orgSet = new HashSet<String>();
+
+            // Handle results
+            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                String org = (String) row.get(0);
+                String chrPID = (String) row.get(1);
+                Integer chrLength = (Integer) row.get(2);
+
+                // Add orgName to HashSet to filter out duplication
+                orgSet.add(org);
+
+                if (chrLength != null) {
+                    ChromosomeInfo chrInfo = new ChromosomeInfo();
+                    chrInfo.setOrgName(org);
+                    chrInfo.setChrPID(chrPID);
+                    chrInfo.setChrLength(chrLength);
+
+                    // Add ChromosomeInfo to Arraylist
+                    chrInfoList.add(chrInfo);
+                }
+            }
+
+            // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
+            // orgName and value as a ArrayList containing a list of chrInfo which has the same
+            // orgName
+            for (String o : orgSet) {
+
+                // a List to store chrInfo for the same organism
+                List<ChromosomeInfo> chrInfoSubList = new ArrayList<ChromosomeInfo>();
+
+                for (ChromosomeInfo chrInfo : chrInfoList) {
+                    if (o.equals(chrInfo.getOrgName())) {
+                        chrInfoSubList.add(chrInfo);
+                        chrInfoMap.put(o, chrInfoSubList);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return chrInfoMap;
+    }
+
+    /**
+     * Query the information of all feature types and their according so terms.
+     *
+     * @param im - the InterMineAPI
+     * @return chrInfoMap - a HashMap with featureType as key and its SO info accordingly as value
+     */
+    public static Map<String, List<String>> getFeatureAndSOInfo(InterMineAPI im) {
+
+        Map<String, List<String>> featureTypeToSOTermMap = new HashMap<String, List<String>>();
+
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+        QueryClass qcSOTerm = new QueryClass(SOTerm.class);
+
+        QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+//        QueryField qfSOId = new QueryField(qcSOTerm, "identifier");
+        QueryField qfSOName = new QueryField(qcSOTerm, "name");
+        QueryField qfSODescription = new QueryField(qcSOTerm, "description");
+
+        q.addToSelect(qfFeatureClass);
+//        q.addToSelect(qfSOId);
+        q.addToSelect(qfSOName);
+        q.addToSelect(qfSODescription);
+
+        q.addFrom(qcFeature);
+        q.addFrom(qcSOTerm);
+
+        QueryObjectReference soTerm = new QueryObjectReference(qcFeature,
+                "sequenceOntologyTerm");
+        ContainsConstraint ccSoTerm = new ContainsConstraint(soTerm,
+                ConstraintOp.CONTAINS, qcSOTerm);
+        q.setConstraint(ccSoTerm);
+
+        Results results = im.getObjectStore().execute(q);
+
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+            List<String> soInfo = new ArrayList<String>();
+
+            @SuppressWarnings("rawtypes")
+            String ft = ((Class) row.get(0)).getSimpleName();
+            String soName = (String) row.get(1);
+            String soDes = (String) row.get(2);
+
+            if (soDes == null) {
+                soDes = "description not avaliable";
+            }
+
+            soInfo.add(soName);
+            soInfo.add(soDes);
+
+            if (!featureTypeToSOTermMap.containsKey(ft)) {
+                featureTypeToSOTermMap.put(ft, soInfo);
+            }
+        }
+
+        return featureTypeToSOTermMap;
+    }
+
+    /**
+     * Query the information of all organisms and their taxon ids.
+     *
+     * @param im - the InterMineAPI
+     * @param profile Profile
+     * @return orgTaxonIdMap - a HashMap with organism  as key and its taxonId as value
+     */
+    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, Profile profile) {
+
+        Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
+
+        PathQuery query = new PathQuery(im.getModel());
+
+        // Add views
+        query.addViews("Organism.shortName",
+                "Organism.taxonId");
+
+        // Add orderby
+        query.addOrderBy("Organism.shortName", OrderDirection.ASC);
+
+        ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+
+        while (results.hasNext()) {
+            List<ResultElement> row = results.next();
+
+            String orgName = (String) row.get(0).getField();
+            Integer orgTaxonId = (Integer) row.get(1).getField();
+
+            orgTaxonIdMap.put(orgName, orgTaxonId);
+        }
+
+        return orgTaxonIdMap;
+
+    }
+}
