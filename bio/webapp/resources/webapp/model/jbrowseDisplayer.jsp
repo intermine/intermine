@@ -12,23 +12,25 @@
 
     <h3 class="overlapping">Genome Browser</h3>
 
-    <c:set var="baseUrl" value="http://jbrowse.org/ucsc/hg19"/>
+    <c:set var="baseUrl" value="/jbrowse"/>
     <c:set var="chr" value="${object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
     <c:set var="padding" value="${10}"/>
     <c:set var="offset" value="${fn:substringBefore((object.length * 0.1), '.')}"/>
 
     <c:set var="start" value="${object.chromosomeLocation.start - offset}"/>
     <c:set var="end" value="${object.chromosomeLocation.end + offset}"/>
-    <c:set var="tracks" value="Gene Track,mRNA Track"/>
+    <c:set var="tracks" value="Gene Track,mRNA Track, SNPs"/>
     <c:set var="jbLink" value="${baseUrl}?loc=chr${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
 	   panel to see the data. Note that some SNPs are recorded with multiple locations - these are marked with
 	   an asterisk (*). Clicking on individual features will take you to the report page for that feature.
     <a href="${jbLink}" target="jbrowse">Centre on ${object.primaryIdentifier}</a></p>
-	<div id="GenomeBrowser" style="height: 300px; width: 98%;border: 1px solid #dfdfdf; padding: 1%"></div>
+	<iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
     <p><a href="http://jbrowse.org">JBrowse</a> genome browser</p>
 </div>
+
+<!--
 
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -54,6 +56,8 @@ var b = new Browser({
 });
 /* ]]> */
 </script>
+
+-->
 
 </c:if>
 <!-- /jBrowseDisplayer.jsp -->
