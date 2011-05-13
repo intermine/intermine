@@ -41,7 +41,7 @@ public class UniprotEntry
     private String sequence, md5checksum;
     private Map<String, List<String>> collections = new HashMap<String, List<String>>();
     private Map<String, String> evidenceCodeToRef = new HashMap<String, String>();
-
+    private boolean isDuplicate = false;
     private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
     private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
 
@@ -533,6 +533,20 @@ public class UniprotEntry
             return Collections.EMPTY_LIST;
         }
         return collections.get("isoformSynonyms");
+    }
+
+    /**
+     * @return the isDuplicate
+     */
+    public boolean isDuplicate() {
+        return isDuplicate;
+    }
+
+    /**
+     * @param isDuplicate the isDuplicate to set
+     */
+    public void setDuplicate(boolean isDuplicate) {
+        this.isDuplicate = isDuplicate;
     }
 
     /**

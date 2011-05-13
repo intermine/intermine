@@ -426,9 +426,6 @@ public class DisplayConstraint
             boolean existPossibleValues =
                 (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
             for (ConstraintOp op : allOps) {
-                if (!existPossibleValues && (op.getIndex() == 6 || op.getIndex() == 7)) {
-                    continue;
-                }
                 validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
             }
             if (existPossibleValues) {

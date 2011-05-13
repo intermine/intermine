@@ -200,6 +200,10 @@ public class TransferSequences
                     continue;
                 }
 
+                if (PostProcessUtil.isInstance(model, feature, "SNP")) {
+                    continue;
+                }
+
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {

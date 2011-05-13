@@ -59,7 +59,7 @@ public class EnsemblIdentifiersConverter extends BioFileConverter
     /**
      * @param taxonIds taxon ID to process
      */
-    public void setEnsemblComparaOrganisms(String taxonIds) {
+    public void setEnsemblOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
@@ -113,7 +113,10 @@ public class EnsemblIdentifiersConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            parseGene(line, fileName);
+            // skip header
+            if (!line[0].startsWith("Ensembl")) {
+                parseGene(line, fileName);
+            }
         }
     }
 

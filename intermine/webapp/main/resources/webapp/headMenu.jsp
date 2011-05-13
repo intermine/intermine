@@ -65,6 +65,13 @@
           <fmt:message key="menu.customQuery"/>&nbsp;
         </a>
       </li>
+      <c:if test="${WEB_PROPERTIES['genomicRegionSearch.hidden'] == 'false'}">
+          <li id="genomicRegionSearch">
+            <a href="/${WEB_PROPERTIES['webapp.path']}/genomicRegionSearch.do">
+              <fmt:message key="menu.genomicRegionSearch"/>
+            </a>
+          </li>
+      </c:if>
       <li id="category">
         <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
           <fmt:message key="menu.dataCategories"/>

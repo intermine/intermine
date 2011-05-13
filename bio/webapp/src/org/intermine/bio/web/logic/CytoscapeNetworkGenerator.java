@@ -55,8 +55,6 @@ public class CytoscapeNetworkGenerator
         sb = addEdgesToGeneNetworkInXGMML(sb, interactionEdgeMap);
         sb = addTailToNetworkInXGMML(sb);
 
-        LOG.info("NetworkModel >>>>>\n" + createGeneNetworkInJSON(interactionNodeMap, interactionEdgeMap));
-
         return sb.toString();
     }
 
@@ -309,6 +307,5 @@ public class CytoscapeNetworkGenerator
         JSONObject jo = new JSONObject(networkModel);
 
         return jo.toString();
-
     }
 }

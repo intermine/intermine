@@ -32,7 +32,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.5.1.min.js'/>"></script>
 
-
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
@@ -56,12 +55,14 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 
 	</c:if>
   </c:if>
+
 <!--
   <c:if test="${pageName == 'begin'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
   </c:if>
 -->
+
   <c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'bag' || pageName == 'mymine'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
     <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
