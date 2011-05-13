@@ -462,6 +462,13 @@
                      replacesFields="goAnnotation,ontologyAnnotations"
                      placement="Function"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Homology"
+                     parameters="{'dataSets': ['Ensembl Compara data set']}"
+                     types="Gene"/>
 </reportdisplayers>
 
 <!-- widgets -->
