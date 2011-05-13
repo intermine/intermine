@@ -59,7 +59,7 @@ public class EnsemblIdentifiersConverter extends BioFileConverter
     /**
      * @param taxonIds taxon ID to process
      */
-    public void setEnsemblComparaOrganisms(String taxonIds) {
+    public void setEnsemblOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
