@@ -785,7 +785,7 @@
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
     <post-process name="create-intron-features">
-      <property name="organisms" value="7165,7460,7227"/>
+      <property name="organisms" value="7165,7460"/>
     </post-process>
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />
