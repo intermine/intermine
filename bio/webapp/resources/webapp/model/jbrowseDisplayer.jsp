@@ -20,7 +20,10 @@
     <c:set var="start" value="${object.chromosomeLocation.start - offset}"/>
     <c:set var="end" value="${object.chromosomeLocation.end + offset}"/>
     <c:set var="tracks" value="Gene Track,mRNA Track, SNPs"/>
-    <c:set var="jbLink" value="${baseUrl}?loc=chr${chr}:${start}..${end}&tracks=${tracks}"/>
+	<c:set var="genus" value="${object.organism.genus}"/>
+	<c:set var="species" value="${object.organism.species}"/>
+
+    <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
 	   panel to see the data. Note that some SNPs are recorded with multiple locations - these are marked with
