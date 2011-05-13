@@ -398,6 +398,15 @@ class Query(object):
         if self.do_verification: self.verify_views(views)
         self.views.extend(views)
 
+    def clear_view(self):
+        """
+        Clear the output column list
+        ============================
+
+        Deletes all entries currently in the view list. 
+        """
+        self.views = []
+
     def verify_views(self, views=None):
         """
         Check to see if the views given are valid
@@ -883,6 +892,35 @@ class Query(object):
             return int(count_str)
         except ValueError:
             raise WebserviceError("Server returned a non-integer count: " + count_str)
+
+    def get_list_upload_uri(self):
+        """
+        Returns the uri to use to create a list from this query
+        =======================================================
+
+        Query.get_list_upload_uri() -> str
+
+        This method is used internally when performing list operations
+        on queries.
+
+        @rtype: str
+        """
+        return self.service.root + self.service.QUERY_LIST_UPLOAD_PATH
+
+    def get_list_append_uri(self):
+        """
+        Returns the uri to use to create a list from this query
+        =======================================================
+
+        Query.get_list_append_uri() -> str
+
+        This method is used internally when performing list operations
+        on queries.
+
+        @rtype: str
+        """
+        return self.service.root + self.service.QUERY_LIST_APPEND_PATH
+
 
     def get_results_path(self):
         """
