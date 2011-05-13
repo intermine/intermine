@@ -128,6 +128,9 @@
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
+<!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
+     <property name="source.db.name" value="ensembl.10090.variation"/>
+    </source>-->
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>

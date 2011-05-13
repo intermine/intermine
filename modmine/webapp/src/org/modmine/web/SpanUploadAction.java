@@ -40,6 +40,9 @@ import org.modmine.web.logic.SpanOverlapQueryRunner;
 import org.modmine.web.logic.SpanValidator;
 
 /**
+ * Action for querying overlap experimental features against uploaded spans (genome regions)
+ * from either a text area or a file in certain formats.
+ *
  * @author Fengyuan Hu
  *
  */
@@ -51,15 +54,7 @@ public class SpanUploadAction extends InterMineAction
     private static final Logger LOG = Logger.getLogger(SpanUploadAction.class);
 
     /**
-     * Action for querying overlap experimental features against uploaded spans (genome regions)
-     * from either a text area or a file in certain formats.
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws an exception
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)

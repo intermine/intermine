@@ -412,7 +412,7 @@
         <li>Both <b>base coordinate</b> (e.g. BLAST, GFF/GFF3) and <b>interbase coordinate</b> (e.g. UCSC BED, Chado) systems are supported, users need to explicitely select one. By default, the base coordinate is selected.</li>
         <li>Each genome region needs to take a <b>new line</b>.</li>
         <li>Only experiments with features are listed below.</li>
-        <li>Right click <ba experiment</b> in the tree to go to experiment report page.</li>
+        <li>Right click <b>an experiment</b> in the tree to go to experiment report page.</li>
       </ul>
       <br/>
 

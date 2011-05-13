@@ -259,7 +259,7 @@
             <%--Contained in bag:--%>
             <html:select property="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
-                <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>
+                <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
                   <c:out value="${bagOp.label}" />
                 </option>
               </c:forEach>
