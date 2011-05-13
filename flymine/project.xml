@@ -141,11 +141,13 @@
       <property name="src.data.dir" location="/shared/data/tiffin/"/>
       <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
     </source>
+    <!-- disable until bob is revived 
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
+    -->
     <source name="protein-structure" type="protein-structure">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
