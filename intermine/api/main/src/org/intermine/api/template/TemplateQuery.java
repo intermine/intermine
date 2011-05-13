@@ -27,9 +27,12 @@ import org.apache.log4j.Logger;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -586,5 +589,35 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public void setEdited(boolean edited) {
         this.edited = edited;
+    }
+
+    /*
+     * Removed from the view all the direct attributes that aren't editable constraints
+     */
+    public TemplateQuery removeDirectAttributesFromView() {
+        TemplateQuery templateQuery = (TemplateQuery) super.clone();
+        List<String> viewPaths = templateQuery.getView();
+        PathQuery pathQuery = templateQuery.getPathQuery();
+        String rootClass = null;
+        try {
+            rootClass = templateQuery.getRootClass();
+            for (String viewPath : viewPaths) {
+                Path path = pathQuery.makePath(viewPath);
+                if (path.getElementClassDescriptors().size() == 1
+                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
+                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
+                        templateQuery.removeView(viewPath);
+                        for (OrderElement oe : templateQuery.getOrderBy()) {
+                            if (oe.getOrderPath().equals(viewPath)) {
+                                templateQuery.removeOrderBy(viewPath);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PathException pe) {
+            LOG.error("Error updating the template's view", pe);
+        }
+        return templateQuery;
     }
 }

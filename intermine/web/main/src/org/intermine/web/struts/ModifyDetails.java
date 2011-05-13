@@ -79,6 +79,7 @@ public class ModifyDetails extends DispatchAction
                 Integer objectId = new Integer(idForLookup);
                 ObjectStore os = im.getObjectStore();
                 InterMineObject object = os.getObjectById(objectId);
+                template = template.removeDirectAttributesFromView();
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
             } else {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template, bag);

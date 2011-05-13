@@ -71,7 +71,7 @@ public class ReportTemplateController extends TilesAction
         try {
             if (reportObject != null) {
                 InterMineObject obj = reportObject.getObject();
-                template = updateView(template);
+                template = template.removeDirectAttributesFromView();
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
@@ -99,35 +99,5 @@ public class ReportTemplateController extends TilesAction
             context.putAttribute("resultsTable", pagedResults);
         }
         return null;
-    }
-
-    /*
-     * Removed from the view all the direct attributes that aren't editable constraints
-     */
-    private TemplateQuery updateView(TemplateQuery template) {
-        TemplateQuery templateQuery = template.clone();
-        List<String> viewPaths = templateQuery.getView();
-        PathQuery pathQuery = templateQuery.getPathQuery();
-        String rootClass = null;
-        try {
-            rootClass = templateQuery.getRootClass();
-            for (String viewPath : viewPaths) {
-                Path path = pathQuery.makePath(viewPath);
-                if (path.getElementClassDescriptors().size() == 1
-                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
-                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
-                        templateQuery.removeView(viewPath);
-                        for (OrderElement oe : templateQuery.getOrderBy()) {
-                            if (oe.getOrderPath().equals(viewPath)) {
-                                templateQuery.removeOrderBy(viewPath);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (PathException pe) {
-            LOG.error("Error updating the template's view", pe);
-        }
-        return templateQuery;
     }
 }
