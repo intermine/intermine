@@ -30,7 +30,7 @@
 	   an asterisk (*). Clicking on individual features will take you to the report page for that feature.
     <a href="${jbLink}" target="jbrowse">Centre on ${object.primaryIdentifier}</a></p>
 	<iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
-    <p><a href="http://jbrowse.org">JBrowse</a> genome browser</p>
+    <p><a onclick="jQuery('iframe').css({height: "600px"});">Expand viewer</a><a href="http://jbrowse.org">JBrowse</a> genome browser</p>
 </div>
 
 <!--
