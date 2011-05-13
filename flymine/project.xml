@@ -36,13 +36,13 @@
     </source>
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 7237 6239 7165 7460 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="fasta.taxonId" value="7227 7237 6239 7165 4932 9606 10090 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -787,7 +787,7 @@
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
     <post-process name="create-intron-features">
-      <property name="organisms" value="7165,7460"/>
+      <property name="organisms" value="7165"/>
     </post-process>
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />
