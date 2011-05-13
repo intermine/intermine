@@ -14,8 +14,9 @@
 
 <html:xhtml/>
 
+<c:choose>
+<c:when test="${(reportObject != null || interMineIdBag !=null) && resultsTable != null}">
 <div style="overflow-x: auto;">
-  <c:if test="${(reportObject != null || interMineIdBag !=null) && resultsTable != null}">
 
     <%-- Results table --%>
   <tiles:insert name="resultsTable.tile">
@@ -25,7 +26,6 @@
      <tiles:put name="tableIdentifier" value="table_${fn:replace(placement, ':', '_')}_${templateQuery.name}" />
   </tiles:insert>
 
-  </c:if>
 </div>
 
 <%-- Produce show in table link --%>
@@ -83,5 +83,16 @@
   </c:otherwise>
 </c:choose>
 
+</c:when>
+<c:otherwise>
+  <%-- a fail happened here... --%>
+  <script type="text/javascript">
+    var h = jQuery('span#label_${fn:replace(placement, ':', '_')}_${templateQuery.name}').find("h3.templateTitle div.right");
+    h.html('No results for this ${reportObject.type}');
+    // apply gray style
+    h.parent().parent().parent().parent().parent().addClass('gray');
+  </script>
+</c:otherwise>
+</c:choose>
 
 <!-- /reportTemplateTable.jsp -->

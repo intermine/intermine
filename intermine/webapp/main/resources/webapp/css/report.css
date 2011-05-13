@@ -20,6 +20,7 @@ div.templateDetails { height:auto !important; margin-left:auto !important; }
 div#navtrail { margin:0 !important; }
 p.no-external-links, p.gbrowse-not-configured { padding:0 0 0 6px; }
 #headercontainer { overflow-x:hidden; /* was not working on vanilla Flymine either, might result in unexpected behavior */ }
+p#contactUsLink { display:none; }
 
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
