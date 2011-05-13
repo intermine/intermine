@@ -51,6 +51,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
         <script type="text/javascript" src="/jbrowse/js/UITracks.js"></script>
         <script type="text/javascript" src="/jbrowse/js/ImageTrack.js"></script>
         <script type="text/javascript" src="/jbrowse/js/GenomeView.js"></script>
+        <script type="text/javascript" src="/jbrowse/data/refSeqs.js"></script>
+        <script type="text/javascript" src="/jbrowse/data/trackInfo.js"></script>
+
 	</c:if>
   </c:if>
 <!--
