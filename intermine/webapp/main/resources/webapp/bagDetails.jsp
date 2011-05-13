@@ -304,12 +304,20 @@
 
 
   <div class="body">
-  <fmt:message key="bagDetails.templatesHelp">
-    <fmt:param>
-              <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>
-      </fmt:param>
-  </fmt:message>
+  <fmt:message key="bagDetails.templatesHelp"/>
 
+  <%-- Each aspect --%>
+  <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+  <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
+    <tiles:insert name="reportAspect.tile">
+      <tiles:put name="placement" value="im:aspect:${aspect}"/>
+      <tiles:put name="trail" value="|bag.${bag.name}"/>
+      <tiles:put name="interMineIdBag" beanName="bag"/>
+      <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+      <tiles:put name="opened" value="${status.index == 0}" />
+    </tiles:insert>
+  </div>
+  </c:forEach>
 </div>  <!-- templates body -->
 
 <!-- /templates -->
