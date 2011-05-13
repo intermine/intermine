@@ -36,6 +36,7 @@ sub read_properties {
         next if /^\s*#/;
         chomp;
         my ($k, $v) = split(/\s*=\s*/, $_, 2);
+        next unless $k;
         $properties{$k} = $v;
     }
     close($in) or die "Problem reading from $file: $!\n";  
