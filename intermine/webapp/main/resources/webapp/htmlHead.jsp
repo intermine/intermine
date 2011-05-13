@@ -38,6 +38,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
 	<c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
+    <!--
 		<link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
         <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dojo/resources/dojo.css"></link>
         <link rel="stylesheet" type="text/css" href="/jbrowse/genome.css"></link>
@@ -59,7 +60,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
         <script type="text/javascript" src="/jbrowse/js/GenomeView.js"></script>
         <script type="text/javascript" src="/jbrowse/data/refSeqs.js"></script>
         <script type="text/javascript" src="/jbrowse/data/trackInfo.js"></script>
-
+    -->
 	</c:if>
   </c:if>
 
