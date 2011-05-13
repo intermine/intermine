@@ -1,6 +1,8 @@
 IMBedding = (function() {
     // Add in a console in case there is no global one.
-    console = console || {log: function() {}};
+    if (typeof(console) == undefined) {
+        console = {log: function() {}};
+    }
     var baseUrl = null;
     var tables = {};
     var defaultTableSize = 10;
@@ -28,6 +30,15 @@ IMBedding = (function() {
         return x1 + x2;
     }
 
+    var mungeHeader = function(header) {
+        var parts = header.split(" > ");
+        if (parts.length == 1) {
+            return parts[0];
+        } else {
+            var ret = parts.slice(parts.length - 2, parts.length - 1).join(" ");
+            return ret;
+        }
+    };
 
     var defaultOptions = {
         formatCount: true,
@@ -60,7 +71,8 @@ IMBedding = (function() {
         showExportLinks: true,
         showMineLink: true,
         throbberSrc: "images/throbber.gif",
-        titleHoverCursor: "pointer"
+        titleHoverCursor: "pointer",
+        headerMunger: mungeHeader;
     };
 
     var localiseUrl = function(url, options) {
@@ -159,7 +171,8 @@ IMBedding = (function() {
             for (var i = 0; i < data.views.length; i++) {
                 var cell = document.createElement("td");
                 cell.setAttribute("class", "imbedded-cell imbedded-column-header");
-                cell.innerHTML = data.columnHeaders[i];
+                cell.innerHTML = this.options.mungeHeader(data.columnHeaders[i]);
+                cell.setAttribute("title", data.columnHeaders[i]);
                 this.colHeaderRow.append(cell);
             }
 
