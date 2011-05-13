@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.NoSuchElementException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -236,7 +238,11 @@ public class ModifyDetails extends DispatchAction
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
 
-            new ReportTemplateController().execute(cc, mapping, form, request, response);
+            try {
+                new ReportTemplateController().execute(cc, mapping, form, request, response);
+            } catch (NoSuchElementException e) {
+                // TODO: happening on metabolicMine im:aspect:Pathways_Gene_Pathway
+            }
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("reportTemplateTable");
         }

@@ -80,4 +80,5 @@
   </c:choose>
 
 </div>
+
 <!-- /reportTemplate.jsp -->
