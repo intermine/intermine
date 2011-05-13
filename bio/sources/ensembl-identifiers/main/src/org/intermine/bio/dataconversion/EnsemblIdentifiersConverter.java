@@ -113,7 +113,10 @@ public class EnsemblIdentifiersConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            parseGene(line, fileName);
+            // skip header
+            if (!line[0].startsWith("Ensembl")) {
+                parseGene(line, fileName);
+            }
         }
     }
 
