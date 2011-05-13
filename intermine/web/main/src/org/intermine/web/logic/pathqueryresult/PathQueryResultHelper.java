@@ -89,13 +89,15 @@ public final class PathQueryResultHelper
             String relPath = fieldConfig.getFieldExpr();
             // only add attributes, don't follow references, following references can be problematic
             // when subclasses get involved.
-            try {
-                Path path = new Path(model, prefix + "." + relPath);
-                if (path.isOnlyAttribute()) {
-                    view.add(path.getNoConstraintsString());
+            if (fieldConfig.getShowInResults()) {
+                try {
+                    Path path = new Path(model, prefix + "." + relPath);
+                    if (path.isOnlyAttribute()) {
+                        view.add(path.getNoConstraintsString());
+                    }
+                } catch (PathException e) {
+                    LOG.error("Invalid path configured in webconfig for class: " + type);
                 }
-            } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
             }
         }
         if (view.size() == 0) {

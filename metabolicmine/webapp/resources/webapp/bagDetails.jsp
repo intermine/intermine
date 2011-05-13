@@ -74,11 +74,11 @@
                   if (a > -1) {
                     var z = url.substring(a, url.length).indexOf("&");
                     // redirect
-                    urlObj.attr('href', url.substring(0, a + 5) + result.replace(' ', '+') + url.substring(a + z, url.length));
+                    urlObj.attr('href', url.substring(0, a + 5) + result.replace(/ /g,"+") + url.substring(a + z, url.length));
                   } else {
                     a = url.indexOf("bagName=");
                     // redirect
-                    urlObj.attr('href', url.substring(0, a + 8) + result.replace(' ', '+'));
+                    urlObj.attr('href', url.substring(0, a + 8) + result.replace(/ /g,"+"));
                   }
                 } else { // no name change
                   jQuery('div.title div.form').hide();
