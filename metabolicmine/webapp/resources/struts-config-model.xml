@@ -42,6 +42,7 @@
 <action path="/cytoscapeNetworkAjax"
         type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 
+<action path="/snpToGeneAction" name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneAction" input="objectDetails">
   <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
   <forward name="waiting" redirect="true" path="/pollQuery.do"/>
 </action>
