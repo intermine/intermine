@@ -198,6 +198,8 @@ div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-deco
 .container_12 .compact-table a:hover { text-decoration:underline !important; }
 div.feature table.compact-table td.main { border-width:0 1px; border-style:solid; padding:0 !important; }
 div.feature table.compact-table td.main table { padding: 0 6px; }
+div.feature table.compact-table tr td, div.feature table.compact-table tr td.main {
+  border-bottom-width:1px; border-bottom-style:solid; }
 
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 .listsObjectIsIn { padding-top: 2px; padding-left: 10px; }

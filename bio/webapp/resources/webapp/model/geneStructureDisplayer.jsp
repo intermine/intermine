@@ -64,30 +64,47 @@
             <tiles:insert page="/model/displaySequenceFeature.jsp">
                 <tiles:put name="feature" beanName="transcript"/>
             </tiles:insert>
+
+          <%-- background color switch --%>
+          <c:set var="color_switch" value="true"/>
+
           <c:if test="${settings.hasExons}">
 
-            <td class="main theme-3-border">
+            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
               <c:set var="count" value="0" scope="page" />
               <c:if test="${!empty geneModel.exons}">
-                <table cellspacing="0" class="theme-6-background">
+
+                  <table cellspacing="0">
+
                   <c:forEach items="${geneModel.exons}" var="exon">
                     <tr>
                       <tiles:insert page="/model/displaySequenceFeature.jsp">
                         <tiles:put name="feature" beanName="exon"/>
                         <tiles:put name="idToHighlight" beanName="actualId"/>
                         <tiles:put name="singleLine" value="true"/>
-                        <tiles:put name="alternate" value="true"/>
                       </tiles:insert>
                     </tr>
                   </c:forEach>
                 </table>
               </c:if>
+
+                <c:choose>
+                  <c:when test="${color_switch}">
+                     <c:set var="color_switch" value="false"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="color_switch" value="true"/>
+                  </c:otherwise>
+                </c:choose>
+
             </td>
-          </c:if>          
+          </c:if>
           <c:if test="${settings.hasIntrons}">
-            <td>
+            <td class='<c:if test="${color_switch}">theme-6-background</c:if>'>
               <c:if test="${!empty geneModel.introns}">
+
                 <table cellspacing="0">
+
                   <c:forEach items="${geneModel.introns}" var="intron">
                     <tr>
                       <tiles:insert page="/model/displaySequenceFeature.jsp">
@@ -98,17 +115,35 @@
                   </c:forEach>
                 </table>
               </c:if>
+
+                <c:choose>
+                  <c:when test="${color_switch}">
+                     <c:set var="color_switch" value="false"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="color_switch" value="true"/>
+                  </c:otherwise>
+                </c:choose>
+
             </td>
           </c:if>
           <c:if test="${settings.hasFivePrimeUTRs}">
-            <td class="main theme-3-border">
-              <table cellspacing="0" class="theme-6-background">
+            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
+
+                <c:choose>
+                  <c:when test="${color_switch}">
+                     <c:set var="color_switch" value="false"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="color_switch" value="true"/>
+                  </c:otherwise>
+                </c:choose>
+
                 <c:choose>
                   <c:when test="${!empty geneModel.fivePrimeUTR}">
                     <c:set var="fivePrimeUTR" value="${geneModel.fivePrimeUTR}"/>
                     <tiles:insert page="/model/displaySequenceFeature.jsp">
                       <tiles:put name="feature" beanName="fivePrimeUTR"/>
-                      <tiles:put name="alternate" value="true"/>
                     </tiles:insert>
                   </c:when>
                   <c:otherwise><td>&nbsp;</td></c:otherwise>
@@ -117,8 +152,19 @@
             </td>
           </c:if>
           <c:if test="${settings.hasThreePrimeUTRs}">
-            <td>
-              <table cellspacing="0">
+            <td class='<c:if test="${color_switch}">theme-6-background</c:if>'>
+
+                <c:choose>
+                  <c:when test="${color_switch}">
+                     <c:set var="color_switch" value="false"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="color_switch" value="true"/>
+                  </c:otherwise>
+                </c:choose>
+
+                    <table cellspacing="0">
+
                 <c:choose>
                   <c:when test="${!empty geneModel.threePrimeUTR}">
                     <c:set var="threePrimeUTR" value="${geneModel.threePrimeUTR}"/>
@@ -132,14 +178,24 @@
             </td>
           </c:if>
           <c:if test="${settings.hasCDSs}">
-            <td class="main theme-3-border">
-              <table cellspacing="0" class="theme-6-background">
+            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
+
+                <c:choose>
+                  <c:when test="${color_switch}">
+                     <c:set var="color_switch" value="false"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="color_switch" value="true"/>
+                  </c:otherwise>
+                </c:choose>
+
+                    <table cellspacing="0">
+
                 <c:choose>
                   <c:when test="${!empty geneModel.CDSs}">
                     <c:forEach items="${geneModel.CDSs}" var="cds">
                       <tiles:insert page="/model/displaySequenceFeature.jsp">
                         <tiles:put name="feature" beanName="cds"/>
-                        <tiles:put name="alternate" value="true"/>
                       </tiles:insert>
                     </c:forEach>
                   </c:when>
