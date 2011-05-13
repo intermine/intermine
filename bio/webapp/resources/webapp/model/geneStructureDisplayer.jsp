@@ -7,7 +7,7 @@
 
 <!-- geneStructureDisplayer.jsp -->
 
-<div class="feature" style="overflow-x: auto">
+<div class="feature">
 
 <c:choose>
 <c:when test="${gene.id == actualId}">
@@ -55,10 +55,10 @@
 
         <c:choose>
           <c:when test="${actualId == transcript.id}">
-            <tr class="highlight">
+            <tr class="mainRow highlight">
           </c:when>
           <c:otherwise>
-            <tr class="${rowClass}">
+            <tr class="mainRow ${rowClass}">
           </c:otherwise>
         </c:choose>
             <tiles:insert page="/model/displaySequenceFeature.jsp">
@@ -209,6 +209,25 @@
     </tbody>
 
   </table>
+
+
+<p class="toggle">
+<a class="toggler"><span>Show all rows</span></a>
+</p>
+<script type="text/javascript">
+// hide over 2 rows from the features table
+jQuery("#GenomicsCategory div.feature table.compact-table tr.mainRow").each(function (i, row) {
+  if (i > 1) {
+    jQuery(row).hide();
+  }
+});
+// show more and destroy itself
+jQuery('#GenomicsCategory div.feature p a.toggler').click(function() {
+  jQuery('#GenomicsCategory div.feature table.compact-table tr.mainRow:hidden').show();
+  jQuery(this).remove();
+});
+</script>
+
 </c:if>
 
 </div>
