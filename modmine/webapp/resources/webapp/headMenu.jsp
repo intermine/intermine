@@ -68,7 +68,7 @@
         </a>
       </li>
 --%>
-      <li id="spanUpload"  <c:if test="${tab == 'spanUpload'}">class="activelink"</c:if>>
+      <li id="spanUpload"  <c:if test="${tab == 'spanUploadOptions'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
           <fmt:message key="menu.spanUpload"/>
         </a>
