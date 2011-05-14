@@ -8,7 +8,6 @@
 <div>
 
 <h3>Homologues</h3>
-<p style="color: red;">[UNDER CONSTRUCTION!]</p>
 <table>
   <tr>
     <c:forEach items="${homologues}" var="entry">
