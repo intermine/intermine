@@ -10,17 +10,14 @@ package org.intermine.bio.web.displayer;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultElement;
@@ -39,16 +36,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Displayer for Drosphila homologues
- * @author rns
+ * Displayer for Homology
+ * @author Richard Smith
  */
 public class HomologueDisplayer extends CustomDisplayer
 {
-
-    private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi", "virilis",
-        "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae", "erecta",
-        "yakuba", "melanogaster", "sechellia", "simulans"});
-    protected static final Logger LOG = Logger.getLogger(OverlappingFeaturesDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(HomologueDisplayer.class);
 
     /**
      * Construct with config information read from webconfig-model.xml and the API.
@@ -111,14 +104,6 @@ public class HomologueDisplayer extends CustomDisplayer
 
         request.setAttribute("organismIds", organismIds);
         request.setAttribute("homologues", homologues);
-    }
-
-    private Map<String, Set<ResultElement>> initMap() {
-        Map homologues = new ListOrderedMap();
-        for (String species : SPECIES) {
-            addToMap(homologues, species, null);
-        }
-        return homologues;
     }
 
     private void addToMap(Map<String, Set<ResultElement>> homologues, String species,
