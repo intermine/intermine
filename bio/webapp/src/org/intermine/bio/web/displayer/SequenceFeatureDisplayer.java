@@ -76,5 +76,15 @@ public class SequenceFeatureDisplayer extends CustomDisplayer {
         } catch (IllegalAccessException e) {
             // this is expected for classes that don't have a cytoLocation attribute
         }
+
+        // check if mapLocation field exists and display it
+        try {
+            String mapLocation = (String) imObj.getFieldValue("mapLocation");
+            if (!StringUtils.isBlank(mapLocation)) {
+                request.setAttribute("mapLocation", mapLocation);
+            }
+        } catch (IllegalAccessException e) {
+            // this is expected for classes that don't have a cytoLocation attribute
+        }
     }
 }
