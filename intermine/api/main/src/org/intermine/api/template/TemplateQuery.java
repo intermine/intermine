@@ -610,6 +610,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                         for (OrderElement oe : templateQuery.getOrderBy()) {
                             if (oe.getOrderPath().equals(viewPath)) {
                                 templateQuery.removeOrderBy(viewPath);
+                                break;
                             }
                         }
                     }
