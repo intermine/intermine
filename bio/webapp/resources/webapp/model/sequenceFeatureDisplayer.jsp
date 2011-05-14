@@ -124,6 +124,12 @@
           <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
+      <c:when test="${!empty mapLocation}">
+        <td class="theme-3-border theme-6-background border-left">Map location:</td>
+        <td class="theme-3-border theme-6-background">
+          <strong><c:out value="${mapLocation}"/></strong>
+        </td>
+      </c:when>
       <c:otherwise>
         <td class="theme-3-border theme-6-background border-left" colspan="2"></td>
       </c:otherwise>
