@@ -26,11 +26,12 @@
     <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
-	   panel to see the data. Note that some SNPs are recorded with multiple locations - these are marked with
-	   an asterisk (*). Clicking on individual features will take you to the report page for that feature.
-    <a href="${jbLink}" target="jbrowse">Centre on ${object.primaryIdentifier}</a></p>
+	   panel to see the data. Clicking on individual features to open a report page for that feature.
+	    <br/>
+	    <strong>*</strong> denotes SNPs that are mapped to multiple genome position.
+    <a href="${jbLink}" target="jbrowse">Centre on ${object.symbol}</a></p>
 	<iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
-    <p><a onclick="jQuery('iframe').css({height: "600px"});">Expand viewer</a><a href="http://jbrowse.org">JBrowse</a> genome browser</p>
+    <p><a href="javascript:;" onclick="jQuery('iframe').css({height: '600px'});">Expand viewer</a>&nbsp;(more about <a href="http://jbrowse.org">JBrowse</a>)</p>
 </div>
 
 <!--
