@@ -599,17 +599,6 @@
         </source>
         -->
 
-        <!-- CELNIKERLAI -->
-        <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
-            <property name="organisms" value="7227"/>
-            <property name="dataSourceName" value="modENCODE"/>
-            <property name="dataSetTitle" value="modENCODE submission"/>
-            <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
-            <property name="processors"
-                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-            <property name="converter.class"
-                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-        </source>
         <!-- WATERSTON NOW WITH PIANO
         <source name="modencode-waterston-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
@@ -628,6 +617,17 @@
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
             <property name="source.db.name" value="modencode-waterstonpiano-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+        <!-- CELNIKERLAI -->
+        <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
+            <property name="organisms" value="7227"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
             <property name="processors"
                                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
             <property name="converter.class"
