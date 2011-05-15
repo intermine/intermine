@@ -116,24 +116,25 @@ public class BagUploadConfirmController extends TilesAction
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
         Map matches = bagQueryResult.getMatches();
         // matches will be null if we get here if the form.validate() method fails
-        if (matches != null) {
+        matchCount = 0;
+		if (matches != null) {
             Iterator matchIDIter = matches.keySet().iterator();
             while (matchIDIter.hasNext()) {
                 matchesStringBuffer.append(matchIDIter.next()).append(' ');
             }
             bagUploadConfirmForm.setMatchIDs(matchesStringBuffer.toString().trim());
+			matchCount = matches.count();
         }
         if (request.getAttribute("bagType") != null) {
             bagUploadConfirmForm.setBagType((String) request.getAttribute("bagType"));
         }
-        String trimmedIds = bagUploadConfirmForm.getMatchIDs().trim();
-        int matchCount;
-        if (trimmedIds.length() > 0) {
-            int spaceCount = StringUtils.countMatches(trimmedIds, " ");
-            matchCount = spaceCount + 1;
-        } else {
-            matchCount = 0;
-        }
+        //String trimmedIds = bagUploadConfirmForm.getMatchIDs().trim();
+        //if (trimmedIds.length() > 0) {
+        //    int spaceCount = StringUtils.countMatches(trimmedIds, " ");
+        //    matchCount = spaceCount + 1;
+        //} else {
+        //    matchCount = 0;
+        //}
         // TODO put field name here.
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
