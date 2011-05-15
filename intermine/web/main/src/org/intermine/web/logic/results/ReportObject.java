@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
@@ -81,6 +82,8 @@ public class ReportObject
     private Map<String, DisplayField> refsAndCollections = null;
 
     private HeaderConfigLink headerLink;
+
+    private static final Logger LOG = Logger.getLogger(ReportObject.class);
 
     /**
      * Setup internal ReportObject
@@ -267,13 +270,16 @@ public class ReportObject
             // crete a path string
             String pathString = objectType + "." + fc.getFieldExpr();
             try {
-                // resolve path
-                Path path = new Path(im.getModel(), pathString);
-                fieldValues.put(fc.getFieldExpr(), PathUtil.resolvePath(path, object));
+                fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
             } catch (PathException e) {
                 throw new Error("There must be a bug", e);
             }
         }
+    }
+
+    private Object resolvePath(String pathString) throws PathException {
+        Path path = new Path(im.getModel(), pathString);
+        return PathUtil.resolvePath(path, object);
     }
 
     /**
@@ -332,6 +338,15 @@ public class ReportObject
 
                     // resolve the field value
                     Object stuff = getFieldValue(path);
+                    // maybe not in FieldConfigs - try just resolving the path
+                    if (stuff == null) {
+                        try {
+                            stuff = resolvePath(objectType + "." + path);
+                        } catch (PathException e) {
+                            LOG.warn("Error resolving path '" + path + "' in titles config for: "
+                                    + objectType);
+                        }
+                    }
                     if (stuff != null) {
                         String stringyStuff = stuff.toString();
                         // String.isEmpty() was introduced in Java release 1.6
