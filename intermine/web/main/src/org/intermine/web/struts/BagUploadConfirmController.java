@@ -116,14 +116,14 @@ public class BagUploadConfirmController extends TilesAction
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
         Map matches = bagQueryResult.getMatches();
         // matches will be null if we get here if the form.validate() method fails
-        matchCount = 0;
-		if (matches != null) {
+        int matchCount = 0;
+        if (matches != null) {
             Iterator matchIDIter = matches.keySet().iterator();
             while (matchIDIter.hasNext()) {
                 matchesStringBuffer.append(matchIDIter.next()).append(' ');
             }
             bagUploadConfirmForm.setMatchIDs(matchesStringBuffer.toString().trim());
-			matchCount = matches.count();
+            matchCount = matches.keySet().size();
         }
         if (request.getAttribute("bagType") != null) {
             bagUploadConfirmForm.setBagType((String) request.getAttribute("bagType"));
