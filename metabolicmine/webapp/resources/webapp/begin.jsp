@@ -348,7 +348,7 @@
                </form>
 			   <script type="text/javascript">
 					jQuery('#mainSearchForm a').click(function() {
-			  			document.forms["search"].submit();
+			  			document.getElementById("mainSearchForm").submit();
 					});
 			   </script>
 
