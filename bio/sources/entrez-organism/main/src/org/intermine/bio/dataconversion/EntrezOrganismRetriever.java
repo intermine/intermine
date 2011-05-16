@@ -113,13 +113,13 @@ public class EntrezOrganismRetriever extends Task
             ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + "\n");
             for (Iterator<Integer> i = orgMap.keySet().iterator(); i.hasNext();) {
-                Integer taxonId = (Integer) i.next();
+                Integer taxonId = i.next();
                 taxonIds.add(taxonId);
                 if (taxonIds.size() == BATCH_SIZE || !i.hasNext()) {
                     SAXParser.parse(new InputSource(getReader(taxonIds)),
                                     new Handler(toStore, itemFactory), false);
                     for (Iterator<Item> j = toStore.iterator(); j.hasNext();) {
-                        Item item = (Item) j.next();
+                        Item item = j.next();
                         writer.write(FullRenderer.render(item));
                     }
                     taxonIds.clear();
