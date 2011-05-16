@@ -53,9 +53,21 @@ function drawPieAndTableChart(timeRange, trackId, columnName) {
     tableChartData.addColumn('number', 'Users');
     
     TrackAjaxServices.getTemplateTracksPercentage(timeRange, function(tracks) {
-        for (index = 0; index < 5; index = index + 1) {
+        var index;
+        for (index = 0; index < 9; index = index + 1) {
             if (tracks[index] != null) {
                 pieChartData.addRows([tracks[index]]);
+            }
+        } 
+        if (index == 9) {
+            var otherTracks = 0;
+            for (index = 9; index < 15; index = index + 1) {
+                if (tracks[index] != null) {
+                    otherTracks = otherTracks + tracks[index][1];
+                }
+            }
+            if (otherTracks != 0) {
+                pieChartData.addRows([["Others", otherTracks, 0]]);
             }
         }
         tableChartData.addRows(tracks);
