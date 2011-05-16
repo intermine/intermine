@@ -27,7 +27,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="lib/commons-math-2.2.jar"/>
-    <classpathentry kind="lib" path="lib/commons-fileupload-1.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="/intermine-api-main/lib/bobo-browse-2.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/json20110106.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
