@@ -74,6 +74,7 @@
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.shortName"/>
     </fields>
   </class>
 
