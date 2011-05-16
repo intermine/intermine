@@ -61,6 +61,7 @@ function drawPieAndTableChart(timeRange, trackId, columnName) {
         } 
         if (index == 9) {
             var otherTracks = 0;
+            //we sum the tracks from the 10th to 15th template and wu put under the label "Other"
             for (index = 9; index < 15; index = index + 1) {
                 if (tracks[index] != null) {
                     otherTracks = otherTracks + tracks[index][1];
