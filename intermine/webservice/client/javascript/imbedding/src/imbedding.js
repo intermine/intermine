@@ -35,7 +35,7 @@ IMBedding = (function() {
         if (parts.length == 1) {
             return parts[0];
         } else {
-            var ret = parts.slice(parts.length - 2, parts.length - 1).join(" ");
+            var ret = parts.slice(parts.length - 2, parts.length).join(" ");
             return ret;
         }
     };
@@ -72,7 +72,7 @@ IMBedding = (function() {
         showMineLink: true,
         throbberSrc: "images/throbber.gif",
         titleHoverCursor: "pointer",
-        headerMunger: mungeHeader;
+        headerMunger: mungeHeader
     };
 
     var localiseUrl = function(url, options) {
@@ -171,7 +171,7 @@ IMBedding = (function() {
             for (var i = 0; i < data.views.length; i++) {
                 var cell = document.createElement("td");
                 cell.setAttribute("class", "imbedded-cell imbedded-column-header");
-                cell.innerHTML = this.options.mungeHeader(data.columnHeaders[i]);
+                cell.innerHTML = this.options.headerMunger(data.columnHeaders[i]);
                 cell.setAttribute("title", data.columnHeaders[i]);
                 this.colHeaderRow.append(cell);
             }
@@ -480,7 +480,7 @@ IMBedding = (function() {
                     var cell = resultSet.results[i][j];
                     var tableCell = document.createElement("td");
                     tableCell.setAttribute("class", "imbedded-cell " + getColumnClass(j));
-                    if (cell.value) {
+                    if (cell.value != null) {
                         var a = document.createElement("a");
                         a.target = "_blank";
                         if (cell.url) {
