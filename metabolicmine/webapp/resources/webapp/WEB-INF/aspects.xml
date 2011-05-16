@@ -19,7 +19,7 @@
     <tile-name>model/genomics.jsp</tile-name>
     <aspect-source name="GeneDB" url="http://www.genedb.org"/>
   </aspect>
-  <!-- <aspect name="Proteins">
+  <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
     <icon-image>model/images/proteins.png</icon-image>
     <large-image>model/images/proteins.png</large-image>
@@ -28,7 +28,7 @@
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
-  </aspect>-->
+  </aspect>
   <aspect name="SNPs">
     <subtitle>Variation data</subtitle>
     <icon-image></icon-image>
