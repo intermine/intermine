@@ -184,26 +184,24 @@ public class TemplateManager
         }
         PathConstraint constraint = template.getEditableConstraints().get(0);
 
-        if (constraint.getOp().equals(ConstraintOp.LOOKUP)) {
-            if (!classes.contains(constraint.getPath())) {
-                return false;
-            }
+        Path path = null;
+        try {
+            path = template.makePath(constraint.getPath());
+        } catch (PathException e) {
+            // not a valid path
+            return false;
+        }
+
+        // find if type that is being constrained inherits from type of report page
+        String constrainedType;
+        if (path.endIsAttribute()) {
+            constrainedType = path.getPrefix().getEndType().getSimpleName();
         } else {
-            Path path = null;
-            try {
-                path = template.makePath(constraint.getPath());
-            } catch (PathException e) {
-                // not a valid path
-                return false;
-            }
-            // if this a root path can only be a LOOKUP constraint
-            if (path.isRootPath()) {
-                return false;
-            }
-            String parentPath = path.getPrefix().getNoConstraintsString();
-            if (!classes.contains(parentPath)) {
-                return false;
-            }
+            // this is a LOOKUP constraint
+            constrainedType = path.getEndType().getSimpleName();
+        }
+        if (!classes.contains(constrainedType)) {
+            return false;
         }
         return true;
     }
