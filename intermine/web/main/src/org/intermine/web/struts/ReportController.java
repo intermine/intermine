@@ -268,7 +268,7 @@ public class ReportController extends InterMineAction
                 Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);
-                    //miscRefs.remove(fd.getName());
+                    miscRefs.remove(fd.getName());
                 }
             } else if (tagName.equals(TagNames.IM_SUMMARY)) {
                 //miscRefs.remove(fd.getName());
