@@ -35,11 +35,6 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
 
-    <source name="ensembl-identifiers" type="ensembl-identifiers">
-      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
-      <property name="ensembl.organisms" value="9606 10090 10116"/>
-    </source>
-
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>
@@ -62,6 +57,10 @@
      <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
+    </source>
+    <source name="ensembl-identifiers" type="ensembl-identifiers">
+      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
+      <property name="ensembl.organisms" value="9606 10090 10116"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
