@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 
 import javax.xml.stream.XMLStreamException;
@@ -60,7 +61,7 @@ public final class TemplateTrackBinding
         try {
             writer.writeStartElement("templatetracks");
             conn = ((ObjectStoreWriterInterMineImpl) uos).getConnection();
-            String sql = "SELECT templatename, username, timestamp, sessionidentifier "
+            String sql = "SELECT templatename, username, sessionidentifier,timestamp "
                 + "FROM templatetrack";
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
@@ -72,8 +73,8 @@ public final class TemplateTrackBinding
                 if (!StringUtils.isBlank(username)) {
                     writer.writeAttribute("username", username);
                 }
-                writer.writeAttribute("timestamp", Long.toString(rs.getLong(3)));
-                writer.writeAttribute("sessionidentifier", rs.getString(4));
+                writer.writeAttribute("sessionidentifier", rs.getString(3));
+                writer.writeAttribute("timestamp", rs.getTimestamp(4).toString());
                 writer.writeEndElement();
             }
             writer.writeCharacters("\n");
@@ -158,8 +159,8 @@ class TemplateTrackHandler extends DefaultHandler
             try {
                 stm.setString(1, attrs.getValue("templatename"));
                 stm.setString(2, attrs.getValue("username"));
-                stm.setLong(3, Long.parseLong(attrs.getValue("timestamp")));
-                stm.setString(4, attrs.getValue("sessionidentifier"));
+                stm.setString(3, attrs.getValue("sessionidentifier"));
+                stm.setTimestamp(4, Timestamp.valueOf(attrs.getValue("timestamp")));
                 stm.executeUpdate();
             } catch (SQLException sqle) {
                 throw new BuildException("problems during update", sqle);
