@@ -23,17 +23,22 @@
         },
         afterBuildTable: function(table) {
             console.log(table);
-            var button = document.createElement('button');
-            button.value = "add-results";
-            button.innerHTML = "Choose items to add to lists";
+            var button = document.createElement('input');
+            button.type = "checkbox";
+            button.name = "add-results";
             button.id = table.container.attr('id') + "list_button";
             button.style.display = "none";
+            buttonLabel = document.createElement('label');
+            buttonLabel.for = button.id;
+            buttonLabel.innerHTML = "Choose items from this table to add to lists";
+            buttonLabel.style.display = "none";
             table.container.after(button);
+            jQuery(button).after(buttonLabel);
             var addButton = document.createElement('button');
             addButton.innerHTML = "Add to";
             addButton.value = "add-items";
             addButton.style.display = "none";
-            jQuery(button).after(addButton);
+            jQuery(buttonLabel).after(addButton);
             var sel = document.createElement("select");
             sel.style.display = "none";
             var lists = {
@@ -101,18 +106,48 @@
 
             table.listAddButton = addButton;
             table.itemChooseButton = button;
+            table.itemChooseLabel = buttonLabel;
             table.listSelector = sel;
+            jQuery(table.itemChooseButton).change(function() {
+                var elements = table.table.children('tbody')
+                        .children('tr')
+                        .children('td')
+                        .children('span')
+                        .children('input');
+                if ($(table.itemChooseButton).attr('checked')) {
+                    elements.show();
+                    jQuery(table.listAddButton).show();
+                    jQuery(table.listSelector).show();
+                } else {
+                    elements.hide();
+                    jQuery(table.listAddButton).hide();
+                    jQuery(table.listSelector).hide();
+                }
+            });
         },
         afterTableUpdate: function(table) {
-            jQuery(table.itemChooseButton).show()
-                .click(function() {
-                    table.table.children('tbody')
-                            .children('tr')
-                            .children('td')
-                            .children('span')
-                            .children('input').toggle();
-                    jQuery(table.listAddButton).toggle();
-                    jQuery(table.listSelector).toggle();
-                });
+            var elements = table.table.children('tbody')
+                    .children('tr')
+                    .children('td')
+                    .children('span')
+                    .children('input');
+            elements.add(table.listAddButton)
+                    .add(table.listSelector);
+            if ($(table.itemChooseButton).attr('checked')) {
+                elements.show();
+            } else {
+                elements.hide();
+            }
+        },
+        onTableToggle: function(table) {
+            jQuery(table.itemChooseButton).toggle();
+            jQuery(table.itemChooseLabel).toggle();
+            if (jQuery(table.itemChooseButton).is(':visible') && jQuery(table.itemChooseButton).attr('checked')) {
+                jQuery(table.listAddButton).show();
+                jQuery(table.listSelector).show();
+            } else {
+                jQuery(table.listAddButton).hide();
+                jQuery(table.listSelector).hide();
+            }
         }
     }

@@ -34,7 +34,7 @@
                     <td class="value [% label %]">
                     [% IF resolved %]
                         [% path = '/' _ resolved.class _ '/id/' _ resolved.objectId %]
-                        <a href="[%proxy.uri_for(path)%]">[% value %]</a>
+                        <a title="[% key %]" href="[%proxy.uri_for(path)%]">[% value %]</a>
                     [% ELSE %]
                         [% value %]
                     [% END %]
