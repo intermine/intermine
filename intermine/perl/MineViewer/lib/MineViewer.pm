@@ -54,10 +54,7 @@ before_template sub {
 };
 
 get '/' => sub {
-
-    my @lists = map { $service->list($_) } @$list_names;
-
-    return template index => { lists => [@lists] };
+    return template index => { lists => [get_lists()] };
 };
 
 get '/templates' => sub {
