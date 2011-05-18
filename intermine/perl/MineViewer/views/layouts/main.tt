@@ -25,6 +25,7 @@
 <link rel="stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.1/style/light.css">
 
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery-ui-1.8.13.custom.min.js') %]"></script>
+<script type="text/javascript" src="[% proxy.uri_for('/javascripts/listcreation.js') %]"></script>
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery.history.js') %]"></script>
 <link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/css/smoothness/jquery-ui-1.8.13.custom.css') %]">
 

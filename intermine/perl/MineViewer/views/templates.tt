@@ -17,6 +17,8 @@
 
 <div class="content-end footerbar"></div>
 
+[% INCLUDE list_creation_popup.tt %]
+
 <script type="text/javascript">
 
 function complainAboutName(problem) {
@@ -55,20 +57,14 @@ function loadUserTemplate() {
     }
 
     var data = {size: 10};
-    var opts = {
+    var opts = [% INCLUDE template_options.tt %];
+
+    jQuery.extend(opts, {
         baseUrl: "[% settings.mine_base_url %]",
         errorHandler: complainAboutName,
         openOnLoad: true,
         throbberSrc: "[% proxy.uri_for('/images/genericThrobber.gif') %]",
-        createCellContent: function(cell) {
-            var a = document.createElement("a");
-            var base = "[% proxy.uri_for('/') %]";
-            var type = cell["class"];
-            a.href = base + type + "/id/" + cell.id;
-            a.innerHTML = cell.value;
-            return a;
-        }
-    };
+    });
 
     for (x in formValues) {
         name = formValues[x].name;

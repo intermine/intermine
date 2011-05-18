@@ -13,18 +13,19 @@
     <div id="list-item-box">
     <ul id="list-items">
         [% FOREACH item IN items %]
-            [% values = [] %]
             [% itemname = '' %]
             [% FOREACH key IN class_keys %]
-                [% access_key = lists.0.type _ '.' _ key %]
-                [% values.push(item.$access_key) %]
-                [% UNLESS itemname %]
-                    [% itemname = item.$access_key %]
+                [% resolved = item %]
+                [% keyparts = key.split('\.') %]
+                [% FOREACH kp IN keyparts %]
+                    [% resolved = resolved.$kp %]
                 [% END %]
+                [% itemname = resolved %]
+                [% LAST IF itemname %]
             [% END %]
-            [% itemid = values.join(';') %]
-            [% type = lists.0.type %]
-<li><a href="[% proxy.uri_for('/' _ type _ '/' _ itemid) %]">[% itemname %]</a></li>
+                <li>
+        <a href="[% proxy.uri_for('/' _ item.class _ '/id/' _ item.objectId) %]">[% itemname %]</a>
+                </li>
         [% END %]
     </ul>
     </div>
