@@ -1,0 +1,13 @@
+
+[% INCLUDE banner.tt %]
+
+<div id="content">
+    <p class="Error summary">
+    The [% type %] you requested ([% id %]) cannot be found.
+    </p>
+    <h3>QUERY:</h3>
+    <p class="Error details">[% query.to_xml | xml %]</p>
+    [% query.to_xml %]
+</div>
+
+<div class="content-end footerbar"></div>

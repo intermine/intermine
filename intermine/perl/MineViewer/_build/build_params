@@ -1,0 +1,137 @@
+do{ my $x = [
+       {
+         'ARGV' => []
+       },
+       {},
+       {
+         'verbose' => undef,
+         'dist_suffix' => undef,
+         'PL_files' => undef,
+         'pollute' => undef,
+         'bindoc_dirs' => [
+                            'blib/script'
+                          ],
+         'conflicts' => {},
+         'recommends' => {},
+         'scripts' => undef,
+         'pod_files' => undef,
+         'dist_version' => '0.1',
+         'config_dir' => '_build',
+         'sign' => undef,
+         'recurse_into' => [],
+         'build_bat' => 0,
+         'extra_linker_flags' => [],
+         'build_class' => 'Module::Build',
+         'prereq_action_types' => [
+                                    'requires',
+                                    'build_requires',
+                                    'conflicts',
+                                    'recommends'
+                                  ],
+         'base_dir' => '/home/alex/svn/dev/intermine/perl/MineViewer',
+         'allow_mb_mismatch' => 0,
+         'xs_files' => undef,
+         'destdir' => undef,
+         'metafile' => 'META.yml',
+         'mb_version' => '0.3624',
+         'use_tap_harness' => 0,
+         'test_file_exts' => [
+                               '.t'
+                             ],
+         'dist_name' => 'MineViewer',
+         'has_config_data' => undef,
+         'install_base' => undef,
+         'module_name' => 'MineViewer',
+         'recursive_test_files' => 1,
+         'libdoc_dirs' => [
+                            'blib/lib',
+                            'blib/arch'
+                          ],
+         'perl' => '/usr/bin/perl',
+         'dist_author' => [
+                            'Alex Kalderimis <dev@intermine.org>'
+                          ],
+         'bundle_inc' => [],
+         'use_rcfile' => 1,
+         'configure_requires' => {},
+         'test_files' => undef,
+         'dist_abstract' => 'A webapp for view data in intermine data-warehouses',
+         'create_readme' => 1,
+         'prefix_relpaths' => {},
+         'share_dir' => undef,
+         'debug' => undef,
+         'meta_merge' => {},
+         'get_options' => {},
+         'dist_version_from' => 'lib/MineViewer.pm',
+         '_added_to_INC' => [
+                              '/home/alex/ensembl/ensembl/modules',
+                              '/home/alex/ensembl/ensembl-compara/modules',
+                              '/home/alex/ensembl/ensembl-variation/modules',
+                              '/home/alex/ensembl/ensembl-functgenomics/modules'
+                            ],
+         'auto_configure_requires' => 1,
+         'create_license' => undef,
+         'debugger' => undef,
+         'html_css' => '',
+         'cpan_client' => 'cpan',
+         'bundle_inc_preload' => [],
+         'build_elements' => [
+                               'PL',
+                               'support',
+                               'pm',
+                               'xs',
+                               'share_dir',
+                               'pod',
+                               'script'
+                             ],
+         'release_status' => 'stable',
+         'needs_compiler' => '',
+         'orig_dir' => '/home/alex/svn/dev/intermine/perl/MineViewer',
+         'include_dirs' => [],
+         'installdirs' => 'site',
+         'mymetafile' => 'MYMETA.yml',
+         'create_makefile_pl' => 'traditional',
+         'magic_number' => undef,
+         'tap_harness_args' => {},
+         'install_sets' => {},
+         'install_base_relpaths' => {},
+         'create_packlist' => 1,
+         'meta_add' => {},
+         'requires' => {
+                         'namespace::autoclean' => 0,
+                         'FindBin' => 0,
+                         'Memoize' => 0,
+                         'MooseX::NonMoose' => 0,
+                         'Webservice::InterMine::Bio' => '0.97',
+                         'Plack::Runner' => 0,
+                         'Carp' => 0,
+                         'Plack::Handler::FCGI' => 0,
+                         'Dancer::Plugin::ProxyPath' => '0.02',
+                         'Dancer' => '1.3',
+                         'Dancer::Plugin::DBIC' => 0,
+                         'DBIx::Class::Schema::Loader' => 0,
+                         'Webservice::InterMine' => '0.97',
+                         'Moose' => '2'
+                       },
+         'install_path' => {},
+         'pm_files' => undef,
+         'quiet' => undef,
+         'script_files' => undef,
+         'extra_compiler_flags' => [],
+         'build_script' => 'Build',
+         'original_prefix' => {},
+         'c_source' => undef,
+         'program_name' => undef,
+         'autosplit' => undef,
+         'license' => 'perl',
+         'build_requires' => {
+                               'Test::More' => '0.9',
+                               'Test::Exception' => 0,
+                               'Dancer::Test' => 0
+                             },
+         'config' => undef,
+         'blib' => 'blib',
+         'prefix' => undef
+       }
+     ];
+$x; }

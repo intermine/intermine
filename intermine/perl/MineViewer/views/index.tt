@@ -1,0 +1,24 @@
+[% INCLUDE banner.tt %]
+
+<div id="content">
+    <p>
+        Welcome to [% settings.project.title %]. This site presents genomics data from
+        [% settings.service_args.0 %] and allows you to annotate the data. This view
+        has [% lists.size  %] lists of interest for you to view - 
+        to see them, visit the <a href="[% proxy.uri_for('/lists') %]"><em>lists</em></a>
+        tab above. You can also search for your own
+        items of interest using the <a href="[% proxy.uri_for('/queries') %]"><em>queries</em></a>
+        and <a href="[% proxy.uri_for('/templates') %]"><em>templates</em></a> tabs.
+    </p>
+
+</div>
+
+<div class="footerbar" id="external-links">
+    <ul class="menu">
+        <li><a icon="out" id="mine-link" href="[% settings.mine_base_url %]">[% settings.service_args.0 %]</a></li>
+        <li><a icon="out" id="intermine-link" href="http://www.intermine.org">InterMine</a></li>
+    </ul>
+</div>
+        
+
+

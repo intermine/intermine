@@ -1,0 +1,95 @@
+<div id="list-addition-box" style="float: right">
+    <form id="list-addition-form">
+    <button id="listadder" value="Add">Add to</button>
+    <select id="addto">
+    <option value="create-new-list">New List</option>
+    [% FOREACH list IN lists %]
+        [% list_name = list.name %]
+        <option value="[% list.name %]"
+            [% IF contained_in.$list_name %] disabled [% END %] >
+            [% list.name %] ([% list.size %] [% pluraliser(list.type) %]) 
+        </option>
+    [% END %]
+    </select>
+    </form>
+</div>
+
+<div id="listnameentry" title="Create New List">
+    <form>
+        <fieldset>
+            <label for="newlistname">New List Name:</label>
+            <input type="text" id="newlistname"/>
+            <label for="newlistdesc">Description:</label>
+            <input type="text" id="newlistdesc"/>
+            <select id="listTypeSelector" style="display: none;"></select>
+        </fieldset>
+    </form>
+</div>
+
+<script type="text/javascript">
+function handleResults(results) {
+    if (results.problem) {
+        var notice = document.createElement('p');
+        notice.className = "ui-state-error ui-corner-all";
+        notice.id = "list-error";
+        var icon = document.createElement("span");
+        icon.className = "ui-icon ui-icon-alert";
+        icon.style["float"] = "left";
+        icon.style["margin-right"] = ".3em";
+        notice.appendChild(icon);
+        var strong = document.createElement("strong");
+        strong.innerHTML = "Um, excuse me:";
+        notice.appendChild(strong);
+        notice.appendChild(document.createTextNode(" " + results.problem));
+        jQuery('#content').prepend(notice);
+        setTimeout("jQuery('#list-error').fadeOut('slow', function() {jQuery('#list-error').remove()})", 2500);
+    } else {
+        var notice = document.createElement('p');
+        notice.className = "ui-state-highlight ui-corner-all";
+        notice.id = "list-results";
+        var icon = document.createElement("span");
+        icon.className = "ui-icon ui-icon-info";
+        icon.style["float"] = "left";
+        icon.style["margin-right"] = ".3em";
+        notice.appendChild(icon);
+        var strong = document.createElement("strong");
+        strong.innerHTML = "Completed:";
+        notice.appendChild(strong);
+        notice.appendChild(document.createTextNode(" " + results.info));
+        jQuery('#content').prepend(notice);
+        setTimeout("jQuery('#list-results').fadeOut('slow', function() {jQuery('#list-results').remove()})", 2500);
+    }
+    // Update list details
+    jQuery('#list-addition-box').load("[% proxy.uri_for(request.path) %] #list-addition-form");
+}
+        
+jQuery(function() {
+    $('#listnameentry').dialog({
+        autoOpen: false,
+        width: 400,
+        modal: true,
+        buttons: {
+            "Create List" : function() {
+                var data = {
+                    ids: "[% obj.objectId %]", 
+                    list: $('#newlistname').val(),
+                    description: $('#newlistdesc').val(),
+                    type: "[% obj.class %]"
+                };
+                $.post("[% proxy.uri_for('/create_new_list') %]", data, handleResults, "json");
+                $(this).dialog('close');
+            },
+            Cancel: function() {$(this).dialog('close');}
+        }
+    });
+    $('#listadder').click(function() {
+        var selectedList = jQuery('#addto').val();
+        if (selectedList == "create-new-list") {
+            $('#listnameentry').dialog('open');
+        } else {
+            var data = {ids: "[% obj.objectId %]", list: selectedList};
+            $.post("[% proxy.uri_for('/add_ids_to_list') %]", data, handleResults, "json");
+        }
+    });
+});
+</script>

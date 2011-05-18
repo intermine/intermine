@@ -1,0 +1,19 @@
+<div id="colleague-placeholder" class="placeholder">
+   <span class="placeholder-text">Loading colleage information. Please bear with us.</span>
+</div>
+
+<script type="text/javascript">
+$(function() {IMBedding.loadTemplate(
+    {
+        name:          "Employee_Colleagues",
+
+        constraint1:   "Employee",
+        op1:           "LOOKUP",
+        value1:        "[% identifier %]",
+        extra1:        "",
+        code1:         "A"
+    },
+    '#colleague-placeholder',
+    [% INCLUDE template_options.tt %]
+);});
+</script>

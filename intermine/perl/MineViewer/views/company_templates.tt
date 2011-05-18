@@ -1,0 +1,28 @@
+[% templates = ["Company_Departments", "Company_Employees"] %]
+[% FOR t IN templates %]
+<div id="[% t %]-placeholder" class="placeholder">
+   <span class="placeholder-text">Loading [% t %] information. Please bear with us.</span>
+</div>
+[% END %]
+
+<script type="text/javascript">
+$(function() {
+    [% FOR t IN templates %]
+        
+    IMBedding.loadTemplate(
+        {
+            name:          "[% t %]",
+
+            constraint1:   "Company",
+            op1:           "LOOKUP",
+            value1:        "[% obj.name %]",
+            extra1:        "",
+            code1:         "A",
+
+        },
+        '#[% t %]-placeholder',
+        [% INCLUDE template_options.tt %]
+    );
+    [% END %]
+});
+</script>
