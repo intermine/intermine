@@ -3,6 +3,28 @@ var tdColorArray = new Array();
 var highlightColor = '#FFF3D3';
 
 /**
+ * give us a list of items in the bag currently
+ */
+function getIdentifiersInTheBag() {
+	return jQuery("#matchIDs").val().split(" ");
+}
+
+/**
+ * check if value is already in a bag
+ * @param identifier, actual object ID
+ * @returns {Boolean}
+ */
+function isIdentifierInTheBag(identifier) {
+	var array = getIdentifiersInTheBag();
+	for (var i = 0; i < array.length; i++) {
+		if (identifier == array[i]) {
+	  		return true;
+	  	}
+	}
+	return false;
+}
+
+/**
  * Add an identifier into the bag
  * @param objectId of the actual row
  * @param row number relative to the table in question

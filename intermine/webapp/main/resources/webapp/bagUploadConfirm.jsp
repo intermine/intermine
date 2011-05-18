@@ -208,22 +208,6 @@
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
   
-  // give us a list of items in the bag currently
-  function getIdentifiersInTheBag() {
-	  return jQuery("#matchIDs").val().split(" ");
-  }
-  
-  // check if value is already in a bag
-  function isIdentifierInTheBag(identifier) {
-	  var array = getIdentifiersInTheBag();
-	  for (var i = 0; i < array.length; i++) {
-	  	if (identifier == array[i]) {
-	  		return true;
-	  	}
-	  }
-	  return false;
-  }
-  
   // run a function checking if we already have items in the bag
   jQuery('span.fakelink').each(function(index) {
 	  // get the element id
