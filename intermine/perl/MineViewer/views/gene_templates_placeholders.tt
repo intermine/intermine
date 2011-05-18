@@ -1,0 +1,12 @@
+    <div id="gene-go-placeholder">
+        <span class="placeholder">Loading Gene &rarr; GO Terms, please be patient</span>
+    </div>
+    <div id="gene-pathways-placeholder">
+        <span class="placeholder">Loading Gene &rarr; Pathways, please be patient</span>
+    </div>
+    <div id="gene-interactions-placeholder">
+        <span class="placeholder">Loading Gene &rarr; Interactions, please be patient</span>
+    </div>
+    <div id="gwas-placeholder">
+        <span class="placeholder">Loading Gene &rarr; GWAS, please be patient</span>
+    </div>

@@ -1,0 +1,70 @@
+
+    <div id="user-comments">
+        <h3 id="user-comments-heading" 
+            [% IF comments.size == 0 %]style="display:none"[% END %]>User Comments</h3>
+        <ul>
+            [% FOREACH comment IN comments %]
+            [% deleterId = "deleter-" _ loop.count %]
+            <li><span onmouseover="jQuery('#[% deleterId %]').show()"
+                onmouseout="jQuery('#[% deleterId %]').hide()"
+                comment="[% comment %]"
+                >
+                [% comment %]
+                <a style="display:none;cursor: pointer" id="[% deleterId %]" 
+                    onclick="removeComment('[% comment %]')">delete</a>
+            </span>
+            </li>
+            [% END %]
+        </ul>
+        <form name="commentform" method="post" action="/addcomment">
+            <input type="hidden" name="id" value="[% identifier %]"/>
+            <input type="text" name="comment" placeholder="Add your comment here"/>
+            <input type="submit" value="Submit"/>
+        </form>
+    </div>
+
+<script type="text/javascript">
+function removeComment(comment) {
+    data = {
+        "commenttext": comment, 
+        "geneid": '[% identifier.replace("'", "\\'") %]'
+    };
+    jQuery.post("[% proxy.uri_for('/removecomment') %]", data, function(results) {
+        jQuery('#user-comments ul li').each(function() {
+            var span = jQuery(this).children('span');
+            console.log(span.attr('comment'));
+            if (span.attr('comment') == comment) {
+                jQuery(this).remove();
+            }
+            if (jQuery('#user-comments ul li').length == 0) {
+                jQuery('#user-comments-heading').hide();
+            }
+            })}, "json");
+}
+
+jQuery(function() {
+    jQuery('form').submit(function() {
+        var data = jQuery(this).serialize();
+        console.log(data);
+        jQuery.post("[% proxy.uri_for('/addcomment') %]", data, function(results) {
+            var count = jQuery('#user-comments ul li').length + 1;
+            var deleterID = "deleter-" + count;
+            while (jQuery('#' + deleterID).length > 0) {
+                count += 1;
+                deleterID = "deleter-" + count;
+            }
+            jQuery('#user-comments ul').append("<li><span onmouseover=\"jQuery('#" 
+                + deleterID + "').show()\" onmouseout=\"jQuery('#" + deleterID 
+                + "').hide()\" comment=\"" + results.comment + "\">"
+                + results.comment
+                + " <a style=\"display:none;cursor: pointer\" id=\"" + deleterID + "\" " 
+                + "onclick=\"removeComment('" + results.comment + "')\">delete</a>"
+                + '</li>');
+            jQuery('#user-comments-heading').show();
+            jQuery('input[name=comment]').val(null);
+        }, "json");
+        return false;
+    });
+});
+    
+</script>

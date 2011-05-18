@@ -1,0 +1,115 @@
+    {
+        baseUrl: '[% settings.mine_base_url %]',
+        createCellContent: function(cell) {
+            var sp = document.createElement('span');
+            var chbx = document.createElement('input');
+            chbx.type = "checkbox";
+            chbx.style.display = "none";
+            chbx.name = cell.id;
+            chbx.objClass = cell["class"];
+            jQuery(chbx).change(function() {
+                var isChecked = $(this).attr('checked');
+                var id = $(this).attr('name');
+                jQuery('input[name=' + id + ']').attr('checked', isChecked);
+                });
+            sp.appendChild(chbx);
+            var a = document.createElement("a");
+            var base = "[% proxy.uri_for('/') %]";
+            var type = cell["class"];
+            a.href = base + type + "/id/" + cell.id;
+            a.innerHTML = cell.value;
+            sp.appendChild(a);
+            return sp;
+        },
+        afterBuildTable: function(table) {
+            console.log(table);
+            var button = document.createElement('button');
+            button.value = "add-results";
+            button.innerHTML = "Choose items to add to lists";
+            button.id = table.container.attr('id') + "list_button";
+            button.style.display = "none";
+            table.container.after(button);
+            var addButton = document.createElement('button');
+            addButton.innerHTML = "Add to";
+            addButton.value = "add-items";
+            addButton.style.display = "none";
+            jQuery(button).after(addButton);
+            var sel = document.createElement("select");
+            sel.style.display = "none";
+            var lists = {
+                'create-new-list': "New List",
+                [% FOREACH list IN all_lists %]
+                    "[% list.name %]": "[% list.name %] ([% list.size %] [% pluraliser(list.type) %])",
+                [% END %]
+            };
+            for (list in lists) {
+                var opt = document.createElement("option");
+                opt.value = list;
+                opt.innerHTML = lists[list];
+                sel.appendChild(opt);
+            }
+            jQuery(addButton).after(sel);
+            jQuery(addButton).click(function() {
+                var inputs = table.table.children('tbody')
+                            .children('tr')
+                            .children('td')
+                            .children('span')
+                            .children('input');
+                var ids = [];
+                var classes = [];
+                inputs.each(function(index, element) {
+                    if (jQuery(element).attr('checked')) {
+                        if (jQuery.inArray(element.name, ids) == -1) {
+                            ids.push(element.name);
+                        }
+                        if (jQuery.inArray(element.objClass, classes) == -1) {
+                            classes.push(element.objClass);
+                        }
+                    }
+                });
+                var listName = jQuery(sel).val();
+                if (listName == "create-new-list") {
+                    $('#listTypeSelector').empty();
+                    for (c in classes) {
+                        $('#listTypeSelector').append('<option value="' + classes[c] 
+                            + '">' + classes[c] + '</option>');
+                    }
+                    $('#listTypeSelector').show();
+                    $('#listnameentry').dialog({
+                        autoOpen: true,
+                        width: 400,
+                        modal: true,
+                        buttons: {
+                            "Create List" : function() {
+                                var data = {
+                                    ids: ids.join(','),
+                                    list: $('#newlistname').val(),
+                                    description: $('#newlistdesc').val(),
+                                    type: $('#listTypeSelector').val()
+                                };
+                                $.post("[% proxy.uri_for('/create_new_list') %]", data, handleResults, "json");
+                                $(this).dialog('close');
+                            },
+                            Cancel: function() {$(this).dialog('close');}
+                        }
+                    });
+                }
+            });
+
+            table.listAddButton = addButton;
+            table.itemChooseButton = button;
+            table.listSelector = sel;
+        },
+        afterTableUpdate: function(table) {
+            jQuery(table.itemChooseButton).show()
+                .click(function() {
+                    table.table.children('tbody')
+                            .children('tr')
+                            .children('td')
+                            .children('span')
+                            .children('input').toggle();
+                    jQuery(table.listAddButton).toggle();
+                    jQuery(table.listSelector).toggle();
+                });
+        }
+    }
