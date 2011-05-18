@@ -93,6 +93,9 @@
                             Cancel: function() {$(this).dialog('close');}
                         }
                     });
+                } else {
+                    var data = {ids: ids.join(','), list: listName};
+                    $.post("[% proxy.uri_for('/add_ids_to_list') %]", data, handleResults, "json");
                 }
             });
 
