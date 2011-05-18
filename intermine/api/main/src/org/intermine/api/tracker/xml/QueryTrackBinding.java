@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.api.tracker.xml;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -9,10 +9,7 @@ package org.intermine.web;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import java.io.Reader;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,34 +19,25 @@ import java.util.LinkedList;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.api.tracker.TemplateTracker;
+import org.intermine.api.tracker.QueryTracker;
 import org.intermine.api.tracker.track.Track;
+import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.util.SAXParser;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * Code for reading and writing template tracks as XML.
- *
- * @author dbutano
- */
-public final class TemplateTrackBinding
+public class QueryTrackBinding
 {
-    private TemplateTrackBinding() {
-    }
-
-    private static final Logger LOG = Logger.getLogger(TemplateTrackBinding.class);
+    private static final Logger LOG = Logger.getLogger(QueryTrackBinding.class);
+    public static final String QUERYTRACKS = "querytracks";
+    public static final String QUERYTRACK = "querytrack";
 
     /**
-     * Convert a Profile to XML and write XML to given writer.
+     * Convert a QueryTrack to XML and write XML to given writer.
      * @param uos the UserObjectStore
      * @param writer the XMLStreamWriter to write to
      */
@@ -59,20 +47,18 @@ public final class TemplateTrackBinding
         ResultSet rs = null;
 
         try {
-            writer.writeStartElement("templatetracks");
+            writer.writeCharacters("\n");
+            writer.writeStartElement(QUERYTRACKS);
             conn = ((ObjectStoreWriterInterMineImpl) uos).getConnection();
-            String sql = "SELECT templatename, username, sessionidentifier,timestamp "
-                + "FROM templatetrack";
+            String sql = "SELECT type, username, sessionidentifier, timestamp FROM "
+                         + TrackerUtil.QUERY_TRACKER_TABLE;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
             while (rs.next()) {
                 writer.writeCharacters("\n");
-                writer.writeStartElement("templatetrack");
-                writer.writeAttribute("templatename", rs.getString(1));
-                String username = rs.getString(2);
-                if (!StringUtils.isBlank(username)) {
-                    writer.writeAttribute("username", username);
-                }
+                writer.writeStartElement(QUERYTRACK);
+                writer.writeAttribute("type", rs.getString(1));
+                writer.writeAttribute("username", rs.getString(2));
                 writer.writeAttribute("sessionidentifier", rs.getString(3));
                 writer.writeAttribute("timestamp", rs.getTimestamp(4).toString());
                 writer.writeEndElement();
@@ -80,9 +66,9 @@ public final class TemplateTrackBinding
             writer.writeCharacters("\n");
             writer.writeEndElement();
         } catch (XMLStreamException e) {
-            throw new RuntimeException("exception while marshalling template tracks", e);
+            throw new RuntimeException("exception while marshalling query tracks", e);
         } catch (SQLException sqle) {
-            throw new RuntimeException("exception while reading template tracks from user profile"
+            throw new RuntimeException("exception while reading query tracks from user profile"
                                        + " database", sqle);
         } finally {
             if (rs != null) {
@@ -98,44 +84,22 @@ public final class TemplateTrackBinding
             ((ObjectStoreWriterInterMineImpl) uos).releaseConnection(conn);
         }
     }
-
-    /**
-     * Read the template tracks from an XML stream Reader.
-     * @param reader contains the template tracks in XML format
-     * @param uosw the objectstore for the userprofile database
-     */
-    public static void unmarshal(Reader reader, ObjectStoreWriter uosw) {
-        try {
-            TemplateTrackHandler ttHandler =
-                new TemplateTrackHandler(uosw);
-            SAXParser.parse(new InputSource(reader), ttHandler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
 }
 
 /**
- * Event handler for the templatetrack xml file
+ * Event handler for the querytrack xml file
  * @author dbutano
  *
  */
-class TemplateTrackHandler extends DefaultHandler
+class QueryTrackHandler extends TrackHandler
 {
-    private ObjectStoreWriter osw;
-    private Connection connection;
-    private PreparedStatement stm;
-    private static final Logger LOG = Logger.getLogger(TemplateTrackHandler.class);
-
     /**
-     * Create a new TemplateTrackHandler
+     * Create a new QueryTrackHandler
      * @param uosw an ObjectStoreWriter to the user profile database
      * problem and continue if possible (used by read-userprofile-xml).
      */
-    public TemplateTrackHandler(ObjectStoreWriter uosw) {
-        super();
-        this.osw = uosw;
+    public QueryTrackHandler(ObjectStoreWriter uosw) {
+        super(uosw);
     }
 
     /**
@@ -144,20 +108,20 @@ class TemplateTrackHandler extends DefaultHandler
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-        if ("templatetracks".equals(qName)) {
+        if (QueryTrackBinding.QUERYTRACKS.equals(qName)) {
             try {
                 connection = ((ObjectStoreWriterInterMineImpl) osw).getConnection();
-                // Creating a template tracker will create an empty table if it doesn't exist
-                TemplateTracker templateTracker = TemplateTracker.getInstance(connection,
-                                                                  new LinkedList<Track>());
-                stm = connection.prepareStatement("INSERT INTO templatetrack VALUES(?, ?, ?, ?)");
+                // Creating a query tracker will create an empty table if it doesn't exist
+                QueryTracker.getInstance(connection, new LinkedList<Track>());
+                stm = connection.prepareStatement("INSERT INTO " + TrackerUtil.QUERY_TRACKER_TABLE
+                                                  + " VALUES(?, ?, ?, ?)");
             } catch (SQLException sqle) {
                 new BuildException("Problem to retrieve the connection", sqle);
             }
         }
-        if ("templatetrack".equals(qName)) {
+        if (QueryTrackBinding.QUERYTRACK.equals(qName)) {
             try {
-                stm.setString(1, attrs.getValue("templatename"));
+                stm.setString(1, attrs.getValue("type"));
                 stm.setString(2, attrs.getValue("username"));
                 stm.setString(3, attrs.getValue("sessionidentifier"));
                 stm.setTimestamp(4, Timestamp.valueOf(attrs.getValue("timestamp")));
@@ -174,15 +138,10 @@ class TemplateTrackHandler extends DefaultHandler
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if ("templatetracks".equals(qName)) {
-            if (stm != null) {
-                try {
-                    stm.close();
-                } catch (SQLException sqle) {
-                    LOG.error("problems closing resources", sqle);
-                }
-            }
-            ((ObjectStoreWriterInterMineImpl) osw).releaseConnection(connection);
+        if (QueryTrackBinding.QUERYTRACKS.equals(qName)) {
+            releaseResources();
         }
     }
 }
+
+

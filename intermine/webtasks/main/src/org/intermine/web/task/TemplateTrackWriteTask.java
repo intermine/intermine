@@ -18,9 +18,9 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.tracker.xml.TemplateTrackBinding;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.TemplateTrackBinding;
 
 /**
  * Task to write an XML file of template track contained in the user profile database.
