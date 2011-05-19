@@ -1,0 +1,49 @@
+<div id="list-addition-box" style="float: right">
+    <form id="list-addition-form">
+    <button id="listadder" value="Add">Add to</button>
+    <select id="addto">
+    <option value="create-new-list">New List</option>
+    [% FOREACH list IN lists %]
+        [% list_name = list.name %]
+        <option value="[% list.name %]"
+            [% IF contained_in.$list_name %] disabled [% END %] >
+            [% list.name %] ([% list.size %] [% pluraliser(list.type) %]) 
+        </option>
+    [% END %]
+    </select>
+    </form>
+</div>
+
+[% INCLUDE list_creation_popup.tt %]
+
+<script type="text/javascript">
+jQuery(function() {
+    $('#listadder').click(function() {
+        var selectedList = jQuery('#addto').val();
+        if (selectedList == "create-new-list") {
+            $('#listTypeSelector').hide();
+            $('#listnameentry').dialog({
+                autoOpen: true,
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Create List" : function() {
+                        var data = {
+                            ids: "[% obj.objectId %]", 
+                            list: $('#newlistname').val(),
+                            description: $('#newlistdesc').val(),
+                            type: "[% obj.class %]"
+                        };
+                        $.post("[% proxy.uri_for('/create_new_list') %]", data, handleResults, "json");
+                        $(this).dialog('close');
+                    },
+                    Cancel: function() {$(this).dialog('close');}
+                }
+            });
+        } else {
+            var data = {ids: "[% obj.objectId %]", list: selectedList};
+            $.post("[% proxy.uri_for('/add_ids_to_list') %]", data, handleResults, "json");
+        }
+    });
+});
+</script>

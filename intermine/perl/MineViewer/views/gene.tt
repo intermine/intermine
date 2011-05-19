@@ -1,0 +1,113 @@
+
+[% INCLUDE banner.tt %]
+
+[% id = gene.primaryIdentifier  || gene.symbol %] 
+<div id="content">
+    <h2 class="displayname">[% displayname %][% IF displayname != id %] ([% id %])[% END %]</h2>
+    <table class="details">
+        <tr>
+            <td class="key">Organism:</td>
+            <td class="value">[% gene.organism.name %]</td>
+        </tr>
+        [% IF gene.chromosome %]
+            <tr>
+                [% location = gene.chromosome.primaryIdentifier _ ":" _ gene.chromosomeLocation.start _ '-' _ gene.chromosomeLocation.end %]
+                <td class="key">Location:</td>
+                <td class="value location">[% location %]</td>
+            </tr>
+        [% END %]
+        [% IF gene.summary %]
+            <tr class="summary">
+                <td class="key">Summary:</td>
+                <td class="value">[% gene.summary %]</td>
+            </tr>
+        [% END %]
+    </table>
+    [% IF homologues.size %]
+        <h3>Homologues</h3>
+        <ul id="homologues">
+        [% FOREACH homologue IN homologues %]
+            [% homologue_display = homologue.symbol || homologue.primaryIdentifier %]
+            [% IF homologue.organism.name == "Rattus norvegicus" %]
+                [% homologue_link = "http://ratmine.mcw.edu/ratmine/portal.do?externalid=" _ homologue.primaryIdentifier %]
+            [% ELSE %]
+                [% homologue_link = proxy.uri_for('/gene/' _ homologue.primaryIdentifier) %]
+            [% END %]
+            <li><a href="[% homologue_link %]">[% homologue_display %]</a>
+                <i>[% homologue.organism.name %]</i>
+            </li>
+        [% END %]
+        </ul>
+    [% END %]
+    <div id="user-comments">
+        <h3 id="user-comments-heading" 
+            [% IF comments.size == 0 %]style="display:none"[% END %]>User Comments</h3>
+        <ul>
+            [% FOREACH comment IN comments %]
+            [% deleterId = "deleter-" _ loop.count %]
+            <li><span onmouseover="jQuery('#[% deleterId %]').show()"
+                onmouseout="jQuery('#[% deleterId %]').hide()"
+                comment="[% comment %]"
+                >
+                [% comment %]
+                <a style="display:none;cursor: pointer" id="[% deleterId %]" 
+                    onclick="removeComment('[% comment %]')">delete</a>
+            </span>
+            </li>
+            [% END %]
+        </ul>
+        <form name="commentform" method="post" action="/addcomment">
+            <input type="hidden" name="id" value="[% id %]"/>
+            <input type="text" size="90" name="comment" placeholder="Add your comment here"/>
+            <input type="submit" value="Submit"/>
+        </form>
+    </div>
+
+    [% INCLUDE gene_templates_placeholders.tt %]
+
+</div>
+
+[% INCLUDE export.tt %]
+
+<script type="text/javascript">
+function removeComment(comment) {
+    data = {"commenttext": comment, "geneid": '[% id %]'};
+    jQuery.post("[% proxy.uri_for('/removecomment') %]", data, function(results) {
+        jQuery('#user-comments ul li').each(function() {
+            var span = jQuery(this).children('span');
+            console.log(span.attr('comment'));
+            if (span.attr('comment') == comment) {
+                jQuery(this).remove();
+            }
+            if (jQuery('#user-comments ul li').length == 0) {
+                jQuery('#user-comments-heading').hide();
+            }
+            })}, "json");
+}
+
+jQuery(function() {
+    jQuery('form').submit(function() {
+        var data = jQuery(this).serialize();
+        jQuery.post("[% proxy.uri_for('/addcomment') %]", data, function(results) {
+            var count = jQuery('#user-comments ul li').length + 1;
+            var deleterID = "deleter-" + count;
+            while (jQuery('#' + deleterID).length > 0) {
+                count += 1;
+                deleterID = "deleter-" + count;
+            }
+            jQuery('#user-comments ul').append("<li><span onmouseover=\"jQuery('#" 
+                + deleterID + "').show()\" onmouseout=\"jQuery('#" + deleterID 
+                + "').hide()\" comment=\"" + results.comment + "\">"
+                + results.comment
+                + " <a style=\"display:none;cursor: pointer\" id=\"" + deleterID + "\" " 
+                + "onclick=\"removeComment('" + results.comment + "')\">delete</a>"
+                + '</li>');
+            jQuery('#user-comments-heading').show();
+        }, "json");
+        return false;
+    });
+    [% INCLUDE gene_templates.tt %]
+});
+    
+</script>
+

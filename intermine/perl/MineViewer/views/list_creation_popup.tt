@@ -1,0 +1,12 @@
+
+<div id="listnameentry" title="Create New List" style="display: none;">
+    <form>
+        <fieldset>
+            <label for="newlistname">New List Name:</label>
+            <input type="text" id="newlistname"/>
+            <label for="newlistdesc">Description:</label>
+            <input type="text" id="newlistdesc"/>
+            <select id="listTypeSelector" style="display: none;"></select>
+        </fieldset>
+    </form>
+</div>

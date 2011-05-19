@@ -1,6 +1,9 @@
 package org.intermine.webservice.server.lists;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -57,7 +64,12 @@ public class ListUploadService extends WebService {
     public static final int BAG_QUERY_MAX_BATCH_SIZE = 10000;
 
     private final BagQueryRunner runner;
-    private static final String TEMP_SUFFIX = "_temp";
+    protected static final String TEMP_SUFFIX = "_temp";
+    protected static final String PLAIN_TEXT = "text/plain";
+    protected static final String LIST_NAME_KEY = "listName";
+    protected static final String LIST_SIZE_KEY = "listSize";
+
+    protected Map<String, String> kvPairs = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -68,7 +80,7 @@ public class ListUploadService extends WebService {
         this.runner = im.getBagQueryRunner();
     }
 
-    protected Map<String, Object> getHeaderAttributes() {
+    protected void setHeaderAttributes(List<String> requiredParams) {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"unmatchedIdentifiers\":[");
@@ -78,7 +90,35 @@ public class ListUploadService extends WebService {
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
         }
-        return attributes;
+        attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
+        output.setHeaderAttributes(attributes);
+
+        for (String param: requiredParams) {
+            if (StringUtils.isEmpty(param)) {
+                kvPairs.put(LIST_NAME_KEY, "unknown");
+                throw new BadRequestException(USAGE);
+            }
+        } 
+    }
+
+    protected void setListName(String name) {
+        kvPairs.put(LIST_NAME_KEY, name);
+    }
+
+    protected void setListSize(Integer size) {
+        kvPairs.put(LIST_SIZE_KEY, size.toString());
+    }
+
+    protected StrMatcher getMatcher(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Profile profile = SessionMethods.getProfile(session);
+        Properties webProperties
+            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);;
+
+        String bagUploadDelims =
+            (String) webProperties.get("list.upload.delimiters") + " ";
+        StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
+        return matcher;
     }
 
     @Override
@@ -88,34 +128,21 @@ public class ListUploadService extends WebService {
         if (!this.isAuthenticated()) {
             throw new BadRequestException("Not authenticated." + USAGE);
         }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
-        Properties webProperties
-            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);;
+        StrMatcher matcher = getMatcher(request);
+        Profile profile = SessionMethods.getProfile(request.getSession());
 
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         String description = request.getParameter("description");
         String extraFieldValue = request.getParameter("extraValue");
         boolean replace = Boolean.parseBoolean("replaceExisting");
-
-        if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
-            throw new BadRequestException("Name or type is blank." + USAGE);
-        }
-        Map<String, Object> attributes = getHeaderAttributes();
-        Map<String, String> kvPairs = new HashMap<String, String>();
-        kvPairs.put("newListName", name);
-        attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
+    
+        setListName(name);
+        setHeaderAttributes(Arrays.asList(type, name));
 
         String tempName = name + TEMP_SUFFIX;
-        String bagUploadDelims =
-            (String) webProperties.get("list.upload.delimiters") + " ";
-        StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
-        if (!"text/plain".equals(request.getContentType())) {
-            throw new BadRequestException("Bad content type - " + request.getContentType() + USAGE);
-        }
-        BufferedReader r = request.getReader();
 
+        BufferedReader r = getReader(request);
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
@@ -136,11 +163,9 @@ public class ListUploadService extends WebService {
             if (ids.size() > 0) {
                 addIdsToList(ids, tempBag, type, extraFieldValue, unmatchedIds);
             }
-            
-            kvPairs.put("newListSize", Integer.toString(tempBag.size()));
-	        attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
-            output.setHeaderAttributes(attributes);
-            
+
+            setListSize(tempBag.size());
+
             for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
                 List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
                 if (i.hasNext()) {
@@ -163,6 +188,41 @@ public class ListUploadService extends WebService {
                 // Ignore
             }
         }
+    }
+
+    protected BufferedReader getReader(HttpServletRequest request) 
+        throws IOException, FileUploadException {
+        BufferedReader r = null;
+
+        if (ServletFileUpload.isMultipartContent(request)) {
+            ServletFileUpload upload = new ServletFileUpload();
+            FileItemIterator iter = upload.getItemIterator(request);
+            while (iter.hasNext()) {
+                FileItemStream item = iter.next();
+                String fieldName = item.getFieldName();
+                if (!item.isFormField() && "identifiers".equalsIgnoreCase(fieldName)) {
+                    InputStream stream = item.openStream();
+                    InputStreamReader in = new InputStreamReader(stream);
+                    r = new BufferedReader(in);
+                    break;
+                }
+            }
+        } else {
+            if (!requestIsOfSuitableType(request)) {
+                throw new BadRequestException("Bad content type - " +
+                        request.getContentType() + USAGE);
+            }
+            r = request.getReader();
+        }
+        if (r == null) {
+            throw new BadRequestException("No identifiers found in request." + USAGE);
+        }
+        return r;
+    }
+
+    protected boolean requestIsOfSuitableType(HttpServletRequest request) {
+        String mimetype = request.getContentType();
+        return ("application/octet-stream".equals(mimetype) || mimetype.startsWith("text"));
     }
 
     protected void addIdsToList(Collection<? extends String> ids, InterMineBag bag,

@@ -5,18 +5,49 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<script language="javascript">
+    function getWebserviceUrl() {
+        var url = "/${WEB_PROPERTIES['webapp.path']}/exportQuery.do?as=link&serviceFormat=tab";
+        var callback = function(data) {
+            jQuery('div.popup').show().find('input').val(data).select();
+        };
+        jQuery.get(url, callback, "text");
+        return false;
+    }
+</script>
 <!-- queryBuilderActions.jsp -->
-    <div class="heading">
-      <fmt:message key="view.actions"/>
-      <span style="font-size: 0.8em; font-weight:100; padding: 0px 10px 0px 10px">
-        <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=perl&source=pathQuery" target="_blank">Perl</a>
-        <span>|</span>
-        <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=python&source=pathQuery" target="_blank">Python</a>
-        <span>|</span>
-        <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=java&source=pathQuery" target="_blank">Java</a>
-        <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
-      </span>
+<div class="queryActions">
+<table>
+  <tr>
+    <td>
+    <div class="heading" style="border:none">
+          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="" onclick="javascript:getWebserviceUrl();return false;"
+    title="Get a URL to run this query from the command line or a script">web service URL</a>
+    <div class="popup" style="display:none;">
+      <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
+      <p style="width:95%;">
+      Use the URL below to fetch results for this query from the command line or a script 
+      <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+      </p>
+    <input type="text" value="None">
     </div>
+  </div>
+    </td>
+    <td>
+      <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=perl&source=pathQuery" target="_blank">Perl</a>
+      <span>|</span>
+      <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=python&source=pathQuery" target="_blank">Python</a>
+      <span>|</span>
+      <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=java&source=pathQuery" target="_blank">Java</a>
+      <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
+    </td>
+    <td>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/exportQuery.do?as=xml" title="Export this query as XML"><fmt:message key="query.export.as"/></a>
+    </td>
+  </tr>
+</table>
+</div>
+
     <div class="body actions" align="right">
       <p><html:form action="/queryBuilderViewAction" styleId="submitform">
         <input type="submit" value="<fmt:message key="view.showresults"/>" 
@@ -24,7 +55,7 @@
       </html:form></p>
     <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
         <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
-          or...&nbsp;<input type="hidden" name="method" value="startTemplateBuild"/>
+          <input type="hidden" name="method" value="startTemplateBuild"/>
           <input class="template" type="submit" value="Start building a template query" />
         </form><p/>
     </c:if>

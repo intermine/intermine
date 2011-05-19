@@ -68,7 +68,7 @@ public class ListSubtractionService extends ListUnionService {
 
         Map<String, Object> attributes = getHeaderAttributes();
         Map<String, String> kvPairs = new HashMap<String, String>();
-        kvPairs.put("newListName", name);
+        kvPairs.put("listName", name);
         attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         output.setHeaderAttributes(attributes);
 

@@ -521,8 +521,7 @@ sub clean_out_SCCs {
 
 sub to_string {
     my $self = shift;
-    my $ret = $self->name || '';
-    $ret .= ' ' if $ret;
+    my $ret = '';
     $ret .= 'VIEW: [' . $self->joined_view(', ') . ']';
     if ($self->constraints) {
         $ret .= ', CONSTRAINTS: [';

@@ -27,7 +27,7 @@ sub exp_xml {q|<saved-query date-created="1160647639444" name="Query 1">
      </constraint>
    </query>
  </saved-query>|}
-sub exp_url {q|FAKEROOTFAKEPATH?format=tab&query=%3Cquery+view%3D%22Employee.name+Employee.age%22+name%3D%22Query+1%22+model%3D%22testmodel%22+sortOrder%3D%22Employee.name+asc%22+constraintLogic%3D%22A+and+B+and+C%22%3E%3Cconstraint+value%3D%2218%22+path%3D%22Employee.age%22+code%3D%22A%22+op%3D%22%3D%22%2F%3E%3Cconstraint+value%3D%22Catering*%22+path%3D%22Employee.department.name%22+code%3D%22B%22+op%3D%22%3D%22%2F%3E%3Cconstraint+path%3D%22Employee.department.company.name%22+code%3D%22C%22+op%3D%22ONE+OF%22%3E%3Cvalue%3EThe+Sandwich+Van%3C%2Fvalue%3E%3Cvalue%3EPr%C3%AAt-%C3%A0-Manger%3C%2Fvalue%3E%3Cvalue%3EThe+Cambridge+Blue%3C%2Fvalue%3E%3C%2Fconstraint%3E%3C%2Fquery%3E|}
+sub exp_url {q|FAKEROOTFAKEPATH|}
 
 sub exp_head {
     return (

@@ -85,6 +85,20 @@
   </servlet-mapping>
 
   <servlet>
+  <servlet-name>ws-query-append</servlet-name>
+  <servlet-class>org.intermine.webservice.server.query.QueryListAppendServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-query-append</servlet-name>
+  <url-pattern>/service/query/append/tolist/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
   <servlet-name>ws-query-upload</servlet-name>
   <servlet-class>org.intermine.webservice.server.query.QueryUploadServlet</servlet-class>
   <init-param>
@@ -197,6 +211,20 @@
   </servlet-mapping>
 
   <servlet>
+  <servlet-name>ws-rename-list</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListRenameServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-rename-list</servlet-name>
+  <url-pattern>/service/lists/rename/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
   <servlet-name>ws-template-upload</servlet-name>
   <servlet-class>org.intermine.webservice.server.template.TemplateUploadServlet</servlet-class>
   <init-param>
@@ -236,6 +264,20 @@
   <servlet-mapping>
   <servlet-name>ws-template-to-list</servlet-name>
   <url-pattern>/service/template/tolist/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-template-append</servlet-name>
+  <servlet-class>org.intermine.webservice.server.template.TemplateListAppendServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-template-append</servlet-name>
+  <url-pattern>/service/template/append/tolist/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

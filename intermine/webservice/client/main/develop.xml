@@ -12,7 +12,7 @@
   <property name="src.dir" value="src" />
   <property name="build.dir" value="client-build" />
   <property name="javadoc.author" value="InterMine team" />
-  <property name="version" value="1.1" />
+  <property name="version" value="2.0" />
   
   <target name="clean">
     <delete dir="${dist.dir}" failonerror="false"/>
@@ -77,7 +77,7 @@
 
   <target name="dist" depends="build, javadoc">
     <mkdir dir="${dist.dir}"/>
-    <zip destfile="${dist.dir}/intermine-client-${version}.zip" >
+    <zip destfile="${dist.dir}/java-intermine-webservice-client-${version}.zip" >
       <zipfileset dir="${build.dir}" excludes="samples/compile-run.sh" prefix="intermine-client-${version}" />
       <zipfileset dir="${build.dir}" includes="samples/compile-run.sh" filemode="755" prefix="intermine-client-${version}"/>
     </zip>

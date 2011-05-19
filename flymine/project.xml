@@ -35,20 +35,15 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
 
-    <source name="ensembl-identifiers" type="ensembl-identifiers">
-      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
-      <property name="ensembl.organisms" value="9606 10090 10116"/>
-    </source>
-
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="fasta.taxonId" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -62,6 +57,10 @@
      <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
+    </source>
+    <source name="ensembl-identifiers" type="ensembl-identifiers">
+      <property name="src.data.dir" location="/shared/data/ensembl/identifiers"/>
+      <property name="ensembl.organisms" value="9606 10090 10116"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
@@ -148,13 +147,13 @@
       <property name="src.data.dir" location="/shared/data/tiffin/"/>
       <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
     </source>
-    <!-- disable until bob is revived 
+
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
-    -->
+
     <source name="protein-structure" type="protein-structure">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
@@ -753,7 +752,7 @@
     </source>
 
     <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
+      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
       <property name="biogrid.organisms" value="7227 6239 4932"/>
     </source>

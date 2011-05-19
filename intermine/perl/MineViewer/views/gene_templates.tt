@@ -1,0 +1,59 @@
+    IMBedding.loadTemplate(
+        {
+            // Search for GO annotations for a particular gene (or List of Genes).
+            name:          "Gene_GO",
+
+            constraint1:   "Gene",
+            op1:           "LOOKUP",
+            value1:        "[% id %]",
+            extra1:        "H. sapiens",
+            code1:         "A"
+        },
+        '#gene-go-placeholder',
+        {baseUrl: '[% settings.mine_base_url %]'}
+    );
+    IMBedding.loadTemplate(
+        {
+            // For a given Gene (or List of Genes) show any associated Pathway(s)
+            // (Data Source: KEGG or REACTOME). Keywords: pathways, metabolism,
+            // cascade 
+            name:          "Gene_Pathway",
+
+            constraint1:   "Gene",
+            op1:           "LOOKUP",
+            value1:        "[% id %]",
+            extra1:        "H. sapiens",
+            code1:         "A"
+        },
+        '#gene-pathways-placeholder',
+        {baseUrl: '[% settings.mine_base_url %]'}
+    );
+    IMBedding.loadTemplate(
+        {
+            // For a particular Gene (or List of Genes) show all known Interactions
+            // (Data Source: BioGRID, IntAct). 
+            name:          "Gene_Interaction",
+
+            constraint1:   "Gene",
+            op1:           "LOOKUP",
+            value1:        "[% id %]",
+            extra1:        "H. sapiens",
+            code1:         "A"
+        },
+        '#gene-interactions-placeholder',
+        {baseUrl: '[% settings.mine_base_url %]'}
+    );
+    IMBedding.loadTemplate(
+        {
+            // Template to display GWAS results in Gene report pages
+            name:          "geneGWAS_reportPg",
+
+            constraint1:   "GWAS.results.associatedGenes",
+            op1:           "LOOKUP",
+            value1:        "[% id %]",
+            extra1:        "H. sapiens",
+            code1:         "A"
+        },
+        '#gwas-placeholder',
+        {baseUrl: '[% settings.mine_base_url %]'}
+    );

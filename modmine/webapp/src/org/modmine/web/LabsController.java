@@ -53,9 +53,9 @@ public class LabsController extends TilesAction
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
-            
-            //get the list of labs 
-            Query q = new Query();  
+
+            //get the list of labs
+            Query q = new Query();
             QueryClass qc = new QueryClass(Lab.class);
             QueryField qfSurname = new QueryField(qc, "surname");
 
@@ -80,12 +80,12 @@ public class LabsController extends TilesAction
                 Lab lab = (Lab) row.get(0);
                 Set<Submission> subs = lab.getSubmissions();
                 Project project = lab.getProject();
-                
+
                 ps.put(lab, subs);
                 pp.put(lab, project);
-            
-            }            
-            
+
+            }
+
             request.setAttribute("experiments", ps);
             request.setAttribute("project", pp);
 

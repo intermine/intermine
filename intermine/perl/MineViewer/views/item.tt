@@ -1,0 +1,58 @@
+
+[% INCLUDE banner.tt %]
+
+<div id="content">
+    [% INCLUDE list_addition_box.tt %]
+    <h2 class="displayname">
+        [% obj.class %]: 
+        <a href="[% settings.mine_base_url %]/objectDetails.do?id=[% obj.objectId %]" 
+            title="View in [% settings.service_args.0 %]"
+            icon="out">[% displayname %]</a></h2>
+    <table class="details">
+        [% FOREACH key IN item.keys.sort %]
+            [% resolved = 0 %]
+            [% parts = key.split('\.') %]
+            [% IF parts.size == 2 %]
+                [% label = parts.pop %]
+            [% ELSE %]
+                [% labelparts = parts.slice(-2) %]
+                [% resolved = obj %]
+                [% FOREACH p IN parts.slice(1, -2) %]
+                    [% resolved = resolved.$p %]
+                [% END %]
+                [% IF labelparts.0 == labelparts.1 %]
+                    [% label = labelparts.pop %]
+                [% ELSE %]
+                    [% label = labelparts.join %]
+                [% END %]
+            [% END %]
+            [% IF item.$key.defined and item.$key != displayname %]
+                [% value = item.$key %]
+                [% value = (item.$key.match('^-?\d+(\.\d+)?$')) ? value.chunk(-3).join(',') : value  %]
+                <tr>
+                    <td class="key">[% label | ucfirst %]:</td>
+                    <td class="value [% label %]">
+                    [% IF resolved %]
+                        [% path = '/' _ resolved.class _ '/id/' _ resolved.objectId %]
+                        <a title="[% key %]" href="[%proxy.uri_for(path)%]">[% value %]</a>
+                    [% ELSE %]
+                        [% value %]
+                    [% END %]
+                    </td>
+                </tr>
+            [% END %]
+        [% END %] 
+    </table>
+
+    [% INCLUDE user_comments.tt %]
+
+    [% FOREACH t IN templates %]
+        [% INCLUDE $t %]
+    [% END %]
+
+</div>
+
+<div class="content-end footerbar"></div>
+
+
+

@@ -29,7 +29,7 @@ import org.intermine.webservice.server.WebServiceConstants;
 public class TemplateResultLinkGeneratorTest extends TestCase
 {
 
-    private String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
+    private final String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
     private static final Logger LOG = Logger.getLogger(TemplateResultLinkGeneratorTest.class);
     public void testExtraValueLink() {
         PathQuery ret = new PathQuery(TestUtil.getModel());
@@ -41,7 +41,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
                                                                     tmpl);
 
         String expected = prefix + "/template/results?name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
-        + "extra1=Drosophila_melanogaster&format=tab&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
+        + "extra1=Drosophila_melanogaster&format=html&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
 
         assertEquals(expected, link);
     }
@@ -61,7 +61,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         String expected = prefix + "/template/results?name=template1"
             + "&constraint1=Gene.name&op1=LIKE&value1=zen"
             + "&constraint2=Gene.length&op2=lt&value2=100"
-            + "&format=tab&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE
+            + "&format=html&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE
             + "&layout=minelink|paging";
 
         assertEquals(expected, link);
