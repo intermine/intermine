@@ -96,12 +96,14 @@ get '/lists' => sub {
 
     return send_error( "No gene lists found", 500 ) unless @lists;
 
-    my $items = get_items_in_list( $lists[0] );
+    my $list_query = get_list_query( $lists[0] );
+    my $items = $list_query->results(as => 'jsonobjects');
 
     template lists => {
         class_keys => get_class_keys_for( $lists[0]->type ),
         items      => $items,
         lists      => [@lists],
+        list_query => $list_query,
         tsv_uri    => proxy->uri_for( '/list/' . $lists[0]->name . '.tsv' ),
         json_uri   => proxy->uri_for( '/list/' . $lists[0]->name . '.json' ),
         xml_uri    => proxy->uri_for( '/list/' . $lists[0]->name . '.xml' ),
@@ -201,13 +203,15 @@ get '/list/:list' => sub {
 
     return send_error( "No gene lists found", 500 ) unless @lists;
 
-    my $items     = get_items_in_list( $lists[0] );
+    my $query     = get_list_query( $lists[0] );
+    my $items     = $query->results(as => 'jsonobjects');
     my $list_name = $lists[0]->name;
 
     template lists => {
         class_keys => get_class_keys_for( $lists[0]->type ),
         items      => $items,
         lists      => [@lists],
+        list_query => $query,
         tsv_uri    => proxy->uri_for( '/list/' . $list_name . '.tsv' ),
         json_uri   => proxy->uri_for( '/list/' . $list_name . '.json' ),
         xml_uri    => proxy->uri_for( '/list/' . $list_name . '.xml' ),
@@ -404,9 +408,8 @@ sub get_user_comments {
 
     # TODO - change DB schema so it refers to items
     my $identifier = shift;
-    my $gene_rs =
-      schema('usercomments')->resultset('Gene')
-      ->find_or_create( { identifer => $identifier } );
+    my $gene_rs = schema('usercomments')->resultset('Gene')
+                                        ->find_or_create( { identifer => $identifier } );
     my @comments = $gene_rs->comments->get_column('value')->all;
     return @comments;
 }
@@ -414,8 +417,7 @@ sub get_user_comments {
 post '/addcomment' => sub {
     my $id      = params->{id};
     my $comment = params->{comment};
-    my $gene_rs =
-      schema('usercomments')->resultset('Gene')
+    my $gene_rs = schema('usercomments')->resultset('Gene')
       ->find_or_create( { identifer => $id } );
     $gene_rs->add_to_comments( { value => $comment } );
     return to_json( { id => $id, comment => $comment } );
@@ -437,11 +439,13 @@ post '/add_ids_to_list' => sub {
     my $list      = $service->list($list_name)
       or return to_json(
         { problem => "$list_name does not exist at this service" } );
+    my $prior_count = $list->size;
     my $query = $service->new_query( class => $list->type );
     $query->add_constraint( 'id', 'ONE OF', [@ids] );
     $list += $query;
+    my $new_item_count = $list->size - $prior_count;
     return to_json(
-        { info => "Added " . scalar(@ids) . " items to $list_name" } );
+        { info => "Added $new_item_count new items to $list_name"} );
 };
 
 post '/create_new_list' => sub {
@@ -458,6 +462,20 @@ post '/create_new_list' => sub {
         tags        => [ setting('list_tag') ],
     );
     return to_json( { info => "New list created: " . $list->name } );
+};
+
+post '/remove_list_item' => sub {
+    my @ids       = split( ',', params->{"ids"} );
+    my $list_name = params->{"list"};
+    my $list = $service->list($list_name)
+        or return to_json({problem => "$list_name is not available"});
+    my $query = $service->new_query( class => $list->type );
+    $query->add_constraint( 'id', 'ONE OF', [@ids] );
+    my $prior_count = $list->size;
+    $list -= $query;
+    my $removed_count = $prior_count - $list->size;
+    return to_json({info => "Removed $removed_count " .
+            pluraliser($list->type) . " from $list_name"});
 };
 
 true;

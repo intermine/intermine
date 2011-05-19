@@ -2,7 +2,10 @@
 [% INCLUDE banner.tt %]
 
 <div id="content">
-    [% INCLUDE list_addition_box.tt %]
+    <div style="float:right;width:50%;">
+        [% INCLUDE list_addition_box.tt %]
+        [% INCLUDE current_lists_box.tt %]
+    </div>
     <h2 class="displayname">
         [% obj.class %]: 
         <a href="[% settings.mine_base_url %]/objectDetails.do?id=[% obj.objectId %]" 

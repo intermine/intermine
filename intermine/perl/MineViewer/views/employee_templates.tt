@@ -1,5 +1,5 @@
 <div id="colleague-placeholder" class="placeholder">
-   <span class="placeholder-text">Loading colleage information. Please bear with us.</span>
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
 </div>
 
 <script type="text/javascript">
@@ -9,7 +9,7 @@ $(function() {IMBedding.loadTemplate(
 
         constraint1:   "Employee",
         op1:           "LOOKUP",
-        value1:        "[% identifier %]",
+        value1:        '[% identifier.replace("'", "\\'") %]',
         extra1:        "",
         code1:         "A"
     },

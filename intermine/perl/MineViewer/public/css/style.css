@@ -24,6 +24,18 @@ a[icon ^="out"] {
     background: transparent url(../images/extlink.gif) no-repeat center right;
 }
 
+a[icon ^="delete"] {
+    color: #333;
+    margin-left: 10px;
+    padding-left: 20px;
+    background: transparent url(../images/delete.png) no-repeat center left;
+}
+
+#controls {
+    margin-bottom: 15px;
+}
+
+
 #gene-list-box div ul li a {
     text-decoration: none;
     padding: 4px;

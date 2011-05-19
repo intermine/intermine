@@ -11,9 +11,7 @@
 <li [% IF request.path == '/lists' %]class="current-tab"[% END %]>
     <a href="[% proxy.uri_for('/lists') %]">Lists</a></li>
 <li [% IF request.path == '/templates' %]class="current-tab"[% END %]>
-    <a href="[% proxy.uri_for('/templates') %]">Templates</a></li>
-<li [% IF request.path == '/queries' %]class="current-tab"[% END %]>
-    <a >Queries</a></li>
+    <a href="[% proxy.uri_for('/templates') %]">Search Tools</a></li>
         </ul>
     </div>
 </div>
