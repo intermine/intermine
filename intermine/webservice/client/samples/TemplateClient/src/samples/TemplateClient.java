@@ -32,7 +32,7 @@ public class TemplateClient
     private static String serviceRootUrl = "http://localhost:8080/query/service";
 
     /**
-     * 
+     *
      * @param args command line arguments
      */
     public static void main(String[] args) {
@@ -47,8 +47,8 @@ public class TemplateClient
         // second organism should be equal to Caenorhabditis elegans
         parameters.add(new TemplateParameter("Homologue.homologue.organism.name", "eq", "Caenorhabditis elegans"));
         // first 100 results are fetched
-        List<List<String>> result = service.getResult("GeneOrganism1_OrthologueOrganism2",
-                                                      parameters, 100);
+        List<List<String>> result = service.getResults("GeneOrganism1_OrthologueOrganism2",
+                                                      parameters, 0, 100);
         System.out.println("First 100 predicted orthologues between two organisms"
                            + " sorted by FlyBase gene identifier:");
         for (List<String> row : result) {
