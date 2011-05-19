@@ -62,6 +62,17 @@ public class WebServiceRequestParser
     public static final String FORMAT_PARAMETER_JSONP = "jsonp";
 
     /**
+     * Value of parameter when user wants json data in a data table
+    **/
+    public static final String FORMAT_PARAMETER_JSON_DATA_TABLE = "jsondatatable";
+
+    /**
+     * Value of parameter when user wants jsonp data in a data table
+    **/
+    public static final String FORMAT_PARAMETER_JSONP_DATA_TABLE = "jsonpdatatable";
+
+
+    /**
      * Value of parameter when user wants json data as
      * nested objects representing records
     **/
