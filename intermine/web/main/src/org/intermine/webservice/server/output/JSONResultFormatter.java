@@ -17,6 +17,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 
 /**
  * @author Alexis Kalderimis
@@ -58,17 +62,16 @@ public abstract class JSONResultFormatter extends JSONFormatter
                 sb.append("\"" + key + "\":");
                 // Format lists as arrays
                 if (attributes.get(key) instanceof List) {
-                    sb.append("[");
-                    List<Object> attr = (List<Object>) attributes.get(key);
-                    Iterator<Object> it = attr.iterator();
-                    while (it.hasNext()) {
-                        sb.append(quote(it.next()));
-                        if (it.hasNext()) { sb.append(","); }
-                    }
-                    sb.append("]");
+                   // try {
+                        JSONArray ja = new JSONArray((List) attributes.get(key));
+                        sb.append(ja.toString());
+                   // } catch (JSONException e) {
+                   //     throw new InternalErrorException("Error handling " + attributes.get(key), e);
+                   // }
                 } else {
                     // Format as attribute
-                    sb.append(quote(attributes.get(key)));
+                    String attr = (attributes.get(key) == null) ? null : attributes.get(key).toString();
+                    sb.append(quote(StringEscapeUtils.escapeJavaScript(attr)));
                 }
                 sb.append(",");
             }
