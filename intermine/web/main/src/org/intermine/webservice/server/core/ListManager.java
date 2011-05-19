@@ -64,4 +64,13 @@ public class ListManager
     public Collection<InterMineBag> getLists() {
         return bagManager.getUserAndGlobalBags(profile).values();
     }
+
+    /**
+     * Returns the lists available to the current user which contain the
+     * specified object.
+     * @return A collection of lists.
+     */
+    public Collection<InterMineBag> getListsContaining(Integer objectId) {
+        return bagManager.getUserOrGlobalBagsContainingId(profile, objectId);
+    }
 }
