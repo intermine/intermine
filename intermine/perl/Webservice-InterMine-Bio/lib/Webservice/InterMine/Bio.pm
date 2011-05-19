@@ -9,15 +9,15 @@ Webservice::InterMine::Bio - The great new Webservice::InterMine::Bio!
 
 =head1 VERSION
 
-Version 0.01
+Version 0.97
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.97';
 
 use Exporter qw/import/;
 
-our @EXPORT_OK = qw/GFF3 BIO_PERL/;
+our @EXPORT_OK = qw/GFF3 BIO_PERL FASTA/;
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,11 @@ if you don't export anything, such as for a purely object-oriented module.
 
 use constant {
     GFF3 => ['Webservice::InterMine::Bio::GFFQuery'],
-    BIO_PERL => ['Webservice::InterMine::Bio::GFFQuery'],
+    FASTA => ['Webservice::InterMine::Bio::FastaQuery'],
+    BIO_PERL => [
+        'Webservice::InterMine::Bio::GFFQuery',
+        'Webservice::InterMine::Bio::FastaQuery',
+    ],
 };
 
 =head1 AUTHOR
