@@ -10,7 +10,8 @@
 
 use warnings;
 use strict;
-use lib '../../intermine/perl/InterMine-Util/lib';
+use File::Basename;
+use lib dirname(__FILE__) . '/../../intermine/perl/InterMine-Util/lib';
 
 use Getopt::Std;
 
