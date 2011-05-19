@@ -1,7 +1,9 @@
 package org.intermine.webservice.server.query;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +65,9 @@ public class QueryToListService extends AbstractQueryService {
 
         String name = request.getParameter(NAME_PARAM);
         String description = request.getParameter(DESC_PARAM);
+        String[] tags = StringUtils.split(request.getParameter("tags"), ';');
+        @SuppressWarnings("unchecked")
+        List<String> tagList = (tags == null) ? Collections.EMPTY_LIST : Arrays.asList(tags);
 
         if (StringUtils.isEmpty(name)) {
             setHeaderAttributes("none-given");
@@ -72,7 +77,7 @@ public class QueryToListService extends AbstractQueryService {
         setHeaderAttributes(name);
 
         PathQuery pq = getQuery(request);
-        generateListFromQuery(pq, name, description, profile);
+        generateListFromQuery(pq, name, description, tagList, profile);
 
     }
 
@@ -98,7 +103,7 @@ public class QueryToListService extends AbstractQueryService {
     }
 
     protected void generateListFromQuery(PathQuery pq,
-            String name, String description,
+            String name, String description, List<String> tags,
             Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
                 pq,
@@ -116,6 +121,7 @@ public class QueryToListService extends AbstractQueryService {
         try {
             InterMineBag newList = profile.createBag(tempName, type, description);
             newList.addToBagFromQuery(q);
+            im.getBagManager().addTagsToBag(tags, newList, profile);
             profile.renameBag(tempName, name);
 
             output.addResultItem(Arrays.asList("" + newList.size()));
