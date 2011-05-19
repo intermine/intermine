@@ -7,20 +7,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.exceptions.BadRequestException;
 
@@ -58,7 +54,7 @@ public class ListAppendService extends ListUploadService {
         Set<String> unmatchedIds = new HashSet<String>();
 
         InterMineBag bag = profile.getSavedBags().get(name);
-        StrMatcher matcher = getMatcher(request);
+        StrMatcher matcher = getMatcher();
         if (bag == null) {
             throw new BadRequestException(name + " is not a list you have access to");
         }
