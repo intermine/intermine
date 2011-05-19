@@ -1,9 +1,9 @@
 package org.intermine.webservice.server.lists;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +55,7 @@ public class ListUploadService extends WebService {
         + "* type: type of the list\n"
         + "* description: A description of the list (optional)\n"
         + "* extraValue: An extra field value to allow disambiguation(optional)\n"
+        + "* tags: a semi-colon delimited list of tags to tag the new list with\n"
         + "\n"
         + "Content: text/plain - list of ids\n";
 
@@ -80,6 +81,10 @@ public class ListUploadService extends WebService {
         this.runner = im.getBagQueryRunner();
     }
 
+    /**
+     * Sets the header attributes on the output object.
+     * @param requiredParams The list of parameters which are required by this service.
+     */
     protected void setHeaderAttributes(List<String> requiredParams) {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
@@ -98,22 +103,33 @@ public class ListUploadService extends WebService {
                 kvPairs.put(LIST_NAME_KEY, "unknown");
                 throw new BadRequestException(USAGE);
             }
-        } 
+        }
     }
 
+    /**
+     * Sets the name of the list on the header attributes.
+     * @param name The name of the newly created list.
+     */
     protected void setListName(String name) {
         kvPairs.put(LIST_NAME_KEY, name);
     }
 
+    /**
+     * Sets the size of the list on the header attributes.
+     * @param size The size of the newly created list.
+     */
     protected void setListSize(Integer size) {
         kvPairs.put(LIST_SIZE_KEY, size.toString());
     }
 
-    protected StrMatcher getMatcher(HttpServletRequest request) {
+    /**
+     * Get the String Matcher for parsing the list of identifiers.
+     * @return
+     */
+    protected StrMatcher getMatcher() {
         HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
         Properties webProperties
-            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);;
+            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
 
         String bagUploadDelims =
             (String) webProperties.get("list.upload.delimiters") + " ";
@@ -128,15 +144,16 @@ public class ListUploadService extends WebService {
         if (!this.isAuthenticated()) {
             throw new BadRequestException("Not authenticated." + USAGE);
         }
-        StrMatcher matcher = getMatcher(request);
+        StrMatcher matcher = getMatcher();
         Profile profile = SessionMethods.getProfile(request.getSession());
 
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         String description = request.getParameter("description");
         String extraFieldValue = request.getParameter("extraValue");
+        String[] tags = StringUtils.split(request.getParameter("tags"), ';');
         boolean replace = Boolean.parseBoolean("replaceExisting");
-    
+
         setListName(name);
         setHeaderAttributes(Arrays.asList(type, name));
 
@@ -180,6 +197,7 @@ public class ListUploadService extends WebService {
                     // Ignore
                 }
             }
+            im.getBagManager().addTagsToBag(Arrays.asList(tags), tempBag, profile);
             profile.renameBag(tempName, name);
         } finally {
             try {
@@ -190,7 +208,7 @@ public class ListUploadService extends WebService {
         }
     }
 
-    protected BufferedReader getReader(HttpServletRequest request) 
+    protected BufferedReader getReader(HttpServletRequest request)
         throws IOException, FileUploadException {
         BufferedReader r = null;
 
@@ -208,9 +226,9 @@ public class ListUploadService extends WebService {
                 }
             }
         } else {
-            if (!requestIsOfSuitableType(request)) {
-                throw new BadRequestException("Bad content type - " +
-                        request.getContentType() + USAGE);
+            if (!requestIsOfSuitableType()) {
+                throw new BadRequestException("Bad content type - "
+                        + request.getContentType() + USAGE);
             }
             r = request.getReader();
         }
@@ -220,11 +238,26 @@ public class ListUploadService extends WebService {
         return r;
     }
 
-    protected boolean requestIsOfSuitableType(HttpServletRequest request) {
+    /**
+     * Determine if we should service this request.
+     * @return whether or not this request's content is of the right type for us to read it.
+     */
+    protected boolean requestIsOfSuitableType() {
         String mimetype = request.getContentType();
         return ("application/octet-stream".equals(mimetype) || mimetype.startsWith("text"));
     }
 
+    /**
+     * Adds objects to the a bag for the matches against a set of identifiers.
+     * @param ids A collection of identifiers
+     * @param bag The bag to add the objects to
+     * @param type The type of this bag
+     * @param extraFieldValue An extra value for disambiguation.
+     * @param unmatchedIds An accumulator to store the failed matches.
+     * @throws ClassNotFoundException if the type is not a valid class.
+     * @throws InterMineException If something goes wrong building the bag.
+     * @throws ObjectStoreException If there is a problem on the database level.
+     */
     protected void addIdsToList(Collection<? extends String> ids, InterMineBag bag,
             String type, String extraFieldValue, Set<String> unmatchedIds)
             throws ClassNotFoundException, InterMineException, ObjectStoreException {
@@ -233,6 +266,7 @@ public class ListUploadService extends WebService {
         bag.addIdsToBag(result.getMatches().keySet(), type);
 
         for (String issueType: result.getIssues().keySet()) {
+            @SuppressWarnings("rawtypes")
             Map<String, Map<String, List>> issueMap = result.getIssues().get(issueType);
             for (String query: issueMap.keySet()) {
                 unmatchedIds.addAll(issueMap.get(query).keySet());
