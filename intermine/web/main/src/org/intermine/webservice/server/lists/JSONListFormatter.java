@@ -1,19 +1,29 @@
 package org.intermine.webservice.server.lists;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;
 
 public class JSONListFormatter implements ListFormatter {
 
+    private final InterMineAPI im;
+
+    public JSONListFormatter(InterMineAPI im) {
+        super();
+        this.im = im;
+    }
     private final boolean hasCallback = false;
     private int rowsLeft = 0;
     private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -30,6 +40,14 @@ public class JSONListFormatter implements ListFormatter {
             Date createdOn = list.getDateCreated();
             listMap.put("dateCreated", iso8601.format(createdOn));
         }
+        BagManager bm = im.getBagManager();
+        List<Tag> tags = bm.getTagsForBag(list);
+        List<String> tagNames = new ArrayList<String>();
+        for (Tag t: tags) {
+            tagNames.add(t.getTagName());
+        }
+        listMap.put("tags", tagNames);
+
         try {
             listMap.put("size", list.getSize());
         } catch (ObjectStoreException e) {
