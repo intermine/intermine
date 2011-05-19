@@ -3,6 +3,9 @@
  */
 package org.intermine.webservice.server.output;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +14,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -150,55 +154,25 @@ public class JSONRowResultProcessorTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    public void testWrite() {
-        List<List<String>> expected = Arrays.asList(
-        Arrays.asList("[" +
-                "{\"value\":30,\"url\":\"Link for:Employee [address=null, age=\\\"30\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"5\\\", name=\\\"Tim Canterbury\\\"]\"},"
-                + "{\"value\":\"Tim Canterbury\",\"url\":\"Link for:Employee "
-                +"[address=null, age=\\\"30\\\", department=null, departmentThatRejectedMe=null, "
-                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"5\\\", "
-                + "name=\\\"Tim Canterbury\\\"]\"}"
-                + "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":32,\"url\":\"Link for:Employee [address=null, age=\\\"32\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"6\\\", name=\\\"Gareth Keenan\\\"]\"},"
-                + "{\"value\":\"Gareth Keenan\",\"url\":\"Link for:Employee [address=null, "
-                + "age=\\\"32\\\", department=null, departmentThatRejectedMe=null, "
-                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"6\\\", "
-                + "name=\\\"Gareth Keenan\\\"]\"}]", ""),
-        Arrays.asList(
-                "[{\"value\":26,\"url\":\"Link for:Employee [address=null, age=\\\"26\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"7\\\", name=\\\"Dawn Tinsley\\\"]\"},"
-                + "{\"value\":\"Dawn Tinsley\",\"url\":\"Link for:Employee [address=null, "
-                + "age=\\\"26\\\", department=null, departmentThatRejectedMe=null, "
-                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"7\\\", "
-                + "name=\\\"Dawn Tinsley\\\"]\"}]", ""),
-        Arrays.asList(
-                "[{\"value\":41,\"url\":\"Link for:Employee [address=null, age=\\\"41\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"8\\\", name=\\\"Keith Bishop\\\"]\"},"
-                + "{\"value\":\"Keith Bishop\",\"url\":\"Link for:Employee [address=null, "
-                + "age=\\\"41\\\", department=null, departmentThatRejectedMe=null, "
-                + "end=\\\"null\\\", fullTime=\\\"false\\\", id=\\\"8\\\", "
-                + "name=\\\"Keith Bishop\\\"]\"}]", ""),
-        Arrays.asList("[" +
-                "{\"value\":28,\"url\":\"Link for:Employee [address=null, age=\\\"28\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"9\\\", name=\\\"Lee\\\"]\"},"
-                + "{\"value\":\"Lee\",\"url\":\"Link for:Employee [address=null, age=\\\"28\\\", "
-                + "department=null, departmentThatRejectedMe=null, end=\\\"null\\\", "
-                + "fullTime=\\\"false\\\", id=\\\"9\\\", name=\\\"Lee\\\"]\"}]")
-        );
+    public void testWrite() throws IOException {
+        InputStream is = getClass().getResourceAsStream("JSONRowResultProcessorTest.expected");
+        StringWriter sw = new StringWriter();
+        IOUtils.copy(is, sw);
+        String expected = sw.toString();
 
         MemoryOutput out  = new MemoryOutput();
         JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         processor.write(iterator, out);
 
-        assertEquals(expected.toString(), out.getResults().toString());
+        /* For debugging, as ant can't give long enough error messages */
+//        FileWriter fw = new FileWriter(new File("/tmp/ant_" + this.getClass().getName() + ".out"));
+//        fw.write("EXPECTED:\n=====\n");
+//        fw.write(expected);
+//        fw.write("\nGOT:\n======\n");
+//        fw.write(out.getResults().toString());
+//        fw.close();
+
+        assertEquals(expected, out.getResults().toString() + "\n");
 
     }
 
