@@ -45,11 +45,11 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
-    private List<Path> paths = new ArrayList<Path>();
+    private final List<Path> paths = new ArrayList<Path>();
     private int columnCount;
-    private Results results;
+    private final Results results;
     private boolean isGoingFaster = false;
-    private PathQuery originatingQuery;
+    private final PathQuery originatingQuery;
 
 
      /**
@@ -100,6 +100,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -110,6 +111,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<ResultElement> next() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -121,6 +123,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
      * This method is not supported.
      * {@inheritDoc}
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
@@ -273,12 +276,16 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
         for (Object column : cols) {
             if (column instanceof List) {
                 List<List> collection = (List<List>) row.get(columnNo);
-                for (List subRow : collection) {
-                    if (multiRow) {
-                        hasCollections = true;
-                        expandCollections(subRow, retval, templateResults, (List) column);
-                    } else {
-                        expandCollectionsJustOneRow(subRow, retval, templateResults, (List) column);
+                if (collection != null) {
+                    for (List subRow : collection) {
+                        if (multiRow) {
+                            hasCollections = true;
+                            expandCollections(subRow,
+                                    retval, templateResults, (List) column);
+                        } else {
+                            expandCollectionsJustOneRow(subRow,
+                                    retval, templateResults, (List) column);
+                        }
                     }
                 }
             }
