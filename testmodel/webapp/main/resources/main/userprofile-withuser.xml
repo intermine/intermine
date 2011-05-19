@@ -12,6 +12,33 @@
         <item id="4" class="Manager">
             <attribute name="name" value="Neil Godwin"/>
         </item>
+        <item id="5" class="Employee">
+            <attribute name="name" value="Brenda"/>
+        </item>
+        <item id="6" class="Employee">
+            <attribute name="name" value="Devon White"/>
+        </item>
+        <item id="7" class="Employee">
+            <attribute name="name" value="Hans Schmelzer"/>
+        </item>
+        <item id="8" class="Employee">
+            <attribute name="name" value="Frank Möllers"/>
+        </item>
+        <item id="9" class="Employee">
+            <attribute name="name" value="Herr Pötsch"/>
+        </item>
+        <item id="10" class="Department">
+            <attribute name="name" value="Kantine"/>
+        </item>
+        <item id="11" class="Department">
+            <attribute name="name" value="Quotes"/>
+        </item>
+        <item id="12" class="Department">
+            <attribute name="name" value="Verwaltung"/>
+        </item>
+        <item id="13" class="Department">
+            <attribute name="name" value="Archiven"/>
+        </item>
     </items>
     <bags>
         <bag name="My-Favourite-Employees" type="Manager">
@@ -19,6 +46,21 @@
             <bagElement id="2"/>
             <bagElement id="3"/>
             <bagElement id="4"/>
+        </bag>
+        <bag name="The great unknowns" type="Employee">
+            <bagElement id="5"/>
+            <bagElement id="6"/>
+            <bagElement id="7"/>
+        </bag>
+        <bag name="Umlaut holders" type="Employee">
+            <bagElement id="8"/>
+            <bagElement id="9"/>
+        </bag>
+        <bag name="Unusual departments" type="Department">
+            <bagElement id="10"/>
+            <bagElement id="11"/>
+            <bagElement id="12"/>
+            <bagElement id="13"/>
         </bag>
     </bags>
     <template-queries>
