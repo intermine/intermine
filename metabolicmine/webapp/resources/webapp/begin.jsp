@@ -336,7 +336,7 @@
                <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
                   href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>]</p>
 
-                <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+                <form id="mainSearchForm" action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
                     <div class="bottom">
                         <center>
@@ -346,6 +346,11 @@
                         </center>
                     </div>
                </form>
+			   <script type="text/javascript">
+					jQuery('#mainSearchForm a').click(function() {
+			  			document.getElementById("mainSearchForm").submit();
+					});
+			   </script>
 
                 <div style="clear:both;"></div>
             </div>

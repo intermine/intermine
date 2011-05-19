@@ -264,3 +264,56 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
   left center transparent; }
 
 #templates #tab-content #ribbon { background: url("../themes/purple/homepage/ribbon-gray.png") no-repeat scroll right top transparent; }
+
+/* report page */
+#header_wrap { background-color:#E6F0E4; background-image:url("report/header-bg.png"); }
+#object_header h1.title span { color:#5c0075; }
+#object_header div.box h3 { background:#F0E3F7; }
+#object_header div.list.box span { color:#002575; }
+#fixed-menu { background:#7EE6FF; }
+#toc-menu-wrap { background:#7EE6FF; }
+#fixed-menu span, #toc-menu-wrap span { color:#353B40; }
+#menu-target { background:#E6F0E4; }
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#002575; background:#E6F0E4; }
+div.box h2 { color:#000; }
+div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#E6F0E4; color:#002575; border-top-color:#002575; }
+div.box a { color:#002575; }
+div.box div.inner { border-color:#FCFAFD; }
+div.box div.inner h4 { background-color:#FCFAFD; }
+div.table h3 { text-shadow: 1px 1px 1px #FFF; }
+#in-lists div.heading { background:#E6F0E4 !important; border-color:#002575; color:#002575 !important; text-shadow:1px 1px 1px #FFF; }
+div.feature table td.border-left { border-left-color:#DFF0DD !important; }
+.container_12 .compact-table td { border-color:#DCC8E2; }
+.container_12 .compact-table a:hover { color:#002575; }
+.container_12 .highlight { background-color: #FFF3D3; }
+div.box div.inner { border-color:#FCFAFD; }
+div.box div.inner h4 { background-color:#FCFAFD; }
+
+/* theme color classes (used on Report page currently) */
+div.table .theme-1-color, div.box .theme-1-color { color:#002575 !important; } /* Resolution Blue */
+div.table .theme-1-background, div.box .theme-1-background { background-color:#002575 !important; } /* Resolution Blue */
+div.table .theme-1-border, div.box .theme-1-border { border-color:#002575 !important; } /* Resolution Blue */
+
+div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
+
+div.table .theme-3-color, div.box .theme-3-color { color:#DFF0DD !important; } /* Zanah */
+div.table .theme-3-background, div.box .theme-3-background { background-color:#DFF0DD !important; } /* Zanah */
+div.table .theme-3-border, div.box .theme-3-border { border-color:#DFF0DD !important; } /* Zanah */
+
+div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
+
+div.table .theme-5-color, div.box .theme-5-color { color:#E6F0E4 !important; } /* Willow Brook */
+div.table .theme-5-background, div.box .theme-5-background { background-color:#E6F0E4 !important; } /* Willow Brook */
+div.table .theme-5-border, div.box .theme-5-border { border-color:#E6F0E4 !important; } /* Willow Brook */
+
+div.table .theme-6-color, div.box .theme-6-color { color:#F8FAF7 !important; } /* Snow Drift */
+div.table .theme-6-background, div.box .theme-6-background { background-color:#F8FAF7 !important; } /* Snow Drift */
+div.table .theme-6-border, div.box .theme-6-border { border-color:#F8FAF7 !important; } /* Snow Drift */
+
+div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */

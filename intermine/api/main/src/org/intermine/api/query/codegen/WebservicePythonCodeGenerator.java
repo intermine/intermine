@@ -1,19 +1,9 @@
 package org.intermine.api.query.codegen;
 
-/*
- * Copyright (C) 2002-2011 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import  java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,23 +22,18 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 
-/**
- * Generate code that can be run with the intermine.webservice python module.
- * @author Alex Kalderimis
- *
- */
 public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 {
 
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY    = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY           = "Invalid query. No fields selected for output...";
+    protected static final String NULL_QUERY              = "Invalid query. Query can not be null...";
 
-    protected static final String INDENT        = "    ";
-    protected static final String SPACE         = " ";
-    protected static final String ENDL          = System.getProperty("line.separator");
+    protected static final String INDENT                  = "    ";
+    protected static final String SPACE                   = " ";
+    protected static final String ENDL                    = System.getProperty("line.separator");
 
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-                                                + "constraint, which is currently not supported...";
+                                                              + "constraint, which is currently not supported...";
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
 
@@ -56,10 +41,10 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
      * This method will generate code that will run using the python webservice
      * client library.
      *
-     * @param info a WebserviceCodeGenInfo object
+     * @param wsCodeGeninfo
+     *            a WebserviceCodeGenInfo object
      * @return the code as a string
      */
-    @Override
     public String generate(WebserviceCodeGenInfo info) {
 
         PathQuery query = info.getQuery();
@@ -72,28 +57,22 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
 
         StringBuffer sb = new StringBuffer();
-        sb.append("#!/usr/bin/env python" + ENDL);
-        sb.append(ENDL);
-        sb.append("#####################################################################" + ENDL);
+        sb.append("#!/usr/bin/env python" + ENDL + ENDL);
         sb.append("# This is an automatically generated script to run your query" + ENDL);
         sb.append("# to use it you will require the intermine python client." + ENDL);
         sb.append("# To install the client, run the following command from a terminal:" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("#     sudo easy_install intermine" + ENDL);
+        sb.append("#     easyinstall intermine-webservice" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("# For documentation and help you can visit:" + ENDL);
-        sb.append("#     * http://www.intermine.org/PythonClient - general usage guide" + ENDL);
-        sb.append("#     * http://www.intermine.org/docs/python-docs - API reference" + ENDL);
-        sb.append("#" + ENDL);
-        sb.append("#####################################################################" + ENDL);
-        sb.append(ENDL);
+        sb.append("# For further documentation you can visit:" + ENDL);
+        sb.append("#     http://www.intermine.org/PythonClient" + ENDL + ENDL);
+        sb.append("# The following two lines will be needed in every python script:" + ENDL);
         sb.append("from intermine.webservice import Service" + ENDL);
         if (info.isPublic()) {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")"
-                    + ENDL + ENDL);
+            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")" + ENDL + ENDL);
         } else {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
-                    + ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
+        	sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
+        			+ ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
         }
 
 
@@ -122,7 +101,6 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                         StringBuffer subBuf = new StringBuffer();
                         if (holdOver != null) {
                             subBuf.append(holdOver);
-                            holdOver = null;
                         }
 
                         while (subBuf.length() <= 74 && viewIter.hasNext()) {
@@ -153,7 +131,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                     query.getOrderBy().size() == 1
                     && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
                     && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                    sb.append("# Uncomment and edit default sort order to select a custom sort order:" + ENDL);
+                    sb.append("# Uncomment end edit the line below (the default) to select a custom sort order:" + ENDL);
                     sb.append("# ");
                 } else {
                     sb.append("# Your custom sort order is specified with the following code:" + ENDL);
@@ -171,24 +149,24 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 // Add comments for constraints
                 sb.append("# You can edit the constraint values below" + ENDL);
 
-                int codedQueries = 0;
-                List<String> uncodedQueryTexts = new ArrayList<String>();
-                List<String> codedQueryTexts = new ArrayList<String>();
+                int coded_queries = 0;
+                List<String> uncoded_query_texts = new ArrayList<String>();
+                List<String> coded_query_texts = new ArrayList<String>();
 
                 for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
                     PathConstraint pc = entry.getKey();
                     if (entry.getValue() != null) {
-                        codedQueries++;
-                        codedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
+                        coded_queries++;
+                        coded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
                     } else {
-                        uncodedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
+                        uncoded_query_texts.add(pathContraintUtil(pc, entry.getValue()));
                     }
                 }
                 // Subclass constraints must come first or the query will break
-                for (String text: uncodedQueryTexts) {
+                for (String text: uncoded_query_texts) {
                     sb.append(text);
                 }
-                for (String text: codedQueryTexts) {
+                for (String text: coded_query_texts) {
                     sb.append(text);
                 }
                 sb.append(ENDL);
@@ -197,7 +175,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 if (query.getConstraintLogic() != null
                     && !"".equals(query.getConstraintLogic())) {
                     String logic = query.getConstraintLogic();
-                    if (codedQueries <= 1 || logic.indexOf("or") == -1) {
+                    if (coded_queries <= 1 || logic.indexOf("or") == -1) {
                         sb.append("# Uncomment and edit the code below to specify your own custom logic:" + ENDL + "# ");
                     } else {
                         sb.append("# Your custom constraint logic is specified with the code below:" + ENDL);
@@ -214,7 +192,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 }
             }
             sb.append("for row in query.results(\"tsv\"):" + ENDL);
-            sb.append(INDENT + "print row");
+            sb.append(INDENT + "print row,");
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
@@ -266,7 +244,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             sb.append("results = template.results( \"tsv\"," + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
             sb.append("for row in results:" + ENDL);
-            sb.append(INDENT + "print row");
+            sb.append(INDENT + "print row,");
         }
 
         return sb.toString();
@@ -324,13 +302,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             String type = ((PathConstraintSubclass) pc).getType();
             sb.append("\"" + type + "\"");
         } else if ("PathConstraintLoop".equals(className)) {
-            if (op.equals(ConstraintOp.EQUALS)) {
-                sb.append("\"IS\"");
-            } else {
-                sb.append("\"IS NOT\"");
-            }
+        	if (op.equals(ConstraintOp.EQUALS)) {
+        		sb.append("\"IS\"");
+        	} else {
+        		sb.append("\"IS NOT\"");
+        	}
         } else {
-            sb.append("\"" + op.toString() + "\"");
+        	sb.append("\"" + op.toString() + "\"");
         }
 
         if ("PathConstraintAttribute".equals(className)) {

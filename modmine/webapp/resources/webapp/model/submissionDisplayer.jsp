@@ -60,15 +60,15 @@ div#submissionDescription {
 <div class="body">
   <div id="submissionLabName">
     <h3>
-      <b>Lab:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.id}">${object.lab.name}</html:link>
+      <b>Lab:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${object.lab.id}">${object.lab.name}</html:link>
       - ${object.lab.affiliation}
     </h3>
   </div>
   <div id="submissionProject">
-      <b>Project:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link> - ${object.lab.project.surnamePI}
+      <b>Project:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${object.lab.project.id}">${object.lab.project.name}</html:link> - ${object.lab.project.surnamePI}
   </div>
   <div id="submissionOrganism">
-      <b>Organism:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.organism.id}">${object.organism.shortName}</html:link>
+      <b>Organism:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${object.organism.id}">${object.organism.shortName}</html:link>
   </div>
    <div id="submissionExperiment">
       <b>Experiment:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${object.experiment.name}">${object.experiment.name}</html:link>
@@ -79,7 +79,7 @@ div#submissionDescription {
     <p><b>Submission description</b></p>
     <br/>
     <p>
-  <html href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.id}">${object.description}</html>
+  <html href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${object.id}">${object.description}</html>
   </div>
 
 

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -30,19 +29,19 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.ConvertedObjectPair;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.InlineResultsTable;
+import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTable;
+import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTableRow;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the bagUploadConfirmIssue tile.
  * @author Kim Rutherford
  * @author Xavier Watkins
+ * @author Radek Stepan
  */
 public class BagUploadConfirmIssueController extends TilesAction
 {
@@ -104,36 +103,59 @@ public class BagUploadConfirmIssueController extends TilesAction
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Map webPropertiesMap = SessionMethods.getWebProperties(servletContext);
-        Map classKeys = im.getClassKeys();
 
-        InlineResultsTable table = new InlineResultsTable(objectList, model, webConfig,
-                                                          webPropertiesMap, classKeys, -1, true);
+        // create a BagUploadConfirmInlineResultsTable which is a special case of InlineResultsTable
+        //  that uses BagUploadConfirmInlineResultsTableRow objects which is a special case of
+        //  InlineResultsTableRow containing methods to set/get identifier & rowspan
+        BagUploadConfirmInlineResultsTable table =
+            new BagUploadConfirmInlineResultsTable(objectList, model, webConfig, webPropertiesMap,
+                    -1, true, null);
 
-        identifierIter = identifierResultElementMap.keySet().iterator();
-        while (identifierIter.hasNext()) {
-            String identifier = (String) identifierIter.next();
-            List objectForIdentifierList = (List) identifierResultElementMap.get(identifier);
-            for (int i = 0; i < objectForIdentifierList.size(); i++) {
-                Integer thisObjectListIndex = (Integer) objectForIdentifierList.get(i);
-                List resultElementRow =
-                    new ArrayList(table.getResultElementRow(thisObjectListIndex.intValue()));
-                if (initialTypeMap == null || initialTypeMap.size() == 0) {
-                    Set cds = (Set) (table.getTypes().get(thisObjectListIndex.intValue()));
-                    ClassDescriptor classDesc = (ClassDescriptor) cds.iterator().next();
-                    String className = TypeUtil.unqualifiedName(classDesc.getName());
-                    resultElementRow.add(0, className);
-                }
-                InterMineObject rowObject = (InterMineObject) table.getRowObjects()
-                    .get(thisObjectListIndex.intValue());
-                resultElementRow.add(rowObject.getId());
-                objectForIdentifierList.set(i, resultElementRow);
-            }
-        }
+        // map additional matches onto the table
+        table = mapResultTableOnAdditionalMatches(table, identifierResultElementMap);
 
-        Map resultElementMap = identifierResultElementMap;
-        context.putAttribute("resultElementMap", resultElementMap);
-        context.putAttribute("columnNames", table.getColumnFullNames());
+        context.putAttribute("table", table);
         context.putAttribute("initialTypeMap", initialTypeMap);
         return null;
     }
+
+    /**
+     * Map additional matches onto the table of result elements
+     *
+     * @param table
+     * @param resultElementMap
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private BagUploadConfirmInlineResultsTable mapResultTableOnAdditionalMatches(
+                BagUploadConfirmInlineResultsTable table,
+                Map resultElementMap) {
+        // table rows
+        List<Object> tableRows = table.getResultElementRows();
+
+        // traverse map
+        for (Object identifierKey : resultElementMap.keySet()) {
+            // fetch the list of row numbers that correspond to the identifier
+            List value = (List) resultElementMap.get(identifierKey);
+            Boolean first = true;
+            for (Object rowNumber : value) {
+                // fetch the actual row in the table
+                BagUploadConfirmInlineResultsTableRow tableRow =
+                    (BagUploadConfirmInlineResultsTableRow) tableRows.get((Integer) rowNumber);
+                // set the new values
+                if (first) {
+                    tableRow.setRowSpan(value.size());
+                    tableRow.setShowIdentifier(true);
+                }
+                tableRow.setIdentifier((String) identifierKey);
+                // save the row back
+                tableRows.set((Integer) rowNumber, tableRow);
+                // switch
+                first = false;
+            }
+        }
+
+        return table;
+    }
+
 }

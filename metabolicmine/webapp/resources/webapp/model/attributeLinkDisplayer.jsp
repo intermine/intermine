@@ -4,11 +4,11 @@
 <!-- attributeLinkDisplayer.jsp -->
 
 <div class="externalLinks">
-	<h3>External links</h3>
-  	<ul>
-  	
-  	<c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
-  	<li>
+  <h3>External links</h3>
+    <ul>
+
+    <c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
+    <li>
     <c:set var="href" value="${confMapEntry.value.url}"/>
     <c:set var="imageName" value="${confMapEntry.value.imageName}"/>
     <c:set var="text" value="${confMapEntry.value.text}"/>
@@ -24,13 +24,13 @@
 
           <%-- GET form --%>
           <c:when test="${empty usePost}">
-	          <c:if test="${!empty imageName}">
-	          	<a href="${href}" class="ext_link image" target="_new">
-	          		<center><html:img src="model/images/${imageName}" title="${text}"/><br /></center>
-	          		<span>${title}</span>
-	          	</a>
-	          </c:if>
-	          <a href="${href}" class="ext_link" target="_new">${text}</a>
+            <c:if test="${!empty imageName}">
+              <a href="${href}" class="ext_link image" target="_new">
+                <center><html:img src="model/images/${imageName}" title="${text}"/><br /></center>
+                <span>${title}</span>
+              </a>
+            </c:if>
+            <a href="${href}" class="ext_link" target="_new">${text}</a>
           </c:when>
 
           <%-- POST form --%>
@@ -66,7 +66,7 @@
 
 <%-- show xrefs --%>
 <table id="xrefTable" class="lookupReport" cellspacing="5" cellpadding="0">
-  <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
+  <c:forEach var="xrefCol" items="${reportObject.refsAndCollections}">
     <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
      <c:forEach var="xref" items="${xrefCol.value.table.resultsAsList}">
        <c:forEach var="xrefMapItem" items="${xrefMap}">

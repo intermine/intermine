@@ -123,7 +123,7 @@ public class PortalQueryAction extends InterMineAction
             // check the matches first...
             for (Map.Entry<Integer, List> entry : matches.entrySet()) {
                 String id = entry.getKey().toString();
-                return new ForwardParameters(mapping.findForward("objectDetails"))
+                return new ForwardParameters(mapping.findForward("report"))
                     .addParameter("id", id).forward();
             }
 
@@ -142,7 +142,7 @@ public class PortalQueryAction extends InterMineAction
                         String[] pair = token.split("=");
                         if (pair[0].equalsIgnoreCase("id")) {
                             id = pair[1].replaceAll("\"", "").replaceAll("]", "");
-                            return new ForwardParameters(mapping.findForward("objectDetails"))
+                            return new ForwardParameters(mapping.findForward("report"))
                                 .addParameter("id", id).forward();
                         }
                         continue;
@@ -217,7 +217,7 @@ public class PortalQueryAction extends InterMineAction
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
-                        return goToObjectDetails(mapping, converted.get(0).toString());
+                        return goToReport(mapping, converted.get(0).toString());
                     }
                     return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
@@ -234,7 +234,7 @@ public class PortalQueryAction extends InterMineAction
             return goToResults(mapping, session, webResults);
         // Go to the object details page
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
-            return goToObjectDetails(mapping, bagList.get(0).toString());
+            return goToReport(mapping, bagList.get(0).toString());
         // Make a bag
         } else if (bagList.size() >= 1) {
             return createBagAndGoToBagDetails(mapping, imBag, bagList);
@@ -253,8 +253,8 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("table", identifier).addParameter("trail", "").forward();
     }
 
-    private ActionForward goToObjectDetails(ActionMapping mapping, String id) {
-        return new ForwardParameters(mapping.findForward("objectDetails"))
+    private ActionForward goToReport(ActionMapping mapping, String id) {
+        return new ForwardParameters(mapping.findForward("report"))
             .addParameter("id", id).forward();
     }
 

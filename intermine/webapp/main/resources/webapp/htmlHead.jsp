@@ -37,6 +37,31 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
+	<c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
+    <!--
+		<link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
+        <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dojo/resources/dojo.css"></link>
+        <link rel="stylesheet" type="text/css" href="/jbrowse/genome.css"></link>
+
+        <script type="text/javascript" src="/jbrowse/jslib/dojo/dojo.js" djConfig="isDebug: false"></script>
+        <script type="text/javascript" src="/jbrowse/jslib/dojo/jbrowse_dojo.js" ></script>
+
+		<script type="text/javascript" src="/jbrowse/js/Browser.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/Util.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/NCList.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/LazyPatricia.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/LazyArray.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/Track.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/SequenceTrack.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/Layout.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/FeatureTrack.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/UITracks.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/ImageTrack.js"></script>
+        <script type="text/javascript" src="/jbrowse/js/GenomeView.js"></script>
+        <script type="text/javascript" src="/jbrowse/data/refSeqs.js"></script>
+        <script type="text/javascript" src="/jbrowse/data/trackInfo.js"></script>
+    -->
+	</c:if>
   </c:if>
 
 <!--

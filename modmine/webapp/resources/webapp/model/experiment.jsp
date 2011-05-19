@@ -237,7 +237,7 @@ Expression Levels
         title="Download in GFF3 format">GFF3</html:link>
             </td>
             <td align="center">
-            
+
             <c:choose>
             <c:when test="${!empty exp.sequenced && fn:contains(exp.unlocated, fc.featureType)}">
 
@@ -245,11 +245,11 @@ Expression Levels
             href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
             title="Download the sequences">SEQ</html:link>
 
-            
+
             </c:when>
             <c:otherwise>
             <i>SEQ</i>
-            
+
 </c:otherwise>
 </c:choose>
 </td>
@@ -555,13 +555,13 @@ All GBrowse tracks generated for this experiment:
     <tr>
       <td class="sorting"><input type="checkbox" class="aSub" value="${subCounts.key.id}" onclick="updateCheckStatus(this.checked)"/></td>
       <td class="sorting">
-      <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
+      <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}">
       <c:out value="${sub.dCCid}"></c:out></html:link>
       <p>
         <c:forEach items="${sub.relatedSubmissions}" var="relSubs" varStatus="rstatus">
         <br>
         <c:if test="${rstatus.first}">Related to: </c:if>
-<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${relSubs.id}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${relSubs.id}">
 <c:out value="${relSubs.dCCid}"></c:out></html:link>
         <c:if test="${rstatus.last}"></c:if>
         </c:forEach>
@@ -569,7 +569,7 @@ All GBrowse tracks generated for this experiment:
       </td>
 
       <td class="sorting">
-      <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
+      <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}">
       <c:out value="${sub.title}"></c:out></html:link>
       </td>
 
@@ -587,7 +587,7 @@ All GBrowse tracks generated for this experiment:
 
                    <c:choose>
                    <c:when test="${thisTypeCount <= 5}">
-                     <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
+                     <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
                     <span class="tinylink">
                        <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
                          <query name="" model="genomic"
@@ -617,7 +617,7 @@ All GBrowse tracks generated for this experiment:
                   <br></br>
 <c:choose>
 <c:when test="${fn:length(factor.property.target.symbol) > 1}">
-target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.target.id}"
+target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.target.id}"
  title="More about this target">
 <c:out value="${factor.property.target.symbol}"/></html:link>
 
@@ -627,7 +627,7 @@ target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${
 </c:otherwise>
 </c:choose>
                   </c:if>
-                  
+
                    </c:when>
                   <c:when test="${thisTypeCount > 5 && status.last}">
                   ...
@@ -719,12 +719,12 @@ ${fc.key}:
    <c:when test="${isUnloc == 'true' }">
      &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>
    </c:when>
-   <c:otherwise>   
+   <c:otherwise>
      <i>&nbsp;SEQ</i>
    </c:otherwise>
    </c:choose>
 
-   
+
    </c:otherwise>
 </c:choose>
 
@@ -756,7 +756,7 @@ Expression Levels:&nbsp;
   <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
   <c:if test="${FFS.key == fc.key}" >
     <c:forEach items="${FFS.value}" var="FS" varStatus="FS_status">
-    <c:if test="${!FS_status.first}">  
+    <c:if test="${!FS_status.first}">
     <br>
     </c:if>
     <c:if test="${FS.value != fc.value}" >
@@ -801,19 +801,19 @@ Expression Levels:&nbsp;
       <c:when test="${isUnloc == 'true' }">
       &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
       </c:when>
-      <c:otherwise>   
+      <c:otherwise>
         <i>&nbsp;SEQ</i>
       </c:otherwise>
       </c:choose>
 
-      
-      
-      
-<%--      
+
+
+
+<%--
       &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
          &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
 --%>
-         
+
          </c:otherwise>
       </c:choose>
          &nbsp;&nbsp;
@@ -849,7 +849,7 @@ Expression Levels:&nbsp;
     <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&project=${project}&feature=all&format=gff3">[full gff3]</html:link>
    </c:if>
 
-   &nbsp;&nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
+   &nbsp;&nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
             </td></tr>
         </table>
         </div>
@@ -928,7 +928,7 @@ Expression Levels:&nbsp;
     <mm:dataFiles files="${subFiles.value}" dccId="${sub.dCCid}" />
   </c:if>
 </c:forEach>
-<%-- TARBALL --%> <b>     
+<%-- TARBALL --%> <b>
 <mm:getTarball dccId="${sub.dCCid}"/>
 
 </span>

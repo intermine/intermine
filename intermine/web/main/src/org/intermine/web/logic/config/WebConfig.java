@@ -12,8 +12,11 @@ package org.intermine.web.logic.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -43,6 +46,8 @@ public class WebConfig
     private Map<String, TableExportConfig> tableExportConfigs =
         new HashMap<String, TableExportConfig>();
     private Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
+    private List<ReportDisplayerConfig> reportDisplayerConfigs =
+        new ArrayList<ReportDisplayerConfig>();
 
     /**
      * Parse a WebConfig XML file
@@ -71,6 +76,28 @@ public class WebConfig
         digester.addSetProperties("webconfig/class", "className", "className");
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
+        /* configure how the "title" of an object is displayed on Type */
+        digester.addObjectCreate("webconfig/class/headerconfig/titles", HeaderConfigTitle.class);
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
+                "mainTitles", "mainTitles");
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
+                "subTitles", "subTitles");
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
+                "numberOfMainTitlesToShow", "numberOfMainTitlesToShow");
+        digester.addSetProperties("webconfig/class/headerconfig/titles/title",
+                "appendConfig", "appendConfig");
+        digester.addSetNext("webconfig/class/headerconfig/titles", "addHeaderConfigTitle");
+
+        digester.addObjectCreate("webconfig/class/headerconfig/customlinks",
+                HeaderConfigLink.class);
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
+                "url", "url");
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
+                "text", "text");
+        digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
+                "imageName", "imageName");
+        digester.addSetNext("webconfig/class/headerconfig/customlinks", "addHeaderConfigLink");
+
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
         digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");
         digester.addSetNext("webconfig/class/tabledisplayer", "setTableDisplayer");
@@ -92,6 +119,18 @@ public class WebConfig
         digester.addCallMethod("webconfig/class/longdisplayers/displayer/param", "addParam", 2);
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
+
+        /* display inline tables as inline lists instead */
+        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineList.class);
+        digester.addSetProperties("webconfig/class/inlinelist/table");
+        digester.addSetNext("webconfig/class/inlinelist/table", "addInlineList");
+        digester.addSetProperties("webconfig/class/inlinelist/table", "path", "path");
+        digester.addSetProperties("webconfig/class/inlinelist/table",
+                "showLinksToObjects", "showLinksToObjects");
+        digester.addSetProperties("webconfig/class/inlinelist/table",
+                "showInHeader", "showInHeader");
+        digester.addSetProperties("webconfig/class/inlinelist/table", "lineLength", "lineLength");
+
 
         digester.addObjectCreate("webconfig/class/bagdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/displayer");
@@ -125,6 +164,11 @@ public class WebConfig
         digester.addSetProperties("webconfig/tableExportConfig", "className", "className");
 
         digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
+
+        digester.addObjectCreate("webconfig/reportdisplayers/reportdisplayer",
+                ReportDisplayerConfig.class);
+        digester.addSetProperties("webconfig/reportdisplayers/reportdisplayer");
+        digester.addSetNext("webconfig/reportdisplayers/reportdisplayer", "addReportDisplayer");
 
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
@@ -191,7 +235,7 @@ public class WebConfig
     }
 
     /**
-     * Get the types (== classes) stored in this WebConfig.
+     * Get a map from fully qualified class name to the Type config for that class
      * @return the types
      */
     public Map<String, Type> getTypes() {
@@ -223,6 +267,30 @@ public class WebConfig
                 type.addWidget(widget);
             }
         }
+    }
+
+    /**
+     * Add config for a custom report page displayer.  This checks that a type has been specified
+     * before adding the config.
+     * @param reportDisplayerConfig config for an individual report page displayer
+     */
+    public void addReportDisplayer(ReportDisplayerConfig reportDisplayerConfig) {
+        Set<String> displayForTypes = reportDisplayerConfig.getConfiguredTypes();
+        if (displayForTypes.isEmpty()) {
+            LOG.error("Report displayer: " + reportDisplayerConfig.getJavaClass() + "/"
+                    + reportDisplayerConfig.getJspName() + " is not configured for any types");
+        } else {
+            reportDisplayerConfigs.add(reportDisplayerConfig);
+        }
+    }
+
+
+    /**
+     * Fetch config for the custom report page displayers.
+     * @return custom report page displayer config in the order specified in the config file
+     */
+    public List<ReportDisplayerConfig> getReportDisplayerConfigs() {
+        return reportDisplayerConfigs;
     }
 
     /**
@@ -272,7 +340,7 @@ public class WebConfig
 
     /**
      * For each class/Type mentioned in XML files, copy its displayers and FieldConfigs to all
-     * subclasses that don't already have any configuration.
+     * subclasses that don't already have any configuration and sometimes when they do.
      * This method has package scope so that it can be called from the tests.
      *
      * @param model the Model to use to find sub-classes
@@ -281,6 +349,7 @@ public class WebConfig
      */
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
+
         for (Iterator<String> modelIter = classes.iterator(); modelIter.hasNext();) {
 
             String className = modelIter.next();
@@ -301,6 +370,42 @@ public class WebConfig
                 Type superClassType = types.get(cd.getName());
 
                 if (superClassType != null) {
+                    // set title config, the setter itself only adds configs that have not been set
+                    //  before, see setTitles() in HeaderConfig
+                    HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
+                    if (hc != null) {
+
+                        // set the HeaderConfig titles as HeaderConfig for thisClassType might have
+                        //  been configured
+                        HashMap<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
+                        if (titles != null) {
+
+                            // new childish HeaderConfig
+                            HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
+                            if (newHC != null) {
+                                // type A behavior: inherit titles from the parent and append
+                                if (newHC.getAppendConfig()) {
+                                    // copy over main titles
+                                    if (titles.get("main") != null) {
+                                        for (Object title : titles.get("main").keySet()) {
+                                            newHC.setMainTitles((String) title);
+                                        }
+                                    }
+                                    // copy over sub titles
+                                    if (titles.get("sub") != null) {
+                                        for (Object title : titles.get("sub").keySet()) {
+                                            newHC.setSubTitles((String) title);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // type B behavior: inherit from parent if we are null
+                                thisClassType.addHeaderConfigTitle(hc);
+                            }
+                        }
+                    }
+
+
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
                         for (FieldConfig fc : superClassType.getFieldConfigs()) {

@@ -16,7 +16,7 @@
 <definition name="pathwayLinkDisplayer.tile" path="/model/pathwayLinkDisplayer.jsp" />
 
 <definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
-  controllerUrl="/initOrthologueLinkDisplayer.do" />
+        controllerUrl="/initOrthologueLinkDisplayer.do"/
 
 <definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
   controllerUrl="/initCytoscapeNetworkDisplayer.do" />

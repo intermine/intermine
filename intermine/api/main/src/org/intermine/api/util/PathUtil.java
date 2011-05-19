@@ -10,10 +10,14 @@ package org.intermine.api.util;
  *
  */
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -69,6 +73,94 @@ public final class PathUtil
             }
         }
         return current;
+    }
+
+    /**
+     * Return the object at the end of a given path, starting from the given object. Works with
+     * Collections of objects and reverse references.
+     *
+     * @param path the path to resolve
+     * @param o the start object
+     * @return the attribute, object or collection at the end of the path
+     * @throws PathException if the path does not match the object type
+     */
+    @SuppressWarnings("unchecked")
+    public static Set<Object> resolveCollectionPath(Path path, Object o) throws PathException {
+        // early bath for him
+        if (!path.containsCollections()) {
+            // return result as a Set
+            return new HashSet<Object>(Collections.singleton(resolvePath(path, o)));
+        }
+        Model model = path.getModel();
+        if (path.getStartClassDescriptor() != null) {
+            Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());
+            if (!clds.contains(path.getStartClassDescriptor())) {
+                throw new PathException("ClassDescriptor from the start of path: " + path
+                        + " is not a superclass of the class: "
+                        + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
+                        + o, path.toString());
+            }
+        }
+
+        Object current = o;
+
+        // elements in a path we will abuse on collection retrieval
+        List<String> pathStrings = path.getElements();
+        // traverse all elements in a Path
+        for (int i = 0; i < path.getElements().size(); i++) {
+
+            // fetch the field
+            String fieldName = pathStrings.get(i);
+
+            try {
+                if (current == null) {
+                    return null;
+                }
+                current = TypeUtil.getFieldValue(current, fieldName);
+
+                // do we have a Collection?
+                if (current instanceof Collection<?>) {
+
+                    // traverse all of the objects and resolve path in them
+                    HashSet<Object> resultList = new HashSet<Object>();
+                    for (Object element : (Collection<?>) current) {
+
+                        // what is the class type?
+                        String objectClass = DynamicUtil.getSimpleClass(
+                                (Class<? extends FastPathObject>) element.getClass())
+                                .getSimpleName();
+
+                        // form a new path string starting with the next element
+                        //  in the path, separated by a '.'
+                        String pathString = "";
+                        for (int k = i + 1; k < pathStrings.size(); k++) {
+                            pathString += '.' + pathStrings.get(k);
+                        }
+
+                        // form a new path
+                        path = new Path(model, objectClass + pathString);
+
+                        // add resolved result
+                        Object resultObject = resolveCollectionPath(path, element);
+                        if (resultObject instanceof HashSet<?>) { // sets of sets
+                            for (Object innerElement : (HashSet<?>) resultObject) {
+                                resultList.add(innerElement);
+                            }
+                        } else {
+                            // add the object
+                            resultList.add(resultObject);
+                        }
+                    }
+                    return resultList;
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("IllegalAccessException while trying to get value of "
+                                           + "field \"" + fieldName + "\" in object: " + o, e);
+            }
+        }
+
+        // we will never reach this point
+        return new HashSet<Object>(Collections.singleton(null));
     }
 
     /**

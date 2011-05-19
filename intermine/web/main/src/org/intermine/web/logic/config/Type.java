@@ -45,11 +45,19 @@ public class Type
     private Displayer tableDisplayer;
     private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
+    /** @var inline lists attached to the object type */
+    private LinkedList<InlineList> inlineLists = new LinkedList<InlineList>();
+
+    /** @var header configuration having paths to titles to show */
+    private HeaderConfigTitle headerConfigTitle;
+    private HeaderConfigLink headerConfigLink;
+
     /**
-     * Set the fully-qualified class name for this Type
+     * Set the unqualified class name for this Type (from fully-qualified)
      * @param className the name of the Type
      */
     public void setClassName(String className) {
+        //this.className = TypeUtil.unqualifiedName(className);
         this.className = className;
     }
 
@@ -112,6 +120,46 @@ public class Type
     }
 
     /**
+     * Add a header configuration, used from WebConfig
+     * @param headerConfig lalala
+     */
+    public void addHeaderConfigTitle(HeaderConfigTitle headerConfig) {
+        this.headerConfigTitle = headerConfig;
+    }
+
+    /**
+     *
+     * @return HeaderConfigTitle
+     */
+    public HeaderConfigTitle getHeaderConfigTitle() {
+        return this.headerConfigTitle;
+    }
+
+    /**
+     * Add a header configuration, used from WebConfig
+     * @param headerConfig lalala
+     */
+    public void addHeaderConfigLink(HeaderConfigLink headerConfig) {
+        this.headerConfigLink = headerConfig;
+    }
+
+    /**
+    *
+    * @return HeaderConfigTitle
+    */
+    public HeaderConfigLink getHeaderConfigLink() {
+        return this.headerConfigLink;
+    }
+
+    /**
+     * Add an InlineList for this object, used from WebConfig
+     * @param list lalala
+     */
+    public void addInlineList(InlineList list) {
+        inlineLists.add(list);
+    }
+
+    /**
      * Add a bag displayer for this Type
      * @param disp the Displayer to add
      */
@@ -155,6 +203,14 @@ public class Type
      */
     public Set getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
+    }
+
+    /**
+     *
+     * @return inline lists
+     */
+    public List<InlineList> getInlineLists() {
+        return inlineLists;
     }
 
     /**
@@ -245,4 +301,20 @@ public class Type
     public void setAspectDisplayers(Map<String, List<Displayer>> aspectDisplayers) {
         this.aspectDisplayers = aspectDisplayers;
     }
+
+    /**
+     * @see unused getter for WebConfig to work
+     * @return null
+     */
+    public String getMainTitles() {
+        return null;
+    }
+    /**
+     * @see unused getter for WebConfig to work
+     * @return null
+     */
+    public String getSubTitles() {
+        return null;
+    }
+
 }

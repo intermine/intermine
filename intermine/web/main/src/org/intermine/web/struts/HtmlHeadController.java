@@ -29,8 +29,8 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayObjectFactory;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -62,7 +62,7 @@ public class HtmlHeadController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
 
         String pageName = (String) context.getAttribute("pageName");
         String bagName = (String) context.getAttribute("bagName");
@@ -107,7 +107,7 @@ public class HtmlHeadController extends TilesAction
             htmlPageTitle = htmlPageTitle + templateTitle;
 
         /* object */
-        } else if ("objectDetails".equals(pageName) && objectId != null) {
+        } else if ("report".equals(pageName) && objectId != null) {
 
             Integer id = null;
             try {
@@ -119,7 +119,7 @@ public class HtmlHeadController extends TilesAction
             if (object == null) {
                 return null;
             }
-            DisplayObject dobj = displayObjects.get(object);
+            ReportObject dobj = reportObjects.get(object);
 
             String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";

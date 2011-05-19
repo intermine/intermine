@@ -10,6 +10,9 @@ package org.intermine.api.mines;
  *
  */
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +24,7 @@ import java.util.Set;
  */
 public class Mine
 {
+//    private static final Logger LOG = Logger.getLogger(Mine.class);
     protected String name = null;
     protected String url = null;
     protected String logo = null;
@@ -153,6 +157,56 @@ public class Mine
      */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    /**
+     * Search through the map held by this mine for matching values.  eg. look in the map for
+     * entries with values equal to the organism name provided.
+     *
+     * For a Dmel list, finds in this mine:
+     *
+     *   D. rerio --> Dmel
+     *
+     * @param remoteKeys keys from other mine
+     * @param values values to query for
+     * @return list of keys for values provided
+     */
+    public Set<String> getMatchingMapKeys(Set<String> remoteKeys, List<String> values) {
+        if (mineMap != null && !mineMap.isEmpty()) {
+            Set<String> results = new HashSet<String>();
+            for (Map.Entry<String, Set<String>> entry : mineMap.entrySet()) {
+                String key = entry.getKey();
+                Set<String> currentMineValues = entry.getValue();
+                for (String otherMineValue : values) {
+                    if (currentMineValues.contains(otherMineValue)) {
+                        if (remoteKeys == null || remoteKeys.contains(key)) {
+                            results.add(key);
+                        }
+                    }
+                }
+            }
+            return results;
+        }
+        return Collections.emptySet();
+    }
+
+    // finds Dmel (organism in list) --> D. rerio (organism for remote mine)
+    public Set<String> getMatchingMapValues(Set<String> remoteKeys, List<String> values) {
+        if (mineMap != null && !mineMap.isEmpty()) {
+            Set<String> results = new HashSet<String>();
+            for (String value : values) {
+                Set<String> localValues = mineMap.get(value);
+                if (localValues != null) {
+                    for (String key : remoteKeys) {
+                        if (localValues.contains(key)) {
+                            results.add(key);
+                        }
+                    }
+                }
+            }
+            return results;
+        }
+        return Collections.emptySet();
     }
 
 }

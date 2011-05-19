@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.CollectionDescriptor;
@@ -30,14 +31,15 @@ public class DisplayCollection extends DisplayField
      * @param collection the actual collection
      * @param desc the descriptors for this collection
      * @param webConfig the WebConfig object for this webapp
-     * @param webProperties the web properties from the session
      * @param classKeys Map of class name to set of keys
+     * @param listOfTypes as determined using PathQueryResultHelper on a Collection
      * @throws Exception if an error occurs
      */
     public DisplayCollection(Collection collection, CollectionDescriptor desc,
-                             WebConfig webConfig, Map webProperties, Map classKeys)
+                             WebConfig webConfig, Map classKeys,
+                             List<Class<?>> listOfTypes)
         throws Exception {
-        super(collection, desc, webConfig, webProperties, classKeys);
+        super(collection, desc, webConfig, classKeys, listOfTypes);
         this.desc = desc;
     }
 
@@ -48,4 +50,14 @@ public class DisplayCollection extends DisplayField
     public ReferenceDescriptor getDescriptor() {
         return desc;
     }
+
+    /**
+     *
+     * @return Collection for JSP instead of dealing with InlineResultsTable
+     */
+    @SuppressWarnings("unchecked")
+    public Collection getCollection() {
+        return this.collection;
+    }
+
 }

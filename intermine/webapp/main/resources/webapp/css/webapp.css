@@ -174,7 +174,7 @@ ul#nav {
 
 ul#nav a {
     float: left;
-    padding: 0px 12px;
+    padding: 0px 10px;
     line-height: 2;
 }
 
@@ -903,13 +903,6 @@ ol#news a {
     background-color: #E6F7FE;
     background-image: url("../images/icons/information.png");
     border: 1px solid #BEDCE4;
-}
-
-/* special case of narrower info messages on list view/upload (metabolicMine) */
-#hints.information.bag {
-  margin:0 auto;
-  width:595px;
-  padding-left:6px;
 }
 
 /* error messages */

@@ -133,6 +133,10 @@ table.column-header-content td {
   margin:5px;
 }
 
+table.results table.column-header-content td span {
+  color:#000;
+}
+
 .column-header-content input {
   margin-right:5px;
 }

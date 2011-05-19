@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -32,7 +33,7 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -41,6 +42,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class TemplateListController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(TemplateListController.class);
     /**
      * {@inheritDoc}
      */
@@ -54,7 +56,7 @@ public class TemplateListController extends TilesAction
         Model model = im.getModel();
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
-        DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
+        ReportObject object = (ReportObject) context.getAttribute("reportObject");
 
         if (AspectTagUtil.isAspectTag(aspect)) {
             aspect = AspectTagUtil.getAspect(aspect);

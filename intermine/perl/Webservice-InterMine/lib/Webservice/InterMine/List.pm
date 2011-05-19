@@ -37,12 +37,11 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::Showable';
 
 use Moose::Util::TypeConstraints qw(match_on_type);
-use MooseX::Types::Moose         qw/ArrayRef Undef/;
+use MooseX::Types::Moose         qw/ArrayRef/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
-    ListOperable ListOfListOperables
 /;
 require Set::Object;
 
@@ -241,14 +240,14 @@ sub overload_subtraction {
         } else {
             confess "Both arguments to list subtraction must be lists";
         }
-    } else {
+    } elsif (not defined $reversed) {
         my $subtraction = $self->subtract($other);
-        if (not defined $reversed) {
-            $self->delete;
-            $subtraction->rename($self->name);
-        }
+        $self->delete;
+        $subtraction->name($self->name);
         return $subtraction;
-    } 
+    } else {
+        return $self->subtract($other);
+    }
 }
 
 sub subtract {
@@ -305,7 +304,6 @@ sub append {
     my ($ids, $content_type) = ($content, "text/plain");
     match_on_type $content => (
         List,     sub {$ids = $_->to_query},
-        ListOfListOperables, sub {$ids = $self->factory->union($_)->to_query},
         ArrayRef, sub {$ids = join("\n", @$_)},
         File,     sub {$ids = [identifiers => [$content]]; $content_type = "form-data";},
         sub {}

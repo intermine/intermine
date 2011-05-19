@@ -11,6 +11,7 @@ package org.intermine.bio.web.logic;
  */
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,8 +46,8 @@ public class CytoscapeNetworkDBQueryRunner
     public Set<Integer> getInteractingGenes(String featureType, Set<Integer> startingFeatureSet,
             Model model, PathQueryExecutor executor) {
 
-        Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
-        Set<Integer> startingGeneSet = new HashSet<Integer>();
+        Set<Integer> fullInteractingGeneSet = new LinkedHashSet<Integer>();
+        Set<Integer> startingGeneSet = new LinkedHashSet<Integer>();
 
         //=== Get starting genes ===
         if ("Gene".equals(featureType)) {
