@@ -10,6 +10,7 @@ package org.intermine.webservice.server.output;
  *
  */
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -209,7 +210,7 @@ public class JSONRowFormatterTest extends TestCase {
         assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
     }
 
-    public void testFormatAll() {
+    public void testFormatAll() throws IOException {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
@@ -224,8 +225,14 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
+        /* For debugging, as ant can't give long enough error messages */
+//        FileWriter fw = new FileWriter(new File("/tmp/ant_debug.txt"));
+//        fw.write("EXPECTED:\n=====\n");
+//        fw.write(expected);
+//        fw.write("\nGOT:\n======\n");
+//        fw.write(sw.toString());
+//        fw.close();
         assertEquals(expected, sw.toString());
-
     }
 
     public void testFormatAllBad() {
