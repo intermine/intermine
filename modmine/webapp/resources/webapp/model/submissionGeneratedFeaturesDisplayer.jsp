@@ -60,6 +60,11 @@ input.query:hover {
     color: #000000;
 }
 
+img.tinyQuestionMark {
+  padding-bottom:4px;
+  padding-left:0px;
+}
+
 </style>
 <script type="text/javascript">
 
@@ -68,7 +73,7 @@ input.query:hover {
 </script>
 
 <h3>
-  Generated Features
+  Features
 </h3>
 
 <c:choose>
@@ -76,23 +81,25 @@ input.query:hover {
 <div>
   <table cellpadding="0" cellspacing="0" border="0" class="table" width="100%">
       <tr>
-        <th colspan="2" style="padding-left: 6px;" class="theme-5-background">Feature type</th>
+        <th colspan="" style="padding-left: 6px;" class="theme-5-background">Feature type</th>
         <th colspan="" style="padding-left: 6px;" class="theme-5-background" align="middle">View data</th>
-        <th colspan="3" style="padding-left: 6px;" class="theme-5-background" align="left">Export</th>
+        <th colspan="4" style="padding-left: 6px;" class="theme-5-background" align="left">Export</th>
+        <th colspan="" style="padding-left: 6px;" class="theme-5-background" align="left">Action</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
           <tr>
-            <td>${fc.key}
-            </td>
-            <td>
+            <td width="15%">
+              ${fc.key}
+
                 <c:forEach items="${expFeatDescription}" var="fdes" varStatus="fdes_status">
                     <c:if test="${fn:substringBefore(fdes.key, '+') == object.experiment.name && fn:substringAfter(fdes.key, '+') == fc.key}">
-                    <img src="model/images/def_s.png" title="${fdes.value }" />
+                      <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?" title="${fdes.value }">
                     </c:if>
                 </c:forEach>
             </td>
-            <td align="middle">
+
+            <td align="middle" width="8%">
 
                 <%-- TMP PATCH until data is corrected. it should be (otherwise)
                 <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
@@ -131,14 +138,20 @@ input.query:hover {
                  <%-- END patch --%>
 
             </td>
-            <td align="left">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}">TAB DELIMITED</html:link>
+            <td align="left" width="5%">
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values">TAB</html:link>
+            </td>
+            <td align="left" width="5%">
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values">CSV</html:link>
+            </td>
+            <td align="left" width="5%">
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}" title="GFF3">GFF3</html:link>
+            </td>
+            <td align="left" width="10%">
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="FASTA">SEQUENCE</html:link>
             </td>
             <td align="left">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}">GFF3</html:link>
-            </td>
-            <td align="left">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=sequence&submission=${object.dCCid}&feature=${fc.key}">SEQUENCE</html:link>
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="Create a list of ${fc.key}">create LIST</html:link>
             </td>
           </tr>
         </c:if>
@@ -174,7 +187,7 @@ input.query:hover {
 
         <html:submit property="overlaps" styleClass="query">Show Results</html:submit>
     </div>
-    <div style="padding-top:10px;">
+    <div style="padding: 10px 0 15px 0;">
         <h4 style="padding-bottom:8px;">Find nearby genes:</h4>
 
         Find Genes that have
@@ -211,13 +224,5 @@ input.query:hover {
     <br/>
   </c:otherwise>
 </c:choose>
-
-<div id="relatedSubmissions">
-   <c:forEach items="${object.relatedSubmissions}" var="relSubs" varStatus="rstatus">
-     <c:if test="${rstatus.first}"><b>Related Submissions:</b> </c:if>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=${relSubs.dCCid}&class=Submission">${relSubs.dCCid}</html:link>
-     <c:if test="${!rstatus.last}">,  </c:if>
-   </c:forEach>
-</div>
 
 <!-- /submissionGeneratedFeaturesDisplayer.jsp -->

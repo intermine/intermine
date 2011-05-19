@@ -50,7 +50,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SubmissionDisplayerController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+    private static final Logger LOG = Logger.getLogger(SubmissionDisplayerController.class);
 
     /**
      * {@inheritDoc}

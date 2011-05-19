@@ -1,6 +1,11 @@
 <webconfig>
 
   <class className="org.intermine.model.bio.Project">
+    <headerconfig>
+	    <titles>
+	        <title mainTitles="name|title" numberOfMainTitlesToShow="1" subTitles="" />
+	    </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="namePI"/>
@@ -115,6 +120,11 @@
   </class>
 
   <class className="org.intermine.model.bio.Submission">
+    <headerconfig>
+      <titles>
+        <title mainTitles="title|DCCid" numberOfMainTitlesToShow="1" subTitles="" />
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="design"/>
@@ -230,6 +240,11 @@
   </class>
 
   <class className="org.intermine.model.bio.BioEntity">
+    <headerconfig>
+      <titles>
+        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.shortName*" />
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
@@ -665,8 +680,14 @@
 
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                          jspName="model/submissionDetailsDisplayer.jsp"
-                         replacesFields="lab,project,organism,experiment"
+                         replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment"
                          placement="top"
+                         types="Submission"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
+                         jspName="model/submissionPropertiesDisplayer.jsp"
+                         replacesFields="properties,experimentalFactors,developmentalStages,arrays,antibodies,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts,tissues,cellLines"
+                         placement="modENCODE"
                          types="Submission"/>
 
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
@@ -675,23 +696,35 @@
                          placement="modENCODE"
                          types="Submission"/>
 
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGBrowseTracksDisplayer"
-                         jspName="model/submissionGBrowseTracksDisplayer.jsp"
-                         replacesFields=""
-                         placement="Genomics"
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionExternalLinksDisplayer"
+                         jspName="model/submissionExternalLinksDisplayer.jsp"
+                         replacesFields="databaseRecords"
+                         placement="modENCODE"
                          types="Submission"/>
-
+<!--
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDataDownloadDisplayer"
+                         jspName="model/submissionDataDownloadDisplayer.jsp"
+                         replacesFields=""
+                         placement="sidebar"
+                         types="Submission"/>
+-->
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
                          jspName="model/submissionProtocolsDisplayer.jsp"
                          replacesFields="protocols,appliedProtocols"
                          placement="modENCODE"
                          types="Submission"/>
 
-	  <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
-	                     jspName="model/submissionPropertiesDisplayer.jsp"
-	                     replacesFields="properties,experimentalFactors,developmentalStages,arrays,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts"
-	                     placement="modENCODE"
-	                     types="Submission"/>
+	  <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
+                         jspName="model/submissionsFromSameExperimentDisplayer.jsp"
+                         replacesFields=""
+                         placement="modENCODE"
+                         types="Submission"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
+                         jspName="model/projectDetailsDisplayer.jsp"
+                         replacesFields="name,title,namePI,surnamePI,url,organisms"
+                         placement="top"
+                         types="Project"/>
 
   </reportdisplayers>
 

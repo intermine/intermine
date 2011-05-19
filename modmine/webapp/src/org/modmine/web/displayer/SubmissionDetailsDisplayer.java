@@ -10,6 +10,12 @@ package org.modmine.web.displayer;
  *
  */
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -39,9 +45,34 @@ public class SubmissionDetailsDisplayer extends CustomDisplayer
 	public void display(HttpServletRequest request, ReportObject reportObject) {
 		// Removed logics from SubmissionDisplayerController
 
-        // submission object
         Submission s = (Submission) reportObject.getObject();
 
+        if (s.getRelatedSubmissions().size() > 0 ) {
+        	Set<Submission> subs = s.getRelatedSubmissions();
+
+        	Set<String> dCCidSet = new LinkedHashSet<String>();
+
+        	for (Submission sub : subs) {
+        		dCCidSet.add(sub.getdCCid());
+        	}
+
+        	request.setAttribute("relatedSubmissions", dCCidSet);
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        String publicReleaseDate = formatter.format(s.getPublicReleaseDate());
+
+        Date today = Calendar.getInstance().getTime();
+        if (s.getEmbargoDate().after(today)) { // in the future
+        	request.setAttribute("embargoDate", formatter.format(s.getEmbargoDate()));
+        }
+
+        request.setAttribute("expType", s.getExperimentType());
+        request.setAttribute("design", s.getDesign());
+        request.setAttribute("dccId", s.getdCCid());
+        request.setAttribute("publicReleaseDate", publicReleaseDate);
+        request.setAttribute("qualityControl", s.getQualityControl());
+        request.setAttribute("replicate", s.getReplicate());
         request.setAttribute("subId", s.getId());
         request.setAttribute("labId", s.getLab().getId());
         request.setAttribute("labName", s.getLab().getName());
@@ -54,5 +85,6 @@ public class SubmissionDetailsDisplayer extends CustomDisplayer
         request.setAttribute("experimentName", s.getExperiment().getName());
         request.setAttribute("subDescription", s.getDescription());
 
+        // TODO submission notice
 	}
 }

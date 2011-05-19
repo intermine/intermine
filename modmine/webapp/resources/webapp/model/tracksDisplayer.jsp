@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mm"%>
 
 <!-- tracksDisplayer tile starts -->
-<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>    
+<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>
 
 <%-- GBROWSE --%>
 <table cellpadding="0" cellspacing="0" border="0" class="internal" >
@@ -21,7 +21,7 @@
      <mm:allTracks tracks="${subTracks}" dccId="${object.dCCid}"/>
    </td>
    </c:if>
-<%-- FILES --%> 
+<%-- FILES --%>
    <c:if test="${!empty files}">
    <td valign="top" align="right">Data files: </td>
    <td valign="top">
@@ -35,9 +35,5 @@
    <tr><td colspan=2>
      <mm:getTarball dccId="${object.dCCid}"/>
 </table>
-          
-<!-- tracksDisplayer tile ends -->        
-            
-           
-          
 
+<!-- tracksDisplayer tile ends -->
