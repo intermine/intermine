@@ -7,6 +7,7 @@
 <!-- submissionPropertiesDisplayer.jsp -->
 
 <div class="custom-displayer" id="submission-properties">
+<%--
   <h3>Properties</h3>
   <p class="desc theme-5-background">
     <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
@@ -14,8 +15,16 @@
   </p>
   <p class="switchers theme-5-background">
     <c:forEach items="${propertyCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
-    <%-- TODO: potential fail if key has spaces --%>
-    <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}</c:forEach>
+    <!-- TODO: potential fail if key has spaces -->
+        <c:choose>
+            <c:when test='${entry.value == "0"}'>
+                ${entry.key}: ${entry.value}
+            </c:when>
+            <c:otherwise>
+                <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}
+            </c:otherwise>
+        </c:choose>
+    </c:forEach>
   </p>
 
   <c:if test="${!empty propertyTables}">
@@ -34,18 +43,9 @@
           <a href="#" style="float:right;" class="collapser"><span>Hide</span></a>
         </p>
         <p class="in_table">
-          <c:choose>
-            <c:when test='${entry.key == "ExperimentalFactor"}'>
-                <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=experimentalFactor&amp;trail=${param.trail}">
-                    Show all in a table »
-                </html:link>
-            </c:when>
-            <c:otherwise>
-                <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
-                    Show all in a table »
-                </html:link>
-            </c:otherwise>
-          </c:choose>
+            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
+                Show all in a table »
+            </html:link>
         </p>
       <br/>
       </div>
@@ -53,12 +53,8 @@
     </c:forEach>
     <p class="in_table outer">
       Show all
-      <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=experimentalFactors&amp;trail=${param.trail}">
-        experimental factors
-      </html:link>
-      &nbsp;or&nbsp;
       <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
-        other properties
+        properties
       </html:link>
       in a table »
     </p>
@@ -158,7 +154,7 @@
             });
 
             // show the global show all in a table
-            jQuery(this).parent().parent().parent().find('p.in_table').show();
+            jQuery(this).parent().parent().parent().find('p.in_table').show();entry
 
             // scroll to the top of the displayer (inlinetemplate.js)
             jQuery("#submission-properties.custom-displayer").scrollTo('fast', 'swing', -30);
@@ -169,7 +165,167 @@
       );
     });
   </script>
+--%>
+
+<table id="submissionProperties" style="">
+  <tr>
+    <td style="width:15%;">Organism:</td>
+    <td>
+      <c:forEach var="organism" items="${organismMap}" varStatus="status">
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${organism.key}"><strong>${organism.value}</strong></html:link>
+      </c:forEach>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Cell Line:</td>
+    <td>
+      <c:choose>
+        <c:when test="${not empty cellLineMap}">
+          <c:forEach var="celline" items="${cellLineMap}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${celline.key}"><strong>${celline.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Antibody/Target:</td>
+    <td id="antibodyContent">
+      <c:choose>
+        <c:when test="${not empty antibodyInfoList}">
+          <c:forEach var="antibody" items="${antibodyInfoList}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}"><strong>${antibody.name}</strong></html:link>
+            /
+            <c:choose>
+                <c:when test="${not empty antibody.target}">
+                  <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}"><strong>${antibody.targetName}</strong></html:link>
+                </c:when>
+                <c:otherwise>
+                  <i>target not available</i>
+                </c:otherwise>
+            </c:choose>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Developmental Stage:</td>
+    <td>
+      <c:choose>
+        <c:when test="${not empty developmentalStageMap}">
+          <c:forEach var="developmentalstage" items="${developmentalStageMap}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${developmentalstage.key}"><strong>${developmentalstage.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Strain:</td>
+    <td>
+      <c:choose>
+        <c:when test="${not empty strainMap}">
+          <c:forEach var="strain" items="${strainMap}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}"><strong>${strain.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Tissue:</td>
+    <td>
+      <c:choose>
+        <c:when test="${not empty tissueMap}">
+          <c:forEach var="tissue" items="${tissueMap}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${tissue.key}"><strong>${tissue.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">Array:</td>
+    <td>
+      <c:choose>
+        <c:when test="${not empty arrayMap}">
+          <c:forEach var="array" items="${arrayMap}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${array.key}"><strong>${array.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <i>not available</i>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+  <c:if test="${not empty submissionPropertyMap}">
+    <c:forEach var="submissionproperties" items="${submissionPropertyMap}">
+      <tr>
+        <td valign="top">${submissionproperties.key}:</td>
+        <td id="${submissionproperties.key}Content_${fn:length(submissionproperties.value)}">
+          <c:forEach var="submissionproperty" items="${submissionproperties.value}" varStatus="status">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${submissionproperty.key}"><strong>${submissionproperty.value}</strong></html:link>
+            <c:if test="${!status.last}">,  </c:if>
+          </c:forEach>
+        </td>
+      </tr>
+    </c:forEach>
+  </c:if>
+</table>
 
 </div>
+
+<script type="text/javascript" src="model/jquery_expander/jquery.expander.js"></script>
+<script type="text/javascript">
+
+        //TODO: concise code
+        for (i=0;i<jQuery('td[id*="Content"]').length;i++)
+        {
+          if (jQuery('td[id*="Content"]').eq(i).attr("id") != "submissionDescriptionContent") {
+            if (jQuery('td[id*="Content"]').eq(i).attr("id").indexOf("primerContent") != -1) {
+                var id = jQuery('td[id*="Content"]').eq(i).attr("id");
+                var count = id.substr(id.indexOf("_")+1);
+                if (count > 15) {
+                  jQuery('td[id*="Content"]').eq(i).expander({
+                    slicePoint: 200,
+                    expandText: 'read all ' + count + ' records'
+                  });
+                } else {
+                  jQuery('td[id*="Content"]').eq(i).expander({
+                    slicePoint: 200
+                  });
+                }
+            } else {
+                  jQuery('td[id*="Content"]').eq(i).expander({
+                    slicePoint: 200
+                  });
+            }
+          }
+        }
+
+</script>
 
 <!-- /submissionPropertiesDisplayer.jsp -->

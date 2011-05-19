@@ -11,7 +11,6 @@ package org.modmine.web.displayer;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,18 +21,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Protocol;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
