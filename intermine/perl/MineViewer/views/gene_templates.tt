@@ -1,3 +1,18 @@
+<div id="gene-go-placeholder">
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+</div>
+<div id="gene-pathways-placeholder">
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+</div>
+<div id="gene-interactions-placeholder">
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+</div>
+<div id="gwas-placeholder">
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+</div>
+<script type="text/javascript">
+jQuery(function() {
+    var opts = [% INCLUDE template_options.tt %];
     IMBedding.loadTemplate(
         {
             // Search for GO annotations for a particular gene (or List of Genes).
@@ -9,8 +24,7 @@
             extra1:        "H. sapiens",
             code1:         "A"
         },
-        '#gene-go-placeholder',
-        {baseUrl: '[% settings.mine_base_url %]'}
+        '#gene-go-placeholder', opts
     );
     IMBedding.loadTemplate(
         {
@@ -25,8 +39,7 @@
             extra1:        "H. sapiens",
             code1:         "A"
         },
-        '#gene-pathways-placeholder',
-        {baseUrl: '[% settings.mine_base_url %]'}
+        '#gene-pathways-placeholder', opts
     );
     IMBedding.loadTemplate(
         {
@@ -40,8 +53,7 @@
             extra1:        "H. sapiens",
             code1:         "A"
         },
-        '#gene-interactions-placeholder',
-        {baseUrl: '[% settings.mine_base_url %]'}
+        '#gene-interactions-placeholder', opts
     );
     IMBedding.loadTemplate(
         {
@@ -54,6 +66,7 @@
             extra1:        "H. sapiens",
             code1:         "A"
         },
-        '#gwas-placeholder',
-        {baseUrl: '[% settings.mine_base_url %]'}
+        '#gwas-placeholder', opts
     );
+});
+</script>

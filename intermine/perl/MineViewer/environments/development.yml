@@ -26,13 +26,3 @@ show_errors: 1
 # OR TINY KITTENS SHALL DIE WITH LOTS OF SUFFERING
 auto_reload: 0
 
-service_args:
-    - "MetabolicMine"
-    - 'alzheimers@intermine.org'
-    - 'alzheimers-pass'
-
-gene_list_names: 
-    - "alzheimer_pw_genes"
-    - "alzheimers_gwas"
-
-mine_base_url: "http://www.metabolicmine.org/test"
