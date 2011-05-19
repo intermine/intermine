@@ -32,27 +32,28 @@ public class ContentType
      * A ContentType constant that describes the generic text/xml content type.
      */
     public static final ContentType TEXT_XML =
-      new ContentType("text", "xml", UTF8_CHARSET);
+        new ContentType("text", "xml", UTF8_CHARSET);
 
     /**
      * A ContentType constant that describes the generic text/plain content type.
      */
     public static final ContentType TEXT_TAB =
-      new ContentType("text", "tab-separated-values", UTF8_CHARSET);
+        new ContentType("text", "tab-separated-values", UTF8_CHARSET);
 
     /**
      * A ContentType constant that describes the generic text/plain content type
      * when requesting counts.
      */
-    public static final ContentType TEXT_COUNT =
-      new ContentType("text", "count", UTF8_CHARSET);
+    public static final ContentType TEXT_COUNT = new ContentType("text", "count", UTF8_CHARSET);
 
     /**
      * A ContentType constant that describes the generic text/plain content type.
      */
-    public static final ContentType TEXT_PLAIN =
-      new ContentType("text", "plain", UTF8_CHARSET);
+    public static final ContentType TEXT_PLAIN = new ContentType("text", "plain", UTF8_CHARSET);
 
+    /**
+     * A ContentType constant that describes the JSON content type.
+     */
     public static final ContentType APPLICATION_JSON =
         new ContentType("application", "json", UTF8_CHARSET);
 
