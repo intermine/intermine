@@ -144,6 +144,12 @@ public abstract class WebService
     /** JSONP count format constant **/
     public static final int JSONP_COUNT_FORMAT = 29;
 
+    /** JSON data table format constant **/
+    public static final int JSON_DATA_TABLE_FORMAT = 30;
+
+    /** JSONP data table format constant **/
+    public static final int JSONP_DATA_TABLE_FORMAT = 31;
+
     protected boolean formatIsJSON() {
         int format = getFormat();
         return (format >= JSON_RANGE_START && format <= JSON_RANGE_END);
@@ -487,6 +493,20 @@ public abstract class WebService
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
+            case JSON_DATA_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
+                break;
+            case JSONP_DATA_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                filename = "resulttable.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
+                break;
             case JSON_ROW_FORMAT:
                 output = new StreamedOutput(out, new JSONRowFormatter());
                 ResponseUtil.setJSONHeader(response,
@@ -658,6 +678,14 @@ public abstract class WebService
         if (WebServiceRequestParser.FORMAT_PARAMETER_JSON
                 .equalsIgnoreCase(format)) {
             return JSON_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_DATA_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSON_DATA_TABLE_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_DATA_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSONP_DATA_TABLE_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT
                 .equalsIgnoreCase(format)) {
