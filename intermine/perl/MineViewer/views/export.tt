@@ -4,5 +4,10 @@
         <li><a id="tsv-link" href="[% tsv_uri %]" title="export data in tab separated value format">TSV</a></li>
         <li><a id="json-link" href="[% json_uri %]" title="export data in json format">JSON</a></li>
         <li><a id="xml-link" href="[% xml_uri %]" title="export data in XML format">XML</a></li>
+        [% IF service.model.name == "genomic" %]
+        <li><a id="gff3-link" href="[% gff3_uri %]" title="export data in gff3 format">GFF3</a></li>
+        <li><a id="fasta-link" href="[% fasta_uri %]" title="export data in fasta format">FASTA</a></li>
+        [% END %]
+            
     </ul>
 </div>

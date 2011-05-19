@@ -51,6 +51,8 @@ before sub {
 before_template sub {
     my $tokens = shift;
     $tokens->{pluraliser} = \&pluraliser;
+    $tokens->{service} = $service;
+    $tokens->{decamelise} = \&decamelise;
 };
 
 get '/' => sub {
@@ -61,8 +63,27 @@ get '/templates' => sub {
     return template 'templates' => { all_lists => [ get_lists() ], };
 };
 
+sub decamelise : Memoize {
+    my $term = shift;
+    my @chars = split(//, $term);
+    my $new_str = '';
+    my $last_char_was_lowercase = 0;
+    for (@chars) {
+        unless (/[[:alpha:]]/) {
+            $new_str .= $_;
+            next;
+        }
+        my $this_is_upper = (/[[:upper:]]/) ? 1 : 0;
+        $new_str .= ' ' if ($last_char_was_lowercase && $this_is_upper);
+        $new_str .= $_;
+        $last_char_was_lowercase = ! $this_is_upper;
+    }
+    return $new_str;
+}
+
 sub pluraliser : Memoize {
     my $term            = shift;
+    return '' unless $term;
     my $lc_term         = lc($term);
     my $lc_plural       = PL_N($lc_term);
     my @term_chars      = split( //, $lc_term );
@@ -94,7 +115,7 @@ get '/lists' => sub {
 
     my @lists = get_lists();
 
-    return send_error( "No gene lists found", 500 ) unless @lists;
+    return template 'no_lists' unless @lists;
 
     my $list_query = get_list_query( $lists[0] );
     my $items = $list_query->results(as => 'jsonobjects');
@@ -225,14 +246,14 @@ sub get_gff_url : Memoize {
     my $identifier = shift;
     my $gff_query = $service->new_query( class => 'Gene', with => GFF3 );
     $gff_query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
-    $gff_query->add_constraint( 'Gene', 'LOOKUP', $identifier );
+    $gff_query->add_constraint( 'id', '=', $identifier );
     return $gff_query->get_gff3_uri;
 }
 
 sub get_fasta_url : Memoize {
     my $identifier = shift;
     my $fasta_query = $service->new_query( class => 'Gene', with => FASTA );
-    $fasta_query->add_constraint( 'Gene', 'LOOKUP', $identifier );
+    $fasta_query->add_constraint( 'id', '=', $identifier );
     return $fasta_query->get_fasta_uri;
 }
 
@@ -307,30 +328,77 @@ sub get_homologues : Memoize {
     return $homologues;
 }
 
-get '/gene/:id' => sub {
-    my $gene = get_item_details( gene => params->{id} )
-      or return template gene_error => params;
+get qr{/gene/id/(\w+)}i => sub {
+    my ($id) = splat;
+    my $query = $service->new_query(class => 'Gene');
+    $query->add_views('*');
+    add_extra_views_to_query(Gene => $query);
+    $query->add_constraint( 'id', '=', $id );
+    return do_gene_report($query);
+};
 
-    my $display_name = $gene->{symbol}            || $gene->{primaryIdentifier};
-    my $identifier   = $gene->{primaryIdentifier} || $gene->{symbol};
+get qr{/gene/(\w+)}i => sub {
+    my ($id) = splat;
+    my $query = get_item_query( Gene => $id );
+    return do_gene_report($query);
+};
+
+sub do_gene_report {
+    my $query = shift;
+
+    debug("Getting gene item");
+    my ($item) = $query->results( as => 'hashrefs' )
+      or return template item_error => { query => $query, params };
+    debug("Getting gene obj");
+    my ($obj) = $query->results(RESULT_OPTIONS)
+      or return template item_error => { query => $query, params };
+
+    my $display_name = $obj->{symbol} || $obj->{primaryIdentifier};
+    my $identifier = $obj->{primaryIdentifier} || $obj->{symbol}; 
     my @comments = get_user_comments($identifier);
 
-    # Generate Links for Sequence export
-    my $gff_uri   = get_gff_url($identifier);
-    my $fasta_uri = get_fasta_url($identifier);
+    my $cd = $service->model->get_classdescriptor_by_name( $obj->{class} );
+    debug("Getting lists");
+    my @all_lists = get_lists();
+    my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
+    debug("Getting contained in");
+    my %contained_in = ();
+    # map { $_->name, $_ } $service->lists_with_object( $obj->{objectId} );
+
+    # Generate Links for Sequence exports
+    debug("Getting export uris");
+    my $gff_uri   = get_gff_url($obj->{objectId});
+    my $fasta_uri = get_fasta_url($obj->{objectId});
 
     # Get homologues in rat and mouse
     my $homologues = get_homologues($identifier);
+    my @table_keys = grep {$_ !~ /chromosomeLocation/} $query->views;
 
     return template gene => {
-        gene        => $gene,
+        item        => $item,
+        obj        => $obj,
         displayname => $display_name,
+        table_keys => [@table_keys],
         comments    => [@comments],
-        gff_uri     => $gff_uri,
+        tsv_uri => get_export_url($query, 'tab'),
+        json_uri => get_export_url($query, 'jsonrows'),
+        xml_uri => get_export_url($query, 'xml'),
+        gff3_uri     => $gff_uri,
         fasta_uri   => $fasta_uri,
         homologues  => $homologues,
+        lists        => [@lists],
+        all_lists    => [@all_lists],
+        contained_in => {%contained_in},
+        templates    => get_templates('Gene'),
     };
 };
+
+sub get_export_url {
+    my ($query, $format) = @_;
+    my $uri = URI->new($query->url);
+    $uri->query_form($query->get_request_parameters, format => $format);
+    return "$uri";
+}
 
 get '/:type/id/:id' => sub {
     my $type = ucfirst( params->{'type'} );

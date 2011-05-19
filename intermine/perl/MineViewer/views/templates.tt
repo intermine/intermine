@@ -220,9 +220,10 @@ var loadTemplateInfo = function(url) {
     $.jsonp({
         url: url,
         callbackParameter: "callback",
-        data: {},
+        data: { format: 'jsonp' },
         success: function( data ) {
-            var templates = data.templates;
+            // Some services have this response structure broken.
+            var templates = data.templates.templates || data.templates;
             window.availableTemplates = templates;
             var names = [];
             for (name in templates) {
@@ -289,7 +290,7 @@ var loadModel = function(url) {
 var baseUrl = "[% settings.mine_base_url %]";
 
 $(function() {
-    loadTemplateInfo(baseUrl + "/service/templates/jsonp");
+    loadTemplateInfo(baseUrl + "/service/templates");
 //    loadModel(baseUrl + "/service/model/jsonp");
 });
 </script>
