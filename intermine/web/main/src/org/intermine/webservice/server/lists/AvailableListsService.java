@@ -44,14 +44,21 @@ public class AvailableListsService extends WebService
     @Override
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ListManager listManager = new ListManager(request);
-        Collection<InterMineBag> lists = listManager.getLists();
+        Collection<InterMineBag> lists = getLists(request);
         ListFormatter formatter = getFormatter();
         formatter.setSize(lists.size());
         output.setHeaderAttributes(getHeaderAttributes());
         for (InterMineBag list: lists) {
+            if (list == null) {
+                continue;
+            }
             output.addResultItem(formatter.format(list));
         }
+    }
+
+    protected Collection<InterMineBag> getLists(HttpServletRequest request) {
+        ListManager listManager = new ListManager(request);
+        return listManager.getLists();
     }
 
     private Map<String, Object> getHeaderAttributes() {
@@ -73,10 +80,10 @@ public class AvailableListsService extends WebService
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
-                return new JSONListFormatter();
+                return new JSONListFormatter(im);
             }
             case (WebService.JSONP_FORMAT): {
-                return new JSONListFormatter();
+                return new JSONListFormatter(im);
             }
             default: {throw new BadRequestException("Unknown request format");}
         }
