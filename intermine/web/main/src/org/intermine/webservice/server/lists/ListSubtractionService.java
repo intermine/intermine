@@ -1,11 +1,29 @@
 package org.intermine.webservice.server.lists;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.split;
+import static org.intermine.api.bag.BagOperations.intersect;
+import static org.intermine.api.bag.BagOperations.subtract;
+import static org.intermine.api.bag.BagOperations.union;
+import static org.intermine.webservice.server.lists.ListServiceUtils.castBagsToCommonType;
+import static org.intermine.webservice.server.lists.ListServiceUtils.ensureBagIsDeleted;
+import static org.intermine.webservice.server.lists.ListServiceUtils.findCommonSuperTypeOf;
+import static org.intermine.webservice.server.lists.ListServiceUtils.getBagsAndClasses;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,38 +31,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagOperations;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
-public class ListSubtractionService extends ListUnionService {
+/**
+ * A service for subtracting one group of lists from another group of lists to produce a new
+ * list.
+ * @author Alexis Kalderimis
+ *
+ */
+public class ListSubtractionService extends ListUnionService
+{
 
-    public static final String LEFT = "_temp_left";
-    public static final String RIGHT = "_temp_right";
-    public static final String SYMETRIC_DIFF = "_temp_symdiff";
-    public static final String INTERSECT = "_temp_intersect";
+    private static final String LEFT = "_temp_left";
+    private static final String RIGHT = "_temp_right";
+    private static final String SYMETRIC_DIFF = "_temp_symdiff";
+    private static final String INTERSECT = "_temp_intersect";
 
+    /**
+     * Constructor
+     * @param im A reference to the main settings bundle.
+     */
     public ListSubtractionService(InterMineAPI im) {
         super(im);
     }
 
+    /**
+     * Usage information to be displayed for bad requests.
+     */
     public static final String USAGE =
-      "\nList Subtraction Service\n"
-      + "===================\n"
-      + "Subtract lists from a main one\n"
-      + "Parameters:\n"
-      + "list: The main list to subtract the others from\n"
-      + "lists: a list of list names - separated by semi-cola (';')\n"
-      + "name: the name of the new list resulting from the subtraction\n\n"
-      + "Content: text/plain - list of ids\n";
+        "\nList Subtraction Service\n"
+        + "===================\n"
+        + "Subtract lists from a main one\n"
+        + "Parameters:\n"
+        + "list: The main list to subtract the others from\n"
+        + "lists: a list of list names - separated by semi-cola (';')\n"
+        + "name: the name of the new list resulting from the subtraction\n\n"
+        + "Content: text/plain - list of ids\n";
 
     @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response)
@@ -60,9 +88,10 @@ public class ListSubtractionService extends ListUnionService {
         String subtract = request.getParameter("subtract");
         String name = request.getParameter("name");
         String description = request.getParameter("description");
+        String[] tags = split(request.getParameter("tags"), ';');
         boolean replace = Boolean.parseBoolean("replaceExisting");
 
-        if (StringUtils.isEmpty(references) || StringUtils.isEmpty(subtract) || StringUtils.isEmpty(name)) {
+        if (isEmpty(references) || isEmpty(subtract) || isEmpty(name)) {
             throw new BadRequestException("Name or list or lists is blank." + USAGE);
         }
 
@@ -76,15 +105,13 @@ public class ListSubtractionService extends ListUnionService {
         Set<InterMineBag> referenceBags = new HashSet<InterMineBag>();
         Set<InterMineBag> bagsToSubtract = new HashSet<InterMineBag>();
 
-        String[] referenceNames = StringUtils.split(references, LIST_SEPARATOR);
-        String[] subtractNames = StringUtils.split(subtract, LIST_SEPARATOR);
+        String[] referenceNames = split(references, LIST_SEPARATOR);
+        String[] subtractNames = split(subtract, LIST_SEPARATOR);
 
-        ListServiceUtils.getBagsAndClasses(classes, referenceBags,
-                profile, bagManager, model, referenceNames);
-        ListServiceUtils.getBagsAndClasses(classes, bagsToSubtract,
-                profile, bagManager, model, subtractNames);
+        getBagsAndClasses(classes, referenceBags, profile, bagManager, model, referenceNames);
+        getBagsAndClasses(classes, bagsToSubtract, profile, bagManager, model, subtractNames);
 
-        String type = ListServiceUtils.findCommonSuperTypeOf(classes);
+        String type = findCommonSuperTypeOf(classes);
 
         String tempName = name + TEMP_SUFFIX;
         String leftName = name + LEFT;
@@ -93,24 +120,28 @@ public class ListSubtractionService extends ListUnionService {
         String intersectName = name + INTERSECT;
 
         Set<String> bagsToDelete = new HashSet<String>(
-                Arrays.asList(tempName, leftName, rightName, symDiffName, intersectName));
+                asList(tempName, leftName, rightName, symDiffName, intersectName));
         try {
-            final Collection<InterMineBag> leftBags = ListServiceUtils.castBagsToCommonType(referenceBags, type, bagsToDelete, profile);
-            final Collection<InterMineBag> rightBags = ListServiceUtils.castBagsToCommonType(bagsToSubtract, type, bagsToDelete, profile);
-            final int leftSize = BagOperations.union(leftBags, leftName, profile);
-            final int rightSize = BagOperations.union(rightBags, rightName, profile);
+            final Collection<InterMineBag> leftBags
+                = castBagsToCommonType(referenceBags, type, bagsToDelete, profile);
+            final Collection<InterMineBag> rightBags
+                = castBagsToCommonType(bagsToSubtract, type, bagsToDelete, profile);
+            final int leftSize = union(leftBags, leftName, profile);
+            final int rightSize = union(rightBags, rightName, profile);
 
             int finalBagSize = 0;
 
             if (leftSize + rightSize > 0) {
                 final InterMineBag leftList = profile.getSavedBags().get(leftName);
                 final InterMineBag rightList = profile.getSavedBags().get(rightName);
-                final int sizeOfSymDiff = BagOperations.subtract(Arrays.asList(leftList, rightList), symDiffName, profile);
+                final int sizeOfSymDiff
+                    = subtract(asList(leftList, rightList), symDiffName, profile);
 
                 if (sizeOfSymDiff != 0) {
                     final InterMineBag diffBag = profile.getSavedBags().get(symDiffName);
 
-                    finalBagSize = BagOperations.intersect(Arrays.asList(diffBag, leftList), intersectName, profile);
+                    finalBagSize
+                        = intersect(asList(diffBag, leftList), intersectName, profile);
                 }
             }
 
@@ -123,15 +154,16 @@ public class ListSubtractionService extends ListUnionService {
                     newList.setDescription(description);
                 }
             }
-            output.addResultItem(Arrays.asList("" + newList.size()));
+            output.addResultItem(asList("" + newList.size()));
 
             if (replace) {
-                ListServiceUtils.ensureBagIsDeleted(profile, name);
+                ensureBagIsDeleted(profile, name);
             }
+            im.getBagManager().addTagsToBag(asList(tags), newList, profile);
             profile.renameBag(newList.getName(), name);
         } finally {
             for (String delendum: bagsToDelete) {
-                ListServiceUtils.ensureBagIsDeleted(profile, delendum);
+                ensureBagIsDeleted(profile, delendum);
             }
         }
     }
