@@ -43,6 +43,7 @@ import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
+import org.intermine.webservice.server.output.JSONDataTableRowResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
 import org.jfree.util.Log;
@@ -133,7 +134,7 @@ public class QueryResultService extends AbstractQueryService
         if (formatIsJSON()) {
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
-            attributes.put(JSONResultFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
+            attributes.put(JSONResultFormatter.KEY_VIEWS, pq.getView());
             attributes.put("start", String.valueOf(start));
             try {
                 attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
@@ -332,6 +333,12 @@ public class QueryResultService extends AbstractQueryService
                 break;
             case WebService.JSONP_ROW_FORMAT:
                 processor = new JSONRowResultProcessor(im);
+                break;
+            case WebService.JSON_DATA_TABLE_FORMAT:
+                processor = new JSONDataTableRowResultProcessor();
+                break;
+            case WebService.JSONP_DATA_TABLE_FORMAT:
+                processor = new JSONDataTableRowResultProcessor();
                 break;
             default:
                 processor = new ResultProcessor();
