@@ -117,28 +117,31 @@ public class BeginAction extends InterMineAction
                         tab.put("identifier", identifier);
                         // (optional) description
                         tab.put("description", props.containsKey(i + ".description")
-                                              ? (String) props.get(i + ".description") : "");
+                                ? (String) props.get(i + ".description") : "");
+                        tab.put("description", props.containsKey(i + ".description")
+                                ? (String) props.get(i + ".description") : "");
                         // (optional) custom name, otherwise use identifier
-                        tab.put("name", props.containsKey(i + ".name")
-                                        ? (String) props.get(i + ".name") : identifier);
 
+                        tab.put("name", props.containsKey(i + ".name")
+                                ? (String) props.get(i + ".name") : identifier);
                         // fetch the actual template queries
-                        /*TrackerDelegate trackerDelegate = im.getTrackerDelegate();
-                        if (trackerDelegate != null) {
-                            trackerDelegate.setTemplateManager(im.getTemplateManager());
-                        }*/
                         TemplateManager tm = im.getTemplateManager();
                         Profile profile = SessionMethods.getProfile(session);
                         if (profile.isLoggedIn()) {
                             templates = tm.getPopularTemplatesByAspect(
-                                        TagNames.IM_ASPECT_PREFIX + identifier,
-                                        MAX_TEMPLATES, profile.getUsername(),
-                                        session.getId());
+                                    TagNames.IM_ASPECT_PREFIX + identifier,
+                                    MAX_TEMPLATES, profile.getUsername(),
+                                    session.getId());
                         } else {
                             templates = tm.getPopularTemplatesByAspect(
-                                                        TagNames.IM_ASPECT_PREFIX + identifier,
-                                                        MAX_TEMPLATES);
+                                    TagNames.IM_ASPECT_PREFIX + identifier,
+                                    MAX_TEMPLATES);
                         }
+
+                        if (templates.size() > MAX_TEMPLATES) {
+                            templates = templates.subList(0, MAX_TEMPLATES);
+                        }
+
                         tab.put("templates", templates);
 
                         bagOfTabs.put(Integer.toString(i), tab);
@@ -154,8 +157,8 @@ public class BeginAction extends InterMineAction
         // preferred bags (Gucci)
         ArrayList<String> preferredBags = new ArrayList<String>();
         TagManager tagManager = im.getTagManager();
-        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
-                                                            im.getProfileManager().getSuperuser());
+        List<Tag> preferredBagTypeTags = tagManager.getTags(
+                "im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferredBags.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }

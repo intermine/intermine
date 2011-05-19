@@ -18,16 +18,16 @@
 </c:if>
 <c:if test="${templateQuery.valid}">
 
-<c:choose>  
+<c:choose>
   <c:when test="${! empty bagName}">
     <%-- bag page --%>
     <c:set var="extra" value="&amp;bagName=${bagName}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
   </c:when>
   <c:otherwise>
-  	<%-- aspect or report page --%>
+    <%-- aspect or report page --%>
      <c:set var="extra" value="&amp;idForLookup=${interMineObject.id}" />
   </c:otherwise>
-</c:choose>  
+</c:choose>
 
 
 
@@ -46,25 +46,22 @@
     </c:otherwise>
   </c:choose>
   <html:link action="${actionLink}" title="${linkTitle}">
-    <span class="templateTitle">${!empty name ? name : templateQuery.title}</span>
+    <h3 class="templateTitle theme-5-background"><div class="right"></div><img src="images/icons/templates-16.png" /> ${!empty name ? name : templateQuery.title}</h3>
   </html:link>
   <fmt:message var="linkTitle" key="templateList.run">
     <fmt:param value="${templateQuery.name}"/>
   </fmt:message>
- 
+
   <%-- favourites star --%>
-  <tiles:insert name="setFavourite.tile">
-    <tiles:put name="name" value="${templateQuery.name}"/>
-    <tiles:put name="type" value="template"/>
-  </tiles:insert>
-  
-  <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
-  <html:link action="${runTemplateActionLink}" title="${linkTitle}">
-    <img border="0" class="arrow" src="images/icons/templates-16.png" title="Click here to go to the template form"/>
-  </html:link>
+  <div class="favorites">
+    <tiles:insert name="setFavourite.tile">
+      <tiles:put name="name" value="${templateQuery.name}"/>
+      <tiles:put name="type" value="template"/>
+    </tiles:insert>
+  </div>
+
   <%-- description --%>
   <c:if test="${! empty descr}">
-  <br>
-  ${descr}
+    ${descr}
   </c:if>
 </c:if>

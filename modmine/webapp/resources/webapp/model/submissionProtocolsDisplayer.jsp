@@ -8,11 +8,12 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
   prefix="str"%>
 
+<!-- submissionProtocolsDisplayer.jsp -->
+
 <tiles:importAttribute />
 
 <html:xhtml />
 
-<!-- submissionProtocolsDisplayer.jsp -->
 <style type="text/css">
 div#submissionProtocols h3 {
   color: black;
@@ -50,15 +51,15 @@ jQuery(document).ready(function () {
  jQuery(".tbox").children('doopen').show();
  jQuery(".tbox").children('doclose').hide();
 
-	jQuery('.tbox').click(function () {
-	var text = jQuery(this).children('doclose');
+  jQuery('.tbox').click(function () {
+  var text = jQuery(this).children('doclose');
 
-	if (text.is(':hidden')) {
-	     jQuery(this).children('doclose').show("slow");
-	   } else {
-	       jQuery(this).children('doopen').show("slow");
-	    }
-	 });
+  if (text.is(':hidden')) {
+       jQuery(this).children('doclose').show("slow");
+     } else {
+         jQuery(this).children('doopen').show("slow");
+      }
+   });
 
   jQuery("doopen").click(function(){
      jQuery(this).toggle("slow");
@@ -71,7 +72,7 @@ jQuery(document).ready(function () {
     });
 
 
-	});
+  });
 
 </script>
 
@@ -90,7 +91,7 @@ jQuery(document).ready(function () {
 
     <td>${prot.type}</td>
     <td><html:link
-    href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prot.id}">
+    href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${prot.id}">
     ${prot.name}
     </html:link></td>
     <td>
@@ -232,7 +233,7 @@ jQuery(document).ready(function () {
                 <c:if test="${fn:length(fn:substringBefore(resultElement.field,'File')) gt 0}">
                   <c:set var="output" value="true"/>
                   <c:set var="isFile" value="true" />
-  			    </c:if>
+            </c:if>
 
               </c:when>
               <c:otherwise>
@@ -270,7 +271,7 @@ jQuery(document).ready(function () {
                         <c:set var="isFile" value="false" />
                         <c:set var="doLink" value="true" />
                         </c:when>
-                        
+
                         <c:when test="${doLink}">
 
                         <c:forEach items="${files}" var="file" varStatus="f_status">
@@ -286,7 +287,7 @@ jQuery(document).ready(function () {
                         <c:out value="${resultElement.field}" /> </a></td>
                         <c:set var="doLink" value="false" />
                         </c:when>
-                        
+
                         <c:otherwise>
                         <tiles:insert name="objectView.tile" />
                         </c:otherwise>

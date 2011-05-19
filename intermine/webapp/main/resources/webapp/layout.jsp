@@ -61,7 +61,7 @@
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
 
-  <div id="pagecontentcontainer" align="center">
+  <div id="pagecontentcontainer" align="center" class="${pageName}${subtabs[subtabName]}-page">
     <c:choose>
     <c:when test="${!empty fixedLayout}">
       <div id="pagecontent">
@@ -84,9 +84,11 @@
     </p>
 
     <!-- Nav trail -->
+  <c:if test="${pageName != 'report'}">
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
     <p class="alignright"><im:contextHelp/></p>
+</c:if>
   </c:if>
  </div>
 

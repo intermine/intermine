@@ -89,13 +89,15 @@ public final class PathQueryResultHelper
             String relPath = fieldConfig.getFieldExpr();
             // only add attributes, don't follow references, following references can be problematic
             // when subclasses get involved.
-            try {
-                Path path = new Path(model, prefix + "." + relPath);
-                if (path.isOnlyAttribute()) {
-                    view.add(path.getNoConstraintsString());
+            if (fieldConfig.getShowInResults()) {
+                try {
+                    Path path = new Path(model, prefix + "." + relPath);
+                    if (path.isOnlyAttribute()) {
+                        view.add(path.getNoConstraintsString());
+                    }
+                } catch (PathException e) {
+                    LOG.error("Invalid path configured in webconfig for class: " + type);
                 }
-            } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
             }
         }
         if (view.size() == 0) {
@@ -173,7 +175,6 @@ public final class PathQueryResultHelper
         return makePathQueryForCollectionForClass(webConfig, os.getModel(), object, field, types);
     }
 
-    // find the subclasses that exist in the given collection
     /**
      * Search for the classes in a collection for a given InterMineObject, for example fine all of
      * the sub-classes of Employee in the Department.employees collection of a given Department.
@@ -183,7 +184,7 @@ public final class PathQueryResultHelper
      * @param os the ObjectStore in which to execute the query
      * @return a list of classes in the collection
      */
-    protected static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
+    public static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
             ObjectStore os) {
         List<Class<?>> typesInCollection = new ArrayList<Class<?>>();
         Query query = new Query();

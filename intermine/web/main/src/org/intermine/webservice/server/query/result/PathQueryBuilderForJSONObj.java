@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.intermine.webservice.server.query.result;
 
@@ -22,7 +22,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 
-	
+
 	protected PathQueryBuilderForJSONObj() {
 		// empty constructor for testing
 	}
@@ -30,7 +30,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 			Map<String, InterMineBag> savedBags) {
 		super(xml, schemaUrl, savedBags);
 	}
-	
+
 	/**
 	 * For the purposes of exporting into JSON objects the view must be:
 	 * <ul>
@@ -39,24 +39,26 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 	 *  <li>Be constituted so that every class has an attribute on it, root class
 	 *      included, and every reference along the way. So a path such as
 	 *      Departments.employees.address.address is illegal unless it is preceded
-	 *      by Departments.id and Departments.employees.id (id is the default if 
+	 *      by Departments.id and Departments.employees.id (id is the default if
 	 *      none is supplied).</li>
 	 *  </ul>
 	 *  The purpose of this method is to perform the necessary transformations.
-	 *  @return a PathQuery with an appropriately mangled view. 
+	 *  @return a PathQuery with an appropriately mangled view.
 	 */
 	@Override
 	public PathQuery getQuery() {
 		PathQuery beforeChanges = super.getQuery();
-		
+		return processQuery(beforeChanges);
+	}
+
+	public static PathQuery processQuery(PathQuery beforeChanges) {
 		PathQuery afterChanges = beforeChanges.clone();
 		afterChanges.clearView();
 		afterChanges.addViews(getAlteredViews(beforeChanges));
-				
+
 		return afterChanges;
-		
 	}
-	
+
 	public static List<String> getAlteredViews(PathQuery pq) {
 		List<String> originalViews = pq.getView();
 		List<Path> viewPaths = new ArrayList<Path>();
@@ -76,11 +78,11 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 				throw new RuntimeException("The view can only contain attribute paths - Got: '" + p.toStringNoConstraints() + "'");
 			}
 			newViews.addAll(getNewViewStrings(classesWithAttributes, p));
-			
-		}		
+
+		}
 		return newViews;
 	}
-	
+
 	public static List<String> getNewViewStrings(Set<Path> classesWithAttributes, Path p) {
 		// The prefix automatically has an attribute, since its child is in the view
 		classesWithAttributes.add(p.getPrefix());
@@ -94,7 +96,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 		newParts.add(p.toStringNoConstraints());
 		return newParts;
 	}
-	
+
 	public static String getNewAttributeNode(Set<Path> classesWithAttributes, Path p) {
 		String retVal;
 		try {
@@ -102,10 +104,10 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 			classesWithAttributes.add(p);
 		} catch (PathException e) {
 			// This should be frankly impossible
-			throw new RuntimeException("Couldn't extend " 
+			throw new RuntimeException("Couldn't extend "
 					+ p.toStringNoConstraints() + " with 'id'", e);
 		}
 		return retVal;
 	}
-	
+
 }

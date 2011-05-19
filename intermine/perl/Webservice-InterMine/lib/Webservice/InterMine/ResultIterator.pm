@@ -140,6 +140,71 @@ sub _build_user_agent {
 }
 
 
+=head1 ATTRIBUTES
+
+Other properties of the object. These attributes are derived from the 
+original construction arguments.
+
+=over 4
+
+=item * request_format: ro, RequestFormat
+
+The format that will be actually requested from the server.
+
+=cut
+
+has request_format => (
+    is => 'ro',
+    isa => RequestFormat,
+    lazy_build => 1,
+    coerce => 1,
+);
+
+sub _build_request_format {
+    my $self = shift;
+    my $row_format = $self->row_format;;
+    if ($row_format eq any(@SIMPLE_FORMATS, @JSON_FORMATS)) {
+        return $row_format;
+    } else {
+        return "jsonrows";
+    }
+}
+
+=item * row_parser: ro, Webservice::InterMine::Parser
+
+The parser to return a formatted row of data.
+
+=cut
+
+has row_parser => (
+    is => 'ro',
+    isa => RowParser,
+    lazy_build => 1,
+);
+
+sub _build_row_parser {
+    my $self        = shift;
+    my $row_format  = $self->row_format;
+    my $view        = $self->view_list;
+    my $json_format = $self->json_format;;
+    if ($row_format eq any(@SIMPLE_FORMATS)) {
+        require Webservice::InterMine::Parser::FlatFile;
+        return Webservice::InterMine::Parser::FlatFile->new();
+    } elsif ($row_format eq "arrayrefs") {
+        require Webservice::InterMine::Parser::JSON::ArrayRefs;
+        return Webservice::InterMine::Parser::JSON::ArrayRefs->new();
+    } elsif ($row_format eq "hashrefs") {
+        require Webservice::InterMine::Parser::JSON::HashRefs;
+        return Webservice::InterMine::Parser::JSON::HashRefs->new(view => $view);
+    } elsif ($row_format eq any(@JSON_FORMATS)) {
+        require Webservice::InterMine::Parser::JSON;
+        return Webservice::InterMine::Parser::JSON->new(
+            json_format => $json_format, model => $self->model);
+    } else {
+        confess "Unknown row format '" . $row_format . "'"
+    }
+}
+
 =item * connection: ro, Net::HTTP
 
 A connection to the source of results
@@ -310,10 +375,8 @@ sub set_headers {
     }
     $self->_set_headers( \%headers );
     if (HTTP::Status::is_error( $self->error_code )) {
-        warn "GETTING REAL ERROR MESSAGE" if $ENV{DEBUG};
         $self->_find_real_error_message();
     }
-    warn "FINISHED SETTING HEADERS" if $ENV{DEBUG};
 }
 
 sub _find_real_error_message {
@@ -454,7 +517,7 @@ sub read_line {
     }
 
     if ( defined $line ) {
-        $line = trim_and_decode($line) unless $self->content_is_binary;
+        $line =~ s/$CRLF//;
     }
     warn "RETURNING LINE: $line\n" if $ENV{DEBUG};
 

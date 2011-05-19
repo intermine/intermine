@@ -62,7 +62,9 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasNext() {
         if (subIter.hasNext() || holdOver != null) {
             return true;
@@ -70,7 +72,9 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         return false;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public JSONObject next() {
         Map<String, Object> nextJsonMap = new HashMap<String, Object>();
         Integer lastId = null;
@@ -435,7 +439,9 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         currentMap = null;
     }
 
-    @Override
+    /**
+     * Remove is not supported.
+     */
     public void remove() {
         throw new UnsupportedOperationException("Remove is not implemented in this class");
     }

@@ -6,7 +6,7 @@
 <html:xhtml/>
 <c:set var="interMineObject" value="${object}"/>
 
-<c:if test="${fn:endsWith(object.class.name, '.DisplayObject')}">
+<c:if test="${fn:endsWith(object.class.name, '.ReportObject')}">
   <c:set var="interMineObject" value="${object.object}"/>
 </c:if>
 

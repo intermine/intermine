@@ -13,6 +13,8 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,19 +34,22 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
@@ -69,7 +74,7 @@ public class ObjectDetailsController extends InterMineAction
         TagManager tagManager = im.getTagManager();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = im.getObjectStore();
-        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
 
         String idString = request.getParameter("id");
 
@@ -86,14 +91,58 @@ public class ObjectDetailsController extends InterMineAction
 
         String superuser = im.getProfileManager().getSuperuser();
 
-        DisplayObject dobj = displayObjects.get(object);
+        ReportObject dobj = reportObjects.get(object);
         dobj.getClass();
         request.setAttribute("object", dobj);
-        session.setAttribute("displayObject", dobj);
+        session.setAttribute("reportObject", dobj);
+
+        // place InlineLists based on TagManager as ReportObject is cached while Controller is not
+        Map<String, List<InlineList>> placedInlineLists = new TreeMap<String, List<InlineList>>();
+        // traverse all unplaced (non-header) InlineLists
+        List<InlineList> unplacedInlineLists = dobj.getNormalInlineLists();
+        for (Integer i = 0; i < unplacedInlineLists.size(); i++) {
+            InlineList list = unplacedInlineLists.get(i);
+            // Descriptor
+            FieldDescriptor fd = list.getDescriptor();
+            // type
+            String taggedType = null;
+            if (fd.isCollection()) {
+                taggedType = "collection";
+            } else if (fd.isReference()) {
+                taggedType = "reference";
+            } else if (fd.isAttribute()) {
+                taggedType = "attribute";
+            } else {
+                // OMG, now what?
+            }
+            List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
+                    + "." + fd.getName(), taggedType, superuser);
+            for (Tag tag : tags) {
+                String tagName = tag.getTagName();
+                // aspect much?
+                if (AspectTagUtil.isAspectTag(tagName)) {
+                    List<InlineList> l = null;
+                    if (placedInlineLists.containsKey(tagName)) {
+                        // we already have aspect like this...
+                        l = placedInlineLists.get(tagName);
+                    } else {
+                        // we do not
+                        l = new ArrayList<InlineList>();
+                    }
+                    // save, save, save!
+                    l.add(list);
+                    placedInlineLists.put(tagName, l);
+                    // remove!
+                    unplacedInlineLists.remove(list);
+                }
+            }
+        }
+        session.setAttribute("mapOfInlineLists", placedInlineLists);
+        session.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
         Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
             Map<String, DisplayField>>();
-        Set<String> aspects = new HashSet<String>(SessionMethods.getCategories(servletContext));
+        Set<String> aspects = new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
 
         Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(object.getClass());
 
@@ -124,6 +173,9 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
 
+        // remove any fields overridden by displayers
+        removeFieldsReplacedByCustomDisplayers(dobj, placementRefsAndCollections);
+
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
         String type = DynamicUtil.getSimpleClass(object.getClass()).getCanonicalName();
@@ -133,6 +185,48 @@ public class ObjectDetailsController extends InterMineAction
         if (stableLink != null) {
             request.setAttribute("stableLink", stableLink);
         }
+
+        // attach only non empty categories
+        Set<String> allClasses = new HashSet<String>();
+        for (ClassDescriptor cld : cds) {
+            allClasses.add(cld.getUnqualifiedName());
+        }
+        TemplateManager templateManager = im.getTemplateManager();
+        Map<String, List<CustomDisplayer>> displayerMap = dobj.getReportDisplayers();
+
+        List<String> categories = new LinkedList<String>();
+        for (String aspect : aspects) {
+            // 1) Displayers
+            // 2) Inline Lists
+            if (
+                    (displayerMap != null
+                            && displayerMap.containsKey(aspect))
+                    || placedInlineLists.containsKey(aspect)) {
+                categories.add(aspect);
+            } else {
+                // 3) Templates
+                if (!templateManager.getReportPageTemplatesForAspect(aspect, allClasses)
+                        .isEmpty()) {
+                    categories.add(aspect);
+                } else {
+                    // 4) References & Collections
+                    if (placementRefsAndCollections.containsKey("im:aspect:" + aspect)
+                            && placementRefsAndCollections.get("im:aspect:" + aspect) != null) {
+                        for (DisplayField df : placementRefsAndCollections.get(
+                                "im:aspect:" + aspect).values()) {
+                            if (df.getSize() > 0) {
+                                categories.add(aspect);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!categories.isEmpty()) {
+            request.setAttribute("categories", categories);
+        }
+
         return null;
     }
 
@@ -145,7 +239,7 @@ public class ObjectDetailsController extends InterMineAction
      * @return
      */
     private Map<String, DisplayField> getSummaryFields(TagManager tagManager, String superuser,
-            DisplayObject dobj, Set<ClassDescriptor> cds) {
+            ReportObject dobj, Set<ClassDescriptor> cds) {
         Map<String, DisplayField> ret =
             new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
         for (ClassDescriptor cd : cds) {
@@ -183,7 +277,7 @@ public class ObjectDetailsController extends InterMineAction
      * @param miscRefs map that contains dispRef (may be removed by this method)
      * @param tagManager the tag manager
      * @param sup  the superuser account name
-     * @param placementRefsAndCollections take from the DisplayObject
+     * @param placementRefsAndCollections take from the ReportObject
      * @param isSuperUser if current user is superuser
      */
     public static void categoriseBasedOnTags(FieldDescriptor fd,
@@ -213,6 +307,14 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
     }
+
+    private void removeFieldsReplacedByCustomDisplayers(ReportObject dobj,
+            Map<String, Map<String, DisplayField>> placementRefsAndCollections) {
+        for (String fieldName : dobj.getReplacedFieldExprs()) {
+            removeField(fieldName, placementRefsAndCollections);
+        }
+    }
+
 
     /**
      * Removes field from placements.

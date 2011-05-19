@@ -29,7 +29,8 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -161,11 +162,8 @@ public class ObjectTrailController extends TilesAction
      * @return label for TrailElement
      */
     protected static String createTrailLabel(InterMineObject object, Model model) {
-        String label = "";
-        for (ClassDescriptor cld : DisplayObject.getLeafClds(object.getClass(), model)) {
-            label += cld.getUnqualifiedName() + " ";
-        }
-        return StringUtils.trim(label);
+        return StringUtils.trim(model.getClassDescriptorByName(
+                DynamicUtil.getSimpleClassName(object)).getUnqualifiedName());
     }
 
     /**

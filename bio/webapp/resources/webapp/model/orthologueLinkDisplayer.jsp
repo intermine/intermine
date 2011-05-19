@@ -7,29 +7,29 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <script type="text/javascript" charset="utf-8">
-function getInterMineOrthologueLinks(mine, organisms, identifierList) {
-    AjaxServices.getInterMineOrthologueLinks(mine, organisms, identifierList, function(mineString) {
-        if (mineString != null && mineString != '') {
-            jQuery('#intermine_orthologue_links_' + mine).html(mineString);
+function getFriendlyMineLinks(mine, organisms, identifierList) {
+    AjaxServices.getFriendlyMineListLinks(mine, organisms, identifierList, function(mineString) {
+        if (!mineString) {
+            mineString = "No orthologues found.";
         }
+        jQuery('#intermine_orthologue_links_' + mine).html(mineString);
         jQuery('#intermine_orthologue_links_' + mine + '_waiting').hide();
     });
 }
 </script>
 
-<!-- orthologueLinkDisplayer.jsp -->
+<!-- friendlyMineLinkDisplayer.jsp -->
 
 <h2>View orthologues in other InterMines:</h2>
 
 <tiles:importAttribute />
 
 <c:forEach items="${mines}" var="mine">
-    <div id="intermine_orthologue_links_${mine}_waiting"><img src="images/wait30.gif" title="Searching..."/></div>
+    <b>${mine}</b><div id="intermine_orthologue_links_${mine}_waiting"><img src="images/wait30.gif" title="Searching..."/></div>
     <div id="intermine_orthologue_links_${mine}"></div>
       <script type="text/javascript" charset="utf-8">
-        getInterMineOrthologueLinks('${mine}', '${organisms}', '${identifierList}');
+        getFriendlyMineLinks('${mine}', '${organisms}', '${identifierList}');
       </script>
 </c:forEach>
 
-
-<!-- /orthologueLinkDisplayer.jsp -->
+<!-- /friendlyMineLinkDisplayer.jsp -->

@@ -157,7 +157,7 @@ Search Term: <c:out value="${searchTerm}"/>
   <c:set var="sub" value="${subResult.key}"/>
   <tr>
       <td><input type="checkbox" class="aSub" value="${sub.id}" onclick="updateCheckStatus(this.checked)"/></td>
-      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
       <td>
       <c:if test="${sub.organism.genus eq 'Drosophila'}">
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
@@ -168,10 +168,10 @@ Search Term: <c:out value="${searchTerm}"/>
                         <c:set var="worm" value="1" />
                     </c:if>
       </td>
-      <td>PI: <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.project.id}"><c:out value="${sub.project.surnamePI}"/></html:link><br/>
-          Lab: <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.lab.id}"><c:out value="${sub.lab.surname}"/></html:link><br/>
+      <td>PI: <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.project.id}"><c:out value="${sub.project.surnamePI}"/></html:link><br/>
+          Lab: <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.lab.id}"><c:out value="${sub.lab.surname}"/></html:link><br/>
       </td>
-      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.title}"></c:out></html:link></td>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}"><c:out value="${sub.title}"></c:out></html:link></td>
       <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
       <td>
         <c:set var="isPrimer" value="0"/>
@@ -184,7 +184,7 @@ Search Term: <c:out value="${searchTerm}"/>
         <c:choose>
         <c:when test="${isPrimer <= 5 || !fn:contains(prop,'primer')}">
           <c:out value="${prop.type}: "/>
-          <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prop.id}">
+          <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${prop.id}">
           <c:out value="${prop.name}"/></html:link><br/>
         </c:when>
         <c:when test="${isPrimer > 5 && status.last}">

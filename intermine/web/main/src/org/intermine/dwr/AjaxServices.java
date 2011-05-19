@@ -14,15 +14,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,8 +47,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.mines.LinkManager;
-import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -103,12 +99,8 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import org.intermine.web.util.InterMineLinkGenerator;
+import org.json.JSONObject;
 
 
 /**
@@ -626,95 +618,77 @@ public class AjaxServices
     }
 
     /**
-     * For an organism, generate links to other intermines with orthologues
+     * used on REPORT page
+     *
+     * For a gene, generate links to other intermines.  Include gene and orthologues.
+     *
+     * Returns NULL if no values found.  It's possible that the identifier in the local mine will
+     * match more than one entry in the remote mine but this will be handled by the portal of the
+     * remote mine.
      *
      * @param organismName gene.organism
      * @param primaryIdentifier identifier for gene
+     * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      */
-    public static String getInterMineLinks(String organismName, String primaryIdentifier) {
+    public static String getFriendlyMineReportLinks(String organismName,
+            String primaryIdentifier, String symbol) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        FriendlyMineManager olm = FriendlyMineManager.getInstance(im, webProperties);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
+        Constructor<?> constructor;
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            Properties webProperties = SessionMethods.getWebProperties(servletContext);
-            LinkManager olm = LinkManager.getInstance(im, webProperties);
-
-            // mines with orthologues
-            Map<Mine, Set<String>> minesWithOrthologues = olm.getMines(Arrays.asList(organismName));
-            // mines with genes
-            // Set<Mine> minesWithGenes = olm.getMines(organismName);
-
-            if (minesWithOrthologues.isEmpty()) {
-                return null;
-            }
-            StringBuffer sb = new StringBuffer("<div class='other-mines'><h3>Orthologues in other"
-                    + " mines:</h3><ul>");
-            for (Mine mine : minesWithOrthologues.keySet()) {
-                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                    + primaryIdentifier + "&orthologue=" + organismName;
-                sb.append("<li><a href=\"" + href + "\">");
-                sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
-                sb.append("</a></li>");
-            }
-            sb.append("</ul></div>");
-            return sb.toString();
-        } catch (RuntimeException e) {
-            processException(e);
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
+        return linkGen.getLinks(olm, null, organismName, primaryIdentifier).toString();
     }
 
     /**
-     * For a mine, test if that mine has orthologues
+     * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
      *
      * @param mineName name of a friendly mine
      * @param organisms list of organisms for genes in this list
-     * @param identifierList list of identifiers
+     * @param identifiers list of identifiers of genes in this list
      * @return the links to friendly intermines or an error message
      */
-    public static String getInterMineOrthologueLinks(String mineName, String organisms,
-            String identifierList) {
+    public static String getFriendlyMineListLinks(String mineName, String organisms,
+            String identifiers) {
         if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
-                || StringUtils.isEmpty(identifierList)) {
+                || StringUtils.isEmpty(identifiers)) {
             return null;
         }
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final String errMsg = "No orthologues found in " + mineName;
 
-        LinkManager olm = LinkManager.getInstance(im, webProperties);
-        List<String> organismList = StringUtil.tokenize(organisms, ",");
-
-        Map<Mine, Set<String>> mineValues = olm.getMine(mineName, organismList);
-        if (mineValues == null || mineValues.isEmpty()) {
-            return errMsg;
+        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
+        Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
+            return null;
         }
-        Map.Entry<Mine, Set<String>> entry = mineValues.entrySet().iterator().next();
-        Mine mine = entry.getKey();
-        Set<String> orthologues = entry.getValue();
-
-        if (mine == null || orthologues.isEmpty()) {
-            return errMsg;
+        Collection<JSONObject> results = linkGen.getLinks(
+                linkManager, mineName, organisms, identifiers);
+        if (results == null || results.isEmpty()) {
+            return null;
         }
-
-        // TODO make this a table with counts
-        StringBuffer sb = new StringBuffer(mineName + "<ul>");
-        for (String orthologue : orthologues) {
-            String encodedOrthologue = null;
-            try {
-                encodedOrthologue = URLEncoder.encode("" + orthologue, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("error while encoding: " + orthologue, e);
-            }
-            String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                + identifierList + "&orthologue=" + encodedOrthologue;
-            sb.append("<li><a href=" + href + ">" + orthologue + "</a>");
-        }
-        sb.append("</ul>");
-        return sb.toString();
+        return results.toString();
     }
 
 
@@ -843,10 +817,11 @@ public class AjaxServices
      * @param bagName the name of a bag
      * @return the list of queries
      */
-    private static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+    private static List<String> queriesThatMentionBag(Map<String, SavedQuery> savedQueries,
+            String bagName) {
         try {
             List<String> queries = new ArrayList<String>();
-            for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+            for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
                 String queryName = (String) i.next();
                 SavedQuery query = (SavedQuery) savedQueries.get(queryName);
                 if (query.getPathQuery().getBagNames().contains(bagName)) {
@@ -1156,94 +1131,6 @@ public class AjaxServices
             return "";
         } catch (IOException e) {
             return "";
-        }
-    }
-
-    /**
-     * Get the news
-     * @param rssURI the URI of the rss feed
-     * @return the news feed as html
-     * @deprecated use getNewsPreview() instead
-     */
-    public static String getNewsRead(String rssURI) {
-        try {
-            URL feedUrl = new URL(rssURI);
-            SyndFeedInput input = new SyndFeedInput();
-            XmlReader reader;
-            try {
-                reader = new XmlReader(feedUrl);
-            } catch (Throwable e) {
-                // xml document at this url doesn't exist or is invalid, so the news cannot be read
-                return "<i>No news</i>";
-            }
-            SyndFeed feed = input.build(reader);
-            List<SyndEntry> entries = feed.getEntries();
-            StringBuffer html = new StringBuffer("<ol id=\"news\">");
-            int counter = 0;
-            for (SyndEntry syndEntry : entries) {
-                if (counter > 4) {
-                    break;
-                }
-
-                // NB: apparently, the only accepted formats for getPublishedDate are
-                // Fri, 28 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 08 11:02 GMT
-                //
-                // an annoying error appears if the format is not followed, and news tile hangs.
-                //
-                // the following is used to display the date without timestamp.
-                // this should always work since the retrieved date has a fixed format,
-                // independent of the one used in the xml.
-                // longDate = Wed Aug 19 14:44:19 BST 2009
-                String longDate = syndEntry.getPublishedDate().toString();
-                String dayMonth = longDate.substring(0, 10);
-                String year = longDate.substring(24);
-
-                DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
-                Date date = df.parse(longDate);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-
-                // month starts at zero
-                int month = calendar.get(calendar.MONTH) + 1;
-                String monthString = String.valueOf(month);
-                if (monthString.length() == 1) {
-                    monthString = "0" + monthString;
-                }
-
-                //http://blog.flymine.org/2009/08/
-//                WebContext ctx = WebContextFactory.get();
-//                ServletContext servletContext = ctx.getServletContext();
-//                Properties properties = SessionMethods.getWebProperties(servletContext);
-
-                String url = syndEntry.getLink();
-//                properties.getProperty("project.news") + "/" + year + "/"   + monthString;
-
-                html.append("<li>");
-                html.append("<strong>");
-                html.append("<a href=\"" + url + "\">");
-                html.append(syndEntry.getTitle());
-                html.append("</a>");
-                html.append("</strong>");
-//                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
-                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
-                html.append(syndEntry.getDescription().getValue());
-                html.append("</li>");
-                counter++;
-            }
-            html.append("</ol>");
-            return html.toString();
-        } catch (MalformedURLException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (IllegalArgumentException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (FeedException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (java.text.ParseException e) {
-            return "<i>No news at specified URL</i>";
         }
     }
 

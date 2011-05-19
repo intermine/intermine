@@ -364,3 +364,75 @@ ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
   color:#FFFFFF; padding:2px 36px; }
 #templates div.content p.more a, #low #rss p.more a { background: url("homepage/more-pitchurka.png") no-repeat scroll
   left center transparent; }
+
+/* bagUploadConfirm */
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#002575; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#EEF0F7;  }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tr.even td { background:#FBFDFE; border-top-color:#E2F5FE; border-bottom-color:#E2F5FE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
+#pagecontentcontainer.bagUploadConfirm-page h3 { color:#002575; background:#EEF0F7; border-top-color:#002575; }
+#pagecontentcontainer.bagUploadConfirm-page div.description { background:#EEF0F7; }
+#pagecontentcontainer.bagUploadConfirm-page #chooseName,
+#pagecontentcontainer.bagUploadConfirm-page #additionalMatches { background:#FFF; }
+
+/* report page */
+#header_wrap { background-color:#EEF0F7; background-image:url("report/header-bg.png"); }
+#object_header h1.title span { color:#5c0075; }
+#object_header div.box h3 { background:#F0E3F7; }
+#object_header div.list.box span { color:#002575; }
+#fixed-menu { background:#38687F; }
+#toc-menu-wrap { background:#38687F; }
+#fixed-menu span, #toc-menu-wrap span { color:#E2F5FE; }
+#menu-target { background:#EEF0F7; }
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#002575; background:#EEF0F7; }
+div.box h2 { color:#000; }
+div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#EEF0F7; color:#002575; border-top-color:#002575; }
+div.box a { color:#002575; }
+div.box div.inner { border-color:#FCFAFD; }
+div.box div.inner h4 { background-color:#FCFAFD; }
+div.table h3 { text-shadow: 1px 1px 1px #FFF; }
+#in-lists div.heading { background:#EEF0F7 !important; border-color:#002575; color:#002575 !important; text-shadow:1px 1px 1px #FFF; }
+div.feature table td.border-left { border-left-color:#E2F5FE !important; }
+.container_12 .compact-table td { border-color:#DCC8E2; }
+.container_12 .compact-table a:hover { color:#002575; }
+.container_12 .highlight { background-color: #FFF3D3; }
+div.box div.inner { border-color:#FCFAFD; }
+div.box div.inner h4 { background-color:#FCFAFD; }
+
+#object_header #headerLink a { color:#002575; }
+#fixed-menu div.links a.current { background:#002575; color:#FFF; }
+div.table.template p.in_table a span { background-color:#FFF; color:#002575; }
+div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; background:#F6F5F7 !important; }
+#object_header p.share a { color:#002575; }
+
+/* theme color classes (used on Report page currently) */
+div.table .theme-1-color, div.box .theme-1-color { color:#002575 !important; } /* Resolution Blue */
+div.table .theme-1-background, div.box .theme-1-background { background-color:#002575 !important; } /* Resolution Blue */
+div.table .theme-1-border, div.box .theme-1-border { border-color:#002575 !important; } /* Resolution Blue */
+
+div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
+
+div.table .theme-3-color, div.box .theme-3-color { color:#E2F5FE !important; } /* Lily White */
+div.table .theme-3-background, div.box .theme-3-background { background-color:#E2F5FE !important; } /* Lily White */
+div.table .theme-3-border, div.box .theme-3-border { border-color:#E2F5FE !important; } /* Lily White */
+
+div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
+
+div.table .theme-5-color, div.box .theme-5-color { color:#EEF0F7 !important; } /* Catskill White */
+div.table .theme-5-background, div.box .theme-5-background { background-color:#EEF0F7 !important; } /* Catskill White */
+div.table .theme-5-border, div.box .theme-5-border { border-color:#EEF0F7 !important; } /* Catskill White */
+
+div.table .theme-6-color, div.box .theme-6-color { color:#FBFDFE !important; } /* Polar */
+div.table .theme-6-background, div.box .theme-6-background { background-color:#FBFDFE !important; } /* Polar */
+div.table .theme-6-border, div.box .theme-6-border { border-color:#FBFDFE !important; } /* Polar */
+
+div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+
+/* redefine for inline lists/boxes with no results (gray) */
+div.box.gray h3 { color:#ABABAB; border-top-color:#6E6E6E !important; background:#F6F5F7 !important; }
