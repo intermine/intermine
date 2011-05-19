@@ -38,6 +38,8 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private static final String CELL_KEY_URL = "url";
     private static final String CELL_KEY_VALUE = "value";
+    private static final String CELL_KEY_CLASS = "class";
+    private static final String CELL_KEY_ID = "id";
 
     /**
      * Constructor
@@ -77,6 +79,8 @@ public class JSONRowIterator implements Iterator<JSONArray>
             if (mapping.get(CELL_KEY_URL) == null) {
                 mapping.put(CELL_KEY_URL, PortalHelper.generateReportPath(cell));
             }
+            mapping.put(CELL_KEY_CLASS, cell.getType());
+            mapping.put(CELL_KEY_ID, cell.getId());
             mapping.put(CELL_KEY_VALUE, cell.getField());
         }
         JSONObject ret = new JSONObject(mapping);
