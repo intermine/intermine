@@ -1,5 +1,5 @@
 <div id="employees-placeholder" class="placeholder">
-   <span class="placeholder-text">Loading employee information. Please bear with us.</span>
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
 </div>
 
 <script type="text/javascript">

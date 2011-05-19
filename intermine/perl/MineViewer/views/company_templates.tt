@@ -1,7 +1,7 @@
 [% templates = ["Company_Departments", "Company_Employees"] %]
 [% FOR t IN templates %]
 <div id="[% t %]-placeholder" class="placeholder">
-   <span class="placeholder-text">Loading [% t %] information. Please bear with us.</span>
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
 </div>
 [% END %]
 

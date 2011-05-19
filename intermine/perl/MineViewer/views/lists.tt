@@ -1,15 +1,24 @@
 [% INCLUDE banner.tt %]
 <div id="content">
+    <div id="controls">
+    <form id="display-format" style="float:right;">
+    <input type="radio" name="list-display-format" id="grid" checked><label for="grid">as grid</label>
+    <input type="radio" name="list-display-format" id="table"><label for="table">as table</label>
+    </form>
     [% IF lists.size == 1 %]
+    <div id="list-title-container">
         [% list = lists.0 %]
-        <h2>[% list.name %] ([% list.size %] [% list.type %]s) </h2>
+    <h2 id="list-title">[% list.name %] ([% list.size %] [% pluraliser(list.type) %])</h2>
     [% ELSE %]
+    <div id="list-container">
         <select id="lists">
         [% FOREACH list IN lists %]
             <option value="[% list.name %]">[% list.name %] ([% list.size %] [% pluraliser(list.type) %]) </option>
         [% END %]
         </select>
     [% END %]
+    </div>
+    </div>
     <div id="list-item-box">
     <ul id="list-items">
         [% FOREACH item IN items %]
@@ -23,42 +32,118 @@
                 [% itemname = resolved %]
                 [% LAST IF itemname %]
             [% END %]
+            [% deleter_id = "deleter-" _ item.objectId %]
                 <li>
-        <a href="[% proxy.uri_for('/' _ item.class _ '/id/' _ item.objectId) %]">[% itemname %]</a>
+<span onmouseover="jQuery('#[% deleter_id %]').show()"
+    onmouseout="jQuery('#[% deleter_id %]').hide()"
+    id="item-[% item.objectId %]">
+    <a href="[% proxy.uri_for('/' _ item.class _ '/id/' _ item.objectId) %]">
+        [% itemname %]
+    </a>
+    <a icon="delete" style="display:none;cursor:pointer;" id="[% deleter_id %]"
+        onclick="removeitem('[% lists.0.name %]', '[% item.objectId %]')">
+    </a>
+</span>
                 </li>
         [% END %]
     </ul>
+    </div>
+    <div id="list-table-box" style="display:none;">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]"></img>
     </div>
 </div>
 
 [% INCLUDE export.tt %]
 
 <script type="text/javascript">
+var colWidth = [% settings.list_column_width %];
+
 jQuery(function() {
-    var colWidth = [% settings.list_column_width %];
+    jQuery('#display-format').buttonset();
+    jQuery('input[name=list-display-format]').change(function() {
+        var format = jQuery('input[name=list-display-format]:checked').attr('id');
+        if (format == "grid") {
+            jQuery('#list-item-box').show();
+            jQuery('#list-table-box').hide();
+        } else {
+            jQuery('#list-item-box').hide();
+            jQuery('#list-table-box').show();
+            if (jQuery('#list-table-box').children('img').length) {
+                var query = '[% list_query.to_xml %]';
+                IMBedding.loadQuery(query, {size: 10}, '#list-table-box',
+                    [% INCLUDE template_options.tt %]
+                );
+            }
+        }
+    });
+});
+
+
+function handleListSelection() {
     var listname = jQuery('#lists option:selected').val();
-    jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" + escape(listname) + ' #list-items',
-        null, function() {
+    window.location.hash = escape(listname);
+    jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
+            + escape(listname) + ' #list-items', null, function() {
         jQuery('#list-items').makeacolumnlists({
             cols: colWidth, colWidth: 0, 
             equalHeight: true, startN: 1
-            })
-        });
-
-    jQuery('#lists').change(function() {
-        var listname = jQuery('#lists option:selected').val();
-        jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" + escape(listname) + ' #list-items',
-            null, function() {
-            jQuery('#list-items').makeacolumnlists({
-                cols: colWidth, colWidth: 0, 
-                equalHeight: true, startN: 1
-                })
             });
         jQuery('#export ul li a').each(function(index, element) {
             var type = element.id.split('-')[0];
             jQuery(this).attr('href', "[% proxy.uri_for('/list/') %]" + listname + "." + type);
         });
     });
+}
+
+function removeitem(listName, objId) {
+    var data = {
+        list: listName,
+        ids: objId,
+    };
+    jQuery.post("[% proxy.uri_for('/remove_list_item') %]", 
+        data, 
+        function(results) {
+            handleResults(results);
+            var url = "[% proxy.uri_for('/') %]";
+            jQuery('#list-container').load(url + 'lists #lists', null,
+                function() {
+                jQuery('option').each(function(index, elem) {
+                    if (elem.value == listName) {
+                        jQuery(elem).attr('selected', true);
+                    }
+                });
+                jQuery('#lists').change(handleListSelection);
+            });
+            jQuery('#list-item-box').load(url + 'list/' 
+                + escape(listName) + ' #list-items', null, function() {
+                jQuery('#list-items').makeacolumnlists({
+                    cols: colWidth, colWidth: 0, 
+                    equalHeight: true, startN: 1
+                })
+            });
+            jQuery('#list-title-container').load(url + 'list/' 
+                + escape(listName) + ' #list-title');
+        }, "json");
+}
+jQuery(function() {
+    var currentList = unescape(window.location.hash.substr(1));
+    if (currentList) {
+        jQuery('#lists option').each(function(index, elem) {
+            if (elem.value == currentList) {
+                jQuery(elem).attr('selected', true);
+            }
+        });
+    }
+
+    var listname = jQuery('#lists option:selected').val();
+    jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
+        + escape(listname) + ' #list-items', null, function() {
+        jQuery('#list-items').makeacolumnlists({
+            cols: colWidth, colWidth: 0, 
+            equalHeight: true, startN: 1
+            })
+        });
+    jQuery('#lists').change(handleListSelection);
 });
 </script>
         

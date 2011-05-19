@@ -1,0 +1,11 @@
+<div id="current-lists-box">
+[% IF contained_in.pairs.size %]
+    <span>Is one of:</span>
+    <ul>
+    [% FOREACH p IN contained_in.pairs %]
+    <li><a href="[% proxy.uri_for('/list/' _ p.key) %]">
+        [% p.key %] ([% p.value.size %] [% pluraliser(p.value.type) %])
+    </a></li>
+    [% END %]
+[% END %]
+</div>

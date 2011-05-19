@@ -3,14 +3,14 @@
 
 <div id="content">
 <form id="template-form">
-    <p><label for="templateName">Template Name: </label>
-    <input spellcheck="false" size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" /></p>
+    <p><label for="templateName">Tool Name: </label>
+    <input spellcheck="false" type="text" name="name" id="templateName" placeholder="Enter a template Name" /></p>
     <div id="templateParameters"></div>
     <br/>
-    <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()" />
+    <input type="button" name="loadTemplate" value="Load Results" onclick="loadUserTemplate()" />
 </form>
 
-<div id="templateplaceholder"><p>The template results will go here</p></div>
+<div id="templateplaceholder"><p>The results will go here</p></div>
 <div id="datatableplaceholder"></div>
 
 </div>

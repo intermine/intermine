@@ -1,7 +1,7 @@
-<div id="list-addition-box" style="float: right">
+<div id="list-addition-box">
     <form id="list-addition-form">
     <button id="listadder" value="Add">Add to</button>
-    <select id="addto">
+    <select id="addto" style="width:80%">
     <option value="create-new-list">New List</option>
     [% FOREACH list IN lists %]
         [% list_name = list.name %]
