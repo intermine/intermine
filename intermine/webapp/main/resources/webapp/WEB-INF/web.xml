@@ -123,7 +123,7 @@
 
   <servlet-mapping>
   <servlet-name>ws-lists</servlet-name>
-  <url-pattern>/service/listswithobject</url-pattern>
+  <url-pattern>/service/listswithobject/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
