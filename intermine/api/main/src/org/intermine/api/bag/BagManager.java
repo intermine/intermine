@@ -43,10 +43,10 @@ import org.intermine.objectstore.query.Results;
 public class BagManager
 {
     private static final Logger LOG = Logger.getLogger(BagManager.class);
-    private Profile superProfile;
+    private final Profile superProfile;
     private final TagManager tagManager;
     private final Model model;
-    private ObjectStore osProduction;
+    private final ObjectStore osProduction;
 
     /**
      * The BagManager references the super user profile to fetch global bags.
@@ -92,6 +92,28 @@ public class BagManager
             }
         }
         return bagsWithTag;
+    }
+
+    /**
+     * Add tags to a bag.
+     * @param tags A list of tag names to add
+     * @param bag The bag to add them to
+     * @param profile The profile this bag belongs to
+     */
+    public void addTagsToBag(List<String> tags, InterMineBag bag, Profile profile) {
+        for (String tag: tags) {
+            tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile.getUsername());
+        }
+    }
+
+    /**
+     * Get a list of tags for a given bag.
+     * @param bag The bag to get tags for.
+     * @return A list of Tag objects
+     */
+    public List<Tag> getTagsForBag(InterMineBag bag) {
+        List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
+        return tags;
     }
 
     /**
