@@ -14,11 +14,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.intermine.metadata.Model;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
 
 /**
@@ -29,25 +27,23 @@ public class QueryAPIClient
 {
     private static String serviceRootUrl = "http://localhost:8080/query/service";
 
-    private static final int MAX_ROWS = 10000;
-
     /**
      * @param args command line arguments
      * @throws IOException
      */
     public static void main(String[] args) {
-        QueryService service =
-            new ServiceFactory(serviceRootUrl, "QueryAPIClient").getQueryService();
-        Model model = getModel();
-        
+        ServiceFactory factory = new ServiceFactory(serviceRootUrl, "QueryAPIClient");
+        QueryService service = factory.getQueryService();
+        Model model = factory.getModelService().getModel();
+
         // Create a query
         PathQuery query = new PathQuery(model);
         query.addViews("Organism.name", "Organism.taxonId");
         query.addOrderBy("Organism.name", OrderDirection.ASC);
 
         // Run the query
-        List<List<String>> result = service.getResult(query, MAX_ROWS);
-        
+        List<List<String>> result = service.getAllResults(query);
+
         // Output results
         int count = 0;
         for (List<String> row : result) {
@@ -58,10 +54,5 @@ public class QueryAPIClient
             count++;
         }
         System.out.println(System.getProperty("line.separator") + count + " results");
-    }
-
-    private static Model getModel() {
-        ModelService service = new ServiceFactory(serviceRootUrl, "ClientAPI").getModelService();
-        return service.getModel();
     }
 }
