@@ -1,11 +1,16 @@
 var previousOrder = '';
 
 jQuery(document).ready(function(){
-	jQuery('#viewDivs').sortable({dropOnEmpty:true,update:function() {
-    	    reorderOnServer();
+    jQuery('#viewDivs').sortable({dropOnEmpty:true,update:function() {
+        reorderOnServer();
         }
-	});
+    });
     recordCurrentOrder();
+    if ("${fn:length(viewStrings) > 0}") {
+        jQuery('#showResultButton').removeClass('inactive');
+      } else {
+        jQuery('#showResultButton').addClass('inactive');
+      }
 });
   
 

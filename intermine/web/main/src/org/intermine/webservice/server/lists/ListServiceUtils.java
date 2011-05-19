@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
@@ -103,16 +104,31 @@ class ListServiceUtils {
             return classes.iterator().next().getUnqualifiedName();
         }
         ClassDescriptor currentClass = null;
+        Set<String> classNames = new HashSet<String>();
+        for (ClassDescriptor cd: classes) {
+            classNames.add(cd.getUnqualifiedName());
+        }
+        String nameString = StringUtils.join(classNames, ", ");
         for (ClassDescriptor cd: classes) {
             String thisType = cd.getName();
-            if (currentClass == null || currentClass.getSuperclassNames().contains(thisType)) {
+            if (currentClass == null || ListServiceUtils.getAllSuperclassNames(currentClass).contains(thisType)) {
                 currentClass = cd;
                 continue;
             }
-            if (!cd.getSuperclassNames().contains(currentClass.getName())) {
-                throw new RuntimeException("Incompatible types");
+            if (!getAllSuperclassNames(cd).contains(currentClass.getName())) {
+                throw new RuntimeException("Incompatible types: " + nameString);
             }
         }
         return currentClass.getUnqualifiedName();
     }
+
+    private static Set<String> getAllSuperclassNames(ClassDescriptor cd) {
+        Set<String> classNames = new HashSet<String>();
+        classNames.addAll(cd.getSuperclassNames());
+        for (ClassDescriptor superCd: cd.getSuperDescriptors()) {
+            classNames.addAll(getAllSuperclassNames(superCd));
+        }
+        return classNames;
+    }
+
 }

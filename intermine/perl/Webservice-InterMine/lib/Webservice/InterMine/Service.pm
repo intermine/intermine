@@ -546,8 +546,7 @@ sub get_results_iterator {
         authorization => $self->get_authstring(),
         request_format => $request_format,
     );
-    confess $response->status_line, $response->content
-      if $response->is_error;
+    confess $response->status_line if $response->is_error;
     return apply_roles( $response, $roles );
 }
 

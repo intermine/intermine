@@ -12,6 +12,7 @@ with(
     'Webservice::InterMine::Query::Roles::Templateable',
     'Webservice::InterMine::Query::Roles::Listable',
     'Webservice::InterMine::Role::Serviced',
+    'Webservice::InterMine::Role::Showable',
 );
 
 __PACKAGE__->meta->make_immutable;

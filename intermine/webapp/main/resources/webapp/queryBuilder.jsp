@@ -60,7 +60,16 @@
       }
   });
 </script>
-
+<div id="sidebar">
+   <div id="showResultButton" class='button inactive'>
+      <div class="left"></div>
+          <html:form action="/queryBuilderViewAction" styleId="submitform">
+          <input id="showResult" type="submit" name="showResult"
+          value='<fmt:message key="view.showresults"/>'/>
+          </html:form><div class="right"></div>
+  </div>
+</div>
+<div id="queryBuilderContainer">
 <div id="queryBuilderBrowser" class="modelbrowse" ><tiles:insert page="/queryBuilderBrowser.jsp"/></div>
 
 <div id="rightColumn" >
@@ -68,6 +77,7 @@
     <tiles:insert name="queryBuilderSummary.tile"/>
   </div>
   <a name="constraint-editor"></a>
+</div>
 </div>
 <div style="clear:both;">
   <tiles:get name="queryBuilderView.tile"/>

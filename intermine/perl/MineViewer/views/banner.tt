@@ -1,0 +1,19 @@
+<div id="banner">
+    <div id="heading">
+        <h1>[% settings.project.title %]</h1>
+        <h3>[% settings.project.subtitle %]</h1>
+    </div>
+
+    <div id="section-menu">
+        <ul class="menu">
+<li [% IF request.path == '/' %]class="current-tab"[% END %] >
+    <a href="[% proxy.uri_for('/') %]">Home</a></li>
+<li [% IF request.path == '/lists' %]class="current-tab"[% END %]>
+    <a href="[% proxy.uri_for('/lists') %]">Lists</a></li>
+<li [% IF request.path == '/templates' %]class="current-tab"[% END %]>
+    <a href="[% proxy.uri_for('/templates') %]">Templates</a></li>
+<li [% IF request.path == '/queries' %]class="current-tab"[% END %]>
+    <a >Queries</a></li>
+        </ul>
+    </div>
+</div>

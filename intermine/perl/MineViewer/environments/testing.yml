@@ -1,0 +1,65 @@
+
+# configuration file for development environment
+
+# the logger engine to use
+# console: log messages to STDOUT (your console where you started the
+#          application server)
+# file:    log message to a file in log/
+logger: "console"
+
+# the log level for this environement
+# core is the lowest, it shows Dancer's core log messages as well as yours
+# (debug, warning and error)
+log: "core"
+
+# should Dancer consider warnings as critical errors?
+warnings: 1
+
+# should Dancer show a stacktrace when an error is caught?
+show_errors: 1
+
+project:
+    title: "MineView Test"
+    subtitle: "A test of the mine-viewer webapp"
+
+list_column_width: 3
+
+service_args:
+    - "squirrel.flymine.org/intermine-test"
+    - 'intermine-test-user'
+    - 'intermine-test-user-password'
+
+list_tag: "mineview-test"
+
+gene_list_names: 
+    - "My-Favourite-Employees"
+    - "The great unknowns"
+    - "Umlaut holders"
+    - "Admin departments"
+    - "Bankrupt soon"
+    - "Rich ladies"
+
+mine_base_url: "http://squirrel.flymine.org/intermine-test"
+
+class_keys:
+    Default:
+        - "name"
+    Department:
+        - "name"
+        - "company.name"
+    Address:
+        - "address"
+
+additional_summary_fields:
+    Department:
+        - "company.name"
+        - "manager.name"
+    Employee:
+        - "department.name"
+        - "department.company.name"
+        - "address.address"
+    Company:
+        - "CEO.name"
+        - "address.address"
+    CEO:
+        - "company.name"

@@ -15,9 +15,9 @@ import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.tracker.xml.TemplateTrackBinding;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.TemplateTrackBinding;
 
 /**
  * Task to read an templatetrack XML file of a webapp and saved into the userprofile database.

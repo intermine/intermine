@@ -1,7 +1,8 @@
 
-<project name="library" default="default" basedir="." xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
+<project name="library" basedir="." xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
 
   <dirname property="library.xml.basedir" file="${ant.file.library}"/>
+
 
   <!-- Import antcontrib tasks -->
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${library.xml.basedir}/lib/ant-contrib.jar"/>
@@ -173,7 +174,7 @@
             additionalparam="${javadoc.additionalparam}" failonerror="true">
       <classpath refid="project.compile.path"/>
       <sourcepath>
-	    <pathelement location="${src.dir}" />
+        <pathelement location="${src.dir}" />
       </sourcepath>
     </javadoc>
   </target>
@@ -275,16 +276,12 @@
   <target name="dot" depends="init, -init-deps">
     <path id="dot.class.path">
       <path refid="project.compile.path"/>
-      <pathelement location="${library.xml.basedir}/lib/ant-tasks.jar"/>
       <pathelement location="${build.classes.dir}"/>
       <pathelement location="${library.xml.basedir}/lib/im-ant-tasks.jar"/>
     </path>
 
-    <taskdef name="dot" classname="org.intermine.task.InheritanceDotTask">
-      <classpath refid="dot.class.path"/>
-    </taskdef>
-    <!--property name="cp" refid="dot.class.path"/>
-    <echo message="class path is ${cp}"/-->
+    <taskdef name="dot" classname="org.intermine.task.InheritanceDotTask" classpathref="dot.class.path"/>
     <dot directory="${src.dir}" packageName="org.intermine" file="src.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
+
   </target>
 </project>

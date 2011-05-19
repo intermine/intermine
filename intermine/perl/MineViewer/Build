@@ -1,0 +1,61 @@
+#! /usr/bin/perl
+
+use strict;
+use Cwd;
+use File::Basename;
+use File::Spec;
+
+sub magic_number_matches {
+  return 0 unless -e '_build/magicnum';
+  local *FH;
+  open FH, '_build/magicnum' or return 0;
+  my $filenum = <FH>;
+  close FH;
+  return $filenum == 761400;
+}
+
+my $progname;
+my $orig_dir;
+BEGIN {
+  $^W = 1;  # Use warnings
+  $progname = basename($0);
+  $orig_dir = Cwd::cwd();
+  my $base_dir = '/home/alex/svn/dev/intermine/perl/MineViewer';
+  if (!magic_number_matches()) {
+    unless (chdir($base_dir)) {
+      die ("Couldn't chdir($base_dir), aborting\n");
+    }
+    unless (magic_number_matches()) {
+      die ("Configuration seems to be out of date, please re-run 'perl Build.PL' again.\n");
+    }
+  }
+  unshift @INC,
+    (
+     '/home/alex/ensembl/ensembl/modules',
+     '/home/alex/ensembl/ensembl-compara/modules',
+     '/home/alex/ensembl/ensembl-variation/modules',
+     '/home/alex/ensembl/ensembl-functgenomics/modules'
+    );
+}
+
+close(*DATA) unless eof(*DATA); # ensure no open handles to this script
+
+use Module::Build;
+Module::Build->VERSION(q{0});
+
+# Some platforms have problems setting $^X in shebang contexts, fix it up here
+$^X = Module::Build->find_perl_interpreter;
+
+if (-e 'Build.PL' and not Module::Build->up_to_date('Build.PL', $progname)) {
+   warn "Warning: Build.PL has been altered.  You may need to run 'perl Build.PL' again.\n";
+}
+
+# This should have just enough arguments to be able to bootstrap the rest.
+my $build = Module::Build->resume (
+  properties => {
+    config_dir => '_build',
+    orig_dir => $orig_dir,
+  },
+);
+
+$build->dispatch;

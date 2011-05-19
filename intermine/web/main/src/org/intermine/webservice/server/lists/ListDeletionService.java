@@ -1,5 +1,7 @@
 package org.intermine.webservice.server.lists;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,11 +40,8 @@ public class ListDeletionService extends ListUploadService {
 
         String name = request.getParameter("name");
 
-        if (StringUtils.isEmpty(name)) {
-            throw new BadRequestException("Name is blank." + USAGE);
-        }
-
-        output.setHeaderAttributes(getHeaderAttributes());
+        setListName(name);
+        setHeaderAttributes(Arrays.asList(name));
 
         if (!profile.getSavedBags().containsKey(name)) {
             throw new BadRequestException(name + " is not a list you have access to");

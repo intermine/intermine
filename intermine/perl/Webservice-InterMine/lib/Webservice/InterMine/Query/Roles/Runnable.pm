@@ -57,7 +57,7 @@ The following options are available:
 
 =item * as => $format
 
-Possible values: (tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count)
+Possible values: (string|tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count)
 
 The format to request results in. The default is C<arrayrefs>
 
@@ -109,6 +109,7 @@ sub results_iterator {
     $self->validate;
 
     my $row_format  = delete($args{as})   || "arrayrefs";
+    $row_format = 'tsv' if ($row_format eq 'string');
     my $json_format = delete($args{json}) || "perl";
     my $roles       = delete $args{with};
 

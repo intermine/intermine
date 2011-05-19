@@ -1,0 +1,8 @@
+
+<div class="footerbar" id="export">
+    <ul class="menu">
+        <li><a id="tsv-link" href="[% tsv_uri %]" title="export data in tab separated value format">TSV</a></li>
+        <li><a id="json-link" href="[% json_uri %]" title="export data in json format">JSON</a></li>
+        <li><a id="xml-link" href="[% xml_uri %]" title="export data in XML format">XML</a></li>
+    </ul>
+</div>

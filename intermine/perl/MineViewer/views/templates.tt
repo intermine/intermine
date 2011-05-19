@@ -1,0 +1,295 @@
+
+[% INCLUDE banner.tt %]
+
+<div id="content">
+<form id="template-form">
+    <p><label for="templateName">Template Name: </label>
+    <input spellcheck="false" size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" /></p>
+    <div id="templateParameters"></div>
+    <br/>
+    <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()" />
+</form>
+
+<div id="templateplaceholder"><p>The template results will go here</p></div>
+<div id="datatableplaceholder"></div>
+
+</div>
+
+<div class="content-end footerbar"></div>
+
+[% INCLUDE list_creation_popup.tt %]
+
+<script type="text/javascript">
+
+function complainAboutName(problem) {
+    jQuery('#templateplaceholder').empty();
+    paramDiv = $('#templateParameters');
+    var error = document.createElement("p");
+    error.className = "ui-state-error ui-corner-all";
+    error.id = "template-error";
+    var icon = document.createElement("span");
+    icon.className = "ui-icon ui-icon-alert";
+    icon.style["float"] = "left";
+    icon.style["margin-right"] = ".3em";
+    error.appendChild(icon);
+    var strong = document.createElement("strong");
+    strong.innerHTML = "Um, excuse me:";
+    error.appendChild(strong);
+    error.appendChild(
+            document.createTextNode(" " + problem));
+    paramDiv.prepend(error);
+    setTimeout("jQuery('#template-error').fadeOut('slow', function() {jQuery('#template-error').remove()})", 2500);
+    return;
+}
+
+function loadUserTemplate() {
+    jQuery('#templateplaceholder').empty()
+                                  .append('<img class="throbber" src="[% proxy.uri_for('/images/loading-bar.gif') %]"></img>');
+
+    var formValues = $('#template-form').serializeArray();
+    if (! formValues[0].value) {
+        complainAboutName("Please enter a template name first");
+        return;
+    } else if (! (formValues[0].value in window.availableTemplates)) {
+        complainAboutName("Check the name - " + 
+          formValues[0].value + " is not one of the available templates");
+        return;
+    }
+
+    var data = {size: 10};
+    var opts = [% INCLUDE template_options.tt %];
+
+    jQuery.extend(opts, {
+        baseUrl: "[% settings.mine_base_url %]",
+        errorHandler: complainAboutName,
+        openOnLoad: true,
+        throbberSrc: "[% proxy.uri_for('/images/genericThrobber.gif') %]",
+    });
+
+    for (x in formValues) {
+        name = formValues[x].name;
+        value = formValues[x].value;
+        data[name] = value;
+    }
+
+    [% IF settings.table_style == "datatables" %]
+        data.format = "jsonpdatatable";
+        delete(data.size);
+        var callback = function(resultSet) {
+            var views = [];
+            for (view in resultSet.views) {
+                var parts = resultSet.views[view].split('.');
+                var lastTwo = parts.slice(parts.length - 2, parts.length);
+                views.push({sTitle: lastTwo.join(" ")});
+            }
+            jQuery('#datatableplaceholder').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="dtable"></table>' );
+
+            jQuery('#dtable').dataTable({
+                aaData: resultSet.results,
+                aoColumns: views,
+                bJQueryUI: true
+            });
+            var ul = document.createElement('ul');
+            ul.className = "menu";
+            jQuery('#datatableplaceholder').append(ul);
+            jQuery(ul).append('<li>Toggle:</li>');
+            for (view in views) {
+                jQuery(ul).append('<li id="coltoggler' + view + '"><a onclick="toggleColumn(' + view + ');">' + views[view].sTitle + '</a></li>');
+            }
+        };
+        IMBedding.loadTemplate(data, callback, opts);
+    [% ELSE %]
+        IMBedding.loadTemplate(data, '#templateplaceholder', opts);
+    [% END %]
+         
+};
+
+[% IF settings.table_style == "datatables" %]
+function toggleColumn( index ) {
+    /* Get the DataTables object again - this is not a recreation, just a get of the object */
+    var table = $('#dtable').dataTable();
+    
+    var isVisible = table.fnSettings().aoColumns[index].bVisible;
+    table.fnSetColumnVis( index, isVisible ? false : true );
+    if (isVisible) {
+        jQuery('#coltoggler' + index).addClass("current-tab");
+    } else {
+        jQuery('#coltoggler' + index).removeClass("current-tab");
+    }
+}
+[% END %]
+
+var operators = {
+    "=": "equals",
+    "!=": "does not equal", 
+    ">": "is greater than/sorts after",
+    "<": "is less than/sorts before",
+    ">=": "is greater than or equal to",
+    "<=": "is less than or equal to",
+    "LIKE": "matches", 
+    "LOOKUP": "any field matches",
+    "ISA": "is a",
+    "IS NOT NULL": "has a value",
+    "IS NULL": "doesn't have a value"
+};
+
+function getOpInput(counter, cons, includeISA) {
+    var opInput = document.createElement("select");
+    opInput.name = "op" + counter;
+    for (op in operators) {
+        if (op == "ISA" && ! includeISA) {
+            continue;
+        }
+        var option = document.createElement("option");
+        option.value = op;
+        option.innerHTML = operators[op];
+        if (cons && op == cons.op) {
+            option.selected = "selected";
+        }
+        opInput.appendChild(option);
+    }
+    return opInput;
+}
+
+var displayTemplate = function(selectedTemplate) {
+    tempSpec = $('#templateParameters');
+    tempSpec.empty();
+    var template = window.availableTemplates[selectedTemplate];
+    var title = document.createElement("h3");
+    title.innerHTML = template.title.replace('-->', '&rarr;');
+    tempSpec.append(title);
+    var table = document.createElement("table");
+    for (var i = 0; i < template.constraints.length; i++) {
+        var row = document.createElement("tr");
+        table.appendChild(row);
+        cons = template.constraints[i];
+        counter = i + 1;
+
+        var cell1 = document.createElement("td");
+        var nameInput = document.createElement("input");
+        nameInput.type = "hidden";
+        nameInput.name = "constraint" + counter;
+        nameInput.value = cons.path;
+        cell1.appendChild(nameInput);
+        var label = document.createElement("label");
+        label.className = "text-input";
+        label["for"] = "op" + counter;
+        label.innerHTML = cons.path + ": ";
+        cell1.appendChild(label);
+        row.appendChild(cell1);
+
+        var cell2 = document.createElement("td");
+        var opInput = getOpInput(counter, cons, false);
+        cell2.appendChild(opInput);
+        row.appendChild(cell2);
+
+        var cell3 = document.createElement("td");
+        var valueInput = document.createElement("input");
+        valueInput.type = "text";
+        valueInput.className = "text-input";
+        valueInput.name = "value" + counter;
+        valueInput.value = cons.value;
+        cell3.appendChild(valueInput);
+        $(opInput).change(function() {
+            if ($(this).val().match(/NULL/)) {
+                valueInput.disabled = true;
+            } else {
+                valueInput.disabled = false;
+            }
+        });
+        var codeInput = document.createElement("input");
+        codeInput.type = "hidden";
+        codeInput.name = "code" + counter;
+        codeInput.value = cons.code;
+        cell3.appendChild(codeInput);
+        row.appendChild(cell3);
+
+    }
+    tempSpec.append(table);
+};
+
+var getSelectHandler = function(templates) {
+    return function(event, ui) {
+        if (ui.item) {
+            displayTemplate(ui.item.value);
+        }
+    };
+};
+
+var loadTemplateInfo = function(url) {
+    $.jsonp({
+        url: url,
+        callbackParameter: "callback",
+        data: {},
+        success: function( data ) {
+            var templates = data.templates;
+            window.availableTemplates = templates;
+            var names = [];
+            for (name in templates) {
+                names.push({
+                    value: name,
+                    label: templates[name].title
+                });
+            }
+            $('#templateName').autocomplete({
+                source: names,
+                minLength: 0,
+                delay: 0,
+                focus: function(event, ui) {
+                    $('#templateName').val(ui.item.value);
+                    window.location.hash = ui.item.value;
+                    return false;
+                },
+                select: getSelectHandler(availableTemplates)
+            }).focus(function() {
+                $(this).autocomplete("search", "");
+            }).data( "autocomplete" )._renderItem = function(ul, item) {
+                return $("<li></li>").data( "item.autocomplete", item )
+                                     .append("<a><strong>" + item.value + "</strong><br/><em>" + item.label + "</em></a>")
+                                     .appendTo(ul);
+            };
+            var currenttemplate = window.location.hash.substr(1);
+            if (currenttemplate && templates[currenttemplate]) {
+                $('#templateName').val(currenttemplate);
+                displayTemplate(currenttemplate);
+            }
+        }
+    });
+};
+
+var loadModel = function(url) {
+    $.jsonp({
+        url: url,
+        callbackParameter: "callback",
+        data: {},
+        success: function( data ) {
+            model = data.model;
+            $("#root-class").children('option').remove();
+            var names = [];
+            for (name in model.classes) {
+                names.push(name);
+            };
+            names = names.sort();
+            for (var i = 0; i < names.length; i++) {
+                var name = names[i];
+                var option = document.createElement("option");
+                option.value = name;
+                var displayName = name;
+                if (displayName.match(/s$/)) {
+                    displayName += "e";
+                }
+                displayName += "s";
+                option.innerHTML = displayName;
+                $("#root-class").append(option);
+            }
+        }
+    });
+};
+
+var baseUrl = "[% settings.mine_base_url %]";
+
+$(function() {
+    loadTemplateInfo(baseUrl + "/service/templates/jsonp");
+//    loadModel(baseUrl + "/service/model/jsonp");
+});
+</script>
