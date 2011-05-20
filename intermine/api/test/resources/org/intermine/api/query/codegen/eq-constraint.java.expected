@@ -1,0 +1,59 @@
+package testprojecttitle;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.intermine.metadata.Model;
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.services.ModelService;
+import org.intermine.webservice.client.services.QueryService;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.Constraints;
+
+/**
+ * This is an automatically generated Java program to run the TEST_PROJECT_TITLE query.
+ *
+ * @author TEST_PROJECT_TITLE
+ *
+ */
+public class QueryClient
+{
+    private static final String ROOT = "TEST_SERVICE_ROOT/service";
+
+    /**
+     * Perform the query and print the rows of results.
+     * @param args command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) {
+        ServiceFactory factory = new ServiceFactory(ROOT);
+        Model model = factory.getModelService().getModel();
+        QueryService service = factory.getQueryService();
+        PathQuery query = new PathQuery(model);
+
+        // Add views
+        query.addViews("Gene.primaryIdentifier",
+                "Gene.secondaryIdentifier",
+                "Gene.symbol",
+                "Gene.name",
+                "Gene.organism.shortName");
+
+        // Add orderby
+        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+
+        // Add constraints and you can edit the constraint values below
+        query.addConstraint(Constraints.eq("Gene.secondaryIdentifier", "zen"));
+
+        List<List<String>> result = service.getAllResults(query);
+        List<String> view = query.getView();
+        System.out.println("Results:");
+        for (List<String> row : result) {
+            for (String cell : row) {
+                System.out.print(cell + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+}
