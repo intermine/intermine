@@ -308,7 +308,7 @@ All GBrowse tracks generated for this experiment:
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(wormlabels, etrack.track)}">
-       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" />
+       <c:set var="wormlabels" value="${wormlabels}%2F${etrack.track}" />
      </c:if>
   </c:otherwise>
   </c:choose>
@@ -321,7 +321,7 @@ All GBrowse tracks generated for this experiment:
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(flylabels, etrack.track)}">
-       <c:set var="flylabels" value="${flylabels}-${etrack.track}" />
+       <c:set var="flylabels" value="${flylabels}%2F${etrack.track}" />
      </c:if>
   </c:otherwise>
   </c:choose>
@@ -335,7 +335,7 @@ All GBrowse tracks generated for this experiment:
 
 <c:if test="${flyTracksCounter > 1 }">
 <b><html:link
-     href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View all the tracks for this experiment">
+     href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?l=${flylabels}" target="_blank" title="View all the tracks for this experiment">
      All ${flyTracksCounter} tracks
 </html:link></b>
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
@@ -343,7 +343,7 @@ All GBrowse tracks generated for this experiment:
 
 <c:if test="${ flyTracksCounter== 1}">
 <b><html:link
-     href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View the track generated for this experiment">
+     href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?l=${flylabels}" target="_blank" title="View the track generated for this experiment">
      ${flylabels}
 </html:link></b>
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
@@ -354,7 +354,7 @@ All GBrowse tracks generated for this experiment:
 </c:if>
 <c:if test="${wormTracksCounter > 1 }">
 <b><html:link
-     href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
+     href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?l=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
      All ${wormTracksCounter} tracks
 </html:link></b>
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
@@ -362,7 +362,7 @@ All GBrowse tracks generated for this experiment:
 
 <c:if test="${ wormTracksCounter== 1}">
 <b><html:link
-     href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View the track generated for this experiment">
+     href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?l=${wormlabels}" target="_blank" title="View the track generated for this experiment">
      ${wormlabels}
 </html:link></b>
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
@@ -373,75 +373,75 @@ All GBrowse tracks generated for this experiment:
 </td>
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=X;label=${flylabels};start=0;end=500000" target="_blank">X</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=X;l=${flylabels};start=0;end=500000" target="_blank">X</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=I;label=${wormlabels};start=0;end=500000" target="_blank">I</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=I;l=${wormlabels};start=0;end=500000" target="_blank">I</html:link>
 </c:if>
 </td>
 
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=2L;label=${flylabels};start=0;end=500000" target="_blank">2L</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=2L;l=${flylabels};start=0;end=500000" target="_blank">2L</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=II;label=${wormlabels};start=0;end=500000" target="_blank">II</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=II;l=${wormlabels};start=0;end=500000" target="_blank">II</html:link>
 </c:if>
 </td>
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=2R;label=${flylabels};start=0;end=500000" target="_blank">2R</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=2R;l=${flylabels};start=0;end=500000" target="_blank">2R</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=III;label=${wormlabels};start=0;end=500000" target="_blank">III</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=III;l=${wormlabels};start=0;end=500000" target="_blank">III</html:link>
 </c:if>
 </td>
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=3L;label=${flylabels};start=0;end=500000" target="_blank">3L</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=3L;l=${flylabels};start=0;end=500000" target="_blank">3L</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=IV;label=${wormlabels};start=0;end=500000" target="_blank">IV</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=IV;l=${wormlabels};start=0;end=500000" target="_blank">IV</html:link>
 </c:if>
 </td>
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=3R;label=${flylabels};start=0;end=500000" target="_blank">3R</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=3R;l=${flylabels};start=0;end=500000" target="_blank">3R</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=V;label=${wormlabels};start=0;end=500000" target="_blank">V</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=V;l=${wormlabels};start=0;end=500000" target="_blank">V</html:link>
 </c:if>
 </td>
 <td>
 <c:if test="${ flyTracksCounter > 0 }">
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=4;label=${flylabels};start=0;end=500000" target="_blank">4</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=4;l=${flylabels};start=0;end=500000" target="_blank">4</html:link>
 </c:if>
 <c:if test="${wormTracksCounter > 0}">
   <c:if test="${ flyTracksCounter > 0 }">
    <br><br>
   </c:if>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=X;label=${wormlabels};start=0;end=500000" target="_blank">X</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ref=X;l=${wormlabels};start=0;end=500000" target="_blank">X</html:link>
 </c:if>
 </td>
 
 <c:if test="${ flyTracksCounter > 0 }">
 <td>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=U;label=${flylabels};start=0;end=500000" target="_blank">U</html:link>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ref=U;l=${flylabels};start=0;end=500000" target="_blank">U</html:link>
 <c:if test="${wormTracksCounter > 0}">
 <br></br><br>-</br>
 </c:if>
