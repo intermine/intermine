@@ -341,7 +341,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
-    </action>org.intermine.bio.web.OtherMinesLinkController
+    </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
