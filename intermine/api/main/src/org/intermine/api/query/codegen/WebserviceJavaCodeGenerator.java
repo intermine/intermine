@@ -37,11 +37,10 @@ import org.intermine.util.TypeUtil;
 public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
+    protected static final String NULL_QUERY = "Invalid query. Query can not be null.";
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-        + "constraint, which is currently not supported. Remove the list constraint and try "
-        + "again...";
+        + "constraint, which is currently not supported.";
 
     protected static final String INDENT = "    ";
     protected static final String INDENT2 = INDENT + INDENT;
@@ -83,11 +82,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             sb = generateTemplateQueryCode(wsCodeGenInfo, pac, impJava, impIM, sb);
         }
 
-        if (!"".equals(sb.toString())) {
+        if (!TEMPLATE_BAG_CONSTRAINT.equals(sb.toString())) {
             return pac.toString() + impJava.toString() + ENDL
                     + impIM.toString() + ENDL + sb.toString();
         } else {
-            return TEST_STRING;
+            return sb.toString();
         }
     }
 
@@ -233,11 +232,6 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                         sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
                     }
                 }
-                if ("PathConstraintBag".equals(className)) {
-                    sb.append(INDENT + INDENT
-                            + "// Only public lists are supported"
-                            + ENDL);
-                }
                 sb.append(INDENT + INDENT + "query.addConstraint("
                         + pathContraintUtil(pc) + ");"
                         + ENDL);
@@ -331,6 +325,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
 
         TemplateQuery template = (TemplateQuery) info.getQuery();
+        if (template.getBagNames().size() > 0) {
+            return new StringBuffer(TEMPLATE_BAG_CONSTRAINT);
+        }
         String srcClassName = TypeUtil.javaiseClassName(template.getName());
 
         // Add package and import
