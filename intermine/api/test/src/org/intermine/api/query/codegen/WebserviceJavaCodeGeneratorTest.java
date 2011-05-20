@@ -33,17 +33,15 @@ import org.intermine.pathquery.PathQueryBinding;
  */
 public class WebserviceJavaCodeGeneratorTest extends TestCase {
 
-    private final String INDENT = WebserviceJavaCodeGenerator.INDENT;
-    private final String SPACE = WebserviceJavaCodeGenerator.SPACE;
-    private final String ENDL = WebserviceJavaCodeGenerator.ENDL;
-
-    private final String INVALID_QUERY = WebserviceJavaCodeGenerator.INVALID_QUERY;
     private final String TEMPLATE_BAG_CONSTRAINT = WebserviceJavaCodeGenerator.TEMPLATE_BAG_CONSTRAINT;
 
     private final String serviceRootURL = "TEST_SERVICE_ROOT";
     private final String projectTitle = "TEST_PROJECT_TITLE";
+    private final String perlWSVersion = "TEST_WS_VERSION";
 
-    private WebserviceJavaCodeGenerator cg;
+    protected String lang;
+
+    protected WebserviceCodeGenerator cg;
 
     private final Properties testProps = new Properties();
 
@@ -66,7 +64,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     }
 
     private String readExpected(String name) {
-        String filename = name + ".java.expected";
+        String filename = name + "." + this.lang + ".expected";
         InputStream is = getClass().getResourceAsStream(filename);
         StringWriter sw = new StringWriter();
         try {
@@ -94,6 +92,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      */
     @Override
     public void setUp() {
+        lang = "java";
         cg = new WebserviceJavaCodeGenerator();
     }
 
@@ -107,7 +106,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     }
 
     private WebserviceCodeGenInfo getGenInfo(PathQuery pq) {
-        return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, null,
+        return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, perlWSVersion,
                 true, null);
     }
 
