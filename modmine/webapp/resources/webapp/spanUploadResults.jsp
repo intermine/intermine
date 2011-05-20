@@ -27,7 +27,6 @@
 <script type="text/javascript" class="source">
 
     var is_all_queries_finished = false;
-    alert(${spanQueryTotalCount});
     var spanQueryTotalCount = parseInt(${spanQueryTotalCount});
     var finishedQueryCount = 0;
     var current_page_size = 10;
