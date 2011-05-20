@@ -42,13 +42,29 @@ $query->add_view(qw/
 
 # You can edit the constraint values below
 $query->add_constraint(
-    path  => 'Gene.organism.commonName',
-    op    => 'NOT LIKE',
-    value => 'D.*',
-    code  => 'A',
+    path      => 'Gene.proteins.genes',
+    op        => 'IS NOT',
+    loop_path => 'InterMineObject',
+    code      => 'A',
+);
+$query->add_constraint(
+    path        => 'Gene',
+    op          => 'LOOKUP',
+    value       => 'zen',
+    extra_value => '',
+    code        => 'B',
+);
+$query->add_constraint(
+    path   => 'Gene.organism.commonName',
+    op     => 'ONE OF',
+    values => [
+        'fruit fly',
+        'honey bee',
+    ],
+    code  => 'C',
 );
 
-# Edit the code below to specify your own custom logic:
-# $query->set_logic("A");
+# Your custom logic is specified with the code below:
+$query->set_logic("(A or B) and C");
 
 $query->show;

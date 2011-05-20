@@ -26,29 +26,14 @@ use warnings;
 # The following import statement sets TEST_PROJECT_TITLE as your default
 use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
 
-my $query = Webservice::InterMine->new_query;
+# Description: For all genes, list the taxonIds available.  Used by webservice
+# to construct links to other intermines.
 
-# The view specifies the output columns
-$query->add_view(qw/
-    Gene.primaryIdentifier
-    Gene.secondaryIdentifier
-    Gene.symbol
-    Gene.name
-    Gene.organism.shortName
-/);
+my $template = Webservice::InterMine->template('im_available_organisms')
+    or die 'Could not find template';
 
-# edit the line below to change the sort order:
-# $query->add_sort_order('Gene.primaryIdentifier', 'ASC');
-
-# You can edit the constraint values below
-$query->add_constraint(
-    path  => 'Gene.organism.commonName',
-    op    => 'NOT LIKE',
-    value => 'D.*',
-    code  => 'A',
+$template->show_with(
+    # A:  Gene.primaryIdentifier
+    opA    => '=',
+    valueA => 'zen',
 );
-
-# Edit the code below to specify your own custom logic:
-# $query->set_logic("A");
-
-$query->show;
