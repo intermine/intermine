@@ -1,9 +1,9 @@
 package org.intermine.api.query.codegen;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import  java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,15 +25,15 @@ import org.intermine.util.TypeUtil;
 public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 {
 
-    protected static final String INVALID_QUERY           = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY              = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY           = "Invalid query. No fields selected for output.";
+    protected static final String NULL_QUERY              = "Invalid query. Query can not be null.";
 
     protected static final String INDENT                  = "    ";
     protected static final String SPACE                   = " ";
     protected static final String ENDL                    = System.getProperty("line.separator");
 
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-                                                              + "constraint, which is currently not supported...";
+                                                              + "constraint, which is currently not supported.";
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
 
@@ -45,6 +45,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
      *            a WebserviceCodeGenInfo object
      * @return the code as a string
      */
+    @Override
     public String generate(WebserviceCodeGenInfo info) {
 
         PathQuery query = info.getQuery();
@@ -71,8 +72,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if (info.isPublic()) {
             sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")" + ENDL + ENDL);
         } else {
-        	sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
-        			+ ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
+            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
+                    + ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
         }
 
 
@@ -90,37 +91,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             } else {
                 sb.append("# The view specifies the output columns" + ENDL);
                 sb.append("query.add_view(");
-                if (query.getView().size() <= 3) {
-                    listFormatUtil(sb, query.getView());
+                StringBuffer viewLine = new StringBuffer();
+                listFormatUtil(viewLine, query.getView());
+                if (viewLine.toString().length() <= 74) {
+                    sb.append(viewLine.toString());
                 } else {
                     sb.append(ENDL);
-                    Iterator<String> viewIter = query.getView().iterator();
-
-                    String holdOver = null;
-                    while (viewIter.hasNext() || holdOver != null) {
-                        StringBuffer subBuf = new StringBuffer();
-                        if (holdOver != null) {
-                            subBuf.append(holdOver);
-                        }
-
-                        while (subBuf.length() <= 74 && viewIter.hasNext()) {
-                            String current =  "\"" + viewIter.next() + "\"";
-                            if (viewIter.hasNext()) {
-                                current += ", ";
-                            }
-                            if ((subBuf.length() + current.length()) >= 75) {
-                                holdOver = current;
-                                break;
-                            } else {
-                                holdOver = null;
-                                subBuf.append(current);
-                            }
-                        }
-                        sb.append(INDENT);
-                        sb.append(subBuf.toString());
-
-                        sb.append(ENDL);
-                    }
+                    printLine(sb, INDENT, viewLine.toString());
                 }
                 sb.append(")" + ENDL + ENDL);
             }
@@ -131,7 +108,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                     query.getOrderBy().size() == 1
                     && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
                     && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                    sb.append("# Uncomment end edit the line below (the default) to select a custom sort order:" + ENDL);
+                    sb.append("# Uncomment and edit the line below (the default) to select a custom sort order:" + ENDL);
                     sb.append("# ");
                 } else {
                     sb.append("# Your custom sort order is specified with the following code:" + ENDL);
@@ -192,7 +169,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 }
             }
             sb.append("for row in query.results(\"tsv\"):" + ENDL);
-            sb.append(INDENT + "print row,");
+            sb.append(INDENT + "print row," + ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
@@ -244,7 +221,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             sb.append("results = template.results( \"tsv\"," + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
             sb.append("for row in results:" + ENDL);
-            sb.append(INDENT + "print row,");
+            sb.append(INDENT + "print row," + ENDL);
         }
 
         return sb.toString();
@@ -255,7 +232,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         while (it.hasNext()) {
             sb.append("\"" + it.next() + "\"");
             if (it.hasNext()) {
-                sb.append(",");
+                sb.append(", ");
             }
         }
     }
@@ -272,7 +249,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         }
         if (lineToPrint.length() > 80 && lineToPrint.lastIndexOf(' ', 80) != -1) {
             int lastCutPoint = lineToPrint.lastIndexOf(' ', 80);
-            sb.append(lineToPrint.substring(0, lastCutPoint) + ENDL);
+            String frontPart = lineToPrint.substring(0, lastCutPoint);
+            sb.append(frontPart + ENDL);
             String nextLine = lineToPrint.substring(lastCutPoint + 1);
             printLine(sb, prefix, nextLine);
         } else {
@@ -302,13 +280,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             String type = ((PathConstraintSubclass) pc).getType();
             sb.append("\"" + type + "\"");
         } else if ("PathConstraintLoop".equals(className)) {
-        	if (op.equals(ConstraintOp.EQUALS)) {
-        		sb.append("\"IS\"");
-        	} else {
-        		sb.append("\"IS NOT\"");
-        	}
+            if (op.equals(ConstraintOp.EQUALS)) {
+                sb.append("\"IS\"");
+            } else {
+                sb.append("\"IS NOT\"");
+            }
         } else {
-        	sb.append("\"" + op.toString() + "\"");
+            sb.append("\"" + op.toString() + "\"");
         }
 
         if ("PathConstraintAttribute".equals(className)) {
