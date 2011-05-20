@@ -1527,10 +1527,10 @@ var loadModel = function(url) {
         callbackParameter: "callback",
         data: {format: "jsonp"},
         success: function( data ) {
-            model = data;
+            model = data.model;
             $("#root-class").children('option').remove();
             var names = [];
-            for (name in data.classes) {
+            for (name in model.classes) {
                 names.push(name);
             };
             names = names.sort();

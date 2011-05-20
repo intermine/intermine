@@ -908,6 +908,12 @@ function loadDepartmentSummary(departmentName) {
                         <td><code>"show table"</code></td>
                     </tr>
                     <tr>
+                        <td>formatCount</td>
+                        <td>format the count by adding thousands separators for legibility</td>
+                        <td><code>boolean</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
                         <td>nextText</td>
                         <td>the text to display in the "next page" links</td>
                         <td><code>string</code></td>
@@ -984,6 +990,12 @@ function loadDepartmentSummary(departmentName) {
                         <td>the location of a throbber to show when the table is first loaded</td>
                         <td><code>location</code></td>
                         <td><code>"images/throbber.gif"</code></td>
+                    </tr>
+                    <tr>
+                        <td>thousandsSeparator</td>
+                        <td>The string to use as the separator between numbers</td>
+                        <td><code>string</code></td>
+                        <td><code>","</code></td>
                     </tr>
                     <tr>
                         <td>titleHoverCursor</td>
@@ -1206,8 +1218,8 @@ function loadDepartmentSummary(departmentName) {
         mineLinkText: "Guarda in Mine",
         resultsDescriptionText: "il risultato della loro interrogazione",
         queryTitleText: "Organismo --&gt; Tutti genia con un dominio specifico",
-        countText: "[x] righe"
-
+        countText: "[x] righe",
+        thousandsSeparator: "."
     };
     IMBedding.loadTemplate(data, ph + "e", options);
 </script></textarea>

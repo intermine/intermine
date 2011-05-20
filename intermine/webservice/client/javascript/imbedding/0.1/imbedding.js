@@ -1,6 +1,8 @@
 IMBedding = (function() {
     // Add in a console in case there is no global one.
-    console = console || {log: function() {}};
+    if (typeof(console) == undefined) {
+        console = {log: function() {}};
+    }
     var baseUrl = null;
     var tables = {};
     var defaultTableSize = 10;
@@ -28,6 +30,25 @@ IMBedding = (function() {
         return x1 + x2;
     }
 
+    var mungeHeader = function(header) {
+        var parts = header.split(" > ");
+        if (parts.length == 1) {
+            return parts[0];
+        } else {
+            var ret = parts.slice(parts.length - 2, parts.length).join(" ");
+            return ret;
+        }
+    };
+
+    var cellCreater = function(cell, localiser) {
+        var a = document.createElement("a");
+        a.target = "_blank";
+        if (cell.url) {
+            a.href = localiser(cell.url);
+        }
+        a.innerHTML = cell.value;
+        return a;
+    };
 
     var defaultOptions = {
         formatCount: true,
@@ -38,6 +59,7 @@ IMBedding = (function() {
         allRowsText: "Show remaining rows",
         collapseHelpText: "hide table",
         countText: "[x] rows",
+        createCellContent: cellCreater,
         defaultQueryName: "Query Results",
         emptyCellText: "[NONE]",
         errorHandler: function(error, statusCode) {console.log("Error:", error, statusCode); alert("Sorry - this table could not be loaded:\n" + error);},
@@ -47,6 +69,7 @@ IMBedding = (function() {
         mineLinkText: "View in Mine",
         nextText: "Next",
         onTitleClick: "collapse",
+        onTableToggle: function(table) {},
         openOnLoad: false,
         previousText: "Previous",
         queryTitleText: null,
@@ -60,7 +83,8 @@ IMBedding = (function() {
         showExportLinks: true,
         showMineLink: true,
         throbberSrc: "images/throbber.gif",
-        titleHoverCursor: "pointer"
+        titleHoverCursor: "pointer",
+        headerMunger: mungeHeader
     };
 
     var localiseUrl = function(url, options) {
@@ -159,7 +183,8 @@ IMBedding = (function() {
             for (var i = 0; i < data.views.length; i++) {
                 var cell = document.createElement("td");
                 cell.setAttribute("class", "imbedded-cell imbedded-column-header");
-                cell.innerHTML = data.columnHeaders[i];
+                cell.innerHTML = this.options.headerMunger(data.columnHeaders[i]);
+                cell.setAttribute("title", data.columnHeaders[i]);
                 this.colHeaderRow.append(cell);
             }
 
@@ -208,6 +233,11 @@ IMBedding = (function() {
                         outer.countDisplayer.text("(" + count + ")");
                     }
                     outer.count = countData.count;
+                    if (countData.count == 0) {
+                        outer.title.unbind("click");
+                        outer.expandHelp.remove();
+                        outer.title.css({cursor: "default"});
+                    }
                     outer.updateVisibilityOfPagers();
                 }, 
                 callbackParameter: "callback"
@@ -265,6 +295,7 @@ IMBedding = (function() {
                           });
             }
 
+
             var queryDescription = this.options.resultsDescriptionText || data.description;
             this.titlebox.hover(
                 function(event) {
@@ -304,13 +335,23 @@ IMBedding = (function() {
             var outer = this;
             var action = function() {
                 outer.toggleExpandHelpText();
-                outer.csvLink.toggle();
-                outer.tsvLink.toggle();
-                outer.mineLink.toggle();
-                outer.table.fadeToggle('slow', function() {
+                outer.table.fadeToggle('fast', function() {
                     outer.fitContainerToTable();
+                    outer.csvLink.toggle();
+                    if (outer.csvLink.is(':visible')) {
+                        outer.csvLink.css({display: 'inline'});
+                    }
+                    outer.tsvLink.toggle();
+                    if (outer.tsvLink.is(':visible')) {
+                        outer.tsvLink.css({display: 'inline'});
+                    }
+                    outer.mineLink.toggle();
+                    if (outer.mineLink.is(':visible')) {
+                        outer.mineLink.css({display: 'inline'});
+                    }
                     outer.updateVisibilityOfPagers();
                 });
+                outer.options.onTableToggle(outer);
             };
             var url = this.localiseUrl(this.getPageUrl());
             if (! this.isFilledIn) {
@@ -438,6 +479,12 @@ IMBedding = (function() {
             return localiseUrl(url, this.options);
         };
 
+        this.getLocaliser =function(options) {
+            return function(url) {
+                return localiseUrl(url, options);
+            };
+        };
+
         // insert rows of data into the table
         // either appending them, or replacing the 
         // current ones
@@ -467,14 +514,9 @@ IMBedding = (function() {
                     var cell = resultSet.results[i][j];
                     var tableCell = document.createElement("td");
                     tableCell.setAttribute("class", "imbedded-cell " + getColumnClass(j));
-                    if (cell.value) {
-                        var a = document.createElement("a");
-                        a.target = "_blank";
-                        if (cell.url) {
-                            a.href = this.localiseUrl(cell.url);
-                        }
-                        a.innerHTML = cell.value;
-                        tableCell.appendChild(a);
+                    if (cell.value != null) {
+                        var elem = this.options.createCellContent(cell, this.getLocaliser(this.options));
+                        tableCell.appendChild(elem);
                     } else {
                         tableCell.innerHTML = this.options.emptyCellText;
                         jQuery(tableCell).addClass("imbedded-null");
@@ -489,7 +531,7 @@ IMBedding = (function() {
             this.lastRow = resultCount + resultSet.start;
             this.isFilledIn = true;
             if (this.options.afterTableUpdate) {
-                this.options.afterTableUpdate(this.table, resultSet);
+                this.options.afterTableUpdate(this, resultSet);
             }
             IMBedding.afterTableUpdate(this.table, resultSet);
         };
@@ -585,7 +627,13 @@ IMBedding = (function() {
             return source;
         } else if (source instanceof Object) {
             var query = jQuery.extend({}, defaultQuery, source);
-            var xmlString = '<query model="';
+            var xmlString = '<query '
+
+            if ("title" in query) {
+                xmlString += 'title="' + query.title + '" ';
+            }
+
+            xmlString += 'model="';
             if ("model" in query) {
                 xmlString += query.model;
             } else if ("from" in query) {
