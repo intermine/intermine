@@ -583,7 +583,7 @@ function filterAspect(type, wsListId) {
         delete tags['aspects_' + wsListId]
     }
 
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 

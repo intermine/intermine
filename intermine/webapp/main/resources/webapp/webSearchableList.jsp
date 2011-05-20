@@ -61,7 +61,6 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 
 
 <html:xhtml/>
-
 <%-- set default to true --%>
 <c:if test="${empty showNames}">
   <c:set var="showNames" value="true" scope="request"/>
@@ -100,7 +99,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
   </c:otherwise>
 </c:choose>
 
-<div id="${wsListId}_${type}_container" class="wsListContainer">
+<div id="${wsListId}_${type}_container" class="wsListContainer" style="display:none;">
 
     <div id='${wsListId}_${type}_ws_list' class="wsList">
 
@@ -242,14 +241,6 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
     setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
 </script>
-
-<c:if test="${empty delayDisplay || !delayDisplay}">
-  <script type="text/javascript">
-<!--//<![CDATA[
-    showWSList('${wsListId}', '${type}');
-//]]>-->
-  </script>
-</c:if>
 
 </div>
 <!-- /webSearchableList.jsp -->
