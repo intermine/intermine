@@ -7,7 +7,7 @@ div.imbedded-table-tooltip {
     color:              white;
     background:         #666;
     opacity:            0.90;
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     font-weight: bold;
 }
 
@@ -33,12 +33,12 @@ div.imbedded-table-tooltip {
 }
 
 .imbedded-table-title {
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     color: #444;
 }
 
 .imbedded-column-header-row {
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     font-weight: bold;
     background: #666;
     color: white;
@@ -51,7 +51,7 @@ div.imbedded-table-tooltip {
 
 .imbedded-cell {
     font-size: 14px;
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     padding: 4px;
 }
 
@@ -77,7 +77,7 @@ div.imbedded-table-tooltip {
 }
 
 .imbedded-exportlink, .imbedded-pagelink {
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     text-decoration: none;
     color: black ! important;
     font-size: 12px;

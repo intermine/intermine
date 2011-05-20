@@ -69,6 +69,7 @@ IMBedding = (function() {
         mineLinkText: "View in Mine",
         nextText: "Next",
         onTitleClick: "collapse",
+        onTableToggle: function(table) {},
         openOnLoad: false,
         previousText: "Previous",
         queryTitleText: null,
@@ -234,6 +235,8 @@ IMBedding = (function() {
                     outer.count = countData.count;
                     if (countData.count == 0) {
                         outer.title.unbind("click");
+                        outer.expandHelp.remove();
+                        outer.title.css({cursor: "default"});
                     }
                     outer.updateVisibilityOfPagers();
                 }, 
@@ -348,6 +351,7 @@ IMBedding = (function() {
                     }
                     outer.updateVisibilityOfPagers();
                 });
+                outer.options.onTableToggle(outer);
             };
             var url = this.localiseUrl(this.getPageUrl());
             if (! this.isFilledIn) {
@@ -527,7 +531,7 @@ IMBedding = (function() {
             this.lastRow = resultCount + resultSet.start;
             this.isFilledIn = true;
             if (this.options.afterTableUpdate) {
-                this.options.afterTableUpdate(this.table, resultSet);
+                this.options.afterTableUpdate(this, resultSet);
             }
             IMBedding.afterTableUpdate(this.table, resultSet);
         };
@@ -623,7 +627,13 @@ IMBedding = (function() {
             return source;
         } else if (source instanceof Object) {
             var query = jQuery.extend({}, defaultQuery, source);
-            var xmlString = '<query model="';
+            var xmlString = '<query '
+
+            if ("title" in query) {
+                xmlString += 'title="' + query.title + '" ';
+            }
+
+            xmlString += 'model="';
             if ("model" in query) {
                 xmlString += query.model;
             } else if ("from" in query) {
