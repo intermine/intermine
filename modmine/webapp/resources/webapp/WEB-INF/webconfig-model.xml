@@ -619,13 +619,13 @@
                          replacesFields="databaseRecords"
                          placement="modENCODE"
                          types="Submission"/>
-<!--
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDataDownloadDisplayer"
-                         jspName="model/submissionDataDownloadDisplayer.jsp"
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionFileDownloadDisplayer"
+                         jspName="model/submissionFileDownloadDisplayer.jsp"
                          replacesFields=""
                          placement="sidebar"
                          types="Submission"/>
--->
+
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
                          jspName="model/submissionProtocolsDisplayer.jsp"
                          replacesFields="protocols,appliedProtocols"
