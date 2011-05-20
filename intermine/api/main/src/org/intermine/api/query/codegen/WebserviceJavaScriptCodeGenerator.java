@@ -33,8 +33,8 @@ import org.intermine.util.TypeUtil;
 public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerator
 {
 
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY    = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
+    protected static final String NULL_QUERY    = "Invalid query. Query can not be null.";
 
     protected static final String INDENT        = "    ";
     protected static final String INDENT2       = INDENT + INDENT;
@@ -42,7 +42,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
     protected static final String ENDL          = System.getProperty("line.separator");
 
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-                                                + "constraint, which is currently not supported...";
+                                                + "constraint, which is currently not supported.";
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
     protected static final String SCRIPT_IMPORTS          =
@@ -55,7 +55,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
     protected static final String PRELUDE =
         "<!-- This is an automatically generated code snippet to run your query" + ENDL
         + " using the intermine JavaScript client library. It is assumed that you" + ENDL
-        + " will be wanting to run this query from a webpage, and so the code is " + ENDL
+        + " will be wanting to run this query from a webpage, and so the code is" + ENDL
         + " formatted such that you can just cut and paste it into any webpage -->" + ENDL + ENDL;
 
     protected static final String PLACEHOLDER =
@@ -82,6 +82,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         // query is null
         if (query == null) {
             return NULL_QUERY;
+        }
+        if (query.getView().isEmpty()) {
+            return INVALID_QUERY;
         }
 
         String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
