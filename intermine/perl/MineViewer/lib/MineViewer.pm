@@ -417,16 +417,18 @@ get '/:type/:id' => sub {
 
 sub do_item_report {
     my $query = shift;
+    debug("Getting " . params->{type} . " item");
     my ($item) = $query->results( as => 'hashrefs' )
       or return template item_error => { query => $query, params };
+    debug("Getting " . params->{type} . " obj");
     my ($obj) = $query->results(RESULT_OPTIONS)
       or return template item_error => { query => $query, params };
 
     my $cd = $service->model->get_classdescriptor_by_name( $obj->{class} );
     my @all_lists = get_lists();
     my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
-    my %contained_in =
-      map { $_->name, $_ } $service->lists_with_object( $obj->{objectId} );
+    my %contained_in = eval {
+      map { $_->name, $_ } $service->lists_with_object( $obj->{objectId} )} || ();
 
     my $type       = ucfirst( params->{'type'} );
     my $keys       = get_class_keys_for($type);

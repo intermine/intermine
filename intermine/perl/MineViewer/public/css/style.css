@@ -5,7 +5,7 @@ margin: 0;
 margin-bottom: 25px;
 padding: 0;
 background-color: #ddd;
-background-image: url("../images/perldancer-bg.jpg"); 
+/* background-image: url("../images/im-large.jpg"); */
 background-repeat: no-repeat;
 background-position: top left;
 
@@ -128,6 +128,10 @@ ul.menu a {
 
 td.key, td.value {
     font-family: "Droid Sans", Helvetica, "trebuchet MS", sans-serif;
+}
+
+td.key {
+    vertical-align: top;
 }
 
 td.value {
