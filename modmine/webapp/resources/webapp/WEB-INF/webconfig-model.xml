@@ -208,9 +208,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.BindingSite">
@@ -222,9 +219,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.BioEntity">
@@ -250,9 +244,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Chromosome">
@@ -261,9 +252,6 @@
       <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
 
@@ -306,9 +294,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/dataSourceLong.jsp"/>
-    </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
@@ -323,10 +308,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
-    <longdisplayers>
-      <!-- <displayer src="attributeLinkDisplayer.tile"/> -->
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
     <bagdisplayers>
       <displayer src="heatMap.tile" showOnLeft="true"/>
     </bagdisplayers>
@@ -346,9 +327,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.shortName" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
    <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
       <displayer src="heatMap.tile" showOnLeft="true"/>
@@ -408,11 +386,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
-    <bagdisplayers>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.OntologyRelation">
@@ -509,9 +482,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Sequence">
@@ -557,7 +527,6 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
-      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -576,9 +545,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TranscriptRegion">
@@ -590,9 +556,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="modmineGBrowse.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TransposableElementInsertionSite">
@@ -606,9 +569,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <!-- inherits longdisplayers -->
-    <bagdisplayers>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.UniProtFeature">
