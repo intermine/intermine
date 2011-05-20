@@ -68,10 +68,14 @@ class_keys:
         - "symbol"
         - "primaryIdentifier"
         - "secondaryIdentifier"
+    Organism:
+        - "name"
 
 additional_summary_fields:
     Gene: 
         - "chromosome.primaryIdentifier"
         - "chromosomeLocation.start"
         - "chromosomeLocation.end"
+        - "organism.name"
+    Chromosome:
         - "organism.name"
