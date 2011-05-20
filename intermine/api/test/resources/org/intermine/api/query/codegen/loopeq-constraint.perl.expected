@@ -42,10 +42,10 @@ $query->add_view(qw/
 
 # You can edit the constraint values below
 $query->add_constraint(
-    path  => 'Gene.organism.commonName',
-    op    => 'NOT LIKE',
-    value => 'D.*',
-    code  => 'A',
+    path      => 'Gene.proteins.genes',
+    op        => 'IS',
+    loop_path => 'InterMineObject',
+    code      => 'A',
 );
 
 # Edit the code below to specify your own custom logic:

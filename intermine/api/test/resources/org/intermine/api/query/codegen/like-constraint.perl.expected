@@ -43,7 +43,7 @@ $query->add_view(qw/
 # You can edit the constraint values below
 $query->add_constraint(
     path  => 'Gene.organism.commonName',
-    op    => 'NOT LIKE',
+    op    => 'LIKE',
     value => 'D.*',
     code  => 'A',
 );
