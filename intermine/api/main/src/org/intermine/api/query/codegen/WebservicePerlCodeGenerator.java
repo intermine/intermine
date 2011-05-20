@@ -38,14 +38,14 @@ import org.intermine.util.TypeUtil;
 public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
+    protected static final String NULL_QUERY = "Invalid query. Query can not be null.";
     protected static final String PATH_BAG_CONSTRAINT = "This query contains a list constraint, "
         + "which is currently not supported...";
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-        + "constraint, which is currently not supported...";
-    protected static final String LOOP_CONSTRAINT = "Loop path constraint is not supported "
-        + "at the moment...";
+        + "constraint, which is currently not supported.";
+    protected static final String LOOP_CONSTRAINT = "Loop path constraints are not supported "
+        + "in templates";
 
     protected static final String INDENT = "    ";
     protected static final String SPACE = " ";
@@ -68,7 +68,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         + "# For help using these modules, please see these resources:" + ENDL
         + "#" + ENDL
         + "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
-        + "#       - API reference " + ENDL
+        + "#       - API reference" + ENDL
         + "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
         + "#       - A How-To manual" + ENDL
         + "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
@@ -208,17 +208,16 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
                 sb.append("# Join status" + ENDL);
                 for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                    sb.append("$query->add_join(" + ENDL
-                            + INDENT + "path  => '" + entry.getKey() + "'," + ENDL
-                            + INDENT + "style => '" + entry.getValue() + "'," + ENDL
-                            + ");" + ENDL);
+                    if (entry.getValue() == OuterJoinStatus.OUTER) {
+                        sb.append("$query->add_outer_join('" + entry.getKey() + "');" + ENDL);
+                    }
                 }
 
                 sb.append(ENDL);
             }
 
             // Add print results
-            sb.append("$query->show;" + ENDL + ENDL);
+            sb.append("$query->show;" + ENDL);
 
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -238,12 +237,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                             + templateName + "')" + ENDL)
                 .append(INDENT + "or die 'Could not find template';" + ENDL)
                 .append(ENDL)
-                .append("$template->show_with(" + ENDL)
-                .append(INDENT + "as     => 'tsv'," + ENDL);
+                .append("$template->show_with(" + ENDL);
 
             for (PathConstraint pc : editableConstraints) {
-                sb.append(ENDL);
-
                 // Add comments for constraints
                 String path = pc.getPath();
 
@@ -265,7 +261,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 sb.append(templateConstraintUtil(pc, opCode));
             }
 
-            sb.append(");" + ENDL + ENDL);
+            sb.append(");" + ENDL);
         }
 
         return sb.toString();
