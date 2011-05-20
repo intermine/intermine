@@ -230,7 +230,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             String value = ((PathConstraintLookup) pc).getValue();
             ret.put("value" + constraintNo, value);
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-            ret.put("extra" + constraintNo, extraValue);
+            if (extraValue != null) {
+                ret.put("extra" + constraintNo, extraValue);
+            }
         }
 
         if ("PathConstraintBag".equals(className)) {
