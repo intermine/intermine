@@ -43,13 +43,18 @@ import org.modmine.web.MetadataCache;
  */
 public class SubmissionExternalLinksDisplayer extends CustomDisplayer
 {
-	public SubmissionExternalLinksDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
-		super(config, im);
-	}
+    /**
+     *
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
+    public SubmissionExternalLinksDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+        super(config, im);
+    }
 
-	@Override
-	public void display(HttpServletRequest request, ReportObject reportObject) {
-		// Removed logics from TrackDisplayerController
+    @Override
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        // Removed logics from TrackDisplayerController
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
@@ -85,11 +90,11 @@ public class SubmissionExternalLinksDisplayer extends CustomDisplayer
         ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
 
         if (results == null || !results.hasNext()) {
-        	request.setAttribute("dbRecords", null);
+            request.setAttribute("dbRecords", null);
         } else {
 
-			Map<String, List<String>> dbRecordMap =
-				new LinkedHashMap<String, List<String>>();
+            Map<String, List<String>> dbRecordMap =
+                new LinkedHashMap<String, List<String>>();
 
             while (results.hasNext()) {
                 List<ResultElement> row = results.next();
@@ -103,20 +108,20 @@ public class SubmissionExternalLinksDisplayer extends CustomDisplayer
                 if ("To be confirmed".equals(acc)) {
                     a = acc;
                 } else {
-                	a = "<a href=\"" + url + "\">" + acc + "</a>";
+                    a = "<a href=\"" + url + "\">" + acc + "</a>";
                 }
 
                 if (dbRecordMap.containsKey(db)) {
-                	dbRecordMap.get(db).add(a);
+                    dbRecordMap.get(db).add(a);
                 } else {
-                	List<String> ll = new ArrayList<String>();
-                	ll.add(a);
+                    List<String> ll = new ArrayList<String>();
+                    ll.add(a);
 
-                	dbRecordMap.put(db, ll);
+                    dbRecordMap.put(db, ll);
                 }
             }
 
             request.setAttribute("dbRecords", dbRecordMap);
         }
-	}
+    }
 }
