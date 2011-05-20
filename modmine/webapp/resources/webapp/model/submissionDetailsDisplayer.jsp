@@ -35,13 +35,12 @@
     <td>Public Release Date:</td>
     <td><strong>${publicReleaseDate}<strong></td>
   </tr>
+
+
   <c:if test="${not empty embargoDate}">
       <tr>
         <td>Embargo Date:</td>
-        <td><strong>${embargoDate}<strong></td>
-      </tr>
-      <tr>
-        <th COLSPAN=2 BGCOLOR="#FF3333" style="margin:5 0 5 0;">Embargo date is in the future...</th>
+        <td><span style="border: 2px solid red;"><strong>${embargoDate}<strong></span></td>
       </tr>
   </c:if>
   <c:if test="${not empty qualityControl}">
@@ -56,6 +55,32 @@
         <td><strong>${replicate}<strong></td>
       </tr>
   </c:if>
+  <c:if test="${not empty multiplyMappedReadCount}">
+      <tr>
+        <td>MultiplyMappedReadCount:</td>
+        <td><strong>${multiplyMappedReadCount}<strong></td>
+      </tr>
+  </c:if>
+  <c:if test="${not empty uniquelyMappedReadCount}">
+      <tr>
+        <td>UniquelyMappedReadCount:</td>
+        <td><strong>${uniquelyMappedReadCount}<strong></td>
+      </tr>
+  </c:if>
+  <c:if test="${not empty totalReadCount}">
+      <tr>
+        <td>TotalReadCount:</td>
+        <td><strong>${totalReadCount}<strong></td>
+      </tr>
+  </c:if>
+    <c:if test="${not empty rnaSize}">
+      <tr>
+        <td>RNA size:</td>
+        <td><strong>${rnaSize}<strong></td>
+      </tr>
+  </c:if>
+
+
   <tr>
     <td>Lab:</td>
     <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${labId}">${labName}</html:link> - ${labAffiliation}</td>

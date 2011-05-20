@@ -34,29 +34,34 @@ import org.intermine.web.logic.results.ReportObject;
  */
 public class SubmissionDetailsDisplayer extends CustomDisplayer
 {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = Logger.getLogger(SubmissionDetailsDisplayer.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(SubmissionDetailsDisplayer.class);
 
-	public SubmissionDetailsDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
-		super(config, im);
-	}
+    /**
+     *
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
+    public SubmissionDetailsDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+        super(config, im);
+    }
 
-	@Override
-	public void display(HttpServletRequest request, ReportObject reportObject) {
-		// Removed logics from SubmissionDisplayerController
+    @Override
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        // Removed logics from SubmissionDisplayerController
 
         Submission s = (Submission) reportObject.getObject();
 
-        if (s.getRelatedSubmissions().size() > 0 ) {
-        	Set<Submission> subs = s.getRelatedSubmissions();
+        if (s.getRelatedSubmissions().size() > 0) {
+            Set<Submission> subs = s.getRelatedSubmissions();
 
-        	Set<String> dCCidSet = new LinkedHashSet<String>();
+            Set<String> dCCidSet = new LinkedHashSet<String>();
 
-        	for (Submission sub : subs) {
-        		dCCidSet.add(sub.getdCCid());
-        	}
+            for (Submission sub : subs) {
+                dCCidSet.add(sub.getdCCid());
+            }
 
-        	request.setAttribute("relatedSubmissions", dCCidSet);
+            request.setAttribute("relatedSubmissions", dCCidSet);
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -64,7 +69,7 @@ public class SubmissionDetailsDisplayer extends CustomDisplayer
 
         Date today = Calendar.getInstance().getTime();
         if (s.getEmbargoDate().after(today)) { // in the future
-        	request.setAttribute("embargoDate", formatter.format(s.getEmbargoDate()));
+            request.setAttribute("embargoDate", formatter.format(s.getEmbargoDate()));
         }
 
         request.setAttribute("expType", s.getExperimentType());
@@ -84,7 +89,11 @@ public class SubmissionDetailsDisplayer extends CustomDisplayer
         request.setAttribute("organismShortName", s.getOrganism().getShortName());
         request.setAttribute("experimentName", s.getExperiment().getName());
         request.setAttribute("subDescription", s.getDescription());
+        request.setAttribute("rnaSize", s.getrNAsize());
+        request.setAttribute("multiplyMappedReadCount", s.getMultiplyMappedReadCount());
+        request.setAttribute("uniquelyMappedReadCount", s.getUniquelyMappedReadCount());
+        request.setAttribute("totalReadCount", s.getTotalMappedReadCount());
 
         // TODO submission notice
-	}
+    }
 }

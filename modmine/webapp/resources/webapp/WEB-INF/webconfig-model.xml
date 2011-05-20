@@ -23,16 +23,17 @@
   </class>
 
   <class className="org.intermine.model.bio.Protocol">
+    <headerconfig>
+        <titles>
+            <title mainTitles="name" numberOfMainTitlesToShow="1" subTitles="" />
+        </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"
                    showInSummary="false" showInResults="false" showInInlineCollection="false" doNotTruncate="true"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/wikiLink.jsp"/>
-    </longdisplayers>
-
   </class>
 
   <class className="org.intermine.model.bio.Experiment">
@@ -55,14 +56,15 @@
   </class>
 
   <class className="org.intermine.model.bio.SubmissionProperty">
+    <headerconfig>
+        <titles>
+            <title mainTitles="name" numberOfMainTitlesToShow="1" subTitles="" />
+        </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/wikiLink.jsp"/>
-    </longdisplayers>
-
   </class>
 
   <class className="org.intermine.model.bio.Antibody">
@@ -587,7 +589,7 @@
 
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                          jspName="model/submissionDetailsDisplayer.jsp"
-                         replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment"
+                         replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize"
                          placement="top"
                          types="Submission"/>
 
@@ -634,16 +636,22 @@
                          types="Project"/>
 
       <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
-                     jspName="model/cytoscapeNetworkDisplayer.jsp"
-                     replacesFields="interactions"
-                     placement="Interactions"
-                     types="Gene,Protein"/>
+                       jspName="model/cytoscapeNetworkDisplayer.jsp"
+                       replacesFields="interactions"
+                       placement="Interactions"
+                       types="Gene,Protein"/>
 
-    <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
-                     jspName="model/modmineGBrowse.jsp"
-                     replacesFields="organism"
-                     placement="Genomics"
-                     types="SequenceFeature"/>
+      <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
+                       jspName="model/modmineGBrowse.jsp"
+                       replacesFields="organism"
+                       placement="Genomics"
+                       types="SequenceFeature"/>
+
+      <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
+                       jspName="model/wikiLink.jsp"
+                       replacesFields="wikiLink,name"
+                       placement="summary"
+                       types="SubmissionProperty,Protocol"/>
 
   </reportdisplayers>
 
