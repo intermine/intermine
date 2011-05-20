@@ -6,7 +6,7 @@
 
 <!-- submissionPropertiesDisplayer.jsp -->
 
-<div class="custom-displayer" id="submission-properties">
+<div class="custom-displayer" id="submission-properties-div">
 <%--
   <h3>Properties</h3>
   <p class="desc theme-5-background">
@@ -43,9 +43,9 @@
           <a href="#" style="float:right;" class="collapser"><span>Hide</span></a>
         </p>
         <p class="in_table">
-            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
+            <a styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
                 Show all in a table »
-            </html:link>
+            </a>
         </p>
       <br/>
       </div>
@@ -53,9 +53,9 @@
     </c:forEach>
     <p class="in_table outer">
       Show all
-      <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
+      <a styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=properties&amp;trail=${param.trail}">
         properties
-      </html:link>
+      </a>
       in a table »
     </p>
   </c:if>
@@ -167,12 +167,12 @@
   </script>
 --%>
 
-<table id="submissionProperties" style="">
+<table>
   <tr>
     <td style="width:15%;">Organism:</td>
     <td>
       <c:forEach var="organism" items="${organismMap}" varStatus="status">
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${organism.key}"><strong>${organism.value}</strong></html:link>
+        <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${organism.key}" style="text-decoration: none;"><strong>${organism.value}</strong></a>
       </c:forEach>
     </td>
   </tr>
@@ -182,7 +182,7 @@
       <c:choose>
         <c:when test="${not empty cellLineMap}">
           <c:forEach var="celline" items="${cellLineMap}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${celline.key}"><strong>${celline.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${celline.key}" style="text-decoration: none;"><strong>${celline.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </c:when>
@@ -198,11 +198,11 @@
       <c:choose>
         <c:when test="${not empty antibodyInfoList}">
           <c:forEach var="antibody" items="${antibodyInfoList}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}"><strong>${antibody.name}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}" style="text-decoration: none;"><strong>${antibody.name}</strong></a>
             /
             <c:choose>
                 <c:when test="${not empty antibody.target}">
-                  <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}"><strong>${antibody.targetName}</strong></html:link>
+                  <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}" style="text-decoration: none;"><strong>${antibody.targetName}</strong></a>
                 </c:when>
                 <c:otherwise>
                   <i>target not available</i>
@@ -223,7 +223,7 @@
       <c:choose>
         <c:when test="${not empty developmentalStageMap}">
           <c:forEach var="developmentalstage" items="${developmentalStageMap}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${developmentalstage.key}"><strong>${developmentalstage.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${developmentalstage.key}" style="text-decoration: none;"><strong>${developmentalstage.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </c:when>
@@ -239,7 +239,7 @@
       <c:choose>
         <c:when test="${not empty strainMap}">
           <c:forEach var="strain" items="${strainMap}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}"><strong>${strain.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}" style="text-decoration: none;"><strong>${strain.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </c:when>
@@ -255,7 +255,7 @@
       <c:choose>
         <c:when test="${not empty tissueMap}">
           <c:forEach var="tissue" items="${tissueMap}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${tissue.key}"><strong>${tissue.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${tissue.key}" style="text-decoration: none;"><strong>${tissue.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </c:when>
@@ -271,7 +271,7 @@
       <c:choose>
         <c:when test="${not empty arrayMap}">
           <c:forEach var="array" items="${arrayMap}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${array.key}"><strong>${array.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${array.key}" style="text-decoration: none;"><strong>${array.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </c:when>
@@ -287,7 +287,7 @@
         <td valign="top">${submissionproperties.key}:</td>
         <td id="${submissionproperties.key}Content_${fn:length(submissionproperties.value)}">
           <c:forEach var="submissionproperty" items="${submissionproperties.value}" varStatus="status">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${submissionproperty.key}"><strong>${submissionproperty.value}</strong></html:link>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${submissionproperty.key}" style="text-decoration: none;"><strong>${submissionproperty.value}</strong></a>
             <c:if test="${!status.last}">,  </c:if>
           </c:forEach>
         </td>
