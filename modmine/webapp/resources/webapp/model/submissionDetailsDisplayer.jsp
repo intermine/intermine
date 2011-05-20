@@ -76,10 +76,18 @@
       <tr>
         <td>Related Submissions:</td>
         <td id="relatedSubmissions">
-          <c:forEach items="${relatedSubmissions}" var="relSubDCCid" varStatus="rstatus">
-                <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=${relSubDCCid}&class=Submission">${relSubDCCid}</html:link>
-                <c:if test="${!rstatus.last}">,  </c:if>
-          </c:forEach>
+        <c:choose>
+            <c:when test="${not empty relatedSubmissions}">
+              <c:forEach items="${relatedSubmissions}" var="relSubDCCid" varStatus="rstatus">
+                    <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=${relSubDCCid}&class=Submission">${relSubDCCid}</html:link>
+                    <c:if test="${!rstatus.last}">,  </c:if>
+              </c:forEach>
+            </c:when>
+            <c:otherwise>
+                <i>no related submissions</i>
+            </c:otherwise>
+        </c:choose>
+
         </td>
       </tr>
   </c:if>

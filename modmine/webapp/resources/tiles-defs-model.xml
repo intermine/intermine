@@ -32,9 +32,6 @@
 <definition name="heatMap.tile" path="/model/heatMap.jsp"
         controllerUrl="/initHeatMap.do"/>
 
-<definition name="modmineGBrowse.tile" path="/model/modmineGBrowse.jsp"
-        controllerUrl="/initExperiment.do"/>
-
 <definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>
 

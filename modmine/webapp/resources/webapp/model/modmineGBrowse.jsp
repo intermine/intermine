@@ -6,9 +6,6 @@
 
 <!-- modmineGBrowse.jsp -->
 
-<tiles:importAttribute />
-
-
 <%--TODO check all this cases, with list of possible types from toronto --%>
 <%--
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
@@ -44,26 +41,26 @@
 <%-- in case there are >1 submissions associated TODO: check if the + is ok (or - like in labels?)--%>
 <c:forEach items="${object.submissions}" var="sub" varStatus="status">
 
-   <c:forEach items="${subTracks}" var="st" varStatus="st_status">   
-      <c:if test="${st.key == sub.dCCid}">      
+   <c:forEach items="${subTracks}" var="st" varStatus="st_status">
+      <c:if test="${st.key == sub.dCCid}">
         <c:forEach items="${st.value}" var="track" varStatus="track_status">
 
-<c:choose>
-<c:when test="${track_status.first}">
-<%-- this should in theory link to the right subtrack, but doesn't work
-     so at the moment displaying all subtracks  
-     <c:set var="label" value=";label=${track.track}/${track.subTrack}" /> 
---%>
-     <c:set var="label" value=";label=${track.track}" /> 
-</c:when>
-<c:otherwise>
-     <c:set var="label" value="${label};label=${track.track}" /> 
-</c:otherwise>
-</c:choose>
+            <c:choose>
+                <c:when test="${track_status.first}">
+                <%-- this should in theory link to the right subtrack, but doesn't work
+                     so at the moment displaying all subtracks
+                     <c:set var="label" value=";label=${track.track}/${track.subTrack}" />
+                --%>
+                     <c:set var="label" value=";label=${track.track}" />
+                </c:when>
+                <c:otherwise>
+                     <c:set var="label" value="${label};label=${track.track}" />
+                </c:otherwise>
+            </c:choose>
 
-        </c:forEach>             
+        </c:forEach>
       </c:if>
-      
+
    </c:forEach>
 
 </c:forEach>
@@ -71,19 +68,17 @@
 
 <%-- display starts  --%>
 
+<h3>modENCODE Genome Browser</h3>
+
 <c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
 
-    <div>
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750">
-      modENCODE genome browser view (GBrowse):
-
-<c:if test="${cld.unqualifiedName != 'Chromosome'}">
-  <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/${link};width=400;b=1" title="GBrowse"/>
-</c:if>
-
-</html:link>
+    <div align="center">
+        <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750">
+            <c:if test="${cld.unqualifiedName != 'Chromosome'}">
+                <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/${link};width=500;b=1" title="GBrowse"/>
+            </c:if>
+        </html:link>
     </div>
-<br>
 
 </c:if>
 

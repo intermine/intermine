@@ -10,16 +10,13 @@ package org.modmine.web.displayer;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.bio.Antibody;
 import org.intermine.model.bio.Array;
 import org.intermine.model.bio.CellLine;
 import org.intermine.model.bio.DevelopmentalStage;
@@ -38,39 +35,44 @@ import org.intermine.web.logic.results.ReportObject;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionPropertiesDisplayer extends CustomDisplayer {
+public class SubmissionPropertiesDisplayer extends CustomDisplayer
+{
 
-	protected static final Logger LOG = Logger.getLogger(SubmissionPropertiesDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(SubmissionPropertiesDisplayer.class);
 
-//	private static final Set<String> PROPERTY_CLASSNAME_SET = new HashSet<String>(
-//			new LinkedHashSet<String>(Arrays.asList("Antibody", "CellLine", "DevelopmentalStage",
-//					"Strain", "Tissue", "Array", "GrowthTemperature", "SubmissionProperty")));
+//private static final Set<String> PROPERTY_CLASSNAME_SET = new HashSet<String>(
+//new LinkedHashSet<String>(Arrays.asList("Antibody", "CellLine", "DevelopmentalStage",
+//"Strain", "Tissue", "Array", "GrowthTemperature", "SubmissionProperty")));
 
-	/** @var maximum amount of rows to show per table */
+    /** @var maximum amount of rows to show per table */
 //    private Integer maxCount = 30;
 
-	public SubmissionPropertiesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
-		super(config, im);
-	}
+    /**
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
+    public SubmissionPropertiesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+        super(config, im);
+    }
 
-	@Override
-	public void display(HttpServletRequest request, ReportObject reportObject) {
+    @Override
+    public void display(HttpServletRequest request, ReportObject reportObject) {
 
-		Submission sub = (Submission) reportObject.getObject();
+        Submission sub = (Submission) reportObject.getObject();
 
-		//== Organism ==
-		Map<Integer, String> organismMap = new HashMap<Integer, String>();
-		organismMap.put(sub.getOrganism().getId(), sub.getOrganism().getShortName());
-		request.setAttribute("organismMap", organismMap);
+        //== Organism ==
+        Map<Integer, String> organismMap = new HashMap<Integer, String>();
+        organismMap.put(sub.getOrganism().getId(), sub.getOrganism().getShortName());
+        request.setAttribute("organismMap", organismMap);
 
-		//== Antibody ==
+        //== Antibody ==
         request.setAttribute("antibodyInfoList", sub.getAntibodies());
 
         //== CellLine ==
         Map<Integer, String> cellLineMap = new HashMap<Integer, String>();
 
         for (CellLine c : sub.getCellLines()) {
-        	cellLineMap.put(c.getId(), c.getName());
+            cellLineMap.put(c.getId(), c.getName());
         }
 
         request.setAttribute("cellLineMap", cellLineMap);
@@ -79,7 +81,7 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         Map<Integer, String> developmentalStageMap = new HashMap<Integer, String>();
 
         for (DevelopmentalStage d : sub.getDevelopmentalStages()) {
-        	developmentalStageMap.put(d.getId(), d.getName());
+            developmentalStageMap.put(d.getId(), d.getName());
         }
 
         request.setAttribute("developmentalStageMap", developmentalStageMap);
@@ -88,7 +90,7 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         Map<Integer, String> strainMap = new HashMap<Integer, String>();
 
         for (Strain s : sub.getStrains()) {
-        	strainMap.put(s.getId(), s.getName());
+            strainMap.put(s.getId(), s.getName());
         }
 
         request.setAttribute("strainMap", strainMap);
@@ -97,7 +99,7 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         Map<Integer, String> tissueMap = new HashMap<Integer, String>();
 
         for (Tissue t : sub.getTissues()) {
-        	tissueMap.put(t.getId(), t.getName());
+            tissueMap.put(t.getId(), t.getName());
         }
 
         request.setAttribute("tissueMap", tissueMap);
@@ -106,31 +108,31 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         Map<Integer, String> arrayMap = new HashMap<Integer, String>();
 
         for (Array a : sub.getArrays()) {
-        	arrayMap.put(a.getId(), a.getName());
+            arrayMap.put(a.getId(), a.getName());
         }
 
         request.setAttribute("arrayMap", arrayMap);
 
         //== SubmissionProperty ==
-		Map<String, Map<Integer, String>> submissionPropertyMap =
-			new HashMap<String, Map<Integer, String>>();
+        Map<String, Map<Integer, String>> submissionPropertyMap =
+            new HashMap<String, Map<Integer, String>>();
 
         for (SubmissionProperty sp : sub.getProperties()) {
-        	if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
-        		if (!submissionPropertyMap.containsKey(sp.getType())) {
-        			Map<Integer, String> propertyMap = new HashMap<Integer, String>();
-        			propertyMap.put(sp.getId(), sp.getName());
-        			submissionPropertyMap.put(sp.getType(), propertyMap);
-        		} else {
-        			submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
-        		}
-        	}
+            if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
+                if (!submissionPropertyMap.containsKey(sp.getType())) {
+                    Map<Integer, String> propertyMap = new HashMap<Integer, String>();
+                    propertyMap.put(sp.getId(), sp.getName());
+                    submissionPropertyMap.put(sp.getType(), propertyMap);
+                } else {
+                    submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
+                }
+            }
         }
 
         request.setAttribute("submissionPropertyMap", submissionPropertyMap);
 
-		/*
-		// group properties by class, to display classes and counts
+        /*
+        // group properties by class, to display classes and counts
         Map<String, Integer> propertyCounts = new TreeMap<String, Integer>();
         Map<String, InlineResultsTable> propertyTables = new TreeMap<String, InlineResultsTable>();
 
@@ -139,10 +141,10 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         // for properties
         try {
 //            @SuppressWarnings("unchecked")
-			Collection<InterMineObject> properties =
+            Collection<InterMineObject> properties =
                 (Collection<InterMineObject>) sub.getFieldValue("properties");
             for (InterMineObject p : properties) {
-            	String className = DynamicUtil.getSimpleClass(p).getSimpleName();
+                String className = DynamicUtil.getSimpleClass(p).getSimpleName();
 
                 if (!geneModelIds.contains(p.getId())) {
                     incrementCount(propertyCounts, className);
@@ -157,7 +159,7 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         /**
         // for developmental stage use
         for (String key : propertyCounts.keySet()) {
-        	propertyClassNameSet.add(key.toLowerCase());
+            propertyClassNameSet.add(key.toLowerCase());
         }
         **/
 
@@ -165,7 +167,7 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         // experimentalFactors = submissionProperties
         try {
             @SuppressWarnings("unchecked")
-			Collection<InterMineObject> experimentalFactors =
+            Collection<InterMineObject> experimentalFactors =
                 (Collection<InterMineObject>) sub.getFieldValue("experimentalFactors");
             for (InterMineObject ef : experimentalFactors) {
                 if (!geneModelIds.contains(ef.getId())) {
@@ -178,21 +180,21 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
         }
         **/
 
-		/*
-		// resolve Collection from FieldDescriptor
+        /*
+        // resolve Collection from FieldDescriptor
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
 
-        	// Case : properties
-        	if ("properties".equals(fd.getName()) && fd.isCollection()) {
-        		Collection<?> collection = null;
-        		try {
-					collection = (Collection<?>)
-					reportObject.getObject().getFieldValue("properties");
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+            // Case : properties
+            if ("properties".equals(fd.getName()) && fd.isCollection()) {
+                Collection<?> collection = null;
+                try {
+                    collection = (Collection<?>)
+                    reportObject.getObject().getFieldValue("properties");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
 
-				// make collection into a list
+                // make collection into a list
                 List<?> collectionList;
                 if (collection instanceof List<?>) {
                     collectionList = (List<?>) collection;
@@ -248,30 +250,30 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
                             lc.add(c);
 
                             // create an InlineResultsTable
-							InlineResultsTable t = new InlineResultsTable(cl, fd
-									.getClassDescriptor().getModel(),
-									SessionMethods.getWebConfig(request),
-									im.getClassKeys(), cl.size(), false, lc);
+                            InlineResultsTable t = new InlineResultsTable(cl, fd
+                                    .getClassDescriptor().getModel(),
+                                    SessionMethods.getWebConfig(request),
+                                    im.getClassKeys(), cl.size(), false, lc);
 
                             // name the table based on the first element contained
                             propertyTables.put(className, t);
                         }
                     }
-        	}
-        	*/
+            }
+            */
 
-        	/**
-        	// Case : experimentalFactors
-        	if ("experimentalFactors".equals(fd.getName()) && fd.isCollection()) {
-        		Collection<?> collection = null;
-        		try {
-					collection = (Collection<?>)
-					reportObject.getObject().getFieldValue("experimentalFactors");
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+            /**
+            // Case : experimentalFactors
+            if ("experimentalFactors".equals(fd.getName()) && fd.isCollection()) {
+                Collection<?> collection = null;
+                try {
+                    collection = (Collection<?>)
+                    reportObject.getObject().getFieldValue("experimentalFactors");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
 
-				// make collection into a list
+                // make collection into a list
                 List<?> collectionList;
                 if (collection instanceof List<?>) {
                     collectionList = (List<?>) collection;
@@ -324,45 +326,45 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
                     lc.add(c);
 
                     // create an InlineResultsTable
-					InlineResultsTable t = new InlineResultsTable(cl, fd
-							.getClassDescriptor().getModel(),
-							SessionMethods.getWebConfig(request),
-							im.getClassKeys(), cl.size(), false, lc);
+                    InlineResultsTable t = new InlineResultsTable(cl, fd
+                            .getClassDescriptor().getModel(),
+                            SessionMethods.getWebConfig(request),
+                            im.getClassKeys(), cl.size(), false, lc);
 
-					// The tricky part, to remove the duplicated items between
-					// properties and experimentalStage
-					List<Object> toRemove = new ArrayList<Object>();
-					for (Object r : t.getResultElementRows()) {
-							for(Object o : ((InlineResultsTableRow)r).getItems()){
-							if (propertyClassNameSet.contains(StringUtil.join(
-									Arrays.asList(((ResultElement) o)
-											.getField().toString().split(" ")),
-									"").toLowerCase())) {
-									toRemove.add(r);
-									break;
-								}
-							}
-					}
+                    // The tricky part, to remove the duplicated items between
+                    // properties and experimentalStage
+                    List<Object> toRemove = new ArrayList<Object>();
+                    for (Object r : t.getResultElementRows()) {
+                            for(Object o : ((InlineResultsTableRow)r).getItems()){
+                            if (propertyClassNameSet.contains(StringUtil.join(
+                                    Arrays.asList(((ResultElement) o)
+                                            .getField().toString().split(" ")),
+                                    "").toLowerCase())) {
+                                    toRemove.add(r);
+                                    break;
+                                }
+                            }
+                    }
 
-					for (Object r : toRemove) {
-						t.getResultElementRows().remove(r);
-				    }
+                    for (Object r : toRemove) {
+                        t.getResultElementRows().remove(r);
+                    }
 
-					propertyCounts.put(className, propertyCounts.get(className) - toRemove.size());
+                    propertyCounts.put(className, propertyCounts.get(className) - toRemove.size());
 
                     // name the table based on the first element contained
                     propertyTables.put(className, t);
                 }
-        	}
-        	**/
-		/*
+            }
+            **/
+        /*
         }
 
         Map<String, Integer> additionalPropertyFields = new HashMap<String, Integer>();
         for (String className : PROPERTY_CLASSNAME_SET) {
-        	if (!propertyCounts.keySet().contains(className)) {
-        		additionalPropertyFields.put(className, 0);
-        	}
+            if (!propertyCounts.keySet().contains(className)) {
+                additionalPropertyFields.put(className, 0);
+            }
         }
         propertyCounts.putAll(additionalPropertyFields);
 
@@ -371,9 +373,9 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer {
 
         request.setAttribute("propertyTables", propertyTables);
         */
-	}
+    }
 
-	/*
+    /*
     private void incrementCount(Map<String, Integer> propertyCounts, String className) {
 
         Integer count = propertyCounts.get(className);
