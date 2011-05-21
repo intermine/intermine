@@ -315,7 +315,30 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.ExonExpressionScore">
+    <fields>
+      <fieldconfig fieldExpr="exon.primaryIdentifier"/>
+      <fieldconfig fieldExpr="submission.title"/>
+      <fieldconfig fieldExpr="cellLine.name"/>
+      <fieldconfig fieldExpr="developmentalStage.name"/>
+      <fieldconfig fieldExpr="score"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GeneExpressionScore">
+    <fields>
+      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+      <fieldconfig fieldExpr="submission.title"/>
+      <fieldconfig fieldExpr="cellLine.name"/>
+      <fieldconfig fieldExpr="developmentalStage.name"/>
+      <fieldconfig fieldExpr="score"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Gene">
+    <inlinelist>
+      <table path="synonyms.value" showInHeader="true" lineLength="100" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -355,7 +378,6 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
-      <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
     </fields>
@@ -596,6 +618,24 @@
                          placement="summary"
                          types="SequenceFeature"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
+                     jspName="model/geneStructureDisplayer.jsp"
+                     replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
+                     placement="Genomics"
+                     types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
+                     jspName="model/overlappingFeaturesDisplayer.jsp"
+                     replacesFields="overlappingFeatures"
+                     placement="Genomics"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+                     jspName="model/geneOntologyDisplayer.jsp"
+                     replacesFields="goAnnotation,ontologyAnnotations"
+                     placement="Gene Ontology"
+                     types="Gene"/>
+
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                          jspName="model/submissionDetailsDisplayer.jsp"
                          replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount"
@@ -632,11 +672,11 @@
                          placement="modENCODE"
                          types="Submission"/>
 
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
+      <!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
                          jspName="model/submissionsFromSameExperimentDisplayer.jsp"
                          replacesFields=""
                          placement="modENCODE"
-                         types="Submission"/>
+                         types="Submission"/>-->
 
       <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
                          jspName="model/projectDetailsDisplayer.jsp"
@@ -661,6 +701,13 @@
                        replacesFields="wikiLink,name"
                        placement="summary"
                        types="SubmissionProperty,Protocol"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Comparative Genomics"
+                     parameters="{'dataSets': ['TreeFam data set', 'Drosophila 12 Genomes Consortium homology']}"
+                     types="Gene"/>
 
   </reportdisplayers>
 
