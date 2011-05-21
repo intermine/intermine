@@ -134,7 +134,7 @@ img.tinyQuestionMark {
 
                  <c:otherwise>
                  --%>
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
+                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
                  <%--
                  </c:otherwise>
                  </c:choose>

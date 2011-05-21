@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -196,7 +197,7 @@ public class FeaturesAction extends InterMineAction
 
                 // to build the query description
                 String experimentType = "";
-                if (sub.getExperimentType() != null) {
+                if (!StringUtils.isBlank(sub.getExperimentType())) {
                     experimentType = StringUtil.indefiniteArticle(sub.getExperimentType())
                         + " " + sub.getExperimentType() + " experiment in";
                 }
@@ -358,6 +359,7 @@ public class FeaturesAction extends InterMineAction
 
         } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
+            //q.clearView();
             q.addView(featureType + ".id");
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
