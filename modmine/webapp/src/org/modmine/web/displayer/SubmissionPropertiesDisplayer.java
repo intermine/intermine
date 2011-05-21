@@ -11,12 +11,15 @@ package org.modmine.web.displayer;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.model.bio.Antibody;
 import org.intermine.model.bio.Array;
 import org.intermine.model.bio.CellLine;
 import org.intermine.model.bio.DevelopmentalStage;
@@ -66,13 +69,21 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer
         request.setAttribute("organismMap", organismMap);
 
         //== Antibody ==
-        request.setAttribute("antibodyInfoList", sub.getAntibodies());
+        Set<Antibody> antibodies = new HashSet<Antibody>();
+        for (Antibody a : sub.getAntibodies()) {
+            if (!"not applicable".equals(a.getName())) {
+                antibodies.add(a);
+            }
+        }
+        request.setAttribute("antibodyInfoList", antibodies);
 
         //== CellLine ==
         Map<Integer, String> cellLineMap = new HashMap<Integer, String>();
 
         for (CellLine c : sub.getCellLines()) {
-            cellLineMap.put(c.getId(), c.getName());
+            if (!"not applicable".equals(c.getName())) {
+                cellLineMap.put(c.getId(), c.getName());
+            }
         }
 
         request.setAttribute("cellLineMap", cellLineMap);
@@ -81,7 +92,9 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer
         Map<Integer, String> developmentalStageMap = new HashMap<Integer, String>();
 
         for (DevelopmentalStage d : sub.getDevelopmentalStages()) {
-            developmentalStageMap.put(d.getId(), d.getName());
+            if (!"not applicable".equals(d.getName())) {
+                developmentalStageMap.put(d.getId(), d.getName());
+            }
         }
 
         request.setAttribute("developmentalStageMap", developmentalStageMap);
@@ -90,7 +103,9 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer
         Map<Integer, String> strainMap = new HashMap<Integer, String>();
 
         for (Strain s : sub.getStrains()) {
-            strainMap.put(s.getId(), s.getName());
+            if (!"not applicable".equals(s.getName())) {
+                strainMap.put(s.getId(), s.getName());
+            }
         }
 
         request.setAttribute("strainMap", strainMap);
@@ -99,7 +114,9 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer
         Map<Integer, String> tissueMap = new HashMap<Integer, String>();
 
         for (Tissue t : sub.getTissues()) {
-            tissueMap.put(t.getId(), t.getName());
+            if (!"not applicable".equals(t.getName())) {
+                tissueMap.put(t.getId(), t.getName());
+            }
         }
 
         request.setAttribute("tissueMap", tissueMap);
@@ -108,7 +125,9 @@ public class SubmissionPropertiesDisplayer extends CustomDisplayer
         Map<Integer, String> arrayMap = new HashMap<Integer, String>();
 
         for (Array a : sub.getArrays()) {
-            arrayMap.put(a.getId(), a.getName());
+            if (!"not applicable".equals(a.getName())) {
+                arrayMap.put(a.getId(), a.getName());
+            }
         }
 
         request.setAttribute("arrayMap", arrayMap);
