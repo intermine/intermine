@@ -133,7 +133,7 @@ div#filter_tool_bar {
 /* =RESULTS TABLES
 -----------------------*/
 table.results tr th {
-    background-color: #192F39;font-size: 12px;color:#FFF;
+    background-color: #E2F5FE;font-size: 12px;color:#FFF;
 }
 table.results tr td.highlightCell, table.results tr.even td.highlightCell {
    border-right:1px solid #FFF;background-color: #63BBDF;}
