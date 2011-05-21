@@ -391,35 +391,35 @@ public final class RegulatoryNetworkDBUtil
 
             // TODO Hack for a database issue
             if ("blmp-1".equals(targetSymbol)) {
-                targetId = 1122002752;
+                targetId = 1348007904;
             }
 
             if ("unc-130".equals(targetSymbol)) {
-                targetId = 1122124362;
+                targetId = 1348015202;
             }
 
             if ("mab-5".equals(targetSymbol)) {
-                targetId = 1122248670;
+                targetId = 1348006300;
             }
 
             if ("mdl-1".equals(targetSymbol)) {
-                targetId = 1122662331;
+                targetId = 1348006399;
             }
 
             if ("elt-3".equals(targetSymbol)) {
-                targetId = 1122661930;
+                targetId = 1348003204;
             }
 
             if ("lin-11".equals(targetSymbol)) {
-                targetId = 1122002014;
+                targetId = 1348006039;
             }
 
             if ("skn-1".equals(targetSymbol)) {
-                targetId = 1122360407;
+                targetId = 1348009973;
             }
 
             if ("egl-27".equals(targetSymbol)) {
-                targetId = 1122131388;
+                targetId = 1348003074;
             }
 
             CytoscapeNetworkEdgeData aEdge = new RegulatoryNetworkEdgeData();
