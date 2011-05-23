@@ -20,9 +20,6 @@
 
 <action path="/chartRenderer" type="org.flymine.web.ChartRenderer" parameter="method" />
 
-<action path="/initAttributeLinkDisplayer"
-  type="org.intermine.bio.web.AttributeLinkDisplayerController" />
-
 <action path="/initTracksDisplayer"
    type="org.modmine.web.TrackDisplayerController" />
 
@@ -128,17 +125,4 @@
 <action path="/initWormRegulatoryNetwork"  type="org.modmine.web.WormRegulatoryNetworkController" />
 <!-- End of Worm Regulatory Network configuration -->
 
-<!-- links to other intermines -->
-<action path="/initOrthologueLinkDisplayer"
-        type="org.intermine.bio.web.OrthologueLinkController"/>
-
-<!--
-<action path="/initLatestSubs"
-  type="org.modmine.web.LatestSubsController" />
-
-<action path="/initLabs"
-  type="org.modmine.web.LabsController" />
-
-<action path="/labs" forward="labs.page"/>
--->
 

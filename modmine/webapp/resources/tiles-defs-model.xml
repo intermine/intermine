@@ -12,9 +12,6 @@
 <definition name="submissionProtocolsDisplayer.tile" path="/model/submissionProtocolsDisplayer.jsp"
           controllerUrl="/initSubmissionProtocolsDisplayer.do"/>
 
-<definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
-          controllerUrl="/initAttributeLinkDisplayer.do"/>
-
 <definition name="tracksDisplayer.tile" path="/model/tracksDisplayer.jsp"
           controllerUrl="/initTracksDisplayer.do"/>
 
@@ -122,21 +119,4 @@
 <definition name="wormRegulatoryNetwork.tile" path="/wormRegulatoryNetwork.jsp"
         controllerUrl="/initWormRegulatoryNetwork.do"/>
 <!-- End of Worm Regulatory Network configuration -->
-
-<!-- links to other intermines -->
-<definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
-        controllerUrl="/initOrthologueLinkDisplayer.do"/>
-
-
-<!--
-<definition name="latestSubs.tile" path="/model/latestSubs.jsp"
-        controllerUrl="/initLatestSubs.do"/>
-
-<definition name="labs.tile" path="/model/labs.jsp"
-        controllerUrl="/initLabs.do"/>
-  <definition name="labs.page" extends="layout.template">
-    <put name="body" value="labs.tile"/>
-    <put name="pageName" value="labs"/>
-  </definition>
--->
 
