@@ -1,51 +1,32 @@
 <div>
-    <select id='list-operation-selector'>
-        <option value="merge" selected>Merge</option>
+    <button id="action">Merge</button>
+    <select id="action-chooser">
+        <option selected value="merge">Merge</option>
         <option value="subtract">Subtract</option>
         <option value="intersect">Intersect</option>
         <option value="diff">Difference</option>
         <option value="delete">Delete</option>
     </select>
+            
     <div id="operation-boxes-container">
-    <div id="operation-boxes">
-        [% simple_ops = [ 'delete', 'merge', 'intersect', 'diff' ] %]
-[% FOREACH op IN simple_ops %]
-<div id="[% op %]-box">
-    [% FOREACH list IN lists %]
-    <input type="checkbox" name="[% list.name %]" id="[% op %]-selector-[% list.name.replace(' ', '_') %]">
-    <label for="[% op %]-selector-[% list.name.replace(' ', '_') %]">
-        [% list.name %] ([% list.size %] [% pluraliser(list.type) %])
-    </label><br/>
-    [% END %]
-    <button onclick="jQuery('#[% op %]-box input').each(function(i, e) {jQuery(e).attr('checked', true)});">Select All</button>
-    <button onclick="jQuery('#[% op %]-box input').each(function(i, e) {jQuery(e).attr('checked', false)});">Clear Selection</button>
-    <button id="list-[% op %]-button">[% op | ucfirst %] Lists</button>
-</div>
-[% END %]
-        <div id="subtract-box">
-            <div id="lhs-subt" style="float:left">
-            [% FOREACH list IN lists %]
-            <input type="checkbox" id="lhs-subt-selector-[% list.name %]">
-            <label for="lhs-subt-selector-[% list.name %]">
-                [% list.name %] ([% list.size %] [% pluraliser(list.type) %])
-            </label><br/>
-            [% END %]
-            <button onclick="jQuery('#lhs-subt input').each(function(i, e) {jQuery(e).attr('checked', true)});">Select All</button>
-            <button onclick="jQuery('#lhs-subt input').each(function(i, e) {jQuery(e).attr('checked', false)});">Clear Selection</button>
-            </div>
-            <div id="rhs-subt" style="float:right">
-            [% FOREACH list IN lists %]
-            <input type="checkbox" id="rhs-subt-selector-[% list.name %]">
-            <label for="rhs-subt-selector-[% list.name %]">
-                [% list.name %] ([% list.size %] [% pluraliser(list.type) %])
-            </label><br/>
-            [% END %]
-            <button onclick="jQuery('#rhs-subt input').each(function(i, e) {jQuery(e).attr('checked', true)});">Select All</button>
-            <button onclick="jQuery('#rhs-subt input').each(function(i, e) {jQuery(e).attr('checked', false)});">Clear Selection</button>
-            </div>
-            <button id="list-subtracter">Subtract Lists on Right from Lists on Left</button>
+        <div id="operation-boxes">
+            <select id="list-operand-selector" multiple="multiple" style="width:50%">
+                [% FOREACH list IN lists %]
+                <option value="[% list.name %]">
+                    [% list.name %] ([% list.size %] [% pluraliser(list.type) %])
+                </option>
+                [% END %]
+            </select>
+            <span id="rhs-operand-box"  style="display:none">
+                <select id="rhs-operand-selector" multiple="multiple">
+                    [% FOREACH list IN lists %]
+                    <option value="[% list.name %]">
+                        [% list.name %] ([% list.size %] [% pluraliser(list.type) %])
+                    </option>
+                    [% END %]
+                </select>
+            </span>
         </div>
-    </div>
     </div>
 </div>
 
@@ -85,60 +66,85 @@ function handleOperationSelection() {
         noun = "Symmetric difference"
     }] %]
 
-function initialiseOpHandlers() {
-    [% FOREACH op IN ops %]
-        jQuery('#list-[% op.kw %]-button').click(function() {
-            var list_names = [];
-            jQuery('#[% op.kw %]-box input').each(function(i, e) {
-                if (jQuery(e).attr('checked')) {
-                    list_names.push(e.name);
-                }
-            });
-            var now = new Date();
-            var dateString = (now + "").split(' ').slice(0, 5).join(' ')
-            jQuery('#created-list-name').val("[% op.adj %] List " + dateString);
-            jQuery('#created-list-desc').val("[% op.noun %] of " + list_names.join(' and '));
-            openListCreationDialog(list_names, '[% op.kw %]');
-        });
-    [% END %]
-    jQuery('#list-delete-button').click(function() {
+var handler_for = {};
+[% FOREACH op IN ops %]
+    handler_for['[% op.kw %]'] = function() {
+        var checked = jQuery('#list-operand-selector').multiselect('getChecked');
         var list_names = [];
-        jQuery('#delete-box input').each(function(i, e) {
-            if (jQuery(e).attr('checked')) {
-                list_names.push(e.name);
-            }
-        });
+        checked.each(function(i, e) {list_names.push(e.value)});
+        if (list_names.length < 1) {
+            $.jGrowl("No lists selected");
+            return;
+        }
+        var now = new Date();
+        var dateString = (now + "").split(' ').slice(0, 5).join(' ')
+        jQuery('#created-list-name').val("[% op.adj %] List " + dateString);
+        jQuery('#created-list-desc').val("[% op.noun %] of " + list_names.join(' and '));
+        openListCreationDialog(list_names, '[% op.kw %]');
+    };
+[% END %]
+handler_for["delete"] = function() {
+    var checked = jQuery('#list-operand-selector').multiselect('getChecked');
+    var list_names = [];
+    checked.each(function(i, e) {list_names.push(e.value)});
 
-        jQuery('#delendum').text(list_names.join(' and '));
-        jQuery('#confirm-del').dialog({
-            autoOpen: true,
-            modal: true,
-            width: 400,
-            buttons: {
-                "Delete": function() {
-                    jQuery(this).dialog('close');
-                    jQuery.post("[% proxy.uri_for('/deletelists') %]", 
-                        { lists: list_names.join(';') }, function(results) {
-                            handler(results);
-                            window.location.hash = null;
-                            jQuery('#lists option').each(function(i, e) {
-                                if (jQuery.inArray(jQuery(e).val(), list_names) >= 0) {
-                                    jQuery(e).remove();
-                                } 
-                            });
-                            jQuery('#lists option').each(function(i, e) {
-                                if (jQuery.inArray(jQuery(e).val(), list_names) < 0) {
-                                    jQuery(e).attr('selected' , true);
-                                    return false;
-                                }
-                            });
-                            handleListSelection();
-                        }, "json");
-                },
-                "Cancel": function() {jQuery(this).dialog('close')}
-            }
-        });
+    jQuery('#delendum').html($.map(list_names, function(e) {return '<b>' + e + '</b>'}).join(' and '));
+    jQuery('#confirm-del').dialog({
+        autoOpen: true,
+        modal: true,
+        width: 400,
+        buttons: {
+            "Delete": function() {
+                jQuery(this).dialog('close');
+                jQuery.post("[% proxy.uri_for('/deletelists') %]", 
+                    { lists: list_names.join(';') }, function(results) {
+                        handler(results);
+                        window.location.hash = null;
+                        jQuery('#lists option').each(function(i, e) {
+                            if (jQuery.inArray(jQuery(e).val(), list_names) >= 0) {
+                                jQuery(e).remove();
+                            } 
+                        });
+                        jQuery('#lists option').each(function(i, e) {
+                            if (jQuery.inArray(jQuery(e).val(), list_names) < 0) {
+                                jQuery(e).attr('selected' , true);
+                                return false;
+                            }
+                        });
+                        handleListSelection();
+                    }, "json");
+            },
+            "Cancel": function() {jQuery(this).dialog('close')}
+        }
     });
+};
+
+handler_for["subtract"] = function() {
+    var checked = jQuery('#list-operand-selector').multiselect('getChecked');
+    var list_names = [];
+    checked.each(function(i, e) {list_names.push(e.value)});
+
+    var rhs_checked = jQuery('#rhs-operand-selector').multiselect('getChecked');
+    var rhs_names = [];
+    rhs_checked.each(function(i, e) {rhs_names.push(e.value)});
+    var now = new Date();
+    var dateString = (now + "").split(' ').slice(0, 5).join(' ')
+    jQuery('#created-list-name').val("Subtracted List " + dateString);
+    jQuery('#created-list-desc').val("Subtraction of " + rhs_names.join(' and ') + " from " + list_names.join(' and '));
+    openListCreationDialog(list_names, 'subtract', rhs_names);
+};
+
+function initialiseOpHandlers() {
+    $("#list-operand-selector").multiselect({
+        noneSelectedText: "Select lists",
+        selectedList: 1,
+        minWidth: 500
+    }).multiselectfilter();
+    $("#rhs-operand-selector").multiselect({
+        noneSelectedText: "Select lists to subtract",
+        selectedList: 1,
+        minWidth: 500
+    }).multiselectfilter();
 }
 
 var handler = function(res) {
@@ -149,12 +155,26 @@ var handler = function(res) {
     };
 
 jQuery(function() {
-    handleOperationSelection();
-    jQuery('#list-operation-selector').change(handleOperationSelection);
+    $('#action').button()
+                .click(handler_for[jQuery('#action-chooser').val()]);
+    $("#action-chooser").multiselect({
+        multiple: false,
+        header: "Select a list operation",
+        selectedText: "Select a list operation"
+        }).bind("multiselectclick", function(event, ui) {
+            jQuery('#action').button("option", "label", ui.text).unbind('click').click(handler_for[ui.value]);
+            if (ui.value == "subtract") {
+                jQuery('#rhs-operand-box').show();
+            } else {
+                jQuery('#rhs-operand-box').hide();
+            }
+        });
+//    handleOperationSelection();
+    //jQuery('#list-operation-selector').change(handleOperationSelection);
     initialiseOpHandlers();
 });
 
-function openListCreationDialog(list_names, operation) {
+function openListCreationDialog(list_names, operation, rhs_names) {
     jQuery('#list-namer').dialog({
         autoOpen: true,
         width: 400,
@@ -164,6 +184,7 @@ function openListCreationDialog(list_names, operation) {
                 jQuery(this).dialog('close');
                 jQuery.post("[% proxy.uri_for('/performlistop') %]", {
                     lists: list_names.join(';'),
+                    rhs: (rhs_names) ? rhs_names.join(';') : "",
                     newname: jQuery('#created-list-name').val(),
                     newdesc: jQuery('#created-list-desc').val(),
                     op: operation
