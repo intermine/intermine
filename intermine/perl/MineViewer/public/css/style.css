@@ -24,6 +24,10 @@ a[icon ^="out"] {
     background: transparent url(../images/extlink.gif) no-repeat center right;
 }
 
+.ColVis {
+    float: left;
+}
+
 a[icon ^="delete"] {
     color: #333;
     margin-left: 10px;
@@ -35,6 +39,9 @@ a[icon ^="delete"] {
     margin-bottom: 15px;
 }
 
+.ui-icon {
+    display: inline-block !important;
+}
 
 #gene-list-box div ul li a {
     text-decoration: none;
@@ -68,9 +75,23 @@ border: 3px solid #aaa;
 border-top: none;
 border-bottom: none;
 padding: 25px;
+padding-top: 5px;
 max-width: 650px;
 margin-left: auto;
 margin-right: auto;
+}
+
+.submenu {
+    padding-bottom: 10px;
+}
+
+.submenu a {
+    color: #333;
+    cursor: pointer;
+}
+
+.submenu a:hover {
+    text-decoration: underline;
 }
 
 #banner, div.footerbar {
@@ -162,7 +183,7 @@ div.content-end {
     border-bottom: 3px solid #aaa;
 }
 
-#heading h1, #heading h3, p {
+#heading h1, #heading h3, p.overview {
     margin: 5px;
     font-family:  'Droid Serif', 'Judson', 'Times New Roman', serif;
     font-weight: 700;

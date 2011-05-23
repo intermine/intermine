@@ -2,9 +2,11 @@
 [% INCLUDE banner.tt %]
 
 <div id="content">
-    <div style="float:right;width:50%;">
+    <div id="list-info-boxes" style="float:right;width:50%;">
+        <div id="list-info-content">
         [% INCLUDE list_addition_box.tt %]
         [% INCLUDE current_lists_box.tt %]
+        </div>
     </div>
     <h2 class="displayname">
         [% obj.class %]: 
