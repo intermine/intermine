@@ -18,6 +18,7 @@ package org.modmine.web.model;
 public class SpanQueryResultRow
 {
 
+    private Integer featureId;
     private String featurePID;
     private String featureClass;
     private String chr;
@@ -25,6 +26,20 @@ public class SpanQueryResultRow
     private Integer end;
     private String subDCCid; // a String as modENCODE_2675
     private String subTitle;
+
+    /**
+     * @return the featureId
+     */
+    public Integer getFeatureId() {
+        return featureId;
+    }
+
+    /**
+     * @param featureId the featureId to set
+     */
+    public void setFeatureId(Integer featureId) {
+        this.featureId = featureId;
+    }
 
     /**
      * @return feature primary id
