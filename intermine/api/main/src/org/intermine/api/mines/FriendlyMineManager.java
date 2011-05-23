@@ -46,7 +46,7 @@ import org.intermine.util.Util;
  */
 public class FriendlyMineManager
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static boolean cached = false;
     private static FriendlyMineManager linkManager = null;
     private static long lastCacheRefresh = 0;
