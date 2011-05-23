@@ -47,3 +47,5 @@
 <action path="/genomicRegionSearchAjax" type="org.intermine.bio.web.struts.GenomicRegionSearchAjaxAction"/>
 
 <!-- End of Genomic Region Search configuration -->
+
+<action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>

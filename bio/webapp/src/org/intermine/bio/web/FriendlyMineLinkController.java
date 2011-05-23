@@ -12,9 +12,9 @@ package org.intermine.bio.web;
 
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,15 +62,17 @@ public class FriendlyMineLinkController  extends TilesAction
         Properties props = PropertiesUtil.stripStart("intermines",
                 PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
         Enumeration<?> propNames = props.propertyNames();
-        Set<String> mines = new HashSet<String>();
+        Map<String, String> mines = new HashMap<String, String>();
         while (propNames.hasMoreElements()) {
             String mineId =  (String) propNames.nextElement();
             mineId = mineId.substring(0, mineId.indexOf("."));
             Properties mineProps = PropertiesUtil.stripStart(mineId,
                     PropertiesUtil.getPropertiesStartingWith(mineId, props));
             String mineName = mineProps.getProperty("name");
-            if (StringUtils.isNotEmpty(mineName) && !mineName.equals(localMineName)) {
-                mines.add(mineName);
+            String mineURL = mineProps.getProperty("url");
+            if (StringUtils.isNotEmpty(mineName) && StringUtils.isNotEmpty(mineURL)
+                    && !mineName.equals(localMineName)) {
+                mines.put(mineName, mineURL);
             }
         }
 
