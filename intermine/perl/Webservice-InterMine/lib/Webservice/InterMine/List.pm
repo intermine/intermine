@@ -37,11 +37,12 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::Showable';
 
 use Moose::Util::TypeConstraints qw(match_on_type);
-use MooseX::Types::Moose         qw/ArrayRef/;
+use MooseX::Types::Moose         qw/ArrayRef Undef/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
+    ListOperable ListOfListOperables SetObject
 /;
 require Set::Object;
 
@@ -83,11 +84,24 @@ as that of the current list.
 
 use overload
   '""'     => \&to_string,
+
+    # unions: +,|
   '+'      => \&overload_adding,
-  '-'      => \&overload_subtraction,
   '+='     => \&overload_appending,
-  '^'      => \&overload_intersecting,
-  '|'      => \&overload_diffing,
+  '|'      => \&overload_adding,
+  '|='     => \&overload_appending,
+
+    # intersections: &
+  '&'      => \&overload_intersecting,
+
+    # Subtractions: -
+  '-'      => \&overload_subtraction,
+  '-='     => \&remove,
+
+    # Symmetric differences: ^
+  '^'      => \&overload_diffing,
+
+    # Iteration: <>
   '<>'     => \&next_element,
   fallback => 1;
 
@@ -100,6 +114,11 @@ has description => (
     is => 'ro',
     isa => 'Maybe[Str]',
 );
+
+sub has_description {
+    my $self = shift;
+    return defined $self->description;
+}
 
 has name => (
     is => 'ro',
@@ -149,6 +168,17 @@ has '_unmatched_identifiers' => (
         get_unmatched_ids => 'elements',
     },
     default => sub { Set::Object->new() },
+);
+
+has 'tags' => (
+    is => 'ro',
+    isa => SetObject,
+    default => sub { Set::Object->new() },
+    handles => {
+        get_tags => 'elements',
+        has_tag => 'contains',
+    },
+    coerce => 1,
 );
 
 has factory => (
@@ -230,6 +260,19 @@ sub difference_with {
     return $self->factory->symmetric_difference($lists, $name, $description);
 }
 
+sub remove {
+    my ($self, $other, $reversed) = @_;
+    if ($reversed) {
+        return $other->remove([$self]);
+    }
+    my $rhs = $self->interpret_other_operand($other);
+    my $new = $self->factory->subtract([$self], $rhs, 
+        undef, $self->description, [$self->get_tags]);
+    $self->delete;
+    $new->rename($self->name);
+    return $new;
+}
+
 sub overload_subtraction {
     my ($self, $other, $reversed) = @_;
     if ($reversed) {
@@ -240,14 +283,14 @@ sub overload_subtraction {
         } else {
             confess "Both arguments to list subtraction must be lists";
         }
-    } elsif (not defined $reversed) {
-        my $subtraction = $self->subtract($other);
-        $self->delete;
-        $subtraction->name($self->name);
-        return $subtraction;
     } else {
-        return $self->subtract($other);
-    }
+        my $subtraction = $self->subtract($other);
+        if (not defined $reversed) {
+            $self->delete;
+            $subtraction->rename($self->name);
+        }
+        return $subtraction;
+    } 
 }
 
 sub subtract {
@@ -270,14 +313,21 @@ sub to_query {
     return $query;
 }
 
+sub get_list_upload_uri {
+    my $self = shift;
+    return $self->to_query->get_list_upload_uri;
+}
+
+sub get_request_parameters {
+    my $self = shift;
+    return $self->to_query->get_request_parameters;
+}
+
 sub build_query {
     my $self = shift;
     my $q = $self->to_query;
-    my @attributes = sort $q->model
-                    ->get_classdescriptor_by_name($self->type)
-                    ->attributes();
     $q->clear_view;
-    $q->add_views(@attributes);
+    $q->add_views('*');
     return $q;
 }
 
@@ -304,6 +354,7 @@ sub append {
     my ($ids, $content_type) = ($content, "text/plain");
     match_on_type $content => (
         List,     sub {$ids = $_->to_query},
+        ListOfListOperables, sub {$ids = $self->factory->union($_)->to_query},
         ArrayRef, sub {$ids = join("\n", @$_)},
         File,     sub {$ids = [identifiers => [$content]]; $content_type = "form-data";},
         sub {}
@@ -331,7 +382,7 @@ sub to_string {
     my $ret  = sprintf( "%s (%s %ss)%s %s",
         $self->name, $self->size, $self->type,
         ( ( $self->has_date ) ? " " . $self->date->datetime : "" ),
-        $self->description,
+        ( ( $self->has_description ) ? " " . $self->description : ""),
     );
     return $ret;
 }

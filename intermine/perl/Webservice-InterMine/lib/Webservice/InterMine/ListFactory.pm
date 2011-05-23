@@ -40,8 +40,9 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::KnowsJSON';
 
 use Webservice::InterMine::List;
-use Webservice::InterMine::Types qw(List);
-use MooseX::Types::Moose qw(HashRef Str);
+use Webservice::InterMine::Types qw(List ListOperable File);
+use Moose::Util::TypeConstraints qw(match_on_type);
+use MooseX::Types::Moose qw(HashRef Str ArrayRef);
 use URI;
 use Scalar::Util qw(blessed);
 use List::MoreUtils qw(uniq);
@@ -115,6 +116,29 @@ sub _process {
     }
 }
 
+sub get_lists_with_object {
+    my $self = shift;
+    my $obj = shift;
+    my $obj_id = eval {$obj->{objectId}} || $obj;
+    my $uri = URI->new($self->service_root . $self->service->LISTS_WITH_OBJ_PATH);
+    $uri->query_form(id => $obj_id);
+    my $str = $self->service->get($uri)->decoded_content;
+    my $parsed = $self->decode($str);
+    unless ($parsed->{wasSuccessful}) {
+        confess $parsed->{error};
+    }
+    $self->refresh_lists;
+    my @lists;
+    for my $list_info (@{$parsed->{lists}}) {
+        push @lists, $self->get_list($list_info->{name});
+    }
+    if (wantarray) {
+        return @lists;
+    } else {
+        return [@lists];
+    }
+}
+
 sub refresh_lists {
     my $self = shift;
     my $latest_data = $self->service->get_list_data;
@@ -142,6 +166,7 @@ sub subtract {
             . join(' and ', @list_names) 
             . ' from ' 
             . join(' and ', @ref_names);
+    my $tags = shift || [];
 
     my $uri = URI->new($self->service_root . SUBTRACTION_PATH);
     $uri->query_form(
@@ -149,6 +174,7 @@ sub subtract {
         description => $description,
         references => join(';', @ref_names),
         subtract => join(';', @list_names),
+        tags => join(';', @$tags),
     );
     my $resp = $self->service->get($uri);
     return $self->parse_upload_response($resp);
@@ -213,52 +239,50 @@ sub delete_lists {
 
 sub new_list {
     my $self = shift;
-    my %args = @_;
+    my %args = (@_ == 1) ? (content => shift) : @_;
     my $content = $args{content} or confess "No content passed to new_list";
     my $name        = $args{name}        || $self->get_unused_list_name;
     my $description = $args{description} || DEFAULT_DESCRIPTION;
     my $type        = $args{type}        || "";
     my $path        = $args{path}        || "";
+    my $tags        = $args{tags}        || [];
 
-    if (blessed $content and $content->does(LISTABLE)) {
-        my $uri = URI->new($content->get_list_upload_uri);
-        $uri->query_form(
-            listName    => $name,
-            description => $description,
-            path => $path, # needed by templates - ignored by queries 
-            $content->get_request_parameters,
-        );
-        my $resp = $self->service->agent->get($uri);
-        return $self->parse_upload_response($resp);
-    }
-
-    if ($type) {
-        $self->service->model->get_classdescriptor_by_name($type);
-    } else {
-        confess "No type information supplied";
-    }
+    confess "Tags may not contain the ';' character" if (grep {/;/} @$tags);
+    my $tag_list = join(';', @$tags);
 
     my $uri = URI->new($self->service_root . UPLOAD_PATH);
     $uri->query_form(
         name => $name,
         description => $description, 
         type => $args{type},
+        tags => $tag_list,
     );
-    if (ref $content eq 'ARRAY') {
-        my $resp = $self->service->agent->post($uri, 
-            'Content-Type' => 'text/plain',
-            Content => join("\n", map {'"' . $_ . '"'} @$content));
-        return $self->parse_upload_response($resp);
-    }
-    if (-f $content) {
-        my $resp = $self->service->agent->post($uri,
-            'Content-Type' => 'form-data',
-            Content => [identifiers => [$content]]);
-        return $self->parse_upload_response($resp);
-    }
-    my $resp = $self->service->agent->post($uri, 
-        'Content-Type' => 'text/plain',
-        Content => $content);
+    # Check the type, if given
+    $self->service->model->get_classdescriptor_by_name($type) if $type;
+
+    my $resp = match_on_type $content => (
+        ListOperable, sub {
+            $uri = URI->new($content->get_list_upload_uri);
+            $uri->query_form(
+                listName    => $name,
+                description => $description,
+                tags => $tag_list,
+                path => $path, # needed by templates - ignored by queries 
+                $content->get_request_parameters,
+            );
+            return $self->service->agent->get($uri);
+        },
+        ArrayRef[Str], sub {
+            return $self->service->post($uri, 'Content-Type' => 'text/plain',
+                Content => join("\n", map {'"' . $_ . '"'} @$content));
+        },
+        File, sub {
+            return $self->service->post($uri, 'Content-Type' => 'form-data',
+                Content => [identifiers => [$content]]);
+        },
+        sub {$self->service->post($uri, 'Content-Type' => 'text/plain', Content => $content)}
+    );
+
     return $self->parse_upload_response($resp);
 }
 

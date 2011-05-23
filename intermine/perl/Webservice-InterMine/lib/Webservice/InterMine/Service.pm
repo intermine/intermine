@@ -40,8 +40,8 @@ use Carp qw(croak confess);
 use Moose::Meta::Role;
 use Perl6::Junction qw(any);
 
-my @JSON_FORMATS = (qw/jsonobjects jsonrows/);
-my @SIMPLE_FORMATS = (qw/ tsv tab csv count /);
+my @JSON_FORMATS = (qw/jsonobjects jsonrows jsondatatable/);
+my @SIMPLE_FORMATS = (qw/ tsv tab csv count xml/);
 
 =head2 new( $url, [$user, $pass] )
 
@@ -74,7 +74,7 @@ use constant {
     QUERY_LIST_PATH            => '/query/tolist/json',
     QUERY_LIST_APPEND_PATH     => '/query/append/tolist/json',
 
-    MODEL_PATH                 => '/model/xml',
+    MODEL_PATH                 => '/model',
 
     TEMPLATES_PATH             => '/templates/xml',
     TEMPLATE_QUERY_PATH        => '/template/results',
@@ -86,6 +86,7 @@ use constant {
     RELEASE_PATH               => '/version/release',
 
     LIST_PATH                  => '/lists/json',
+    LISTS_WITH_OBJ_PATH        => '/listswithobject/json',
 
     SAVEDQUERY_PATH            => '/savedqueries/xml',
 
@@ -456,6 +457,7 @@ has _lists => (
     handles => { 
         list => 'get_list', 
         lists => 'get_lists', 
+        lists_with_object => 'get_lists_with_object',
         list_names => 'get_list_names',
         new_list => 'new_list',
         join_lists => 'union',
@@ -465,6 +467,7 @@ has _lists => (
         delete_lists => 'delete_lists',
         delete_temp_lists => 'clean_up',
         list_count => 'list_count',
+        refresh_lists => 'refresh_lists',
     },
 );
 
@@ -594,7 +597,6 @@ sub fetch {
     my $self = shift;
     my $url  = shift;
     my $uri  = URI->new($url);
-    $uri->query_form( format => 'text' );
     my $resp = $self->agent->get($uri);
     if ( $resp->is_error ) {
         confess $resp->status_line, $resp->content;

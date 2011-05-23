@@ -9,6 +9,7 @@ use MooseX::Types::Moose qw(Str HashRef Bool Num GlobRef Maybe);
 
 use HTTP::Status qw(status_message);
 use Encode;
+use URI::Escape;
 use overload (
     '<>' => 'next',
     fallback => 1,
@@ -156,19 +157,9 @@ The format that will be actually requested from the server.
 has request_format => (
     is => 'ro',
     isa => RequestFormat,
-    lazy_build => 1,
+    required => 1,
     coerce => 1,
 );
-
-sub _build_request_format {
-    my $self = shift;
-    my $row_format = $self->row_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS, @JSON_FORMATS)) {
-        return $row_format;
-    } else {
-        return "jsonrows";
-    }
-}
 
 =item * row_parser: ro, Webservice::InterMine::Parser
 
@@ -179,31 +170,8 @@ The parser to return a formatted row of data.
 has row_parser => (
     is => 'ro',
     isa => RowParser,
-    lazy_build => 1,
+    required => 1,
 );
-
-sub _build_row_parser {
-    my $self        = shift;
-    my $row_format  = $self->row_format;
-    my $view        = $self->view_list;
-    my $json_format = $self->json_format;;
-    if ($row_format eq any(@SIMPLE_FORMATS)) {
-        require Webservice::InterMine::Parser::FlatFile;
-        return Webservice::InterMine::Parser::FlatFile->new();
-    } elsif ($row_format eq "arrayrefs") {
-        require Webservice::InterMine::Parser::JSON::ArrayRefs;
-        return Webservice::InterMine::Parser::JSON::ArrayRefs->new();
-    } elsif ($row_format eq "hashrefs") {
-        require Webservice::InterMine::Parser::JSON::HashRefs;
-        return Webservice::InterMine::Parser::JSON::HashRefs->new(view => $view);
-    } elsif ($row_format eq any(@JSON_FORMATS)) {
-        require Webservice::InterMine::Parser::JSON;
-        return Webservice::InterMine::Parser::JSON->new(
-            json_format => $json_format, model => $self->model);
-    } else {
-        confess "Unknown row format '" . $row_format . "'"
-    }
-}
 
 =item * connection: ro, Net::HTTP
 
@@ -476,7 +444,6 @@ in the correct encoding, with the new line characters stripped.
 =cut
 
 sub read_line {
-    warn "READING LINE" if $ENV{DEBUG};
     my $self = shift;
     my $line;
     if ( $self->has_content ) {
@@ -517,7 +484,7 @@ sub read_line {
     }
 
     if ( defined $line ) {
-        $line =~ s/$CRLF//;
+        $line = trim_and_decode($line);
     }
     warn "RETURNING LINE: $line\n" if $ENV{DEBUG};
 
@@ -547,11 +514,20 @@ sub connect {
     
     my $connection = Net::HTTP->new( Host => $uri->host )
         or confess "Could not connect to host $@";
-    my %headers = ('User-Agent' => $self->user_agent);
+    my %headers = (
+        'User-Agent' => $self->user_agent,
+#        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+    );
     if (my $auth = $self->authorization) {
         $headers{Authorization} = $auth;
     }
-    warn "GETTING $uri" if $ENV{DEBUG};
+
+#    my @pairs;
+#    while (my @pair = each %$query_form) {
+#        push @pairs, join('=', map {uri_escape($_)} @pair);
+#    }
+#    my $content = join('&', @pairs);
+    warn "getting $uri\n" if $ENV{DEBUG};
     $connection->write_request(GET => "$uri", %headers);
     $self->set_connection($connection);
 }

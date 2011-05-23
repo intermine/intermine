@@ -5,9 +5,10 @@ use MooseX::Role::WithOverloading;
 requires 'list_upload_path', 'service_root', 'get_request_parameters', 'service';
 
 use overload 
+   '|' => \&overload_adding,
    '+' => \&overload_adding,
-   '^' => \&overload_intersecting,
-   '|' => \&overload_diffing,
+   '&' => \&overload_intersecting,
+   '^' => \&overload_diffing,
    '-' => \&overload_subtraction,
    fallback => 1;
 
