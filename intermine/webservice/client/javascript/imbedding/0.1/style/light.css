@@ -25,6 +25,10 @@ div.imbedded-table-tooltip {
     padding-bottom: 5px;
 }
 
+.imbedded-scroll-container {
+    overflow: auto;
+}
+
 .imbedded-table-titlebox {
     font-size: 24px;
     padding: 20px;
@@ -47,6 +51,7 @@ div.imbedded-table-tooltip {
 .imbedded-table {
     border-collapse: collapse;
     width: 100%;
+    overflow: scroll;
 }
 
 .imbedded-cell {
