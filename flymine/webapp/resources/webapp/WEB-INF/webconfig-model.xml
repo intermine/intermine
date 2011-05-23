@@ -122,7 +122,6 @@
   <class className="org.intermine.model.bio.Disease">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
 
@@ -153,7 +152,7 @@
     <headerconfig>
       <customlinks>
         <customlink
-          linkUrl="http://www.yeastgenome.org/cgi-bin/locus.fpl?dbid={primaryIdentifier}"
+          linkUrl="http://flybase.org/reports/{primaryIdentifier}.html"
           linkImageName="flybase_logo_link.png"
         />
       </customlinks>
@@ -178,7 +177,7 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
    </bagdisplayers>
   </class>
 

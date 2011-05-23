@@ -172,9 +172,6 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
             Set<String> organisms, boolean isOrthologue) {
         PathQuery q = new PathQuery(im.getModel());
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
-
-
-
         if (isOrthologue) {
             q.addViews("Gene.primaryIdentifier",
                     "Gene.symbol",

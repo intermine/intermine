@@ -1,5 +1,3 @@
-
-
 <definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
   controllerUrl="/initSequenceExportOptions.do" />
 
@@ -20,3 +18,5 @@
   <put name="body" value="/model/genomicRegionSearchResultsBase.jsp" />
   <put name="pageName" value="genomicRegionSearchResults" />
 </definition>
+
+<definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>

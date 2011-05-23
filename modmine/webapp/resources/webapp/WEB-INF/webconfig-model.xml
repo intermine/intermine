@@ -353,7 +353,7 @@
       <fieldconfig fieldExpr="organism.shortName" />
     </fields>
    <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
       <displayer src="heatMap.tile" showOnLeft="true"/>
     </bagdisplayers>
 

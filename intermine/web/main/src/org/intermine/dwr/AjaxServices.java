@@ -676,15 +676,16 @@ public class AjaxServices
         Class<?> clazz
             = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
         Constructor<?> constructor;
+        Collection<JSONObject> results = null;
         try {
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+            // runs remote templates (possibly)
+            results = linkGen.getLinks(linkManager, mineName, organisms, identifiers);
         } catch (Exception e) {
             LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
             return null;
         }
-        Collection<JSONObject> results = linkGen.getLinks(
-                linkManager, mineName, organisms, identifiers);
         if (results == null || results.isEmpty()) {
             return null;
         }
