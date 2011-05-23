@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -57,6 +58,8 @@ public class SpanUploadOptionsController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute("tabName", "spanUpload");
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
