@@ -125,6 +125,12 @@ jQuery(function() {
                 response.bJQueryUI = true;
                 response.sScrollX = "100%";
                 response.sPaginationType = "full_numbers";
+                // Dear future maintainer:
+                //  I didn't mean to put this magical incantation 
+                // in - but was forced to by DataTables. This determines
+                // the layout of the table. Lord knows how...
+                // With apologies,
+                // Alex.
                 response.sDom = '<"H"RCfr>t<"F"ip>';
                 response.oColVis = {activate: "mouseover"};
                 jQuery('#dtable').dataTable(response);
