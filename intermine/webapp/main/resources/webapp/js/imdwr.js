@@ -566,7 +566,7 @@ function filterFavourites(type, wsListId) {
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
         tags['favourites_' + wsListId] = 'im:favourite';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -592,7 +592,7 @@ function filterByUserTag(type, wsListId, tag) {
     selectedUserTag = tag;
 
     // boring stuff to reload new filtered web searchables from server
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -608,7 +608,7 @@ function changeScope(type, wsListId) {
         document.getElementById(id).value = 'all';
         document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -636,7 +636,7 @@ function clearFilter(type, wsListId) {
     if ($(aspectId) != null) {
         $(aspectId).value = '';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     filterTextElement.value = '';
 
     showAll(wsListId, type);
