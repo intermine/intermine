@@ -40,7 +40,7 @@ public class ApiJavaController extends TilesAction
             HttpServletResponse response) throws Exception {
 
         request.setAttribute("path", "WEB-INF/lib/");
-        request.setAttribute("fileName", "intermine-client-1.1.zip");
+        request.setAttribute("fileName", "java-intermine-webservice-client.zip");
         // for jar - application/java-archive or application/x-jar
         request.setAttribute("mimeType", "application/zip");
         // for jar - jar
