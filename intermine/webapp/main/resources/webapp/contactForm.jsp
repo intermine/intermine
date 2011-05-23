@@ -38,12 +38,33 @@
   </html:form>
 </div>
 
-      <script language="JavaScript">
-      <!--
-     jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
-      //-->
-      </script>
+<script language="JavaScript">
+<!--
+jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
+
+// JS submit handler for the form
+jQuery("#contactForm").submit(function(e) {
+  // no synchronous beans for you
+  e.preventDefault();
+
+  // values dict
+  var form = {};
+  form["name"] = jQuery(this).find('input[name="name"]').val();
+  form["monkey"] = jQuery(this).find('input[name="monkey"]').val();
+  form["subject"] = jQuery(this).find('input[name="subject"]').val();
+  form["message"] = jQuery(this).find('textarea[name="message"]').val();
+
+  // send the form through AJAX
+  jQuery.post(jQuery(this).attr('action'), form,
+    function (data) {
+      // show the response message
+      jQuery("#contactForm").parent().prepend(jQuery(data).find("#contactFormResponse").clone());
+      jQuery("#contactFormResponse").show();
+    }
+  );
+});
+//-->
+</script>
 
 
 <!-- /feedbackForm.jsp -->
-
