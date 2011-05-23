@@ -50,4 +50,71 @@
   </c:choose>
 </c:forEach>
 
+<div id="clippy-table">Copy to clipboard </div>
+
+<script type="text/javascript">
+// parse the table to provide a tabified string, optionally specify a column to exclusively include
+function tableToString(column) {
+  var text = "";
+
+  // head
+  jQuery('table.results thead tr th').each(function(i) { // no comment...
+    if (i > 0 && column == null) text += "\t"; // tab
+    if (column == null || column == i) {
+      text += jQuery.trim(jQuery(this).find('table tr td span').text()).replace(/\s+/g, '');
+    }
+  });
+  // replace html arrow chars with makeshift line...
+  text = text.replace(new RegExp(">", "g"), " - ");
+
+  // body
+  jQuery('table.results tbody tr.bodyRow').each(function(i) { // rows
+    text += "\n"; // newline
+    jQuery(this).find('td').each(function(j) { // columns
+      if (j > 0 && column == null) text += "\t"; // tab
+      if (column == null || column == j) {
+        text += jQuery.trim(jQuery(this).text()); // actual text
+      }
+    });
+  });
+
+  return text;
+}
+
+// create the Flash copy to clipboard object
+function createClippy(text, target) {
+  if (jQuery(target).length > 0) {
+    // fetch the id from our id attribute
+    var identifier = jQuery(target).attr("id");
+    // create the element with text
+    jQuery(target).append('<span style="display:none;" id="'+identifier+'-text">'+text+'</span>');
+    // append the object
+    var object = '<object style="vertical-align:bottom;" width="14" height="14" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000">'
+            + '<param value="swf/clippy.swf" name="movie">'
+            + '<param value="always" name="allowScriptAccess">'
+            + '<param value="high" name="quality">'
+            + '<param value="noscale" name="scale">'
+            + '<param value="id='+identifier+'-text" name="FlashVars">'
+            + '<param value="#FFFFFF" name="bgcolor">'
+            + '<param value="opaque" name="wmode">'
+            + '<embed width="14" height="14" wmode="opaque" bgcolor="#FFFFFF" flashvars="id='+identifier+'-text" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowscriptaccess="always" quality="high" name="clippy" src="swf/clippy.swf">'
+            + '</object>';
+    jQuery(target).append(object);
+  }
+}
+
+jQuery(document).ready(function() {
+  // on table load create table-wide clippy
+  createClippy(tableToString(), "div.results-page #tool_bar_item_export #clippy-table");
+  createClippy(tableToString(), "div.bagDetails-page #download #clippy-table");
+  // and one clippy per column
+  jQuery('table.results thead tr th.columnHeader').each(function(i) { // no comment...
+    // add the target
+    jQuery(this).prepend('<div class="summary_link" id="clippy-column-'+i+'"></div>');
+    // create clippy thingie
+    createClippy(tableToString(i), '#clippy-column-'+i);
+  });
+});
+</script>
+
 <!-- /export.jsp -->
