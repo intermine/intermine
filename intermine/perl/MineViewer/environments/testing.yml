@@ -50,6 +50,9 @@ class_keys:
     Address:
         - "address"
 
+never_show: 
+    - 'name'
+
 additional_summary_fields:
     Department:
         - "company.name"

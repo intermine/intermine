@@ -1,17 +1,37 @@
-<div id="gene-go-placeholder">
-    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+[% INCLUDE jbrowse.tt %]
+
+<h3 id="gene-templates-hider" style="cursor:pointer">
+    <span class="ui-icon ui-icon-triangle-1-s" id="gene-templates-hider-icon"></span>
+    Gene Templates
+</h3>
+
+<div id="gene-templates">
+    <div id="gene-go-placeholder">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+    </div>
+    <div id="gene-pathways-placeholder">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+    </div>
+    <div id="gene-interactions-placeholder">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+    </div>
+    <div id="gwas-placeholder">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+    </div>
 </div>
-<div id="gene-pathways-placeholder">
-    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
-</div>
-<div id="gene-interactions-placeholder">
-    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
-</div>
-<div id="gwas-placeholder">
-    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
-</div>
+
 <script type="text/javascript">
 jQuery(function() {
+    jQuery('#gene-templates-hider').click(function() {
+        jQuery('#gene-templates').slideToggle(function() {
+        if (jQuery('#gene-templates').is(':visible')) {
+            jQuery('#gene-templates-hider-icon').removeClass('ui-icon-triangle-1-e')
+                                    .addClass('ui-icon-triangle-1-s');
+        } else {
+            jQuery('#gene-templates-hider-icon').removeClass('ui-icon-triangle-1-s')
+                                    .addClass('ui-icon-triangle-1-e');
+                                    }});
+    });
     var opts = [% INCLUDE template_options.tt %];
     IMBedding.loadTemplate(
         {
@@ -64,7 +84,9 @@ jQuery(function() {
             op1:           "LOOKUP",
             value1:        "[% id %]",
             extra1:        "H. sapiens",
-            code1:         "A"
+            code1:         "A",
+
+            size: 5
         },
         '#gwas-placeholder', opts
     );

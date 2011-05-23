@@ -1,0 +1,55 @@
+
+[% base_url = settings.mine_base_url.remove('\w+$')  _ "/jbrowse" %]
+[% padding = 10 %]
+[% offset = obj.length.split('\.').0 %]
+[% loc_start = obj.chromosomeLocation.start - offset %]
+[% loc_end = obj.chromosomeLocation.end + offset %]
+[% tracks = "Gene Track,mRNA Track" | uri %]
+[% orgName = obj.organism.name.replace(' ', '_') %]
+[% chr = obj.chromosome.primaryIdentifier %]
+[% params = {loc = orgName _ '_chr_' _ chr _ ':' _ loc_start _ '..' _ loc_end } %]
+[% jbrowse_link = base_url _ '?loc=' _ params.loc _ '&tracks=' _ tracks %]
+<h3 id="browser-hider" style="cursor:pointer">
+    <span class="ui-icon ui-icon-triangle-1-s" id="browser-hider-icon"></span>
+    Genome Browser
+</h3>
+<div id="genome-browser">
+    <p>
+        Click and drag the browser to move the view.  
+        Drag and drop tracks from left menu into the main
+        panel to see the data. Click on individual features to 
+        open a report page for that feature.
+        <br/>
+        <strong>*</strong> 
+        denotes SNPs that are mapped to multiple genome position.
+        <a href="[% jbrowse_link %]" target="jbrowse">
+            Centre on [% obj.symbol %]
+        </a>
+    </p>
+
+	<iframe name="jbrowse" id="jbrowse-displayer" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="[% jbrowse_link %]"></iframe>
+    
+    <p>
+        <a id="jbrowse-expander" href="javascript:;" 
+            onclick="jQuery('#jbrowse-displayer').css({height: (jQuery('#jbrowse-displayer').attr('clientHeight') > 400) ? '300px' : '600px'});jQuery('#jbrowse-expander').text((jQuery('#jbrowse-displayer').attr('clientHeight') > 400) ? 'Collapse Viewer' : 'Expand Viewer')">
+            Expand viewer
+        </a>
+        &nbsp;
+        (more about <a href="http://jbrowse.org">JBrowse</a>)
+    </p>
+</div>
+
+<script type="text/javascript">
+jQuery(function() {
+        jQuery('#browser-hider').click(function() {
+            jQuery('#genome-browser').slideToggle(function() {
+            if (jQuery('#genome-browser').is(':visible')) {
+                jQuery('#browser-hider-icon').removeClass('ui-icon-triangle-1-e')
+                                        .addClass('ui-icon-triangle-1-s');
+            } else {
+                jQuery('#browser-hider-icon').removeClass('ui-icon-triangle-1-s')
+                                        .addClass('ui-icon-triangle-1-e');
+                                        }});
+        });
+});
+</script>

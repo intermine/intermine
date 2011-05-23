@@ -1,7 +1,7 @@
 [% INCLUDE banner.tt %]
 
 <div id="content">
-    <p>
+    <p class="overview">
         Welcome to [% settings.project.title %]. This site presents genomics data from
         <a icon="out" href="[% settings.mine_base_url %]">[% settings.service_args.0 %]</a>
         and allows you to annotate the data. This view

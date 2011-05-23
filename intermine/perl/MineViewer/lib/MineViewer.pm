@@ -1,7 +1,10 @@
 package MineViewer;
+use strict;
+use warnings;
 use Dancer ':syntax';
 use Dancer::Plugin::DBIC;
 use Dancer::Plugin::ProxyPath;
+use Scalar::Util qw/blessed/;
 
 # For caching results we do not expect to change
 use Attribute::Memoize;
@@ -121,6 +124,7 @@ get '/lists' => sub {
     my $items = $list_query->results(as => 'jsonobjects');
 
     template lists => {
+        use_data_tables => 1,
         class_keys => get_class_keys_for( $lists[0]->type ),
         items      => $items,
         lists      => [@lists],
@@ -216,6 +220,47 @@ get '/list/:list.xml' => sub {
       . $list->name . '.xml';
     my $result = join( "\n", $query->results( as => 'xml' ) );
     return $result;
+};
+
+# An ugly hack to fix json round-tripping
+sub JSON::Boolean::TO_JSON {
+    my $self = shift;
+    if ($$self) {
+        return 'true';
+    } else {
+        return 'false';
+    }
+}
+
+get '/list/:list.table' => sub {
+    my $list = $service->list(params->{list})
+        or return to_json({problem => "This list is not available"});
+    my $query = get_list_query($list);
+    my $rows = $query->results( as => 'jsonrows' );
+    no warnings;
+    my $table_data = [
+        map {
+            [map {
+        my $value = (blessed($_->{value}) and $_->{value}->can('TO_JSON')) 
+                    ? $_->{value}->TO_JSON
+                    : (defined($_->{value})) 
+                        ? $_->{value}
+                        : '[NULL]';
+                '<a href="' 
+                    . proxy->uri_for('/' . $_->{class} . '/id/' . $_->{id})
+                    . '">' . $value . '</a>'
+            } @$_]
+        } @$rows
+    ];
+    my @views = map {{sTitle => $_}} map { 
+        my @parts = split(/\./);
+        (@parts == 2 or $parts[-2] eq $parts[-1])
+            ? ucfirst(decamelise($parts[-1]))
+            : ($parts[-1] eq setting('class_keys')->{Default}[0])
+                ? ucfirst(decamelise($parts[-2]))
+                : ucfirst(decamelise(join(' ', @parts[-2, -1])));
+    } $query->views;
+    return to_json({aoColumns => [@views], aaData => $table_data});
 };
 
 get '/list/:list' => sub {
@@ -428,7 +473,9 @@ sub do_item_report {
     my @all_lists = get_lists();
     my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
     my %contained_in = eval {
-      map { $_->name, $_ } $service->lists_with_object( $obj->{objectId} )} || ();
+      map { $_->name, $_ } 
+      $service->lists_with_object( $obj->{objectId} )
+    };
 
     my $type       = ucfirst( params->{'type'} );
     my $keys       = get_class_keys_for($type);
@@ -544,8 +591,62 @@ post '/remove_list_item' => sub {
     my $prior_count = $list->size;
     $list -= $query;
     my $removed_count = $prior_count - $list->size;
+    $service->delete_temp_lists();
     return to_json({info => "Removed $removed_count " .
             pluraliser($list->type) . " from $list_name"});
+};
+
+post '/deletelist' => sub {
+    my $list_name = params->{"list"};
+    my $list = $service->list($list_name)
+        or return to_json({problem => "$list_name is not available"});
+    $list->delete();
+    return to_json({info => "Deleted " . $list->name});
+};
+
+post '/deletelists' => sub {
+    my @list_names = split(/;/, params->{"lists"});
+    my @lists;
+    for my $list_name (@list_names) {
+        my $list = $service->list($list_name)
+            or return to_json({problem => "$list_name is not available"});
+        push @lists, $list;
+    }
+    map {$_->delete()} @lists;
+    return to_json({info => "Deleted " . scalar(@lists) . " lists"});
+};
+
+my %method_name_for_option = (
+    merge => 'join_lists',
+    intersect => 'intersect_lists', 
+    diff => 'diff_lists',
+);
+
+post '/performlistop' => sub {
+    my @list_names = split(/;/, params->{"lists"});
+    my $name = params->{newname};
+    my $desc = params->{newdesc};
+    my $op = params->{op};
+    my $method = $method_name_for_option{$op} 
+        or return to_json({problem => "$op is not a list operation"});
+    my @lists;
+    for my $list_name (@list_names) {
+        my $list = $service->list($list_name)
+            or return to_json({problem => "$list_name is not available"});
+        push @lists, $list;
+    }
+    my $joined_list = eval {$service->$method([@lists])};
+    if (my $e = $@) {
+        return to_json({problem => $e});
+    }
+    my $new_list = $service->new_list(
+        content => $joined_list,
+        name => $name, 
+        description => $desc, 
+        tags => [ setting('list_tag') ],
+    );
+    $service->delete_temp_lists();
+    return to_json({info => "Created " . $new_list->name});
 };
 
 true;

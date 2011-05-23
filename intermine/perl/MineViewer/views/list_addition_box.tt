@@ -1,7 +1,7 @@
-<div id="list-addition-box">
-    <form id="list-addition-form">
     <button id="listadder" value="Add">Add to</button>
-    <select id="addto" style="width:80%">
+<span id="list-addition-box">
+    <span id="list-addition-form">
+    <select id="addto" style="width:75%">
     <option value="create-new-list">New List</option>
     [% FOREACH list IN lists %]
         [% list_name = list.name %]
@@ -11,8 +11,8 @@
         </option>
     [% END %]
     </select>
-    </form>
-</div>
+    </span>
+</span>
 
 [% INCLUDE list_creation_popup.tt %]
 
