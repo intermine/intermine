@@ -81,7 +81,7 @@
       <zipfileset dir="${build.dir}" excludes="samples/compile-run.sh" prefix="intermine-client-${version}" />
       <zipfileset dir="${build.dir}" includes="samples/compile-run.sh" filemode="755" prefix="intermine-client-${version}"/>
     </zip>
-    <symlink link="${dist.dir}/java-intermine-webservice-client.zip"
-      resource="${dist.dir}/java-intermine-webservice-client-${version}.zip" />
+    <copy tofile="${dist.dir}/java-intermine-webservice-client.zip"
+      file="${dist.dir}/java-intermine-webservice-client-${version}.zip" />
   </target>
 </project>
