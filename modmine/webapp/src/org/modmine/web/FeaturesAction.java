@@ -287,7 +287,7 @@ public class FeaturesAction extends InterMineAction
             String criteria = request.getParameter("criteria");
 
              // Use feature pids as the value in lookup constraint
-            String value =
+            Set<Integer> value =
                 getSpanOverlapFeatures(spanUUIDString, criteria, spanOverlapFullResultMap);
 
             // Create a path query
@@ -300,7 +300,8 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".submissions.title");
             q.addView(path + ".organism.name");
 
-            q.addConstraint(Constraints.lookup(path, value, null));
+//            q.addConstraint(Constraints.lookup(path, value, null));
+            q.addConstraint(Constraints.inIds(path, value));
 
             String organism = getSpanOrganism(spanUUIDString, spanConstraintMap);
             Set<String> organisms = new HashSet<String>();
@@ -500,10 +501,10 @@ public class FeaturesAction extends InterMineAction
      * @param request HttpServletRequest
      * @return comma separated feature pids as a string
      */
-    private String getSpanOverlapFeatures(String spanUUIDString, String criteria,
+    private Set<Integer> getSpanOverlapFeatures(String spanUUIDString, String criteria,
             Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap) {
 
-        Set<String> featureSet = new HashSet<String>();
+        Set<Integer> featureSet = new HashSet<Integer>();
         Map<GenomicRegion, List<SpanQueryResultRow>> featureMap = spanOverlapFullResultMap
                 .get(spanUUIDString);
 
@@ -511,7 +512,7 @@ public class FeaturesAction extends InterMineAction
             for (List<SpanQueryResultRow> l : featureMap.values()) {
                 if (l != null) {
                     for (SpanQueryResultRow r : l) {
-                        featureSet.add(r.getFeaturePID());
+                        featureSet.add(r.getFeatureId());
                     }
                 }
             }
@@ -519,11 +520,11 @@ public class FeaturesAction extends InterMineAction
         } else {
             GenomicRegion spanToExport = new GenomicRegion(criteria);
             for (SpanQueryResultRow r : featureMap.get(spanToExport)) {
-                featureSet.add(r.getFeaturePID());
+                featureSet.add(r.getFeatureId());
             }
         }
 
-        return StringUtil.join(featureSet, ",");
+        return featureSet;
     }
 
     private String getSpanOrganism(String spanUUIDString,

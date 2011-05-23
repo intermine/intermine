@@ -218,6 +218,7 @@ public class SpanOverlapQueryRunner implements Runnable
                     QueryField qfOrgName = new QueryField(qcOrg, "shortName");
                     QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
                     QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
+                    QueryField qfFeatureId = new QueryField(qcFeature, "id");
                     QueryField qfFeatureClass = new QueryField(qcFeature, "class");
                     QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
                     QueryField qfSubmissionDCCid = new QueryField(qcSubmission, "DCCid");
@@ -225,6 +226,7 @@ public class SpanOverlapQueryRunner implements Runnable
                     QueryField qfLocStart = new QueryField(qcLoc, "start");
                     QueryField qfLocEnd = new QueryField(qcLoc, "end");
 
+                    q.addToSelect(qfFeatureId);
                     q.addToSelect(qfFeaturePID);
                     q.addToSelect(qfFeatureClass);
                     q.addToSelect(qfChr);
@@ -318,16 +320,14 @@ public class SpanOverlapQueryRunner implements Runnable
                             ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
                             SpanQueryResultRow aRow = new SpanQueryResultRow();
-                            aRow.setFeaturePID((String) row.get(0));
-                            String featureClass = ((Class) row.get(1)).getName();
-                            featureClass = featureClass.split("\\.")[featureClass
-                                    .split("\\.").length - 1];
-                            aRow.setFeatureClass(featureClass);
-                            aRow.setChr((String) row.get(2));
-                            aRow.setStart((Integer) row.get(3));
-                            aRow.setEnd((Integer) row.get(4));
-                            aRow.setSubDCCid((String) row.get(5));
-                            aRow.setSubTitle((String) row.get(6));
+                            aRow.setFeatureId((Integer) row.get(0));
+                            aRow.setFeaturePID((String) row.get(1));
+                            aRow.setFeatureClass(((Class) row.get(2)).getSimpleName());
+                            aRow.setChr((String) row.get(3));
+                            aRow.setStart((Integer) row.get(4));
+                            aRow.setEnd((Integer) row.get(5));
+                            aRow.setSubDCCid((String) row.get(6));
+                            aRow.setSubTitle((String) row.get(7));
 
                             spanResults.add(aRow);
                         }
