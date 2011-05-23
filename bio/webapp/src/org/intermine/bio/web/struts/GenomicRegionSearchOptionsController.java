@@ -12,6 +12,7 @@ package org.intermine.bio.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -21,6 +22,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Class to prepare data for genomicRegionSeachOptions.jsp.
@@ -39,6 +41,8 @@ public class GenomicRegionSearchOptionsController extends TilesAction
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute("tabName", "genomicRegionSearch");
 
         GenomicRegionSearchService grsService = GenomicRegionSearchUtil
                 .getGenomicRegionSearchService(request);
