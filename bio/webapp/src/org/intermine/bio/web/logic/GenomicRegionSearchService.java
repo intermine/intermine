@@ -80,6 +80,9 @@ public class GenomicRegionSearchService
     private static final String GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT =
         "genomic_region_search_options_default";
 
+    private static final String GENOMIC_REGION_SEARCH_RESULTS_DEFAULT =
+        "genomic_region_search_results_default";
+
     private static final int READ_AHEAD_CHARS = 10000;
 
     private GenomicRegionSearchConstraint grsc = null;
@@ -197,7 +200,45 @@ public class GenomicRegionSearchService
                 request.getSession().getServletContext()).get(
                 "genomicRegionSearch.resultsJavascript");
 
+        if (resultsJavascriptName == null || "".equals(resultsJavascriptName)) {
+            resultsJavascriptName = GENOMIC_REGION_SEARCH_RESULTS_DEFAULT;
+        }
+
         return resultsJavascriptName;
+    }
+
+    /**
+     * Get the name of customized options CSS
+     *
+     * @return the name of options css
+     */
+    public String getOptionsCss() {
+        String optionsCssName = (String) SessionMethods.getWebProperties(
+                request.getSession().getServletContext()).get(
+                "genomicRegionSearch.optionsCss");
+
+        if (optionsCssName == null || "".equals(optionsCssName)) {
+            optionsCssName = GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT;
+        }
+
+        return optionsCssName;
+    }
+
+    /**
+     * Get the name of customized results CSS
+     *
+     * @return the name of results css
+     */
+    public String getResultsCss() {
+        String resultsCssName = (String) SessionMethods.getWebProperties(
+                request.getSession().getServletContext()).get(
+                "genomicRegionSearch.resultsCss");
+
+        if (resultsCssName == null || "".equals(resultsCssName)) {
+            resultsCssName = GENOMIC_REGION_SEARCH_RESULTS_DEFAULT;
+        }
+
+        return resultsCssName;
     }
 
     /**

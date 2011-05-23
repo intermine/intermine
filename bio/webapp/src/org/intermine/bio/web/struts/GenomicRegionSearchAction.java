@@ -103,6 +103,9 @@ public class GenomicRegionSearchAction extends InterMineAction
         // User selections
         request.setAttribute("selectionInfo", grsService.getSelectionInformation());
 
+        // Results Page css
+        request.setAttribute("resultsCss", grsService.getResultsCss());
+
         return mapping.findForward("genomicRegionSearchResults");
     }
 }
