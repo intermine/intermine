@@ -164,29 +164,7 @@ function removeitem(listName, objId) {
         ids: objId,
     };
     jQuery.post("[% proxy.uri_for('/remove_list_item') %]", 
-        data, 
-        function(results) {
-            handleResults(results);
-            var url = "[% proxy.uri_for('/') %]";
-            jQuery('#list-container').load(url + 'lists #lists', null,
-                function() {
-                jQuery('option').each(function(index, elem) {
-                    if (elem.value == listName) {
-                        jQuery(elem).attr('selected', true);
-                    }
-                });
-                jQuery('#lists').change(handleListSelection);
-            });
-            jQuery('#list-item-box').load(url + 'list/' 
-                + escape(listName) + ' #list-items', null, function() {
-                jQuery('#list-items').makeacolumnlists({
-                    cols: colWidth, colWidth: 0, 
-                    equalHeight: true, startN: 1
-                })
-            });
-            jQuery('#list-title-container').load(url + 'list/' 
-                + escape(listName) + ' #list-title');
-        }, "json");
+        data, handleResults, "json");
 }
 function initialiseListPage() {
     var currentList = unescape(window.location.hash.substr(1));

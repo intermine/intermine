@@ -620,6 +620,7 @@ my %method_name_for_option = (
     merge => 'join_lists',
     intersect => 'intersect_lists', 
     diff => 'diff_lists',
+    subtract => 'subtract_lists',
 );
 
 post '/performlistop' => sub {
@@ -635,12 +636,22 @@ post '/performlistop' => sub {
             or return to_json({problem => "$list_name is not available"});
         push @lists, $list;
     }
-    my $joined_list = eval {$service->$method([@lists])};
+    my @rhs;
+    if (my $rhs_names = params->{rhs}) {
+        for my $name (split(/;/, $rhs_names)) {
+            my $list = $service->list($name)
+                or return to_json({problem => "$name is not available"});
+            push @rhs, $list;
+        }
+    }
+
+    my @args = (params->{rhs}) ? ([@lists], [@rhs]) : ([@lists]);
+    my $try = eval {$service->$method(@args)};
     if (my $e = $@) {
         return to_json({problem => $e});
     }
     my $new_list = $service->new_list(
-        content => $joined_list,
+        content => $try,
         name => $name, 
         description => $desc, 
         tags => [ setting('list_tag') ],

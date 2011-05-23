@@ -33,6 +33,10 @@
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery-ui-1.8.13.custom.min.js') %]"></script>
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/listcreation.js') %]"></script>
 <link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/css/smoothness/jquery-ui-1.8.13.custom.css') %]">
+<link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/javascripts/jquery.multiselect.css') %]">
+<script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery.multiselect.js') %]"></script>
+<link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/javascripts/jquery.multiselect.filter.css') %]">
+<script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery.multiselect.filter.js') %]"></script>
 <link rel="stylesheet" href="[% proxy.uri_for('/css/style.css') %]"/>
 </head>
 <body>
