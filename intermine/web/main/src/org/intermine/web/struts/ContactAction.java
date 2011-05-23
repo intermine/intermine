@@ -83,6 +83,7 @@ public class ContactAction extends InterMineAction
             ff.reset(mapping, request); // clear bean (we don't clear it if an error occurs)
 
         } catch (Exception e) {
+            request.setAttribute("response", e);
             recordError(new ActionMessage("contact.failed", e), request, e, LOG);
         }
 

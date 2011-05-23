@@ -149,6 +149,9 @@ public class ContactForm extends ValidatorForm
                     new ActionMessage("errors.contact.invalidmessage"));
         }
 
+        // a message attached for AJAX requests
+        request.setAttribute("response", "Could not send the form, please check that all fields are filled in.");
+
         return errors;
     }
 

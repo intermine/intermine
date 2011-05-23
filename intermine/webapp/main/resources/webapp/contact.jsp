@@ -12,6 +12,20 @@ window.onload = function() {
 // -->
 </script>
 
+<div id="contactFormResponse" style="display:none;">
+<c:choose>
+  <c:when test="${!empty response}">
+  <div style="" id="error_msg" class="topBar errors">
+        <a href="#" onclick="jQuery('#contactFormResponse').remove();return false">Hide</a>
+      ${response}<br></div>
+  </c:when>
+  <c:otherwise>
+  <div style="" id="error_msg" class="topBar messages">
+        <a href="#" onclick="jQuery('#contactFormResponse').remove();return false">Hide</a>
+      Thank you for contacting us!<br></div>
+  </c:otherwise>
+</c:choose>
+</div>
 
 <c:if test="${empty sent}">
 <tiles:get name="contactForm.jsp"/>
