@@ -103,6 +103,8 @@ use MooseX::Types -declare => [
         UserAgent
 
         ResultIterator
+
+        SetObject
     )
 ];
 
@@ -329,9 +331,9 @@ coerce SavedQueryFactory, from Str, via {
 # RESULT ITERATION
 
 role_type RowParser, {role => "Webservice::InterMine::Parser"};
-enum RowFormat, ['arrayrefs', 'hashrefs', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'count'];
+enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count'];
 enum JsonFormat, ['perl', 'inflate', 'instantiate'];
-enum RequestFormat, ['tab', 'tsv', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml'];
+enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable'];
 
 class_type ResultIterator, {class => 'Webservice::InterMine::ResultIterator'};
 
@@ -347,6 +349,10 @@ coerce Date, from Str, via {DateTime::Format::ISO8601->parse_datetime($_)};
 # LWP
 
 class_type UserAgent, {class => 'LWP::UserAgent'};
+
+class_type SetObject, {class => 'Set::Object'};
+
+coerce SetObject, from ArrayRef, via {require Set::Object; return Set::Object->new(@$_)};
 
 
 1;

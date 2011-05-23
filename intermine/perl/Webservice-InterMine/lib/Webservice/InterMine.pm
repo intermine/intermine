@@ -145,6 +145,20 @@ sub new_list {
     return $class->get_service(@$service_args)->new_list(%args);
 }
 
+=head2 get_list( $list_name, [from => \@service_args] )
+
+Get the list of the given name from the default service, or the given service if 
+details are supplied.
+
+=cut
+
+sub get_list {
+    my $class = shift;
+    my $list_name = shift;
+    my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->list($list_name);
+}
 
 =head2 load_query([\@service_args], source_file|source_string => $source, %opts )
 

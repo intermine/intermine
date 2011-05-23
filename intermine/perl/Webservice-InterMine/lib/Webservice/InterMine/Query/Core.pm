@@ -146,10 +146,21 @@ sub add_views {
 sub add_view {
     my $self = shift;
     my @views = map {split} @_;
-    if ($self->has_root_path) {
-        @views = map {$self->root_path . '.' . $_} @views;
+    if (my $root = $self->root_path) {
+        @views = map {(/^$root/) ? $_ : "$root.$_"} @views;
     }
-    $self->_add_views(@views);
+    my @expanded_views;
+    for my $view (@views) {
+        if ($view =~ /(.*)\.\*$/) {
+            my $path = $1;
+            my $cd = $self->model->get_classdescriptor_by_name(type_of($self->model, $path));
+            my @expanded = map { $path . '.' . $_->name } sort $cd->attributes;
+            push @expanded_views, @expanded;
+        } else {
+            push @expanded_views, $view;
+        }
+    }
+    $self->_add_views(@expanded_views);
 }
 
 after qr/^add_/ => sub {
@@ -530,7 +541,7 @@ sub to_string {
         }
         $ret .= ']';
     }
-    $ret .= ', LOGIC: ' . $self->logic->code;
+    $ret .= ', LOGIC: ' . $self->logic->code if ($self->coded_constraints > 1);
     $ret .= ', SORT_ORDER: ' . $self->joined_so(' ');
     return $ret;
 }

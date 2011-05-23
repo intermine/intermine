@@ -146,6 +146,7 @@ any headers in the case of templates and saved queries)
 
 sub to_query_xml {
     my $self = shift;
+    $self->_validate;
     my $dom = $self->to_DOM;
     my ($query) = ($dom->getTagName eq "query") 
             ? $dom 

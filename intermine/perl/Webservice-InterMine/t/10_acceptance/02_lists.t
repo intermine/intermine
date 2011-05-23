@@ -17,7 +17,7 @@ my($service, $initial_list_count);
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 105 );
+    plan( tests => 118 );
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
@@ -75,6 +75,13 @@ while (my ($source_type, $content) = each %content_sources) {
 
 }
 
+TEST_ONE_ARG_FORM: {
+    my $list;
+    lives_ok {$list= $service->new_list($content_sources{query})}
+        "Handles one arg form of creation";
+    is $list->size, 5, "And it has the right size";
+}
+
 # Test Appending
 
 APPENDING: {
@@ -130,6 +137,13 @@ my @lists = map {$service->new_list(type => "Employee", content => $_, descripti
                 "Lee Delphine Carol Helena Anne Malcolm",
                 'Lee Helena Ina Jennifer Fatou "Glynn Williams"';
 
+CLONING: {
+    my $clone;
+    lives_ok {$clone = $service->new_list($lists[0])} "Can clone a list";
+    is $clone->size, $lists[0]->size, "And it has the same size";
+    isnt $clone->name, $lists[0]->name,"But is has a different name";
+}
+
 # Test Unions
 
 UNION: {
@@ -148,6 +162,18 @@ UNION: {
 
     lives_ok {$union = $q2 + $query} "Can perform union with two queries";
     is $union->size, 23, "And it has the right size";
+
+    lives_ok {$union = $lists[0] | [@lists[1 .. 3]]} "Can do the same thing with |";
+    is $union->size, 15, "And the union is of the right size";
+
+    lives_ok {$union = reduce {$a | $b} @lists} "Can do the same thing with reduce";
+    is $union->size, 15, "And the union is of the right size";
+
+    lives_ok {$union = $union | $query} "Can perform union with a query";
+    is $union->size, 36, "And it has the right size";
+
+    lives_ok {$union = $q2 | $query} "Can perform union with two queries";
+    is $union->size, 23, "And it has the right size";
 }
 
 # Test Intersecting
@@ -158,27 +184,27 @@ INTERSECT: {
         "Can intersect a bunch of lists.";
     is ($intersection->size, 1, "And it has the right size");
 
-    lives_ok {$intersection = $lists[0] ^ [@lists[1 .. 3]]}
+    lives_ok {$intersection = $lists[0] & [@lists[1 .. 3]]}
         "Can do the same thing with overloading";
     is ($intersection->size, 1, "And it has the right size");
 
-    lives_ok {$intersection = reduce {$a ^ $b} @lists}
+    lives_ok {$intersection = reduce {$a & $b} @lists}
         "Can do the same thing with reduction";
     is ($intersection->size, 1, "And it has the right size");
 
-    lives_ok {$intersection = $lists[0] ^ reduce {$a + $b} @lists[1 .. 3]}
+    lives_ok {$intersection = $lists[0] & reduce {$a + $b} @lists[1 .. 3]}
         "Combining intersections and unions";
     is ($intersection->size, 4, "leads to a different result")
         or diag reduce(sub {$a + $b}, @lists[1 .. 3])->size;
 
-    lives_ok { $intersection = $query ^ reduce {$a + $b} @lists } "Can intersect with a query";
+    lives_ok { $intersection = $query & reduce {$a + $b} @lists } "Can intersect with a query";
     is $intersection->size, 1, "And it has the right size";
 
-    lives_ok {$intersection = $q2 ^ $query} "Can perform intersections with two queries";
+    lives_ok {$intersection = $q2 & $query} "Can perform intersections with two queries";
     is $intersection->size, 4, "And it has the right size";
 
     my $old_name = $intersection->name;
-    lives_ok {$intersection ^= $lists[3]} "Can intersection-assign";
+    lives_ok {$intersection &= $lists[3]} "Can intersection-assign";
     is $intersection->name, $old_name, "The name stays the same";
     is $intersection->size, 0, "But the size has changed";
 }
@@ -190,17 +216,17 @@ DIFF: {
     lives_ok {$difference = $service->diff_lists([@lists])} "Can diff lists";
     is $difference->size, 14, "And it has the right size";
 
-    lives_ok {$difference = $lists[0] | [@lists[1 .. 3]]} "Can diff lists with |";
+    lives_ok {$difference = $lists[0] ^ [@lists[1 .. 3]]} "Can diff lists with ^";
     is $difference->size, 14, "And it has the right size";
 
-    lives_ok {$difference = reduce {$a | $b} @lists} "Can diff lists";
+    lives_ok {$difference = reduce {$a ^ $b} @lists} "Can diff lists";
     is $difference->size, 8, "BEWARE!! Asymmetric diff is not commutative";
 
-    lives_ok {$difference = $query | $q2} "Can diff queries";
+    lives_ok {$difference = $query ^ $q2} "Can diff queries";
     is $difference->size, 19, "And with the right size";
 
     my $old_name = $difference->name;
-    lives_ok {$difference |= $lists[3]} "Can diff-assign";
+    lives_ok {$difference ^= $lists[3]} "Can diff-assign";
     is $difference->name, $old_name, "The name stays the same";
     is $difference->size, 23, "But the size has changed";
 }
@@ -264,7 +290,7 @@ SHOWING: {
     $list->show($fh);
     close $fh or die "$!";
     my $name = $list->name;
-    my $expected_head = qr!$name \(5 Employees\) \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2} Created with Perl API client!;
+    my $expected_head = qr!$name \(5 Employees\) \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\s+Created with Perl API client!;
     my $expected_body = q!Employee.age............Employee.end............Employee.fullTime.......Employee.name...........
 30......................6.......................false...................Karim...................
 33......................1.......................false...................Jennifer.Schirrmann.....
