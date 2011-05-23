@@ -173,7 +173,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         PathQuery q = new PathQuery(im.getModel());
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
 
-        q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+
 
         if (isOrthologue) {
             q.addViews("Gene.primaryIdentifier",
@@ -183,6 +183,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
                     identifiers));
             q.addConstraint(Constraints.oneOfValues("Gene.organism.shortName",
                     organisms));
+            q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
         } else {
             q.addViews("Gene.homologues.homologue.primaryIdentifier",
                     "Gene.homologues.homologue.symbol",
@@ -191,6 +192,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
                     identifiers));
             q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism.shortName",
                     organisms));
+            q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         }
         return q;
     }
