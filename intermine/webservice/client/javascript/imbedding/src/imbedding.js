@@ -175,6 +175,7 @@ IMBedding = (function() {
                 });
             });
 
+            this.scrollContainer = jQuery('<div class="imbedded-scroll-container"></div>');
             this.table = jQuery('<table style="display: none;" id="imbedded-table-' 
                     + this.uid + '" class="imbedded-table"></table>');
 
@@ -262,10 +263,11 @@ IMBedding = (function() {
 
             // Slot it all together
             this.titlebox.append(this.title);
+            this.scrollContainer.append(this.table);
             this.container.append(this.titlebox)
                         .append(this.nextLink)
                         .append(this.prevLink)
-                        .append(this.table);
+                        .append(this.scrollContainer);
 
             if (this.options.showExportLinks) {
                 this.container.append(this.csvLink)
@@ -415,14 +417,14 @@ IMBedding = (function() {
         };
 
         this.containerNeedsExpanding = function() {
-            return this.table.attr("offsetWidth") >= this.container.attr("offsetWidth");
+            return this.table.attr("offsetWidth") >= this.scrollContainer.attr("offsetWidth");
         };
 
         this.expandContainer = function() {
             if (! this.defaultContainerwidth) {
-                this.defaultContainerwidth = this.container.attr("offsetWidth") + 'px';
+                this.defaultContainerwidth = this.scrollContainer.attr("offsetWidth") + 'px';
             }
-            this.container.css({width: (this.table.attr("offsetWidth") + 1) + 'px'});
+            this.scrollContainer.css({width: (this.table.attr("offsetWidth") + 1) + 'px'});
         };
 
         this.tableIsHidden = function() {
@@ -431,17 +433,18 @@ IMBedding = (function() {
 
         this.returnContainerToOriginalSize = function() {
             if (this.defaultContainerwidth) {
-                this.container.css({width: this.defaultContainerwidth});
+                this.scrollContainer.css({width: this.defaultContainerwidth});
             }
         };
 
         // Perform the resize
         this.fitContainerToTable = function() {
-            if (this.containerNeedsExpanding()) {
-                this.expandContainer();
-            } else if (this.tableIsHidden()) {
-                this.returnContainerToOriginalSize();
-            }
+            this.scrollContainer.css({width: this.container.attr("clientWidth") + 'px'});
+            //if (this.containerNeedsExpanding()) {
+            //    this.expandContainer();
+            //} else if (this.tableIsHidden()) {
+            //    this.returnContainerToOriginalSize();
+            //}
         };
 
         // get a page url using the base url 
