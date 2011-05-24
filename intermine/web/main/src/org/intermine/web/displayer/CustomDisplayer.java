@@ -14,9 +14,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Parent class for custom displayers that appear on report pages.  Subclasses must implement the
@@ -31,6 +35,8 @@ public abstract class CustomDisplayer
 
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
+    private static final Logger LOG = Logger.getLogger(CustomDisplayer.class);
+
 
     /**
      * Construct with config information read from webconfig-model.xml and the API.
@@ -52,7 +58,23 @@ public abstract class CustomDisplayer
     public void execute(HttpServletRequest request, ReportObject reportObject) {
         request.setAttribute("reportObject", reportObject);
         request.setAttribute("jspPage", getJspPage());
-        display(request, reportObject);
+
+        try {
+            display(request, reportObject);
+        } catch (Exception e) {
+            // failed to display so put an error message in place instead
+            LOG.error("Error rendering custom displayer " + getClass() + " for "
+                    + reportObject.getType() + "(" + reportObject.getId() + "): "
+                    + e.fillInStackTrace());
+            request.setAttribute("displayerName", getClass().getSimpleName());
+            request.setAttribute("jspPage", "customDisplayerError.jsp");
+
+            Profile profile = SessionMethods.getProfile(request.getSession());
+            if (profile.isSuperuser()) {
+                request.setAttribute("exception",
+                        ExceptionUtils.getStackTrace(ExceptionUtils.getRootCause(e)));
+            }
+        }
     }
 
     /**
