@@ -49,7 +49,7 @@
   </ul>
 </div>
 
-<html:hidden property="matchIDs" styleId="matchIDs"/>
+<html:hidden property="matchIDs" styleId="matchIDs" />
 <html:hidden property="bagType"/>
 
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
@@ -207,22 +207,8 @@
 
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
-  
-  // run a function checking if we already have items in the bag
-  jQuery('span.fakelink').each(function(index) {
-	  // get the element id
-      var id = jQuery(this).attr("id");
-	  // parse out the actual identifier
-      var identifier = id.substring(id.lastIndexOf("_") + 1);
-	  // check if we have it
-	  if (isIdentifierInTheBag(identifier)) {
-		  // ...then select it
-		  jQuery(this).click();
-		  // ...and remove the controls
-		  jQuery(this).parent().html("<p>Already in your list.</p>")
-	  }
-  });
-  
+
+  checkIfAlreadyInTheBag();
 </script>
 
 <!-- /bagUploadConfirm.jsp -->

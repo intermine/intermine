@@ -47,9 +47,25 @@
     </tr>
   </thead>
   <tbody>
+
+    <c:set var="oldRowIdentifier" value="0" scope="request" />
+    <c:set var="rowClass" value="even" scope="request" />
     <c:forEach items="${table.resultElementRows}" var="resultElementRow" varStatus="status">
       <c:set var="totalRowCount" value="${totalRowCount + 1}" scope="request" />
-      <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if> id="tr_${resultElementRow.identifier}">
+      <c:set var="newIdentifier" value="${resultElementRow.identifier}" scope="request" />
+      <c:if test="${oldRowIdentifier != newIdentifier}">
+        <c:choose>
+          <c:when test="${rowClass == 'odd'}">
+            <c:set var="rowClass" value="even" scope="request" />
+          </c:when>
+          <c:otherwise>
+            <c:set var="rowClass" value="odd" scope="request" />
+          </c:otherwise>
+        </c:choose>
+      </c:if>
+      <tr class="${rowClass}" id="tr_${resultElementRow.identifier}">
+      <c:set var="oldRowIdentifier" value="${newIdentifier}" scope="request" />
+
         <c:if test="${resultElementRow.showIdentifier}">
             <td
               class="identifier"
