@@ -32,7 +32,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
             var homologue = '';
-            if (entry['isHomologue'] == 'true') {
+            if (entry['isHomologue'] == true) {
                 homologue = "&orthologue=" + entry['shortName'];
             }
             var linky = "<li><a href='" + url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue + "'>" + entry['shortName'] + "</a>";
