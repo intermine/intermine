@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,12 +26,10 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -80,6 +79,18 @@ public class ObjectTrailController extends TilesAction
             // will be something like bag.baggieName or results.col0 or itt.template.id
             String urlParam = ids[i];
             String[] breadcrumbs = StringUtils.split(urlParam, '.');
+
+            // bag names allow for dots
+            if (breadcrumbs[0].equals("bag")) {
+                List<String> bagName = new ArrayList<String>();
+                for (int j = 1; j < breadcrumbs.length; j++) {
+                    // replace all spaces with plus signs
+                    bagName.add(breadcrumbs[j].replaceAll(" ", "+"));
+                }
+                // join on a dot
+                String[] newBreadcrumbs = { "bag", StringUtils.join(bagName, ".") };
+                breadcrumbs = newBreadcrumbs;
+            }
 
             if ("results".equals(breadcrumbs[0])) {
                             //&& SessionMethods.getResultsTable(session, ids[i]) != null) {
