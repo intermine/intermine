@@ -71,26 +71,6 @@
     </c:otherwise>
     </c:choose>
 
-  <div id="navtrail">
-
-  <!-- contact us -->
-
-    <p id="contactUsLink" style="display:none;" class="alignleft">
-    <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
-    </p>
-
-    <p id="takeATourLink" style="display:none;" class="alignleft">
-    <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
-    </p>
-
-  <c:if test="${pageName != 'report'}">
-  <fmt:message key="${pageName}.tab" var="tab" />
-    <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-        <p class="alignright"><im:contextHelp/></p>
-    </c:if>
-  </c:if>
- </div>
-
 <div style="clear: both;"></div>
 
       <%-- Render messages --%>
