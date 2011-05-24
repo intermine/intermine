@@ -26,7 +26,9 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.GOTerm;
+import org.intermine.model.bio.Organism;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -44,6 +46,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();
     private static final Map<String, String> EVIDENCE_CODES = new HashMap<String, String>();
+    private Map<String, Boolean> organismCache = new HashMap<String, Boolean>();
 
     /**
      * Construct with config and the InterMineAPI.
@@ -55,9 +58,9 @@ public class GeneOntologyDisplayer extends CustomDisplayer
     }
 
     static {
-        ONTOLOGIES.add("GO:0008150");
-        ONTOLOGIES.add("GO:0003674");
-        ONTOLOGIES.add("GO:0005575");
+        ONTOLOGIES.add("biological_process");
+        ONTOLOGIES.add("molecular_function");
+        ONTOLOGIES.add("cellular_component");
 
         EVIDENCE_CODES.put("EXP", "Inferred from Experiment");
         EVIDENCE_CODES.put("IDA", "Inferred from Direct Assay");
@@ -82,38 +85,62 @@ public class GeneOntologyDisplayer extends CustomDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-        Model model = im.getModel();
         Profile profile = SessionMethods.getProfile(request.getSession());
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
-        InterMineObject object = (InterMineObject) request.getAttribute("object");
-        String primaryIdentifier = null;
-        try {
-            primaryIdentifier = (String) object.getFieldValue("primaryIdentifier");
-        } catch (IllegalAccessException e) {
-            return;
-        }
-        if (StringUtils.isEmpty(primaryIdentifier)) {
-            return;
-        }
+        // noGoMessage
+        boolean goLoadedForOrganism = true;
 
-        PathQuery query = buildQuery(model, reportObject.getId());
-        ExportResultsIterator result = executor.execute(query);
+        // check whether GO annotation is loaded for this organism
+        // if we can't work out organism just proceed with display
+        String organismName = getOrganismName(reportObject);
 
-        Map<String, Map<GOTerm, Set<String>>> goTermsByOntology = new HashMap<String, Map<GOTerm,
-        Set<String>>>();
-
-        while (result.hasNext()) {
-            List<ResultElement> row = result.next();
-            String parentTerm = (String) row.get(0).getField();
-            parentTerm = parentTerm.replaceAll("_", " ");
-            GOTerm term = (GOTerm) row.get(1).getObject();
-            String code = (String) row.get(2).getField();
-            addToOntologyMap(goTermsByOntology, parentTerm, term, code);
+        if (organismName != null) {
+            goLoadedForOrganism = isGoLoadedForOrganism(organismName, profile);
         }
 
-        request.setAttribute("goTerms", goTermsByOntology);
-        request.setAttribute("codes", EVIDENCE_CODES);
+        if (!goLoadedForOrganism) {
+            String noGoMessage = "No Gene Ontology annotation loaded for " + organismName;
+            request.setAttribute("noGoMessage", noGoMessage);
+        } else {
+            Model model = im.getModel();
+            PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+
+            InterMineObject object = (InterMineObject) request.getAttribute("object");
+            String primaryIdentifier = null;
+            try {
+                primaryIdentifier = (String) object.getFieldValue("primaryIdentifier");
+            } catch (IllegalAccessException e) {
+                return;
+            }
+            if (StringUtils.isEmpty(primaryIdentifier)) {
+                return;
+            }
+
+            PathQuery query = buildQuery(model, reportObject.getId());
+            ExportResultsIterator result = executor.execute(query);
+
+            Map<String, Map<GOTerm, Set<String>>> goTermsByOntology =
+                new HashMap<String, Map<GOTerm, Set<String>>>();
+
+            while (result.hasNext()) {
+                List<ResultElement> row = result.next();
+                String parentTerm = (String) row.get(0).getField();
+                parentTerm = parentTerm.replaceAll("_", " ");
+                GOTerm term = (GOTerm) row.get(1).getObject();
+                String code = (String) row.get(2).getField();
+                addToOntologyMap(goTermsByOntology, parentTerm, term, code);
+            }
+
+            // If no terms in a particular category add the parent term only to put heading in JSP
+            for (String ontology : ONTOLOGIES) {
+                String parentTerm = ontology.replaceAll("_", " ");
+                if (!goTermsByOntology.containsKey(parentTerm)) {
+                    goTermsByOntology.put(parentTerm, null);
+                }
+            }
+            request.setAttribute("goTerms", goTermsByOntology);
+            request.setAttribute("codes", EVIDENCE_CODES);
+        }
     }
 
     private void addToOntologyMap(Map<String, Map<GOTerm, Set<String>>> goTermsByOntology,
@@ -140,7 +167,7 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         q.addOrderBy("Gene.goAnnotation.ontologyTerm.name", OrderDirection.ASC);
 
         // parents have to be main ontology
-        q.addConstraint(Constraints.oneOfValues("Gene.goAnnotation.ontologyTerm.parents.identifier",
+        q.addConstraint(Constraints.oneOfValues("Gene.goAnnotation.ontologyTerm.parents.name",
                 ONTOLOGIES));
 
         // not a NOT relationship
@@ -150,5 +177,33 @@ public class GeneOntologyDisplayer extends CustomDisplayer
         q.addConstraint(Constraints.eq("Gene.id", "" + geneId));
 
         return q;
+    }
+
+    private String getOrganismName(ReportObject reportObject) {
+        Organism organism = ((BioEntity) reportObject.getObject()).getOrganism();
+        if (organism != null) {
+            if (!StringUtils.isBlank(organism.getName())) {
+                return organism.getName();
+            } else if (organism.getTaxonId() != null) {
+                return "" + organism.getTaxonId();
+            }
+        }
+        return null;
+    }
+
+    private boolean isGoLoadedForOrganism(String organismField, Profile profile) {
+        if (!organismCache.containsKey(organismField)) {
+            PathQuery q = new PathQuery(im.getModel());
+            q.addViews("Gene.goAnnotation.ontologyTerm.name");
+            if (StringUtils.isNumeric(organismField)) {
+                q.addConstraint(Constraints.eq("Gene.organism.taxonId", organismField));
+            } else {
+                q.addConstraint(Constraints.eq("Gene.organism.name", organismField));
+            }
+            PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+            ExportResultsIterator result = executor.execute(q, 0, 1);
+            organismCache.put(organismField, result.hasNext());
+        }
+        return organismCache.get(organismField);
     }
 }
