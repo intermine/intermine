@@ -193,8 +193,6 @@
             </div>
 
             <div id="api">
-                <h4>Perl, Java<span>&nbsp;&amp;&nbsp;</span>Python API</h4>
-                <img src="images/begin/perl-java-python-ico.png" alt="perl java python" />
                 <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
                 <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
                 <p>
@@ -206,7 +204,6 @@
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
-                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python API</a>
                 </ul>
             </div>
 
