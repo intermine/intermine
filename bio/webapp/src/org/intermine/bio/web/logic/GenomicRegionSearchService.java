@@ -120,6 +120,7 @@ public class GenomicRegionSearchService
                 "genomicRegionSearch.defaultOrganisms");
 
         List<String> orgList = new ArrayList<String>();
+        List<String> orgWithNoChrInfoList = new ArrayList<String>();
         Set<String> chrOrgSet = getChrInfoMap().keySet();
         if ((defaultOrganisms == null || "".equals(defaultOrganisms))
                 && chrOrgSet == null) {
@@ -156,6 +157,9 @@ public class GenomicRegionSearchService
                     if (chrOrgSet.contains(o)) {
                         chrOrgSet.remove(o);
                     }
+                    // If chrOrgSet doesn't include pre-defined organisms?
+                    // The admin needs to make sure pre-defined organisms have chromosome location
+                    // information in the database
                 }
 
                 orgList.addAll(newDefultOrgList);
@@ -715,8 +719,8 @@ public class GenomicRegionSearchService
                 ConstraintOp.CONTAINS, qcOrg);
         constraints.addConstraint(ccOrg);
 
-        constraints.addConstraint(new BagConstraint(qfOrgName,
-                    ConstraintOp.IN, orgList));
+//        constraints.addConstraint(new BagConstraint(qfOrgName,
+//                    ConstraintOp.IN, orgList));
 
         Results results =
             SessionMethods.getInterMineAPI(request.getSession()).getObjectStore().execute(q);
@@ -725,6 +729,7 @@ public class GenomicRegionSearchService
         Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
         Set<String> featureTypeSet = new LinkedHashSet<String>();
 
+        // TODO this will be very slow when query too many features
         if (results == null || results.size() < 0) {
             return "";
         }
@@ -737,7 +742,7 @@ public class GenomicRegionSearchService
                 // TODO exception - feature type is NULL
                 String featureType = ((Class) row.get(1)).getSimpleName();
 
-                if (!"Chromosome".equals(featureType)) {
+                if (!"Chromosome".equals(featureType) && orgList.contains(org)) {
                     if (resultsMap.size() < 1) {
                         featureTypeSet.add(featureType);
                         resultsMap.put(org, featureTypeSet);
@@ -761,6 +766,7 @@ public class GenomicRegionSearchService
                 featureTypesInOrgs.addAll(ftSet);
             }
         }
+
         getFtToSoMap();
         getOrgTaxonIdMap();
 
