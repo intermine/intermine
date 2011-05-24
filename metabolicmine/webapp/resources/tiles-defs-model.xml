@@ -14,7 +14,7 @@
 
 <definition name="genomicRegionSearchOptions.page" extends="layout.template">
   <put name="body" value="genomicRegionSearchOptions.tile" />
-  <put name="pageName" value="genomicRegionSearchOptions" />
+  <put name="pageName" value="genomicRegionSearch" />
 </definition>
 
 <definition name="genomicRegionSearchOptions.tile" path="/model/genomicRegionSearchOptionsBase.jsp"
