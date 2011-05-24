@@ -1,3 +1,6 @@
+
+div.table p.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
+
 #bagTable{
     padding:5px;}
 
