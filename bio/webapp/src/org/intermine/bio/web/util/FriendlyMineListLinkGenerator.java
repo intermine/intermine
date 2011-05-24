@@ -222,7 +222,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         JSONObject organism = new JSONObject();
         organism.put("shortName", organismName);
         organism.put("identifiers", identifiers);
-        organism.put("isHomologue", false);
+        organism.put("isHomologue", isHomologue);
         return organism;
     }
 
