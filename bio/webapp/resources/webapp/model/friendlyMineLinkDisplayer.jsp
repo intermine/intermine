@@ -13,14 +13,16 @@
 function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 
     AjaxServices.getFriendlyMineListLinks(mine, organisms, identifierList, function(mineString) {
+        // switch off loading img
+        jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
         if (mineString) {
-            // switch off loading img
-            jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
             // parse to JSON (requires jQuery 1.4.1+)
             var jSONObject = jQuery.parseJSON(mineString);
             // TODO can be many identifiers, need to post
             // [{"identifiers":["ENSRNOG00000001410","ENSRNOG00000001575"],"isHomologue":false,"shortName":"R. norvegicus"}]
             generate(jSONObject, "#intermine_orthologue_links_" + mine, url);
+        } else {
+            jQuery("#intermine_orthologue_links_" + mine).html("No results found.");
         }
     });
 }
@@ -30,7 +32,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
             var homologue = '';
-            if (entry['isHomologue']) {
+            if (entry['isHomologue'] == 'true') {
                 homologue = "&orthologue=" + entry['shortName'];
             }
             var linky = "<li><a href='" + url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue + "'>" + entry['shortName'] + "</a>";
