@@ -108,7 +108,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
             // test if local mine has orthologues
             return checkLocalMine(linkManager, mine, organismsInList, identifierSet);
         }
-        return convertToJSON(homologues, identifierSet);
+        return convertToJSON(homologues, identifierSet, true);
     }
 
     // test if local mine has orthologues
@@ -119,8 +119,8 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         Mine localMine = linkManager.getLocalMine();
 
         // D. rerio --> Dmel
-        Set<String> homologues = localMine.getMatchingMapKeys(
-                mine.getMineValues(), organismsInList);
+        Set<String> homologues = localMine.getMatchingMapKeys(mine.getMineValues(),
+                organismsInList);
         if (homologues.isEmpty()) {
             // one more try
             // look for Dmel --> D. rerio
@@ -139,7 +139,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         if (results.isEmpty()) {
             return null;
         }
-        return convertToJSON(results);
+        return convertToJSON(results, isOrthologue);
     }
 
     private static Map<String, List<String>> runLocalQuery(InterMineAPI im,
@@ -185,8 +185,7 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
             q.addViews("Gene.homologues.homologue.primaryIdentifier",
                     "Gene.homologues.homologue.symbol",
                     "Gene.homologues.homologue.organism.shortName");
-            q.addConstraint(Constraints.oneOfValues("Gene.primaryIdentifier",
-                    identifiers));
+            q.addConstraint(Constraints.oneOfValues("Gene.primaryIdentifier", identifiers));
             q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism.shortName",
                     organisms));
             q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
@@ -194,23 +193,25 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         return q;
     }
 
-    private Collection<JSONObject> convertToJSON(Set<String> homologues, List<String> identifiers)
+    private Collection<JSONObject> convertToJSON(Set<String> homologues, List<String> identifiers,
+            boolean isHomologue)
         throws JSONException {
         Set<JSONObject> jsonObjects = new HashSet<JSONObject>();
         for (String homologue : homologues) {
-            JSONObject json = getJSONOrganism(homologue, identifiers, false);
+            JSONObject json = getJSONOrganism(homologue, identifiers, isHomologue);
             jsonObjects.add(json);
         }
         return jsonObjects;
     }
 
-    private Collection<JSONObject> convertToJSON(Map<String, List<String>> results)
+    private Collection<JSONObject> convertToJSON(Map<String, List<String>> results,
+            boolean isHomologue)
         throws JSONException {
         List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
         for (Map.Entry<String, List<String>> entry : results.entrySet()) {
             String homologue = entry.getKey();
             List<String> identifiers = entry.getValue();
-            JSONObject json = getJSONOrganism(homologue, identifiers, true);
+            JSONObject json = getJSONOrganism(homologue, identifiers, isHomologue);
             jsonObjects.add(json);
         }
         return jsonObjects;
