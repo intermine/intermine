@@ -81,6 +81,8 @@ div.formik input[type="text"] { background:#FFF3D3; padding:6px; width:360px; }
                 color:#004499; }
             #sidebar ul li.added a { display:none; }
 
+.highlight { background:#FFF3D3 !important; }
+
 @media only screen and (max-width:1024px) {
   h1 { font-size:20px; }
   h2 { font-size:16px; }

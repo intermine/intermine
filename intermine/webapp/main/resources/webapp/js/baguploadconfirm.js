@@ -3,10 +3,31 @@ var tdColorArray = new Array();
 var highlightColor = '#FFF3D3';
 
 /**
+ * Run a function checking if we already have items in the bag
+ */
+function checkIfAlreadyInTheBag() {
+    // run a function checking if we already have items in the bag
+    jQuery('span.fakelink').each(function(index) {
+      // get the element id
+      var id = jQuery(this).attr("id");
+      // parse out the actual identifier
+      var identifier = id.substring(id.lastIndexOf("_") + 1);
+
+      // check if we have it
+      if (isIdentifierInTheBag(identifier)) {
+        // ...then select it
+        jQuery(this).click();
+        // ...and remove the controls
+        jQuery(this).parent().html("<p>Already in your list.</p>")
+      }
+    });
+}
+
+/**
  * give us a list of items in the bag currently
  */
 function getIdentifiersInTheBag() {
-	return jQuery("#matchIDs").val().split(" ");
+  return jQuery("#matchIDs").val().split(" ");
 }
 
 /**
@@ -15,13 +36,13 @@ function getIdentifiersInTheBag() {
  * @returns {Boolean}
  */
 function isIdentifierInTheBag(identifier) {
-	var array = getIdentifiersInTheBag();
-	for (var i = 0; i < array.length; i++) {
-		if (identifier == array[i]) {
-	  		return true;
-	  	}
-	}
-	return false;
+  var array = getIdentifiersInTheBag();
+  for (var i = 0; i < array.length; i++) {
+    if (identifier == array[i]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -36,51 +57,129 @@ function addId2Bag(objectId, row, parentId, issueType) {
   // I can remove now...
   setLinkState('removeAllLink', 'active');
 
-
   if (jQuery('#add_' + issueType + '_' + objectId).hasClass('fakelink')) {
-    // switch the class on add/remove links
-    jQuery('#add_' + issueType + '_' + objectId).removeClass('fakelink');
-    jQuery('#rem_' + issueType + '_' + objectId).addClass('fakelink');
+      // switch the class on add/remove links
+      jQuery('span#add_' + issueType + '_' + objectId).removeClass('fakelink');
+      jQuery('span#rem_' + issueType + '_' + objectId).addClass('fakelink');
 
-        // colour the row columns
-        colourRow('row_' + issueType + '_' + row, true);
+      // colour the row columns (even associated rows, based on object id)
+      jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+        var rowId = jQuery(this).parent().attr('class').split(" ")[1];
+        colourRow(rowId, true);
+      });
 
-        // remove identifier from a list of additional matches to upload
-        addIdToListOfMatches(objectId);
+      if (!isIdentifierInTheBag(objectId)) {
+        // update the number of matches count
+        updateCount('#matchCount', 1);
 
-        if (!isIdentifierInTheBag(objectId)) {
-            // update the number of matches count
-            updateCount('#matchCount', 1);
-
-            // now update the count of items in a JS var from bagUploadConfirm.jsp
-            if (matchCount != null) {
-              matchCount++;
-            }        	
+        // now update the count of items in a JS var from bagUploadConfirm.jsp
+        if (matchCount != null) {
+          matchCount++;
         }
+      }
 
-        var idArray = duplicateArray[parentId];
-        if (idArray == null) {
-          duplicateArray[parentId] = new Array(objectId);
+      // remove identifier from a list of additional matches to upload
+      addIdToListOfMatches(objectId);
 
-          // decrease count
-          updateCount('#' + issueType + 'Count', -1);
+      var idArray = duplicateArray[parentId];
+      if (idArray == null) {
+        duplicateArray[parentId] = new Array(objectId);
 
-          // apply bg color to identifier
-          jQuery('#td_' + issueType + '_' + parentId).css('background-color', highlightColor);
+        // decrease count
+        updateCount('#' + issueType + 'Count', -1);
 
-          // decrease count
-          updateCount('#initialIdCount', -1);
-        } else {
-          idArray[idArray.length] = objectId;
-          duplicateArray[parentId] = idArray;
+        // apply bg color to identifier(s)
+        jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+          var tdId = jQuery(this).parent().parent().attr('id').substring(3);
+          jQuery('td#td_' + issueType + '_' + tdId).addClass('highlight');
+        });
 
-        }
+        // decrease count
+        updateCount('#initialIdCount', -1);
+      } else {
+        idArray[idArray.length] = objectId;
+        duplicateArray[parentId] = idArray;
+      }
 
-        setLinkState(issueType+'removeAllLink', 'active');
+      setLinkState(issueType + 'removeAllLink', 'active');
 
-        // update the text of the button that saves our list
-        updateFurtherMatchesDisplay();
+      // update the text of the button that saves our list
+      updateFurtherMatchesDisplay();
+    } else {
+      // update the color anyways, we are already included through another object
+      //jQuery('span#add_' + issueType + '_' + objectId).parent().parent().css('background-color', highlightColor);
     }
+}
+
+/**
+ * Remove identifier from the bag
+ * @param objectId of the actual row
+ * @param row number relative to the table in question
+ * @param parentId is the identifier we were trying to upload
+ * @param issueType, e.g.: 'duplicate' etc.
+ * @return
+ */
+function removeIdFromBag(objectId, row, parentId, issueType) {
+    setLinkState('addAllLink', 'active');
+
+    if (jQuery('#rem_' + issueType + '_' + objectId).hasClass('fakelink')) {
+    // switch the class on remove/add links
+    jQuery('span#rem_' + issueType + '_' + objectId).removeClass('fakelink');
+    jQuery('span#add_' + issueType + '_' + objectId).addClass('fakelink');
+
+    // decolour the row columns (even associated rows, based on object id)
+    jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+      var rowId = jQuery(this).parent().attr('class').split(" ")[1];
+      colourRow(rowId, false);
+    });
+
+    if (isIdentifierInTheBag(objectId)) {
+      // update the number of matches count
+      updateCount('#matchCount', -1);
+
+      // now update the count of items in a JS var from bagUploadConfirm.jsp
+      if (matchCount != null) {
+        matchCount--;
+      }
+    }
+
+    // remove identifier from a list of additional matches to upload
+    removeIdFromListOfMatches(objectId);
+
+    var idArray = duplicateArray[parentId];
+    if (idArray != null) {
+      if (idArray.length == 1) {
+        // increase count
+        updateCount('#' + issueType + 'Count', 1);
+
+        // 'remove' background color from identifier
+        jQuery('span#add_' + issueType + '_' + objectId).each(function(i){
+          var tdId = jQuery(this).parent().parent().attr('id').substring(3);
+          jQuery('td#td_' + issueType + '_' + tdId).removeClass('highlight');
+        });
+
+        // reduce count
+        updateCount('#initialCount', -1);
+
+        duplicateArray[parentId] = null;
+      } else {
+        var idArrayCopy = new Array();
+
+        jQuery.each(idArray, function(i, value) {
+          if (objectId != value) {
+            idArrayCopy[idArrayCopy.length] = idArray[i];
+          }
+        });
+
+        duplicateArray[parentId] = idArrayCopy;
+      }
+    }
+
+    setLinkState(issueType + 'addAllLink', 'active');
+
+    // update the text of the button that saves our list
+    updateFurtherMatchesDisplay();
+  }
 }
 
 /**
@@ -194,69 +293,6 @@ function removeIdFromListOfMatches(identifier) {
   } else {
     // trying to remove an element that is not in the list
   }
-}
-
-/**
- * Remove identifier from the bag
- * @param objectId of the actual row
- * @param row number relative to the table in question
- * @param parentId is the identifier we were trying to upload
- * @param issueType, e.g.: 'duplicate' etc.
- * @return
- */
-function removeIdFromBag(objectId, row, parentId, issueType) {
-    setLinkState('addAllLink', 'active');
-
-    if (jQuery('#rem_' + issueType + '_' + objectId).hasClass('fakelink')) {
-        // switch the class on remove/add links
-        jQuery('#rem_' + issueType + '_' + objectId).removeClass('fakelink');
-        jQuery('#add_' + issueType + '_' + objectId).addClass('fakelink');
-
-        // switch off row color
-        colourRow('row_' + issueType + '_' + row, false);
-
-        // remove identifier from a list of additional matches to upload
-        removeIdFromListOfMatches(objectId);
-
-        if (!isIdentifierInTheBag(objectId)) {
-            // update the number of matches count
-            updateCount('#matchCount', -1);
-
-            // now update the count of items in a JS var from bagUploadConfirm.jsp
-            if (matchCount != null) {
-              matchCount--;
-            }        	
-        }
-
-        var idArray = duplicateArray[parentId];
-        if (idArray.length == 1) {
-            // increase count
-            updateCount('#' + issueType + 'Count', 1);
-
-            // 'remove' background color from identifier
-            jQuery('#td_' + issueType + '_' + parentId).css('background-color', 'transparent');
-
-            // reduce count
-            updateCount('#initialCount', -1);
-
-            duplicateArray[parentId] = null;
-        } else {
-            var idArrayCopy = new Array();
-
-            jQuery.each(idArray, function(i, value) {
-                if (objectId != value) {
-                    idArrayCopy[idArrayCopy.length] = idArray[i];
-                }
-            });
-
-            duplicateArray[parentId] = idArrayCopy;
-        }
-
-        setLinkState(issueType + 'addAllLink', 'active');
-
-        // update the text of the button that saves our list
-        updateFurtherMatchesDisplay();
-    }
 }
 
 function addAll(issue, flatArray){
