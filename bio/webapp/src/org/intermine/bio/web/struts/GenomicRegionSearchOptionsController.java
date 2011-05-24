@@ -22,7 +22,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Class to prepare data for genomicRegionSeachOptions.jsp.

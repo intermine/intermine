@@ -280,7 +280,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * Query the information of all feature types and their according so terms.
      *
      * @param im - the InterMineAPI
-     * @return chrInfoMap - a HashMap with featureType as key and its SO info accordingly as value
+     * @return featureTypeToSOTermMap -
+     *         a HashMap with featureType as key and its SO info accordingly as value
      */
     public static Map<String, List<String>> getFeatureAndSOInfo(InterMineAPI im) {
 
