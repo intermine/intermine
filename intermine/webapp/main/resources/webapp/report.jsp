@@ -33,7 +33,13 @@
     </c:if>
     <a name="summary"></a>
     <h1 class="title">
-        ${object.type}: <strong>${object.titleMain}</strong> ${object.titleSub}
+        ${object.type}:
+        <c:forEach var="title" varStatus="status" items="${object.titleMain}">
+          <c:if test="${status.count > 0}"> </c:if><strong>${title.value}</strong>
+        </c:forEach>
+        <c:forEach var="title" varStatus="status" items="${object.titleSub}">
+          <c:if test="${status.count > 0}"> </c:if>${title.value}
+        </c:forEach>
     </h1>
 
     <%-- summary short fields --%>
