@@ -218,6 +218,27 @@ public class ReportObject
                     objectSummaryFields.add(rof);
                 }
             }
+
+            // 4. remove fields that are resolved IN titles
+            Map<String, String> mainTitles = getTitleMain();
+            Map<String, String> subTitles = getTitleSub();
+            Set<String> allTitles = new HashSet<String>();
+            if (mainTitles != null) {
+                allTitles.addAll(mainTitles.keySet());
+            }
+            if (mainTitles != null) {
+                allTitles.addAll(subTitles.keySet());
+            }
+            if (allTitles.size() > 0) {
+                List<ReportObjectField> temp = new ArrayList<ReportObjectField>();
+                for (ReportObjectField rof : objectSummaryFields) {
+                    String rofName = rof.getName();
+                    if (!allTitles.contains(rofName)) {
+                        temp.add(rof);
+                    }
+                }
+                objectSummaryFields = temp;
+            }
         }
 
         return objectSummaryFields;
@@ -292,17 +313,17 @@ public class ReportObject
 
     /**
      * Used by JSP
-     * @return the main title of this object, i.e.: "eve FBgn0000606"
+     * @return the main title of this object, i.e.: "eve FBgn0000606" as a Map
      */
-    public String getTitleMain() {
+    public Map<String, String> getTitleMain() {
         return getTitles("main");
     }
 
     /**
      * Used by JSP
-     * @return the subtitle of this object, i.e.: "D. melanogaster"
+     * @return the subtitle of this object, i.e.: "D. melanogaster" as a Map
      */
-    public String getTitleSub() {
+    public Map<String, String> getTitleSub() {
         return getTitles("sub");
     }
 
@@ -311,7 +332,7 @@ public class ReportObject
      * @param key: main|subre
      * @return the titles string as resolved based on the path(s) under key
      */
-    private String getTitles(String key) {
+    private Map<String, String> getTitles(String key) {
         // fetch the Type
         Type type = webConfig.getTypes().get(getClassDescriptor().getName());
         // retrieve the titles map, HeaderConfig serves as a useless wrapper
@@ -320,7 +341,7 @@ public class ReportObject
             Map<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
             // if we have something saved
             if (titles != null && titles.containsKey(key)) {
-                String result = "";
+                Map<String, String> result = new LinkedHashMap<String, String>();
                 // specify the maximum number of values to show
                 Integer maxCount = ("main".equals(key)
                         && hc.getNumberOfMainTitlesToShow() != null)
@@ -358,15 +379,12 @@ public class ReportObject
                                 stringyStuff = "<i>" + stringyStuff + "</i>";
                             }
 
-                            result += stringyStuff + " ";
+                            result.put(path, stringyStuff);
                             count++;
                         }
                     }
                 }
-                // trailing space & return
-                if (!result.isEmpty()) {
-                    return result.substring(0, result.length() - 1);
-                }
+                return result;
             }
         }
 
