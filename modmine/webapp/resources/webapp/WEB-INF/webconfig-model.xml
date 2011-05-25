@@ -508,6 +508,15 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.RNAiScreenHit">
+    <fields>
+      <fieldconfig fieldExpr="result"/>
+      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier"/>
+      <fieldconfig fieldExpr="rnaiScreen.name"/>
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
