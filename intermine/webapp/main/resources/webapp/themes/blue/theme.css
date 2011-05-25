@@ -317,7 +317,7 @@ table.internal td {
   .keywordSearchResults .resultTableContainer table.dbsources th { background:#192F39; color:#FFF; font-size:13px; padding:2px 8px;
     text-transform:none; }
   .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#192F39; }
-    .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
+    .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:16px; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { border-bottom:1px solid #63B7DE;
   border-top:1px solid #63B7DE; background:#E0F5FF; }
