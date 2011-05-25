@@ -89,7 +89,9 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
   jQuery("p#contactUsLink").toggle();
-  jQuery("#${tabName}").addClass("activelink");
+  <c:if test="${tabName != null}">
+    jQuery("#${tabName}").addClass("activelink");
+  </c:if>
 });
 </script>
 
