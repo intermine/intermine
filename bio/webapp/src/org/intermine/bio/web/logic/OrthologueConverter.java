@@ -57,50 +57,8 @@ public class OrthologueConverter extends BagConverter
                 organismName));
 
         // homologue.type = "orthologue"
-        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
-
+        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
         return q;
-    }
-
-    /**
-     * runs the orthologue conversion pathquery and returns a comma-delimited list of identifiers
-     * used on list analysis page for intermine linking, called via Ajax
-     *
-     * @param profile the user's profile
-     * @param bagType the class of the list, has to be gene I think
-     * @param bagName name of list
-     * @param organismName name of homologue's organism
-     * @return commadelimited list of identifiers, eg. eve,zen
-     */
-    public String getConvertedObjectFields(Profile profile, String bagType, String bagName,
-            String organismName) {
-        StringBuffer orthologues = new StringBuffer();
-        final String geneIdentifier = "Gene.homologues.homologue.primaryIdentifier";
-        PathQuery pathQuery = constructPathQuery(organismName);
-        pathQuery.addConstraint(Constraints.in(bagType, bagName));
-        pathQuery.addConstraint(Constraints.isNotNull(geneIdentifier));
-        pathQuery.addView(geneIdentifier);
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = null;
-
-        try {
-            it = executor.execute(pathQuery);
-        } catch (Exception e) {
-            throw new RuntimeException("bad pathquery", e);
-        }
-
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            String orthologue = row.get(0).getField().toString();
-            if (orthologues.length() > 0) {
-                orthologues.append(",");
-            }
-            orthologues.append(orthologue);
-        }
-        if (orthologues.length() == 0) {
-            return null;
-        }
-        return orthologues.toString();
     }
 
     /**
