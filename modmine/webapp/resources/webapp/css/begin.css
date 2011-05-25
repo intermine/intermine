@@ -48,17 +48,17 @@ li { margin-left:auto; }
     #genomic-bochs h3 a { color:#FFF; }
   #genomic-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#upload-bochs { border:1px solid #63B7DE; height:252px; }
+#upload-bochs { border:1px solid #63B7DE; height:290px; }
   #upload-bochs h3 { background:#63B7DE; padding-left:80px; }
   #upload-bochs img.title { position:absolute; top:10px; left:10px; }
   #upload-bochs select { display:block; width:278px; margin-bottom:4px; }
   #upload-bochs textarea { width:273px; }
 
-#templates-bochs { border:1px solid #E8D9FF; height:252px; }
+#templates-bochs { border:1px solid #E8D9FF; height:290px; }
   #templates-bochs h3 { background:#E8D9FF; padding-left:80px; }
   #templates-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#lists-bochs { border:1px solid #D0FCC5; height:252px; }
+#lists-bochs { border:1px solid #D0FCC5; height:290px; }
   #lists-bochs h3 { background:#D0FCC5; padding-left:80px; }
   #lists-bochs img.title { position:absolute; top:10px; left:10px; }
 
