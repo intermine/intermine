@@ -67,9 +67,9 @@ def fetch_summary(gene_ids, parser, output):
 
 if len(sys.argv) != 3:
     print "Usage:"
-    print "    get_redfly destination_dir log_file"
+    print "    ", sys.argv[0], "gene_info_file output_file"
     print "For example:"
-    print "    get_redfly /DATA/redfly download.log"
+    print "    ", sys.argv[0], "/DATA/gene_info_file /DATA/gene_summaries"
     exit(1)
 
 gene_info_filename = sys.argv[1]
