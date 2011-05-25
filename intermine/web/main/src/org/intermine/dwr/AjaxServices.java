@@ -1329,43 +1329,4 @@ public class AjaxServices
         return defaultList;
     }
 
-    /**
-     * Used on list analysis page to convert list contents to orthologues.  then forwarded to
-     * another intermine instance.
-     *
-     * @param bagType class of bag
-     * @param bagName name of bag
-     * @param param name of parameter value, eg. `orthologue`
-     * @param selectedValue orthologue organism
-     * @return converted list of orthologues
-     * @throws UnsupportedEncodingException bad encoding
-     */
-    public String convertObjects(String bagType, String bagName, String param,
-            String selectedValue) throws UnsupportedEncodingException {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpServletRequest request = getRequest();
-        HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-
-        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-
-        // Use custom converters
-        Map<String, String []> additionalConverters =
-            bagQueryConfig.getAdditionalConverters(bagType);
-        if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
-                String addparameter = PortalHelper.getAdditionalParameter(param,
-                        additionalConverters.get(converterClassName));
-                if (StringUtils.isNotEmpty(addparameter)) {
-                    BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
-                            converterClassName);
-                    return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
-                            selectedValue);
-                }
-            }
-        }
-        return null;
-    }
 }
