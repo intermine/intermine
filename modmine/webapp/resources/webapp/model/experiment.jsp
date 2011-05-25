@@ -235,6 +235,9 @@ Expression Levels
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
         title="Download in GFF3 format">GFF3</html:link>
+        (<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3&UCSC"
+        title="Download in GFF3 format">for UCSC</html:link>)
             </td>
             <td align="center">
 
@@ -466,6 +469,9 @@ All GBrowse tracks generated for this experiment:
     <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3"
         title="Download in GFF3 format"><b>GFF3 for the experiment (with Genes, UTRs, Transcripts, mRNA, Codons, CDS, polyA sites)</b></html:link>
+    (<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3&UCSC"
+        title="Download in GFF3 format">for UCSC</html:link>)
    </c:if>
    <c:if test="${project == 'Piano'
    && fn:containsIgnoreCase(exp.name,'Encyclopedia')
@@ -473,6 +479,9 @@ All GBrowse tracks generated for this experiment:
     <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3"
         title="Download in GFF3 format"><b>GFF3 for the experiment (with Genes, UTRs, Transcripts, mRNA)</b></html:link>
+    (<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3&UCSC"
+        title="Download in GFF3 format">for UCSC</html:link>)
    </c:if>
    <c:if test="${project == 'Waterston'
    && fn:containsIgnoreCase(exp.name,'Definition')
@@ -480,6 +489,9 @@ All GBrowse tracks generated for this experiment:
     <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3"
         title="Download in GFF3 format"><b>GFF3 for the experiment (with Transcripts, introns, exons, polyA sites, TSS, TES, acceptor sites)</b></html:link>
+    (<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&project=${project}&feature=all&format=gff3&UCSC"
+        title="Download in GFF3 format">for UCSC</html:link>)
    </c:if>
  </td>
 
@@ -714,6 +726,7 @@ ${fc.key}:
 </c:forEach>
 
 &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+&nbsp;(<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3&UCSC">for UCSC</html:link>)
 
 <c:choose>
    <c:when test="${isUnloc == 'true' }">
@@ -796,6 +809,7 @@ Expression Levels:&nbsp;
    </c:forEach>
 
    &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
+   &nbsp;(<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3&UCSC">for UCSC</html:link>)
 
    <c:choose>
       <c:when test="${isUnloc == 'true' }">

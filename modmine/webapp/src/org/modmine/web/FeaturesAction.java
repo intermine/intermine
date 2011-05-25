@@ -341,8 +341,11 @@ public class FeaturesAction extends InterMineAction
             exportForm.setIncludeHeaders(true);
 
             if ("gff3".equals(format)) {
+                boolean makeUcscCompatible = readUcscParameter(request);
+
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
+                ((GFF3ExportForm) exportForm).setMakeUcscCompatible(makeUcscCompatible);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
             }
 
@@ -397,6 +400,14 @@ public class FeaturesAction extends InterMineAction
             rootChoice = "Gene";
         }
         return rootChoice;
+    }
+
+    private boolean readUcscParameter(HttpServletRequest request) {
+        String ucscParameter = request.getParameter("UCSC");
+        if (ucscParameter != null) {
+            return true;
+        }
+        return false;
     }
 
     /**

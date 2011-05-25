@@ -313,6 +313,8 @@ ${exp.category}
 
             <li class="gff"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
                 title="Download in GFF3 format">GFF3</a></li>
+            <li class="gff">(<a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3&UCSC"
+                title="Download in GFF3 format">for UCSC</a>)</li>
             <li class="seq"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
                 title="Download the sequences">FASTA</a></li>
 
