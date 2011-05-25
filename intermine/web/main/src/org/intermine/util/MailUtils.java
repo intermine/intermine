@@ -124,7 +124,8 @@ public abstract class MailUtils
         String baseSubject = (String) webProperties.get("mail.passwordSubject");
         String mailSubject = MessageFormat.format(baseSubject, new Object[] {projectTitle});
         String mailText = (String) webProperties.get("mail.passwordText");
-        email(to, mailSubject, mailText, webProperties);
+        String mailTextWithUrl = MessageFormat.format(mailText, new Object[] {url});
+        email(to, mailSubject, mailTextWithUrl, webProperties);
     }
 
 
