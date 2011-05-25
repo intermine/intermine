@@ -120,7 +120,7 @@ public class GenomicRegionSearchService
                 "genomicRegionSearch.defaultOrganisms");
 
         List<String> orgList = new ArrayList<String>();
-        List<String> orgWithNoChrInfoList = new ArrayList<String>();
+
         Set<String> chrOrgSet = getChrInfoMap().keySet();
         if ((defaultOrganisms == null || "".equals(defaultOrganisms))
                 && chrOrgSet == null) {
@@ -825,7 +825,7 @@ public class GenomicRegionSearchService
 
         GenomicRegion spanToExport = new GenomicRegion(spanString);
         for (List<String> r : resultMap.get(spanToExport)) {
-            featureSet.add(r.get(0));
+            featureSet.add(r.get(1)); // the first element (0) is InterMine Id, second (1) is PID
         }
 
         return StringUtil.join(featureSet, ",");
