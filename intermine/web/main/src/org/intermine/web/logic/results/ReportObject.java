@@ -83,6 +83,9 @@ public class ReportObject
 
     private HeaderConfigLink headerLink;
 
+    /** @var Set of References & Collections that will always be 0 for this type of object */
+    private Set<String> nullRefsCols;
+
     private static final Logger LOG = Logger.getLogger(ReportObject.class);
 
     /**
@@ -526,29 +529,31 @@ public class ReportObject
 
         ReferenceDescriptor ref = (ReferenceDescriptor) fd;
 
-        // check whether reference is null without dereferencing
-        Object proxyObject = null;
-        ProxyReference proxy = null;
-        try {
-            proxyObject = object.getFieldProxy(ref.getName());
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        }
-        if (proxyObject instanceof org.intermine.objectstore.proxy.ProxyReference) {
-            proxy = (ProxyReference) proxyObject;
-        } else {
-            // no go on objects that are not Proxies, ie Tests
-        }
-        DisplayReference newReference = null;
-        try {
-            newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String refName = ref.getName();
+        // do not bother with 'em if they WILL be size 0
+        if (! nullRefsCols.contains(refName)) {
+            // check whether reference is null without dereferencing
+            Object proxyObject = null;
+            ProxyReference proxy = null;
+            try {
+                proxyObject = object.getFieldProxy(refName);
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            }
+            if (proxyObject instanceof org.intermine.objectstore.proxy.ProxyReference) {
+                proxy = (ProxyReference) proxyObject;
+            } else {
+                // no go on objects that are not Proxies, ie Tests
+            }
+            DisplayReference newReference = null;
+            try {
+                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        if (newReference != null) {
-            if (newReference.collection.size() > 0) {
-                references.put(fd.getName(), newReference);
+            if (newReference != null) {
+                references.put(refName, newReference);
             }
         }
     }
@@ -562,27 +567,31 @@ public class ReportObject
         collections = (collections != null) ? collections
                 : new TreeMap<String, DisplayCollection>(String.CASE_INSENSITIVE_ORDER);
 
-        Object fieldValue = null;
-        try {
-            fieldValue = object.getFieldValue(fd.getName());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        String colName = fd.getName();
+        // do not bother with 'em if they WILL be size 0
+        if (! nullRefsCols.contains(colName)) {
+            Object fieldValue = null;
+            try {
+                fieldValue = object.getFieldValue(colName);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
 
-        // determine the types in the collection
-        List<Class<?>> listOfTypes = PathQueryResultHelper.
-        queryForTypesInCollection(object, fd.getName(), im.getObjectStore());
+            // determine the types in the collection
+            List<Class<?>> listOfTypes = PathQueryResultHelper.
+            queryForTypesInCollection(object, colName, im.getObjectStore());
 
-        DisplayCollection newCollection = null;
-        try {
-            newCollection = new DisplayCollection((Collection<?>) fieldValue,
-                    (CollectionDescriptor) fd, webConfig, im.getClassKeys(), listOfTypes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            DisplayCollection newCollection = null;
+            try {
+                newCollection = new DisplayCollection((Collection<?>) fieldValue,
+                        (CollectionDescriptor) fd, webConfig, im.getClassKeys(), listOfTypes);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        if (newCollection != null) {
-            collections.put(fd.getName(), newCollection);
+            if (newCollection != null) {
+                collections.put(colName, newCollection);
+            }
         }
     }
 
@@ -610,6 +619,8 @@ public class ReportObject
         }
 
         /** Attributes, References, Collections through FieldDescriptors **/
+        nullRefsCols =
+            im.getObjectStoreSummary().getNullReferencesAndCollections(getClassDescriptor().getName());
         for (FieldDescriptor fd : getClassDescriptor().getAllFieldDescriptors()) {
             // only continue if we have not included this object in an inline list
             if (bagOfInlineListNames.get(fd.getName()) == null) {
