@@ -23,10 +23,13 @@ value="${fn:substringAfter(correctedLink, 'http://wiki.modencode.org/project/ind
 </c:otherwise>
 </c:choose>
 
-<html:link styleId="customHeaderLink" href="${correctedLink}"
+<ul>
+<li class="external">
+<html:link href="${correctedLink}" target="new"
    title="Access Wiki information on ${thisValue}">${correctedLink}
-   <html:img src="images/right-arrow.gif" title="Access Wiki information on ${thisValue}" />
 </html:link>
+</li>
+</ul>
 <div style="clear:both;"></div>
 
 </c:if>
