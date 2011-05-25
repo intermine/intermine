@@ -343,7 +343,9 @@
         return false;
     }
 </script>
-
+<c:if test="${!empty builder && builder=='yes'}">
+<br/>
+</c:if>
 <div class="templateActions">
 <table>
   <tr>
