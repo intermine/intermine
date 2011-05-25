@@ -68,6 +68,7 @@
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>
   </div>
+  <div style="clear:both;"></div>
 </div>
 <div id="queryBuilderContainer">
 <div id="queryBuilderBrowser" class="modelbrowse" ><tiles:insert page="/queryBuilderBrowser.jsp"/></div>

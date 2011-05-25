@@ -80,7 +80,7 @@ div.modelbrowse {
 }
 
 #queryBuilderContainer {
-  margin-top:40px;
+  margin-top:10px;
 }
 /* Outer Joins diagram */
 li.block {
@@ -186,7 +186,7 @@ img.tinyQuestionMark {
 }
 
 .queryActions {
-  margin-top: 35px;
+  margin-top: 15px;
 }
 
 .queryActions table {
@@ -206,7 +206,7 @@ img.tinyQuestionMark {
   text-align: center;
 }
 
-#sidebar { margin-left:830px;
+#sidebar { margin-left:830px;height:35px;
   width:495px;}
 
     #sidebar div.button input { background:url('../images/progress/green-btn-center.png') repeat-x left;

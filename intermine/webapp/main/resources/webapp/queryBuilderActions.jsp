@@ -15,6 +15,17 @@
         return false;
     }
 </script>
+<div id="sidebar">
+   <div id="showResultButton" 
+   <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
+   <c:if test="${fn:length(viewStrings) > 0}">class='button'</c:if>>
+      <div class="left"></div>
+          <html:form action="/queryBuilderViewAction" styleId="submitform">
+          <input id="showResult" type="submit" name="showResult"
+          value='<fmt:message key="view.showresults"/>'/>
+          </html:form><div class="right"></div>
+  </div>
+</div>
 <!-- queryBuilderActions.jsp -->
 <div class="queryActions">
 <table>
@@ -49,10 +60,6 @@
 </div>
 
     <div class="body actions" align="right">
-      <p><html:form action="/queryBuilderViewAction" styleId="submitform">
-        <input type="submit" value="<fmt:message key="view.showresults"/>" 
-            <c:if test="${fn:length(viewStrings) <= 0}">disabled</c:if>/> 
-      </html:form></p>
     <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
         <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
           <input type="hidden" name="method" value="startTemplateBuild"/>
