@@ -137,7 +137,9 @@
     <script type="text/javascript">
     jQuery(document).ready(function() {
         display("contactUsLink", true);
-        jQuery("#${tabName}").addClass("activelink");
+        <c:if test="${tabName != null}">
+          jQuery("#${tabName}").addClass("activelink");
+        </c:if>
     });
     </script>
     <c:if test="${!empty fixedLayout}">
