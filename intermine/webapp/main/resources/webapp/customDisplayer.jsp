@@ -4,8 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- customDisplayer.jsp -->
-    <tiles:importAttribute name="displayer"/>
+  <tiles:importAttribute name="displayer"/>
 
-    <jsp:include page="${jspPage}"/>
-
+  <jsp:include page="${jspPage}"/>
 <!-- /customDisplayer.jsp -->
