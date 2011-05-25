@@ -210,22 +210,27 @@
 
   </table>
 
+<p style="display:none;" class="toggle"><a class="toggler"><span>Show all rows</span></a></p>
 
-<p class="toggle">
-<a class="toggler"><span>Show all rows</span></a>
-</p>
 <script type="text/javascript">
 // hide over 2 rows from the features table
-jQuery("#GenomicsCategory div.feature table.compact-table tr.mainRow").each(function (i, row) {
-  if (i > 1) {
-    jQuery(row).hide();
-  }
-});
-// show more and destroy itself
-jQuery('#GenomicsCategory div.feature p a.toggler').click(function() {
-  jQuery('#GenomicsCategory div.feature table.compact-table tr.mainRow:hidden').show();
-  jQuery(this).remove();
-});
+var geneStructureDisplayerSize = jQuery("#GenomicsCategory div.feature table.compact-table tr.mainRow").size();
+if (geneStructureDisplayerSize > 1) {
+  jQuery('#GenomicsCategory div.feature p').show();
+  jQuery('#GenomicsCategory div.feature p a span').html("Show " + geneStructureDisplayerSize + " rows");
+
+  //show more and destroy itself
+  jQuery('#GenomicsCategory div.feature p a.toggler').click(function() {
+    jQuery('#GenomicsCategory div.feature table.compact-table tr.mainRow:hidden').show();
+    jQuery(this).remove();
+  });
+
+  jQuery("#GenomicsCategory div.feature table.compact-table tr.mainRow").each(function (i, row) {
+    if (i > 1) {
+      jQuery(row).hide();
+    }
+  });
+}
 </script>
 
 </c:if>
