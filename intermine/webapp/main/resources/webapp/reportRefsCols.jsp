@@ -25,8 +25,7 @@
     <c:set var="fieldName" value="${entry.key}" />
 
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
-    <c:choose>
-      <c:when test="${collection.size > 0}">
+
         <%-- ############# --%>
         <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
         <h3 class="theme-1-border theme-5-background">
@@ -51,79 +50,9 @@
         </html:link></h3>
         <div class="clear"></div>
         <%-- ############# --%>
-      </c:when>
+
+    <c:choose>
       <c:when test="${collection.size > 0}">
-        <%-- ############# --%>
-        <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3 class="theme-1-border theme-5-background">
-          <c:if test="${IS_SUPERUSER}">
-            <span class="tag-editor">
-              <c:set var="descriptor" value="${collection.descriptor}" />
-              <tiles:insert name="inlineTagEditor.tile">
-                <tiles:put name="taggable" beanName="descriptor" />
-                <tiles:put name="show" value="true" />
-              </tiles:insert>
-            </span>
-          </c:if>
-        <html:link
-          styleClass="getTable"
-          linkName="${placement}_${fieldName}"
-          onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
-          action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-          <span class="collectionField theme-1-color">
-            ${collection.size} ${fieldName}<!--  of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
-          </span>
-          <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
-        </html:link></h3>
-        <div class="clear"></div>
-        <%-- ############# --%>
-        <%--
-        <c:if test="${collection.size == 1}">
-          <c:forEach
-            items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}"
-            var="cld2">
-            <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-              <c:set var="cld2" value="${cld2}" scope="request" />
-              <c:set var="backup" value="${object}" />
-              <c:set var="object" value="${collection.table.rowObjects[0]}"
-                scope="request" />
-              <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}" />
-              <c:set var="object" value="${backup}" scope="request" />
-            </c:if>
-          </c:forEach>
-        </c:if>
-        --%>
-      </c:when>
-      <%--
-      <c:otherwise>
-                  <span class="nullStrike">
-                    <img border="0" src="images/plus-disabled.gif" title=" " width="11" height="11"/>
-                    <span class="collectionField nullReferenceField">${fieldName}</span>
-                    <c:forEach items="${object.clds}" var="cld">
-                      <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>
-                    </c:forEach>
-                  </span>
-      </c:otherwise>
-    </c:choose>
-          <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
-            ${collection.size} <span class="type">${collection.descriptor.referencedClassDescriptor.unqualifiedName}</span>
-          </span>
-          <c:if test="${collection.size == 1 && !verbose}">
-            <c:if test="${collection.table.ids[0] != null}">
-              [<html:link action="/report?id=${collection.table.ids[0]}&amp;trail=${param.trail}|${collection.table.ids[0]}">
-                <fmt:message key="results.details"/>
-              </html:link>]
-            </c:if>
-          </c:if>
-         <c:if test="${collection.size == 0}">
-            </span>
-          </c:if> &nbsp; <c:choose>
-          --%>
-    </c:choose>
-    <c:if test="${collection.size > 0}">
-      <c:choose>
-        <c:when test="${true}">
-          <%-- ############# --%>
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
 
@@ -144,28 +73,18 @@
           </p>
 
           </div>
-          </div>
           <div class="clear"></div>
-          <%-- ############# --%>
-        </c:when>
-        <c:otherwise>
-          <%-- ############# --%>
-          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
-          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;"></div>
-
-          <p class="in_table" style="display:none;">
-            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-              Show all in a table »
-            </html:link>
-          </p>
-
-          </div>
-          </div>
-          <div class="clear"></div>
-          <%-- ############# --%>
-        </c:otherwise>
-      </c:choose>
-    </c:if>
+        <%-- ############# --%>
+      </c:when>
+      <c:otherwise>
+        <script type="text/javascript">
+          jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').addClass('gray');
+          var h3 = jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').find('h3');
+          h3.html(h3.find('a').text());
+        </script>
+      </c:otherwise>
+    </c:choose>
+    </div>
 
   </c:forEach>
 </c:if>

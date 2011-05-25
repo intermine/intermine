@@ -259,14 +259,7 @@
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
   </tiles:insert>
-<%--
-  <tiles:insert
-    page="/reportDisplayers.jsp">
-    <tiles:put name="placement" value="" />
-    <tiles:put name="reportObject" beanName="object" />
-    <tiles:put name="heading" value="true" />
-  </tiles:insert>
---%>
+
   <c:forEach items="${categories}" var="aspect" varStatus="status">
     <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
       <tiles:insert name="reportAspect.tile">
