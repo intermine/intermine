@@ -106,7 +106,7 @@ public class GFFQueryService extends AbstractQueryService
             removeFirstItemInPaths(viewColumns);
             exporter = new GFF3Exporter(pw, indexes,
                     getSoClassNames(servletContext), viewColumns,
-                    sourceName, organisms);
+                    sourceName, organisms, false);
             ExportResultsIterator iter = null;
             try {
                 Profile profile = SessionMethods.getProfile(session);

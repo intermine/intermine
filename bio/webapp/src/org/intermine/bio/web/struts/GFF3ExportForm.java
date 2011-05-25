@@ -20,16 +20,32 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class GFF3ExportForm extends TableExportForm
 {
-    private Set<Integer> taxIds = null;
-
+    private Set<Integer> taxonIds = null;
+    private boolean makeUcscCompatible = false;
 
     /**
-     * Set the organisms set
-     *
-     * @param set of taxon ids
+     * Return whether to make exported GFF3 compatible with UCSC genome browser.
+     * @return true if GFF3 should be UCSC genome browser compatible
      */
-    public void setOrganisms(Set taxIds) {
-        this.taxIds = taxIds;
+    public boolean makeUcscCompatible() {
+        return makeUcscCompatible;
+    }
+
+    /**
+     * Set whether to make exported GFF3 compatible with UCSC genome browser.
+     * @param makeUcscCompatible true if GFF3 should be UCSC genome browser compatible
+     */
+    public void setMakeUcscCompatible(boolean makeUcscCompatible) {
+        this.makeUcscCompatible = makeUcscCompatible;
+    }
+
+    /**
+     * Set the organisms
+     *
+     * @param taxonIds set of taxon ids
+     */
+    public void setOrganisms(Set<Integer> taxonIds) {
+        this.taxonIds = taxonIds;
     }
 
     /**
@@ -38,8 +54,6 @@ public class GFF3ExportForm extends TableExportForm
      * @return a set of taxon ids
      */
     public Set<Integer> getOrganisms() {
-        return taxIds;
+        return taxonIds;
     }
-
-    
 }

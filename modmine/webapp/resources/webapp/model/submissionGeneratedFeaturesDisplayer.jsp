@@ -150,6 +150,7 @@ img.tinyQuestionMark {
             </td>
             <td align="left" width="5%">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}" title="GFF3" style="text-decoration: none;">GFF3</a>
+              (<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}&UCSC" title="GFF3 for UCSC" style="text-decoration: none;">for UCSC</a>)
             </td>
             <td align="left" width="10%">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="FASTA" style="text-decoration: none;">SEQUENCE</a>
