@@ -73,17 +73,6 @@ public abstract class BagConverter
         throws ObjectStoreException, UnsupportedEncodingException;
 
     /**
-     *
-     * @param profile user's profile
-     * @param bagType class of list
-     * @param bagName name of list
-     * @param constraintValue value of constraint
-     * @return string of comma delimited identifiers
-     */
-    public abstract String getConvertedObjectFields(Profile profile, String bagType,
-            String bagName, String constraintValue);
-
-    /**
     *
     * @param profile user's profile
     * @param bagType class of list
