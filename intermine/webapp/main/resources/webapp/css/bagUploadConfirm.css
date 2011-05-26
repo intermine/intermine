@@ -14,7 +14,7 @@ table.inlineResultsTable { font-size:12px; width:100%; }
 table.inlineResultsTable td { padding:6px; }
     table.inlineResultsTable td.right { text-align:right; }
 table.inlineResultsTable thead td { padding:0 0 0 6px; font-size:13px; }
-table.inlineResultsTable tr.even td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
+table.inlineResultsTable tbody tr td { border-top-width:1px; border-top-style:solid; border-bottom-width:0px; border-bottom-style:solid; }
 table.inlineResultsTable td.identifier { font-weight:bold; }
 
 
