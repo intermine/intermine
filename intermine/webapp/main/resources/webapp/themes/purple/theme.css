@@ -276,7 +276,7 @@ ul#loginbar li { border-right-color:#5C0075; }
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#5c0075; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#F4EEF7;  }
-#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tr.even td { background:#fcfafd; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { background:#fcfafd; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color: #5C0075; background:#F4EEF7; border-top-color:#5C0075; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#F4EEF7; }
