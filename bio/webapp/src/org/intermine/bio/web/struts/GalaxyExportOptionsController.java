@@ -12,11 +12,13 @@ package org.intermine.bio.web.struts;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,8 +91,24 @@ public class GalaxyExportOptionsController extends TilesAction
             query.addView(path + ".chromosomeLocation.end");
             query.addView(path + ".organism.name");
 
+            // use ids or pids
+            String[] idsInStr = value.split(",");
+            Set<Integer> ids = new HashSet<Integer>();
+            boolean isIds = true;
+            for (String id : idsInStr) {
+                if (!Pattern.matches("^\\d*$", id)) {
+                    isIds = false;
+                    break;
+                }
+                ids.add(Integer.valueOf(id));
+            }
 
-            query.addConstraint(Constraints.lookup(path, value, null));
+            if (isIds) {
+                query.addConstraint(Constraints.inIds(path, ids));
+            } else {
+                query.addConstraint(Constraints.lookup(path, value, null));
+            }
+
         } else {
             String tableName = request.getParameter("table");
             PagedTable pt = SessionMethods.getResultsTable(session, tableName);
@@ -165,15 +183,16 @@ public class GalaxyExportOptionsController extends TilesAction
             }
         }
 
-        String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
+        String queryXML = PathQueryBinding.marshal(query, "", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);
-        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
-        StringBuffer stringUrl = new StringBuffer(
-                new URLGenerator(request).getPermanentBaseURL()
-                        + "/service/query/results?query=" + encodedQueryXML
-                        + "&size=1000000");
 
-        request.setAttribute("viewURL", stringUrl.toString());
+        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
+        String link = new URLGenerator(request).getPermanentBaseURL()
+                        + "/service/query/results?query="
+                        + encodedQueryXML
+                        + "&size=1000000";
+
+        request.setAttribute("viewURL", link);
 
         return null;
     }
