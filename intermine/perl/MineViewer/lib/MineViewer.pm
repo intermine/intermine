@@ -135,6 +135,27 @@ get '/lists' => sub {
     };
 };
 
+get '/lists.options' => sub {
+    my @lists = get_lists();
+    template list_options => {
+        lists => [@lists],
+    }, {layout => undef};
+};
+
+my $list_item_controller = sub {
+    my @lists = (params->{list}) ? ( 
+        $service->list(params->{list}) || get_lists()) : get_lists();
+    my $list_query = get_list_query( $lists[0] );
+    my $items = $list_query->results(as => 'jsonobjects');
+    template list_items => {
+        class_keys => get_class_keys_for( $lists[0]->type ),
+        items      => $items,
+        lists      => [@lists],
+    }, {layout => undef};
+};
+get '/lists.items' => $list_item_controller;
+post '/lists.items' => $list_item_controller;
+
 sub get_items_in_list {
     my $list  = shift;
     my $query = get_list_query($list);
