@@ -63,7 +63,7 @@
                 var ids = [];
                 var classes = [];
                 inputs.each(function(index, element) {
-                    if (jQuery(element).attr('checked')) {
+                    if (jQuery(element).attr('checked') && element.objClass) {
                         if (jQuery.inArray(element.name, ids) == -1) {
                             ids.push(element.name);
                         }
@@ -92,7 +92,7 @@
                                     description: $('#newlistdesc').val(),
                                     type: $('#listTypeSelector').val()
                                 };
-                                $.post("[% proxy.uri_for('/create_new_list') %]", data, handleResults, "json");
+                                $.post("[% proxy.uri_for('/create_new_list') %]", data, handleListResults, "json");
                                 $(this).dialog('close');
                             },
                             Cancel: function() {$(this).dialog('close');}
@@ -100,7 +100,7 @@
                     });
                 } else {
                     var data = {ids: ids.join(','), list: listName};
-                    $.post("[% proxy.uri_for('/add_ids_to_list') %]", data, handleResults, "json");
+                    $.post("[% proxy.uri_for('/add_ids_to_list') %]", data, handleListResults, "json");
                 }
             });
 
@@ -124,6 +124,20 @@
                     jQuery(table.listSelector).hide();
                 }
             });
+        },
+        headerMunger: function(header, idx, uid) {
+            var parts = header.split(" > ");
+            var path = parts.join('.');
+            var text = '';
+            if (parts.length == 1) {
+                text = parts[0];
+            } else if (parts.length == 2) {
+                text = parts[1];
+            } else {
+                text = parts.slice(parts.length - 2, parts.length).join(" ");
+            }
+            var script = "var isChecked = jQuery(this).attr('checked');var tbl = jQuery('#imbedded-table-" + uid + "'); var rows = tbl.children('tbody').children('.imbedded-data-row'); rows.each(function() {var cell = jQuery(this).children('td').get()[" + (idx + 1) + "]; jQuery(cell).children('span').children('input').attr('checked', isChecked).change();});";
+            return '<span><input type="checkbox" value="' + path + '" onclick="' + script + '" style="display:none"/>' + text + '</span>';
         },
         afterTableUpdate: function(table) {
             var elements = table.table.children('tbody')

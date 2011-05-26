@@ -7,7 +7,7 @@
     <div class="submenu" id="list-submenu">
         <a onclick="jQuery('#lists-display').show();jQuery('#lists-manage').hide();">View Lists</a>
         <span>|</span>
-        <a onclick="jQuery('#lists-display').hide();jQuery('#lists-manage').show();">Manage Lists</a>
+        <a onclick="jQuery('#lists-display').hide();jQuery('#lists-manage').slideDown('fast', function() {jQuery('#list-operand-selector').multiselect('open')});">Manage Lists</a>
     </div>
     <div id="lists-display">
         [% INCLUDE lists_display.tt %]

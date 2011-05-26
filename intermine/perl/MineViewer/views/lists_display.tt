@@ -1,57 +1,35 @@
 
-    <div id="controls">
-    <form id="display-format" style="float:right;">
-    <button id="list-deleter">Delete this list</button>
-    <input type="radio" name="list-display-format" id="grid" checked><label for="grid">as grid</label>
-    <input type="radio" name="list-display-format" id="table"><label for="table">as table</label>
-    </form>
+<div id="list-chrome" style="margin-bottom:10px;">
+
     [% IF lists.size == 1 %]
-    <div id="list-title-container">
+    <span id="list-title-container">
         [% list = lists.0 %]
         <h2 id="list-title">
             <span id="currentListName">[% list.name %]</span>
             ([% list.size %] [% pluraliser(list.type) %])
         </h2>
     [% ELSE %]
-    <div id="list-container">
+    <span id="list-container">
         <select id="lists">
-        [% FOREACH list IN lists %]
-            <option value="[% list.name %]">[% list.name %] ([% list.size %] [% pluraliser(list.type) %]) </option>
-        [% END %]
+            [% INCLUDE list_options.tt %]
         </select>
     [% END %]
-    </div>
-    </div>
-    <div id="list-item-box">
-    <ul id="list-items">
-        [% FOREACH item IN items %]
-            [% itemname = '' %]
-            [% FOREACH key IN class_keys %]
-                [% resolved = item %]
-                [% keyparts = key.split('\.') %]
-                [% FOREACH kp IN keyparts %]
-                    [% resolved = resolved.$kp %]
-                [% END %]
-                [% itemname = resolved %]
-                [% LAST IF itemname %]
-            [% END %]
-    [% deleter_id = "deleter-" _ item.objectId %]
-    [% href = proxy.uri_for('/' _ item.class _ '/id/' _ item.objectId) %]
-    [% lname = lists.0.name %]
-    [% itemid = item.objectId %]
-    <li>
-        <span onmouseover="jQuery('#[% deleter_id %]').show()"
-              onmouseout="jQuery('#[% deleter_id %]').hide()"
-              id="item-[% item.objectId %]">
-            <a href="[% href %]">[% itemname %]</a>
-            <a icon="delete" style="display:none;cursor:pointer;" 
-               id="[% deleter_id %]"
-               title="Remove this item"
-               onclick="removeitem('[% lname %]', '[% itemid %]')"></a>
-       </span> 
-    </li>
-        [% END %]
-    </ul>
+    </span>
+
+    <span id="controls" style="float:right;width:300px;">
+        <form id="display-format">
+            <button id="list-deleter">Delete this list</button>
+            <input type="radio" name="list-display-format" id="grid" checked>
+            <label for="grid">grid</label>
+            <input type="radio" name="list-display-format" id="table">
+            <label for="table">table</label>
+        </form>
+    </span>
+</div>
+<div style="height:10px;"></div>
+
+    <div id="list-item-box" >
+        [% INCLUDE list_items.tt %]
     </div>
     <div id="list-table-box" style="display:none;">
         <img src="[% proxy.uri_for('/images/loading-bar.gif') %]"></img>
@@ -61,13 +39,19 @@
 var colWidth = [% settings.list_column_width %];
 
 jQuery(function() {
-    jQuery('#lists').buttonset();
+    jQuery('#lists').multiselect({
+        noneSelectedText: "Select a list",
+        multiple: false,
+        selectedList: 1,
+        minWidth: 300
+    })
+    .bind('multiselectclick', handleListSelection)
+    .multiselectfilter();
     jQuery('#display-format').buttonset();
     jQuery('#list-deleter').button({
             icons: {primary: "ui-icon-trash"}
         }).click(function() {
-        var listname = jQuery('#lists option:selected').val()
-                        || jQuery('#currentListName').text();
+        var listname = getCurrentList();
         jQuery('#delendum').text(listname);
         jQuery('#confirm-del').dialog({
             autoOpen: false,
@@ -77,21 +61,9 @@ jQuery(function() {
                 "Delete": function() {
                     jQuery.post('[% proxy.uri_for("/deletelist") %]', 
                         {list: listname}, function(results) {
-                            handleResults(results);
+                            notifyResults(results);
+                            updateListDisplay('[% proxy.uri_for("/lists") %]');
                             jQuery('#confirm-del').dialog('close');
-                            window.location.hash = null;
-                            jQuery('#lists option').each(function(i, e) {
-                                if (jQuery(e).val() == listname) {
-                                    jQuery(e).remove();
-                                }
-                            });
-                            jQuery('#lists option').each(function(i, e) {
-                                if (jQuery(e).val() != listname) {
-                                    jQuery(e).attr('selected' , true);
-                                    return false;
-                                }
-                            });
-                            handleListSelection();
                      }, "json");
                 },
                 "Cancel": function() {jQuery(this).dialog('close');}
@@ -140,9 +112,14 @@ jQuery(function() {
     });
 });
 
+function getCurrentList() {
+    var current = $('#lists').multiselect('getChecked')[0].value 
+        || $('#currentListName').text();
+    return current;
+}
 
 function handleListSelection() {
-    var listname = jQuery('#lists option:selected').val();
+    var listname = getCurrentList();
     window.location.hash = escape(listname);
     jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
             + escape(listname) + ' #list-items', null, function() {
@@ -163,27 +140,23 @@ function removeitem(listName, objId) {
         list: listName,
         ids: objId,
     };
+    var currentList = getCurrentList();
+    console.log("CURRENT LIST: " + currentList); 
     jQuery.post("[% proxy.uri_for('/remove_list_item') %]", 
-        data, handleResults, "json");
+        data, 
+        function(res) {
+            notifyResults(res);
+            updateListSelector('[% proxy.uri_for("/lists.options") %]', currentList);
+            updateListItemDisplayArea('[% proxy.uri_for("/lists.items") %]', currentList);
+        }, "json"
+    );
+
 }
 function initialiseListPage() {
     var currentList = unescape(window.location.hash.substr(1));
     if (currentList) {
-        jQuery('#lists option').each(function(index, elem) {
-            if (elem.value == currentList) {
-                jQuery(elem).attr('selected', true);
-            }
-        });
+        updateListDisplay('[% proxy.uri_for("/lists") %]', currentList);
     }
-
-    var listname = jQuery('#lists option:selected').val();
-    jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
-        + escape(listname) + ' #list-items', null, function() {
-        jQuery('#list-items').makeacolumnlists({
-            cols: colWidth, colWidth: 0, 
-            equalHeight: true, startN: 1
-            })
-        });
 }
 
 jQuery(function() {

@@ -34,7 +34,7 @@ jQuery(function() {
                             description: $('#newlistdesc').val(),
                             type: "[% obj.class %]"
                         };
-                        $.post("[% proxy.uri_for('/create_new_list') %]", data, handleResults, "json");
+                        $.post("[% proxy.uri_for('/create_new_list') %]", data, handleListResults, "json");
                         $(this).dialog('close');
                     },
                     Cancel: function() {$(this).dialog('close');}
