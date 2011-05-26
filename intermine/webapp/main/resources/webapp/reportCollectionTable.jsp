@@ -46,11 +46,6 @@
                               <c:when test="${resultElementColumn.isKeyField}">
                                 <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>
                                 <a class="theme-1-color" href="report.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
-                                <!--
-                                <html:link action="/report?id=${resultElementColumn.id}">
-                                  <fmt:message key="${resultElementColumn.field}"/>
-                                </html:link>
-                                -->
                                 </td>
                               </c:when>
                               <c:otherwise>
