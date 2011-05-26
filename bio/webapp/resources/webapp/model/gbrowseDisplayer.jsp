@@ -7,7 +7,7 @@
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
 
-  <div class="feature">
+<div id="gBrowse" class="feature">
 
   <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
@@ -69,12 +69,8 @@
   </c:if>
   <c:choose>
   <c:when test="${ WEB_PROPERTIES['gbrowse.database.source'] != null }">
-    <div style="padding: 20px">
-      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
-        <c:if test="${cld.unqualifiedName != 'Chromosome'}">
-            <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=600;b=1" title="GBrowse"/>
-        </c:if>
-      </html:link>
+    <div align="center">
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750"></html:link>
     </div>
   </c:when>
   <c:otherwise>
@@ -84,6 +80,32 @@
 
 <br/>
 </div>
+
+<c:if test="${cld.unqualifiedName != 'Chromosome'}">
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+      var img = new Image();
+      // wrap our new image in jQuery
+      jQuery(img)
+        // once the image has loaded, execute this code
+        .load(function() {
+          // 'remove' loading
+          jQuery("#gBrowse div").removeClass('loading');
+          // attach image
+          jQuery('#gBrowse a').html(this);
+        })
+        .error(function() {
+          // notify the user that the image could not be loaded
+          jQuery('#gBrowse a').html("The genome browser could not be loaded.")
+          .attr('style', 'color:#ff0000;font-weight:bold;');
+        })
+        // set the attributes of the image
+        .attr('src', "${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=600;b=1")
+        .attr('style', 'border:1px solid #000;')
+        .attr('title', 'GBrowse');
+  });
+</script>
+</c:if>
 
 </c:if>
 <!-- /gbrowseDisplayer.jsp -->

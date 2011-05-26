@@ -190,6 +190,10 @@ div.custom-displayer p.switchers a.switcher.active { font-weight:bold; text-deco
 #intermine_links ul li ul li ul li { display:inline; }
 #intermine_links ul li.mine { margin-bottom:5px; }
 
+/* a loading elsewhere */
+#gBrowse .loading { background:url('../images/icons/ajax-loader.gif') no-repeat center;
+  margin:0 auto; min-width:200px; min-height:20px; display:block; }
+
 /* gene models */
 .container_12 .compact-table td { font-size: 10.8px; padding: 0 6px !important; }
 .container_12 .compact-table thead tr th { border-bottom-width:1px; border-bottom-style:solid; padding: 0 6px; }

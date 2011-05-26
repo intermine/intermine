@@ -68,17 +68,40 @@
 
 <%-- display starts  --%>
 
-<h3>modENCODE Genome Browser</h3>
+<div id="gBrowse">
+  <h3>modENCODE Genome Browser</h3>
 
-<c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
+  <c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
+  <div class="loading" align="center">
+    <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750"></html:link>
+  </div>
+</div>
 
-    <div align="center">
-        <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750">
-            <c:if test="${cld.unqualifiedName != 'Chromosome'}">
-                <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/${link};width=500;b=1" title="GBrowse"/>
-            </c:if>
-        </html:link>
-    </div>
+<c:if test="${cld.unqualifiedName != 'Chromosome'}">
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+      var img = new Image();
+      // wrap our new image in jQuery
+      jQuery(img)
+        // once the image has loaded, execute this code
+        .load(function() {
+          // 'remove' loading
+          jQuery("#gBrowse div").removeClass('loading');
+          // attach image
+          jQuery('#gBrowse a').html(this);
+        })
+        .error(function() {
+          // notify the user that the image could not be loaded
+          jQuery('#gBrowse a').html("The genome browser could not be loaded.")
+          .attr('style', 'color:#ff0000;font-weight:bold;');
+        })
+        // set the attributes of the image
+        .attr('src', "${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/${link};width=500;b=1")
+        .attr('style', 'border:1px solid #000;')
+        .attr('title', 'GBrowse');
+  });
+</script>
+</c:if>
 
 </c:if>
 
