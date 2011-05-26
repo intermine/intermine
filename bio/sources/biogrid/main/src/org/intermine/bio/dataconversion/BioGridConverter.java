@@ -74,9 +74,8 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
-    private Map<MultiKey, Item> idsToExperiments;
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
-
+    private Map<MultiKey, Item> idsToExperiments;
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -183,6 +182,19 @@ public class BioGridConverter extends BioFileConverter
      */
     public void setBiogridOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void close()  {
+        for (Item experiment : idsToExperiments.values()) {
+            try {
+                store(experiment);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -364,8 +376,6 @@ public class BioGridConverter extends BioFileConverter
                 }
             } else if ("experimentDescription".equals(qName)) {
                 setExperiment(experimentHolder);
-            } else if ("entrySet".equals(qName)) {
-                storeExperiments();
 
             /********************************* GENES ***********************************/
 
@@ -640,15 +650,6 @@ public class BioGridConverter extends BioFileConverter
             eh.experimentRefId = exp.getIdentifier();
         }
 
-        private void storeExperiments() throws SAXException {
-            for (Item experiment : idsToExperiments.values()) {
-                try {
-                    store(experiment);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-        }
 
         private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
                                                         String refId) {
