@@ -41,6 +41,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
 import org.intermine.web.logic.config.HeaderConfigTitle;
@@ -443,6 +444,23 @@ public class ReportObject
             }
         }
         return this.headerLink;
+    }
+
+    /**
+     * The said function will resolve the maximum number of rows to show (in Collections)
+     *  from webProperties.
+     * @return Integer duh
+     */
+    public Integer getNumberOfTableRowsToShow() {
+        String maxInlineTableSizeString =
+            (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+        try {
+            return Integer.parseInt(maxInlineTableSizeString);
+        } catch (NumberFormatException e) {
+            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                     + maxInlineTableSizeString);
+        }
+        return null;
     }
 
     /**

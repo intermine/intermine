@@ -54,7 +54,6 @@
 
     #interactions-wrap { overflow-x:auto; }
     #interactions-wrap div.inside { min-width:1040px; }
-
 </style>
 
 <script type="text/javascript">
@@ -129,7 +128,7 @@
   </div>
 </div>
 <br />
-<div id="cwinlinetable" class="box table">
+<div id="cwinlinetable" class="table">
   <h3>Interactions</h3>
   <div style="overflow-x:auto;">
     <tiles:insert name="resultsTable.tile">
@@ -138,7 +137,55 @@
          <tiles:put name="inlineTable" value="true" />
     </tiles:insert>
   </div>
+  <p class="toggle" style="display:none;">
+    <a class="collapser" style="float: right;" href="#"><span>Hide</span></a>
+    <a class="toggler" style="float: right; margin-right: 20px;" href="#"><span>Show more rows</span></a>
+  </p>
+  <p class="in_table">
+    <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
+      Show all in a table »
+    </html:link>
+  </p>
 </div>
+<script type="text/javascript">
+  <%-- hide more than 10 rows --%>
+  var interactionsTableLength = jQuery("#cwinlinetable table.results tr.bodyRow").length;
+  if (interactionsTableLength > 10) {
+    jQuery("#cwinlinetable table.results tr.bodyRow").each(function(i) {
+      if (i > 9) {
+        jQuery(this).hide();
+      }
+    });
+    <%-- 'provide' toggler --%>
+    jQuery("#cwinlinetable p.toggle").show();
+    <%-- attach toggler event --%>
+    jQuery('#cwinlinetable p.toggle a.toggler').click(function(e) {
+      jQuery("#cwinlinetable table.results tr.bodyRow:hidden").each(function(i) {
+        if (i < 10) {
+          jQuery(this).show();
+        }
+      });
+      if (jQuery("#cwinlinetable table.results tr.bodyRow:hidden").length == 0) {
+        jQuery('#cwinlinetable p.toggle a.toggler').hide();
+      }
+
+      e.preventDefault();
+    });
+    <%-- attach collapser event --%>
+    jQuery('#cwinlinetable p.toggle a.collapser').click(function(e) {
+      jQuery("#cwinlinetable table.results tr.bodyRow").each(function(i) {
+        if (i > 9) {
+          jQuery(this).hide();
+        }
+      });
+      jQuery('#cwinlinetable p.toggle a.toggler').show();
+
+      jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
+
+      e.preventDefault();
+    });
+  }
+</script>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>

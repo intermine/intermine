@@ -141,7 +141,7 @@ public class CytoscapeNetworkDisplayer extends CustomDisplayer
         try {
             WebResultsExecutor we = im.getWebResultsExecutor(profile);
             WebResults webResults = we.execute(q);
-            PagedTable pagedResults = new PagedTable(webResults, 10); // TODO only display 10 recs?
+            PagedTable pagedResults = new PagedTable(webResults, reportObject.getNumberOfTableRowsToShow());
             pagedResults.setTableid("CytoscapeNetworkDisplayer");
             request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
         } catch (ObjectStoreException e) {
