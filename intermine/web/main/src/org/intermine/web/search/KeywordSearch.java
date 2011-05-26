@@ -929,7 +929,7 @@ public final class KeywordSearch
         classBoost = new HashMap<ClassDescriptor, Float>();
         ignoredFields = new HashMap<Class<? extends InterMineObject>, Set<String>>();
         facets = new Vector<KeywordSearchFacetData>();
-        debugOutput = false;
+        debugOutput = true;
 
         // load config file to figure out special classes
         String configFileName = "keyword_search.properties";
@@ -958,7 +958,7 @@ public final class KeywordSearch
                         }
                     } else  if ("index.ignore.fields".equals(key) && !StringUtils.isBlank(value)) {
                         String[] ignoredPaths = value.split("\\s+");
-                        
+
                         for (String ignoredPath : ignoredPaths) {
                             if (StringUtils.countMatches(ignoredPath, ".") != 1) {
                                 LOG.error("Fields to ignore specified by 'index.ignore.fields'"
@@ -966,7 +966,7 @@ public final class KeywordSearch
                             } else {
                                 String clsName = ignoredPath.split("\\.")[0];
                                 String fieldName = ignoredPath.split("\\.")[1];
-                                
+
                                 ClassDescriptor cld =
                                     os.getModel().getClassDescriptorByName(clsName);
                                 if (cld != null) {
@@ -1730,10 +1730,10 @@ public final class KeywordSearch
             for (ClassDescriptor subCld : cld.getSubDescriptors()) {
                 clds.add(subCld);
             }
-            
+
             for (ClassDescriptor ignoreCld : clds) {
                 Set<String> fields = ignoredFields.get(cld.getType());
-                Class<? extends InterMineObject> cls = 
+                Class<? extends InterMineObject> cls =
                     (Class<? extends InterMineObject>) cld.getType();
                 if (fields == null) {
                     fields = new HashSet<String>();
@@ -1745,9 +1745,9 @@ public final class KeywordSearch
             LOG.error("cld " + cld + " is not IMO!");
         }
     }
-    
-    
-    
+
+
+
     /**
      * get list of facet fields and names
      * @return map of internal fieldname -> displayed name
