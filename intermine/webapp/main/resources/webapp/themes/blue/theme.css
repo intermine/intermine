@@ -368,7 +368,8 @@ ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#002575; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#EEF0F7;  }
-#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { background:#FBFDFE; border-top-color:#E2F5FE; border-bottom-color:#E2F5FE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr.even td { background:#FBFDFE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { border-top-color:#E2F5FE; border-bottom-color:#E2F5FE; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#002575; background:#EEF0F7; border-top-color:#002575; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#EEF0F7; }

@@ -300,7 +300,8 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#004499; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#EBEBEB;  }
-#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { background:#FAFAFA; border-top-color:#F0F0F0; border-bottom-color:#F0F0F0; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr.even td { background:#FAFAFA; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { border-top-color:#F0F0F0; border-bottom-color:#F0F0F0; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#004499; background:#EBEBEB; border-top-color:#004499; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#EBEBEB; }
