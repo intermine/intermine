@@ -184,7 +184,7 @@ IMBedding = (function() {
             for (var i = 0; i < data.views.length; i++) {
                 var cell = document.createElement("td");
                 cell.setAttribute("class", "imbedded-cell imbedded-column-header");
-                cell.innerHTML = this.options.headerMunger(data.columnHeaders[i]);
+                cell.innerHTML = this.options.headerMunger(data.columnHeaders[i], i, this.uid);
                 cell.setAttribute("title", data.columnHeaders[i]);
                 this.colHeaderRow.append(cell);
             }
