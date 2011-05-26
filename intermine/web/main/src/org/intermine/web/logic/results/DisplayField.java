@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
@@ -22,6 +23,7 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -42,17 +44,22 @@ public class DisplayField
     /** @List<Class<?> PathQueryResultHelper resolved */
     private List<Class<?>> listOfTypes = null;
 
+    /** @var webProperties so we can resolve # of rows to show in Collections */
+    private Properties webProperties;
+
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
      * @param fd metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
+     * @param webProperties, telling us how many Collection rows to show
      * @param classKeys Map of class name to set of keys
      * @param listOfTypes as determined using PathQueryResultHelper on a Collection
      * @throws Exception if an error occurs
      */
     public DisplayField(Collection collection, FieldDescriptor fd,
-                        WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
+                        WebConfig webConfig, Properties webProperties,
+                        Map<String, List<FieldDescriptor>> classKeys,
                         List<Class<?>> listOfTypes) throws Exception {
 
         this.listOfTypes = listOfTypes;
@@ -60,6 +67,7 @@ public class DisplayField
         this.collection = collection;
         this.fd = fd;
         this.webConfig = webConfig;
+        this.webProperties = webProperties;
         this.classKeys = classKeys;
     }
 
@@ -69,21 +77,19 @@ public class DisplayField
      */
     public InlineResultsTable getTable() {
         if (table == null && collection.size() > 0) {
-            // default
-            int maxInlineTableSize = 30;
-
-            // will throw an exception
-            /*String maxInlineTableSizeString =
-                (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
-
-            try {
-                maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
-            } catch (NumberFormatException e) {
-                LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
-                         + maxInlineTableSizeString);
-            }*/
-
-            int tableSize = maxInlineTableSize;
+            // on References we will have 1 row
+            Integer tableSize = 1;
+            if (webProperties != null) {
+                // resolve max table size to show from properties
+                String maxInlineTableSizeString =
+                    (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+                try {
+                    tableSize = Integer.parseInt(maxInlineTableSizeString);
+                } catch (NumberFormatException e) {
+                    LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                             + maxInlineTableSizeString);
+                }
+            }
 
             try {
                 // don't call size unless we have to - it's slow

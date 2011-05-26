@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -86,6 +87,12 @@ public class ReportObject
     /** @var Set of References & Collections that will always be 0 for this type of object */
     private Set<String> nullRefsCols;
 
+    /**
+     * @var webProperties so we can resolve # of rows to show in Collections
+     * @see DisplayReference/DisplayCollection -> DisplayField -> getTable()
+     */
+    private Properties webProperties;
+
     private static final Logger LOG = Logger.getLogger(ReportObject.class);
 
     /**
@@ -93,13 +100,15 @@ public class ReportObject
      * @param object InterMineObject
      * @param webConfig WebConfig
      * @param im InterMineAPI
+     * @param webProperties
      * @throws Exception Exception
      */
-    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im)
+    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im, Properties webProperties)
         throws Exception {
         this.object = object;
         this.webConfig = webConfig;
         this.im = im;
+        this.webProperties = webProperties;
 
         // infer dynamic type of IM object
         this.objectType = DynamicUtil.getSimpleClass(object).getSimpleName();
@@ -584,7 +593,8 @@ public class ReportObject
             DisplayCollection newCollection = null;
             try {
                 newCollection = new DisplayCollection((Collection<?>) fieldValue,
-                        (CollectionDescriptor) fd, webConfig, im.getClassKeys(), listOfTypes);
+                        (CollectionDescriptor) fd, webConfig, webProperties, im.getClassKeys(),
+                        listOfTypes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
