@@ -527,9 +527,7 @@ public class DisplayObject
                             queryForTypesInCollection(object, fd.getName(), os);
 
                             DisplayCollection newCollection =
-                                new DisplayCollection((Collection) fieldValue,
-                                        (CollectionDescriptor) fd, webConfig, webProperties,
-                                        listOfTypes);
+                                new DisplayCollection(null, null, null, null, null, null);
                             //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
                             //}

@@ -39,7 +39,7 @@ public class DisplayReference extends DisplayField
     public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,
                             WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys)
         throws Exception {
-        super(getProxyList(proxy), ref, webConfig, classKeys, null);
+        super(getProxyList(proxy), ref, webConfig, null, classKeys, null);
         this.proxy = proxy;
         desc = ref;
     }
