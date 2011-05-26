@@ -162,21 +162,13 @@
   <definition name="error.tile" path="/error.jsp"/>
   <definition name="pagenotfound.tile" path="/pagenotfound.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
-  <definition name="tipWrapper.tile" path="/tipWrapper.jsp"/>
   <definition name="login.tile" path="/login.jsp" controllerUrl="/initLogin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
-  <definition name="tip.tile" path="/tip.jsp" controllerUrl="/initTip.do"/>
-  <definition name="tips.tile" path="/tips.jsp" />
-  <definition name="tipDisplayer.tile" path="/tipDisplayer.jsp"/>
   <definition name="aspects.tile" path="/aspectIcons.jsp" />
-
   <definition name="query.tile" path="/queryBuilderPage.jsp">
     <put name="queryBuilder" value="queryBuilder.tile"/>
     <put name="queryBuilderView" value="queryBuilderView.tile"/>
   </definition>
-
-
-
   <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
   <definition name="reportTemplateTable.tile" path="/reportTemplateTable.jsp"
               controllerUrl="/initReportTemplateTable.do"/>
