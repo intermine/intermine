@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
@@ -25,6 +26,9 @@ public class BioGridConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     BioGridConverter converter;
     MockItemWriter itemWriter;
+    private final String currentFile = "BIOGRID-ORGANISM-Drosophila_melanogaster-3.1.76.psi25.xml";
+
+
 
     public BioGridConverterTest(String arg) {
         super(arg);
@@ -43,8 +47,10 @@ public class BioGridConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                            .getResourceAsStream("BioGridConverterTest_src.xml"));
-        converter.setBiogridOrganisms("10116 6239 7227");
+                                            .getResourceAsStream(currentFile));
+        converter.setCurrentFile(new File(currentFile));
+        converter.setBiogridOrganisms("10116 4932 10090 7227");
+        System.out.println(converter.getCurrentFile());
         converter.process(reader);
         converter.close();
 
