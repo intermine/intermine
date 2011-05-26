@@ -1,1 +1,0 @@
-Keywords can be used to search for existing template queries.
