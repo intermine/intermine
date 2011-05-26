@@ -28,6 +28,8 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 }
 
   function generate(jSONObject, target, url) {
+      jQuery(target).html("<ul class='organisms'></ul>");
+      target += " ul.organisms";
       // for each organism for which the mine has orthologues
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
@@ -35,8 +37,8 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
             if (entry['isHomologue'] == true) {
                 homologue = "&orthologue=" + entry['shortName'];
             }
-            var linky = "<li><a href='" + url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue + "'>" + entry['shortName'] + "</a>";
-            jQuery(target).html(linky);
+            var linky = "<li id='organism-" + key + "'><a href='" + url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue + "'>" + entry['shortName'] + "</a>";
+            jQuery(target).append(linky);
         }
       });
   }
