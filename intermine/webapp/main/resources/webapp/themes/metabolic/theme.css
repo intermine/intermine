@@ -216,7 +216,8 @@ table.results tr th.columnHeader { font-size:16px; background:#F5F5F5 !important
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#1F7492; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable thead td { background:#F5F5F5;  }
-#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { background:#F6FCFE; border-top-color:#E6F7FE; border-bottom-color:#E6F7FE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr.even td { background:#F6FCFE; }
+#pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable tbody tr td { border-top-color:#E6F7FE; border-bottom-color:#E6F7FE; }
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable td.identifier { color:#886644; }
 #pagecontentcontainer.bagUploadConfirm-page h3 { color:#1F7492; background:#F5F5F5; border-top-color:#1F7492; }
 #pagecontentcontainer.bagUploadConfirm-page div.description { background:#F5F5F5; }
