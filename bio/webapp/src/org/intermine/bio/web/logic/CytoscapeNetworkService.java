@@ -137,7 +137,7 @@ public class CytoscapeNetworkService
             Integer targetId = (Integer) aRecode.get(8);
 
             if (!interactionNodeMap.containsKey(String.valueOf(sourceId))
-            		&& !interactionNodeMap.containsKey(String.valueOf(targetId))) {
+                    && !interactionNodeMap.containsKey(String.valueOf(targetId))) {
                 String sourcePID = (String) aRecode.get(0);
                 String sourceSymbol = (String) aRecode.get(1);
                 String targetPID = (String) aRecode.get(3);
@@ -153,13 +153,13 @@ public class CytoscapeNetworkService
                         .getObjectById(sourceId), im.getClassKeys());
 
                 if (sourceSymbol != null) {
-                	sourceNode.setSourceLabel(sourceSymbol);
+                    sourceNode.setSourceLabel(sourceSymbol);
                 } else if (sourcePID != null) {
-                	sourceNode.setSourceLabel(sourcePID);
+                    sourceNode.setSourceLabel(sourcePID);
                 } else if (sourceGenekeyFldVal != null) {
-                	sourceNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
+                    sourceNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
                 } else {
-                	sourceNode.setSourceLabel("(Unknown Name)");
+                    sourceNode.setSourceLabel("(Unknown Name)");
                 }
 
                 interactionNodeMap.put(String.valueOf(sourceId), sourceNode);
@@ -171,20 +171,20 @@ public class CytoscapeNetworkService
                         .getObjectById(targetId), im.getClassKeys());
 
                 if (targetSymbol != null) {
-                	targetNode.setSourceLabel(targetSymbol);
+                    targetNode.setSourceLabel(targetSymbol);
                 } else if (targetPID != null) {
-                	targetNode.setSourceLabel(targetPID);
+                    targetNode.setSourceLabel(targetPID);
                 } else if (targetGenekeyFldVal != null) {
-                	targetNode.setSourceLabel(String.valueOf(targetGenekeyFldVal));
+                    targetNode.setSourceLabel(String.valueOf(targetGenekeyFldVal));
                 } else {
-                	targetNode.setSourceLabel("(Unknown Name)");
+                    targetNode.setSourceLabel("(Unknown Name)");
                 }
 
                 interactionNodeMap.put(String.valueOf(targetId), targetNode);
             }
 
             if (!interactionNodeMap.containsKey(String.valueOf(sourceId))
-            		&& interactionNodeMap.containsKey(String.valueOf(targetId))) {
+                    && interactionNodeMap.containsKey(String.valueOf(targetId))) {
                 String sourcePID = (String) aRecode.get(0);
                 String sourceSymbol = (String) aRecode.get(1);
 
@@ -198,20 +198,20 @@ public class CytoscapeNetworkService
                         .getObjectById(sourceId), im.getClassKeys());
 
                 if (sourceSymbol != null) {
-                	sourceNode.setSourceLabel(sourceSymbol);
+                    sourceNode.setSourceLabel(sourceSymbol);
                 } else if (sourcePID != null) {
-                	sourceNode.setSourceLabel(sourcePID);
+                    sourceNode.setSourceLabel(sourcePID);
                 } else if (sourceGenekeyFldVal != null) {
-                	sourceNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
+                    sourceNode.setSourceLabel(String.valueOf(sourceGenekeyFldVal));
                 } else {
-                	sourceNode.setSourceLabel("(Unknown Name)");
+                    sourceNode.setSourceLabel("(Unknown Name)");
                 }
 
                 interactionNodeMap.put(String.valueOf(sourceId), sourceNode);
             }
 
             if (interactionNodeMap.containsKey(String.valueOf(sourceId))
-            		&& !interactionNodeMap.containsKey(String.valueOf(targetId))) {
+                    && !interactionNodeMap.containsKey(String.valueOf(targetId))) {
 
                 String targetPID = (String) aRecode.get(3);
                 String targetSymbol = (String) aRecode.get(4);
@@ -226,13 +226,13 @@ public class CytoscapeNetworkService
                         .getObjectById(targetId), im.getClassKeys());
 
                 if (targetSymbol != null) {
-                	targetNode.setSourceLabel(targetSymbol);
+                    targetNode.setSourceLabel(targetSymbol);
                 } else if (targetPID != null) {
-                	targetNode.setSourceLabel(targetPID);
+                    targetNode.setSourceLabel(targetPID);
                 } else if (targetGenekeyFldVal != null) {
-                	targetNode.setSourceLabel(String.valueOf(targetGenekeyFldVal));
+                    targetNode.setSourceLabel(String.valueOf(targetGenekeyFldVal));
                 } else {
-                	targetNode.setSourceLabel("(Unknown Name)");
+                    targetNode.setSourceLabel("(Unknown Name)");
                 }
 
                 interactionNodeMap.put(String.valueOf(targetId), targetNode);
