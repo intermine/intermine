@@ -346,7 +346,9 @@
   <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="relationship"/>
+      <fieldconfig fieldExpr="parentTerm.name"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
+      <fieldconfig fieldExpr="childTerm.name"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
   </class>
