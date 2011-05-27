@@ -68,7 +68,7 @@
     <c:set var="label" value="${label}-CDSs"/>
   </c:if>
   <c:choose>
-  <c:when test="${ WEB_PROPERTIES['gbrowse.database.source'] != null }">
+  <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
     <div align="center">
       <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750"></html:link>
     </div>
@@ -95,6 +95,8 @@
           jQuery('#gBrowse a').html(this);
         })
         .error(function() {
+          // 'remove' loading
+          jQuery("#gBrowse div").removeClass('loading');
           // notify the user that the image could not be loaded
           jQuery('#gBrowse a').html("The genome browser could not be loaded.")
           .attr('style', 'color:#ff0000;font-weight:bold;');

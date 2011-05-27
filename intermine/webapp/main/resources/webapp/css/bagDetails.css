@@ -65,6 +65,7 @@ table.listinfotable tr td.infotitle {
 ol.widgetList li {
     float:left;
     margin-bottom:5px;
+    margin-left:10px !important;
 }
 .active, a:link.active, a:visited.active {
     background-color:#9F67AD;
@@ -117,4 +118,4 @@ div.table table.results tr.even td { border-width:1px 0; border-style:solid; }
 div.table.template div.templateDetails p.description { line-height:auto !important; margin:0 auto !important;
   text-align:left; padding-left:6px; }
 div.table.template div.templateDetails div.favorites img { float:left; padding:4px 4px 4px 6px; }
-div.template.table table { width:100%; }
+div.template.table div.templateDetails { margin:0 !important; width:100%; }

@@ -72,9 +72,16 @@
   <h3>modENCODE Genome Browser</h3>
 
   <c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
-  <div class="loading" align="center">
-    <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750"></html:link>
-  </div>
+  <c:choose>
+  <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
+    <div class="loading" align="center">
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750"></html:link>
+    </div>
+  </c:when>
+  <c:otherwise>
+    <p class="gbrowse-not-configured"><i>GBrowse is not configured in web.properties</i></p>
+  </c:otherwise>
+  </c:choose>
 </div>
 
 <c:if test="${cld.unqualifiedName != 'Chromosome'}">
@@ -91,6 +98,8 @@
           jQuery('#gBrowse a').html(this);
         })
         .error(function() {
+          // 'remove' loading
+          jQuery("#gBrowse div").removeClass('loading');
           // notify the user that the image could not be loaded
           jQuery('#gBrowse a').html("The genome browser could not be loaded.")
           .attr('style', 'color:#ff0000;font-weight:bold;');

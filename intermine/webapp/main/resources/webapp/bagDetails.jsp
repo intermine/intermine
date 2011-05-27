@@ -28,7 +28,7 @@
 <div class="heading results">
   <img src="images/icons/lists-64.png" alt="lists icon"/>
   <h1>
-    <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+    <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">&nbsp;for <b>${bag.name}</b> (${bag.size}&nbsp;${bag.type}s)</span>
   </h1>
   <div id="tool_bar_div">
       <ul id="button_bar">
