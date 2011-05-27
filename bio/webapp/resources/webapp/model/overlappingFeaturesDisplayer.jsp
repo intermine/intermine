@@ -81,16 +81,18 @@
                     jQuery(this).hide();
                 }
             });
+            var attrId = jQuery(this).attr('id');
             // add a show next link
             if (count < 0) {
                 var a = "<a href='#' style='float:right;margin-right:20px;' class='toggler'><span>Show more rows</span></a>";
-                jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle").append(a);
-                jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").bind(
+                jQuery("#overlapping-features.custom-displayer #" + attrId + ".table p.toggle").append(a);
+                jQuery("#overlapping-features.custom-displayer #" + attrId + ".table p.toggle a.toggler").bind(
                     "click",
                     function(f) {
                         // show another 10 rows
-                        count = 10;
-                        rows = jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden");
+                        count = 11;
+                        rows = jQuery("#overlapping-features.custom-displayer #" + attrId + ".table tbody tr:hidden");
+                        // #overlapping-features.custom-displayer #.table tbody tr:hidden
                         rows.each(function(index) {
                             count--;
                             if (count > 0) {
@@ -99,9 +101,9 @@
                         });
 
                         // we have no more rows to show
-                        if (jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden").length == 0) {
+                        if (jQuery("#overlapping-features.custom-displayer #" + attrId + ".table tbody tr:hidden").length == 0) {
                             // hide the link to more
-                            jQuery("#overlapping-features.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").remove();
+                            jQuery("#overlapping-features.custom-displayer #" + attrId + ".table p.toggle a.toggler").remove();
                         }
 
                         // no linking on my turf
