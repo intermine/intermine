@@ -107,6 +107,7 @@ jQuery(document).ready(function() {
   // on table load create table-wide clippy
   createClippy(tableToString(), "div.results-page #tool_bar_item_export #clippy-table");
   createClippy(tableToString(), "div.bagDetails-page #download #clippy-table");
+  createClippy(tableToString(), "div.bagDetails-page #tool_bar_item_export #clippy-table"); // old list analysis
   // and one clippy per column
   jQuery('table.results thead tr th.columnHeader').each(function(i) { // no comment...
     // add the target
