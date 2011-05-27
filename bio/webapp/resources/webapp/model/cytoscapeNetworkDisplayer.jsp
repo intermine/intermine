@@ -212,12 +212,14 @@
 
     if (dataNotIncludedMessage != "") {
         jQuery(target).html(dataNotIncludedMessage)
-                           .css('font-style','italic');
+                           .css({'font-style': 'italic', 'border': 'none'})
+                           .height(0)
+                           .width(600);
     }
     else if (orgWithNoDataMessage != "") {
       jQuery(target).html(orgWithNoDataMessage)
-                               .css('font-style','italic')
-                               .height(20)
+                               .css({'font-style': 'italic', 'border': 'none'})
+                               .height(0)
                                .width(600);
     }
 
@@ -233,9 +235,9 @@
                 if (response.match("^"+"No interaction data found from data sources:")) {
                     geneWithNoDatasourceMessage = response; // case: no interaction data found from the data sources
                     jQuery(target).html(geneWithNoDatasourceMessage)
-                                             .css('font-style','italic')
-                                             .height(20)
-                                             .width(60);
+                                             .css({'font-style': 'italic', 'border': 'none'})
+                                             .height(0)
+                                             .width(600);
                 } else {
                     networkdata = response;
                     displayNetwork(networkdata, fullInteractingGeneSet, project_title, project_baseurl, project_path);
