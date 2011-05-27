@@ -204,6 +204,7 @@ public final class FriendlyMineQueryRunner
         FriendlyMineQueryRunner.setMaps(mine);
     }
 
+    // sets available values for Mine, eg. organisms
     private static boolean setValues(Mine mine) {
         Set<String> names = new HashSet<String>();
         String webserviceURL = null;
@@ -216,7 +217,9 @@ public final class FriendlyMineQueryRunner
             }
             String line = null;
             while ((line = reader.readLine()) != null) {
-                names.add(line);
+                if (StringUtils.isNotEmpty(line)) {
+                    names.add(line);
+                }
             }
         } catch (Exception e) {
             LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
@@ -231,6 +234,7 @@ public final class FriendlyMineQueryRunner
         return false;
     }
 
+    // set key value pairs representing data in a mine
     private static void setMaps(Mine mine) {
         Map<String, Set<String>> mineMap = new HashMap<String, Set<String>>();
         String url = null;
@@ -254,8 +258,9 @@ public final class FriendlyMineQueryRunner
                 String key = bits[0];
 //                String dataSet = bits[1];
                 String value = bits[2];
-
-                Util.addToSetMap(mineMap, key, value);
+                if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
+                    Util.addToSetMap(mineMap, key, value);
+                }
             }
         } catch (Exception e) {
             LOG.error("Unable to access " + mine.getName() + " at " + url);
