@@ -34,17 +34,14 @@
                   <c:set var="term" value="${entry.key}" />
                   <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${term.id}" title="${term.description}">
                   <c:out value="${term.name}"/>
-                  </html:link>
-                  <img alt="?" title="${term.description}"
+                  </html:link>&nbsp;<img alt="?" title="${term.description}"
                        src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
                        class="tinyQuestionMark" />
                 </td>
                 <td>
                   <c:set var="evidence" value="${entry.value}" />
                   <c:forEach items="${entry.value}" var="evidence">
-                    <c:out value="${evidence}"/>
-                    <c:if test="${!empty codes[evidence] }">
-                      <img alt="?" title="${codes[evidence]}"
+                    <c:out value="${evidence}"/><c:if test="${!empty codes[evidence] }">&nbsp;<img alt="?" title="${codes[evidence]}"
                         src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
                         class="tinyQuestionMark" />
                     </c:if>

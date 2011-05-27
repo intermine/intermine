@@ -194,7 +194,7 @@
 
             <div id="api">
                 <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-                <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+                <img src="images/begin/perl-java-python-ico.png" alt="perl java" />
                 <p>
                     Access our <c:out value="${WEB_PROPERTIES['project.title']}"/> data via
                     our Application Programming Interface (API) too!
@@ -246,7 +246,7 @@
     // feed URL
     var feedURL = "${WEB_PROPERTIES['project.rss']}";
     // limit number of entries displayed
-    var maxEntries = 2;
+    var maxEntries = 3;
     // where are we appending entries? (jQuery syntax)
     var target = 'table#articles';
 

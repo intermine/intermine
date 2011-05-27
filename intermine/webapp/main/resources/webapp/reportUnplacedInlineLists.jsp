@@ -24,7 +24,7 @@
             </tiles:insert>
           </span>
         </c:if>
-        ${list.size} ${list.prefix}
+        ${list.size}&nbsp;${list.prefix}
       </h3>
       <c:if test="${list.size > 0}">
         <c:choose>

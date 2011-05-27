@@ -44,7 +44,11 @@
   <c:when test="${resultsTable.exactSize == 0}">
     <script type="text/javascript">
         var h = jQuery('#table_${fn:replace(placement, ':', '_')}_${templateQuery.name}').parent().find("h3.templateTitle div.right");
-        h.html('No results for this ${reportObject.type}');
+        if ('${reportObject.type}'.length > 0) {
+          h.html('No results for this ${reportObject.type}');
+        } else {
+          h.html('No results for this type');
+        }
         // apply gray style
         h.parent().parent().parent().parent().parent().addClass('gray');
     </script>

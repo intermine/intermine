@@ -262,7 +262,9 @@ function collapseTemplate(e, maxCount) {
   jQuery(e).parent().find('p.description').hide();
 
   // scroll to the table
-  jQuery(e).scrollTo('fast', 'swing', -60);
+  if (typeof jQuery(e).scrollTo == 'function') { // seems to fail on bagDetails otherwise...
+    jQuery(e).scrollTo('fast', 'swing', -60);
+  }
 
   // remove collapser & toggler
   table.parent().parent().find('p.in_table a.collapser').remove();
@@ -349,7 +351,7 @@ function showMoreRowsTemplate(e, round, maxCount) {
 
   // first round, show collapser
   if (round == 1) {
-    table.parent().parent().find('p.in_table').append('<a class="collapser" style="float:right;" onclick="return collapseTemplate(\'' + e + '\', ' +  maxCount + ');" href="#"><span>Collapse</span></a>');
+    table.parent().parent().find('p.in_table').append('<a class="collapser" style="float:right;" href="#" onclick="return collapseTemplate(\'' + e + '\', ' +  maxCount + ');"><span>Collapse</span></a>');
   }
 
   // if the count is > 0 (< 30 entries) or 4rd round (30+ entries) at this

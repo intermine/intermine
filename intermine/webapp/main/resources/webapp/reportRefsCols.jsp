@@ -44,7 +44,7 @@
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
           <span class="collectionField theme-1-color">
-            ${collection.size} ${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
+            ${collection.size}&nbsp;${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
           <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
         </html:link></h3>
@@ -80,7 +80,13 @@
         <script type="text/javascript">
           jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').addClass('gray');
           var h3 = jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').find('h3');
-          h3.html(h3.find('a').text());
+          if (h3.find('span.tag-editor').length > 0) {
+            var tags = h3.find('span.tag-editor');
+            h3.html(h3.find('a.getTable').text());
+            tags.appendTo(h3);
+          } else {
+            h3.html(h3.find('a.getTable').text());
+          }
         </script>
       </c:otherwise>
     </c:choose>
@@ -88,46 +94,5 @@
 
   </c:forEach>
 </c:if>
-
-<script type="text/javascript">
-// on load
-jQuery(document).ready(function() {
-  loadInView();
-});
-
-//script that will load tables as they get into the viewport
-function loadInView() {
-    // for all divs that are to be loaded on scroll
-    jQuery("div.loadOnScroll").each(function(index) {
-      // fetch the identifier
-      var id = jQuery(this).attr("id")
-      // can we see the element?
-      if (isElementInView("#" + id)) {
-        // find our SPECIFIC link
-        var a = jQuery(this).find('a.getTable');
-        if (a.length !== 0) {
-          // trigger the associated onlick handler
-          a.triggerHandler("click");
-        }
-      }
-    });
-
-    function isElementInView(e) {
-        // #im_aspect_GenomicsCDSs_table failing...
-        if (jQuery(e).length > 0) {
-          // fetch the dimensions of the viewport
-          var docViewTop = jQuery(window).scrollTop();
-          var docViewBottom = docViewTop + jQuery(window).height();
-
-          // fetch the element dimensions
-          var eTop = jQuery(e).offset().top;
-          var eBottom = eTop + jQuery(e).height();
-
-          return ((eBottom >= docViewTop) && (eTop <= docViewBottom));
-        }
-    }
-}
-
-</script>
 
 <!-- /reportRefsCols.jsp -->
