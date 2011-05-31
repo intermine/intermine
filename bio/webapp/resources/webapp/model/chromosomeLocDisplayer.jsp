@@ -2,9 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<!-- chromosomeLocDisplayer.jsp -->
-
-<html:xhtml/>
 <im:instanceof instanceofObject="${interMineObject}" instanceofClass="org.intermine.model.bio.SequenceFeature" instanceofVariable="hasChromosomeLocation"/>
 <c:choose>
   <c:when test="${hasChromosomeLocation == 'true' && !empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.locatedOn}">
@@ -15,5 +12,3 @@
     [unknown]
   </c:otherwise>
 </c:choose>
-
-<!-- /chromosomeLocDisplayer.jsp -->

@@ -8,7 +8,6 @@
 
 <tiles:importAttribute />
 
-<!-- objectView.jsp -->
 <html:xhtml />
 <c:set var="object" value="${resultElement.field}" />
 <c:set var="doNotTruncate" value="${doNotTruncate}" />
@@ -123,5 +122,3 @@
     </c:forEach></div>
   </c:otherwise>
 </c:choose>
-
-<!-- /objectView.jsp -->
