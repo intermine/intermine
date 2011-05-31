@@ -46,8 +46,8 @@
         <li id="genomicRegionInput">
            <%-- textarea --%>
            <span>Type/Paste in genomic regions in</span>
-           <span id="baseCorRadioSpan"><html:radio property="dataFormat" value="isNotInterBaseCoordinate"> base coordinate</html:radio></span>
-           <span id="interBaseCorRadioSpan"><html:radio property="dataFormat" value="isInterBaseCoordinate"> interbase coordinate</html:radio></span>
+           <span id="baseCorRadioSpan"><html:radio property="dataFormat" value="isNotInterBaseCoordinate">&nbsp;base coordinate</html:radio></span>
+           <span id="interBaseCorRadioSpan"><html:radio property="dataFormat" value="isInterBaseCoordinate">&nbsp;interbase coordinate</html:radio></span>
 
            <%-- example span --%>
            <div style="text-align:left;">
