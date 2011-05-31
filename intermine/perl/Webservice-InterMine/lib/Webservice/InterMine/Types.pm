@@ -94,6 +94,7 @@ use MooseX::Types -declare => [
         RowFormat
         JsonFormat
         RequestFormat
+        TSVFormat
 
         File
         NotAllLowerCase
@@ -334,12 +335,14 @@ role_type RowParser, {role => "Webservice::InterMine::Parser"};
 enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count'];
 enum JsonFormat, ['perl', 'inflate', 'instantiate'];
 enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable'];
+subtype TSVFormat, as Str, where {/^tsv$/i};
 
 class_type ResultIterator, {class => 'Webservice::InterMine::ResultIterator'};
 
 coerce RowFormat, from NotAllLowerCase, via { lc($_) };
 coerce JsonFormat, from NotAllLowerCase, via { lc($_) };
 coerce RequestFormat, from NotAllLowerCase, via { lc($_) };
+coerce RequestFormat, from TSVFormat, via { 'tab' };
 
 # DATES
 
