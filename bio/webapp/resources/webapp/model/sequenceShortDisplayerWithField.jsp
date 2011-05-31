@@ -3,9 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- sequenceShortDisplayerWithField.jsp -->
 <tiles:importAttribute name="expr" ignore="false"/>
-<html:xhtml/>
 <im:eval evalExpression="interMineObject.${expr}" evalVariable="outVal"/>
 <c:choose>
   <c:when test="${empty outVal}">
@@ -23,4 +21,3 @@
     </c:choose>
   </c:otherwise>
 </c:choose>
-<!-- /sequenceShortDisplayerWithField.jsp -->
