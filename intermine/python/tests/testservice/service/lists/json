@@ -1,0 +1,18 @@
+{"lists":[
+    {
+        "name":"test-list-1", 
+        "title":"test1", 
+        "description":"An example test list",
+        "type": "Employee",
+        "size": 42,
+        "dateCreated": "2011-05-07T19:52:03"
+    },
+    {
+        "name":"test-list-2", 
+        "title":"test2", 
+        "description":"Another example test list",
+        "type": "Manager",
+        "size": 7,
+        "dateCreated": "2011-05-07T10:11:12"
+    }
+],"wasSuccessful":true,"error":null,"statusCode":200}

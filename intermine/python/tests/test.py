@@ -577,7 +577,28 @@ class TestTemplates(WebserviceTest):
         self.assertTrue(con.editable and con.optional and con.switched_on)
         con = t2.get_constraint("C")
         self.assertTrue(con.editable and con.optional and con.switched_off)
+
+class TestLists(WebserviceTest):
+
+    def setUp(self):
+        self.service = Service(self.get_test_root())
          
+    def testGetLists(self):
+        """Should be able to get lists from a service"""
+        self.assertTrue(self.service.get_list_count, 2)
+
+        list_a = self.service.get_list("test-list-1")
+        self.assertTrue(list_a.description, "An example test list")
+        self.assertTrue(list_a.size, 42)
+
+        list_a = self.service.get_list("test-list-2")
+        self.assertTrue(list_a.description, "Another example test list")
+        self.assertTrue(list_a.size, 7)
+
+    def tearDown(self):
+        s = self.service
+        s.__del__()
+        
 
 if __name__ == '__main__':
     server = TestServer()

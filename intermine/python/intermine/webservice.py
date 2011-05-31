@@ -155,7 +155,10 @@ class Service(object):
         return method(*args, **kwargs)
 
     def __del__(self):
-        self._list_manager.delete_temporary_lists()
+        try: 
+            self._list_manager.delete_temporary_lists()
+        except ReferenceError:
+            pass
 
     @property
     def version(self):

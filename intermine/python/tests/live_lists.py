@@ -30,14 +30,13 @@ class LiveListTest(unittest.TestCase):
         s = self.SERVICE
         self.assertTrue(s.get_list_count() > 0)
         self.initialListCount = s.get_list_count()
-        
-        l = s.get_list("My-Favourite-Employees")
-        self.assertEqual(l.name, "My-Favourite-Employees")
-        self.assertEqual(l.size, 4)
-        self.assertEqual(l.list_type, "Manager")
 
         l = s.create_list(self.LADIES_NAMES, t, description="Id list")
         self.assertEqual(l.unmatched_identifiers, set(["Zop", "Quux"]))
+        self.assertEqual(l.size, 5)
+        self.assertEqual(l.list_type, t)
+
+        l = s.get_list(l.name)
         self.assertEqual(l.size, 5)
         self.assertEqual(l.list_type, t)
 
