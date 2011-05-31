@@ -11,6 +11,7 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -19,10 +20,12 @@ import org.json.JSONObject;
 public class JSONListFormatter implements ListFormatter {
 
     private final InterMineAPI im;
+    private final Profile profile;
 
-    public JSONListFormatter(InterMineAPI im) {
+    public JSONListFormatter(InterMineAPI im, Profile profile) {
         super();
         this.im = im;
+        this.profile = profile;
     }
     private final boolean hasCallback = false;
     private int rowsLeft = 0;
@@ -52,6 +55,11 @@ public class JSONListFormatter implements ListFormatter {
             listMap.put("size", list.getSize());
         } catch (ObjectStoreException e) {
             throw new ServiceException("Error getting list size:" + e);
+        }
+        if (profile.getSavedBags().get(list.getName()) == list) {
+            listMap.put("authorized", true);
+        } else {
+            listMap.put("authorized", false);
         }
         JSONObject listObj = new JSONObject(listMap);
         String ret = listObj.toString();

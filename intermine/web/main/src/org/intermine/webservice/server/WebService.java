@@ -704,15 +704,25 @@ public abstract class WebService
      */
     public String getCallback() {
         if (formatIsJSONP()) {
-            String cb = request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
-            if (cb == null || "".equals(cb)) {
+            if (! hasCallback()) {
                 return DEFAULT_CALLBACK;
             } else {
-                return cb;
+                return request.getParameter(
+                        WebServiceRequestParser.CALLBACK_PARAMETER);
             }
         } else {
             return null;
         }
+    }
+
+    /**
+      * Determine whether a callback was supplied to this request.
+      * @return Whether or not a callback was supplied.
+      */
+    public boolean hasCallback() {
+        String cb = request.getParameter(
+                WebServiceRequestParser.CALLBACK_PARAMETER);
+        return (cb != null && ! "".equals(cb));
     }
 
     /**
