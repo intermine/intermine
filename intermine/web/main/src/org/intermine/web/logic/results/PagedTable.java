@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ResultElement;
@@ -56,6 +57,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.ReportTemplateController;
 
 /**
  * A pageable and configurable table of data.
@@ -86,6 +88,8 @@ public class PagedTable
 
     private String selectedClass;
     private int selectedColumn;
+
+    private static final Logger LOG = Logger.getLogger(PagedTable.class);
 
     /**
      * Construct a PagedTable with a list of column names
@@ -732,24 +736,25 @@ public class PagedTable
     private void updateRows() {
         List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> newRows
             = new ArrayList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>();
-        String invalidStartMessage = "Invalid start row of table: " + getStartRow();
-        if (getStartRow() < 0) {
+        String invalidStartMessage = "Invalid start row of table: " + startRow;
+        if (startRow < 0) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
 
         try {
-            if (getStartRow() == 0) {
+            if (startRow == 0) {
                 // no problem - 0 is always valid
             } else {
-                getAllRows().getResultElements(getStartRow());
+                webTable.getResultElements(startRow);
             }
         } catch (IndexOutOfBoundsException e) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
 
-        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
+        int max = startRow + pageSize;
+        for (int i = startRow; i < max; i++) {
             try {
-                newRows.add(getAllRows().getResultElements(i));
+                newRows.add(webTable.getResultElements(i));
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
                 break;

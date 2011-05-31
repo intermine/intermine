@@ -34,27 +34,27 @@ html, body {
 /* =A */
 a:link {
     color: #049;
-    text-decoration: none
+    text-decoration: none;
 }
 
 a:visited {
     color: #049;
-    text-decoration: none
+    text-decoration: none;
 }
 
 a:link:hover {
     color: #CF4D23;
-    text-decoration: underline
+    text-decoration: underline;
 }
 
 a:visited:hover {
     color: #CF4D23;
-    text-decoration: underline
+    text-decoration: underline;
 }
 
 a:link:active {
     color: #58e;
-    text-decoration: none
+    text-decoration: none;
 }
 
 a.extlink, a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover {
@@ -84,7 +84,7 @@ img {
 
 /* =FORM */
 form {
-    margin: 0px
+    margin: 0px;
 }
 
 /* =TD */
@@ -134,7 +134,7 @@ p#version {
     font-size: 12px;
     color: #333;
     font-weight: bold;
-    float: left
+    float: left;
 }
 
 #topnav {
@@ -553,7 +553,7 @@ div#navtrail a:link, div#navtrail a:visited {
 
 .fakelink:active {
     color: #58e;
-    text-decoration: none
+    text-decoration: none;
 }
 
 /* Genomics (12 results) */
@@ -863,7 +863,8 @@ table#buildbaglist textarea {
     width: 98.5%;
 }
 
-table#buildbaglist a /* desc top of textarea */ {
+/* desc top of textarea */
+table#buildbaglist a {
     float: right;
 }
 
@@ -1393,9 +1394,8 @@ ol#constraintList.templateForm select { height:25px; }
 
 /* constraint logic (query.do) */
 #constraintLogicContainer span#constraintLogic { cursor:pointer; padding-right:14px; background-image:url('../images/icons/edit-8.png');
-  background-repeat:no-repeat; background-position:97%; }
-#constraintLogicContainer span#editConstraintLogic { ; }
-  #constraintLogicContainer span#editConstraintLogic input#expr { font-size:12px; border:1px solid #CACACA; padding:2px; margin-left:10px; }
+    background-repeat:no-repeat; background-position:97%; }
+#constraintLogicContainer span#editConstraintLogic input#expr { font-size:12px; border:1px solid #CACACA; padding:2px; margin-left:10px; }
 
 /* buildBag unresolved identifiers */
 ul.unresolvedIdentifiers { list-style-type:none; margin:0; padding:0; font-weight:bold; }

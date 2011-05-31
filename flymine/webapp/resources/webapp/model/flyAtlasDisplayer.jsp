@@ -39,7 +39,12 @@
 
 <script type="text/javascript">
 google.load("visualization", "1", {packages: ["corechart"]});
-google.setOnLoadCallback(drawFlyAtlasChart);
+google.setOnLoadCallback(function() {
+  jQuery(function() {
+    drawFlyAtlasChart();
+  });
+});
+
 function drawFlyAtlasChart(event, sortBySignal, useLinearScale, showSignal) {
   var sortByName = !sortBySignal;
   var showEnrichment = !showSignal;

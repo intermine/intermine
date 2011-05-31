@@ -176,7 +176,7 @@
                            onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
                            disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
-                        </html:multibox>
+                        </html:multibox>&nbsp;
                       </c:if>
                     </c:if>
                     <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
