@@ -307,20 +307,20 @@
           <html:hidden property="name"/>
           <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
-          <!-- Twisted by the Dark Side young Skywalker has become... -->
+          <%-- For some reason, we are faking up the real sumbit actions with these buttons... --%>
           <div class="floatRight">
           <input type="button" onclick="jQuery('input#editQueryButton').click();" class="editQueryBuilder" value="<fmt:message key="template.submitToQuery"/>" />
           <c:if test="${IS_SUPERUSER}">
             <input type="button" onclick="jQuery('input#editTemplateButton').click();" class="editTemplate" value="<fmt:message key="template.submitToQueryEdit"/>" />
           </c:if>
           </div>
-          <!-- default action, if you do not care about submit button ordering -->
+          <%-- default action, if you do not care about submit button ordering --%>
           <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
             <fmt:message key="template.submitToResults"/>
           </html:submit>
 
 
-          <!-- these are not the drones you are looking for... -->
+          <%-- These elements are hidden - look for the real (js) ones above... --%>
       <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
             <fmt:message key="template.submitToQuery"/>
           </html:submit>
@@ -363,7 +363,7 @@
     <div class="popup" style="display:none;">
       <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
       <p style="width:95%;">
-      Use the URL below to fetch results for this template from the command line or a script 
+      Use the URL below to fetch results for this template from the command line or a script
       <i>(please note that you will need to use authentication to access private templates and lists)</i>:
       </p>
     <input type="text" value="None">
