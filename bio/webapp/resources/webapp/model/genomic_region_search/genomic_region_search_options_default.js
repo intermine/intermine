@@ -4,7 +4,7 @@
     jQuery(document).ready(function() {
 
         var htmlToInsert = '<li>' +
-                           '<span>Select Organism:</span>' +
+                           '<span>Select Organism:&nbsp;</span>' +
                            '<select id="organisms" name="organism">';
 
         // iterate through the object
@@ -101,7 +101,7 @@
                             if (!(current_loc >= feature_size)) {
                                 ftHTMLArray.push("<td width='300'>");
                                                        ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
-                                                        + webDataJSON.featureTypes[i].features[current_loc] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + webDataJSON.featureTypes[i].features[current_loc] + "<br/>");
+                                                        + webDataJSON.featureTypes[i].features[current_loc] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>&nbsp;" + webDataJSON.featureTypes[i].features[current_loc] + "<br/>");
                                 ftHTMLArray.push("</td>");
                             }
                         }
@@ -112,7 +112,7 @@
          }
 
          if(ftHTMLArray.join("") != "") {
-             jQuery("#selectFeatureTypes").html("<input id=\"check\" type=\"checkbox\" checked=\"yes\" onclick=\"checkAll(this.id)\"/>Select Feature Types:");
+             jQuery("#selectFeatureTypes").html("<input id=\"check\" type=\"checkbox\" checked=\"yes\" onclick=\"checkAll(this.id)\"/>&nbsp;Select Feature Types:");
              jQuery("#featureTypes").html(ftHTMLArray.join(""));
          }
          else {

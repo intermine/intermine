@@ -16,7 +16,7 @@
     }
 </script>
 <div id="sidebar">
-   <div id="showResultButton" 
+   <div id="showResultButton"
    <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
    <c:if test="${fn:length(viewStrings) > 0}">class='button'</c:if>>
       <div class="left"></div>
@@ -37,7 +37,7 @@
     <div class="popup" style="display:none;">
       <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
       <p style="width:95%;">
-      Use the URL below to fetch results for this query from the command line or a script 
+      Use the URL below to fetch results for this query from the command line or a script
       <i>(please note that you will need to use authentication to access private templates and lists)</i>:
       </p>
     <input type="text" value="None">

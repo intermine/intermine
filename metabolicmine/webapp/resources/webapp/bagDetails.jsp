@@ -112,7 +112,7 @@
     <%-- meta --%>
     <table class="fields">
       <tr>
-        <td class="nobr slim">Results: ${bag.size} ${bag.type}<c:if test="${bag.size != 1}">s</c:if></td>
+        <td class="nobr slim">Results: ${bag.size}&nbsp;${bag.type}<c:if test="${bag.size != 1}">s</c:if></td>
         <td class="nobr slim">Created: <fmt:formatDate dateStyle="full" timeStyle="full" value="${bag.dateCreated}" /></td>
         <td class="description">
           Description:
@@ -239,8 +239,8 @@
 
     <div id="ListCategory" class="aspectBlock">
     <div class="box grid_4">
-        <a name="list"><h2>List of ${bag.size} ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
-        <div class="button">
+        <a name="list"><h2>List of ${bag.size}&nbsp;${bag.type}<c:if test="${bag.size != 1}">s</c:if>&nbsp;<div
+        class="button">
             <div class="left"></div>
             <input type="button" value="+ Show">
             <div class="right"></div>

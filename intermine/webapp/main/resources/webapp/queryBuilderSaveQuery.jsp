@@ -9,8 +9,8 @@
 <c:if test="${!empty QUERY}">
   <c:if test="${PROFILE.loggedIn}">
     <p><html:form action="/saveQuery">
-      <html:text property="queryName"/>
-      <html:submit property="action">
+      <html:text property="queryName"/>&nbsp;<html:submit
+      property="action">
         <fmt:message key="query.save"/>
       </html:submit>
     </html:form></p>
