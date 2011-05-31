@@ -63,7 +63,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         sb.append("# to use it you will require the intermine python client." + ENDL);
         sb.append("# To install the client, run the following command from a terminal:" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("#     easyinstall intermine-webservice" + ENDL);
+        sb.append("#     sudo easy_install intermine" + ENDL);
         sb.append("#" + ENDL);
         sb.append("# For further documentation you can visit:" + ENDL);
         sb.append("#     http://www.intermine.org/PythonClient" + ENDL + ENDL);
