@@ -197,7 +197,9 @@ public class ListUploadService extends WebService {
                     // Ignore
                 }
             }
-            im.getBagManager().addTagsToBag(Arrays.asList(tags), tempBag, profile);
+            if (tags != null) {
+	            im.getBagManager().addTagsToBag(Arrays.asList(tags), tempBag, profile);
+            }
             profile.renameBag(tempName, name);
         } finally {
             try {
