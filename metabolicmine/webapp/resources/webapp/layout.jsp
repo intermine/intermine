@@ -130,7 +130,7 @@
     <c:if test="${!empty googleAnalyticsId}">
         <script type="text/javascript">
             document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
+        --</script>
         <script type="text/javascript">
             var pageTracker = _gat._getTracker('${googleAnalyticsId}');
             pageTracker._initData();
@@ -143,5 +143,18 @@
   </div>
 </body>
 </html:html>
+
+<script type="text/javascript">
+<%-- remove any 'handwritten images' (metabolic) if we have a hint for the user that would overlay them --%>
+  if (jQuery('#hints').is(":visible")) {
+    jQuery.each(["#pagecontent", "#pagecontentmax"], function(index, target) {
+      var element = jQuery(target);
+      if (element.length > 0) {
+        element.css('background-image', 'none');
+      }
+    });
+  }
+</script>
+
 <!-- /layout.jsp -->
 
