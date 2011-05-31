@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
@@ -61,6 +63,14 @@ public class AvailableListsService extends WebService
         return listManager.getLists();
     }
 
+    protected int getDefaultFormat() {
+        if (hasCallback()) {
+            return JSONP_FORMAT;
+        } else {
+            return JSON_FORMAT;
+        }
+    }
+
     private Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
@@ -80,10 +90,12 @@ public class AvailableListsService extends WebService
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
-                return new JSONListFormatter(im);
+                Profile profile = SessionMethods.getProfile(request.getSession());
+                return new JSONListFormatter(im, profile);
             }
             case (WebService.JSONP_FORMAT): {
-                return new JSONListFormatter(im);
+                Profile profile = SessionMethods.getProfile(request.getSession());
+                return new JSONListFormatter(im, profile);
             }
             default: {throw new BadRequestException("Unknown request format");}
         }
