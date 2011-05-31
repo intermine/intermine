@@ -55,8 +55,8 @@ p.apology {
 
       <div  style="margin-top: 10px;">
            <p>
-           Below you can see an example embedded table displaying the results from this 
-           template. As soon as the page loads, results are fetched from the server and 
+           Below you can see an example embedded table displaying the results from this
+           template. As soon as the page loads, results are fetched from the server and
            formatted in the browser, according to your CSS.
            </p>
       </div>
@@ -72,7 +72,7 @@ p.apology {
 
       <pre class="html-snippet">${jsCode}</pre>
 
-  <span style="float:left;">For other options and detailed help <a href="http://intermine.org/wiki/TemplateWebService">click here</a>.</span>
+  <span style="float:left;">For other options and detailed help <a href="http://intermine.org/wiki/JavaScriptClient">click here</a>.</span>
     <span style="float:right;"><a href="javascript:history.go(-1)">Go back</a></span>
 
 </div></div>
