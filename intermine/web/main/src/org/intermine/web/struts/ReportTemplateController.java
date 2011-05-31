@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,10 +29,6 @@ import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;

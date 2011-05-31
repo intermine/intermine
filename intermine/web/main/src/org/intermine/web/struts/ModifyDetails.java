@@ -237,7 +237,6 @@ public class ModifyDetails extends DispatchAction
             cc.putAttribute("reportObject", obj);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
-
             try {
                 new ReportTemplateController().execute(cc, mapping, form, request, response);
             } catch (NoSuchElementException e) {
@@ -252,9 +251,9 @@ public class ModifyDetails extends DispatchAction
         cc.putAttribute("interMineIdBag", interMineBag);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));
-
         new ReportTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+
         return mapping.findForward("reportTemplateTable");
     }
 
