@@ -159,7 +159,9 @@ public class ListSubtractionService extends ListUnionService
             if (replace) {
                 ensureBagIsDeleted(profile, name);
             }
-            im.getBagManager().addTagsToBag(asList(tags), newList, profile);
+            if (tags != null) {
+	            im.getBagManager().addTagsToBag(asList(tags), newList, profile);
+            }
             profile.renameBag(newList.getName(), name);
         } finally {
             for (String delendum: bagsToDelete) {
