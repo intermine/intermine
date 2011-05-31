@@ -4,7 +4,7 @@
 # to use it you will require the intermine python client.
 # To install the client, run the following command from a terminal:
 #
-#     easyinstall intermine-webservice
+#     sudo easy_install intermine
 #
 # For further documentation you can visit:
 #     http://www.intermine.org/PythonClient
