@@ -216,6 +216,7 @@ class_type NetHTTP, { class => 'Net::HTTP', };
 subtype HTTPCode, as Str, where { /^\d{3}$/ };
 
 coerce Uri, from Str, via {
+    require URI;
     my $prefix = (m!^(?:ht|f)tp!) ? '' : 'http://';
     URI->new( $prefix . $_ );
 };

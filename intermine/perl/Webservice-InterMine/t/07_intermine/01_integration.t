@@ -44,11 +44,11 @@ $fake_lwp->mock(
 	if ($uri =~ m!templates/xml!) {
 	    $content = $templates;
 	}
-	elsif ($uri =~ m!/model\?!) {
+	elsif ($uri =~ m!/model!) {
 	    $content = $model;
 	}
 	elsif ($uri =~ m!version!) {
-	    $content = 2;
+	    $content = 4;
 	}
 	elsif ($uri =~ m!/results\?!) {
 	    $content = $results;
@@ -83,17 +83,13 @@ $fake_IOSock->mock(
     },
 );
 
-my $url = 'FAKEURL';
-my @view = ('Employee.name', 'Employee.age', 'Employee.fullTime',
-	    'Employee.address.address', 'Employee.department.name',
-	    'Employee.department.company.name',
-	    'Employee.department.manager.name',
-	);
+my $url = 'fake.url/path';
+my @view = ('Employee.name', 'Employee.age', 'Employee.fullTime');
 use_ok($module, ($url));
 
 isa_ok($module->get_service, 'Webservice::InterMine::Service', "The service it makes");
 
-is($module->get_service->version, 2, "Service version is correct");
+is($module->get_service->version, 4, "Service version is correct");
 isa_ok($module->get_service->model, 'InterMine::Model', "The model the service makes");
 my $q;
 lives_ok(sub {$q = $module->new_query}, "Makes a new query ok");
@@ -179,7 +175,7 @@ is(ref $res, 'ARRAY', "And it is an arrayref");
 
 is(ref $res->[0], 'ARRAY', "An array of arrays in fact");
 
-is($res->[1][3], "Chédin S", "With the right fields")
+is($res->[1][2], -1.23, "With the right fields")
     or diag(explain $res);
 
 lives_ok(
@@ -187,7 +183,7 @@ lives_ok(
     "Queries for results as hashes",
 );
 
-is($res->[1]->{'Employee.address.address'}, "Chédin S", "with the right fields");
+is($res->[1]->{'Employee.fullTime'}, -1.23, "with the right fields");
 
 my $test_role = 'Test::Webservice::InterMine::FooBar';
 my $q_roled;
@@ -207,7 +203,7 @@ lives_ok(
 );
 is($ri->foo, 'bar', "And it has one of the methods");
 
-my $row = "<tr><td>S000000001</td><td>YAL001C</td><td>10531351</td><td>Rubbi L</td><td>J Biol Chem</td><td>1999</td><td>Saccharomyces cerevisiae</td></tr>";
+my $row = "<tr><td>foo</td><td>bar</td><td>baz</td></tr>";
 is($ri->html_row, $row, "And it has the other");
 
 my $t;
@@ -225,9 +221,9 @@ lives_ok(
     "Runs results with ok",
 );
 
-is($res->[1][3], "Chédin S", "With the right fields");
+is($res->[1][2], -1.23, "With the right fields");
 
-is($t->results->[1][3],  "Chédin S", "And ditto for results");
+is($t->results->[1][2],  -1.23, "And ditto for results");
 
 $role = 'Webservice::InterMine::Query::Roles::HTMLTable';
 lives_ok(

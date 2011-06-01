@@ -68,6 +68,13 @@ around BUILDARGS => sub {
     }
 };
 
+sub BUILD {
+    my $self = shift;
+    if ($self->has_user xor $self->has_pass) {
+        croak "User name or password supplied, but not both";
+    }
+}
+
 use constant {
     QUERY_PATH                 => '/query/results',
     QUERY_SAVE_PATH            => '/query/upload',

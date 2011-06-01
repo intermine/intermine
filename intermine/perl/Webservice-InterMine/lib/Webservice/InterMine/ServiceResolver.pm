@@ -38,4 +38,7 @@ sub resolve {
     confess "Could not resolve $service_name";
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
+
 1;

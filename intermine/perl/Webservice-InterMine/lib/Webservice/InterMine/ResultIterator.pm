@@ -2,6 +2,7 @@ package Webservice::InterMine::ResultIterator;
 
 use strict;
 use Moose;
+use Carp qw/croak confess/;
 
 use InterMine::Model::Types qw(PathList);
 use Webservice::InterMine::Types qw(Uri HTTPCode NetHTTP RowFormat JsonFormat RequestFormat RowParser);
@@ -22,9 +23,9 @@ sub BUILD {
     unless ($self->has_content) {
         warn "CONNECTING" if $ENV{DEBUG};
         $self->connect();
+        warn "SETTING HEADERS" if $ENV{DEBUG};
+        $self->set_headers();
     }
-    warn "SETTING HEADERS" if $ENV{DEBUG};
-    $self->set_headers();
 }
 
 =head1 NAME
@@ -137,41 +138,8 @@ has user_agent => (
 
 sub _build_user_agent {
     require Webservice::InterMine;
-    return "Webservice::InterMine-" . $Webservice::InterMine::VERSION;
+    return "Webservice::InterMine-" . $Webservice::InterMine::VERSION . "/Perl client library";
 }
-
-
-=head1 ATTRIBUTES
-
-Other properties of the object. These attributes are derived from the 
-original construction arguments.
-
-=over 4
-
-=item * request_format: ro, RequestFormat
-
-The format that will be actually requested from the server.
-
-=cut
-
-has request_format => (
-    is => 'ro',
-    isa => RequestFormat,
-    required => 1,
-    coerce => 1,
-);
-
-=item * row_parser: ro, Webservice::InterMine::Parser
-
-The parser to return a formatted row of data.
-
-=cut
-
-has row_parser => (
-    is => 'ro',
-    isa => RowParser,
-    required => 1,
-);
 
 =item * connection: ro, Net::HTTP
 
@@ -254,7 +222,7 @@ has headers => (
           if ( $te and $te eq 'chunked' );
         my $ct = $self->get_content_type;
         $self->_is_binary(1)
-            if ($ct =~ /octet-stream/);
+            if ($ct and $ct =~ /octet-stream/);
     },
 );
 
@@ -333,14 +301,15 @@ sub set_headers {
         if ( $line =~ /^HTTP/ ) {
             chomp( ( $version, $code, $phrase ) =
                   split( /\s/, $line, 3 ) );
-        } else {
+        } elsif ($line =~ /:/) {
             chomp( ( $key, $value ) = split( /:\s*/, $line, 2 ) );
-        }
+        } 
         $headers{$key} = $value if $key;
         warn "HEADER $key = $value" if $ENV{DEBUG};
         $self->_set_error_code($code)      if $code;
         $self->_set_error_message($phrase) if $phrase;
     }
+    warn "FINISHED READING HEADERS" if $ENV{DEBUG};
     $self->_set_headers( \%headers );
     if (HTTP::Status::is_error( $self->error_code )) {
         $self->_find_real_error_message();
@@ -427,6 +396,7 @@ sub get_all {
     while (defined(my $line = $self->next)) {
         push @rows, $line;
     }
+    croak "Incomplete result set received" unless $self->row_parser->is_complete;
     if (wantarray) {
         return @rows;
     } else {

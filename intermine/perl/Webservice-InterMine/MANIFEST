@@ -55,7 +55,6 @@ lib/Webservice/InterMine/Query/Roles/ReadInAble.pm
 lib/Webservice/InterMine/Query/Roles/Runnable.pm
 lib/Webservice/InterMine/Query/Roles/Saved.pm
 lib/Webservice/InterMine/Query/Roles/ScriptAble.pm
-lib/Webservice/InterMine/Query/Roles/Serviced.pm
 lib/Webservice/InterMine/Query/Roles/Templateable.pm
 lib/Webservice/InterMine/Query/Roles/Templated.pm
 lib/Webservice/InterMine/Query/Roles/TemplateParameters.pm
@@ -73,11 +72,15 @@ lib/Webservice/InterMine/ResultIterator.pm
 lib/Webservice/InterMine/ResultIterator/Role/HTMLTableRow.pm
 lib/Webservice/InterMine/ResultObject.pm
 lib/Webservice/InterMine/Role/Described.pm
+lib/Webservice/InterMine/Role/HasQuery.pm
+lib/Webservice/InterMine/Role/KnowsJSON.pm
 lib/Webservice/InterMine/Role/Logical.pm
 lib/Webservice/InterMine/Role/ModelOwner.pm
 lib/Webservice/InterMine/Role/Named.pm
 lib/Webservice/InterMine/Role/Serviced.pm
+lib/Webservice/InterMine/Role/Showable.pm
 lib/Webservice/InterMine/Service.pm
+lib/Webservice/InterMine/ServiceResolver.pm
 lib/Webservice/InterMine/Simple.pm
 lib/Webservice/InterMine/Simple/Query.pm
 lib/Webservice/InterMine/Simple/Service.pm
@@ -109,6 +112,8 @@ t/06_service/03_result_objects.t
 t/06_service/04_serviced_queries.t
 t/07_intermine/01_integration.t
 t/10_acceptance/01_live_test.t
+t/10_acceptance/02_lists.t
+t/10_acceptance/03_service_resolution.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml
@@ -124,6 +129,7 @@ t/data/mock_results
 t/data/multixml.txt
 t/data/old_style_templates.xml
 t/data/result.json
+t/data/test-identifiers.list
 t/manifest.t
 t/moose-hygiene.t
 t/pod-coverage.t
