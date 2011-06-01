@@ -8,7 +8,7 @@ use Test::Exception;
 require Carp;
 use List::Util qw(reduce);
 
-#$SIG{__WARN__} = \&Carp::cluck;
+$SIG{__WARN__} = \&Carp::cluck;
 
 my $do_live_tests = $ENV{RELEASE_TESTING};
 

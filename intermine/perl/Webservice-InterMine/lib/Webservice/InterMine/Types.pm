@@ -56,6 +56,7 @@ under the same terms as Perl itself.
 
 use DateTime::Format::ISO8601;
 use Carp qw(confess);
+require overload;
 
 use MooseX::Types -declare => [
     qw(
@@ -106,10 +107,14 @@ use MooseX::Types -declare => [
         ResultIterator
 
         SetObject
+
+        True False TruthValue Truthy 
     )
 ];
 
-use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int/;
+use MooseX::Types::Moose qw/
+   Defined  Bool Object Str ArrayRef HashRef Undef Maybe Int/;
+
 
 # UTILITY
 
@@ -357,5 +362,10 @@ class_type SetObject, {class => 'Set::Object'};
 
 coerce SetObject, from ArrayRef, via {require Set::Object; return Set::Object->new(@$_)};
 
+subtype True, as Defined, where {$_ == 1 || $_ eq "1"};
+subtype False, as Defined, where {$_ == 0 || $_ eq "0"};
+subtype TruthValue, as True | False;
+subtype Truthy, as Object, where {overload::Method($_, 'bool')};
+coerce TruthValue, from Truthy, via {$_ ? 1 : 0};
 
 1;
