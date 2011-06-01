@@ -1447,3 +1447,17 @@ div.floatRight { float:right; }
     #list-progress div.wrap { *width:75%; } /* <IE7 hack */
 
     div.clear { clear:both; display:block; height:0; overflow:hidden; visibility:hidden; width:0; }
+
+/* green/grey btn on bagUploadConfirm, QueryBuilder and Templates */
+#bigGreen.button input { background:url('../images/progress/green-btn-center.png') repeat-x left;
+  height:32px; color:#FFF; font-size:15px; font-weight:bold; border:none; line-height:21px; float:left; }
+#bigGreen.button div.left { background:url('../images/progress/green-btn-left.png') no-repeat left;
+  width:20px; display:inline-block; height:32px; float:left; }
+#bigGreen.button div.right { background:url('../images/progress/green-btn-right.png') no-repeat left;
+  width:20px; display:inline-block; height:32px; float:left; }
+
+#bigGreen.button.inactive input { background:url('../images/progress/gray-btn-center.png') repeat-x left; }
+#bigGreen.button.inactive div.left { background:url('../images/progress/gray-btn-left.png') no-repeat left; }
+#bigGreen.button.inactive div.right { background:url('../images/progress/gray-btn-right.png') no-repeat left; }
+
+#bigGreen.button.inactive input { cursor:default; }

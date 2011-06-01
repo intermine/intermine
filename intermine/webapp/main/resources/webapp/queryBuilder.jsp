@@ -61,7 +61,7 @@
   });
 </script>
 <div id="sidebar">
-   <div id="showResultButton" class='button inactive'>
+   <div id="bigGreen" class='button inactive'>
       <div class="left"></div>
           <html:form action="/queryBuilderViewAction" styleId="submitform">
           <input id="showResult" type="submit" name="showResult"

@@ -16,7 +16,7 @@
     }
 </script>
 <div id="sidebar">
-   <div id="showResultButton"
+   <div id="bigGreen"
    <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
    <c:if test="${fn:length(viewStrings) > 0}">class='button'</c:if>>
       <div class="left"></div>
