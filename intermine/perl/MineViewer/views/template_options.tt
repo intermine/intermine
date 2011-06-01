@@ -131,8 +131,6 @@
             var text = '';
             if (parts.length == 1) {
                 text = parts[0];
-            } else if (parts.length == 2) {
-                text = parts[1];
             } else {
                 text = parts.slice(parts.length - 2, parts.length).join(" ");
             }

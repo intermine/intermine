@@ -142,6 +142,12 @@ get '/lists.options' => sub {
     }, {layout => undef};
 };
 
+any '/lists.export' => sub {
+    my @lists = (params->{list}) ? ( 
+        $service->list(params->{list}) || get_lists()) : get_lists();
+    template export => {lists => [@lists]}, {layout => undef};
+};
+
 my $list_item_controller = sub {
     my @lists = (params->{list}) ? ( 
         $service->list(params->{list}) || get_lists()) : get_lists();
@@ -167,7 +173,11 @@ sub get_list_query {
     my $list       = shift;
     my $main_field = get_class_keys_for( $list->type )->[0];
     my $query      = $list->build_query;
-    $query->set_sort_order( $list->type . '.' . $main_field => 'asc' );
+    if ($service->model
+                ->get_classdescriptor_by_name($list->type)
+                ->get_field_by_name($main_field)) {
+        $query->set_sort_order( $list->type . '.' . $main_field => 'asc' );
+    }
     add_extra_views_to_query( $list->type, $query );
     return $query;
 }
@@ -194,9 +204,15 @@ get '/list/:list.gff3' => sub {
 sub get_list_gff3 : Memoize {
     my $list_name = shift;
     my $list = $service->list($list_name) or die "Cannot find list $list_name";
-    my $query = $service->new_query( class => 'Gene', with => GFF3 );
-    $query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
-    $query->add_constraint( 'Gene', 'IN', $list );
+    my $query = $service->new_query( class => $list->type, with => GFF3 );
+    if ($list->type eq 'Gene') {
+        $query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
+    } else {
+        $query->add_constraint(qw/locatedFeatures.feature SequenceFeature/);
+        $query->add_view('locatedFeatures.feature.primaryIdentifier');
+    }
+
+    $query->add_constraint( $list->type, 'IN', $list );
     return $query->get_gff3;
 }
 
@@ -386,7 +402,7 @@ sub get_item_details : Memoize {
 sub get_homologues : Memoize {
     my $identifier = shift;
     my $homologue_query = $service->new_query( class => 'Gene' );
-    $homologue_query->add_views(qw/primaryIdentifier symbol organism.name/);
+    $homologue_query->add_views(qw/* organism.name/);
     $homologue_query->add_constraint( 'organism.name', '!=', 'Homo sapiens' );
     $homologue_query->add_constraint( 'homologues.homologue', 'LOOKUP',
         $identifier );
@@ -394,7 +410,7 @@ sub get_homologues : Memoize {
     return $homologues;
 }
 
-get qr{/gene/id/(\w+)}i => sub {
+get qr{/gene/id/(\d+)}i => sub {
     my ($id) = splat;
     my $query = $service->new_query(class => 'Gene');
     $query->add_views('*');
@@ -420,7 +436,7 @@ sub do_gene_report {
       or return template item_error => { query => $query, params };
 
     my $display_name = $obj->{symbol} || $obj->{primaryIdentifier};
-    my $identifier = $obj->{primaryIdentifier} || $obj->{symbol}; 
+    my $identifier = $obj->{primaryIdentifier} || $obj->{symbol} || $obj->{secondaryIdentifier}; 
     my @comments = get_user_comments($identifier);
 
     my $cd = $service->model->get_classdescriptor_by_name( $obj->{class} );
@@ -428,8 +444,10 @@ sub do_gene_report {
     my @all_lists = get_lists();
     my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
     debug("Getting contained in");
-    my %contained_in = ();
-    # map { $_->name, $_ } $service->lists_with_object( $obj->{objectId} );
+    my %contained_in = eval {
+      map { $_->name, $_ } 
+      $service->lists_with_object( $obj->{objectId} )
+    };
 
     # Generate Links for Sequence exports
     debug("Getting export uris");

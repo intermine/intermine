@@ -6,6 +6,11 @@ function notifyResults(results) {
     }
 }
 
+function updateExportBox(url, currentList) {
+    url += 'lists.export';
+    $('#export').load(url + ' #export-menu', {list: currentList});
+} 
+
 function handleListResults(results) {
     notifyResults(results);
     // Update list details

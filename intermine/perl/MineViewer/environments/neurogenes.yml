@@ -79,3 +79,6 @@ additional_summary_fields:
         - "organism.name"
     Chromosome:
         - "organism.name"
+
+
+genome_browser: "jbrowse"

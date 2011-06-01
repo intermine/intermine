@@ -19,16 +19,35 @@
     [% END %]
     [% IF item.$key.defined and item.$key != displayname %]
         [% displayKey = label | ucfirst %]
+        
         [% value = item.$key %]
-        [% value = (item.$key.match('^-?\d+(\.\d+)?$')) ? value.chunk(-3).join(',') : value  %]
         <tr>
             <td class="key">[% decamelise(displayKey) %]:</td>
             <td class="value [% label %]">
             [% IF resolved %]
-                [% path = '/' _ resolved.class _ '/id/' _ resolved.objectId %]
-                <a title="[% key %]" href="[%proxy.uri_for(path)%]">[% value %]</a>
+                [% field = key.split('\.').pop %]
+                [%# Deal with resolved objects (references) %]
+                [% IF resolved.$field %]
+                    [% path = '/' _ resolved.class _ '/id/' _ resolved.objectId %]
+                    <a title="[% key %]" href="[%proxy.uri_for(path)%]">
+                        [% resolved.$field %]
+                    </a>
+                [% ELSE %]
+                    [%# Deal with resolved lists (collections) %]
+                    [% FOREACH e IN resolved %]
+                        [% path = '/' _ e.class _ '/id/' _ e.objectId %]
+                        <a title="[% key %]" href="[%proxy.uri_for(path)%]">
+                            [% e.$field %]
+                        </a>
+                    [% END %]
+                [% END %]
             [% ELSE %]
+                [%# deal with a basic attribute value %]
+                [% IF value.match('^http') %]
+                    <a href="[% value %]">
+                [% END %]
                 [% value %]
+                [% IF value.match('^http') %]</a>[% END %]
             [% END %]
             </td>
         </tr>
