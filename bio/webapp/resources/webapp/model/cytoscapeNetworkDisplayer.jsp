@@ -7,53 +7,31 @@
 
 <html:xhtml/>
 
-<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.10.custom.css"/>
 <style type="text/css">
     /* The Cytoscape Web container must have its dimensions set. */
     html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
     /* use absolute value */
     #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0;
         -moz-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; float:left; }
-    #cwtabsbyside { display: none; float: right; width: 300px; }
+    #cwtabsbyside { float: right; width: 300px; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
-    fieldset { border: 1px solid #CCCCCC; margin-bottom: 0.5em; padding: 0.8em 1em; }
     label { vertical-align: middle; }
-    #legend h3 { -moz-border-radius: 5px 5px 0 0; background: none repeat scroll 0 0 #CCCCCC; margin: 0; padding: 4px 5px; color: black; border-top-style: none; }
-    #legend p {
-        border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-        border-right: 1px solid #BBBBBB;
-        border-style: none solid solid;
-        border-width: medium 1px 1px;
-        margin: 0;
-        padding: 5px;
-    }
-
-    #legend table {
-        border-color: -moz-use-text-color #BBBBBB #BBBBBB;
-        border-right: 1px solid #BBBBBB;
-        border-style: none solid solid;
-        border-width: medium 1px 1px;
-        margin: 0;
-        padding: 5px;
-    }
-
-    #legend { padding: 0.2em 0.4em 0.4em; }
     #powerby { padding: 5px; text-align: center; }
     #powerby a { color: rgb(136, 136, 136); text-decoration: none; background-color: white; }
     #powerby img { vertical-align: middle; }
 
-    #svgtable {
-        border: 2px solid #CCCCCC;
-        border-collapse: separate;
-        border-spacing: 1px;
-        clear: both;
-        width: 100%;
-    }
-
-    #legendall { height: 50px; }
+    #legendall { width:100%; height:50px; }
 
     #interactions-wrap { overflow-x:auto; }
     #interactions-wrap div.inside { min-width:1040px; }
+
+    <%-- sidebar toolbar bar --%>
+    #cwtabsbyside ul { border-bottom-width:1px; border-bottom-style:solid; font-size:14px; margin:0; }
+    #cwtabsbyside ul li { display:inline; border-right-width:1px; border-right-style:solid; }
+    #cwtabsbyside ul li a { padding:4px; }
+    #cwtabsbyside ul li a.active { font-weight:bold; }
+    #cwtabsbyside ul li.last { border:none; }
+    #cwtabsbyside fieldset, #cwtabsbyside #legend { border:none; border-bottom-width:1px; border-bottom-style:solid; padding:8px; }
 </style>
 
 <script type="text/javascript">
@@ -71,20 +49,21 @@
 <div id="interactions-wrap">
   <div class="inside">
   <div id="cwtabsbyside">
-    <ul>
-      <li><a href="#tabs-controls">Controls</a></li>
-      <li><a href="#tabs-data">Data</a></li>
-      <li><a href="#tabs-help">Help</a></li>
+    <ul class="theme-3-border theme-6-background">
+      <li class="theme-3-border"><a class="active" href="#tabs-controls">Controls</a></li>
+      <%--<li class="theme-3-border"><a href="#tabs-data">Data</a></li>--%>
+      <li class="theme-3-border last"><a href="#tabs-help">Help</a></li>
     </ul>
     <div id="tabs-controls">
       <div>
-        <fieldset>
+        <fieldset class="theme-3-border">
               <label>Show:</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
-            </fieldset>
-        <fieldset>
+        </fieldset>
+
+        <fieldset class="theme-3-border theme-6-background">
               <label>Export network as:</label>
               <select id="exportoptions">
                   <option value="xgmml" selected>XGMML</option>
@@ -95,27 +74,22 @@
               </select>
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
-        <fieldset>
+
+        <fieldset class="theme-3-border">
           <label class="fakelink" onclick="window.open(project_baseurl+ '/' + project_path + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
-        <fieldset>
+
+        <fieldset class="theme-3-border theme-6-background">
           <label>View interaction data in a table</lable>
-          <input type="button" value="Toggle" onclick="jQuery('#cwinlinetable').toggle('blind', {}, 1000);">
+          <input type="button" id="toggleTable" value="Toggle">
         </fieldset>
       </div>
     </div>
-    <div id="tabs-data">
-      <div>to be implemented...</div>
-    </div>
+    <div id="tabs-data"></div>
     <div id="tabs-help">
-      <div id="legend">
-        <h3>Interaction Type</h3>
-          <table id="svgtable">
-            <tr>
-              <td id="legendall">
-              </td>
-            </tr>
-          </table>
+      <div id="legend" class="theme-3-border">
+        <p>Interaction Type</p>
+        <div id="legendall"></div>
       </div>
       <div id="powerby">
           <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
@@ -124,6 +98,44 @@
         </div>
       </div>
   </div>
+  <script type="text/javascript">
+    <%-- sidebar toolbar bar --%>
+    var sidebarPages = new Array();
+    jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+      <%-- push targets --%>
+      sidebarPages.push(jQuery(this).attr('href'));
+      <%-- attaché onclick behavior --%>
+      jQuery(this).click(function(e) {
+        var that = this;
+        jQuery.each(sidebarPages, function(index, target) {
+          if (target == jQuery(that).attr('href')) {
+            jQuery("#cwtabsbyside "+target).show();
+          } else {
+            jQuery("#cwtabsbyside "+target).hide();
+          }
+        });
+        jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+            jQuery(this).removeClass('active');
+        });
+        jQuery(that).addClass('active');
+        e.preventDefault();
+      });
+    });
+    <%-- show only first tab --%>
+    jQuery.each(sidebarPages, function(index, target) {
+      if (index > 0) {
+        jQuery("#cwtabsbyside "+target).hide();
+      }
+    });
+    <%-- toggle table btn --%>
+    jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
+      if (jQuery('#cwinlinetable').is(":hidden")) {
+        jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
+      } else {
+        jQuery('#cwinlinetable').hide();
+      }
+    });
+  </script>
   <div id="cwcontent"></div>
   </div>
 </div>
@@ -196,9 +208,6 @@
 <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/cytoscapeweb.min.js'/>"></script>
 
-<script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
-
 <link href="model/jquery_svg/jquery.svg.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_svg/jquery.svg.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
@@ -253,12 +262,12 @@
 
     jQuery('#legendall').svg();
     var legendall = jQuery('#legendall').svg('get');
-    legendall.line(15, 10, 75, 10, {stroke: "red", strokeWidth: 4});
-    legendall.polygon([[75, 5], [75, 15], [95, 10]], {fill: "red"});
-    legendall.text(100, 15, "Physical");
-    legendall.line(185, 10, 245, 10, {stroke: "blue", strokeWidth: 4});
-    legendall.polygon([[245, 5], [245, 15], [265, 10]], {fill: "blue"});
-    legendall.text(270, 15, "Genetic");
+    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
+    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
+    legendall.text(70, 15, "Physical");
+    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
+    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
+    legendall.text(210, 15, "Genetic");
 
     jQuery("svg").height("100%").width("100%");
 
