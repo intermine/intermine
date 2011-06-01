@@ -23,4 +23,4 @@ query.add_view("Employee.name", "Employee.age")
 query.add_constraint("Employee", "Manager")
 
 for row in query.results("tsv"):
-    print row,
+    print row

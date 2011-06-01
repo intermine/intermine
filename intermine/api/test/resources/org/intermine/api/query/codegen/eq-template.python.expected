@@ -25,4 +25,4 @@ results = template.results( "tsv",
     A = {"op": "=", "value": "zen"}
 )
 for row in results:
-    print row,
+    print row

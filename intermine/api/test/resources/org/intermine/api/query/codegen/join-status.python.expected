@@ -28,4 +28,4 @@ query.add_view(
 # Join status
 query.add_join("Gene.organism", "OUTER")
 for row in query.results("tsv"):
-    print row,
+    print row

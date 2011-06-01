@@ -32,4 +32,4 @@ query.add_constraint("Gene.organism.commonName", "ONE OF", ["fruit fly", "honey 
 # query.set_logic("A")
 
 for row in query.results("tsv"):
-    print row,
+    print row
