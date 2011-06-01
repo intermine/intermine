@@ -32,17 +32,18 @@ union, intersection, symmetric difference, and subtraction whicj create new list
 =cut
 
 use Moose;
+
 with 'Webservice::InterMine::Role::HasQuery';
 with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::Showable';
 
 use Moose::Util::TypeConstraints qw(match_on_type);
-use MooseX::Types::Moose         qw/ArrayRef Undef/;
+use MooseX::Types::Moose         qw/ArrayRef Undef Bool/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
     List ListableQuery ListOfLists ListOfListableQueries
-    ListOperable ListOfListOperables SetObject
+    ListOperable ListOfListOperables SetObject TruthValue
 /;
 require Set::Object;
 
@@ -178,6 +179,14 @@ has 'tags' => (
         get_tags => 'elements',
         has_tag => 'contains',
     },
+    coerce => 1,
+);
+
+has 'is_authorized' => (
+    isa => TruthValue,
+    is => 'ro',
+    default => 1,
+    init_arg => 'authorized',
     coerce => 1,
 );
 
