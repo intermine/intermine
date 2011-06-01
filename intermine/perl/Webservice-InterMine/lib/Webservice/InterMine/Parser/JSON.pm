@@ -72,6 +72,7 @@ has footer => (
 sub parse_header {
     my $self = shift;
     my $line = shift;
+    warn $line if $ENV{DEBUG};
     $self->add_to_header($line);
 }
 
@@ -80,6 +81,16 @@ sub header_is_parsed {
     return $self->header =~ /"results":\[$/;
 }
 
+has completeness => (
+    reader => '_get_completeness', 
+    writer => '_set_completeness',
+    isa => 'Bool', 
+    default => 0,
+);
+
+# Horrible hack to get around issue with role requirements...
+sub is_complete {my $self = shift; return $self->_get_completeness};
+
 sub check_status {
     my $self = shift;
     my $container_text = $self->header . $self->footer;
@@ -87,19 +98,20 @@ sub check_status {
     unless ($container) {
         confess "Problem decoding container", $@, $container_text;
     }
-    confess "Results returned error:", $container->{statusCode}, $container->{error}
+    confess "Results returned error: ", $container->{statusCode}, " - ", $container->{error}
         unless ($container->{wasSuccessful});
 }
 
 sub parse_line {
     my $self = shift;
     my $line = shift;
-    if ($line =~ /^\]/) {
+    if ($line and $line =~ /^\]/) {
         $self->add_to_footer($line);
         $self->check_status;
+        $self->_set_completeness(1);
         return undef;
     }
-    if (length($line)) {
+    if ($line and length($line)) {
         chomp($line);
         $line =~ s/,\s*$//;
         my $json = eval {$self->decode($line);};

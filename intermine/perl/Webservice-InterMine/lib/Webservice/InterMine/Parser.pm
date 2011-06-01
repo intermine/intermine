@@ -27,7 +27,7 @@ Given a line of text, return whatever the parser returns.
 
 =cut
 
-requires qw/header_is_parsed parse_header parse_line/;
+requires qw/header_is_parsed parse_header parse_line is_complete/;
 
 no Moose;
 1;

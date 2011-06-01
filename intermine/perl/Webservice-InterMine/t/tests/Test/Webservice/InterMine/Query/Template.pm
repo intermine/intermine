@@ -206,7 +206,7 @@ sub results : Test(4) {
                 op1 => '=',
                 code1 => 'B',
             },
-            $obj->view, 'tsv', 'perl', undef
+            $obj->view, 'tab', 'perl', undef
         ],
         "Produces appropriate arguments for string results",
     );

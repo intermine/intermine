@@ -2,22 +2,25 @@ package Test::Webservice::InterMine::Service;
 
 #TODO - add tests for apply role, and new_query
 
+use strict;
+use warnings;
 use base 'Test::Class';
 use Test::More;
 use Test::Exception;
 use Test::MockObject;
 use InterMine::Model::TestModel;
 
-sub class {'Webservice::InterMine::Service'}
-sub fake_queryurl {'fake.url'}
-sub fake_viewlist {[qw/one two three/]}
-sub user_agent {'WebserviceInterMinePerlAPIClient'}
+sub class         { 'Webservice::InterMine::Service' }
+sub fake_queryurl { 'fake.url/path' }
+sub fake_viewlist { [qw/one two three/] }
+sub user_agent    { 'WebserviceInterMinePerlAPIClient' }
+
 sub object {
     my $test = shift;
     return $test->{object};
-};
+}
 
-sub setup :Test(setup) {
+sub setup : Test(setup) {
     my $test = shift;
 
     # Set up all the mock stuff
@@ -26,239 +29,192 @@ sub setup :Test(setup) {
     $test->{model} = $model;
 
     my $fake_query = Test::MockObject->new;
-    $fake_query->fake_module(
-	'Webservice::InterMine::Query',
-	new => sub {},
-    );
+    $fake_query->fake_module( 'Webservice::InterMine::Query', new => sub { }, );
     $test->{fq} = $fake_query;
     my $connection = Test::MockObject->new;
     $connection->fake_module(
-    	'Net::HTTP',
-    	new => sub {
-    	    my $class = shift;
-    	    my @args  = @_;
-    	    $connection->{_init_args} = {@args};
-    	    return $connection;
-    	},
-    );
-    $connection->mock(
-	write_request => sub {
-	    my $self = shift;
-	    my @args  = @_;
-	    $self->{_write_args} = {@args};
-	    return $self;
-	},
-    );
-    $test->{connection} = $connection;
-    $test->{version} = 1_000_000;
-
-    my $uri = Test::MockObject->new;
-    $uri->fake_module(
-        'URI',
+        'Net::HTTP',
         new => sub {
             my $class = shift;
-            my $url = shift;
-            $uri->{_url} = $url;
-            return $uri;
+            my @args  = @_;
+            $connection->{_init_args} = {@args};
+            return $connection;
         },
     );
-    $uri->mock(path => sub {
+    $connection->mock(
+        write_request => sub {
             my $self = shift;
-            return $uri->{_url};
-        })
-        ->mock(scheme => sub {
-            my $self = shift;
-            return $uri->{_url};
-        });
-    $uri->set_isa('URI');
-    $uri->mock(host => sub{'URI-HOST'});
-    $uri->mock(query_form => sub{});
-    $test->{uri} = $uri;
+            my @args = @_;
+            $self->{_write_args} = {@args};
+            return $self;
+        },
+    );
+    $test->{connection} = $connection;
+    $test->{version}    = 1_000_000;
+    $test->{release}    = 'SOME RELEASE STRING';
+    $test->{listdata}    = 'SOME LIST DATA';
 
     my $fakeRes = Test::MockObject->new;
     $fakeRes->fake_module(
-	'Webservice::InterMine::ResultIterator',
-	new => sub {
-	    my $class = shift;
-	    my @args  = @_;
-	    $fakeRes->{_init_args} = {@args};
-	    return $fakeRes;
-	},
+        'Webservice::InterMine::ResultIterator',
+        new => sub {
+            my $class = shift;
+            my @args  = @_;
+            $fakeRes->{_init_args} = {@args};
+            return $fakeRes;
+        },
     );
-    $fakeRes->mock(status_line => sub {"Hello, I'm a status line"})
-	    ->mock(
-		content => sub{
-		    my $self = shift;
-		    return $self->{_content}
-		},
-	    );
-    $fakeRes->set_false('is_error')
-            ->mock(code => sub {'FAKE_CODE'})
-            ->mock(message => sub {'FAKE_MESSAGE'});
+    $fakeRes->mock( status_line => sub { "Hello, I'm a status line" } )->mock(
+        content => sub {
+            my $self = shift;
+            return $self->{_content};
+        },
+    );
+    $fakeRes->set_false('is_error')->mock( code => sub { 'FAKE_CODE' } )
+      ->mock( message => sub { 'FAKE_MESSAGE' } );
     $test->{Res} = $fakeRes;
 
     my $fakeLWP = Test::MockObject->new();
-    $fakeLWP->fake_module(
-	'LWP::UserAgent',
-	new => sub {return $fakeLWP},
+    $fakeLWP->{get_count} = 0;
+    $fakeLWP->fake_module( 'LWP::UserAgent', new => sub { return $fakeLWP }, );
+    $fakeLWP->set_isa('LWP::UserAgent');
+    $fakeLWP->mock( env_proxy => sub { } )->mock(
+        agent => sub {
+            my $self         = shift;
+            my $agent_string = shift;
+            $self->{agent} = $agent_string;
+        }
+      )->mock(
+        get => sub {
+            my ( $self, $uri ) = @_;
+            $self->{get_count}++;
+            my $url = "$uri";
+            if ( $url =~ m!/model! ) {
+                $fakeRes->{_content} = $model;
+            }
+            elsif ( $url =~ m!/lists! ) {
+                $fakeRes->{_content} = $test->{listdata};
+            }
+            elsif ( $url =~ m!/release! ) {
+                $fakeRes->{_content} = $test->{release};
+            }
+            elsif ( $url =~ m!/version! ) {
+                $fakeRes->{_content} = $test->{version};
+            }
+            else {
+                $fakeRes->{_content} .= $url;
+            }
+            return $fakeRes;
+        }
+      )->mock(
+        default_header => sub {
+            my ($self, @header)  = @_;
+            $self->{header} = \@header;
+        }
     );
-    $fakeLWP->mock(env_proxy => sub {})
-            ->mock(agent => sub {
-		       my $self = shift;
-		       my $agent_string = shift;
-		       $fakeRes->{_content} .= $agent_string;
-		       return $fakeRes;
-	       })
-            ->mock(get => sub {
-		       my ($self, $uri) = @_;
-		       my $url = $uri->{_url} || $uri;
-		       if ($url =~ m!/model!) {
-			   $fakeRes->{_content} = $model;
-		       }
-		       elsif ($url =~ m!/version!) {
-			   $fakeRes->{_content} = $test->{version};
-		       }
-		       else {
-			   $fakeRes->{_content} .= $url;
-		       }
-		       return $fakeRes;
-		   });
     $test->{LWP} = $fakeLWP;
 
     my $fake_TemplateFactory = Test::MockObject->new;
     $fake_TemplateFactory->fake_module(
-	'Webservice::InterMine::TemplateFactory',
-	new => sub {
-	    return $fake_TemplateFactory;
-	},
+        'Webservice::InterMine::TemplateFactory',
+        new => sub {
+            return $fake_TemplateFactory;
+        },
     );
     $fake_TemplateFactory->set_isa('Webservice::InterMine::TemplateFactory');
     $fake_TemplateFactory->mock(
-	get_template_by_name => sub {
-	    my $self = shift;
-	    my $name = shift;
-	    return "Mock Template Result - $name";
-	},
-    );
+        get_template_by_name => sub {
+            my $self = shift;
+            my $name = shift;
+            return "Mock Template Result - $name";
+        },
+    )->mock(get_templates => sub {"Many Templates"});
     $test->{TF} = $fake_TemplateFactory;
+
+    my $fake_ListFactory = Test::MockObject->new;
+    $fake_TemplateFactory->fake_module(
+        'Webservice::InterMine::ListFactory',
+        new => sub {
+            return $fake_ListFactory;
+        },
+    );
+    $fake_ListFactory->set_isa('Webservice::InterMine::ListFactory');
+    $test->{LF} = $fake_ListFactory;
 }
 
-sub _new : Test(7) {
+sub _compilation : Test(1)  {
     my $test = shift;
-    use_ok($test->class);
-    my @args = (
-        root => $test->fake_queryurl,
-    );
-    my $service = new_ok($test->class, [@args]);
-    is($service->root, $test->{uri},
-       '... coerces the url correctly');
-    is($service->host, 'URI-HOST',
-       "... delegates host appropriately",);
-    is($service->model, $test->{model},
-       "... gets a model for itself",);
-    is($service->version, $test->{version},
-       "... gets a version string for itself",);
-    $test->{version} = 'foo';
-    throws_ok(
-        sub {my $bad_service = $test->class->new(@args);},
-        qr/version.*please check the url/,
-        "Dies when it can't get the version"
-    );
-    $test->{object} = $service;
+    use_ok( $test->class );
 }
 
-sub get_results_iterator : Test(4) {
-    my $test     = shift;
-    my $url      = $test->fake_queryurl;
-    my $viewlist = $test->fake_viewlist;
-    my $object   = $test->object;
-    my $response;
-    lives_ok(
-        sub {$response = $object->get_results_iterator($url, $viewlist);},
-        "Calls for a result iterator ok",
-    );
-
-    is_deeply(
-        $response->{_init_args}{view_list}, $viewlist,
-        '... handles viewlist correctly',
-    );
-    is(
-        $response->{_content},
-        $test->user_agent . $url,
-        "... handles agent and url correctly"
-    ) or diag(explain $test->{Res});
-    # is(
-    # 	$response->{_init_args}{connection}{_write_args}{'User-Agent'},
-    # 	$test->user_agent,
-    # 	"... sets the user agent string in the right place",
-    # );
-    # is(
-    # 	$response->{_init_args}{connection}{_init_args}{Host}, 'URI-HOST',
-    # 	'... puts host in the right place',
-    # );
-    $test->{Res}->set_true('is_error');
-    throws_ok(
-	sub {$object->get_results_iterator},
-	qr/Hello, I'm a status line/,
-	'... Catches response errors correctly',
-    );
-    # $test->{connection}->fake_module(
-    # 	'Net::HTTP',
-    # 	new => sub {return undef},
-    # );
-    # throws_ok(
-    # 	sub {$object->get_results_iterator},
-    # 	qr/Could not connect to host/,
-    # 	'... Catches connection errors correctly',
-    # );
-}
-
-
-sub fetch : Test(2) {
+sub basic_service : Test(3) {
     my $test = shift;
-    my $url      = $test->fake_queryurl;
-    my $service = $test->class->new(root => $test->fake_queryurl);
-    my $response = $service->fetch($url);
-    is(
-        $response,  $test->{version} . $test->user_agent . $url,
-        "... handles url and agent correctly",
-    );
-    $test->{Res}->set_true('is_error');
-    throws_ok(
-        sub {$service->fetch('foo')},
-        qr/Hello, I'm a status line/,
-        '... Catches response errors correctly',
-    );
+    my @args = ( root => $test->fake_queryurl );
+    my $service = new_ok( $test->class, [@args] );
+    is( $service->version, $test->{version}, "It gets its version ok" );
+
+    is($service->get_authstring, undef, "No user, no authentication");
+
 }
 
-sub methods : Test {
+sub auth_service : Test(2) {
     my $test = shift;
-    my @methods = (qw/
-	root host model version get_results_iterator
-	template fetch
-	QUERY_PATH MODEL_PATH TEMPLATES_PATH TEMPLATEQUERY_PATH
-	VERSION_PATH USER_AGENT
-    /);
-    can_ok($test->class, @methods);
+    my @args = ( root => $test->fake_queryurl, user => 'Foo', pass => 'Bar' );
+    my $service = new_ok( $test->class, [@args] );
+    isnt($service->get_authstring, undef, "With a user, there is authentication");
+}
+    
+
+sub bad_services : Test(3) {
+    my $test = shift;
+    my @args = ( root => $test->fake_queryurl );
+
+    throws_ok {$test->class->new(@args, user => "Foo")} qr/not both/, 
+        "demands a password for a user";
+
+    throws_ok {$test->class->new(@args, pass => "Foo")} qr/not both/, 
+        "demands a user for a password";
+
+    $test->{version} = 0;
+    throws_ok {$test->class->new(@args)} qr/check the url/, 
+        "Throws a sensible error when it can't get the version";
 }
 
-sub attributes : Test(3) {
+sub release : Test(2) {
     my $test = shift;
-    my @readonly_attrs = (qw/
-	root model version
-    /);
-    for (@readonly_attrs) {
-	dies_ok(sub {$test->{object}->$_('Any Value')},
-		"... dies trying to change $_");
-    }
+    my @args = ( root => $test->fake_queryurl );
+    my $service = $test->class->new(@args);
+    my $c = $test->{LWP}->{get_count};
+    is($service->release, $test->{release}, "Can get the release string");
+    is($test->{LWP}->{get_count}, $c + 1, "Was fetched lazily");
 }
 
-sub template : Test {
+sub templates : Test(2) {
     my $test = shift;
-    my $obj = $test->{object};
-    is(
-	$obj->template('foo'), 'Mock Template Result - foo',
-	"Lazy builds a factory, and delegates to it correctly",
-    );
+    my @args = ( root => $test->fake_queryurl );
+    my $service = $test->class->new(@args);
+    is($service->template('Foo'), "Mock Template Result - Foo", 
+        "Can delegate template fetching");
+    is($service->get_templates, "Many Templates", 
+        "Can delegate fetching of all templates");
 }
+
+sub list_methods : Test(3) {
+    my $test = shift;
+    my @args = ( root => $test->fake_queryurl );
+    my $service = $test->class->new(@args);
+    can_ok($service, qw/list lists lists_with_object list_names new_list 
+        join_lists subtract_lists intersect_lists diff_lists delete_lists 
+        delete_temp_lists list_count refresh_lists/);
+    is($service->get_list_data, $test->{listdata}, "Can fetch list data");
+
+    $test->{version} = 3;
+    $service = $test->class->new(@args);
+    throws_ok {$service->get_list_data} qr/not support list operations/, 
+        "Informs the user if the webservice cannot handle lists";
+    
+}
+
+    
+
 1;

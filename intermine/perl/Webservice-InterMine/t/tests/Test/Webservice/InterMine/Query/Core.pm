@@ -336,14 +336,20 @@ sub all_paths : Test(2) {
 sub suspend_validation : Test(5) {
     my $test = shift;
     my $obj  = $test->{object};
+
     is($obj->is_validating, 1, "Has validation turned on by default");
+
     $obj->suspend_validation;
+
     is($obj->is_validating, 0, "... and can turn it off");
+
     lives_ok(
-	sub {$obj->add_constraint(path => 'Foo', type => 'Quux');},
-	"... so now it can add truly hideously incorrect paths and not die",
+        sub {$obj->add_constraint(path => 'Foo', type => 'Quux');},
+        "... so now it can add truly hideously incorrect paths and not die",
     );
+
     $obj->resume_validation;
+
     is($obj->is_validating, 1, "... but we can turn validation back on");
     dies_ok(sub {$obj->validate}, "... and it dies when we next call validate");
 }
@@ -354,29 +360,29 @@ sub clean_out_SCCs : Test(4) {
     my $starting_count = $obj->count_constraints;
     $obj->suspend_validation;
     $obj->add_constraint(
-	path => 'Employee.age',
-	type => 'Int',
+        path => 'Employee.age',
+        type => 'Int',
     );
     $obj->add_constraint(
-	path => 'Employee.name',
-	type => 'Java.lang.string',
+        path => 'Employee.name',
+        type => 'Java.lang.string',
     );
     my $survivor = $obj->add_constraint(
-	path => 'Employee',
-	type => 'Manager',
+        path => 'Employee',
+        type => 'Manager',
     );
     is(
-	$obj->count_constraints, $starting_count + 3,
-	"Has the right number of constraints prior to clean out"
+        $obj->count_constraints, $starting_count + 3,
+        "Has the right number of constraints prior to clean out"
     );
     $obj->clean_out_SCCs;
     is(
-	$obj->count_constraints, $starting_count + 1,
-	"... but only good ones survive the purge",
+        $obj->count_constraints, $starting_count + 1,
+        "... but only good ones survive the purge",
     );
     ok(
-	grep( {$_ eq $survivor} $obj->all_constraints),
-	"... and the right one survived",
+        grep( {$_ eq $survivor} $obj->all_constraints),
+        "... and the right one survived",
     );
     lives_ok(sub {$obj->validate}, "... and the object survives validation");
 }
