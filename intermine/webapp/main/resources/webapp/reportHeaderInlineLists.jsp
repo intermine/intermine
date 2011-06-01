@@ -9,12 +9,48 @@
 
 <tiles:importAttribute name="object" ignore="false" />
 
+<script type="text/javascript">
+  function showMoreInlineList(listDiv) {
+    jQuery(listDiv + ' ul.items li').each(function(index) {
+      if (!jQuery(this).is(":visible")) {
+        jQuery(this).show();
+      }
+    });
+    jQuery(listDiv + ' ul.items li.show-more').hide();
+  }
+
+  <%-- give some leeway of 20 chars as "Show more" takes up some space too --%>
+  function applyShowMoreInlineList(listDiv, listLength) {
+    <%-- traverse all elements for this list --%>
+    jQuery(listDiv + ' ul.items li').each(function(index) {
+      <%-- substract elements length --%>
+      listLength -= jQuery(this).text().length;
+      <%-- hide the further elements if we broke through the limit --%>
+      if (listLength <= 0) {
+        jQuery(this).hide();
+      }
+    });
+    <%-- show link to show more? --%>
+    if (listLength <= 0) {
+      jQuery('<li/>', {
+          className: 'show-more',
+          html: jQuery('<a/>', {
+              href: '#',
+              title: 'Show more items',
+              text: 'Show more',
+              click: function(e) {
+                showMoreInlineList(listDiv);
+                e.preventDefault();
+              }
+          })
+      }).appendTo(listDiv + ' ul.items');
+    }
+  }
+</script>
+
 <c:forEach items="${object.headerInlineLists}" var="list" varStatus="outerStatus">
   <c:if test="${list.size > 0}">
     <div class="box grid_12 list" id="header-inline-list-${outerStatus.count}">
-      <script type="text/javascript">
-        var listLength = <c:out value="${list.lineLength}"/>;
-      </script>
       <ul class="items">
         <li><span>${list.prefix}</span>:</li>
         <c:choose>
@@ -35,33 +71,12 @@
       </ul>
     </div>
     <div style="clear:both;">&nbsp;</div>
-      <script type="text/javascript">
-        function showMoreInlineList(numero) {
-          jQuery('#header-inline-list-' + numero + ' ul.items li').each(function(index) {
-            if (!jQuery(this).is(":visible")) {
-              jQuery(this).show();
-            }
-          });
-          jQuery('#header-inline-list-' + numero + ' ul.items li.show-more').hide();
-        }
 
-        // give some leeway of 20 chars as "Show more" takes up some space too
-        if (listLength > 0 && ${list.length} - 20 > listLength) {
-          // traverse all elements for this list
-          jQuery('#header-inline-list-${outerStatus.count} ul.items li').each(function(index) {
-            // substract elements length
-            listLength -= jQuery(this).text().length;
-            // hide the further elements if we broke through the limit
-            if (listLength <= 0) {
-              jQuery(this).hide();
-            }
-          });
-          // show link to show more?
-          if (listLength <= 0) {
-            var linkElement = '<li class="show-more"><a href="#" onclick="showMoreInlineList(${outerStatus.count});return false;">Show more</a></li>'
-            jQuery('#header-inline-list-${outerStatus.count} ul.items').append(linkElement);
-          }
-        }
+    <%-- give some leeway of 20 chars as "Show more" takes up some space too --%>
+    <c:if test="${list.lineLength > 0 && list.length - 20 > list.lineLength}">
+      <script type="text/javascript">
+        applyShowMoreInlineList('#header-inline-list-${outerStatus.count}', ${list.lineLength});
       </script>
+    </c:if>
   </c:if>
 </c:forEach>
