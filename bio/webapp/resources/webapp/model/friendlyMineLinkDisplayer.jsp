@@ -37,8 +37,13 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
             if (entry['isHomologue'] == true) {
                 homologue = "&orthologue=" + entry['shortName'];
             }
-            var linky = "<li id='organism-" + key + "'><a href='" + url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue + "'>" + entry['shortName'] + "</a>";
-            jQuery(target).append(linky);
+            jQuery('<li/>', {
+                id: 'organism-' + key,
+                html: jQuery('<a/>', {
+                    href: url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
+                    text: entry['shortName']
+                })
+            }).appendTo(target);
         }
       });
   }
