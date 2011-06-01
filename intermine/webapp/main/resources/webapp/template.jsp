@@ -315,13 +315,18 @@
           </c:if>
           </div>
           <%-- default action, if you do not care about submit button ordering --%>
-          <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
-            <fmt:message key="template.submitToResults"/>
-          </html:submit>
+          <div id="bigGreen" class='button'>
+            <div class="left"></div>
+            <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
+              <fmt:message key="template.submitToResults"/>
+            </html:submit>
+            <div class="right"></div>
+          </div>
+          <div class="clear"></div>
 
 
           <%-- These elements are hidden - look for the real (js) ones above... --%>
-      <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
+          <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
             <fmt:message key="template.submitToQuery"/>
           </html:submit>
           <html:submit property="editTemplate" styleId="editTemplateButton" style="display:none;">
