@@ -169,7 +169,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 }
             }
             sb.append("for row in query.results(\"tsv\"):" + ENDL);
-            sb.append(INDENT + "print row," + ENDL);
+            sb.append(INDENT + "print row" + ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
 
@@ -221,7 +221,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             sb.append("results = template.results( \"tsv\"," + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
             sb.append("for row in results:" + ENDL);
-            sb.append(INDENT + "print row," + ENDL);
+            sb.append(INDENT + "print row" + ENDL);
         }
 
         return sb.toString();
