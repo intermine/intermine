@@ -40,9 +40,9 @@
             </c:forEach>
           </c:otherwise>
         </c:choose>
-      </div>
-      <div style="clear:both;">&nbsp;</div>
     </c:if>
+    </div>
+    <div style="clear:both;">&nbsp;</div>
   </c:forEach>
 </c:if>
 
