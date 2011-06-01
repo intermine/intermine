@@ -210,6 +210,9 @@ class List(object):
             self.list_type = args["type"]
             self.size = int(args["size"])
             self.date_created = args.get("dateCreated")
+            self.is_authorized = args.get("authorized")
+            if self.is_authorized is None:
+                self.is_authorized = True
         except KeyError:
             raise ValueError("Missing argument") 
         self.unmatched_identifiers = set([])
