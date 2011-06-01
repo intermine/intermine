@@ -26,4 +26,4 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 for row in query.results("tsv"):
-    print row,
+    print row

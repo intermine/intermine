@@ -26,4 +26,4 @@ results = template.results( "tsv",
     D = {"op": "LOOKUP", "value": "EmployeeA1", "extra_value": "DepartmentA"}
 )
 for row in results:
-    print row,
+    print row

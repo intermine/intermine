@@ -32,4 +32,4 @@ query.add_constraint("Gene.length", "<=", "1024", "A")
 # query.set_logic("A")
 
 for row in query.results("tsv"):
-    print row,
+    print row

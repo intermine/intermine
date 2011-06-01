@@ -22,4 +22,4 @@ results = template.results( "tsv",
     A = {"op": "ONE OF", "values": "["Employee A1", "EmployeeA2"]"}
 )
 for row in results:
-    print row,
+    print row

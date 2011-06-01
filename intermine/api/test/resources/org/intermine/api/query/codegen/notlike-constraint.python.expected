@@ -32,4 +32,4 @@ query.add_constraint("Gene.organism.commonName", "NOT LIKE", "D.*", "A")
 # query.set_logic("A")
 
 for row in query.results("tsv"):
-    print row,
+    print row
