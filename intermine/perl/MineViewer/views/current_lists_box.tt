@@ -15,11 +15,13 @@
             <a href="[% proxy.uri_for('/list/' _ p.key) %]">
             [% p.key %] ([% p.value.size %] [% pluraliser(p.value.type) %])
             </a>
+            [% IF p.value.is_authorized %]
             <a icon="delete" style="display:none;cursor:pointer;" 
                 id="[% deleter_id %]"
                 onclick="removeitem('[% lname %]', '[% itemid %]')">
                 Remove from
             </a>
+            [% END %]
         </li>
         [% END %]
     </ul>
@@ -38,6 +40,6 @@ function removeitem(listName, objId) {
         ids: objId,
     };
     jQuery.post("[% proxy.uri_for('/remove_list_item') %]", 
-        data, handleResults, "json");
+        data, handleListResults, "json");
 }
 </script>

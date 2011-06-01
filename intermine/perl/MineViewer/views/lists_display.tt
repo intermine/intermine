@@ -1,6 +1,8 @@
 
 <div id="list-chrome" style="margin-bottom:10px;">
 
+    <table style="border:none"><tr>
+    <td>
     [% IF lists.size == 1 %]
     <span id="list-title-container">
         [% list = lists.0 %]
@@ -15,8 +17,9 @@
         </select>
     [% END %]
     </span>
+    </td><td style="width:300px;" >
 
-    <span id="controls" style="float:right;width:300px;">
+    <span id="controls" >
         <form id="display-format">
             <button id="list-deleter">Delete this list</button>
             <input type="radio" name="list-display-format" id="grid" checked>
@@ -25,6 +28,8 @@
             <label for="table">table</label>
         </form>
     </span>
+    </td>
+    </tr></table>
 </div>
 <div style="height:10px;"></div>
 
@@ -113,13 +118,15 @@ jQuery(function() {
 });
 
 function getCurrentList() {
-    var current = $('#lists').multiselect('getChecked')[0].value 
+    var current = 
+        $('#lists').multiselect('getChecked').first().attr('value') 
         || $('#currentListName').text();
     return current;
 }
 
 function handleListSelection() {
     var listname = getCurrentList();
+    updateExportBox( "[% proxy.uri_for('/') %]", listname);
     window.location.hash = escape(listname);
     jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
             + escape(listname) + ' #list-items', null, function() {
@@ -154,6 +161,7 @@ function removeitem(listName, objId) {
 }
 function initialiseListPage() {
     var currentList = unescape(window.location.hash.substr(1));
+    updateExportBox( "[% proxy.uri_for('/') %]", currentList);
     if (currentList) {
         updateListDisplay('[% proxy.uri_for("/lists") %]', currentList);
     }
@@ -162,6 +170,7 @@ function initialiseListPage() {
 jQuery(function() {
     initialiseListPage();
     jQuery('#lists').change(handleListSelection);
+    handleListSelection();
 });
 </script>
         

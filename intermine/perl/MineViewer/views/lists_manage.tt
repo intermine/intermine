@@ -107,19 +107,19 @@ handler_for["subtract"] = function() {
     var rhs_names = jQuery('#rhs-operand-selector').multiselect('getChecked')
                             .map(function() {return this.value}).get();
     if (list_names.length < 1) {
-        $.jGrowl("No reference lists");
+        $.jGrowl("No lists selected for removal");
         $('#list-operand-selector').multiselect('open');
         return;
     } else if (rhs_names.length < 1) {
-        $.jGrowl("No lists selected for removal");
+        $.jGrowl("No reference lists");
         $('#rhs-operand-selector').multiselect('open');
         return;
     }
     var now = new Date();
     var dateString = (now + "").split(' ').slice(0, 5).join(' ')
     jQuery('#created-list-name').val("Subtracted List " + dateString);
-    jQuery('#created-list-desc').val("Subtraction of " + rhs_names.join(' and ') + " from " + list_names.join(' and '));
-    openListCreationDialog(list_names, 'subtract', rhs_names);
+    jQuery('#created-list-desc').val("Subtraction of " + list_names.join(' and ') + " from " + rhs_names.join(' and '));
+    openListCreationDialog(rhs_names, 'subtract', list_names );
 };
 
 var selectedTextGenerator = function(numChecked, numTotal, checkedItems) {
@@ -127,7 +127,7 @@ var selectedTextGenerator = function(numChecked, numTotal, checkedItems) {
         return checkedItems[0].value;
     }
     if (numChecked > 4) {
-        return numChecked + " lists selected";
+        return numChecked + " lists";
     }
     var names = jQuery.map(checkedItems, function(e) { 
         return (e.value.length < 15) ? e.value : e.value.substr(0, 15) + "..."  });
@@ -142,8 +142,8 @@ function initialiseOpHandlers() {
         minWidth: 500
     }).multiselectfilter();
     $("#rhs-operand-selector").multiselect({
-        noneSelectedText: "Select lists to subtract",
-        selectedText: selectedTextGenerator,
+        noneSelectedText: "Select reference lists",
+        selectedText: function(n, t, i) {return "From " + selectedTextGenerator(n, t, i)},
         minWidth: 500
     }).multiselectfilter();
     handleActionSelection();
@@ -161,14 +161,11 @@ var handleActionSelection = function() {
     var currentSelection = $('#action-chooser').multiselect('getChecked')[0];
     jQuery('#action').button("option", "label", currentSelection.title).unbind('click').click(handler_for[currentSelection.value]);
     if (currentSelection.value == "subtract") {
-        jQuery('#rhs-operand-box').show();
-        jQuery('#list-operand-selector').multiselect('option', 'noneSelectedText', 'Select Reference Lists');
-        jQuery('#rhs-operand-selector').multiselect('open');
-        jQuery('#list-operand-selector').multiselect('close');
+        jQuery('#rhs-operand-box').show().multiselect('close');
     } else {
         jQuery('#rhs-operand-box').hide();
-        jQuery('#list-operand-selector').multiselect('option', 'noneSelectedText', 'Select Lists to ' + currentSelection.title).multiselect('open');
     }
+    jQuery('#list-operand-selector').multiselect('option', 'noneSelectedText', 'Select Lists to ' + currentSelection.title).multiselect('open');
 };
 
 jQuery(function() {

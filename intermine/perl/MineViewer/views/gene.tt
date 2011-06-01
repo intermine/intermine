@@ -3,7 +3,7 @@
 [% gene = obj %]
 [% id = gene.primaryIdentifier  || gene.symbol %] 
 <div id="content">
-    <div style="float:right;width:50%;">
+    <div id="list-info-boxes" style="float:right;width:50%;">
         [% INCLUDE list_addition_box.tt %]
         [% INCLUDE current_lists_box.tt %]
     </div>
@@ -22,23 +22,12 @@
         [% END %]
         [% INCLUDE item_details_table.tt %]
     </table>
-    [% IF homologues.size %]
-        <h3>Homologues</h3>
-        <ul id="homologues">
-        [% FOREACH homologue IN homologues %]
-            [% homologue_display = homologue.symbol || homologue.primaryIdentifier %]
-            [% IF homologue.organism.name == "Rattus norvegicus" %]
-                [% homologue_link = "http://ratmine.mcw.edu/ratmine/portal.do?externalid=" _ homologue.primaryIdentifier %]
-            [% ELSE %]
-                [% homologue_link = proxy.uri_for('/gene/' _ homologue.primaryIdentifier) %]
-            [% END %]
-            <li><a href="[% homologue_link %]">[% homologue_display %]</a>
-                <i>[% homologue.organism.name %]</i>
-            </li>
-        [% END %]
-        </ul>
-    [% END %]
     [% INCLUDE user_comments.tt %]
+    [% INCLUDE homologues.tt %]
+    [% IF settings.genome_browser %]
+        [% browser = settings.genome_browser _ '.tt' %]
+        [% INCLUDE $browser %]
+    [% END %]
 
 
 [% FOREACH t IN templates %]

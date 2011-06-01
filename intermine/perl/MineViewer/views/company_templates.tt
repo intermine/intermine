@@ -1,4 +1,4 @@
-[% templates = ["Company_Departments", "Company_Employees"] %]
+[% templates = ["Company_Departments", "Company_Employees", "Company_Contractors"] %]
 [% FOR t IN templates %]
 <div id="[% t %]-placeholder" class="placeholder">
     <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>

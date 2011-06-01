@@ -1,4 +1,3 @@
-[% INCLUDE jbrowse.tt %]
 
 <h3 id="gene-templates-hider" style="cursor:pointer">
     <span class="ui-icon ui-icon-triangle-1-s" id="gene-templates-hider-icon"></span>
@@ -15,9 +14,14 @@
     <div id="gene-interactions-placeholder">
         <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
     </div>
+    <div id="gene-proteins">
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+    </div>
+    [% IF service.template('geneGWAS_reportPg') %]
     <div id="gwas-placeholder">
         <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
     </div>
+    [% END %]
 </div>
 
 <script type="text/javascript">
@@ -41,7 +45,7 @@ jQuery(function() {
             constraint1:   "Gene",
             op1:           "LOOKUP",
             value1:        "[% id %]",
-            extra1:        "H. sapiens",
+            extra1:        "[% obj.organism.shortName %]",
             code1:         "A"
         },
         '#gene-go-placeholder', opts
@@ -56,7 +60,7 @@ jQuery(function() {
             constraint1:   "Gene",
             op1:           "LOOKUP",
             value1:        "[% id %]",
-            extra1:        "H. sapiens",
+            extra1:        "[% obj.organism.shortName %]",
             code1:         "A"
         },
         '#gene-pathways-placeholder', opts
@@ -70,11 +74,25 @@ jQuery(function() {
             constraint1:   "Gene",
             op1:           "LOOKUP",
             value1:        "[% id %]",
-            extra1:        "H. sapiens",
+            extra1:        "[% obj.organism.shortName %]",
             code1:         "A"
         },
         '#gene-interactions-placeholder', opts
     );
+    IMBedding.loadTemplate(
+        {
+            // Show the proteins for a particular gene.
+            name:          "Gene_Protein",
+
+            constraint1:   "Gene",
+            op1:           "LOOKUP",
+            value1:        "[% id %]",
+            extra1:        "",
+            code1:         "A"
+        },
+        '#gene-proteins', opts
+    );
+    [% IF service.template('geneGWAS_reportPg') %]
     IMBedding.loadTemplate(
         {
             // Template to display GWAS results in Gene report pages
@@ -83,12 +101,13 @@ jQuery(function() {
             constraint1:   "GWAS.results.associatedGenes",
             op1:           "LOOKUP",
             value1:        "[% id %]",
-            extra1:        "H. sapiens",
+            extra1:        "[% obj.organism.shortName %]",
             code1:         "A",
 
             size: 5
         },
         '#gwas-placeholder', opts
     );
+    [% END %]
 });
 </script>
