@@ -157,7 +157,7 @@
                   </c:choose>
 
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}">theme-6-background theme-3-border</c:if>" rowspan="${subRow[column.index].rowspan}">
+                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}"> theme-6-background theme-3-border</c:if>" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
                     <c:set var="disabled" value="false"/>
                     <c:if test="${(!empty pagedResults.selectedClass) && ((pagedResults.selectedClass != resultElement.type)&&(pagedResults.selectedClass != column.typeClsString) && pagedResults.selectedColumn != column.index)}">
