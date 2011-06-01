@@ -43,12 +43,11 @@ class TestCommand(Command):
         time.sleep(1)
 
         testfiles = [ ]
-        for t in glob(pjoin(self._dir, 'tests', '*.py')):
+        for t in glob(pjoin(self._dir, 'tests', 'test*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
                     ['tests', splitext(basename(t))[0]])
                 )
-        testfiles = [ "tests.test" ]
 
         self.announce("Test files:" + str(testfiles), level=2)
         tests = TestLoader().loadTestsFromNames(testfiles)
