@@ -23,9 +23,10 @@
     </condition>
   </target>
   
-  <!-- WAR INSTEAD OF JAR -->
   
+  <!-- WAR INSTEAD OF JAR -->
   <target name="-pre-jar" depends="compile,-check-project-level">
+    <echo message="Running webapp pre-jar"/>
     <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
                   type="deploy" noFollow="true"/>
     <!-- copy all dependencies into build/lib -->
@@ -50,7 +51,62 @@
     </move>
   </target>
 
-  <target name="do-jar" depends="-init-presetdef-war">
+    <target name="-init-yui">
+       <property
+           name="yui-compressor.jar"
+           location="${lib.dir}/yuicompressor-2.4.6.jar" />
+       <property
+           name="yui-compressor-ant-task.jar"
+           location="${lib.dir}/yui-compressor-ant-task-0.5.2.jar" />
+       <path id="yui.classpath">
+           <pathelement location="${yui-compressor.jar}" />
+           <pathelement location="${yui-compressor-ant-task.jar}" />
+       </path>
+    </target>
+
+    <target name="-define-minify-task">
+        <taskdef name="yui-compressor" classname="net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask">
+            <classpath refid="project.execute.path"/>
+        </taskdef>
+    </target>
+
+
+    <target name="-minify" unless="dont.minify"
+        depends="-init-yui,-define-minify-task">
+ 
+       <!-- Example of consolidating javascript and css files
+       Which we should do later...
+       <echo message="Building global javascript" />
+       <concat destfile="${build.dir}/web/common/js/global.js" force="no">
+           <fileset dir="${build.dir}" includes="/js/jquery-1.5.1.js" />
+       </concat>
+ 
+       <echo message="Building global cascading stylesheets" />
+       <concat destfile="${build.dir}/web/common/css/global.css" force="no">
+           <fileset dir="${build.dir}" includes="web/common/css/base.css" />
+       </concat>
+       -->
+
+       <echo message="Minifying javascript and css files"/>
+ 
+       <!-- invoke compressor -->
+       <yui-compressor warn="false" charset="UTF-8" jsSuffix="-COMPRESSED.js" cssSuffix="-min.css" fromdir="${build.dir}" todir="${build.dir}">
+           <include name="webapp/js/*.js" />
+           <exclude name="webapp/js/*min.js"/>
+       </yui-compressor>
+
+      <apply executable="mv">
+        <srcfile/>
+        <targetfile/>
+        <fileset dir="${build.dir}/webapp/js" includes="*-COMPRESSED.js"/>
+        <mapper type="glob" from="*-COMPRESSED.js" to="${build.dir}/webapp/js/*.js"/>
+      </apply>
+ 
+   </target>
+ 
+
+  <target name="do-jar" depends="-init-presetdef-war,-minify">
+      <echo message="Running webapp do-jar"/>
     <webapp:war/>
   </target>
   
