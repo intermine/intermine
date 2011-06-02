@@ -5,16 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<script language="javascript">
-    function getWebserviceUrl() {
-        var url = "/${WEB_PROPERTIES['webapp.path']}/exportQuery.do?as=link&serviceFormat=tab";
-        var callback = function(data) {
-            jQuery('div.popup').show().find('input').val(data).select();
-        };
-        jQuery.get(url, callback, "text");
-        return false;
-    }
-</script>
 <div id="sidebar">
    <div id="bigGreen"
    <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
@@ -31,18 +21,36 @@
 <table>
   <tr>
     <td>
-    <div class="heading" style="border:none">
-          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="" onclick="javascript:getWebserviceUrl();return false;"
-    title="Get a URL to run this query from the command line or a script">web service URL</a>
-    <div class="popup" style="display:none;">
-      <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
-      <p style="width:95%;">
-      Use the URL below to fetch results for this query from the command line or a script
-      <i>(please note that you will need to use authentication to access private templates and lists)</i>:
-      </p>
-    <input type="text" value="None">
-    </div>
-  </div>
+      <div id="permalink">
+        <a href="#" title="Get a URL to run this query from the command line or a script">web service URL</a>
+        <div class="popup" style="display:none;">
+          <span class="close"></span>
+          <p style="width:95%;">
+          Use the URL below to fetch results for this template from the command line or a script
+          <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+          </p>
+          <input type="text" value="None">
+        </div>
+      </div>
+      <script type="text/javascript">
+        <%-- permalink handlers --%>
+        jQuery('#permalink a').click(function(e) {
+          jQuery.ajax({
+            url: "/${WEB_PROPERTIES['webapp.path']}/exportQuery.do?as=link&serviceFormat=tab",
+            data: jQuery('#templateForm').serialize(),
+            success: function(data) {
+              jQuery('#permalink div.popup').show().find('input').val(data).select();
+            },
+            dataType: "text"
+          });
+          e.preventDefault();
+        });
+
+        jQuery('#permalink div.popup span.close').click(function(e) {
+          jQuery('#permalink div.popup').hide();
+        });
+      </script>
+
     </td>
     <td>
       <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=perl&source=pathQuery" target="_blank">Perl</a>

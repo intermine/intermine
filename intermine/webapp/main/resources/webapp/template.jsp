@@ -315,7 +315,7 @@
           </c:if>
           </div>
           <%-- default action, if you do not care about submit button ordering --%>
-          <div id="bigGreen" class='button'>
+          <div id="smallGreen" class='button'>
             <div class="left"></div>
             <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
               <fmt:message key="template.submitToResults"/>
@@ -336,18 +336,6 @@
 </c:if>
 </html:form>
 
-<script language="javascript">
-    function getWebserviceUrl() {
-        jQuery('#actionType').val("webserviceURL");
-        var data = jQuery('#templateForm').serialize();
-        var url = "<html:rewrite page='/templateAction.do'/>";
-        var callback = function(data) {
-            jQuery('div.popup').show().find('input').val(data).select();
-        };
-        jQuery.get(url, data, callback, "text");
-        return false;
-    }
-</script>
 <c:if test="${!empty builder && builder=='yes'}">
 <br/>
 </c:if>
@@ -362,18 +350,35 @@
       <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
     </td>
     <td>
-      <div class="heading" style="border:none">
-          <a id="permalink" style="text-decoration:none;font-size:11px" target="new" href="" onclick="javascript:getWebserviceUrl();return false;"
-    title="Get a URL to run this template from the command line or a script">web service URL</a>
-    <div class="popup" style="display:none;">
-      <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
-      <p style="width:95%;">
-      Use the URL below to fetch results for this template from the command line or a script
-      <i>(please note that you will need to use authentication to access private templates and lists)</i>:
-      </p>
-    <input type="text" value="None">
-    </div>
-  </div>
+      <div id="permalink">
+        <a href="#" title="Get a URL to run this template from the command line or a script">web service URL</a>
+        <div class="popup" style="display:none;">
+          <span class="close"></span>
+          <p style="width:95%;">
+          Use the URL below to fetch results for this template from the command line or a script
+          <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+          </p>
+          <input type="text" value="None">
+        </div>
+      </div>
+      <script type="text/javascript">
+        <%-- permalink handlers --%>
+        jQuery('#permalink a').click(function(e) {
+          jQuery('#actionType').val("webserviceURL");
+          jQuery.ajax({
+            url: "<html:rewrite page='/templateAction.do'/>",
+            data: jQuery('#templateForm').serialize(),
+            success: function(data) {
+              jQuery('#permalink div.popup').show().find('input').val(data).select();
+            },
+            dataType: "text"
+          });
+          e.preventDefault();
+        });
+        jQuery('#permalink div.popup span.close').click(function(e) {
+          jQuery('#permalink div.popup').hide();
+        });
+      </script>
     </td>
     <td>
       <c:choose>
