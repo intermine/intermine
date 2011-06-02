@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute name="title" ignore="true" />
+<tiles:importAttribute name="description" ignore="true" />
 <tiles:importAttribute name="id" ignore="false" />
 <tiles:importAttribute name="mainColumn" ignore="true" />
 <!-- track.jsp -->
@@ -32,9 +33,10 @@
 
 <div class="body">
 
-<div id="trackcontainer${id}" class="trackscontainer">
-<h3><c:out value="${title}"/></h3>
-<div id='chart_div${id}' style='width: 1000px; height: 300px; margin-bottom: 50px'></div>
+<div id="trackcontainer${id}" class="trackscontainer gradientbox">
+<h2><c:out value="${title}"/></h2>
+<i>${description}</i>
+<div id='chart_div${id}' style='width: 1000px; height: 280px; margin-bottom: 50px'></div>
 
 <c:if test="${id != 'login'}">
 <div id='filter' style='float:left; margin-bottom: 20px'>
