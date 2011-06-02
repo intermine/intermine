@@ -17,6 +17,13 @@
 <c:when test="${!empty bag}">
 
 <script type="text/javascript">
+  <%-- the number of entries to show in References & Collections before switching to "show all" --%>
+  var numberOfTableRowsToShow = '${object.numberOfTableRowsToShow}'; <%-- required on report.js --%>
+  numberOfTableRowsToShow = (numberOfTableRowsToShow == '') ? 30 : parseInt(numberOfTableRowsToShow);
+</script>
+<script type="text/javascript" src="js/report.js"></script>
+
+<script type="text/javascript">
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
   var detailsType = 'bag';
