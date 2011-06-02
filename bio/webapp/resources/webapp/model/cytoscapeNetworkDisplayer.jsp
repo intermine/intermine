@@ -150,8 +150,8 @@
     </tiles:insert>
   </div>
   <p class="toggle" style="display:none;">
-    <a class="collapser" style="float: right;" href="#"><span>Hide</span></a>
-    <a class="toggler" style="float: right; margin-right: 20px;" href="#"><span>Show more rows</span></a>
+    <a class="collapser" style="float:right; display:none; margin-left:20px;" href="#"><span>Collapse</span></a>
+    <a class="toggler" style="float:right;" href="#"><span>Show more rows</span></a>
   </p>
   <p class="in_table">
     <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
@@ -177,6 +177,7 @@
           jQuery(this).show();
         }
       });
+      jQuery("#cwinlinetable p.toggle a.collapser").show();
       if (jQuery("#cwinlinetable table.results tr.bodyRow:hidden").length == 0) {
         jQuery('#cwinlinetable p.toggle a.toggler').hide();
       }
@@ -185,9 +186,11 @@
     });
     <%-- attach collapser event --%>
     jQuery('#cwinlinetable p.toggle a.collapser').click(function(e) {
+      var that = this;
       jQuery("#cwinlinetable table.results tr.bodyRow").each(function(i) {
         if (i > 9) {
           jQuery(this).hide();
+          jQuery(that).hide();
         }
       });
       jQuery('#cwinlinetable p.toggle a.toggler').show();
