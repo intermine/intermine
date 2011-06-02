@@ -81,7 +81,7 @@ div.menu-wrap div.links { height:20px; display:inline-block; }
 div.menu-wrap div.links a { height:20px; display:inline-block; }
 
 /* menu of links not list */
-#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { font-size:16px; font-weight:bold; padding:0 10px; }
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { font-size:16px; font-weight:bold; padding:0 10px; margin: 0 2px; }
 #toc-menu-wrap div.wrap div.links, #fixed-menu div.wrap div.links { width:100%; text-align:center; }
 /* smallscreen resize */
 #toc-menu-wrap .smallscreen, #fixed-menu .smallscreen { line-height:17px !important; }
