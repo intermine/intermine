@@ -7,6 +7,7 @@
 
 
 <!-- drosophilaHomologueDisplayer.jsp -->
+<c:if test="${willBeDisplayed}">
 
 <c:set var="backslash" value="\\"/>
 <c:set var="dblBackslash" value="\\\\"/>
@@ -312,4 +313,5 @@ phylogeny: [
 
 </div>
 
+</c:if>
 <!-- /drosophilaHomologueDisplayer.jsp -->

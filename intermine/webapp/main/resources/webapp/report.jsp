@@ -146,7 +146,7 @@
 
           return false;
         });
-      --</script>
+      </script>
   </div>
 
   </div>
