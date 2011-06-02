@@ -216,7 +216,7 @@ public class ReportObjectTest extends TestCase
             if (fd.isCollection()) {
                 Object fieldValue = company.getFieldValue(fd.getName());
                 DisplayCollection dc = new DisplayCollection((Collection<?>) fieldValue,
-                        (CollectionDescriptor) fd, webConfig, new Properties(), imAPI.getClassKeys(), null);
+                        (CollectionDescriptor) fd, webConfig, null, imAPI.getClassKeys(), null);
                 m.put(fd.getName(), dc);
             }
         }
