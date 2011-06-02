@@ -1401,17 +1401,6 @@ ol#constraintList.templateForm select { height:25px; }
 ul.unresolvedIdentifiers { list-style-type:none; margin:0; padding:0; font-weight:bold; }
   ul.unresolvedIdentifiers li { display:inline; margin:0 10px 0 0; }
 
-/* object details page permalink */
-div.heading { position:relative; }
-a#permalink { float:right; background:url('../images/icons/permalink-blue.png') no-repeat left; padding-left:20px; font-size:13px;
-   text-decoration:underline; font-weight:normal; }
-   div.heading div.popup { position:absolute; top:22px; right:4px; width:400px; background:#FFF; display:block; padding:6px;
-       border: 1px solid #888; }
-       div.heading div.popup span.close { display:block; position:absolute; top:6px; right:6px; width:16px; height:16px;
-           background:url("../images/icons/close.png") no-repeat top right; cursor:pointer; }
-       div.heading div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
-       div.heading div.popup input { width:392px; }
-
 /* Cytoscape interactions */
 h3.interactions { font-size:16px; color:#333; }
 
@@ -1448,7 +1437,7 @@ div.floatRight { float:right; }
 
     div.clear { clear:both; display:block; height:0; overflow:hidden; visibility:hidden; width:0; }
 
-/* green/grey btn on bagUploadConfirm, QueryBuilder and Templates */
+/* green/grey btn on bagUploadConfirm, QueryBuilder */
 #bigGreen.button input { background:url('../images/progress/green-btn-center.png') repeat-x left;
   height:32px; color:#FFF; font-size:15px; font-weight:bold; border:none; line-height:21px; float:left; }
 #bigGreen.button div.left { background:url('../images/progress/green-btn-left.png') no-repeat left;
@@ -1461,3 +1450,23 @@ div.floatRight { float:right; }
 #bigGreen.button.inactive div.right { background:url('../images/progress/gray-btn-right.png') no-repeat left; }
 
 #bigGreen.button.inactive input { cursor:default; }
+
+/* green btn on Templates */
+#smallGreen.button input { background:url('../images/templates/green-btn-center.gif') repeat-x left;
+  height:20px; color:#FFF; font-size:12px; font-weight:bold; border:none; line-height:13px; float:left; }
+#smallGreen.button div.left { background:url('../images/templates/green-btn-left.gif') no-repeat left;
+  width:8px; display:inline-block; height:20px; float:left; }
+#smallGreen.button div.right { background:url('../images/templates/green-btn-right.gif') no-repeat left;
+  width:8px; display:inline-block; height:20px; float:left; }
+
+/* template and templateAction permalinks */
+#permalink { position:relative; }
+#permalink a { background:url('../images/icons/permalink-blue.png') no-repeat left;
+  padding-left:20px; }
+#permalink div.popup { position:absolute; top:22px; right:4px; width:400px;
+  background:#FFF; display:block; padding:6px; border: 1px solid #888; }
+#permalink div.popup span.close { display:block; position:absolute; top:6px; right:6px;
+  width:16px; height:16px; background:url("../images/icons/close.png") no-repeat top right;
+  cursor:pointer; }
+#permalink div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
+#permalink div.popup input { width:392px; }
