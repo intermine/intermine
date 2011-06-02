@@ -69,43 +69,48 @@ public class DrosophilaHomologueDisplayer extends CustomDisplayer
         Gene gene = (Gene) reportObject.getObject();
         boolean isRecentred = !"melanogaster".equals(gene.getOrganism().getSpecies());
         String thisSpecies = gene.getOrganism().getSpecies();
-        if (isRecentred) {
-            request.setAttribute("origSymbol", gene.getSymbol());
-        HOMOLOGUES:
-            for (Homologue homologue : gene.getHomologues()) {
-                for (DataSet dataSet : homologue.getDataSets()) {
-                    if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
-                        String species = homologue.getHomologue().getOrganism().getSpecies();
-                        if ("melanogaster".equals(species)) {
-                            ResultElement re = new ResultElement(homologue.getHomologue(),
-                                       symbolPath, true);
-                            addToMap(homologues, species, re);
-                            gene = homologue.getHomologue();
-                            break HOMOLOGUES;
+        // show displayer on D. melanogaster report pages only
+        if (thisSpecies.equals("melanogaster")) {
+            request.setAttribute("willBeDisplayed", true);
+
+            if (isRecentred) {
+                request.setAttribute("origSymbol", gene.getSymbol());
+            HOMOLOGUES:
+                for (Homologue homologue : gene.getHomologues()) {
+                    for (DataSet dataSet : homologue.getDataSets()) {
+                        if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
+                            String species = homologue.getHomologue().getOrganism().getSpecies();
+                            if ("melanogaster".equals(species)) {
+                                ResultElement re = new ResultElement(homologue.getHomologue(),
+                                           symbolPath, true);
+                                addToMap(homologues, species, re);
+                                gene = homologue.getHomologue();
+                                break HOMOLOGUES;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        for (Homologue homologue : gene.getHomologues()) {
-            for (DataSet dataSet : homologue.getDataSets()) {
-                if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
-                    Organism org = homologue.getHomologue().getOrganism();
-                    organismIds.put(org.getSpecies(), org.getId().toString());
-                    ResultElement re = new ResultElement(homologue.getHomologue(),
-                            symbolPath, true);
-                    String species = org.getSpecies();
-                    if (!isRecentred || (isRecentred && !thisSpecies.equals(species))) {
-                        addToMap(homologues, species, re);
+            for (Homologue homologue : gene.getHomologues()) {
+                for (DataSet dataSet : homologue.getDataSets()) {
+                    if (HOMOLOGY_DATASET.equals(dataSet.getName())) {
+                        Organism org = homologue.getHomologue().getOrganism();
+                        organismIds.put(org.getSpecies(), org.getId().toString());
+                        ResultElement re = new ResultElement(homologue.getHomologue(),
+                                symbolPath, true);
+                        String species = org.getSpecies();
+                        if (!isRecentred || (isRecentred && !thisSpecies.equals(species))) {
+                            addToMap(homologues, species, re);
+                        }
                     }
                 }
             }
-        }
 
-        request.setAttribute("organismIds", organismIds);
-        request.setAttribute("isRecentred", isRecentred);
-        request.setAttribute("homologues", homologues);
+            request.setAttribute("organismIds", organismIds);
+            request.setAttribute("isRecentred", isRecentred);
+            request.setAttribute("homologues", homologues);
+        }
     }
 
     private Map<String, Set<ResultElement>> initMap() {
