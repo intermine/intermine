@@ -46,6 +46,22 @@ function isIdentifierInTheBag(identifier) {
 }
 
 /**
+ * We cannot rely on JSP to give us an accurate number of matches we have
+ * in a bag anymore, thus run this method to count the number of rows
+ * highlighted (= used)
+ */
+function hasUnhighlightedRows() {
+  var unhighlighted = false;
+  jQuery("#additionalMatches table.inlineResultsTable tbody tr").each(function(index) {
+    if (jQuery(this).find('td:not(.identifier)').first().attr('style') != 'background-color: rgb(255, 243, 211);') {
+      unhighlighted = true;
+      return false;
+    }
+  });
+  return unhighlighted;
+}
+
+/**
  * Add an identifier into the bag
  * @param objectId of the actual row
  * @param row number relative to the table in question
@@ -245,7 +261,7 @@ function updateFurtherMatchesDisplay() {
     }
     // "further matches" text
     if (jQuery('p#furtherMatches').length > 0) {
-      if (matchCount < totalCount) {
+      if (hasUnhighlightedRows()) {
         jQuery('p#furtherMatches').html(furtherMatchesText);
       } else {
         jQuery('p#furtherMatches').html(null);
