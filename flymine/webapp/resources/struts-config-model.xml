@@ -29,7 +29,7 @@
 <action path="/cytoscapeNetworkAjax"
         type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 
-<!-- Begining of Genomic Region Search configuration -->
+<!-- Beginning of Genomic Region Search configuration -->
 
 <action path="/initGenomicRegionSearchOptions"
         type="org.intermine.bio.web.struts.GenomicRegionSearchOptionsController"/>
