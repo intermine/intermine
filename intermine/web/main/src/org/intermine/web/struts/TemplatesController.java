@@ -42,8 +42,6 @@ public class TemplatesController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.removeAttribute("tabName");
-        session.setAttribute("tabName", "templates");
         session.removeAttribute(Constants.NEW_TEMPLATE);
         Profile profile = SessionMethods.getProfile(session);
         MyMineController.getPrecomputedSummarisedInfo(profile, session, request);

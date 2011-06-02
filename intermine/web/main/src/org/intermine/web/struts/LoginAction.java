@@ -77,27 +77,8 @@ public class LoginAction extends LoginHandler
                 && lf.returnToString.indexOf("error") == -1
                 && lf.returnToString.indexOf("bagUploadConfirm") == -1
                 && lf.returnToString.indexOf("keywordsearchresults") == -1) {
-            session.setAttribute("tabName", session.getAttribute("prevTabName"));
             return new ActionForward(lf.returnToString);
         }
         return mapping.findForward("mymine");
-    }
-
-    private String getTabName(String returnTo) {
-        if (returnTo.startsWith("/begin")) {
-            return "home";
-        } else if (returnTo.startsWith("/template")) {
-            return "templates";
-        } else if (returnTo.startsWith("/bag")) {
-            return "bags";
-        } else if (returnTo.startsWith("/customQuery") || returnTo.startsWith("/query")) {
-            return "query";
-        } else if (returnTo.startsWith("/dataCategories")) {
-            return "category";
-        } else if (returnTo.startsWith("/api")) {
-            return "api";
-        } else {
-            return "mymine";
-        }
     }
 }

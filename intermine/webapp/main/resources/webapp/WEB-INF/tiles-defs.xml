@@ -136,7 +136,7 @@
     <put name="pageName" value="dataCategories"/>
   </definition>
   <definition name="customQuery.page" extends="layout.template">
-    <put name="body" value="customQuery.tile"/>
+    <put name="body" value="customQuery.jsp"/>
     <put name="pageName" value="customQuery"/>
   </definition>
   <definition name="showStatic.page" extends="layout.template">
@@ -193,9 +193,8 @@
   <definition name="otherMinesLink.tile" path="/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
   <definition name="attributeLinks.tile" path="/attributeLinks.jsp" controllerUrl="/initAttributeLinks.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
-  <definition name="bag.tile" path="/bag.jsp" controllerUrl="/initBags.do"/>
-  <definition name="api.tile" path="/api.jsp" controllerUrl="/initApi.do"/>
-  <definition name="customQuery.tile" path="/customQuery.jsp" controllerUrl="/initCustomQuery.do"/>
+  <definition name="bag.tile" path="/bag.jsp"/>
+  <definition name="api.tile" path="/api.jsp"/>
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="noResults.tile" path="/noResults.jsp"/>
@@ -229,7 +228,7 @@
   <definition name="apiJava.tile" path="apiJava.jsp" controllerUrl="/initApiJava.do" />
   <definition name="apiPerl.tile" path="apiPerl.jsp" controllerUrl="/initApiPerl.do" />
   <definition name="apiPython.tile" path="apiPython.jsp" controllerUrl="/initApiPython.do" />
-  <definition name="dataCategories.tile" path="/dataCategories.jsp" controllerUrl="/initDataCategories.do"/>
+  <definition name="dataCategories.tile" path="/dataCategories.jsp"/>
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />
   <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />
   <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />

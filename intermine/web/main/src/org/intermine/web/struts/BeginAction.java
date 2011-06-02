@@ -70,7 +70,6 @@ public class BeginAction extends InterMineAction
         throws Exception {
 
         HttpSession session = request.getSession();
-        session.setAttribute("tabName", "home");
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
         Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
