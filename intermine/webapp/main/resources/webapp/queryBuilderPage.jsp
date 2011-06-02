@@ -5,11 +5,7 @@
 
 <!-- queryBuilderPage.jsp -->
 <im:viewablejs idPrefixes="nav,browser,query,showing"/>
-<script type="text/javascript">
-jQuery(document).ready(function() {
-  jQuery("#${tabName}").addClass("activelink");
-});
-</script>
+
 <tiles:get name="queryBuilder"/>
 <tiles:insert page="templateSettings.jsp"/>
 <tiles:insert page="queryBuilderTemplatePreview.jsp"/>

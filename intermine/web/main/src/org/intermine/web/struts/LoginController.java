@@ -39,9 +39,6 @@ public class LoginController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        session.setAttribute("prevTabName", session.getAttribute("tabName"));
-        session.setAttribute("tabName", "mymine");
         LoginForm loginForm = (LoginForm) form;
         String returnToString = request.getParameter("returnto");
         loginForm.setReturnToString(returnToString);

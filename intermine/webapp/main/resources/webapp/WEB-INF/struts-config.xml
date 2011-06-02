@@ -400,14 +400,6 @@
     </action>
     <action path="/initTree" type="org.intermine.web.struts.TreeController">
     </action>
-    <action path="/initBags" type="org.intermine.web.struts.InitBagsController">
-    </action>
-    <action path="/initApi" type="org.intermine.web.struts.InitApiController">
-    </action>
-    <action path="/initCustomQuery" type="org.intermine.web.struts.InitCustomQueryController">
-    </action>
-    <action path="/initDataCategories" type="org.intermine.web.struts.InitDataCategoriesController">
-    </action>
     <action path="/initExport" type="org.intermine.web.struts.ExportController">
     </action>
     <action path="/initAspect" type="org.intermine.web.struts.AspectController">

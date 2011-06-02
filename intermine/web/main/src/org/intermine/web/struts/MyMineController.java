@@ -59,7 +59,6 @@ public class MyMineController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.setAttribute("tabName", "mymine");
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TagManager tagManager = im.getTagManager();
         String page = request.getParameter("page");
