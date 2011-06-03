@@ -95,7 +95,7 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
                 "text", "text");
         digester.addSetProperties("webconfig/class/headerconfig/customlinks/customlink",
-                "imageName", "imageName");
+                "image", "image");
         digester.addSetNext("webconfig/class/headerconfig/customlinks", "addHeaderConfigLink");
 
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);

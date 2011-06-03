@@ -152,8 +152,8 @@
     <headerconfig>
       <customlinks>
         <customlink
-          linkUrl="http://flybase.org/reports/{primaryIdentifier}.html"
-          linkImageName="flybase_logo_link.png"
+          url="http://flybase.org/reports/{primaryIdentifier}.html"
+          image="flybase_logo_link.png"
         />
       </customlinks>
     </headerconfig>
