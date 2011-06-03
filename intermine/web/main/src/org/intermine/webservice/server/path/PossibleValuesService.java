@@ -30,6 +30,16 @@ public class PossibleValuesService extends WebService {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
+    /**
+     * A service for providing column summary information. This information is
+     * designed to be used in forms that provide autocomplete or drop-down options
+     * to suggest possible values. It expects a path (such as Employee.name, or
+     * CEO.company.departments.employees.name), and lists all possible values
+     * that path may represent, along with their frequency. The values list is sorted
+     * by the value, not the frequency.
+     *
+     * @param im A reference to the InterMine API bundle.
+     */
     public PossibleValuesService(InterMineAPI im) {
         super(im);
     }
