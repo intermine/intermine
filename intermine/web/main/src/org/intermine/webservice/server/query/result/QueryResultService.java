@@ -38,16 +38,15 @@ import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
+import org.intermine.webservice.server.output.JSONDataTableRowResultProcessor;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
-import org.intermine.webservice.server.output.JSONDataTableRowResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
 import org.jfree.util.Log;
-import org.json.JSONArray;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
@@ -59,6 +58,7 @@ import org.json.JSONArray;
  * output.
  *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  */
 
 public class QueryResultService extends AbstractQueryService
