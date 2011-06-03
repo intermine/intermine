@@ -23,7 +23,7 @@
   in as either tables of values, or JSON data structures (see <a href="http://json.org">json.org</a>).
   <br/>
   Like all our code, these client libraries are open-source, licensed under the LGPL. For information
-  the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
+  on the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
 </div>
 <br>
 <div>
