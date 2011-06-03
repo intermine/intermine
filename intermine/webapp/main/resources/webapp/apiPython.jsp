@@ -45,7 +45,8 @@
         <pre>&gt; sudo easy_install simplejson</pre>
         <br>
         The client library has been tested on Python 2.5, 2.6 &amp; 2.7, on Linux, Windows and
-    Mac OS X, and like all our code is open-source, licensed under the LGPL.
+    Mac OS X, and like all our code is open-source, licensed under the LGPL.For information
+  the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
       </p>
       <p>
         For other installation options, and a general guide to usage,
