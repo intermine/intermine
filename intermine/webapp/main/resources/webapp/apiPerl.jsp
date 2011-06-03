@@ -13,9 +13,11 @@
 
 <div>
   <p>
-    The Perl web service API makes it easy to run queries in <c:out value="${WEB_PROPERTIES['project.title']}"/> directly from Perl programs.
-    You can use the Perl API to construct any query you could run from web interface and fetch the results
+    The Perl web service client library makes it easy to run queries in <c:out value="${WEB_PROPERTIES['project.title']}"/> directly from Perl programs.
+    You can use these modules to construct any query you could run from web interface and fetch the results
     in a number of formats, including native Perl data structures and objects, and TSV/CSV strings.
+  <br/>
+  Like all our code, it is open-source, coming licensed under the LGPL.
   </p>
 </div>
 <br>
