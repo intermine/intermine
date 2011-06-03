@@ -37,15 +37,15 @@
         <br>
       </p>
       <p>
-        This module is pure Python with no external dependencies, if your Python is 2.6 or newer.
+        This module is pure Python with no external dependencies, so long as your Python is 2.6 or newer.
         If you have 2.5 (which will be the case if you run Mac OS 10.5 - ie. Leopard),
-        you will need to run the following command (we would also recommend upgrading&nbsp;-&nbsp;
-    see <a href="http://www.python.org/download/mac/">here</a>):
+        you will need to run the following command (we also recommend upgrading&nbsp;-&nbsp;see
+        <a href="http://www.python.org/download/mac/">here</a>):
         <br>
         <pre>&gt; sudo easy_install simplejson</pre>
         <br>
-        It has been tested on Python 2.5, 2.6 &amp; 2.7, on Linux and Mac OS X, and like all our code
-        comes with a LGPL license.
+        The client library has been tested on Python 2.5, 2.6 &amp; 2.7, on Linux, Windows and
+    Mac OS X, and like all our code is open-source, licensed under the LGPL.
       </p>
       <p>
         For other installation options, and a general guide to usage,
