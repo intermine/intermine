@@ -8,29 +8,7 @@
 
 <html:xhtml/>
 
-<!-- apiPerl.jsp -->
-<script type="text/javascript">
-<!--//<![CDATA[
-
-  jQuery(document).ready(function() {
-     // jQuery("p").hide();
-  });
-
-  function showText(pid) {
-    // jQuery("#" + pid).slideToggle("slow");
-  }
-
-//]]>-->
-</script>
-
-<style type="text/css">
-  pre {
-    background-color: black;
-    color: white;
-    padding: 10px;
-    line-height: 120%;
-  }
-</style>
+<!-- apiJava.jsp -->
 
 <im:boxarea titleKey="api.java.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiJava">
   <form id="apiJavaForm" action="fileDownload.do" method="post">
@@ -51,10 +29,10 @@
       <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
       <div id="prerequisite" style="padding: 5px">
         <p>All you need to do is <a href="javascript: jQuery('#apiJavaForm').submit();">download</a>
-    and unzip the distribution package which contains all the libraries required to run the program:
+    and unzip the distribution package which contains all the libraries required to run the program,
+  and then unzip them:
       </p>
-    <pre>wget ${baseURL}/fileDownload.do?path=${path}&fileName=${fileName}&mineType=${mimeType}&mineExtension=${mimeExtension}
-unzip ${fileName}</pre>
+    <pre>unzip ${fileName}</pre>
       </div>
     </li>
     <li>
