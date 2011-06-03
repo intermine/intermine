@@ -247,7 +247,7 @@
         <%-- help link --%>
         <td rowspan="${rowspanExternalTd}" valign="${valignExternalTd}">
           <c:if test="${!empty dec.helpMessage}">
-            <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}"/></span>
+            <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}" type="big"/></span>
           </c:if>
         </td>
         </tr>
