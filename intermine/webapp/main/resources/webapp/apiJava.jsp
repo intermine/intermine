@@ -28,11 +28,10 @@
     <li>
       <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
       <div id="prerequisite" style="padding: 5px">
-        <p>All you need to do is <a href="javascript: jQuery('#apiJavaForm').submit();">download</a>
-    and unzip the distribution package which contains all the libraries required to run the program,
-  and then unzip them:
+        <p>All you need to is java 1.5+ and our package
+    (<a href="javascript: jQuery('#apiJavaForm').submit();">download</a>)
+        which contains the client library and all dependencies.
       </p>
-    <pre>unzip ${fileName}</pre>
       </div>
     </li>
     <li>
@@ -87,4 +86,4 @@ mkdir ${dirName}</pre>
 </div>
 
 </im:boxarea>
-<!-- /apiPerl.jsp -->
+<!-- /apiJava.jsp -->
