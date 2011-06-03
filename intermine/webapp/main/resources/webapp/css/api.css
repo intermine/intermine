@@ -1,0 +1,8 @@
+pre {
+  background-color: grey;
+  color: white;
+  padding: 10px;
+  line-height: 120%;
+  border: solid light-grey 3px;
+  border-radius: 5px;
+}
