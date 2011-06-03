@@ -331,7 +331,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         String srcClassName = TypeUtil.javaiseClassName(template.getName());
 
         // Add package and import
-        pac.append("package " + TypeUtil.javaisePackageName(info.getProjectTitle()) + ENDL + ENDL);
+        pac.append("package " + TypeUtil.javaisePackageName(info.getProjectTitle()) + ';'
+                + ENDL + ENDL);
 
         impJava.append(
                 "import java.util.ArrayList;" + ENDL
