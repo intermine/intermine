@@ -23,7 +23,7 @@
           var jSONObject = jQuery.parseJSON(mines);
           generate(jSONObject, "#intermine_links");
       });
-      //var jSONObject = [{"mineName":"ZFINMine","organisms":[{"shortName":"D. rerio","orthologues":[{"isConverted":false,"identifier":"evx1"},{"isConverted":false,"identifier":"evx2"}]}]}, {"mineName":"modMine","organisms":[{"genes":{"shortName":"D. melanogaster","orthologues":{"isConverted":false,"identifier":"eve"}},"shortName":"D. melanogaster"},{"shortName":"C. elegans","orthologues":[{"isConverted":true,"identifier":"WBGene00006873"},{"isConverted":true,"identifier":"vab-7"}]}]}, {"mineName":"metabolicMine","organisms":[{"shortName":"H. sapiens","orthologues":[{"isConverted":false,"identifier":"EVX1"},{"isConverted":false,"identifier":"EVX2"}]}]}, {"mineName":"YeastMine"}, {"mineName":"RatMine","organisms":[{"shortName":"R. norvegicus","orthologues":[{"isConverted":false,"identifier":"Evx2"},{"isConverted":false,"identifier":"Evx1"}]}]}];
+      //var jSONObject = [{"mineName":"ZFINMine"}, {"mineName":"modMine","organisms":[{"genes":{"shortName":"D. melanogaster","orthologues":{"displayIdentifier":"ap","primaryIdentifier":"FBgn0000099"}},"shortName":"D. melanogaster"},{"shortName":"D. virilis","orthologues":[{"displayIdentifier":"Dsim\\GD10352","primaryIdentifier":"FBgn0182124"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0171416"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0017741"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0041262"},{"displayIdentifier":"Dpse\\ap","primaryIdentifier":"FBgn0064417"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0154548"},{"displayIdentifier":"Dana\\GF13843","primaryIdentifier":"FBgn0090870"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0064607"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0236786"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0127893"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0142349"}]}]}, {"mineName":"metabolicMine"}, {"mineName":"YeastMine"}, {"mineName":"RatMine"}]
   }
 
   function generate(jSONObject, target) {
@@ -40,31 +40,72 @@
 
               // mine
               if (minePortalDetails["bgcolor"] != null && minePortalDetails["frontcolor"] != null) { // we have colors! aaaw, pretty...
-                jQuery(target).append("<li id='mine-" + key + "' class='mine'><span style='background-color:" + minePortalDetails["bgcolor"] + ";color:" + minePortalDetails["frontcolor"] + ";'>" + entry['mineName'] + "</span><ul class='organisms'></ul></li>");
+                jQuery('<li/>', {
+                    id: 'mine-' + key,
+                    className: 'mine'
+                })
+                .append(jQuery('<span/>', {
+                    style: 'background-color:' + minePortalDetails["bgcolor"] + ';color:' + minePortalDetails["frontcolor"],
+                    text: entry['mineName']
+                }))
+                .append(jQuery('<ul/>', {
+                    className: 'organisms'
+                }))
+                .appendTo(target);
               } else {
-                jQuery(target).append("<li id='mine-" + key + "' class='mine'>" + entry['mineName'] + "<ul class='organisms'></ul></li>");
+                jQuery('<li/>', {
+                    id: 'mine-' + key,
+                    className: 'mine',
+                    text: entry['mineName']
+                })
+                .append(jQuery('<ul/>', {
+                    className: 'organisms'
+                }))
+                .appendTo(target);
               }
 
               // traverse organisms
               jQuery.each(entry['organisms'], function(organismKey, organismEntry) {
                   // organism
-                  jQuery(target + " li#mine-" + key + " ul.organisms").append("<li class='organism-" + organismKey + "'>" + organismEntry['shortName'] + "<ul class='entries'></ul></li>");
+                  jQuery('<li/>', {
+                      className: 'organism-' + organismKey,
+                      text: organismEntry['shortName']
+                  })
+                  .append(jQuery('<ul/>', {
+                      className: 'entries'
+                  }))
+                  .appendTo(target + " li#mine-" + key + " ul.organisms");
+
                   // gene item
                   if (organismEntry['genes'] != undefined) {
-                      jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + organismEntry['genes']['orthologues']['displayIdentifier'] + "</li>");
+                      jQuery('<li/>', {
+                          text: organismEntry['genes']['orthologues']['displayIdentifier']
+                      })
+                      .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
+
                       identifier = organismEntry['genes']['orthologues']['primaryIdentifier'];
                   }
                   // orthologues list
                   if (organismEntry['orthologues'] != undefined) {
                       jQuery.each(organismEntry['orthologues'], function(orthoKey, orthoEntry) {
-                          jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries").append("<li>" + orthoEntry['displayIdentifier'] + "</li>");
+                          jQuery('<li/>', {
+                              text: orthoEntry['displayIdentifier']
+                          })
+                          .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
+
                           identifier = orthoEntry['primaryIdentifier'];
                       });
                   }
                   // add separators & linkify
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
-                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + identifier + "&class=Gene&origin=FlyMine'>" + jQuery(this).text() + "</a>");
+                        // sometimes we do not have a symbol and have a string of bunny ears...
+                        if (jQuery(this).text() != '""') {
+                          var linkText = jQuery(this).text();
+                        } else {
+                          var linkText = identifier;
+                        }
+                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + identifier + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());
