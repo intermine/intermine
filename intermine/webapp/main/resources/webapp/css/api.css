@@ -3,6 +3,9 @@ pre {
   color: white;
   padding: 10px;
   line-height: 120%;
-  border: solid light-grey 3px;
+  border: 3px solid grey;
   border-radius: 5px;
+  font-family: "Nimbus monospace" "FreeMono" "Andale Mono" "Lucida Console" "Consolas" "Monaco" "Courier";
+  font-weight: bold;
+  width: 60%;
 }
