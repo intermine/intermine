@@ -18,9 +18,12 @@
     <input type="hidden" value="${mimeExtension}" name="mimeExtension" />
   </form>
 <div>
-  The Java web service API makes it easy to run queries in <c:out value="${WEB_PROPERTIES['project.title']}"/> directly from Java programs.
-  You can use the Java API to construct any query you could run from web interface and fetch the results
+  The Java web service client library makes it easy to run queries in <c:out value="${WEB_PROPERTIES['project.title']}"/> directly from Java programs.
+  You can use this libray to construct any query you could run from web interface and fetch the results
   in as either tables of values, or JSON data structures (see <a href="http://json.org">json.org</a>).
+  <br/>
+  Like all our code, these client libraries are open-source, licensed under the LGPL. For information
+  the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
 </div>
 <br>
 <div>

@@ -17,7 +17,8 @@
     You can use these modules to construct any query you could run from web interface and fetch the results
     in a number of formats, including native Perl data structures and objects, and TSV/CSV strings.
   <br/>
-  Like all our code, it is open-source, coming licensed under the LGPL.
+  Like all our code, it is open-source, coming licensed under the LGPL. For information on our
+  API, visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
   </p>
 </div>
 <br>
