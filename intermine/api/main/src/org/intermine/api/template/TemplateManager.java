@@ -316,7 +316,7 @@ public class TemplateManager
      * tagged with a particular tag.
      * @param profile a user profile to get templates from
      * @param tag the tag to search for
-     * @param filterOutAdmin if false, filter out templates tagged with IM_ADMIN
+     * @param filterOutAdmin if true, filter out templates tagged with IM_ADMIN
      * @return a map from template name to template query
      */
     private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag,
@@ -329,7 +329,7 @@ public class TemplateManager
                     profile.getUsername());
             if (tags.size() > 0) {
                 // if filtering by admin tag, don't include this template if it's tagged with ADMIN
-                if (!filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
+                if (filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
                     continue;
                 }
                 templatesWithTag.put(entry.getKey(), entry.getValue());
