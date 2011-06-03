@@ -28,9 +28,6 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 <c:if test="${pageCSS == 'true'}">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
-<c:if test="${pageJS == 'true'}">
-<script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
-</c:if>
 
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
@@ -119,6 +116,10 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
   <!--[if lt IE 7.]>
     <script defer type="text/javascript" src="pngfix.js"></script>
   <![endif]-->
+
+<c:if test="${pageJS == 'true'}">
+<script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
+</c:if>
 
 <meta content="${WEB_PROPERTIES['meta.keywords']}" name="keywords"/>
 <meta content="${WEB_PROPERTIES['meta.description']}" name="description"/>
