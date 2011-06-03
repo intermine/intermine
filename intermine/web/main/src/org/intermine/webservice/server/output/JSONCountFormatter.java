@@ -23,7 +23,7 @@ public class JSONCountFormatter extends JSONFormatter {
                     + "result row: " + resultRow.toString()
                     + ", but I was expecting a count");
         } else {
-            return "count:" + resultRow.get(0);
+            return "\"count\":" + resultRow.get(0);
         }
     }
 
