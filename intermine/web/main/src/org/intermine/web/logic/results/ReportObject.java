@@ -418,7 +418,7 @@ public class ReportObject
             if (link != null) {
 
                 // link URL
-                String linkUrl = link.getLinkUrl();
+                String linkUrl = link.getUrl();
 
                 if (linkUrl != null) {
                     // patternz
@@ -435,7 +435,7 @@ public class ReportObject
                             // String.isEmpty() was introduced in Java release 1.6
                             if (StringUtils.isNotBlank(stringyStuff)) {
                                 // replace the field with the value & update
-                                link.setLinkUrl(linkUrl.replace("{" + path + "}", stringyStuff));
+                                link.setUrl(linkUrl.replace("{" + path + "}", stringyStuff));
                                 this.headerLink = link;
                             }
                         }

@@ -29,16 +29,23 @@
 
 <div id="header_wrap">
   <div id="object_header">
-    <c:if test="${object.headerLink == null}">
+    <c:if test="${object.headerLink != null}">
         <c:set var="headerLink" value="${object.headerLink}"/>
         <div id="headerLink">
-            <a href="${headerLink.linkUrl}" target="new">
-              <c:if test="${headerLink.linkImageName != null}">
-                  <img src="model/images/${headerLink.linkImageName}" />
-              </c:if>
-              <c:if test="${headerLink.linkText != null}">
-                  ${headerLink.linkText}
-              </c:if>
+            <a href="${headerLink.url}" target="new">
+              <c:choose>
+                <c:when test="${headerLink.text != null || headerLink.image != null}">
+                  <c:if test="${headerLink.image != null}">
+                      <img src="model/images/${headerLink.image}" />
+                  </c:if>
+                  <c:if test="${headerLink.text != null}">
+                      ${headerLink.text}
+                  </c:if>
+                </c:when>
+                <c:otherwise>
+                  ${headerLink.url}
+                </c:otherwise>
+              </c:choose>
             </a>
         </div>
     </c:if>

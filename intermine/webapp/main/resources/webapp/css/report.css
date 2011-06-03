@@ -26,7 +26,8 @@ p#contactUsLink { display:none; }
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
 
 /* report page */
-#header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll; }
+#header_wrap { background-repeat:repeat-x; background-position:left top;
+background-attachment:scroll; padding-top:10px; }
 
 /* header */
 #object_header { width:94%; margin-left:3%; margin-right:3%; position:relative; }

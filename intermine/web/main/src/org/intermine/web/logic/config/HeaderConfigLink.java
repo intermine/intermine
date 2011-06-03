@@ -19,56 +19,56 @@ package org.intermine.web.logic.config;
 public class HeaderConfigLink
 {
 
-    private String linkUrl;
-    private String linkText;
-    private String linkImageName;
+    private String url;
+    private String text;
+    private String image;
 
     /**
      * Set
      * @param url header link url
      */
-    public void setLinkUrl(String url) {
-        this.linkUrl = url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     /**
      *
      * @return link url
      */
-    public String getLinkUrl() {
-        return this.linkUrl;
+    public String getUrl() {
+        return this.url;
     }
 
     /**
      * Set
      * @param text header link text
      */
-    public void setLinkText(String text) {
-        this.linkText = text;
+    public void setText(String text) {
+        this.text = text;
     }
 
     /**
      *
      * @return link text
      */
-    public String getLinkText() {
-        return this.linkText;
+    public String getText() {
+        return this.text;
     }
 
     /**
      * Set
-     * @param imageName header link image name
+     * @param image header link image name
      */
-    public void setLinkImageName(String imageName) {
-        this.linkImageName = imageName;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     /**
      *
      * @return link image name
      */
-    public String getLinkImageName() {
-        return this.linkImageName;
+    public String getImage() {
+        return this.image;
     }
 
 }
