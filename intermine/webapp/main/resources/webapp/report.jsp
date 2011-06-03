@@ -23,7 +23,6 @@
   var numberOfTableRowsToShow = '${object.numberOfTableRowsToShow}'; <%-- required on report.js --%>
   numberOfTableRowsToShow = (numberOfTableRowsToShow == '') ? 30 : parseInt(numberOfTableRowsToShow);
 </script>
-<script type="text/javascript" src="js/report.js"></script>
 
 <link rel="stylesheet" type="text/css" href="css/960gs.css" />
 <link rel="stylesheet" type="text/css" href="css/report.print.css" media="print" />

@@ -21,11 +21,16 @@ String pageName = (String) request.getAttribute("pageName");
 if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()) {
         request.setAttribute("pageCSS","true");
 }
+if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) {
+    request.setAttribute("pageJS","true");
+}
 %>
 <c:if test="${pageCSS == 'true'}">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
-
+<c:if test="${pageJS == 'true'}">
+<script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
+</c:if>
 
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
@@ -37,16 +42,16 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
-	<c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
+  <c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
     <!--
-		<link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
+    <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
         <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dojo/resources/dojo.css"></link>
         <link rel="stylesheet" type="text/css" href="/jbrowse/genome.css"></link>
 
         <script type="text/javascript" src="/jbrowse/jslib/dojo/dojo.js" djConfig="isDebug: false"></script>
         <script type="text/javascript" src="/jbrowse/jslib/dojo/jbrowse_dojo.js" ></script>
 
-		<script type="text/javascript" src="/jbrowse/js/Browser.js"></script>
+    <script type="text/javascript" src="/jbrowse/js/Browser.js"></script>
         <script type="text/javascript" src="/jbrowse/js/Util.js"></script>
         <script type="text/javascript" src="/jbrowse/js/NCList.js"></script>
         <script type="text/javascript" src="/jbrowse/js/LazyPatricia.js"></script>
@@ -61,7 +66,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
         <script type="text/javascript" src="/jbrowse/data/refSeqs.js"></script>
         <script type="text/javascript" src="/jbrowse/data/trackInfo.js"></script>
     -->
-	</c:if>
+  </c:if>
   </c:if>
 
 <!--
