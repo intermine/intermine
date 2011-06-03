@@ -60,15 +60,15 @@
            <ol style="padding:0px">
             <li>
               Unzip the distribution package (see above):<br>
-                <pre>unzip ${fileName}</pre>
+                <pre>&gt; unzip ${fileName}</pre>
             </li>
             <li>
               <c:set var="dirName" value="${javasieProjectTitle}"/>
 
               In the intermine-client-x.x directory that has been created make a new directory called
               <code><c:out value="${dirName}"/></code> (this is the package name in the generated Java).<br>
-        <pre>cd ${fn:substringBefore(fileName, ".zip")}
-mkdir ${dirName}</pre>
+        <pre>&gt; cd ${fn:substringBefore(fileName, ".zip")}
+&gt; mkdir ${dirName}</pre>
             </li>
       <li>
               Save the source code in a Java source file (*.java) in the <c:out value="${dirName}"/>
@@ -76,11 +76,11 @@ mkdir ${dirName}</pre>
         have to be the same. The generated class names might be duplicated (if you have generated
         code for a query before) - feel free to change them if necessary. For example, the
     default query class name is <code>QueryClient</code>, so:<br>
-    <pre>cp [downloaded-file] ${dirName}/QueryClient.java</pre>
+    <pre>&gt; cp [downloaded-file] ${dirName}/QueryClient.java</pre>
             </li>
             <li>
               Run the script from the command line under the package directory:<br>
-      <pre>sh compile-run.sh <c:out value="${dirName}"/>.QueryClient</pre>
+      <pre>&gt; sh compile-run.sh <c:out value="${dirName}"/>.QueryClient</pre>
             </li>
           </ol>
       </div>
