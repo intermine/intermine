@@ -8,26 +8,6 @@
 <html:xhtml/>
 
 <!-- apiPerl.jsp -->
-<script type="text/javascript">
-<!--//<![CDATA[
-jQuery(document).ready(function() {
-    // jQuery("p").hide();
- });
-
- function showText(pid) {
-   // jQuery("#" + pid).slideToggle("slow");
- }
-
-//]]>-->
-</script>
-
-<style type="text/css">
-  pre {
-    background-color: black;
-    color: white;
-    padding: 10px;
-  }
-</style>
 
 <im:boxarea titleKey="api.perl.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiPerl">
 
@@ -95,8 +75,6 @@ jQuery(document).ready(function() {
     </div>
   </li>
 </ul>
-
-</div>
 
 </im:boxarea>
 <!-- /apiPerl.jsp -->
