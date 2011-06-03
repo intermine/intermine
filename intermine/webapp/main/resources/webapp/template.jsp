@@ -254,18 +254,17 @@
         <tr>
         <td class="constraint_${index}">
           <c:if test="${!empty dec.bags && !dec.nullSelected}">
-            <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />
-            <fmt:message key="template.constraintobe"/>
-            <%--Contained in bag:--%>
-            <html:select property="bagOp(${index})" disabled="true">
+            <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
+            key="template.constraintobe"/>&nbsp;<html:select
+            property="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
                 <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
                   <c:out value="${bagOp.label}" />
                 </option>
               </c:forEach>
-            </html:select>
-            <fmt:message key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>
-            <html:select property="bag(${index})" disabled="true">
+            </html:select>&nbsp;<fmt:message
+            key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>&nbsp;<html:select
+            property="bag(${index})" disabled="true">
               <c:forEach items="${dec.bags}" var="bag">
                 <option value="${bag}" <c:if test="${!empty dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
                   <c:out value="${bag}" />
