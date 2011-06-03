@@ -28,8 +28,11 @@ import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
 
 /**
- * Web service that returns xml representation of model.
+ * Web service that returns a serialised representation of the data model. The currently
+ * supported formats are JSON and XML.
+ *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  */
 public class ModelService extends WebService
 {
