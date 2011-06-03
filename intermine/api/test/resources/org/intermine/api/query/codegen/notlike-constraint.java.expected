@@ -1,54 +1,59 @@
-#!/usr/bin/perl
+package testprojecttitle;
 
-use strict;
-use warnings;
+import java.io.IOException;
+import java.util.List;
 
-######################################################################
-# This is an automatically generated script to run your query.
-# To use it you will require the InterMine Perl client libraries.
-# These can be installed from CPAN, using your preferred client, eg:
-#
-#    sudo cpan Webservice::InterMine
-#
-# For help using these modules, please see these resources:
-#
-#  * http://search.cpan.org/perldoc?Webservice::InterMine
-#       - API reference
-#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook
-#       - A How-To manual
-#  * http://www.intermine.org/wiki/PerlWebServiceAPI
-#       - General Usage
-#  * http://www.intermine.org/wiki/WebService
-#       - Reference documentation for the underlying REST API
-#
-######################################################################
+import org.intermine.metadata.Model;
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.services.ModelService;
+import org.intermine.webservice.client.services.QueryService;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.Constraints;
 
-# The following import statement sets TEST_PROJECT_TITLE as your default
-use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
+/**
+ * This is an automatically generated Java program to run the TEST_PROJECT_TITLE query.
+ *
+ * @author TEST_PROJECT_TITLE
+ *
+ */
+public class QueryClient
+{
+    private static final String ROOT = "TEST_SERVICE_ROOT/service";
 
-my $query = Webservice::InterMine->new_query;
+    /**
+     * Perform the query and print the rows of results.
+     * @param args command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) {
+        ServiceFactory factory = new ServiceFactory(ROOT);
+        Model model = factory.getModelService().getModel();
+        QueryService service = factory.getQueryService();
+        PathQuery query = new PathQuery(model);
 
-# The view specifies the output columns
-$query->add_view(qw/
-    Gene.primaryIdentifier
-    Gene.secondaryIdentifier
-    Gene.symbol
-    Gene.name
-    Gene.organism.shortName
-/);
+        // Add views
+        query.addViews("Gene.primaryIdentifier",
+                "Gene.secondaryIdentifier",
+                "Gene.symbol",
+                "Gene.name",
+                "Gene.organism.shortName");
 
-# edit the line below to change the sort order:
-# $query->add_sort_order('Gene.primaryIdentifier', 'ASC');
+        // Add orderby
+        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
 
-# You can edit the constraint values below
-$query->add_constraint(
-    path  => 'Gene.organism.commonName',
-    op    => 'NOT LIKE',
-    value => 'D.*',
-    code  => 'A',
-);
+        // Add constraints and you can edit the constraint values below
+        query.addConstraint(Constraints.notLike("Gene.organism.commonName", "D.*"));
 
-# Edit the code below to specify your own custom logic:
-# $query->set_logic("A");
+        List<List<String>> result = service.getAllResults(query);
+        List<String> view = query.getView();
+        System.out.println("Results:");
+        for (List<String> row : result) {
+            for (String cell : row) {
+                System.out.print(cell + " ");
+            }
+            System.out.print("\n");
+        }
+    }
 
-$query->show;
+}
