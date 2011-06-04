@@ -82,7 +82,9 @@ sub get_admins {
 }
 
 func get_data($settings_key) {
-    my $content = try{slurp( setting($settings_key) )};
+    my $file = setting($settings_key);
+    debug("Am in " . `pwd`);
+    my $content = try{slurp( $file )};
     return try{ from_yaml($content) } catch { {} };
 }
 
