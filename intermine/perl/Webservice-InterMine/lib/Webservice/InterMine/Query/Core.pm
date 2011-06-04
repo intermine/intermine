@@ -113,12 +113,6 @@ sub set_sort_order {
     $self->_set_sort_order( join( ' ', @_ ) );
 }
 
-sub table_format {
-    my $self = shift;
-    my $format = "%-24s" x $self->view_size;
-    return $format . "\n";
-}
-
 has view => (
     traits  => ['Array'],
     is      => 'ro',

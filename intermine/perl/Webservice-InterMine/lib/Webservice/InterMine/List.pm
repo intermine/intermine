@@ -27,7 +27,14 @@ An object of this type represents a list on the corresponding webservice's
 server. While not containing the list data itself, it provides methods
 for obtaining and iterating over that data, and manipulating the list
 by addition, which alters the current list, and the operations of 
-union, intersection, symmetric difference, and subtraction whicj create new lists.
+union, intersection, symmetric difference, and subtraction which create new lists.
+
+Lists can be created de novo, but for that you should see L<Webservice::InterMine::Service>, which provides
+the C<new_list> method.
+
+For all active list operations (as opposed to just getting information about 
+the available lists and querying against them) you will need to be authenticated to 
+your user account.
 
 =cut
 
@@ -65,7 +72,7 @@ The following operations on list objects are overloaded:
 Returns a human readable representation of the list, with its name, size,
 creation time, and description.
 
-=item * C<+> (Addition)
+=item * C<+>, C<|> (Unions)
 
 Returns a new list from the union of this list and the other operand.
 Lists can be joined to other lists, or any of the suitable content
@@ -73,13 +80,45 @@ types for new queries. In the case of lists of identifiers (whether in
 Arrays, strings or files), the type will be assumed to be the same 
 as that of the current list.
 
-=item * C<+=> (Appending)
+=item * C<+=>, C<|=> (Appending)
 
 Adds elements to the current list. Items can be appended from 
 other lists, or any of the suitable content
 types for new queries. In the case of lists of identifiers (whether in 
 Arrays, strings or files), the type will be assumed to be the same 
 as that of the current list.
+
+=item * C<->, C<-=> (Subtraction, Removal)
+
+Creates a new list by removing elements from the current list. 
+Lists can be subtracted from other lists, as can suitable queries or
+other content types, where the type will be assumed from that of the current 
+list.
+
+=item * C<&>, C<&=> (Intersections)
+
+Creates a new list from the intersection of this list and the other operand, modifying 
+the current list in the case of the assignment variant. As with other operations, where the type of an operands must 
+be inferred, it will be assumed to be the same as the current list.
+
+
+=item * C<^>, C<^=> (Symmetric Difference)
+
+Creates a new list, or modifies the current one, to have the symmetric difference
+of the operands - ie. only elements not shared by all operands will be in the
+new list. As with other operations, where the type of an operands must 
+be inferred, it will be assumed to be the same as the current list.
+
+=item * C<< <> >> (Iteration over results)
+
+Calling iteration over a list directly will iterate over a result
+set comprising the members of the list, where the output columns are all the
+attributes of the list's type. For more fine grained control over list results and 
+other list queries, you can call C<to_query> to get a query of the
+right class with the attribute view already added on.
+
+
+=back
 
 =cut
 
@@ -106,20 +145,50 @@ use overload
   '<>'     => \&next_element,
   fallback => 1;
 
+
+=head1 ATTRIBUTES
+
+=head2 title
+
+The permananent title of the list. This will not change over the 
+list's lifetime.
+
+=cut 
+
 has title => (
     is  => 'ro',
     isa => 'Str',
 );
+
+=head2 description
+
+The human readable description of the list. This can be altered, and may
+be undefined.
+
+=cut
 
 has description => (
     is => 'ro',
     isa => 'Maybe[Str]',
 );
 
+=head2 has_description
+
+Returns whether or not this list has a description.
+
+=cut
+
 sub has_description {
     my $self = shift;
     return defined $self->description;
 }
+
+=head2 name
+
+The name of the list. This can be changed by calling C<rename>, which 
+will also update the name on the server.
+
+=cut
 
 has name => (
     is => 'ro',
@@ -142,16 +211,42 @@ sub _update_name {
     $self->clear_query;
 }; 
 
+=head2 size
+
+The number of members in the list. This will be updated if the list
+is appended to, or if elements are removed through list 
+operations.
+
+=cut
+
 has 'size' => (
     is  => 'ro',
     isa => 'Int',
     writer => '_set_size',
 );
 
+=head2 type
+
+The class of object this list contains. Each list must be 
+homogenous, and the classes are defined in the data-model 
+for each mine. (See L<InterMine::Model>). A class defines the 
+attributes and references each member possesses. The type of a 
+list cannot change, unless through list operations, and then it will
+only ever become less specific, and never more specific.
+
+=cut
+
 has 'type' => (
     is  => 'ro',
     isa => PathString,
 );
+
+=head2 date
+
+The creation date of the list. Not all lists will necessarily have 
+creation dates.
+
+=cut
 
 has 'date' => (
     init_arg  => 'dateCreated',
@@ -160,6 +255,15 @@ has 'date' => (
     coerce    => 1,
     predicate => 'has_date',
 );
+
+=head2 get_unmatched_ids
+
+Gets a list of identifiers that did not match objects when this 
+list was created. This is primarily of use when debugging list creation issues. 
+The set of unmatched ids does not persist accross sessions, and is only 
+available immediately after a list is created.
+
+=cut
 
 has '_unmatched_identifiers' => (
     is => 'ro',
@@ -171,6 +275,15 @@ has '_unmatched_identifiers' => (
     default => sub { Set::Object->new() },
 );
 
+=head2 get_tags, has_tag
+
+Get the labels this list is tagged with. Tags are short
+categorisations that enable lists to be more effectively sorted and 
+grouped. C<get_tags> returns the list of all tags, and C<has_tag>
+returns whether the list has a particular tag.
+
+=cut
+
 has 'tags' => (
     is => 'ro',
     isa => SetObject,
@@ -181,6 +294,15 @@ has 'tags' => (
     },
     coerce => 1,
 );
+
+=head2 is_authorized
+
+Returns whether the current user has the authority to make 
+changes to this list. In the case of global lists, this value will return
+false. For all lists a user creates (for which you must provide authentication)
+it will return true.
+
+=cut
 
 has 'is_authorized' => (
     isa => TruthValue,
@@ -195,6 +317,7 @@ has factory => (
     required => 1,
     isa => ListFactory,
 );
+
 
 sub interpret_other_operand {
     my $self = shift;
@@ -215,6 +338,17 @@ sub interpret_other_operand {
     );
 }
 
+=head1 METHODS AND OPERATIONS
+
+=head2 delete
+
+Delete this list. This method deletes the list B<permanently> from the 
+originating mine. B<USE WITH EXTEME CAUTION> - it B<WILL> cause loss
+of data. Once this method has been called, you should not use the list 
+object in any further operations, as it will throw errors.
+
+=cut
+
 sub delete {
     my $self = shift;
     return $self->factory->delete_lists($self);
@@ -224,6 +358,15 @@ sub overload_adding {
     my ($self, $other, $reversed) = @_;
     $self->join_with($other);
 }
+
+=head2 join_with(something_else)
+
+Make a union of this list with something else. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
 
 sub join_with {
     my $self = shift;
@@ -243,6 +386,15 @@ sub overload_intersecting {
     return $intersection;
 }
 
+=head2 intersect_with(something_else)
+
+Make an intersection of this list with something else. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
+
 sub intersect_with {
     my $self = shift;
     my $lists = $self->interpret_other_operand(shift);
@@ -261,6 +413,16 @@ sub overload_diffing {
     return $diff;
 }
 
+=head2 difference_with(something_else)
+
+Make a new list of the symmetric difference between this
+list and something else. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
+
 sub difference_with {
     my $self = shift;
     my $lists = $self->interpret_other_operand(shift);
@@ -268,6 +430,15 @@ sub difference_with {
     unshift @$lists, $self;
     return $self->factory->symmetric_difference($lists, $name, $description);
 }
+
+=head2 remove(something_else)
+
+Remove the other operand from this list. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
 
 sub remove {
     my ($self, $other, $reversed) = @_;
@@ -302,6 +473,15 @@ sub overload_subtraction {
     } 
 }
 
+=head2 subtract(something_else)
+
+Make a new list by removing the other operand from this list. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
+
 sub subtract {
     my $self = shift;
     my $lists = $self->interpret_other_operand(shift);
@@ -314,6 +494,15 @@ sub overload_appending {
     confess "Cannot append list to non-list value" if $reversed;
     $self->append($other);
 }
+
+=head2 to_query
+
+Return a L<Webservice::InterMine::Query> representing the elements of this
+list. The resulting query will have this list's type as its root class, and
+already be contrained to only contain elements in this list. It will not have any
+output columns. Further contraints and views can be added.
+
+=cut
 
 sub to_query {
     my $self = shift;
@@ -332,6 +521,16 @@ sub get_request_parameters {
     return $self->to_query->get_request_parameters;
 }
 
+=head2 build_query
+
+Return a L<Webservice::InterMine::Query> representing the elements of this
+list. The resulting query will have this list's type as its root class, and
+already be contrained to only contain elements in this list. It will have 
+all the attribute fields of the list's type as its
+output columns. Further contraints and views can be added.
+
+=cut
+
 sub build_query {
     my $self = shift;
     my $q = $self->to_query;
@@ -340,6 +539,14 @@ sub build_query {
     return $q;
 }
 
+=head2 results_iterator
+
+Get a results iterator for this list. It will by default 
+iterate over results as arrayrefs, with the query set to the default values
+of C<build_query>.
+
+=cut
+
 has element_iterator => (
     is => 'ro',
     isa => ResultIterator,
@@ -347,12 +554,29 @@ has element_iterator => (
     builder => 'results_iterator',
 );
 
+=head2 next_element
+
+Get the next element (as a results row) from the list. Once the last element
+is returned, the list will reset and go back to the beginning on its underlying
+iterator.
+
+=cut
+
 sub next_element {
     my $self = shift;
     my $next = $self->element_iterator->next;
     $self->clear_element_iterator unless (defined $next);
     return $next;
 }
+
+=head2 append(something_else)
+
+Add the elements represented by the other operand to this query. The other 
+operand can be a list, a query, a string of identifiers, 
+the name of a file containing identifiers, an array-ref 
+of identifiers, or an array-ref of lists or queries.
+
+=cut
 
 sub append {
     my $self = shift;
@@ -386,6 +610,14 @@ sub append {
     return $self;
 }
 
+=head2 to_string
+
+Return a human readable string representation of this list. This consists of
+the name, the size, the type, the creation time, and the description, if it
+has all those things.
+
+=cut
+
 sub to_string {
     my $self = shift;
     my $ret  = sprintf( "%s (%s %ss)%s %s",
@@ -401,3 +633,53 @@ __PACKAGE__->meta->make_immutable;
 no Moose;
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Webservice::InterMine::Cookbook> - A guide to using the Webservice::InterMine Perl API.
+
+=item * L<Webservice::InterMine> - Provides the main interface to these modules.
+
+=item * L<Webservice::InterMine::Service> - Provides factory method for all list operations.
+
+=back
+
+=head1 AUTHOR
+
+Alex Kalderimis C<dev@intermine.org>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::List
+
+You can also look for information at:
+
+=over 4
+
+=item * Webservice::InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/wiki/PerlWebServiceAPI>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+

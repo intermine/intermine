@@ -11,7 +11,7 @@ SYNOPSIS
 
       OR
 
-        use Webservice::InterMine 'www.flymine.org', $user, $pass;
+        use Webservice::InterMine 'flymine', 'some-username', 'some-password';
 
         my $query    = Webservice::InterMine->new_query;
         $query->add_view(@views);
@@ -31,23 +31,81 @@ DESCRIPTION
     This module allows you to interact with one or more webservices by
     providing a url to an InterMine implementation.
 
-  Usage
-    You can call "use Webservice::InterMine" without any parameters, which
-    simply means you need to either specify the webservice url on every
-    call, or call the methods on a service directly.
+INSTALLATION AND DEPENDENCIES
+    This package can be installed using the following commands
+    (Module::Build >= 0.36 is required):
 
-    If you call "use Webservice::InterMine $url", a default service will be
-    set, meaning method calls will not require the webservice url. Unless
-    you are intending to access multiple services, the latter form is
-    recommended.
+      perl Build.PL
+      ./Build test
+      sudo ./Build install
+
+    If any runtime dependencies are missing, you can use the following
+    command to install them:
+
+      sudo ./Build installdeps
+
+  IMPORT STATEMENTS
+    In the example above the modules are imported with the following
+    statements:
+
+        use Webservice::InterMine;
+
+    and
+
+        use Webservice::InterMine 'flymine', 'some-username', 'some-password';
+
+    Calling "use Webservice::InterMine" without any parameters simply means
+    you need to either specify the webservice url on every call, or call the
+    methods on a service directly.
+
+    If you call "use Webservice::InterMine $mine, [$user, $pass]", a default
+    service will be set, meaning method calls will not require the
+    webservice url. Unless you are intending to access multiple services,
+    this form is recommended.
 
 METHODS
-  new_query( [\@service_args], [%query_args] )
+  new_query( [from => \@service_args], [%query_args] )
     returns a new query object for you to fill in with constraints before
-    being run to get its results. If you pass a url, it constructs a query
-    for the specified webservice.
+    being run to get its results.
 
-    Please see Webservice::InterMine::Query
+    Parameters:
+
+    *   from => [url, user, pass]
+
+        An array ref of arguments to pass to get_service. This information
+        can be used to specify a different service than the one named on
+        import, or to specify one when none was named on import.
+
+    *   %query_args
+
+        Key value pairs of arguments to pass to the query constructor in
+        Webservice::InterMine::Service. This methid serves as sugar for the
+        factory method in that class.
+
+    Please see Webservice::InterMine::Query, Webservice::InterMine::Service.
+
+  new_list( %list_args, [from => \@service_args] )
+    Creates a new list with the content specified by the list arguments. The
+    "content" key-word parameter will always be required. For a full
+    specification of creating lists, see: Webservice::InterMine::Service.
+
+    Parameters:
+
+    *   from => [url, user, pass]
+
+        An array ref of arguments to pass to get_service. This information
+        can be used to specify a different service than the one named on
+        import, or to specify one when none was named on import.
+
+    *   %list_args
+
+        Key value pairs of arguments to pass to the list constructor in
+        Webservice::InterMine::Service. This methid serves as sugar for the
+        factory method in that class.
+
+  get_list( $list_name, [from => \@service_args] )
+    Get the list of the given name from the default service, or the given
+    service if details are supplied.
 
   load_query([\@service_args], source_file|source_string => $source, %opts )
     Returns a query object based on xml you have previously saved, either as
@@ -61,22 +119,22 @@ METHODS
 
     If you want a specific service, call it thus:
 
-      load_query(service_args => [$name, $user, $pass], source_string => $string);
+      load_query(from => [$name, $user, $pass], source_string => $string);
 
     OR:
 
-      load_query([$name, $user, $pass], source_string => $string);
+      load_query(from => [$name, $user, $pass], source_string => $string);
 
     Please see Webservice::InterMine::Query::Saved
 
-  template( $name, [\@service_args], [%opts] )
+  template( $name, [from => \@service_args], [%opts] )
     returns the named template (if it exists - if not it returns undef). If
     you pass a url, it returns the named template from the specified
     webservice.
 
     Please see Webservice::InterMine::Query::Template
 
-  saved_query( $name, [$url] ) NOT IMPLEMENTED YET
+  saved_query( $name, [from => \@service_args], %options ) NOT IMPLEMENTED YET
     returns the named saved_query (if it exists - if not it returns undef).
     If you pass a url, it returns the named query from the specified
     webservice.
@@ -86,28 +144,55 @@ METHODS
 
     Please see Webservice::InterMine::Query::Saved
 
-  get_service( [$url, $user, $pass] )
+  get_service( $url, $user, $pass )
     returns a webservice object, which is used to construct queries and
     fetch templates and saved queries. If a url is passed, the webservice
     for that url is returned, otherwise the service for the url given to
     "use" is returned.
 
-    Please note: user and password based authentication has not yet been
-    implemented.
+    If a service for a url has been created previously, that one is
+    returned, even if different login details are provided.
 
     Please see: Webservice::InterMine::Service
 
+  get_saved_user_info($mine_name/$mine_url)
+    Returns saved user name and passwords from the webservice config file if
+    it exists. This file should be located at
+    ~/.intermine-webservices.config, and should have the following format:
+
+      flymine                        user@somewhere.edu password
+      metabolicmine                  user@somewhere.edu another-password
+      http://yeastmine.org/yeastmine user@somewhere.org A v3rj d1EE!kvlt 0n3
+
+    ie., whitespace separated fields. The password may contain whitespace
+    characters, but no new-lines. The mine-name/url needs to identical to
+    the name used to request the service.
+
+  clean_temp_lists()
+    Deletes all automatically created anonymous lists. Any renamed lists
+    will be spared the clean-up. This method is called on system exit,
+    unless the variable $Webservice::InterMine::CLEAN_UP is set to a false
+    value.
+
+  get_{minename}(user, pass)
+    An unknown method preceded with 'get_' will be interpreted as a mine
+    name, and an attempt will be made to return a service with that name.
+
 SEE ALSO
-    *   Webservice::InterMine::Cookbook for guide on how to use these
+    *   Webservice::InterMine::Cookbook for a guide on how to use these
         modules.
 
     *   Webservice::InterMine::Query
 
     *   Webservice::InterMine::Service
 
+    *   Webservice::InterMine::List
+
     *   Webservice::InterMine::Query::Template
 
     *   Webservice::InterMine::Query::Saved
+
+    *   Webservice::InterMine::Bio Biologically specific roles.
 
 AUTHOR
     Alex Kalderimis "<dev@intermine.org>"

@@ -51,8 +51,9 @@ under the same terms as Perl itself.
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
 use MooseX::Types::Moose qw/Str HashRef/;
-use Webservice::InterMine::Types qw/File Service Template/;
+use Webservice::InterMine::Types qw/File Service Template DomNode/;
 use Webservice::InterMine::Query::Template;
+use XML::DOM;
 
 around BUILDARGS => sub {
     my $orig  = shift;
@@ -104,10 +105,22 @@ has template_list => (
     isa     => HashRef[Template],
     default => sub { {} },
     handles => {
-        _set_template        => "set",
-        get_template_by_name => "get",
-        get_templates        => "values",
-        get_template_names   => "keys",
+        _set_template      => "set",
+        _get_template      => "get",
+        _get_templates     => "values",
+        _get_parsed_count  => 'count',
+    },
+);
+
+has xml_list => (
+    traits => ['Hash'],
+    isa => HashRef[DomNode],
+    default => sub { {} },
+    handles => {
+        _set_template_xml   => 'set',
+        _get_template_xml   => 'get',
+        get_template_names  => "keys",
+        get_template_count  => 'count',
     },
 );
 
@@ -125,26 +138,52 @@ sub set_xml {
 sub process_xml {
     my $self             = shift;
     my $xml              = shift;
-    my @template_strings = $xml =~ m!(<template .*?</template>)!sg;
-    confess "Can't find any template strings in the xml I was passed: $xml"
-      unless @template_strings;
-    for (@template_strings) {
-        warn "Processing $_" if $ENV{DEBUG};
+    my $parser = XML::DOM::Parser->new;
+    my $doc = eval {$parser->parse($xml)};
+    if (my $e = $@) {
+        confess "Error parsing template XML: '$xml';", $e;
+    }
+    my @templates = $doc->getElementsByTagName('template');
+    for my $template (@templates) {
+        my $name = $template->getAttribute('name');
+        if ($self->_get_template_xml($name)) {
+            confess "Found two templates with the same name: $name";
+        }
+        warn "FOUND TEMPLATE $name" if $ENV{DEBUG};
+        $self->_set_template_xml($name, $template);
+    }
+}
+
+sub get_template_by_name {
+    my ($self, $name) = @_;
+    if (my $template = $self->_get_template($name)) {
+        return $template;
+    }
+    if (my $xml = $self->_get_template_xml($name)) {
+        warn "PARSING $name" if $ENV{DEBUG};
         my $t = eval {
             Webservice::InterMine::Query::Template->new(
                 service       => $self->service,
                 model         => $self->model,
-                source_string => $_,
+                source_string => $xml->toString(),
             );
         };
-        unless (defined $t) {
-            warn $@ if ($@ and $ENV{DEBUG});
-            next;
+        if (my $e = $@) {
+            confess "Error parsing template $name: (", $xml->toString(), ") ", $e;
         }
-        my $name = $t->name;
-        confess "Made two templates with the same name - $name"
-          if $self->get_template_by_name($name);
-        $self->_set_template( $name, $t );
+        $self->_set_template($name, $t);
+        return $t;
+    } else {
+        return;
+    }
+}
+
+sub get_templates {
+    my $self = shift;
+    if ($self->_get_parsed_count == $self->get_template_count) {
+        return $self->_get_templates;
+    } else {
+        return map {$self->get_template_by_name($_)} $self->get_template_names;
     }
 }
 

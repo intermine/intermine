@@ -39,6 +39,7 @@ use InterMine::Model::Types qw(Model);
 use Carp qw(croak confess);
 use Moose::Meta::Role;
 use Perl6::Junction qw(any);
+use Time::HiRes qw/gettimeofday/;
 
 my @JSON_FORMATS = (qw/jsonobjects jsonrows jsondatatable/);
 my @SIMPLE_FORMATS = (qw/ tsv tab csv count xml/);
@@ -604,10 +605,12 @@ sub fetch {
     my $self = shift;
     my $url  = shift;
     my $uri  = URI->new($url);
+    warn "FETCHING $uri " . gettimeofday() if $ENV{DEBUG};
     my $resp = $self->agent->get($uri);
     if ( $resp->is_error ) {
         confess $resp->status_line, $resp->content;
     } else {
+        warn "FINISHED FETCHING $uri " . gettimeofday() if $ENV{DEBUG};
         return $resp->content;
     }
 }
