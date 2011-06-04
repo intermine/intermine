@@ -89,7 +89,10 @@ has completeness => (
 );
 
 # Horrible hack to get around issue with role requirements...
-sub is_complete {my $self = shift; return $self->_get_completeness};
+sub is_complete {
+    my $self = shift; 
+    return $self->_get_completeness;
+};
 
 sub check_status {
     my $self = shift;

@@ -17,7 +17,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 67 );
+    plan( tests => 69 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -380,4 +380,13 @@ $exp_res = [ ['EmployeeA1','DepartmentA1'] ];
 $res = $loaded->results;
 is_deeply($res, $exp_res, "Can get results for queries loaded from xml")
     or diag(explain $res);
+
+PARSING_EMPTY_RESULTS: {
+    my $q = $module->new_query(class => 'Manager');
+    $q->add_views('*');
+    $q->add_constraint('name', '=', 'Santa Claus');
+    my $res;
+    lives_ok {$res = $q->results} "It's ok to ask about Santa Claus";
+    is_deeply($res, [], "But there is no Santa Claus");
+}
 
