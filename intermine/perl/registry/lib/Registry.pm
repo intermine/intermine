@@ -10,8 +10,9 @@ use Dancer::Plugin::FormattedOutput;
 use Registry::Model qw(:all);
 
 func handle_response($response) {
+    debug("Setting status to " . $response->{status} );
     status( $response->{status} );
-    debug( $response->{text} );
+    debug("Status is " . status());
     return format_output($response);
 }
 
@@ -73,7 +74,7 @@ get '/mines/admin:format?' => sub {
 
 func can_administer($mine) {
     my $administrators = get_admins;
-    return true if ($administrators->{session('user')});
+    return true if (session('user') and $administrators->{session('user')});
     my $secrets = get_secrets;
     my $secret_key = params->{authToken};
     return $secret_key and $secret_key eq $secrets->{$mine};
@@ -140,7 +141,7 @@ post '/register' => sub {
                     $name, get_secrets->{name} );
             }
             else {
-                $response->{status} = 'success';
+                $response->{status} = 'ok';
                 $response->{text} = sprintf( setting("update_message"), $name );
             }
         }
@@ -173,7 +174,7 @@ del '/:name' => sub {
         return handle_response($response);
     }
     update_minelist($mines);
-    $response->{status} = "success",
+    $response->{status} = "ok",
     $response->{text} = "$name deleted from registry";
     return handle_response($response);
 };
