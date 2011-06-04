@@ -7,9 +7,6 @@ use Carp;
 use MooseX::Types::Moose qw(Str);
 use Webservice::InterMine::Types qw(ConstraintCode);
 
-my $next_code = 'A';
-my @used_codes;
-
 has 'op' => (
     is       => 'ro',
     isa      => Str,
@@ -18,14 +15,16 @@ has 'op' => (
 
 has '_next_code' => (
     is => 'rw',
-    isa => Str,
+    isa => ConstraintCode,
     default => "A",
 );
 
 sub getNextCode {
     my $self = shift;
-    my $nextcode = $self->_next_code;
+    my $nextcode = $self->_next_code || 'A';
+    warn $nextcode if $ENV{DEBUG};
     my $thiscode = $nextcode++;
+    warn $nextcode if $ENV{DEBUG};
     $self->_next_code($nextcode);
     return $thiscode;
 }

@@ -74,4 +74,6 @@ Revision history for Webservice-InterMine
 0.9701: Sat 4 June 2011
         * Improved template parsing speed by only parsing what is requested
         * Improved show printing format with more appropriate column sizes, and column guides.
+0.9702: Sat 4 June 2011
+        * Bug-fix release - subclass parsing was broken
 
