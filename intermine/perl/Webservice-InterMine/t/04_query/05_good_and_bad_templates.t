@@ -68,6 +68,7 @@ my @sort_order = (
     'Contractor.id', 'Manager.name',
     'Company.name',  'Company.name',
     'Company.name',  'Employee.name',
+    'Company.departments.employees.name',
 );
 
 ############################################################

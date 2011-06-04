@@ -76,4 +76,8 @@ Revision history for Webservice-InterMine
         * Improved show printing format with more appropriate column sizes, and column guides.
 0.9702: Sat 4 June 2011
         * Bug-fix release - subclass parsing was broken
+0.9702: Sun 5 June 2011
+        * Bug-fix release - Fixed handling of empty result sets - added test
+        for recently fixed bugs.
+        * Bug-fix release - subclass parsing was broken
 

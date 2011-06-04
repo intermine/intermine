@@ -92,6 +92,13 @@
   </query>
 </template>
 
+<template name="SubClassContraints" title="Template with subclasses">
+    <query name="SubClassContraints" model="testmodel" view="Company.departments.employees.name Company.departments.employees.seniority">
+        <constraint path="Company.departments.employees" type="Manager" editable="false"/>
+        <constraint path="Company.name" op="=" value="CompanyA" editable="true" code="A"/>
+    </query>
+</template>
+
   </template-queries>
 
   <tags>

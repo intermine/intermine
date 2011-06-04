@@ -379,7 +379,14 @@ sub next {
     until ($self->row_parser->header_is_parsed) {
         $self->row_parser->parse_header($self->read_line);
     }
-    return $self->row_parser->parse_line($self->read_line);
+    my $next = $self->row_parser->parse_line($self->read_line);
+    unless (defined $next) {
+        if (my $footer = $self->read_line) {
+            warn "PARSING FOOTER" if $ENV{DEBUG};
+            do {$self->row_parser->parse_line($footer)} while ($footer = $self->read_line);
+        }
+    }
+    return $next;
 }
 
 =head2 get_all
