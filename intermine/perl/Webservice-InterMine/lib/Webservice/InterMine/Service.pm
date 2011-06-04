@@ -318,6 +318,8 @@ has _templates => (
     handles => { 
         get_template => 'get_template_by_name', 
         get_templates => 'get_templates',
+        get_template_count => 'get_template_count',
+        get_template_names => 'get_template_names',
     },
 );
 

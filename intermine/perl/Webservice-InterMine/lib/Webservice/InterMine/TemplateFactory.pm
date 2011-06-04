@@ -54,6 +54,7 @@ use MooseX::Types::Moose qw/Str HashRef/;
 use Webservice::InterMine::Types qw/File Service Template DomNode/;
 use Webservice::InterMine::Query::Template;
 use XML::DOM;
+use Carp qw/carp confess/;
 
 around BUILDARGS => sub {
     my $orig  = shift;
@@ -170,7 +171,7 @@ sub get_template_by_name {
         };
         if (my $e = $@) {
             confess "Error parsing template $name: (", $xml->toString(), ") ", $e;
-        }
+        } 
         $self->_set_template($name, $t);
         return $t;
     } else {
@@ -183,7 +184,7 @@ sub get_templates {
     if ($self->_get_parsed_count == $self->get_template_count) {
         return $self->_get_templates;
     } else {
-        return map {$self->get_template_by_name($_)} $self->get_template_names;
+        return grep {defined} map {eval{$self->get_template_by_name($_)}} $self->get_template_names;
     }
 }
 

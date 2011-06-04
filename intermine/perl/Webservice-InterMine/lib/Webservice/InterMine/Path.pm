@@ -233,11 +233,17 @@ sub _parse {
 
     $type_hashref ||= {};
 
+    if ($ENV{DEBUG}) {
+        require Data::Dumper;
+        warn "SUBTYPES: " . Data::Dumper->Dump([$type_hashref]);
+    }
+
     # split Path.string into 'Path', 'string'
     my @bits = split /\./, $path_string;
     my @parts = ();    # <-- the classdescriptors will go here
 
     my $top_class_name = shift @bits;
+    my @processed_bits = ($top_class_name); # <-- to track what we have looked at
     confess "model is not defined" unless ( defined $model );
     push @parts, $model->get_classdescriptor_by_name($top_class_name);
 
@@ -258,7 +264,10 @@ sub _parse {
         else {
             $current_field = $current_class->get_field_by_name($bit);
             if ( !defined $current_field ) {
-                if ( my $type = $type_hashref->{ $current_class } ) {
+                my $subclass_key = join('.', @processed_bits);
+                warn "COULDN'T FIND $bit, CHECKING SUBCLASSES FOR $subclass_key" if $ENV{DEBUG};
+                if ( my $type = $type_hashref->{ $subclass_key } ) {
+                    warn "IT MAY BE IN $type" if $ENV{DEBUG};
                     my $type_class = $model->get_classdescriptor_by_name($type);
                     $current_field = $type_class->get_field_by_name($bit);
                 }
@@ -281,6 +290,7 @@ sub _parse {
             $current_class =
               next_class( $current_field, $model, $type );
         }
+        push @processed_bits, $bit;
     }
     return @parts;
 }
