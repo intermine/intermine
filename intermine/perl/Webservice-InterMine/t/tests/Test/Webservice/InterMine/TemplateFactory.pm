@@ -35,37 +35,24 @@ sub model {
 sub startup : Test(startup => 1) {
     my $test = shift;
     use_ok($test->class);
-    my $fake_Template = Test::MockObject->new;
-    $fake_Template->fake_module(
-	'Webservice::InterMine::Query::Template',
-	new => sub {
-	    return $fake_Template;
-	},
-    );
-    $fake_Template->set_isa('Webservice::InterMine::Query::Template');
-    $fake_Template->mock(
-	name => sub {
-	    return $next_char++;
-	},
-    );
-    $test->{template} = $fake_Template;
-
-
 }
 
-sub construction : Test(7) {
+sub construction : Test(9) {
     my $test = shift;
     my $obj  = new_ok($test->class, [
-	source_file   => $test->source_file,
+        source_file   => $test->source_file,
         service       => $test->service,
-	model         => $test->model,
+        model         => $test->model,
     ]);
+
     $test->{object} = $obj;
+
     new_ok($test->class, [
-	source_string => $test->source_string,
+        source_string => $test->source_string,
         service       => $test->service,
-	model         => $test->model,
+        model         => $test->model,
     ]);
+
     new_ok(
 	$test->class, [
 	    [
@@ -77,44 +64,39 @@ sub construction : Test(7) {
     );
     my $missing_source_error = qr/source xml must be passed to a TemplateFactory as either a string or a file/;
     my $bad_arg_error = qr/does not pass the type constraint because:.*should be a file/;
-    my $bad_xml_error = qr/Can't find any template strings in the xml I was passed/;
+    my $bad_xml_error = qr/Error parsing template XML: 'foo'/;
+
+    throws_ok {$test->class->new(service => $test->service, model => $test->model,)}
+        $missing_source_error,
+	    "... and catches constructing without source";
+
+    throws_ok {$test->class->new(
+            source_file => $test->nonexistent_file, 
+            service => $test->service,
+	        model         => $test->model,
+	    )} $bad_arg_error,
+        "... and catches constructing with nonexistent file";
+
+    throws_ok {$test->class->new(
+            source_string => 'foo',
+            service       => $test->service,
+            model         => $test->model,
+        )} $bad_xml_error,
+        "... and catches constructing with a bad string";
+
+    my $empty_factory;
+    lives_ok {$empty_factory = $test->class->new(
+            source_string => '<templates></templates>',
+            service       => $test->service,
+            model         => $test->model,
+        );} "Is happy to parse an empty template list";
+
+    is($empty_factory->get_template_count, 0, "And it reports the template number correctly");
+
     throws_ok(
-	sub {$test->class->new(
-	    service => $test->service,
-	    model => $test->model,
-	)},
-	$missing_source_error,
-	"... and catches constructing without source",
-    );
-    throws_ok(
-	sub {$test->class->new(
-	    source_file => $test->nonexistent_file,
-	    service       => $test->service,
-	    model         => $test->model,
-	)},
-	$bad_arg_error,
-	"... and catches constructing with nonexistent file",
-    );
-    throws_ok(
-	sub {$test->class->new(
-	    source_string => 'foo',
-	    service       => $test->service,
-	    model         => $test->model,
-	)},
-	$bad_xml_error,
-	"... and catches constructing with a bad string",
-    );
-    throws_ok(
-	sub {
-	    $test->class->new(
-		[$test->service,
-		$test->model,
-		$test->source_file,
-	     ],
-	    );
-	},
-	$bad_xml_error,
-	"... and catches when calling new in the one arg style with a file",
+        sub {$test->class->new([$test->service, $test->model, $test->source_file]);},
+        qr!Error parsing template XML: 't/data/default-template-queries.xml'!,
+        "... and catches when calling new in the one arg style with a file",
     );
 }
 
@@ -124,28 +106,59 @@ sub methods : Test {
     can_ok($test->class, @methods);
 }
 
-sub get_templates : Test {
+sub get_templates : Test(2) {
     my $test = shift;
-    my $obj  = $test->{object};
+    my $obj  = $test->class->new(
+        source_file   => $test->source_file,
+        service       => $test->service,
+        model         => $test->model,
+    );
     my @templates = $obj->get_templates;
     is(scalar(@templates), 12, "Gets the right number of templates");
+    is($obj->_get_parsed_count, 12, "Getting templates means they get parsed");
 }
 
-sub get_template_by_name : Test {
+sub get_template_by_name : Test(4) {
     my $test = shift;
-    my $obj  = $test->{object};
-    my $t    = $obj->get_template_by_name('K');
-    is($t, $test->{template},"Stores and retrieves a template by name");
-}
-
-sub get_template_names : Test {
-    my $test = shift;
-    my $obj  = $test->{object};
-    my @names = ('A' .. 'L');
-    is_deeply(
-	[sort $obj->get_template_names], \@names,
-	"Stores and retrieves a list of template names",
+    my $obj  = $test->class->new(
+        source_file   => $test->source_file,
+        service       => $test->service,
+        model         => $test->model,
     );
+    my $t = $obj->get_template_by_name('employeeByName');
+
+    isa_ok($t, 'Webservice::InterMine::Query::Template');
+    is($t->title, "View all the employees with certain name", "Retrieves a template");
+    is($obj->_get_parsed_count, 1, "Only this template has been parsed");
+    is($obj->get_template_count, 12, "But all templates have been found");
+
+}
+
+sub get_template_names : Test(2) {
+    my $test = shift;
+    my $obj  = $test->class->new(
+        source_file   => $test->source_file,
+        service       => $test->service,
+        model         => $test->model,
+    );
+    my $exp = [
+        'InnerInsideOuter',
+        'ManagerLookup',
+        'MultiValueConstraints',
+        'SwitchableConstraints',
+        'UneditableConstraints',
+        'convertContractorToEmployees',
+        'convertEmployeeToManager',
+        'convertEmployeesToAddresses',
+        'employeeByName',
+        'employeesFromCompanyAndDepartment',
+        'employeesOfACertainAge',
+        'employeesOverACertainAgeFromDepartmentA'
+    ];
+
+    my $got = [sort $obj->get_template_names];
+    is_deeply($got, $exp, "Stores and retrieves a list of template names") or diag(explain $got);
+    is($obj->_get_parsed_count, 0, "Getting names doesn't parse the templates");
 }
 
 1;

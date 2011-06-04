@@ -19,11 +19,15 @@ has [ 'comment', 'title', ] => (
 around 'to_string' => sub {
     my $orig = shift;
     my $self = shift;
-    my $retval = $self->$orig();
-    if ($self->title) {
-        return $self->title . ' - ' . $retval;
+    my $retval = $self->name;
+    if (my $title = $self->title) {
+        $retval .= " - $title";
     }
-    return $retval;
+    if (my $desc = $self->description) {
+        $retval .= "\n$desc";
+    }
+    return $retval unless ($retval eq $self->name);
+    return $self->orig();
 };
 
 sub type { 'template' }

@@ -2,9 +2,19 @@ package Webservice::InterMine::Role::Showable;
 
 use Moose::Role;
 
-requires qw/to_string views table_format results_iterator/;
+requires qw/to_string views results_iterator/;
 
 use IO::Handle;
+use List::Util qw(max);
+
+=head2 show( [$fh] )
+
+Print out the results to standard out (or an optional filehandle)
+in a easy to read summary table format, with an informative header, 
+column headers in the form of the views, and the results aligned
+in columns.
+
+=cut
 
 sub show {
     my $self = shift;
@@ -12,11 +22,27 @@ sub show {
 
     binmode $fh, ':encoding(utf8)';
     print $fh $self->to_string, "\n";
+    print $fh $self->bar_line;
     printf $fh $self->table_format, $self->views;
+    print $fh $self->bar_line;
     my $iter = $self->results_iterator;
     while (<$iter>) {
         printf $fh $self->table_format, map {(defined $_) ? $_ : 'UNDEF'} @$_;
     }
+}
+
+sub bar_line {
+    my $self = shift;
+    my @view_lengths = map {length} $self->views;
+    my $line = join('-+-', map { '-' x $_ } @view_lengths);
+    return $line . "\n";
+}
+
+sub table_format {
+    my $self = shift;
+    my @view_lengths = map {length} $self->views;
+    my $format = join(' | ', map {'%-' . $_ . 's'} @view_lengths);
+    return $format . "\n";
 }
 
 =head2 print_results( %options )

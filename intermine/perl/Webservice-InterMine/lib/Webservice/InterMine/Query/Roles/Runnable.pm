@@ -178,6 +178,13 @@ sub results {
     return $iter->get_all();
 }
 
+=head2 get_count
+
+A convenience method that returns the number of result rows a query
+returns.
+
+=cut
+
 sub get_count {
     my $self = shift;
     my $iter = $self->results_iterator(as => "count");

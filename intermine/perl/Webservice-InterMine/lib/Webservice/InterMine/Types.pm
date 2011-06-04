@@ -109,6 +109,8 @@ use MooseX::Types -declare => [
         SetObject
 
         True False TruthValue Truthy 
+        
+        DomNode
     )
 ];
 
@@ -368,5 +370,7 @@ subtype False, as Defined, where {$_ == 0 || $_ eq "0"};
 subtype TruthValue, as True | False;
 subtype Truthy, as Object, where {overload::Method($_, 'bool')};
 coerce TruthValue, from Truthy, via {$_ ? 1 : 0};
+
+class_type DomNode, { class => 'XML::DOM::Node' };
 
 1;

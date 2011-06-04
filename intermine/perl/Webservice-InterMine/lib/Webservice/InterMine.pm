@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9700";
+our $VERSION = "0.9701";
 
 =head1 NAME
 
@@ -20,7 +20,7 @@ Webservice::InterMine - modules for interacting with InterMine datawarehouse web
 
   OR
 
-    use Webservice::InterMine 'www.flymine.org', $user, $pass;
+    use Webservice::InterMine 'flymine', 'some-username', 'some-password';
 
     my $query    = Webservice::InterMine->new_query;
     $query->add_view(@views);
@@ -42,16 +42,36 @@ allows the user to easily write and execute structured queries.
 This module allows you to interact with one or more webservices
 by providing a url to an InterMine implementation.
 
-=head2 Usage
+=head1 INSTALLATION AND DEPENDENCIES
 
-You can call C<use Webservice::InterMine> without any parameters, which simply
+This package can be installed using the following commands (Module::Build >= 0.36 
+is required):
+
+  perl Build.PL
+  ./Build test
+  sudo ./Build install
+
+If any runtime dependencies are missing, you can use the following command to install them:
+
+  sudo ./Build installdeps
+
+=head2 IMPORT STATEMENTS
+
+In the example above the modules are imported with the following statements:
+
+    use Webservice::InterMine; 
+
+and
+
+    use Webservice::InterMine 'flymine', 'some-username', 'some-password';
+  
+Calling C<use Webservice::InterMine> without any parameters simply
 means you need to either specify the webservice url on every call, or
 call the methods on a service directly.
 
-If you call C<use Webservice::InterMine $url>, a default service will be set,
+If you call C<use Webservice::InterMine $mine, [$user, $pass]>, a default service will be set,
 meaning method calls will not require the webservice url. Unless you are
-intending to access multiple services, the latter form is recommended.
-
+intending to access multiple services, this form is recommended.
 
 =head1 METHODS
 
@@ -116,7 +136,7 @@ sub new_query {
 
 Creates a new list with the content specified by the list arguments. The
 C<content> key-word parameter will always be required. For a full 
-specification of creating lists, see: L<Webservice::InterMine::ListFactory>.
+specification of creating lists, see: L<Webservice::InterMine::Service>.
 
 Parameters:
 
