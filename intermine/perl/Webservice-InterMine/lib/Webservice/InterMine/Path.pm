@@ -59,6 +59,52 @@ use strict;
 use InterMine::Model::Attribute;
 use Carp qw/confess croak/;
 
+sub new {
+    my $class = (ref $_[0]) ? ref shift : shift;
+    my ($path, $service, $subtypes) = @_;
+    $subtypes ||= {};
+    my $self = {path => $path, service => $service, subtypes => $subtypes};
+
+    _parse($service->model, $path, $subtypes);
+    return bless $self, $class;
+}
+
+sub get_results_iterator {
+    my $self = shift;
+    my $format = shift || 'jsonobjects';
+    my $service = $self->{service};
+    my $uri = $service->root . $service->POSSIBLE_VALUES_PATH; 
+    require JSON;
+    my $json = JSON->new;
+    my $params = {
+        path => $self->{path}, 
+        typeConstraints => $json->encode($self->{subtypes}),
+    };
+
+    my $iter = $service->get_results_iterator(
+        $uri, $params, [], $format, 'perl', []);
+    return $iter;
+}
+
+sub set_subtype {
+    my $self = shift;
+    my ($k, $v) = @_;
+    return $self->{subtypes}{$k} = $v;
+}
+
+sub get_possible_values {
+    my $self = shift;
+    my $iter = $self->get_results_iterator;
+    my @values = map {$_->{value}} $iter->get_all;
+    return @values;
+}
+
+sub get_possible_values_count {
+    my $self = shift;
+    my $iter = $self->get_results_iterator('count');
+    return join('', $iter->get_all);
+}
+
 =head2 validate_path
 
  Usage   : validate_path($model, 'Department.name');
