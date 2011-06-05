@@ -139,7 +139,7 @@ public class QueryResultService extends AbstractQueryService
             try {
                 attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
             } catch (PathException e) {
-                throw new RuntimeException("Cannot get root class name", e);
+                throw new RuntimeException(e);
             }
         }
         int f = getFormat();
