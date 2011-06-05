@@ -6,6 +6,8 @@ Webservice::InterMine::Path - functions for finding problems with paths
 
 =head1 SYNOPSIS
 
+For validation using functions/static methods:
+
     use Webservice::InterMine::Path qw(:validate);
 
     my @errors;
@@ -14,38 +16,19 @@ Webservice::InterMine::Path - functions for finding problems with paths
     push @errors, b_is_subclass_of_a($model, $path_stringA, $path_stringB);
     confess @errors if @errors;
 
-=head1 AUTHOR
+For queries for path based information from query services:
 
-FlyMine C<< <support@flymine.org> >>
+    use Webservice::InterMine;
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<support@flymine.org>.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Webservice::InterMine::Path
-
-You can also look for information at:
-
-=over 4
-
-=item * FlyMine
-
-L<http://www.flymine.org>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009,2010 FlyMine, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=head1 FUNCTIONS
+    my $service = Webservice::InterMine->get_testmine;
+    my $path = $service->new_path('Department.employees.name');
+    my $has_guessed_correctly = 0;
+    for my $name ($path->get_possible_values) {
+        last if $has_guessed_correctly;
+        print "Is your name $name?: y|N:";
+        chomp(my $resp = <STDIN>);
+        $has_guessed_correctly++ if ($resp =~ /y(es)?/i);
+    }
 
 =cut
 
@@ -59,6 +42,21 @@ use strict;
 use InterMine::Model::Attribute;
 use Carp qw/confess croak/;
 
+=head1 METHODS
+
+=head2 new(Str path, Service service, [HashRef subtypes])
+
+Construct a new path object for use with path based 
+webservice. The path is immediately validated before use, 
+so any subclass constraints that affect this path need 
+to be included in the subtypes hash. 
+
+This constructor is not meant to be used directly; rather, obtain
+Webservice::InterMine:Path objects from their respective Service objects
+via their C<new_path> methods.
+
+=cut 
+
 sub new {
     my $class = (ref $_[0]) ? ref shift : shift;
     my ($path, $service, $subtypes) = @_;
@@ -68,6 +66,16 @@ sub new {
     _parse($service->model, $path, $subtypes);
     return bless $self, $class;
 }
+
+=head2 get_results_iterator([$format])
+
+Return an object for iterating over rows of results. 
+The formats that are supported by the possible values service
+are jsonobjects (the default), and count formats. However, for accessing
+counts, and even values, it is probably easier to use the 
+convenience methods listed below.
+
+=cut
 
 sub get_results_iterator {
     my $self = shift;
@@ -86,24 +94,60 @@ sub get_results_iterator {
     return $iter;
 }
 
+=head2 set_subtype($key => $value)
+
+Paths can be refined by adding subtype constraints after they have been
+constructed. EG:
+
+ my $path = $service->new_path("Department.employees.name")
+ # now the path represents that names of employees
+
+ $path->set_subtype("Department.employees" => "CEO");
+ # And now it represents the names of CEOs
+
+=cut
+
 sub set_subtype {
     my $self = shift;
     my ($k, $v) = @_;
     return $self->{subtypes}{$k} = $v;
 }
 
+=head2 get_possible_values()
+
+Returns the values this path may potentially have. Be aware
+that in list context it returns, as expected, as list of values, whereas
+in scalar context it resturns an Array-Reference to that list of
+values. If you just want the number of items in the list, use 
+C<get_possible_values_count> instead, which is much more efficient.
+
+=cut
+
 sub get_possible_values {
     my $self = shift;
     my $iter = $self->get_results_iterator;
     my @values = map {$_->{value}} $iter->get_all;
-    return @values;
+    if (wantarray) {
+        return @values;
+    } else {
+        return [@values];
+    }
 }
+
+=head2 get_possible_values_count()
+
+Returns the number of different values this path may represent. 
+This is the most efficient way to retrieve this information from the server.
+
+=cut
 
 sub get_possible_values_count {
     my $self = shift;
     my $iter = $self->get_results_iterator('count');
     return join('', $iter->get_all);
 }
+
+=head1 FUNCTIONS
 
 =head2 validate_path
 
@@ -380,3 +424,37 @@ sub class_of {
     }
 }
 1;
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::Path
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009,2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+
+=cut
