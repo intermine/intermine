@@ -207,6 +207,8 @@ sub get_list_gff3 : Memoize {
     my $query = $service->new_query( class => $list->type, with => GFF3 );
     if ($list->type eq 'Gene') {
         $query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
+        $query->add_outer_join('Gene.exons');
+        $query->add_outer_join('Gene.transcripts');
     } else {
         $query->add_constraint(qw/locatedFeatures.feature SequenceFeature/);
         $query->add_view('locatedFeatures.feature.primaryIdentifier');
@@ -328,6 +330,8 @@ sub get_gff_url : Memoize {
     my $identifier = shift;
     my $gff_query = $service->new_query( class => 'Gene', with => GFF3 );
     $gff_query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
+    $gff_query->add_outer_join('Gene.exons');
+    $gff_query->add_outer_join('Gene.transcripts');
     $gff_query->add_constraint( 'id', '=', $identifier );
     return $gff_query->get_gff3_uri;
 }
@@ -455,6 +459,7 @@ sub do_gene_report {
     my $fasta_uri = get_fasta_url($obj->{objectId});
 
     # Get homologues in rat and mouse
+    debug("Getting homologues");
     my $homologues = get_homologues($identifier);
     my @table_keys = grep {$_ !~ /chromosomeLocation/} $query->views;
 

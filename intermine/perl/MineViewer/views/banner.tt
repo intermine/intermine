@@ -1,7 +1,7 @@
 <div id="banner">
     <div id="heading">
         <h1>[% settings.project.title %]</h1>
-        <h3>[% settings.project.subtitle %]</h1>
+        <h3>[% settings.project.subtitle %]</h3>
     </div>
 
     <div id="section-menu">

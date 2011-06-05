@@ -56,6 +56,7 @@ never_show:
 
 gene_list_names: 
     - "flymineview"
+    - "example"
 
 mine_base_url: "http://preview.flymine.org/preview"
 

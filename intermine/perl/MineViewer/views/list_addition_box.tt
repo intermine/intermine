@@ -6,7 +6,9 @@
     [% FOREACH list IN lists %]
         [% list_name = list.name %]
         <option value="[% list.name %]"
-            [% IF contained_in.$list_name %] disabled [% END %] >
+            [% IF contained_in.$list_name or not list.is_authorized %] 
+                disabled 
+            [% END %] >
             [% list.name %] ([% list.size %] [% pluraliser(list.type) %]) 
         </option>
     [% END %]

@@ -5,7 +5,7 @@
     <div id="contained-in-box" style="display:none">
     <ul id="contained-in">
         [% FOREACH p IN contained_in.pairs %]
-            [% deleter_id = 'deleter-' _ p.key.replace(' ', '_') %]
+            [% deleter_id = 'deleter-' _ p.key.replace('[^A-Za-z0-9]', '_') %]
             [% lname = p.key %]
             [% itemid = obj.objectId %]
         <li>
@@ -32,14 +32,5 @@
 jQuery(function() {
     jQuery('#list-collapser').button()
     .click(function() {jQuery('#contained-in-box').slideToggle()});
-    });
-
-function removeitem(listName, objId) {
-    var data = {
-        list: listName,
-        ids: objId,
-    };
-    jQuery.post("[% proxy.uri_for('/remove_list_item') %]", 
-        data, handleListResults, "json");
-}
+});
 </script>
