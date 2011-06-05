@@ -69,11 +69,17 @@ public class AvailableTemplatesService extends WebService
 
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, TemplateQuery> templates;
+        boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
             Profile profile = SessionMethods.getProfile(request.getSession());
-            templates = templateManager.getUserAndGlobalTemplates(profile);
+            templates = (includeBroken)
+                            ? templateManager.getUserAndGlobalTemplates(profile)
+                            : templateManager.getWorkingTemplates(profile);
+
         } else {
-            templates = templateManager.getGlobalTemplates();
+            templates = (includeBroken)
+                            ? templateManager.getGlobalTemplates()
+                            : templateManager.getWorkingTemplates();
         }
 
         if (formatIsXML()) {
@@ -89,7 +95,8 @@ public class AvailableTemplatesService extends WebService
             attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":{");
             attributes.put(JSONFormatter.KEY_OUTRO, "}");
             output.setHeaderAttributes(attributes);
-            output.addResultItem(Arrays.asList("\"templates\":" + TemplateHelper.templateMapToJson(templates)));
+            output.addResultItem(Arrays.asList("\"templates\":"
+                    + TemplateHelper.templateMapToJson(templates)));
         } else {
             ResponseUtil.setPlainTextHeader(response, FILE_BASE_NAME + ".txt");
             Set<String> templateNames = new TreeSet<String>(templates.keySet());

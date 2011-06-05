@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
@@ -32,7 +33,6 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
@@ -142,6 +142,40 @@ public class TemplateManager
         allTemplates.putAll(profile.getSavedTemplates());
 
         return allTemplates;
+    }
+
+    /**
+     * Fetch all user and global templates that are valid. These templates can be expected
+     * to work with the mine in their current state.
+     * @param profile The user to fetch templates for.
+     * @return A map of templates and their names.
+     */
+    public Map<String, TemplateQuery> getWorkingTemplates(Profile profile) {
+        Map<String, TemplateQuery> allTemplates = getUserAndGlobalTemplates(profile);
+        Map<String, TemplateQuery> workingTemplates = new TreeMap<String, TemplateQuery>();
+        filterOutBrokenTemplates(allTemplates, workingTemplates);
+        return workingTemplates;
+    }
+
+    /**
+     * Fetch all global templates that are valid. These templates can be expected
+     * to work with the mine in their current state.
+     * @return A map of templates and their names.
+     */
+    public Map<String, TemplateQuery> getWorkingTemplates() {
+        Map<String, TemplateQuery> publicTemplates = getGlobalTemplates();
+        Map<String, TemplateQuery> workingTemplates = new TreeMap<String, TemplateQuery>();
+        filterOutBrokenTemplates(publicTemplates, workingTemplates);
+        return workingTemplates;
+    }
+
+    private void filterOutBrokenTemplates(Map<String, TemplateQuery> in,
+            Map<String, TemplateQuery> out) {
+        for (Entry<String, TemplateQuery> pair: in.entrySet()) {
+            if (pair.getValue().isValid()) {
+                out.put(pair.getKey(), pair.getValue());
+            }
+        }
     }
 
     /**
