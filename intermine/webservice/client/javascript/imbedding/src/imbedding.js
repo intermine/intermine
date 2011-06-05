@@ -10,12 +10,21 @@ IMBedding = (function() {
     var placeholder = '#placeholder';
     var templateResultsPath = "/service/template/results";
     var queryResultsPath = "/service/query/results";
-    var availableTemplatesPath = "/service/templates";
+    var availableTemplatesPath = "/service/templates/json";
+    var possibleValuesPath = "/service/path/values";
+    var modelPath = "/service/model/json";
     var getColumnClass = function(index) {
         return ((index % 2 == 0) ? "imbedded-column-even" : "imbedded-column-odd");
     };
     var getRowClass = function(index) {
         return ((index % 2 == 0) ? "imbedded-row-even" : "imbedded-row-odd");
+    };
+
+    var defaultTemplateCallback = function(data) {
+        window.im_templates = data.templates;
+    };
+    var defaultModelCallback = function(data) {
+        window.im_model = data.model;
     };
 
     var addCommas = function(nStr, separator) {
@@ -99,7 +108,10 @@ IMBedding = (function() {
         }
         if ((! ret.match(/\/$/)) && (! url.match(/^\//))) {
             ret += "/";
+        } else if (url.match(/^\//)) {
+            ret = ret.replace(/\/$/, '');
         }
+
         return ret + url;
     };
 
@@ -238,6 +250,9 @@ IMBedding = (function() {
                         outer.title.unbind("click");
                         outer.expandHelp.remove();
                         outer.title.css({cursor: "default"});
+                        if (outer.options.openOnLoad) {
+                            outer.resizeTable();
+                        }
                     }
                     outer.updateVisibilityOfPagers();
                 }, 
@@ -339,15 +354,21 @@ IMBedding = (function() {
                 outer.toggleExpandHelpText();
                 outer.table.fadeToggle('fast', function() {
                     outer.fitContainerToTable();
-                    outer.csvLink.toggle();
+                    if (jQuery(outer.table).is(':visible')) {
+                        outer.csvLink.show();
+                        outer.tsvLink.show();
+                        outer.mineLink.show();
+                    } else {
+                        outer.csvLink.hide();
+                        outer.tsvLink.hide();
+                        outer.mineLink.hide();
+                    }
                     if (outer.csvLink.is(':visible')) {
                         outer.csvLink.css({display: 'inline'});
                     }
-                    outer.tsvLink.toggle();
                     if (outer.tsvLink.is(':visible')) {
                         outer.tsvLink.css({display: 'inline'});
                     }
-                    outer.mineLink.toggle();
                     if (outer.mineLink.is(':visible')) {
                         outer.mineLink.css({display: 'inline'});
                     }
@@ -705,11 +726,11 @@ IMBedding = (function() {
         scriptNode.src = scriptPath;
 
         var headNode = document.getElementsByTagName('HEAD');
-        if (headNode[0] != null)
+        if (headNode[0] != null) {
             headNode[0].appendChild(scriptNode);
+        }
 
-        if (callback != null)    
-        {
+        if (callback != null) {
             scriptNode.onreadystagechange = callback;            
             scriptNode.onload = callback;
         }
@@ -774,6 +795,49 @@ IMBedding = (function() {
                 data.query = getXML(query);
                 var url = localiseUrl(queryResultsPath, options);
                 getResults(url, data, target, options);
+            });
+        },
+        loadPossibleValues: function(path, subclasses, options) {
+            loadDependencies(function() {
+                var url = localiseUrl(possibleValuesPath, options);
+                var params = {path: path};
+                if (subclasses) {
+                    params.typeConstraints = JSON.stringify(subclasses);
+                }
+                options = options || {};
+                if (options.format) {
+                    params.format = options.format;
+                }
+                jQuery.jsonp({
+                    url: url, 
+                    data: params, 
+                    success: options.callback, 
+                    callbackParameter: "callback"
+                });
+            });
+        },
+        loadModel: function(options) {
+            loadDependencies(function() {
+                var url = localiseUrl(modelPath, options);
+                options = options || {};
+                var callback = options.callback || defaultModelCallback;
+                jQuery.jsonp({
+                    url: url, 
+                    success: callback, 
+                    callbackParameter: "callback"
+                });
+            });
+        },
+        loadTemplates: function(options) {
+            loadDependencies(function() {
+                var url = localiseUrl(availableTemplatesPath, options);
+                options = options || {};
+                var callback = options.callback || defaultTemplateCallback;
+                jQuery.jsonp({
+                    url: url, 
+                    success: callback, 
+                    callbackParameter: "callback"
+                });
             });
         }
     };
