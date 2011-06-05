@@ -66,7 +66,7 @@ class ListManager(object):
         self._temp_lists.add(name)
         return name
 
-    def create_list(self, content, list_type="", name=None, description=None):
+    def create_list(self, content, list_type="", name=None, description=None, tags=[]):
         if description is None:
             description = self.DEFAULT_DESCRIPTION
 
@@ -97,11 +97,10 @@ class ListManager(object):
                     return self.parse_list_upload_response(data) 
 
         uri = self.service.root + self.service.LIST_CREATION_PATH
-        query_form = {'name': name, 'type': list_type, 'description': description}
+        query_form = {'name': name, 'type': list_type, 'description': description, 'tags': ";".join(tags)}
         uri += "?" + urllib.urlencode(query_form)
         data = self.service.opener.post_plain_text(uri, ids)
         return self.parse_list_upload_response(data)
-        
 
     def parse_list_upload_response(self, response):
         try:
@@ -137,16 +136,16 @@ class ListManager(object):
         self.delete_lists(self._temp_lists)
         self._temp_lists = set()
 
-    def intersect(self, lists, name=None, description=None):
-        return self._do_operation(self.INTERSECTION_PATH, "Intersection", lists, name, description)
+    def intersect(self, lists, name=None, description=None, tags=[]):
+        return self._do_operation(self.INTERSECTION_PATH, "Intersection", lists, name, description, tags)
 
-    def union(self, lists, name=None, description=None):
-        return self._do_operation(self.UNION_PATH, "Union", lists, name, description)
+    def union(self, lists, name=None, description=None, tags=[]):
+        return self._do_operation(self.UNION_PATH, "Union", lists, name, description, tags)
 
-    def xor(self, lists, name=None, description=None):
-        return self._do_operation(self.DIFFERENCE_PATH, "Difference", lists, name, description)
+    def xor(self, lists, name=None, description=None, tags=[]):
+        return self._do_operation(self.DIFFERENCE_PATH, "Difference", lists, name, description, tags)
 
-    def subtract(self, lefts, rights, name=None, description=None):
+    def subtract(self, lefts, rights, name=None, description=None, tags=[]):
         left_names = self.make_list_names(lefts)
         right_names = self.make_list_names(rights)
         if description is None:
@@ -158,14 +157,15 @@ class ListManager(object):
             "name": name,
             "description": description,
             "references": ';'.join(left_names),
-            "subtract": ';'.join(right_names)
+            "subtract": ';'.join(right_names),
+            "tags": ";".join(tags)
             })
         resp = self.service.opener.open(uri)
         data = resp.read()
         resp.close()
         return self.parse_list_upload_response(data)
 
-    def _do_operation(self, path, operation, lists, name, description):
+    def _do_operation(self, path, operation, lists, name, description, tags):
         list_names = self.make_list_names(lists)
         if description is None:
             description = operation + " of " + ' and '.join(list_names)
@@ -175,7 +175,8 @@ class ListManager(object):
         uri += '?' + urllib.urlencode({
             "name": name,
             "lists": ';'.join(list_names),
-            "description": description
+            "description": description,
+            "tags": ";".join(tags)
             })
         resp = self.service.opener.open(uri)
         data = resp.read()
@@ -213,16 +214,16 @@ class List(object):
             self.is_authorized = args.get("authorized")
             if self.is_authorized is None:
                 self.is_authorized = True
+            tags = args["tags"] if "tags" in args else []
+            self.tags = frozenset(tags)
         except KeyError:
             raise ValueError("Missing argument") 
         self.unmatched_identifiers = set([])
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name
 
-    @name.setter
-    def name(self, new_name):
+    def set_name(self, new_name):
         if self._name == new_name:
             return
         uri = self.service.root + self.service.LIST_RENAME_PATH
@@ -237,6 +238,10 @@ class List(object):
         new_list = self.manager.parse_list_upload_response(data)
         self._name = new_name
 
+    def del_name(self):
+        raise AttributeError("List names cannot be deleted, only changed")
+
+    name = property(get_name, set_name, del_name, "The name of this list")
 
     def _add_failed_matches(self, ids):
         if ids is not None:
@@ -346,7 +351,7 @@ class List(object):
         return self.manager.subtract([self], [other])
 
     def __isub__(self, other):
-        subtr = self.manager.subtract([self], [other], description=self.description)
+        subtr = self.manager.subtract([self], [other], description=self.description, tags=self.tags)
         self.delete()
         subtr.name = self.name
         return subtr
