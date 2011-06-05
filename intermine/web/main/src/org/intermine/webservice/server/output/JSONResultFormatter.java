@@ -62,12 +62,8 @@ public abstract class JSONResultFormatter extends JSONFormatter
                 sb.append("\"" + key + "\":");
                 // Format lists as arrays
                 if (attributes.get(key) instanceof List) {
-                   // try {
                         JSONArray ja = new JSONArray((List) attributes.get(key));
                         sb.append(ja.toString());
-                   // } catch (JSONException e) {
-                   //     throw new InternalErrorException("Error handling " + attributes.get(key), e);
-                   // }
                 } else {
                     // Format as attribute
                     String attr = (attributes.get(key) == null) ? null : attributes.get(key).toString();
