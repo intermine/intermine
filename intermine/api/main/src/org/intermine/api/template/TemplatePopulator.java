@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.commons.lang.StringUtils.stripAll;
+import static org.apache.commons.lang.StringUtils.strip;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.model.InterMineObject;
@@ -272,7 +274,7 @@ public final class TemplatePopulator
                     newConstraint =
                         new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
                                 templateValue.getOperation(),
-                                Arrays.asList(templateValue.getValue().split(",")));
+                                Arrays.asList(stripAll(strip(templateValue.getValue().trim(), ",").split(","))));
                 } else {
                     newConstraint =
                         new PathConstraintAttribute(constraintPath.getNoConstraintsString(),
@@ -297,7 +299,7 @@ public final class TemplatePopulator
                     newConstraint =
                         new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
                                 templateValue.getOperation(),
-                                Arrays.asList(templateValue.getValue().split(",")));
+                                Arrays.asList(stripAll(strip(templateValue.getValue().trim(), ",").split(","))));
                 }
             }
             template.replaceConstraint(originalConstraint, newConstraint);
