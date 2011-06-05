@@ -19,6 +19,17 @@
 
 [% INCLUDE list_creation_popup.tt %]
 
+<style>
+    .ui-autocomplete {
+        max-height: 250px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        /* add padding to account for vertical scrollbar */
+        padding-right: 20px;
+    }
+</style>
+
 <script type="text/javascript">
 
 function complainAboutName(problem) {
@@ -130,7 +141,9 @@ var operators = {
     "LOOKUP": "any field matches",
     "ISA": "is a",
     "IS NOT NULL": "has a value",
-    "IS NULL": "doesn't have a value"
+    "IS NULL": "doesn't have a value",
+    "ONE OF": "is one of",
+    "NONE OF": "is none of"
 };
 
 function getOpInput(counter, cons, includeISA) {
@@ -150,6 +163,82 @@ function getOpInput(counter, cons, includeISA) {
     }
     return opInput;
 }
+
+function split( val ) {
+    if (val == null) {
+        return [];
+    }
+    return val.split( /,\s*/ );
+}
+function extractLast( term ) {
+    return split( term ).pop();
+}
+
+var multiValueFocus = function() {return false};
+var multiValueSelect = function( event, ui ) {
+    var terms = split( this.value );
+    // remove the current input
+    terms.pop();
+    // add the selected item
+    terms.push( ui.item.value );
+    // add placeholder to get the comma-and-space at the end
+    terms.push( "" );
+    this.value = terms.join( ", " );
+    return false;
+};
+var multiValueSource = function(valInput) { 
+    return function(request, response) {
+        // delegate back to autocomplete, but extract the last term
+        response( $.ui.autocomplete.filter(
+            split(valInput.getAttribute('ac_values')), extractLast( request.term ) ) );
+    }
+};
+
+var singleValueSelect = function() {return true};
+var singleValueFocus = function() {return true};
+
+var handleOpSelection = function(opInput,valInput) {
+    return function() {
+        if ($(opInput).val().match(/NULL/)) {
+            valInput.disabled = true;
+        } else {
+            valInput.disabled = false;
+        }
+        if ($(opInput).val().match(/ONE OF/)) {
+            $(valInput).autocomplete('option', 'focus', multiValueFocus);
+            $(valInput).autocomplete('option', 'select', multiValueSelect);
+            $(valInput).autocomplete('option', 'source', multiValueSource(valInput));
+        } else {
+            $(valInput).autocomplete('option', 'focus', singleValueFocus);
+            $(valInput).autocomplete('option', 'select', singleValueSelect);
+            $(valInput).autocomplete('option', 'source', split(valInput.getAttribute('ac_values')));
+        }   
+    };
+};
+
+var handleValueAutocomplete = function(path, input) {
+    return function(response) {
+        console.log(response);
+        if (response.error == null) {
+            var count = response.count;
+            if (count <= 200) {
+                IMBedding.loadPossibleValues(path, {}, {
+                    baseUrl: "[% settings.mine_base_url %]" ,
+                    callback: function(response) {
+                        console.log(response);
+                        var values = jQuery.map(response.results, function(e) {return String(e.value)});;
+                        input.setAttribute('ac_values', values);
+                        jQuery(input).autocomplete({
+                            source: values,
+                            minLength: 0
+                        }).focus(function() {jQuery(this).autocomplete('search')});
+                    }
+                });
+            }
+        }
+    };
+};
+
 
 var displayTemplate = function(selectedTemplate) {
     tempSpec = $('#templateParameters');
@@ -178,6 +267,7 @@ var displayTemplate = function(selectedTemplate) {
         cell1.appendChild(label);
         row.appendChild(cell1);
 
+
         var cell2 = document.createElement("td");
         var opInput = getOpInput(counter, cons, false);
         cell2.appendChild(opInput);
@@ -189,14 +279,17 @@ var displayTemplate = function(selectedTemplate) {
         valueInput.className = "text-input";
         valueInput.name = "value" + counter;
         valueInput.value = cons.value;
+        valueInput.size = 50;
         cell3.appendChild(valueInput);
-        $(opInput).change(function() {
-            if ($(this).val().match(/NULL/)) {
-                valueInput.disabled = true;
-            } else {
-                valueInput.disabled = false;
-            }
-        });
+
+        $(opInput).change(handleOpSelection(opInput, valueInput));
+
+        IMBedding.loadPossibleValues(cons.path, {}, {
+            format: 'jsonpcount',
+            callback: handleValueAutocomplete(cons.path, valueInput),
+            baseUrl: "[% settings.mine_base_url %]"
+            });
+                
         var codeInput = document.createElement("input");
         codeInput.type = "hidden";
         codeInput.name = "code" + counter;

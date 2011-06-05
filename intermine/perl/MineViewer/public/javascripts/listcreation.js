@@ -11,6 +11,12 @@ function updateExportBox(url, currentList) {
     $('#export').load(url + ' #export-menu', {list: currentList});
 } 
 
+function removeitem(listName, objId) {
+    var url = $BASE_URL + 'remove_list_item';
+    var data = { list: listName, ids: objId };
+    jQuery.post(url, data, handleListResults, "json");
+}
+
 function handleListResults(results) {
     notifyResults(results);
     // Update list details

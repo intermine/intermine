@@ -29,7 +29,7 @@
             button.id = table.container.attr('id') + "list_button";
             button.style.display = "none";
             buttonLabel = document.createElement('label');
-            buttonLabel.for = button.id;
+            buttonLabel["for"] = button.id;
             buttonLabel.innerHTML = "Choose items from this table to add to lists";
             buttonLabel.style.display = "none";
             table.container.after(button);
