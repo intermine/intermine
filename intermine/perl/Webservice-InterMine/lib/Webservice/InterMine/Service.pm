@@ -40,6 +40,7 @@ use Carp qw(croak confess);
 use Moose::Meta::Role;
 use Perl6::Junction qw(any);
 use Time::HiRes qw/gettimeofday/;
+require Webservice::InterMine::Path;
 
 my @JSON_FORMATS = (qw/jsonobjects jsonrows jsondatatable/);
 my @SIMPLE_FORMATS = (qw/ tsv tab csv count xml/);
@@ -99,6 +100,8 @@ use constant {
     SAVEDQUERY_PATH            => '/savedqueries/xml',
 
     RESOURCE_AVAILABILITY_PATH => '/check',
+
+    POSSIBLE_VALUES_PATH       => '/path/values',
 
     USER_AGENT                 => 'WebserviceInterMinePerlAPIClient',
 };
@@ -481,6 +484,7 @@ has _lists => (
     },
 );
 
+
 sub _build__lists {
     my $self = shift;
     return {service => $self};
@@ -493,6 +497,14 @@ sub get_list_data {
     }
     return $self->fetch( $self->root . LIST_PATH );
 }
+
+sub new_path {
+    my $self = shift;
+    my $path = shift;
+    my $subtypes = (@_ == 1) ? shift : {@_};
+    return Webservice::InterMine::Path->new($path, $self, $subtypes);
+}
+
 # Applies user supplied roles to object instances at runtime
 sub apply_roles {
     my $instance = shift;
