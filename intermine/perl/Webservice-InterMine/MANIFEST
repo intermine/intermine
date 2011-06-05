@@ -114,6 +114,7 @@ t/07_intermine/01_integration.t
 t/10_acceptance/01_live_test.t
 t/10_acceptance/02_lists.t
 t/10_acceptance/03_service_resolution.t
+t/10_acceptance/04_paths.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml

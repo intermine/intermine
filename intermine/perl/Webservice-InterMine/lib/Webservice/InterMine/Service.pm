@@ -10,11 +10,24 @@ Webservice::InterMine::Service - an object representation of an Webservice::Inte
 
   my $service = Webservice::InterMine->get_service('www.flymine.org/query/service');
 
-  my $query    = $service->new_query;
+  # Construct queries...
+  my $query    = $service->new_query(class => 'Gene');
+
+  # Access templates...
   my $template = $service->template('Probe_Genes')
       or die "Cannot find template"
 
-  # ... do stuff with your query/template
+  # Manage lists
+  my $new_list = $service->new_list(content => $filename, type => 'Gene');
+  my $existing_list = $service->list($name);
+
+  # Get metadata
+  my $model = $service->model
+ 
+  # Get path info
+  my $path = $service->new_path("Gene.homologues.homologue.symbol");
+
+  # ... do stuff with your objects
 
 =head1 DESCRIPTION
 
@@ -240,10 +253,24 @@ sub get_authstring {
 
 =head1 METHODS
 
-=head2 new_query
+=head2 new_query([%args])
 
 This returns a new query object for you to define
 by adding constraints and a view to.
+
+The most useful arguments are the root class, eg:
+
+  my $query = $service->new_query(class => 'Gene');
+
+With this, you can use the shortcuts for adding views:
+
+  # Adds all attributes
+  $query->add_views('*');
+
+And avoid having to repeat the root class on other calls:
+
+ # 'Gene.' is now optional
+ $query->add_constraint('symbol', '=', 'eve');
 
 See L<Webservice::InterMine::Query>
 
@@ -287,22 +314,42 @@ sub new_from_xml {
     return apply_roles( $query, $roles );
 }
 
-=head2 template( $name [$roles] )
+=head2 Template Methods:
+
+For handling template objects, see L<Webservice::InterMine::Query::Template>
+
+=over 2
+
+=item * template( $name )
 
 This checks to see if there is a template of this name in the
 webservice, and returns it to you if it exists. If the user
 has provided user credentials, then that user's private templates
-will also be accessible.
+will also be accessible. If the template exists but cannot be
+parsed (and so will not run) an exception will be throws (which it up to you
+to catch).
 
-See L<Webservice::InterMine::Query::Template>
-
-=head2 get_templates() 
+=item * get_templates() 
 
 Returns all the templates available from the service as a list.  If 
 the user has provided user credentials, then that user's private templates
-will also be accessible.
+will also be accessible. The number of templates returned in this list may NOT
+be the same as the figure returned by C<get_template_count> - any templates that 
+cannot be parsed (and so will not run) are excluded from the list.
 
-See L<Webservice::InterMine::Query::Template>
+=item * get_template_count()
+
+Gets the count of all templates reported as available at the webservice. This may 
+include broken templates.
+
+=item * get_template_names() 
+
+Returns a list of names of the templates available at the service. No guarantee
+is made to the order these names are returned in - you may have to do some sorting 
+if you require them to be alphabetical. This list includes all templates, working or
+broken.
+
+=back
 
 =cut
 
@@ -344,7 +391,7 @@ has _saved_queries => (
     handles => { saved_query => 'get_saved_query_by_name', },
 );
 
-=head2 LIST METHODS
+=head2 List Methods
 
 For handling list objects, see L<Webservice::InterMine::List>.
 
@@ -497,6 +544,29 @@ sub get_list_data {
     }
     return $self->fetch( $self->root . LIST_PATH );
 }
+
+=head2 new_path(Str path, [path => class, ...])
+
+Construct new path objects for use with path based webservices. 
+The path will be immediately validated, so it is important that any
+subclass constraints that affect this path's validity are included. 
+Subclass constraints can be listed as key-value pairs, or as a 
+hash-ref.
+
+EG:
+
+  my $path = $service->new_path("Department.employees.name");
+  my $path = $service->new_path("Department.employees.name", 
+    "Department.employees" => "Manager");
+  my $path = $service->new_path("Department.employees.name", 
+    {"Department.employees" => "Manager"});
+
+Any irrelevant subclass constraint values are ignored.
+
+For handling path objects to retrieve lists of potential values, see
+L<Webservice::InterMine::Path>
+
+=cut
 
 sub new_path {
     my $self = shift;
