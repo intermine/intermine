@@ -111,6 +111,7 @@ public abstract class JSONResultFormatter extends JSONFormatter
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
         sb.append("\"" + JSONResultFormatter.KEY_TIME + "\":\"" + executionTime + "\"");
+        declarePrinted();
         sb.append(super.formatFooter(errorMessage, errorCode));
         return sb.toString();
     }

@@ -33,6 +33,7 @@ import org.json.JSONObject;
 public class PossibleValuesService extends WebService {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
+    private Map<String, String> kvPairs = new HashMap<String, String>();
     private static Logger logger 
         = Logger.getLogger(PossibleValuesService.class);
 
@@ -62,6 +63,10 @@ public class PossibleValuesService extends WebService {
     private Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("path", "UNKNOWN");
+        kvPairs.put("path", "UNKNOWN");
+        if (formatIsCount()) {
+            attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
+        }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
         }
@@ -80,6 +85,7 @@ public class PossibleValuesService extends WebService {
             throw new BadRequestException("No path provided");
         } 
         attributes.put("path", pathString);
+        kvPairs.put("path", pathString);
 
         String typeConstraintStr = request.getParameter("typeConstraints");
         Map<String, String> typeMap = new HashMap<String, String>();
@@ -128,10 +134,12 @@ public class PossibleValuesService extends WebService {
         q.addToSelect(qf);
         q.addToGroupBy(qf1);
 
+        int count = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
+
         if (formatIsCount()) {
-            int count = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
             output.addResultItem(Arrays.asList(String.valueOf(count)));
         } else {
+            attributes.put("count", count);
 
             Results results = im.getObjectStore().execute(q, DEFAULT_BATCH_SIZE, true, true, false);
             Iterator<Object> iter = results.iterator();

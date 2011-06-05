@@ -35,6 +35,7 @@ public class JSONFormatter extends Formatter {
     private boolean shouldQuote = false;
     private boolean hasPrintedSomething = false;
     private boolean isExpectingPrimitive = false;
+    private String header = null;
 
     /**
      * The key for the callback
@@ -93,6 +94,7 @@ public class JSONFormatter extends Formatter {
         if (attributes != null && attributes.containsKey(KEY_QUOTE)) {
             shouldQuote = (Boolean) attributes.get(KEY_QUOTE);
         }
+        header = sb.toString();
         return sb.toString();
     }
 
@@ -134,9 +136,14 @@ public class JSONFormatter extends Formatter {
             }
             buffer.append(",").append(next);
         }
-        hasPrintedSomething = true;
+        declarePrinted();
         return buffer.toString();
     }
+
+    protected void declarePrinted() {
+        hasPrintedSomething = true;
+    }
+
 
     /**
      * Put on the final brace, and close the call-back bracket if needed.
@@ -157,7 +164,14 @@ public class JSONFormatter extends Formatter {
         if (!hasPrintedSomething && isExpectingPrimitive) {
             sb.append("null");
         }
-        sb.append(",\"wasSuccessful\":");
+        if ((header != null) && !hasPrintedSomething
+                && (header.endsWith("{") || header.endsWith(","))) {
+            // That's fine
+        } else {
+            sb.append(',');
+        }
+
+        sb.append("\"wasSuccessful\":");
         if (errorCode != Output.SC_OK) {
             sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJavaScript(errorMessage) + "\"");
         } else {
