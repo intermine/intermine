@@ -45,10 +45,11 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(l.size, 5)
         self.assertEqual(l.list_type, "Employee")
 
-        l = s.create_list(self.EMPLOYEE_FILE, t, description="Id file")
+        l = s.create_list(self.EMPLOYEE_FILE, t, description="Id file", tags=["Foo", "Bar"])
         self.assertEqual(l.unmatched_identifiers, set(["Not a good id"]))
         self.assertEqual(l.size, 5)
         self.assertEqual(l.list_type, "Employee")
+        self.assertEqual(l.tags, set(["Foo", "Bar"]))
 
         q = s.new_query()
         q.add_view("Employee.id")
@@ -115,7 +116,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(prev_desc, listA.description)
 
         # Test unions
-        listA = s.create_list(self.GUYS_NAMES, t)
+        listA = s.create_list(self.GUYS_NAMES, t, tags=["tagA", "tagB"])
         listB = s.create_list(self.LADIES_NAMES, t)
 
         union = listA | listB
@@ -146,6 +147,9 @@ class LiveListTest(unittest.TestCase):
         prev_desc = listA.description
         listA += listB
         self.assertEqual(listA.size, 10)
+        self.assertEqual(listA.tags, set(["tagA", "tagB"]))
+        fromService = s.get_list(listA.name)
+        self.assertEqual(listA.tags, fromService.tags)
         got = [row for row in listA.to_attribute_query().results()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
@@ -274,7 +278,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(prev_desc, listA.description)
 
         # Test subtraction
-        listA = s.create_list(self.GUYS_NAMES, t)
+        listA = s.create_list(self.GUYS_NAMES, t, tags=["subtr-a", "subtr-b"])
         listB = s.create_list(self.EMPLOYEE_FILE, t)
 
         subtr = listA - listB
@@ -292,6 +296,7 @@ class LiveListTest(unittest.TestCase):
         prev_desc = listA.description
         listA -= listB
         self.assertEqual(listA.size, 4)
+        self.assertEqual(listA.tags, set(["subtr-a", "subtr-b"]))
         got = [row for row in listA.to_attribute_query().results()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
