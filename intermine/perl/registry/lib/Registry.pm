@@ -6,17 +6,34 @@ use DateTime;
 use DateTime::Format::ISO8601;
 use Dancer::Plugin::ProxyPath;
 use Dancer::Plugin::FormattedOutput;
+use Dancer::Cookies;
 
 use Registry::Model qw(:all);
 
 func handle_response($response) {
     debug("Setting status to " . $response->{status} );
+    unless ($response->{status} eq 'ok') {
+        log_error($response);
+    }
     status( $response->{status} );
     debug("Status is " . status());
     return format_output($response);
 }
 
-use Dancer::Cookies;
+func log_error($response) {
+    my $error_log = get_error_log();
+    my $mine = lc($response->{mineName}) || 'GENERAL'; 
+    my $error = {
+        mineName => $mine,
+        dateTime => DateTime->now->datetime,
+        message => $response->{text},
+        status => $response->{status},
+    };
+
+    $error_log->{$mine} ||= [];
+    push @{ $error_log->{$mine} }, $error;
+    update_error_log($error_log);
+}
 
 my $iso_8601_parser = DateTime::Format::ISO8601->new;
 
@@ -27,7 +44,6 @@ before_template sub {
     $tokens->{howLongAgo} = sub {
         my $when = $iso_8601_parser->parse_datetime(shift);
         my $days = DateTime->now->delta_days($when);
-        debug(to_dumper($days->deltas));
         return $days->days ? $days->days . " days ago" : "today";
     };
 };
@@ -68,27 +84,37 @@ get '/mines/admin:format?' => sub {
         forward '/login';
     }
 
-    my $data = { mines => [get_minelist()], logs => get_logs() };
+    my $data = { mines => [get_minelist()], logs => get_logs(), error_log => get_error_log() };
     return format_output( mines_admin => $data, "html" );
 };
 
 func can_administer($mine) {
     my $administrators = get_admins;
-    return true if (session('user') and $administrators->{session('user')});
-    my $secrets = get_secrets;
-    my $secret_key = params->{authToken};
-    return $secret_key and $secret_key eq $secrets->{$mine};
+    if (params->{authToken}) {
+        my $secrets = get_secrets;
+        my $secret_key = params->{authToken};
+        return (defined($secret_key) and ($secret_key eq $secrets->{$mine}));
+    } else {
+        debug("Authenticating against session");
+        return true if (session('user') and $administrators->{session('user')});
+    }
 }
 
 post '/register' => sub {
     no warnings 'uninitialized';
     my $mines = get_minehash;
     my $name  = params->{name};
+    my $echo_params = params();
+    if (exists $echo_params->{authToken}) {
+        $echo_params->{authToken} = 'HIDDEN';
+    }
+    my $param_echo_string = 'Parameters supplied: ' . to_json($echo_params);
+
     my $storage_name = lc($name);
     my $response =
       $name
       ? { mineName => $name }
-      : { status => 'bad_request', text => 'No name provided in request' };
+      : { status => 'bad_request', text => 'No name provided in request - the "name" parameter is required. ' . $param_echo_string };
     return handle_response($response) unless $name;
 
     my $mine_is_new = $mines->{$storage_name} ? false : true;
@@ -102,7 +128,7 @@ post '/register' => sub {
     } else {
         unless (can_administer($storage_name)) {
             $response->{status} = 'forbidden';
-            $response->{text} = sprintf( setting("forbidden_message"), $name );
+            $response->{text} = sprintf( setting("forbidden_message"), $name ) . " $param_echo_string";
         }
     }
 
@@ -150,7 +176,7 @@ post '/register' => sub {
             $response->{text}   = sprintf(
                 setting("validation_error_message"),
                 params->{webservice} || params->{url} || "NO VALUE"
-            );
+            ) . ". $param_echo_string";
         }
     }
     return handle_response($response);
