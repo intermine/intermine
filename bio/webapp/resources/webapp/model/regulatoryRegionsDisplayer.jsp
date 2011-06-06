@@ -7,7 +7,7 @@
 
 <!-- regulatoryRegionsDisplayer.jsp -->
 
-<div class="custom-displayer" id="regulatory-regions">
+<div class="report-displayer" id="regulatory-regions">
   <h3>Regulatory Regions</h3>
   <p class="desc theme-5-background">
     <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
@@ -52,28 +52,28 @@
 
   <script type="text/javascript">
     // apply different class to h3 so tables are not so separate
-    jQuery("#regulatory-regions.custom-displayer div.table h3").each(function(i) {
+    jQuery("#regulatory-regions.report-displayer div.table h3").each(function(i) {
         jQuery(this).toggleClass('theme-2-border');
         jQuery(this).toggleClass('theme-3-border');
     });
 
     // switcher between tables this displayer haz
-    jQuery("#regulatory-regions.custom-displayer a.switcher").each(function(i) {
+    jQuery("#regulatory-regions.report-displayer a.switcher").each(function(i) {
       jQuery(this).bind(
         "click",
         function(e) {
             // hide anyone (!) that is shown
-            jQuery("#regulatory-regions.custom-displayer div.table:visible").each(function(j) {
+            jQuery("#regulatory-regions.report-displayer div.table:visible").each(function(j) {
               jQuery(this).hide();
               // hide more toggler
               jQuery(this).parent().find('p.toggle a.toggler').remove();
             });
 
             // show the one we want
-            jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table").show();
+            jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table").show();
 
             // show only 10 rows
-            var rows = jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr");
+            var rows = jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr");
             var count = 10;
             rows.each(function(index) {
                 count--;
@@ -84,13 +84,13 @@
             // add a show next link
             if (count < 0) {
                 var a = "<a href='#' style='float:right;margin-right:20px;' class='toggler'><span>Show more rows</span></a>";
-                jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle").append(a);
-                jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").bind(
+                jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle").append(a);
+                jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").bind(
                     "click",
                     function(f) {
                         // show another 10 rows
                         count = 10;
-                        rows = jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden");
+                        rows = jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden");
                         rows.each(function(index) {
                             count--;
                             if (count > 0) {
@@ -99,9 +99,9 @@
                         });
 
                         // we have no more rows to show
-                        if (jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden").length == 0) {
+                        if (jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden").length == 0) {
                             // hide the link to more
-                            jQuery("#regulatory-regions.custom-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").remove();
+                            jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").remove();
                         }
 
                         // no linking on my turf
@@ -110,7 +110,7 @@
             }
 
             // switchers all off
-            jQuery("#regulatory-regions.custom-displayer a.switcher.active").each(function(j) {
+            jQuery("#regulatory-regions.report-displayer a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
@@ -127,19 +127,19 @@
     });
 
     // table hider
-    jQuery("#regulatory-regions.custom-displayer p.toggle a").each(function(i) {
+    jQuery("#regulatory-regions.report-displayer p.toggle a").each(function(i) {
       jQuery(this).bind(
         "click",
         function(e) {
             // hide anyone (!) that is shown
-            jQuery("#regulatory-regions.custom-displayer div.table:visible").each(function(j) {
+            jQuery("#regulatory-regions.report-displayer div.table:visible").each(function(j) {
               jQuery(this).hide();
               // hide more toggler
               jQuery(this).parent().find('p.toggle a.toggler').remove();
             });
 
             // switchers all off
-            jQuery("#regulatory-regions.custom-displayer a.switcher.active").each(function(j) {
+            jQuery("#regulatory-regions.report-displayer a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
@@ -147,7 +147,7 @@
             jQuery(this).parent().parent().parent().find('p.in_table').show();
 
             // scroll to the top of the displayer (inlinetemplate.js)
-            jQuery("#regulatory-regions.custom-displayer").scrollTo('fast', 'swing', -30);
+            jQuery("#regulatory-regions.report-displayer").scrollTo('fast', 'swing', -30);
 
             // no linking on my turf
             e.preventDefault();

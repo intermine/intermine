@@ -29,7 +29,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.results.InlineResultsTable;
@@ -43,7 +43,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Richard Smith
  *
  */
-public class RegulatoryRegionsDisplayer extends CustomDisplayer
+public class RegulatoryRegionsDisplayer extends ReportDisplayer
 {
     /** @var maximum amount of rows to show per table */
     private Integer maxCount = 30;

@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Bean to hold configuration for custom report displayers.  One instance of this class represents
+ * Bean to hold configuration for report displayers.  One instance of this class represents
  * a single report page displayer.
  * @author Richard Smith
  *

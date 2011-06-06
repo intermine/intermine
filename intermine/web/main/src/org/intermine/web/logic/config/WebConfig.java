@@ -270,7 +270,7 @@ public class WebConfig
     }
 
     /**
-     * Add config for a custom report page displayer.  This checks that a type has been specified
+     * Add config for a report page displayer.  This checks that a type has been specified
      * before adding the config.
      * @param reportDisplayerConfig config for an individual report page displayer
      */
@@ -286,8 +286,8 @@ public class WebConfig
 
 
     /**
-     * Fetch config for the custom report page displayers.
-     * @return custom report page displayer config in the order specified in the config file
+     * Fetch config for the report page displayers.
+     * @return report page displayer config in the order specified in the config file
      */
     public List<ReportDisplayerConfig> getReportDisplayerConfigs() {
         return reportDisplayerConfigs;

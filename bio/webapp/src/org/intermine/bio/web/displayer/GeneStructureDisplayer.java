@@ -20,7 +20,7 @@ import org.intermine.bio.web.model.GeneModelCache;
 import org.intermine.bio.web.model.GeneModelSettings;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -32,7 +32,7 @@ import org.intermine.web.logic.results.ReportObject;
  * @author rns
  *
  */
-public class GeneStructureDisplayer extends CustomDisplayer
+public class GeneStructureDisplayer extends ReportDisplayer
 {
     /**
      * Construct with config and the InterMineAPI.

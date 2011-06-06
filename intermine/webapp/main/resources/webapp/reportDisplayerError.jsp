@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<!-- customDisplayerError.jsp -->
+<!-- reportDisplayerError.jsp -->
 
   <div class='box gray'>
     <h3>Error rendering ${displayerName}</h3>
@@ -15,4 +15,4 @@
     </c:if>
   </div>
 
-<!-- /customDisplayerError.jsp -->
+<!-- /reportDisplayerError.jsp -->

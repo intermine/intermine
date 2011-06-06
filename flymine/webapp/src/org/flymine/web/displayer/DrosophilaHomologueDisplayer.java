@@ -29,7 +29,7 @@ import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Homologue;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -37,7 +37,7 @@ import org.intermine.web.logic.results.ReportObject;
  * Displayer for drosophila homologue data
  * @author rns
  */
-public class DrosophilaHomologueDisplayer extends CustomDisplayer
+public class DrosophilaHomologueDisplayer extends ReportDisplayer
 {
 
     private static final List<String> SPECIES = Arrays.asList(new String[] {"grimshawi",

@@ -459,7 +459,7 @@
 
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
 
-    <action path="/initCustomDisplayer" type="org.intermine.web.struts.CustomDisplayerController"/>
+    <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

@@ -32,7 +32,7 @@
 
   <a name="<c:out value="${fn:toLowerCase(fn:replace(aspect, ' ', '_'))}"/>"><h2>${aspect}</h2></a>
   <c:if test="${!empty reportObject}">
-    <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="${aspect}" />
       <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>

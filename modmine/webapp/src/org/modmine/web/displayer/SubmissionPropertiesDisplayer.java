@@ -27,7 +27,7 @@ import org.intermine.model.bio.Strain;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.model.bio.Tissue;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -38,7 +38,7 @@ import org.intermine.web.logic.results.ReportObject;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionPropertiesDisplayer extends CustomDisplayer
+public class SubmissionPropertiesDisplayer extends ReportDisplayer
 {
 
     protected static final Logger LOG = Logger.getLogger(SubmissionPropertiesDisplayer.class);

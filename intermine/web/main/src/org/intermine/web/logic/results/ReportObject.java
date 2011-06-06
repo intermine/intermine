@@ -39,7 +39,7 @@ import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
@@ -120,7 +120,7 @@ public class ReportObject
      * that placement.
      * @return map from placement to displayers
      */
-    public Map<String, List<CustomDisplayer>> getReportDisplayers() {
+    public Map<String, List<ReportDisplayer>> getReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         return displayerManager.getReportDisplayersForType(objectType);
     }
@@ -696,13 +696,13 @@ public class ReportObject
      */
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
-        for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
+        for (ReportDisplayer reportDisplayer : getAllReportDisplayers()) {
             replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
         }
         return replacedFieldExprs;
     }
 
-    private Set<CustomDisplayer> getAllReportDisplayers() {
+    private Set<ReportDisplayer> getAllReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDisplayersForType(clsName);

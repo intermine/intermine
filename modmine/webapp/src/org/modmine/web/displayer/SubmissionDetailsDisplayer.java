@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Submission;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -32,7 +32,7 @@ import org.intermine.web.logic.results.ReportObject;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionDetailsDisplayer extends CustomDisplayer
+public class SubmissionDetailsDisplayer extends ReportDisplayer
 {
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SubmissionDetailsDisplayer.class);

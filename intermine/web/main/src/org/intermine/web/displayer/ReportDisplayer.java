@@ -23,19 +23,19 @@ import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Parent class for custom displayers that appear on report pages.  Subclasses must implement the
- * display() method to place view information on the request.  CustomDisplayers are constructed
+ * Parent class for report displayers that appear on report pages.  Subclasses must implement the
+ * display() method to place view information on the request.  ReportDisplayers are constructed
  * once and the display() method called many times so caching and one time setup can be performed in
  * the displayer class.
  * @author Richard Smith
  *
  */
-public abstract class CustomDisplayer
+public abstract class ReportDisplayer
 {
 
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
-    private static final Logger LOG = Logger.getLogger(CustomDisplayer.class);
+    private static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
 
 
     /**
@@ -43,7 +43,7 @@ public abstract class CustomDisplayer
      * @param config config information
      * @param im the InterMine API
      */
-    public CustomDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+    public ReportDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         this.config = config;
         this.im = im;
     }
@@ -63,11 +63,11 @@ public abstract class CustomDisplayer
             display(request, reportObject);
         } catch (Exception e) {
             // failed to display so put an error message in place instead
-            LOG.error("Error rendering custom displayer " + getClass() + " for "
+            LOG.error("Error rendering report displayer " + getClass() + " for "
                     + reportObject.getType() + "(" + reportObject.getId() + "): "
                     + e.fillInStackTrace());
             request.setAttribute("displayerName", getClass().getSimpleName());
-            request.setAttribute("jspPage", "customDisplayerError.jsp");
+            request.setAttribute("jspPage", "reportDisplayerError.jsp");
 
             Profile profile = SessionMethods.getProfile(request.getSession());
             if (profile.isSuperuser()) {

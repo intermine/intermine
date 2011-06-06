@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- reportCustomDisplayers.jsp -->
+<!-- reportDisplayers.jsp -->
 
 <html:xhtml/>
 
@@ -14,11 +14,11 @@
 <tiles:importAttribute name="placement"/>
 
 <c:forEach items="${reportObject.reportDisplayers[placement]}" var="displayer">
-    <tiles:insert name="customDisplayer.tile">
+    <tiles:insert name="reportDisplayer.tile">
       <tiles:put name="displayer" beanName="displayer" />
       <tiles:put name="reportObject" beanName="reportObject" />
     </tiles:insert>
     <br />
 </c:forEach>
 
-<!-- /reportCustomDisplayers.jsp -->
+<!-- /reportDisplayers.jsp -->

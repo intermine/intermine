@@ -5,7 +5,7 @@
 <%-- one element hash map --%>
 <c:forEach var="type" items="${response}">
   <c:if test="${not empty type}">
-    <div class="custom-displayer">
+    <div class="report-displayer">
       <h3 class="uniprot">Curated comments from UniProt</h3>
       <table cellspacing="0" class="displayer">
 
