@@ -17,7 +17,8 @@
         </select>
     [% END %]
     </span>
-    </td><td style="width:300px;" >
+    </td>
+    <td style="width:300px;" >
 
     <span id="controls" >
         <form id="display-format">
