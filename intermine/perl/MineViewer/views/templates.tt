@@ -47,9 +47,9 @@ function complainAboutName(problem) {
     strong.innerHTML = "Um, excuse me:";
     error.appendChild(strong);
     error.appendChild(
-            document.createTextNode(" " + problem));
+            document.createTextNode(" " + problem.replace(/^[A-Za-z0-9.]+Exception:/, '')));
     paramDiv.prepend(error);
-    setTimeout("jQuery('#template-error').fadeOut('slow', function() {jQuery('#template-error').remove()})", 2500);
+    setTimeout("jQuery('#template-error').fadeOut('slow', function() {jQuery('#template-error').remove()})", 7000);
     return;
 }
 
