@@ -78,7 +78,7 @@ public class TemplateResultService extends QueryResultService
         }
         if (template == null) {
             throw new ResourceNotFoundException(
-            	"There is no public template called '" + input.getName() + "' in this mine.");
+                    "There is no public template called '" + input.getName() + "' in this mine.");
         }
 
         Map<String, List<TemplateValue>> templateValues = TemplateHelper.getValuesFromInput(
