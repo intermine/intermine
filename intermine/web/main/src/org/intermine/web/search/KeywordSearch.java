@@ -43,8 +43,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.StopAnalyzer;
-import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
@@ -1297,10 +1296,7 @@ public final class KeywordSearch
         try {
             IndexSearcher searcher = new IndexSearcher(reader);
 
-            Analyzer analyzer =
-                    new SnowballAnalyzer(Version.LUCENE_30, "English",
-                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-
+            Analyzer analyzer = new WhitespaceAnalyzer();
             org.apache.lucene.search.Query query;
 
             // pass entire list of field names to the multi-field parser
@@ -1360,8 +1356,7 @@ public final class KeywordSearch
         String queryString = parseQueryString(searchString);
 
         try {
-            Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            Analyzer analyzer = new WhitespaceAnalyzer();
 
             // pass entire list of field names to the multi-field parser
             // => search through all fields
@@ -1637,12 +1632,8 @@ public final class KeywordSearch
         LOG.info("Index directory: " + tempFile.getAbsolutePath());
 
         IndexWriter writer;
-        SnowballAnalyzer snowballAnalyzer =
-                new SnowballAnalyzer(Version.LUCENE_30, "English",
-                        StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-        writer =
-                new IndexWriter(index.getDirectory(), snowballAnalyzer, true,
-                        IndexWriter.MaxFieldLength.UNLIMITED); //autocommit = false?
+        writer = new IndexWriter(index.getDirectory(), new WhitespaceAnalyzer(), true,
+                 IndexWriter.MaxFieldLength.UNLIMITED); //autocommit = false?
         writer.setMergeFactor(10); //10 default, higher values = more parts
         writer.setRAMBufferSizeMB(64); //flush to disk when docs take up X MB
 
@@ -1673,11 +1664,8 @@ public final class KeywordSearch
                 }
             }
         }
-
         index.getFieldNames().addAll(fetchThread.getFieldNames());
-
         LOG.info("Indexing done, optimizing index files...");
-
         try {
             writer.optimize();
             writer.close();
@@ -1687,12 +1675,9 @@ public final class KeywordSearch
 
         time = System.currentTimeMillis() - time;
         int seconds = (int) Math.floor(time / 1000);
-        LOG.info("Indexing of "
-                + indexed
-                + " documents finished in "
+        LOG.info("Indexing of " + indexed + " documents finished in "
                 + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
                         time % 1000) + " minutes");
-
         return tempFile;
     }
 
@@ -1746,8 +1731,6 @@ public final class KeywordSearch
         }
     }
 
-
-
     /**
      * get list of facet fields and names
      * @return map of internal fieldname -> displayed name
@@ -1768,10 +1751,10 @@ public final class KeywordSearch
                 String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.info("Deleting index file: " + files[i]);
-                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
+//                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
 
-                tempFile.delete();
+//                tempFile.delete();
 
                 LOG.warn("Deleted index directory!");
             } else {
