@@ -757,9 +757,8 @@ class InterMineObjectFetcher extends Thread
             if (!raw) {
                 f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
             } else {
-                f =
-                        new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
-                                Field.Index.NOT_ANALYZED);
+                f = new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
+                    Field.Index.NOT_ANALYZED);
             }
 
             f.setBoost(boost);
@@ -1751,11 +1750,9 @@ public final class KeywordSearch
                 String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.info("Deleting index file: " + files[i]);
-//                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
+                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
-
-//                tempFile.delete();
-
+                tempFile.delete();
                 LOG.warn("Deleted index directory!");
             } else {
                 LOG.warn("Index directory does not exist!");
