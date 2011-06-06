@@ -40,7 +40,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -318,7 +318,7 @@ public class DisplayObject
      *
      * @return Set
      */
-    public Set<CustomDisplayer> getAllReportDisplayers() {
+    public Set<ReportDisplayer> getAllReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDisplayersForType(clsName);
@@ -328,7 +328,7 @@ public class DisplayObject
     *
     * @return Map
     */
-   public Map<String, List<CustomDisplayer>> getReportDisplayers() {
+   public Map<String, List<ReportDisplayer>> getReportDisplayers() {
        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
        return displayerManager.getReportDisplayersForType(clsName);
@@ -340,7 +340,7 @@ public class DisplayObject
      */
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
-        for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
+        for (ReportDisplayer reportDisplayer : getAllReportDisplayers()) {
             replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
         }
         return replacedFieldExprs;

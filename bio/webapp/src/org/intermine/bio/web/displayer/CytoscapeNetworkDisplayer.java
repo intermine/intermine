@@ -34,7 +34,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
@@ -44,7 +44,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * Displayer for gene/protein interactions using cytoscape plugin
  * @author Fengyuan
  */
-public class CytoscapeNetworkDisplayer extends CustomDisplayer
+public class CytoscapeNetworkDisplayer extends ReportDisplayer
 {
 
     /**

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Project;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -26,7 +26,7 @@ import org.intermine.web.logic.results.ReportObject;
  *
  */
 
-public class ProjectDetailsDisplayer extends CustomDisplayer
+public class ProjectDetailsDisplayer extends ReportDisplayer
 {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(ProjectDetailsDisplayer.class);

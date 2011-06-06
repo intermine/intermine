@@ -16,7 +16,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
@@ -26,7 +26,7 @@ import org.modmine.web.MetadataCache;
  * Displayer for GBrowse in modMine
  * @author Fengyuan Hu
  */
-public class ModMineGBrowseDisplayer extends CustomDisplayer
+public class ModMineGBrowseDisplayer extends ReportDisplayer
 {
     /**
      * Construct with config and the InterMineAPI.

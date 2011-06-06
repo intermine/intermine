@@ -17,10 +17,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.results.ReportObject;
 
-public class CustomDisplayerController extends TilesAction {
+/**
+ * Execute a ReportDisplayer placed on the context.
+ * @author Richard Smith
+ *
+ */
+public class ReportDisplayerController extends TilesAction
+{
     /**
      * {@inheritDoc}
      */
@@ -31,7 +37,7 @@ public class CustomDisplayerController extends TilesAction {
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
 
-        CustomDisplayer displayer = (CustomDisplayer) context.getAttribute("displayer");
+        ReportDisplayer displayer = (ReportDisplayer) context.getAttribute("displayer");
         ReportObject reportObject = (ReportObject) context.getAttribute("reportObject");
 
         displayer.execute(request, reportObject);

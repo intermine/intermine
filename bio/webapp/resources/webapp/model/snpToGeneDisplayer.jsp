@@ -3,7 +3,7 @@
 
 <html:xhtml/>
 
-  <div class="custom-displayer">
+  <div class="report-displayer">
     <h3 class="overlapping">SNPs to overlapping Genes within 10.0kb</h3>
 
     <table cellspacing="0" class="snpToGenes displayer">
@@ -47,12 +47,12 @@
 
 <script type="text/javascript">
     // no value...
-    jQuery("div.custom-displayer table.displayer.snpToGenes td").each(function() {
+    jQuery("div.report-displayer table.displayer.snpToGenes td").each(function() {
       if (jQuery(this).text() == "[no value]") jQuery(this).text("");
     });
 
     // distance formatting
-    jQuery("div.custom-displayer table.displayer.snpToGenes td.distance").each(function() {
+    jQuery("div.report-displayer table.displayer.snpToGenes td.distance").each(function() {
         var distance = parseInt(jQuery(this).text());
         // under 1kb
         if (distance < 1000) {

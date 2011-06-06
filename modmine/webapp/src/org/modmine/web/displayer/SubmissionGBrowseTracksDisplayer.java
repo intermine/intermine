@@ -19,7 +19,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -33,7 +33,7 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionGBrowseTracksDisplayer extends CustomDisplayer
+public class SubmissionGBrowseTracksDisplayer extends ReportDisplayer
 {
 	public SubmissionGBrowseTracksDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
 		super(config, im);

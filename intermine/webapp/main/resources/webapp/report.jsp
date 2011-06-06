@@ -122,7 +122,7 @@
 
   <%-- shown @ top displayers --%>
   <div id="displayers" class="table">
-    <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="top" />
       <tiles:put name="reportObject" beanName="object" />
     </tiles:insert>
@@ -265,7 +265,7 @@
 
   <%-- shown in a sidebar displayers --%>
   <div id="displayers" class="table">
-    <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="sidebar" />
       <tiles:put name="reportObject" beanName="object" />
     </tiles:insert>
@@ -273,7 +273,7 @@
 </div>
 
 <div class="box grid_10">
-  <tiles:insert page="/reportCustomDisplayers.jsp">
+  <tiles:insert page="/reportDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
   </tiles:insert>

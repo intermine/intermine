@@ -28,7 +28,7 @@ import org.intermine.model.bio.Homologue;
 import org.intermine.model.bio.Organism;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.json.JSONArray;
@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * Displayer for Homology
  * @author Richard Smith
  */
-public class HomologueDisplayer extends CustomDisplayer
+public class HomologueDisplayer extends ReportDisplayer
 {
     protected static final Logger LOG = Logger.getLogger(HomologueDisplayer.class);
 

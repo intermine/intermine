@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -22,7 +22,7 @@ import org.intermine.web.logic.results.ReportObject;
  * displayer for protein structures.  should add protein
  * @author Julie Sullivan
  */
-public class JMOLDisplayer extends CustomDisplayer
+public class JMOLDisplayer extends ReportDisplayer
 {
 
     protected static final Logger LOG = Logger.getLogger(JMOLDisplayer.class);
