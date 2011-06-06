@@ -88,7 +88,7 @@ public class ReportObjectTest extends TestCase
     public void testFieldConfigsNoConfig() throws Exception {
         // setup the object we are testing
         WebConfig newWebConfig = new WebConfig();
-        ReportObject reportObject = new ReportObject(company, newWebConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, newWebConfig, imAPI, null);
 
         // test
         assertEquals(new ArrayList(), reportObject.getFieldConfigs());
@@ -97,7 +97,7 @@ public class ReportObjectTest extends TestCase
     @SuppressWarnings("unchecked")
     public void testGetFieldConfigs() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         List<FieldConfig> fieldConfigs = new ArrayList<FieldConfig>();
         FieldConfig df1 = new FieldConfig();
@@ -117,7 +117,7 @@ public class ReportObjectTest extends TestCase
 
     public void testGetFieldValue() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         // test
         assertEquals("Weyland Yutani", reportObject.getFieldValue("name"));
@@ -143,7 +143,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df3);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         // test
         assertEquals(3, reportObject.getObjectSummaryFields().size());
@@ -161,7 +161,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         // test
         assertEquals(true, reportObject.getObjectSummaryFields().get(0).getValueHasDisplayer());
@@ -179,7 +179,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         // test
         assertEquals("Company.name", reportObject.getObjectSummaryFields().get(0).getPathString());
@@ -200,7 +200,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI);
+        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
 
         // build the map of DisplayField(s) that we want to see in the result
         Map<String, DisplayField> m = new HashMap<String, DisplayField>();
