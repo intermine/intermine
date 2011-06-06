@@ -22,8 +22,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.StopAnalyzer;
-import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
@@ -102,10 +101,7 @@ public class ModMineSearch
 
         try {
             IndexSearcher searcher = new IndexSearcher(ram);
-
-            Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-
+            Analyzer analyzer = new WhitespaceAnalyzer();
             org.apache.lucene.search.Query query;
 
             // pass entire list of field names to the multi-field parser
@@ -341,11 +337,8 @@ public class ModMineSearch
         ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-            writer = new IndexWriter(ram, snowballAnalyzer, true,
+            writer = new IndexWriter(ram, new WhitespaceAnalyzer(), true,
                     IndexWriter.MaxFieldLength.UNLIMITED);
-
             for (Document doc : docs) {
                 try {
                     writer.addDocument(doc);
