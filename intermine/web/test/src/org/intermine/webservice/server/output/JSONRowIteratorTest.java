@@ -208,8 +208,8 @@ public class JSONRowIteratorTest extends TestCase {
         os.setResultsSize(1);
 
         String jsonString = "[" +
-                "{id: 3, class: 'Manager', value: 'David Brent', url: '/objectDetails.do?id=3'}," +
-                "{id: 3, class: 'Manager', value: '39', url: '/objectDetails.do?id=3'}" +
+                "{id: 3, class: 'Manager', value: 'David Brent', url: '/report.do?id=3'}," +
+                "{id: 3, class: 'Manager', value: '39', url: '/report.do?id=3'}" +
                 "]";
         JSONArray expected = new JSONArray(jsonString);
 
@@ -263,8 +263,8 @@ public class JSONRowIteratorTest extends TestCase {
 
         List<String> jsonStrings = Arrays.asList(
                 "[" +
-                "{id: 3, class: 'Manager', value: 'David Brent', url: '/objectDetails.do?id=3'}," +
-                "{id: 3, class: 'Manager', value: '39', url: '/objectDetails.do?id=3'}" +
+                "{id: 3, class: 'Manager', value: 'David Brent', url: '/report.do?id=3'}," +
+                "{id: 3, class: 'Manager', value: '39', url: '/report.do?id=3'}" +
                 "]",
                 "[" +
                 "{value: null, url: null}," +
@@ -311,24 +311,24 @@ public class JSONRowIteratorTest extends TestCase {
 
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add("[" +
-                "{id: 5, class: 'Employee', url: '/objectDetails.do?id=5', value:30}," +
-                "{id: 5, class: 'Employee', url: '/objectDetails.do?id=5', value:'Tim Canterbury'}" +
+                "{id: 5, class: 'Employee', url: '/report.do?id=5', value:30}," +
+                "{id: 5, class: 'Employee', url: '/report.do?id=5', value:'Tim Canterbury'}" +
                 "]");
         jsonStrings.add("[" +
-                "{id: 6, class: 'Employee', url: '/objectDetails.do?id=6', value:32}," +
-                "{id: 6, class: 'Employee', url: '/objectDetails.do?id=6', value:'Gareth Keenan'}" +
+                "{id: 6, class: 'Employee', url: '/report.do?id=6', value:32}," +
+                "{id: 6, class: 'Employee', url: '/report.do?id=6', value:'Gareth Keenan'}" +
                 "]");
         jsonStrings.add("[" +
-                "{id: 7, class: 'Employee', url: '/objectDetails.do?id=7', value:26}," +
-                "{id: 7, class: 'Employee', url: '/objectDetails.do?id=7', value:'Dawn Tinsley'}" +
+                "{id: 7, class: 'Employee', url: '/report.do?id=7', value:26}," +
+                "{id: 7, class: 'Employee', url: '/report.do?id=7', value:'Dawn Tinsley'}" +
                 "]");
         jsonStrings.add("[" +
-                "{id: 8, class: 'Employee', url: '/objectDetails.do?id=8', value:41}," +
-                "{id: 8, class: 'Employee', url: '/objectDetails.do?id=8', value:'Keith Bishop'}" +
+                "{id: 8, class: 'Employee', url: '/report.do?id=8', value:41}," +
+                "{id: 8, class: 'Employee', url: '/report.do?id=8', value:'Keith Bishop'}" +
                 "]");
         jsonStrings.add("[" +
-                "{id: 9, class: 'Employee', url: '/objectDetails.do?id=9', value:28}," +
-                "{id: 9, class: 'Employee', url: '/objectDetails.do?id=9', value:'Lee'}" +
+                "{id: 9, class: 'Employee', url: '/report.do?id=9', value:28}," +
+                "{id: 9, class: 'Employee', url: '/report.do?id=9', value:'Lee'}" +
                 "]");
 
         ResultsRow row1 = new ResultsRow();
@@ -427,31 +427,31 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 11, class: 'Department', value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/objectDetails.do?id=5'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/report.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 11, class: 'Department', value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/objectDetails.do?id=6'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/report.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 13, class: 'Department', value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{id: 9, class: 'Employee', value:'Lee',url:'/objectDetails.do?id=9'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 9, class: 'Employee', value:'Lee',url:'/report.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 13, class: 'Department', value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{id: 10, class: 'Employee', value:'Alex',url:'/objectDetails.do?id=10'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 10, class: 'Employee', value:'Alex',url:'/report.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
@@ -547,35 +547,35 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 11, class: 'Department', value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/objectDetails.do?id=5'}," +
-                "{id: 5, class: 'Employee', value:'30',url:'/objectDetails.do?id=5'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/report.do?id=5'}," +
+                "{id: 5, class: 'Employee', value:'30',url:'/report.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 11, class: 'Department', value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/objectDetails.do?id=6'}," +
-                "{id: 6, class: 'Employee', value:'32',url:'/objectDetails.do?id=6'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/report.do?id=6'}," +
+                "{id: 6, class: 'Employee', value:'32',url:'/report.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 13, class: 'Department', value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{id: 9, class: 'Employee', value:'Lee',url:'/objectDetails.do?id=9'}," +
-                "{id: 9, class: 'Employee', value:'28',url:'/objectDetails.do?id=9'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 9, class: 'Employee', value:'Lee',url:'/report.do?id=9'}," +
+                "{id: 9, class: 'Employee', value:'28',url:'/report.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{id: 1, class: 'Company', value:101,url:'/objectDetails.do?id=1'}," +
-                "{id: 13, class: 'Department', value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{id: 10, class: 'Employee', value:'Alex',url:'/objectDetails.do?id=10'}," +
-                "{id: 10, class: 'Employee', value:'24',url:'/objectDetails.do?id=10'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 10, class: 'Employee', value:'Alex',url:'/report.do?id=10'}," +
+                "{id: 10, class: 'Employee', value:'24',url:'/report.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
