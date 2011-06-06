@@ -58,14 +58,5 @@
     <tiles:put name="noTemplatesMsgKey" value="" />
     <tiles:put name="trail" value="${trail}" />
   </tiles:insert>
-
-<%--
-  <c:if test="${! empty reportObject}">
-    <tiles:insert page="/reportDisplayers.jsp">
-      <tiles:put name="placement" value="${placement}" />
-      <tiles:put name="reportObject" beanName="reportObject" />
-    </tiles:insert>
-  </c:if>
---%>
 </c:if>
 <!-- /reportAspect.jsp -->
