@@ -78,5 +78,10 @@
                 <constraint path="Company.name" op="!=" value="Diffic*" editable="false" code="B"/>
             </query>
         </template>
+        <template name="BrokenPrivate" title="This template should not validate">
+            <query name="BrokenPrivate" model="testmodel" view="Employee.name Employee.age Employee.favouriteColour">
+                <constraint path="Employee.childhoodPet" type="Dog"/>
+            </query>
+        </template>
     </template-queries>
 </userprofile>
