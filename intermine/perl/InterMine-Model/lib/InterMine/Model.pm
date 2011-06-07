@@ -7,10 +7,11 @@ use Carp qw/confess/;
 use Moose::Util::TypeConstraints;
 use XML::Parser::PerlSAX;
 use InterMine::Model::Handler;
+use Time::HiRes qw/gettimeofday/;
 
 use constant TYPE_PREFIX => "InterMine";
 
-our $VERSION = '0.9700';
+our $VERSION = '0.9701';
 
 =head1 NAME
 
@@ -133,6 +134,7 @@ sub _process {
     my $source_arg       = shift;
     my $source_is_string = shift;
 
+    warn "PARSING MODEL " . gettimeofday() if $ENV{DEBUG};
     my $handler = new InterMine::Model::Handler( model => $self );
     my $parser = XML::Parser::PerlSAX->new( Handler => $handler );
 
@@ -146,7 +148,7 @@ sub _process {
     }
 
     $parser->parse( Source => $source );
-
+    warn "FINISHED PARSING MODEL " . gettimeofday() if $ENV{DEBUG};
 }
 
 sub _add_type_constraint_and_coercion {
@@ -171,6 +173,7 @@ use Moose::Meta::Class;
 sub _fix_class_descriptors {
     my $self = shift;
 
+    warn "BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
     for my $class_name (keys %{ $self->{class_hash} } ) {
         $self->_add_type_constraint_and_coercion($class_name);
     }
@@ -183,6 +186,7 @@ sub _fix_class_descriptors {
         $cd->_make_fields_into_attributes();
         $cd->make_immutable;
     }
+    warn "FINISHED BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
 }
 
 sub _get_fields {
