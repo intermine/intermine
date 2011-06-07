@@ -9,16 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
-import org.intermine.api.InterMineAPI;
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
@@ -29,17 +25,16 @@ import org.intermine.web.logic.config.WebConfig;
  * @author radek
  *
  */
-public class ReportObjectTest extends TestCase
+public class ReportObjectTest extends InterMineAPITestCase
 {
 
     private WebConfig webConfig;
-    private InterMineAPI imAPI;
 
     private Company company;
     private Address address;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    public ReportObjectTest() throws Exception {
+        super(null);
 
         // InterMine Objects
         company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -76,19 +71,13 @@ public class ReportObjectTest extends TestCase
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-
-        // ObjectStore
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-
-        // InterMine API
-        imAPI = new InterMineAPI(os, null, null, null, null, null, null);
     }
 
     @SuppressWarnings("unchecked")
     public void testFieldConfigsNoConfig() throws Exception {
         // setup the object we are testing
         WebConfig newWebConfig = new WebConfig();
-        ReportObject reportObject = new ReportObject(company, newWebConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, newWebConfig, im, null);
 
         // test
         assertEquals(new ArrayList(), reportObject.getFieldConfigs());
@@ -97,7 +86,7 @@ public class ReportObjectTest extends TestCase
     @SuppressWarnings("unchecked")
     public void testGetFieldConfigs() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         List<FieldConfig> fieldConfigs = new ArrayList<FieldConfig>();
         FieldConfig df1 = new FieldConfig();
@@ -117,7 +106,7 @@ public class ReportObjectTest extends TestCase
 
     public void testGetFieldValue() throws Exception {
         // setup the object we are testing
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         // test
         assertEquals("Weyland Yutani", reportObject.getFieldValue("name"));
@@ -143,7 +132,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df3);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         // test
         assertEquals(3, reportObject.getObjectSummaryFields().size());
@@ -161,7 +150,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         // test
         assertEquals(true, reportObject.getObjectSummaryFields().get(0).getValueHasDisplayer());
@@ -179,7 +168,7 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         // test
         assertEquals("Company.name", reportObject.getObjectSummaryFields().get(0).getPathString());
@@ -200,23 +189,23 @@ public class ReportObjectTest extends TestCase
         type.addFieldConfig(df1);
         webConfig.addType(type);
 
-        ReportObject reportObject = new ReportObject(company, webConfig, imAPI, null);
+        ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         // build the map of DisplayField(s) that we want to see in the result
         Map<String, DisplayField> m = new HashMap<String, DisplayField>();
-        for (FieldDescriptor fd : imAPI.getModel().getClassDescriptorByName(
+        for (FieldDescriptor fd : im.getModel().getClassDescriptorByName(
                 "org.intermine.model.testmodel.Company").getAllFieldDescriptors()) {
             // Reference
             if (fd.isReference()) {
                 ReferenceDescriptor ref = (ReferenceDescriptor) fd;
-                DisplayReference dr = new DisplayReference(null, ref, webConfig, imAPI.getClassKeys());
+                DisplayReference dr = new DisplayReference(null, ref, webConfig, im.getClassKeys());
                 m.put(fd.getName(), dr);
             }
             // Collection
             if (fd.isCollection()) {
                 Object fieldValue = company.getFieldValue(fd.getName());
                 DisplayCollection dc = new DisplayCollection((Collection<?>) fieldValue,
-                        (CollectionDescriptor) fd, webConfig, null, imAPI.getClassKeys(), null);
+                        (CollectionDescriptor) fd, webConfig, null, im.getClassKeys(), null);
                 m.put(fd.getName(), dc);
             }
         }
