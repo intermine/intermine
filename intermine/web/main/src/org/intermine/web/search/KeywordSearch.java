@@ -1092,8 +1092,7 @@ public final class KeywordSearch
 
     /**
      * loads or creates the lucene index
-     * @param im
-     *            API for accessing object store
+     * @param im API for accessing object store
      * @param path path to store the fsdirectory in
      */
     public static synchronized void initKeywordSearch(InterMineAPI im, String path) {
@@ -1168,12 +1167,10 @@ public final class KeywordSearch
     }
 
     /**
-     * writes index and associated directory to the database using the
-     * metadatamanager
-     * @param os
-     *            intermine objectstore
-     * @param classKeys
-     *            map of classname to key field descriptors (from InterMineAPI)
+     * writes index and associated directory to the database using the metadatamanager.
+     *
+     * @param os intermine objectstore
+     * @param classKeys map of classname to key field descriptors (from InterMineAPI)
      */
     public static void saveIndexToDatabase(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys) {
@@ -1450,8 +1447,16 @@ public final class KeywordSearch
         String queryString = qs;
         // keep strings separated by spaces together
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
-        // replace single quotes with double.  maybe.
+        // i don't know
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
+        // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
+        final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
+            "]", "^", "\"", "~", "*", "?", ":", "\\"};
+        for (String s : specialCharacters) {
+            if (queryString.contains(s)) {
+                queryString = queryString.replaceAll(s, "\\" + s);
+            }
+        }
         return queryString;
     }
 
