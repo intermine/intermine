@@ -93,6 +93,13 @@ public class ResponseUtil
         setNoCache(response);
     }
 
+    public static void setJSONSchemaHeader(HttpServletResponse response,
+            String filename) {
+        setJSONSchemaContentType(response);
+        setFileName(response, filename);
+        setNoCache(response);
+    }
+
     /**
      * Sets the response header and content type for jsonp output
      * @param response Our response to this request
@@ -216,6 +223,14 @@ public class ResponseUtil
      */
     public static void setJSONContentType(HttpServletResponse response) {
         response.setContentType("application/json");
+    }
+
+    /**
+     * Sets the content type to "application/schema+json"
+     * @param response The response we are sending out into the world
+     */
+    public static void setJSONSchemaContentType(HttpServletResponse response) {
+        response.setContentType("application/schema+json");
     }
 
     /**
