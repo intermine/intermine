@@ -34,6 +34,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
@@ -219,16 +220,18 @@ public class ReportObject
             objectSummaryFields.addAll(objectOtherSummaryFields);
 
             // 3. any attributes not configured at all are shown last
-            for (String attName : attributes.keySet()) {
-                if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
-                    ReportObjectField rof = new ReportObjectField(
-                            objectType,
-                            attName,
-                            attributes.get(attName),
-                            null,
-                            false
-                    );
-                    objectSummaryFields.add(rof);
+            if (attributes != null) {
+                for (String attName : attributes.keySet()) {
+                    if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
+                        ReportObjectField rof = new ReportObjectField(
+                                objectType,
+                                attName,
+                                attributes.get(attName),
+                                null,
+                                false
+                        );
+                        objectSummaryFields.add(rof);
+                    }
                 }
             }
 
