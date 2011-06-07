@@ -69,7 +69,7 @@ function trimTable(e) {
           className: 'toggle',
           html: jQuery('<a/>', {
               href: '#',
-              className: 'theme-1-color toggler',
+              className: 'toggler',
               text: 'Show more rows',
               title: 'Show more rows',
               click: function(event) {
@@ -159,7 +159,7 @@ function collapseTable(e, maxCount) {
 
   jQuery('<a/>', {
     href: '#',
-    className: 'theme-1-color toggler',
+    className: 'toggler',
     text: 'Show more rows',
     title: 'Show more rows',
     html: jQuery('<span/>', {
@@ -308,7 +308,7 @@ function showMoreRows(e, round, maxCount) {
     table.parent().parent().find('p.toggle a.toggler').remove();
     jQuery('<a/>', {
       href: '#',
-      className: 'theme-1-color toggler',
+      className: 'toggler',
       text: 'Show more rows',
       title: 'Show more rows',
       click: function(event) {

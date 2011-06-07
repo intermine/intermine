@@ -53,7 +53,7 @@ function loadInlineTemplate(i) {
     error: function(jXHR, textStatus) {
       // on fail append a retry to the parent if not present
       if (jQuery(e).parent().find('p.fail').length == 0) {
-        jQuery(e).parent().append('<p class="fail theme-7-background">Failed to load the data. <a class="theme-1-color" href="#" onclick="return\
+        jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
         toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
       }
     },
@@ -112,7 +112,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
                   }
                 });
                 // add a toggler for more rows
-                table.parent().parent().append('<p class="toggle"><a href="#" class="theme-1-color toggler" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
+                table.parent().parent().append('<p class="toggle"><a href="#" class="toggler" onclick="return showMoreRows(\'' + e + '\', 1);">Show more rows</a></p>');
             }
 
             // fade it in
@@ -127,7 +127,7 @@ function toggleCollectionVisibilityJQuery(placement, field, object_id, trail) {
         error: function(jXHR, textStatus) {
           // on fail append a retry to the parent if not present
           if (jQuery(e).parent().find('p.fail').length == 0) {
-            jQuery(e).parent().append('<p class="fail">Failed to load the data. <a class="theme-1-color" href="#" onclick="return\
+            jQuery(e).parent().append('<p class="fail">Failed to load the data. <a href="#" onclick="return\
             toggleCollectionVisibilityJQuery(\'' + placement + '\',\'' + field + '\',\'' + object_id + '\',\'' + trail + '\');">Try again</a></p>');
           }
         },

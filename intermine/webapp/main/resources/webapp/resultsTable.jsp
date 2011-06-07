@@ -29,8 +29,7 @@
 </script>
 
 <c:set var="colcount" value="0" />
-<table class="results" cellspacing="0" width="100%">
-
+<table class="results-table" cellspacing="0">
   <%-- The headers --%>
   <c:if test="${pagedResults.exactSize > 0}">
   <thead>
@@ -52,53 +51,45 @@
         </c:otherwise>
       </c:choose>
 
-      <th align="center" class="columnHeader theme-3-border theme-5-background">
+      <th id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}">
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
           <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
           <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-               title="${summaryTitle}" class="summary_link theme-1-color"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+               title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
         </c:if>
-        <!-- <div class="column-header-content"> -->
-            <table border="0" cellspacing="0" cellpadding="0" class="column-header-content">
-                <tr>
             <c:if test="${column.selectable && empty inlineTable}">
               <c:set var="disabled" value="false"/>
               <c:if test="${(!empty pagedResults.selectedClass) && (pagedResults.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
               </c:if>
-              <td><html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
+              <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
                              styleClass="selectable"
                              onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
                              disabled="${disabled}">
                 <c:out value="${column.columnId}"/>
-              </html:multibox></td>
+              </html:multibox>
             </c:if>
-            <td>
+
             <!-- Display actual column name -->
             <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
             <c:set var="begin" value="0"/>
             <c:if test="${fn:length(columnDisplayNameList) > 3}">...
                 <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
             </c:if>
-            <span id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}" style="cursor:default;">
-            <em style="font-size:9px;">
-            <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
-              <c:choose>
-                <c:when test="${status2.last}">
-                    </em><br/>${columnNameItem}
-                    <c:set var="fieldName" value="${columnNameItem}"/>
-                </c:when>
-                <c:otherwise>
-                    ${columnNameItem} &gt;
-              </c:otherwise>
-              </c:choose>
-            </c:forEach>
-            <!-- ${fn:length(columnDisplayNameList)}:${columnDisplayName} -->
+            <span class="path">
+            	<c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
+              		<c:choose>
+                		<c:when test="${status2.last}">
+                    		</span>${columnNameItem}
+                    		<c:set var="fieldName" value="${columnNameItem}"/>
+                		</c:when>
+                		<c:otherwise>
+                    		${columnNameItem} &gt;
+              			</c:otherwise>
+              		</c:choose>
+            	</c:forEach>
             <im:typehelp type="${column.path}" fullPath="true"/>
-            </span>
-            </td></tr></table>
-        <!-- </div> -->
       </th>
     </c:forEach>
   </tr>
@@ -120,7 +111,7 @@
       </c:set>
 
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
-        <tr class="bodyRow <c:out value="${rowClass}"/>">
+        <tr class="<c:out value="${rowClass}"/>">
 
         <%-- If a whole column is selected, find the ResultElement.id from the selected column, other columns with the same ResultElement.id may also need to be highlighted --%>
         <c:if test="${pagedResults.allSelected != -1}">
@@ -157,7 +148,7 @@
                   </c:choose>
 
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}"> theme-6-background theme-3-border</c:if>" rowspan="${subRow[column.index].rowspan}">
+                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}"> alt</c:if>" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
                     <c:set var="disabled" value="false"/>
                     <c:if test="${(!empty pagedResults.selectedClass) && ((pagedResults.selectedClass != resultElement.type)&&(pagedResults.selectedClass != column.typeClsString) && pagedResults.selectedColumn != column.index)}">
@@ -168,7 +159,6 @@
                       <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
                         <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
                       </c:if>
-                      <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.type}" rowspan="${subRow[column.index].rowspan}">--%>
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                            styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}"
@@ -189,7 +179,7 @@
               </c:when>
               <c:otherwise>
                 <%-- add a space so that IE renders the borders --%>
-                <td class="<c:if test="${status.count % 2 == 0}">theme-6-background theme-3-border</c:if>">&nbsp;</td>
+                <td class="<c:if test="${status.count % 2 == 0}">alt</c:if>">&nbsp;</td>
               </c:otherwise>
             </c:choose>
           </c:forEach>
@@ -234,7 +224,7 @@
     </c:if>
   </c:if>
 
-  <div>
+  <div class="selected-fields">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
   <c:choose>
     <c:when test="${empty inlineTable}">
@@ -297,7 +287,7 @@
 </table>
 
 <c:if test="${empty bagName && empty inlineTable}">
-   <div style="margin-top: 10px;">
+   <div>
    <tiles:insert name="paging.tile">
      <tiles:put name="resultsTable" beanName="pagedResults" />
      <tiles:put name="currentPage" value="results" />

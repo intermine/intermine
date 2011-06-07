@@ -13,8 +13,8 @@
 
 <c:if test="${!empty listOfUnplacedInlineLists}">
   <c:forEach items="${listOfUnplacedInlineLists}" var="list" varStatus="status">
-    <div class='box <c:if test="${list.size == 0}">gray</c:if>'>
-      <h3 class="theme-5-background theme-1-border">
+    <div class='<c:if test="${list.size == 0}">gray</c:if>'>
+      <h3>
         <c:if test="${IS_SUPERUSER}">
           <span class="tag-editor">
             <c:set var="descriptor" value="${list.descriptor}" />
@@ -30,7 +30,7 @@
         <c:choose>
           <c:when test="${list.showLinksToObjects}">
             <c:forEach items="${list.items}" var="item" varStatus="status">
-              <a class="theme-1-color" href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}"
+              <a href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}"
                  title="Show '${item.value}' detail">${item.value}</a><c:if test="${status.count < list.size}">, </c:if>
             </c:forEach>
           </c:when>
@@ -42,7 +42,7 @@
         </c:choose>
     </c:if>
     </div>
-    <div style="clear:both;">&nbsp;</div>
+    <div class="clear"></div>
   </c:forEach>
 </c:if>
 

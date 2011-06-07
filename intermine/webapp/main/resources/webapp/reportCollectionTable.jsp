@@ -17,12 +17,12 @@
 
     <c:choose>
     <c:when test="${true}">
-      <table border="0" cellspacing="0" class="refSummary" align="left">
-        <thead style="text-align: center">
+      <table>
+        <thead>
           <tr>
-            <c:if test="${inlineResultsTable.hasMoreThanOneType}"><td class="theme-5-background theme-3-border">Class</td></c:if>
+            <c:if test="${inlineResultsTable.hasMoreThanOneType}"><th>Class</th></c:if>
             <c:forEach items="${inlineResultsTable.tableFieldConfigs}" var="fc">
-              <td class="theme-5-background theme-3-border">${fc.fieldExpr}</td>
+              <th>${fc.fieldExpr}</th>
             </c:forEach>
           </tr>
         </thead>
@@ -34,7 +34,7 @@
                 <c:when test="${!empty(resultElementRow.items)}">
                   <c:forEach items="${resultElementRow.items}" var="resultElementColumn" varStatus="rowStatus">
                     <c:if test="${rowStatus.count == 1 && inlineResultsTable.hasMoreThanOneType}">
-                      <td class="type <c:if test="${status.count % 2 == 0}">theme-3-border theme-6-background</c:if>">
+                      <td class="type <c:if test="${status.count % 2 == 0}">alt</c:if>">
                           ${resultElementRow.className}
                       </td>
                     </c:if>
@@ -44,12 +44,12 @@
                           <c:when test="${!resultElementColumn.hasDisplayer}">
                             <c:choose>
                               <c:when test="${resultElementColumn.isKeyField}">
-                                <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>
-                                <a class="theme-1-color" href="report.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
+                                <td<c:if test="${status.count % 2 == 0}"> class="alt"</c:if>>
+                                <a href="report.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
                                 </td>
                               </c:when>
                               <c:otherwise>
-                                <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>
+                                <td<c:if test="${status.count % 2 == 0}"> class="alt"</c:if>>
                                   <c:choose>
                                     <c:when test="${resultElementColumn.field != null}">
                                       ${resultElementColumn.field}
@@ -63,7 +63,7 @@
                             </c:choose>
                           </c:when>
                           <c:otherwise>
-                            <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>
+                            <td<c:if test="${status.count % 2 == 0}"> class="alt"</c:if>>
                               <c:set var="interMineObject" value="${resultElementColumn.object}" scope="request"/>
                               <tiles:insert page="${resultElementColumn.fieldConfig.displayer}">
                                 <tiles:put name="expr" value="${resultElementColumn.fieldConfig.fieldExpr}" />
@@ -73,7 +73,7 @@
                         </c:choose>
                       </c:when>
                       <c:otherwise>
-                        <td<c:if test="${status.count % 2 == 0}"> class="theme-3-border theme-6-background"</c:if>>&nbsp;</td>
+                        <td<c:if test="${status.count % 2 == 0}"> class="alt"</c:if>>&nbsp;</td>
                       </c:otherwise>
                     </c:choose>
                   </c:forEach>

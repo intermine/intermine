@@ -27,8 +27,8 @@
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
 
         <%-- ############# --%>
-        <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3 class="theme-1-border theme-5-background">
+        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table">
+        <h3>
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
               <c:set var="descriptor" value="${collection.descriptor}" />
@@ -38,16 +38,9 @@
               </tiles:insert>
             </span>
           </c:if>
-        <html:link
-          styleClass="getTable"
-          linkName="${placement}_${fieldName}"
-          onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
-          action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-          <span class="collectionField theme-1-color">
-            ${collection.size}&nbsp;${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
-          </span>
+          ${collection.size}&nbsp;${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
-        </html:link></h3>
+        </h3>
         <div class="clear"></div>
         <%-- ############# --%>
 
@@ -67,7 +60,7 @@
           </div>
 
           <p class="in_table" style="display:none;">
-            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
               Show all in a table »
             </html:link>
           </p>

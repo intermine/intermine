@@ -29,21 +29,21 @@
     <thead>
       <tr>
         <%--<th>Gene</th>--%>
-        <th class="theme-5-background theme-3-border">Transcript</th>
+        <th>Transcript</th>
         <c:if test="${settings.hasExons}">
-          <th class="theme-5-background theme-3-border">Exons</th>
+          <th>Exons</th>
         </c:if>
         <c:if test="${settings.hasIntrons}">
-          <th class="theme-5-background theme-3-border">Introns</th>
+          <th>Introns</th>
          </c:if>
         <c:if test="${settings.hasFivePrimeUTRs}">
-          <th class="theme-5-background theme-3-border">5' UTR</th>
+          <th>5' UTR</th>
         </c:if>
         <c:if test="${settings.hasThreePrimeUTRs}">
-          <th class="theme-5-background theme-3-border">3' UTR</th>
+          <th>3' UTR</th>
         </c:if>
         <c:if test="${settings.hasCDSs}">
-          <th class="theme-5-background theme-3-border">CDSs</th>
+          <th>CDSs</th>
         </c:if>
       </tr>
     </thead>
@@ -70,7 +70,7 @@
 
           <c:if test="${settings.hasExons}">
 
-            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
+            <td class='main <c:if test="${color_switch}">alt</c:if>'>
               <c:set var="count" value="0" scope="page" />
               <c:if test="${!empty geneModel.exons}">
 
@@ -100,7 +100,7 @@
             </td>
           </c:if>
           <c:if test="${settings.hasIntrons}">
-            <td class='<c:if test="${color_switch}">theme-6-background</c:if>'>
+            <td class='<c:if test="${color_switch}">alt</c:if>'>
               <c:if test="${!empty geneModel.introns}">
 
                 <table cellspacing="0">
@@ -128,7 +128,7 @@
             </td>
           </c:if>
           <c:if test="${settings.hasFivePrimeUTRs}">
-            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
+            <td class='main<c:if test="${color_switch}"> alt</c:if>'>
 
                 <c:choose>
                   <c:when test="${color_switch}">
@@ -152,7 +152,7 @@
             </td>
           </c:if>
           <c:if test="${settings.hasThreePrimeUTRs}">
-            <td class='<c:if test="${color_switch}">theme-6-background</c:if>'>
+            <td class='<c:if test="${color_switch}">alt</c:if>'>
 
                 <c:choose>
                   <c:when test="${color_switch}">
@@ -178,7 +178,7 @@
             </td>
           </c:if>
           <c:if test="${settings.hasCDSs}">
-            <td class='main theme-3-border <c:if test="${color_switch}">theme-6-background</c:if>'>
+            <td class='main<c:if test="${color_switch}"> alt</c:if>'>
 
                 <c:choose>
                   <c:when test="${color_switch}">
