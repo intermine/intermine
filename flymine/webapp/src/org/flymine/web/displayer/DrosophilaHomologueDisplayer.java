@@ -44,7 +44,7 @@ public class DrosophilaHomologueDisplayer extends ReportDisplayer
         "virilis", "mojavensis", "willistoni", "persimilis", "pseudoobscura", "ananassae",
         "erecta", "yakuba", "melanogaster", "sechellia", "simulans"});
     private static final String HOMOLOGY_DATASET = "Drosophila 12 Genomes Consortium homology";
-
+    private static final String GENUS = "Drosophila";
     /**
      * @param config report object config
      * @param im intermine API
@@ -67,11 +67,11 @@ public class DrosophilaHomologueDisplayer extends ReportDisplayer
         }
 
         Gene gene = (Gene) reportObject.getObject();
-        boolean isRecentred = !"melanogaster".equals(gene.getOrganism().getSpecies());
-        String thisSpecies = gene.getOrganism().getSpecies();
-        // show displayer on D. melanogaster report pages only
-        if (thisSpecies.equals("melanogaster")) {
-            request.setAttribute("willBeDisplayed", true);
+        boolean isRecentred = !GENUS.equals(gene.getOrganism().getGenus());
+        String thisSpecies = gene.getOrganism().getGenus();
+        // show displayer on Drosophila report pages only
+        if (GENUS.equals(thisSpecies)) {
+            request.setAttribute("willBeDisplayed", Boolean.TRUE);
 
             if (isRecentred) {
                 request.setAttribute("origSymbol", gene.getSymbol());
