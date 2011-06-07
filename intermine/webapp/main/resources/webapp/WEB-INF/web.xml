@@ -363,6 +363,20 @@
     <servlet-name>ws-possible-values</servlet-name>
     <url-pattern>/service/path/values</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-schemata</servlet-name>
+    <servlet-class>org.intermine.webservice.server.SchemaServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-schemata</servlet-name>
+    <url-pattern>/service/schema/*</url-pattern>
+  </servlet-mapping>
 <!-- ================================================================================= -->
 
   <session-config>
