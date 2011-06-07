@@ -50,8 +50,8 @@
 
 <c:forEach items="${object.headerInlineLists}" var="list" varStatus="outerStatus">
   <c:if test="${list.size > 0}">
-    <div id="header-inline-list-${outerStatus.count}">
-      <ul class="inline-list">
+    <div class="inline-list" id="header-inline-list-${outerStatus.count}">
+      <ul>
         <li><span class="name">${list.prefix}</span>:</li>
         <c:choose>
           <c:when test="${list.showLinksToObjects}">
@@ -70,7 +70,6 @@
         </c:choose>
       </ul>
     </div>
-    <div class="clear"></div>
 
     <%-- give some leeway of 20 chars as "Show more" takes up some space too --%>
     <c:if test="${list.lineLength > 0 && list.length - 20 > list.lineLength}">

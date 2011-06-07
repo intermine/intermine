@@ -41,9 +41,10 @@
 	                </td>
 	                <td>
 	                  <c:set var="evidence" value="${entry.value}" />
-	                  <c:forEach items="${entry.value}" var="evidence">
+	                  <c:forEach items="${entry.value}" var="evidence" varStatus="status">
 	                    <c:out value="${evidence}"/>
 	                    <c:if test="${!empty codes[evidence] }">&nbsp;<img alt="?" title="${codes[evidence]}" src="images/icons/information-small-blue.png" /></c:if>
+	                    <c:if test="${not status.last}">&nbsp;</c:if>
 	                  </c:forEach>
 	                </td>
 	              </tr>

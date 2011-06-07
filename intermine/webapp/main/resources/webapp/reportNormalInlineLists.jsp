@@ -13,7 +13,7 @@
 <c:forEach items="${mapOfInlineLists}" var="lists">
   <c:if test="${lists.key == placement}">
     <c:forEach items="${lists.value}" var="list" varStatus="status">
-      <div class='<c:if test="${list.size == 0}">gray</c:if>'>
+      <div class="inline-list<c:if test="${list.size == 0}"> gray</c:if>">
         <h3>
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
@@ -27,22 +27,23 @@
           ${list.size}&nbsp;${list.prefix}
         </h3>
         <c:if test="${list.size > 0}">
-          <c:choose>
-            <c:when test="${list.showLinksToObjects}">
-              <c:forEach items="${list.items}" var="item" varStatus="status">
-                <a href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}"
-                title="Show '${item.value}' detail">${item.value}</a><c:if test="${status.count < list.size}">, </c:if>
-              </c:forEach>
-            </c:when>
-            <c:otherwise>
-              <c:forEach items="${list.items}" var="item" varStatus="status">
-                ${item.value}<c:if test="${status.count < list.size}">, </c:if>
-              </c:forEach>
-            </c:otherwise>
-          </c:choose>
+          <ul>
+	          <c:choose>
+	            <c:when test="${list.showLinksToObjects}">
+	              <c:forEach items="${list.items}" var="item" varStatus="status">
+	                <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />report.do?id=${item.id}"
+	                title="Show '${item.value}' detail">${item.value}</a><c:if test="${status.count < list.size}">, </c:if></li>
+	              </c:forEach>
+	            </c:when>
+	            <c:otherwise>
+	              <c:forEach items="${list.items}" var="item" varStatus="status">
+	                <li>${item.value}<c:if test="${status.count < list.size}">, </c:if></li>
+	              </c:forEach>
+	            </c:otherwise>
+	          </c:choose>
+          </ul>
         </c:if>
       </div>
-      <div class="clear"></div>
     </c:forEach>
   </c:if>
 </c:forEach>

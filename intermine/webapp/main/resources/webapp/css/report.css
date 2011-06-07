@@ -9,7 +9,6 @@ ul { list-style-type:none; }
 /* body */
 html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-serif; }
 .container_12 { font-size:12px; }
-h3 { font-size:14px; border-top:1px solid; margin-bottom:6px; padding-left:6px; }
 h2 { margin-bottom:10px; }
 
 /* report page */
@@ -26,12 +25,13 @@ h2 { margin-bottom:10px; }
     #object_header table.fields { width:50%; }
 
     /* header inline lists */
-    #object_header ul.inline-list { margin-left:3px; }
+	#object_header div.inline-list { margin:0; }
+    #object_header div.inline-list ul { margin-left:3px; }
 
     /* header link */
     #headerLink { position:absolute; top:0; right:0; z-index:3; font-size:12px; }
 
-    /* top dispayers */
+    /* top displayers */
     #object_header #displayers.table { margin:0; }
         #object_header #displayers.table h3 { border:0; }
 
@@ -88,6 +88,8 @@ div.container_12 { padding-top:30px; }
 .sidebar #external-links ul li ul li { ; }
 .sidebar #external-links ul li ul li ul li { display:inline; }
 .sidebar #external-links ul li.mine { margin-bottom:5px; }
+.sidebar #external-links li.external a,
+.sidebar #external-links ul li a { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
 
 /* a loading elsewhere */
 #gBrowse .loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; margin:0 auto; min-width:200px; min-height:20px; display:block; }
@@ -95,13 +97,16 @@ div.container_12 { padding-top:30px; }
 img.tinyQuestionMark { padding-bottom:4px; cursor:help; }
 .listsObjectIsIn { padding-top: 2px; padding-left: 10px; }
 
-/* external links */
-li.external a, #intermine_links ul li a { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
-
 /* object not found */
 #pagecontent #wrap { padding:20px; }
 #pagecontent #wrap p, #pagecontent #wrap ol { font-size:18px; line-height:30px; margin:20px 0; }
 #pagecontent #wrap a { color:#004499; text-decoration:underline; }
+
+/* FlyAtlas options */
+form#fly-atlas-options table { width:100%; }
+form#fly-atlas-options table tr.even td { border-width:1px 0; border-style:solid; }
+form#fly-atlas-options table tr td.border-left { border-left:1px solid; }
+form#fly-atlas-options table tr td { padding:6px; }
 
 /* resizing on small screens */
 @media only screen and (max-width:1440px) {

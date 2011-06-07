@@ -5,15 +5,15 @@
 <%-- one element hash map --%>
 <c:forEach var="type" items="${response}">
   <c:if test="${not empty type}">
-    <div class="custom-displayer">
+    <div class="collection-table">
       <h3 class="uniprot">Curated comments from UniProt</h3>
-      <table cellspacing="0" class="displayer">
+      <table>
 
           <c:choose>
             <%-- displayer for gene page --%>
             <c:when test="${type.key == 'gene'}">
 				<thead>
-					<tr>
+			      <tr>
 	                <th>Type</th>
 	                <th>Comment</th>
 	                <th>Proteins</th>
@@ -29,7 +29,7 @@
 		                    <c:choose>
 		                      <c:when test="${bag.key == 'type'}">
 		                        <!-- comment 'type' -->
-		                        <td class="comment-type ${tdStyle}">
+		                        <td class="class ${tdStyle}">
 		                          ${bag.value}
 		                        </td>
 		                        <td class="text ${tdStyle}">${comment.key}</td>
