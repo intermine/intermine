@@ -208,30 +208,6 @@ table.dbsources td {
 table.dbsources td.leftcol {
   border-left: 1px solid #000;}
 
-/* =RESULTS TABLES
------------------------*/
-table.results tr th {
-    background-color: #000;font-size: 12px;color:#FFF;
-}
-table.results tr td.highlightCell, table.results tr.even td.highlightCell {
-   border-right:1px solid #FFF;background-color: #888;}
-
-table.results tfoot tr td {
-  color:#FFF;
-  background-color: #000;
-}
-
-table.results tr.even TD{
-  background-color: #d3e6cf;}
-
-table.results tr.odd TD{
-  border-right:1px solid #d3e6cf;
-  border-bottom:1px solid #d3e6cf;}
-
-table.results tr td.highlightObject {
-  background-color: #888;
-}
-
 /*    .columnHeader {
       background: #353B40;
     }*/

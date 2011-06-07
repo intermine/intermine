@@ -8,10 +8,10 @@
 
     <table cellspacing="0" class="snpToGenes displayer">
       <tr>
-        <th class="theme-5-background theme-3-border">Gene Primary Identifier</th>
-        <th class="theme-5-background theme-3-border">Gene name</th>
-        <th class="theme-5-background theme-3-border">Gene Symbol</th>
-        <th class="theme-5-background theme-3-border" colspan="2">Relative to Gene</th>
+        <th>Gene Primary Identifier</th>
+        <th>Gene name</th>
+        <th>Gene Symbol</th>
+        <th colspan="2">Relative to Gene</th>
       </tr>
       <c:forEach var="row" items="${list}" varStatus="status">
         <tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">

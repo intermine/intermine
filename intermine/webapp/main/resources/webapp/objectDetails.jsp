@@ -155,50 +155,7 @@
 
 <div class="container_12">
 
-<%--
-<p class="description grid_12"><img
-  src="model/images/report_page/question-mark.png" alt="info">Summary
-represents a lorem ipsum dolor sit amet nunc eros felis, porta quis
-hendrerit sit amet, convallis in ipsum. Cras congue, nisi non volutpat
-scelerisque, augue nibh posuere dui, at tristique augue ante at velit.
-Vivamus arcu eros, tristique eu imperdiet a, mollis sed dui. Ut blandit,
-arcu non condimentum porta, quam lacus porttitor eros.</p>
-
-<div class="clear">&nbsp;</div>
-
-    <div class="box grid_8">
-        <h3>Quick Links</h3>
-        <div class="inner">
-            <ul id="quick_links" class="quick_links">
-                <!-- <li><a href="#"><span class="left">&nbsp;</span><strong>Graphs</strong><span class="right">&nbsp;</span></a></li> -->
-            </ul>
-            <script type="text/javascript">
-              jQuery(document).ready(function() {
-                jQuery("div.loadOnScroll").each(function(index) {
-                    // fetch the text from the title
-                    var text = jQuery(this).find('h3').text();
-                    // split it on a space after removing unwanted whitespace
-                    var textArray = text.replace(/^\s*|\s*$/g,'').split(" ");
-                    // fetch the amount as the first value
-                    var amount = textArray[0];
-                    var textTitle = '';
-                    // traverse the rest of the text for the title
-                    for (i = 1; i < textArray.length; i++) {
-                        textTitle += textArray[i];
-                    }
-                    // finally create an anchor
-                    var anchor = '/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?<c:out value="${pageContext.request.queryString}" />'
-                      + '#' + jQuery(this).find('h3').find('a').attr('name');
-
-                    // create the list item
-                    jQuery("#quick_links").append('<li><a href="' + anchor + '"><span class="left">&nbsp;</span>\
-                          <strong>' + textTitle + '</strong>' + amount + '<span class="right">&nbsp;</span></a></li>')
-                });
-              });
-            </script>
-        </div>
-    </div>
-    --%> <c:set value="${fn:length(CATEGORIES)}" var="aspectCount" /> <c:set
+<c:set value="${fn:length(CATEGORIES)}" var="aspectCount" /> <c:set
   var="templateIdPrefix" value="objectDetailsTemplate${objectType}" /> <c:set
   var="miscId" value="objectDetailsMisc${objectType}" /> <%-- All other references and collections --%>
 <script type="text/javascript">

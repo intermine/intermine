@@ -31,13 +31,13 @@
 </c:if>
 
 <div class="template table">
-  <div class="templateDetails">
+  <div>
     <span class="${cssClass}" id="label_${fn:replace(uid, ":", "_")}">
       <im:templateLine scope="${scope}" templateQuery="${templateQuery}"
                        interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" />
       <span id="count_${uid}" class="templateResCount"></span>
     </span>
-    <p class="description theme-1-color theme-5-background" style="display:none;">${templateQuery.description}</p>
+    <p class="description" style="display:none;">${templateQuery.description}</p>
   </div>
 
   <script type="text/javascript">

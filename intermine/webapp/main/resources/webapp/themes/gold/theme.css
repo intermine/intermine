@@ -131,59 +131,6 @@ div#filter_tool_bar {
     font-size:0.8em; background:#362923; color:white;}
 
 
-/* =RESULTS TABLES
------------------------*/
-table.results tr th {
-    background-color: #362923;font-size: 12px;color:#FFF;
-}
-table.results tr td.highlightCell, table.results tr.even td.highlightCell {
-   border-right:1px solid #FFF;background-color: #63BBDF;}
-
-table.results tfoot tr td {
-  color:#FFF;
-  background-color: #362923;
-}
-
-table.results tr.even TD{
-  background-color: #FFF5B2;}
-
-table.results tr.odd TD{
-  border-right:1px solid #FFF5B2;
-  border-bottom:1px solid #FFF5B2;}
-
-table.results tr.stepE TD{
-  background-color: #FFF5B2;}
-
-table.results tr.stepO TD{
-  border-right:1px solid #FFF5B2;
-  border-bottom:1px solid #FFF5B2;}
-
-
-table.results tr.stepOeven TD{
-  background-color: #FFF;
-  border-right:1px solid #F0F8FF;
-  border-bottom:1px solid #F0F8FF;}
-
-table.results tr.stepOodd TD{
-  background-color: #F0F8FF;
-  border-right:1px solid #FFF;
-  border-bottom:1px solid #FFF;}
-
-table.results tr.stepEodd TD{
-  background-color: #FFF5B2;}
-
-table.results tr.stepEeven TD{
-  background-color: #63B7DE;
-  border-right:1px solid #FFF5B2;
-  border-bottom:1px solid #FFF5B2;}
-
-
-
-table.results tr td.highlightObject {
-  background-color: #ee6;
-}
-
-
 /* =TOOLBOX RESULTS
 --------------------------*/
 
@@ -344,52 +291,10 @@ div.heading.results #tool_bar_div ul#button_bar li a { background:none !importan
 /* report page */
 #header_wrap { background-color:#F7F1EE; background-image:url("report/header-bg.png"); }
 #object_header h1.title span { color:#5c0075; }
-#object_header div.box h3 { background:#F0E3F7; }
-#object_header div.list.box span { color:#662F2E; }
 #fixed-menu { background:#94854B; }
 #toc-menu-wrap { background:#94854B; }
 #fixed-menu span, #toc-menu-wrap span { color:#FFF; }
 #menu-target { background:#F7F1EE; }
 #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#A32220; background:#F7F1EE; }
-div.box h2 { color:#000; }
-div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#F7F1EE; color:#662F2E; border-top-color:#662F2E; }
-div.box a { color:#662F2E; }
-div.box div.inner { border-color:#FCFAFD; }
-div.box div.inner h4 { background-color:#FCFAFD; }
-div.table h3 { text-shadow: 1px 1px 1px #FFF; }
 #in-lists div.heading { background:#F7F1EE !important; border-color:#662F2E; color:#662F2E !important; text-shadow:1px 1px 1px #FFF; }
-div.feature table td.border-left { border-left-color:#F7F5DA !important; }
-.container_12 .compact-table td { border-color:#DCC8E2; }
-.container_12 .compact-table a:hover { color:#A32220; }
 .container_12 .highlight { background-color: #FFF3D3; }
-div.box div.inner { border-color:#FCFAFD; }
-div.box div.inner h4 { background-color:#FCFAFD; }
-
-/* theme color classes (used on Report page currently) */
-div.table .theme-1-color, div.box .theme-1-color { color:#662F2E !important; } /* Buccaneer */
-div.table .theme-1-background, div.box .theme-1-background { background-color:#662F2E !important; } /* Buccaneer */
-div.table .theme-1-border, div.box .theme-1-border { border-color:#662F2E !important; } /* Buccaneer */
-
-div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
-div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
-div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
-
-div.table .theme-3-color, div.box .theme-3-color { color:#F7F5DA !important; } /* Coconut Cream */
-div.table .theme-3-background, div.box .theme-3-background { background-color:#F7F5DA !important; } /* Coconut Cream */
-div.table .theme-3-border, div.box .theme-3-border { border-color:#F7F5DA !important; } /* Coconut Cream */
-
-div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
-div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
-div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
-
-div.table .theme-5-color, div.box .theme-5-color { color:#F7F1EE !important; } /* Dawn Pink */
-div.table .theme-5-background, div.box .theme-5-background { background-color:#F7F1EE !important; } /* Dawn Pink */
-div.table .theme-5-border, div.box .theme-5-border { border-color:#F7F1EE !important; } /* Dawn Pink */
-
-div.table .theme-6-color, div.box .theme-6-color { color:#FEFEF6 !important; } /* Hint of Yellow */
-div.table .theme-6-background, div.box .theme-6-background { background-color:#FEFEF6 !important; } /* Hint of Yellow */
-div.table .theme-6-border, div.box .theme-6-border { border-color:#FEFEF6 !important; } /* Hint of Yellow */
-
-div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
-div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
-div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */

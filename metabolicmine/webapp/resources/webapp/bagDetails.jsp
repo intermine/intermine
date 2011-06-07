@@ -259,7 +259,7 @@
 
     <%-- convert to a different type & orthologues --%>
     <div class="box grid_4" id="convertList">
-      <div class="feature theme-1-border convert">
+      <div class="feature convert">
         <h3>Convert to a different type</h3>
         <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
         <html:hidden property="bagName" value="${bag.name}"/>
@@ -274,7 +274,7 @@
 
     <%-- download list --%>
     <div class="box grid_4" id="download">
-      <div class="feature theme-1-border">
+      <div class="feature">
         <h3>Download</h3>
         <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
         <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
@@ -284,7 +284,7 @@
 
     <%-- external links --%>
     <div class="box grid_4" id="externalLinks">
-      <div class="feature theme-1-border">
+      <div class="feature">
       <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
         <html:hidden property="bagName" value="${bag.name}"/>
         <tiles:insert page="/bagDisplayers.jsp">
@@ -454,7 +454,7 @@
 
     <c:forEach items="${widgets}" var="widget">
     <div class="box">
-      <div class="feature theme-1-border">
+      <div class="feature">
         <tiles:insert name="widget.tile">
           <tiles:put name="widget" beanName="widget"/>
           <tiles:put name="bag" beanName="bag"/>
@@ -473,7 +473,7 @@
 
     <%-- templates --%>
     <div class="box grid_12">
-      <div class="feature theme-1-border">
+      <div class="feature">
         <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
         <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
         <h3>Template results for '${bag.name}' <span>(<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></h3>

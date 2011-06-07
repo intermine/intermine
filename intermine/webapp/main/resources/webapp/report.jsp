@@ -113,11 +113,9 @@
 
     <%-- header Inline Lists --%>
     <c:if test="${object.hasHeaderInlineLists}">
-      <div class="box">
-        <tiles:insert page="/reportHeaderInlineLists.jsp">
-          <tiles:put name="object" beanName="object" />
-        </tiles:insert>
-      </div>
+      <tiles:insert page="/reportHeaderInlineLists.jsp">
+        <tiles:put name="object" beanName="object" />
+      </tiles:insert>
     </c:if>
 
   <%-- shown @ top displayers --%>
@@ -131,7 +129,7 @@
     <%-- permalink --%>
     <%-- <p class="share">Share this page: <a href="${stableLink}">${stableLink}</a></p> --%>
     <div id="share">
-      <a class="share" href="#"></a>
+      <a></a>
       <div class="popup">
         <span class="close"></span>
         Paste the following link
@@ -143,14 +141,10 @@
           jQuery("#object_header #share div.popup").show();
           // select
           jQuery("#object_header #share div.popup").find('input').select();
-
-          return false;
         });
         jQuery('#object_header #share div.popup span.close').click(function() {
           // hide
           jQuery("#object_header #share div.popup").hide();
-
-          return false;
         });
       </script>
   </div>
@@ -250,7 +244,7 @@
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div style="float:right;" class="box grid_2 sidebar">
+<div style="float:right;" class="grid_2 sidebar">
   <div id="in-lists">
     <tiles:insert name="reportInList.tile">
       <tiles:put name="object" beanName="object"/>
@@ -259,8 +253,10 @@
 
   <c:set var="object_bk" value="${object}"/>
   <c:set var="object" value="${reportObject.object}" scope="request"/>
-  <tiles:insert name="otherMinesLink.tile" />
-  <tiles:insert name="attributeLinks.tile" />
+  <div id="external-links">
+	  <tiles:insert name="otherMinesLink.tile" />
+	  <tiles:insert name="attributeLinks.tile" />
+  </div>
   <c:set var="object" value="${object_bk}"/>
 
   <%-- shown in a sidebar displayers --%>
@@ -272,7 +268,7 @@
   </div>
 </div>
 
-<div class="box grid_10">
+<div class="grid_10">
   <tiles:insert page="/reportCustomDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />

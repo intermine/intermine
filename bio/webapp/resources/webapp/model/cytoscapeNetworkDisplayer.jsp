@@ -49,21 +49,20 @@
 <div id="interactions-wrap">
   <div class="inside">
   <div id="cwtabsbyside">
-    <ul class="theme-3-border theme-6-background">
-      <li class="theme-3-border"><a class="active" href="#tabs-controls">Controls</a></li>
-      <%--<li class="theme-3-border"><a href="#tabs-data">Data</a></li>--%>
-      <li class="theme-3-border last"><a href="#tabs-help">Help</a></li>
+    <ul>
+      <li><a class="active" href="#tabs-controls">Controls</a></li>
+      <li class="last"><a href="#tabs-help">Help</a></li>
     </ul>
     <div id="tabs-controls">
       <div>
-        <fieldset class="theme-3-border">
+        <fieldset>
               <label>Show:</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
         </fieldset>
 
-        <fieldset class="theme-3-border theme-6-background">
+        <fieldset>
               <label>Export network as:</label>
               <select id="exportoptions">
                   <option value="xgmml" selected>XGMML</option>
@@ -75,11 +74,11 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
 
-        <fieldset class="theme-3-border">
+        <fieldset>
           <label class="fakelink" onclick="window.open(project_baseurl+ '/' + project_path + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
 
-        <fieldset class="theme-3-border theme-6-background">
+        <fieldset>
           <label>View interaction data in a table</lable>
           <input type="button" id="toggleTable" value="Toggle">
         </fieldset>
@@ -87,7 +86,7 @@
     </div>
     <div id="tabs-data"></div>
     <div id="tabs-help">
-      <div id="legend" class="theme-3-border">
+      <div id="legend">
         <p>Interaction Type</p>
         <div id="legendall"></div>
       </div>
@@ -154,7 +153,7 @@
     <a class="toggler" style="float:right;" href="#"><span>Show more rows</span></a>
   </p>
   <p class="in_table">
-    <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
+    <html:link action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
       Show all in a table »
     </html:link>
   </p>

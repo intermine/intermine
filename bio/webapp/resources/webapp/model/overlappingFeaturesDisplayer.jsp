@@ -9,11 +9,11 @@
 
 <div class="custom-displayer" id="overlapping-features">
   <h3>Overlapping Features</h3>
-  <p class="desc theme-5-background">
+  <p class="desc">
     <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
     Genome features that overlap coordinates of this ${reportObject.type}
   </p>
-  <p class="switchers theme-5-background">
+  <p class="switchers">
     <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
     <%-- TODO: potential fail if key has spaces --%>
     <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}</c:forEach>
@@ -22,7 +22,7 @@
   <c:if test="${!empty featureTables}">
     <c:forEach items="${featureTables}" var="entry">
       <div class="table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3 class="theme-1-border theme-5-background">${entry.key}</h3>
+        <h3>${entry.key}</h3>
         <div class="clear"></div>
 
         <c:set var="inlineResultsTable" value="${entry.value}" />
@@ -35,7 +35,7 @@
           <a href="#" style="float:right;" class="collapser"><span>Hide</span></a>
         </p>
         <p class="in_table">
-          <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+          <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
             Show all in a table »
           </html:link>
         </p>
@@ -44,7 +44,7 @@
       <div class="clear"></div>
     </c:forEach>
     <p class="in_table outer">
-      <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+      <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
         Show all in a table »
       </html:link>
     </p>
@@ -53,8 +53,8 @@
   <script type="text/javascript">
     // apply different class to h3 so tables are not so separate
     jQuery("#overlapping-features.custom-displayer div.table h3").each(function(i) {
-        jQuery(this).toggleClass('theme-2-border');
-        jQuery(this).toggleClass('theme-3-border');
+        jQuery(this).toggleClass('someclass');
+        jQuery(this).toggleClass('someclass');
     });
 
     // switcher between tables this displayer haz

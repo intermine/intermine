@@ -1470,3 +1470,8 @@ div.floatRight { float:right; }
   cursor:pointer; }
 #permalink div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
 #permalink div.popup input { width:392px; }
+
+/* ############ tables, lists & misc configuration ############ */
+/* inline lists */
+ul.inline-list { list-style-type:none; }
+ul.inline-list li { display:inline; margin:0; }
