@@ -11,7 +11,7 @@
   <h3>Regulatory Regions</h3>
   <p class="desc theme-5-background">
     <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
-    Something that is relevant and descriptive should go here, this ain't it
+    View regulatory regions associated with this gene by type.
   </p>
   <p class="switchers theme-5-background">
     <c:forEach items="${regionCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
