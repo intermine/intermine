@@ -16,7 +16,7 @@
 
 <div class="table">
 <form id="fly-atlas-options">
-  <table>
+  <table cellspacing="0">
     <tbody>
     <tr>
       <td><input type="radio" name="scale" value="log" checked="checked"/></td><td>Logarithmic Scale</td>

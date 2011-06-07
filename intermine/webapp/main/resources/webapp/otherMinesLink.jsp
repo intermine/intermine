@@ -117,7 +117,7 @@
   }
   </script>
 
-  <h3>Link to other InterMines</h3>
+  <h3 class="goog">Link to other InterMines</h3>
       <div id="intermine_links" class="loading">&nbsp;</div><br>
         <script type="text/javascript" charset="utf-8">
           getMineLinks('${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');

@@ -29,7 +29,7 @@
         <tbody>
 
           <c:forEach items="${inlineResultsTable.resultElementRows}" var="resultElementRow" varStatus="status">
-            <tr<c:if test="${status.count % 2 == 0}"> class="even"</c:if>>
+            <tr<c:if test="${status.count % 2 == 0}"> class="odd"</c:if>>
               <c:choose>
                 <c:when test="${!empty(resultElementRow.items)}">
                   <c:forEach items="${resultElementRow.items}" var="resultElementColumn" varStatus="rowStatus">

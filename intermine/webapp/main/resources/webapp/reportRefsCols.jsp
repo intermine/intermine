@@ -27,7 +27,7 @@
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
 
         <%-- ############# --%>
-        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table">
+        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
         <h3>
           <c:if test="${IS_SUPERUSER}">
             <span class="tag-editor">
@@ -77,8 +77,6 @@
             var tags = h3.find('span.tag-editor');
             h3.html(h3.find('a.getTable').text());
             tags.appendTo(h3);
-          } else {
-            h3.html(h3.find('a.getTable').text());
           }
         </script>
       </c:otherwise>

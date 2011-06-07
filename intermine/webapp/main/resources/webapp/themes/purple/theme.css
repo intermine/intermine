@@ -264,9 +264,41 @@ ul#loginbar li { border-right-color:#5C0075; }
 #pagecontentcontainer.report-page #object_header #headerLink a { color:#5C0075; }
 #pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#5C0075; color:#FFF; }
 #pagecontentcontainer.report-page #object_header p.share a { color:#5C0075; }
-#pagecontentcontainer.report-page h3 { background:#F4EEF7; border-color:#5C0075; color:#5C0075; text-shadow: 1px 1px 1px #FFF; }
 #pagecontentcontainer.report-page h2 { color:#000; }
+#pagecontentcontainer.report-page #cwtabsbyside a { color:#5C0075; }
+#pagecontentcontainer.report-page #cwtabsbyside fieldset,
+#pagecontentcontainer.report-page #cwtabsbyside ul li { border-color:#DCC8E2; }
+#pagecontentcontainer.report-page #cwtabsbyside ul,
+#pagecontentcontainer.report-page #cwtabsbyside fieldset.alt { background:#FCFAFD; border-color:#DCC8E2; }
+#pagecontentcontainer.report-page form#fly-atlas-options table tr td { border-color:#DCC8E2; }
+#pagecontentcontainer.report-page form#fly-atlas-options table tr.even td { background:#FCFAFD; }
 
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */
-ul.inline-list .name { color:#5C0075; }
+div.inline-list ul .name { color:#5C0075; }
+div.inline-list a,
+div.inline-list a:hover,
+div.inline-list a:visited { color:#5C0075; }
+div.inline-list h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
+div.inline-list.gray h3,
+div.inline-list.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+/* collection tables */
+div.collection-table h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
+div.collection-table thead th,
+div.collection-table thead td { background:#F4EEF7; border-color:#DCC8E2; }
+div.collection-table table tr.odd td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
+div.collection-table table td.class { color:#886644; }
+div.collection-table table a,
+div.collection-table table a:hover,
+div.collection-table table a:visited { color:#5C0075; }
+div.collection-table.gray h3,
+div.collection-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+/* collection of collection tables */
+div.collection-of-collections div.header { background:#F4EEF7; border-top-color:#5C0075; }
+div.collection-of-collections div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
+div.collection-of-collections div.header a,
+div.collection-of-collections div.header a:hover,
+div.collection-of-collections div.header a:visited { color:#5C0075; }
+div.collection-of-collections div.collection-table h3 { border-top-color:#DCC8E2; }
+/* header, the same as table header */
+h3.goog { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }

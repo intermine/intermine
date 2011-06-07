@@ -62,7 +62,7 @@
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
         </fieldset>
 
-        <fieldset>
+        <fieldset class="alt">
               <label>Export network as:</label>
               <select id="exportoptions">
                   <option value="xgmml" selected>XGMML</option>
@@ -78,7 +78,7 @@
           <label class="fakelink" onclick="window.open(project_baseurl+ '/' + project_path + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
 
-        <fieldset>
+        <fieldset class="alt">
           <label>View interaction data in a table</lable>
           <input type="button" id="toggleTable" value="Toggle">
         </fieldset>
