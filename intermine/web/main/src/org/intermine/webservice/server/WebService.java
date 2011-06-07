@@ -42,7 +42,7 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
-import org.intermine.webservice.server.output.HTMLOutput;
+import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
@@ -409,6 +409,15 @@ public abstract class WebService
     }
 
     private void initOutput(HttpServletResponse response) {
+        int format = getFormat();
+
+        // HTML is a special case
+        if (format == HTML_FORMAT) {
+            output = new MemoryOutput();
+            ResponseUtil.setHTMLContentType(response);
+            return;
+        }
+
         PrintWriter out;
         OutputStream os;
         try {
@@ -424,7 +433,7 @@ public abstract class WebService
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-        int format = getFormat();
+
         String filename = getDefaultFileName();
         switch (format) {
             case XML_FORMAT:
@@ -529,13 +538,6 @@ public abstract class WebService
                 filename = "resultcount.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case HTML_FORMAT:
-                output = new HTMLOutput(out);
-                filename = "results.html";
-                if (isUncompressed()) {
-                    ResponseUtil.setHTMLContentType(response);
                 }
                 break;
             default:
