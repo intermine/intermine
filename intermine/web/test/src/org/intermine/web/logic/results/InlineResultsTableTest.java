@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -174,7 +174,7 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, new Integer(2), new Boolean(false), typeClasses);
+                new HashMap<String, List<FieldDescriptor>>(), 2, false, typeClasses);
 
         assertEquals(new Integer(3), new Integer(resultsTable.getTableFieldConfigs().size()));
         assertEquals(new Integer(3), new Integer(resultsTable.getColumnsSize()));
@@ -203,7 +203,8 @@ public class InlineResultsTableTest extends TestCase
 
         // InlineResultsTable
         InlineResultsTable resultsTable = new InlineResultsTable(collection, model, webConfig,
-                null, new Integer(2), new Boolean(false), typeClasses);
+                new HashMap<String, List<FieldDescriptor>>(), new Integer(2), new Boolean(false),
+                typeClasses);
 
         // List<InlineResultsTableRow>
         List<Object> rows = resultsTable.getResultElementRows();
