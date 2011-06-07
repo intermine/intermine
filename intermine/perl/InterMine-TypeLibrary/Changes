@@ -13,3 +13,7 @@ Revision history for InterMine-TypeLibrary
 0.9601  Mon Feb 28 19:49:04 GMT 2011
         * Made BigInt compatible with lower versions of Perl (back to 5.8.8)
         by removing "try" call.
+0.9700  Wed 1 June 2011
+        Refactored most type definitions to more sensible places.
+0.9701  Sat 4 June 2011
+        Bug fix release - removed errant type definition.
