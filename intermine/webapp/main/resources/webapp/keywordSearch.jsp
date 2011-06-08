@@ -50,8 +50,7 @@
                     genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>, <i>zen</i>, <i>allele</i>)
                 </li>
                 <li>
-                    Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)
-                    or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>) or to escape special characters.
+                    Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>) or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>).
                 </li>
                 <li>
                     <strong>Boolean search syntax</strong> is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
