@@ -66,6 +66,7 @@
         <xs:attribute name="identifier" type="xs:string" use="optional" />
         <xs:attribute name="editable" type="xs:string" use="optional" />
         <xs:attribute name="code" type="xs:string" use="optional" />
+        <xs:attribute name="loopPath" type="xs:string" use="optional"/>
         <xs:attribute name="extraValue" type="xs:string" use="optional" />
         <xs:attribute name="type" type="xs:string" use="optional" />
         <xs:attribute name="ids" type="xs:string" use="optional" />
