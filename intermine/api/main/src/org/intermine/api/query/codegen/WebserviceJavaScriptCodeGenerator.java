@@ -10,6 +10,8 @@ package org.intermine.api.query.codegen;
  *
  */
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -48,9 +49,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                                                               + "at the moment...";
     protected static final String SCRIPT_IMPORTS          =
           "<!-- You need to import the IMBedding client library - this is hosted at intermine.org for your convenience: -->" + ENDL
-          + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
+          + "<script src=\"http://www.intermine.org/lib/imbedding/0.2/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
           + "<!-- We also need to import a stylesheet - you can choose from light, dark or bold-->" + ENDL
-          + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.1/style/light.css\">" + ENDL
+          + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.2/style/light.css\">" + ENDL
           + ENDL;
 
     protected static final String PRELUDE =
@@ -187,7 +188,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString();
     }
 
-    /** 
+    /**
      * Format a list of strings as a nice javascript array.
      */
     private static void listFormatUtil(StringBuffer sb, Collection<String> coll) {
