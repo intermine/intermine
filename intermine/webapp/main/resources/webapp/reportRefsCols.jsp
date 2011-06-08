@@ -30,13 +30,13 @@
         <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
         <h3>
           <c:if test="${IS_SUPERUSER}">
-            <span class="tag-editor">
+            <div class="right">
               <c:set var="descriptor" value="${collection.descriptor}" />
               <tiles:insert name="inlineTagEditor.tile">
                 <tiles:put name="taggable" beanName="descriptor" />
                 <tiles:put name="show" value="true" />
               </tiles:insert>
-            </span>
+            </div>
           </c:if>
           ${collection.size}&nbsp;${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
@@ -69,17 +69,7 @@
           <div class="clear"></div>
         <%-- ############# --%>
       </c:when>
-      <c:otherwise>
-        <script type="text/javascript">
-          jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').addClass('gray');
-          var h3 = jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').find('h3');
-          if (h3.find('span.tag-editor').length > 0) {
-            var tags = h3.find('span.tag-editor');
-            h3.html(h3.find('a.getTable').text());
-            tags.appendTo(h3);
-          }
-        </script>
-      </c:otherwise>
+      <c:otherwise></c:otherwise>
     </c:choose>
     </div>
 
