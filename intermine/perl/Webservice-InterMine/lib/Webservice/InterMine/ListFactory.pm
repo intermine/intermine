@@ -263,14 +263,14 @@ sub new_list {
     my $resp = match_on_type $content => (
         ListOperable, sub {
             $uri = URI->new($content->get_list_upload_uri);
-            $uri->query_form(
+            my $params = {
                 listName    => $name,
                 description => $description,
                 tags => $tag_list,
                 path => $path, # needed by templates - ignored by queries 
                 $content->get_request_parameters,
-            );
-            return $self->service->agent->get($uri);
+            };
+            return $self->service->post($uri, $params);
         },
         ArrayRef[Str], sub {
             return $self->service->post($uri, 'Content-Type' => 'text/plain',

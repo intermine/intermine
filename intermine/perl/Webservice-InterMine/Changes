@@ -83,4 +83,6 @@ Revision history for Webservice-InterMine
         * Bug-fix release - subclass parsing was broken
 0.9704: Sun 5 June 2011
         * Added possible values service methods.
+0.9705: Wed Jun  8 19:34:43 BST 2011
+        * Avoid hitting url limits by posting where possible
 
