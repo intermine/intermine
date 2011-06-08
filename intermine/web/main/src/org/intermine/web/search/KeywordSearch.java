@@ -1454,7 +1454,7 @@ public final class KeywordSearch
             "]", "^", "\"", "~", "?", ":", "\\"};
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
-                queryString = queryString.replace(s, "\\" + s);
+                queryString = queryString.replace(s, "*");
             }
         }
         return queryString;
