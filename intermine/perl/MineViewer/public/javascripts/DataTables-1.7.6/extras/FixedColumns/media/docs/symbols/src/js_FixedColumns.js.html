@@ -1,0 +1,647 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>  * File:        FixedColumns.js
+<span class='line'>  3</span>  * Version:     1.1.0
+<span class='line'>  4</span>  * Description: "Fix" columns on the left of a scrolling DataTable
+<span class='line'>  5</span>  * Author:      Allan Jardine (www.sprymedia.co.uk)
+<span class='line'>  6</span>  * Created:     Sat Sep 18 09:28:54 BST 2010
+<span class='line'>  7</span>  * Language:    Javascript
+<span class='line'>  8</span>  * License:     GPL v2 or BSD 3 point style
+<span class='line'>  9</span>  * Project:     Just a little bit of fun - enjoy :-)
+<span class='line'> 10</span>  * Contact:     www.sprymedia.co.uk/contact
+<span class='line'> 11</span>  * 
+<span class='line'> 12</span>  * Copyright 2010-2011 Allan Jardine, all rights reserved.
+<span class='line'> 13</span>  */</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">FixedColumns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oDT</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oInit</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">	</span><span class="COMM">/* Sanity check - you just know it will happen */</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">this._fnConstruct</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">		</span><span class="NAME">alert</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">"FixedColumns warning: FixedColumns must be initialised with the 'new' keyword."</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">	
+<span class='line'> 23</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">oInit</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">		</span><span class="NAME">oInit</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">	
+<span class='line'> 28</span> 	</span><span class="COMM">/**
+<span class='line'> 29</span> 	 * @namespace Settings object which contains customisable information for FixedColumns instance
+<span class='line'> 30</span> 	 */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">	</span><span class="NAME">this.s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">		</span><span class="COMM">/** 
+<span class='line'> 33</span> 		 * DataTables settings objects
+<span class='line'> 34</span>      *  @property dt
+<span class='line'> 35</span>      *  @type     object
+<span class='line'> 36</span>      *  @default  null
+<span class='line'> 37</span> 		 */</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">		</span><span class="NAME">dt</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">oDT.fnSettings</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">		
+<span class='line'> 40</span> 		</span><span class="COMM">/** 
+<span class='line'> 41</span> 		 * Number of left hand columns to fix in position
+<span class='line'> 42</span>      *  @property leftColumns
+<span class='line'> 43</span>      *  @type     int
+<span class='line'> 44</span>      *  @default  1
+<span class='line'> 45</span> 		 */</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">		</span><span class="NAME">leftColumns</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">		
+<span class='line'> 48</span> 		</span><span class="COMM">/** 
+<span class='line'> 49</span> 		 * Number of right hand columns to fix in position
+<span class='line'> 50</span>      *  @property rightColumns
+<span class='line'> 51</span>      *  @type     int
+<span class='line'> 52</span>      *  @default  0
+<span class='line'> 53</span> 		 */</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">		</span><span class="NAME">rightColumns</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">		
+<span class='line'> 56</span> 		</span><span class="COMM">/** 
+<span class='line'> 57</span> 		 * Store the heights of the rows for a draw. This can significantly speed up a draw where both
+<span class='line'> 58</span> 		 * left and right columns are fixed
+<span class='line'> 59</span>      *  @property heights
+<span class='line'> 60</span>      *  @type     array int
+<span class='line'> 61</span>      *  @default  0
+<span class='line'> 62</span> 		 */</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">		</span><span class="NAME">heights</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">	
+<span class='line'> 66</span> 	
+<span class='line'> 67</span> 	</span><span class="COMM">/**
+<span class='line'> 68</span> 	 * @namespace Common and useful DOM elements for the class instance
+<span class='line'> 69</span> 	 */</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">	</span><span class="NAME">this.dom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 72</span> 		 * DataTables scrolling element
+<span class='line'> 73</span> 		 *  @property scroller
+<span class='line'> 74</span> 		 *  @type     node
+<span class='line'> 75</span> 		 *  @default  null
+<span class='line'> 76</span> 		 */</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">		</span><span class="NAME">scroller</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">		  	
+<span class='line'> 79</span> 		</span><span class="COMM">/**
+<span class='line'> 80</span> 		 * Scroll container that DataTables has added
+<span class='line'> 81</span> 		 *  @property scrollContainer
+<span class='line'> 82</span> 		 *  @type     node
+<span class='line'> 83</span> 		 *  @default  null
+<span class='line'> 84</span> 		 */</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="NAME">scrollContainer</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">		
+<span class='line'> 87</span> 		</span><span class="COMM">/**
+<span class='line'> 88</span> 		 * DataTables header table
+<span class='line'> 89</span> 		 *  @property header
+<span class='line'> 90</span> 		 *  @type     node
+<span class='line'> 91</span> 		 *  @default  null
+<span class='line'> 92</span> 		 */</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">		</span><span class="NAME">header</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">		
+<span class='line'> 95</span> 		</span><span class="COMM">/**
+<span class='line'> 96</span> 		 * DataTables body table
+<span class='line'> 97</span> 		 *  @property body
+<span class='line'> 98</span> 		 *  @type     node
+<span class='line'> 99</span> 		 *  @default  null
+<span class='line'>100</span> 		 */</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">		</span><span class="NAME">body</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">		
+<span class='line'>103</span> 		</span><span class="COMM">/**
+<span class='line'>104</span> 		 * DataTables footer table
+<span class='line'>105</span> 		 *  @property footer
+<span class='line'>106</span> 		 *  @type     node
+<span class='line'>107</span> 		 *  @default  null
+<span class='line'>108</span> 		 */</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">		</span><span class="NAME">footer</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">		
+<span class='line'>111</span> 		</span><span class="COMM">/**
+<span class='line'>112</span> 		 * @namespace Cloned table nodes
+<span class='line'>113</span> 		 */</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">		</span><span class="NAME">clone</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">			</span><span class="COMM">/**
+<span class='line'>116</span> 			 * @namespace Left column cloned table nodes
+<span class='line'>117</span> 			 */</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">			</span><span class="NAME">left</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">				</span><span class="COMM">/**
+<span class='line'>120</span> 				 * Cloned header table
+<span class='line'>121</span> 				 *  @property header
+<span class='line'>122</span> 				 *  @type     node
+<span class='line'>123</span> 				 *  @default  null
+<span class='line'>124</span> 				 */</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">				</span><span class="NAME">header</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">		  	
+<span class='line'>127</span> 				</span><span class="COMM">/**
+<span class='line'>128</span> 				 * Cloned body table
+<span class='line'>129</span> 				 *  @property body
+<span class='line'>130</span> 				 *  @type     node
+<span class='line'>131</span> 				 *  @default  null
+<span class='line'>132</span> 				 */</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">				</span><span class="NAME">body</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">		  	
+<span class='line'>135</span> 				</span><span class="COMM">/**
+<span class='line'>136</span> 				 * Cloned footer table
+<span class='line'>137</span> 				 *  @property footer
+<span class='line'>138</span> 				 *  @type     node
+<span class='line'>139</span> 				 *  @default  null
+<span class='line'>140</span> 				 */</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">				</span><span class="NAME">footer</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">			
+<span class='line'>144</span> 			</span><span class="COMM">/**
+<span class='line'>145</span> 			 * @namespace Right column cloned table nodes
+<span class='line'>146</span> 			 */</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">			</span><span class="NAME">right</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">				</span><span class="COMM">/**
+<span class='line'>149</span> 				 * Cloned header table
+<span class='line'>150</span> 				 *  @property header
+<span class='line'>151</span> 				 *  @type     node
+<span class='line'>152</span> 				 *  @default  null
+<span class='line'>153</span> 				 */</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">				</span><span class="NAME">header</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">		  	
+<span class='line'>156</span> 				</span><span class="COMM">/**
+<span class='line'>157</span> 				 * Cloned body table
+<span class='line'>158</span> 				 *  @property body
+<span class='line'>159</span> 				 *  @type     node
+<span class='line'>160</span> 				 *  @default  null
+<span class='line'>161</span> 				 */</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">				</span><span class="NAME">body</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">		  	
+<span class='line'>164</span> 				</span><span class="COMM">/**
+<span class='line'>165</span> 				 * Cloned footer table
+<span class='line'>166</span> 				 *  @property footer
+<span class='line'>167</span> 				 *  @type     node
+<span class='line'>168</span> 				 *  @default  null
+<span class='line'>169</span> 				 */</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">				</span><span class="NAME">footer</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">	
+<span class='line'>175</span> 	</span><span class="COMM">/* Let's do it */</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">	</span><span class="NAME">this._fnConstruct</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oInit</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> 
+<span class='line'>179</span> 
+<span class='line'>180</span> </span><span class="NAME">FixedColumns.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>182</span> 	 * Update the fixed columns - including headers and footers
+<span class='line'>183</span> 	 *  @method  fnUpdate
+<span class='line'>184</span> 	 *  @returns void
+<span class='line'>185</span> 	 */</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="WHIT">	</span><span class="NAME">fnUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">		</span><span class="NAME">this._fnDraw</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">	
+<span class='line'>191</span> 	
+<span class='line'>192</span> 	</span><span class="COMM">/**
+<span class='line'>193</span> 	 * Initialisation for FixedColumns
+<span class='line'>194</span> 	 *  @method  _fnConstruct
+<span class='line'>195</span> 	 *  @param   {Object} oInit User settings for initialisation
+<span class='line'>196</span> 	 *  @returns void
+<span class='line'>197</span> 	 */</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">	</span><span class="NAME">_fnConstruct</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oInit</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="WHIT">		
+<span class='line'>202</span> 		</span><span class="COMM">/* Sanity checking */</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">this.s.dt.oInstance.fnVersionCheck</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'function'</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">		     </span><span class="NAME">this.s.dt.oInstance.fnVersionCheck</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">'1.7.0'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">			</span><span class="NAME">alert</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">"FixedColumns 2 required DataTables 1.7.0 or later. "</span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">				</span><span class="STRN">"Please upgrade your DataTables installation"</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">		
+<span class='line'>211</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.dt.oScroll.sX</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="STRN">""</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">			</span><span class="NAME">this.s.dt.oInstance.oApi._fnLog</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.dt</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"FixedColumns is not needed (no "</span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">				</span><span class="STRN">"x-scrolling in DataTables enabled), so no action will be taken. Use 'FixedHeader' for "</span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">				</span><span class="STRN">"column fixing when scrolling is not enabled"</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">		
+<span class='line'>219</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">oInit.columns</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">			</span><span class="COMM">/* Support for FixedColumns 1.0.x initialisation parameter */</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">			</span><span class="NAME">this.s.leftColumns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oInit.columns</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">		
+<span class='line'>225</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">oInit.iColumns</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">			</span><span class="NAME">this.s.leftColumns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oInit.iColumns</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">		
+<span class='line'>230</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">oInit.iRightColumns</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">			</span><span class="NAME">this.s.rightColumns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oInit.iRightColumns</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">		
+<span class='line'>235</span> 		</span><span class="COMM">/* Set up the DOM as we need it and cache nodes */</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">		</span><span class="NAME">this.dom.scrollContainer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.s.dt.nTable</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">parents</span><span class="PUNC">(</span><span class="STRN">'div.dataTables_scroll'</span><span class="PUNC">)</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">		</span><span class="NAME">this.dom.scrollContainer.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"relative"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">		
+<span class='line'>239</span> 		</span><span class="NAME">this.dom.body</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.dt.nTable</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">		</span><span class="NAME">this.dom.scroller</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.dom.body.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">		</span><span class="NAME">this.dom.scroller.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"relative"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">		
+<span class='line'>243</span> 		</span><span class="NAME">this.dom.header</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.dt.nTHead.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">		</span><span class="NAME">this.dom.header.parentNode.parentNode.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"relative"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">		
+<span class='line'>246</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.dt.nTFoot</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">			</span><span class="NAME">this.dom.footer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.dt.nTFoot.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">			</span><span class="NAME">this.dom.footer.parentNode.parentNode.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"relative"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">		
+<span class='line'>252</span> 		</span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.dt.oScroll.sY</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="STRN">""</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'relative'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">		
+<span class='line'>254</span> 		</span><span class="COMM">/* Event handlers */</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.scroller</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">scroll</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">				</span><span class="NAME">that._fnPosition.call</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">		
+<span class='line'>262</span> 		</span><span class="NAME">this.s.dt.aoDrawCallback.push</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">			</span><span class="NAME">fn</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">				</span><span class="NAME">that._fnDraw.call</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">that</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">			</span><span class="NAME">sName</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"FixedColumns"</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">		
+<span class='line'>269</span> 		</span><span class="COMM">/* Get things right to start with */</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">		</span><span class="NAME">this._fnDraw</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">	
+<span class='line'>273</span> 	
+<span class='line'>274</span> 	</span><span class="COMM">/**
+<span class='line'>275</span> 	 * Clone and position the fixed columns
+<span class='line'>276</span> 	 *  @method  _fnDraw
+<span class='line'>277</span> 	 *  @returns void
+<span class='line'>278</span> 	 *  @param   {Boolean} bAll Indicate if the headre and footer should be updated as well (true)
+<span class='line'>279</span> 	 *  @private
+<span class='line'>280</span> 	 */</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="WHIT">	</span><span class="NAME">_fnDraw</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">		</span><span class="NAME">this._fnCloneLeft</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">		</span><span class="NAME">this._fnCloneRight</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">		</span><span class="NAME">this._fnPosition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">		
+<span class='line'>287</span> 		</span><span class="NAME">this.s.heights.splice</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.s.heights.length</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="WHIT">	
+<span class='line'>290</span> 	
+<span class='line'>291</span> 	</span><span class="COMM">/**
+<span class='line'>292</span> 	 * Clone the right columns
+<span class='line'>293</span> 	 *  @method  _fnCloneRight
+<span class='line'>294</span> 	 *  @returns void
+<span class='line'>295</span> 	 *  @param   {Boolean} bAll Indicate if the headre and footer should be updated as well (true)
+<span class='line'>296</span> 	 *  @private
+<span class='line'>297</span> 	 */</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">	</span><span class="NAME">_fnCloneRight</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.rightColumns</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="WHIT">		
+<span class='line'>305</span> 		</span><span class="KEYW">var</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">			</span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT">			</span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">			</span><span class="NAME">aiCellWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">			</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">jq</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">			</span><span class="NAME">iColumns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.header</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">		
+<span class='line'>312</span> 		</span><span class="COMM">/* Grab the widths that we are going to need */</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">		</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NAME">this.s.rightColumns</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">>=</span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">--</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">			</span><span class="NAME">jq</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.header</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="STRN">':eq('</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">iColumns</span><span class="PUNC">-</span><span class="NAME">i</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">			</span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jq.outerWidth</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">			</span><span class="NAME">aiCellWidth.push</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">jq.width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">		</span><span class="NAME">aiCellWidth.reverse</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="WHIT">		
+<span class='line'>321</span> 		</span><span class="NAME">this._fnClone</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.dom.clone.right</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">aiCellWidth</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>322</span> 			</span><span class="STRN">':last'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">':lt('</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">iColumns</span><span class="PUNC">-</span><span class="NAME">this.s.rightColumns</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="WHIT">	
+<span class='line'>325</span> 	
+<span class='line'>326</span> 	</span><span class="COMM">/**
+<span class='line'>327</span> 	 * Clone the left columns
+<span class='line'>328</span> 	 *  @method  _fnCloneLeft
+<span class='line'>329</span> 	 *  @returns void
+<span class='line'>330</span> 	 *  @param   {Boolean} bAll Indicate if the headre and footer should be updated as well (true)
+<span class='line'>331</span> 	 *  @private
+<span class='line'>332</span> 	 */</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">	</span><span class="NAME">_fnCloneLeft</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.leftColumns</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>339</span> </span><span class="WHIT">		
+<span class='line'>340</span> 		</span><span class="KEYW">var</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">			</span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">			</span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">			</span><span class="NAME">aiCellWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="WHIT">			</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">jq</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>345</span> </span><span class="WHIT">		
+<span class='line'>346</span> 		</span><span class="COMM">/* Grab the widths that we are going to need */</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="WHIT">		</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iLen</span><span class="PUNC">=</span><span class="NAME">this.s.leftColumns</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">iLen</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">			</span><span class="NAME">jq</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.header</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="STRN">':eq('</span><span class="PUNC">+</span><span class="NAME">i</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="WHIT">			</span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jq.outerWidth</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="WHIT">			</span><span class="NAME">aiCellWidth.push</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">jq.width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="WHIT">		
+<span class='line'>354</span> 		</span><span class="NAME">this._fnClone</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.dom.clone.left</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">aiCellWidth</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>355</span> 			</span><span class="STRN">':first'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">':gt('</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">this.s.leftColumns</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>357</span> </span><span class="WHIT">		
+<span class='line'>358</span> 	
+<span class='line'>359</span> 	
+<span class='line'>360</span> 	</span><span class="COMM">/**
+<span class='line'>361</span> 	 * Clone the DataTable nodes and place them in the DOM (sized correctly)
+<span class='line'>362</span> 	 *  @method  _fnClone
+<span class='line'>363</span> 	 *  @returns void
+<span class='line'>364</span> 	 *  @param   {Object} oClone Object containing the header, footer and body cloned DOM elements
+<span class='line'>365</span> 	 *  @param   {Boolean} bAll Indicate if the headre and footer should be updated as well (true)
+<span class='line'>366</span> 	 *  @param   {array} aiCellWidth Array of integers with the width's to use for the cloned columns
+<span class='line'>367</span> 	 *  @param   {int} iTableWidth Calculated table width
+<span class='line'>368</span> 	 *  @param   {string} sBoxHackSelector Selector to pick which TD element to copy styles from
+<span class='line'>369</span> 	 *  @param   {string} sRemoveSelector Which elements to remove
+<span class='line'>370</span> 	 *  @private
+<span class='line'>371</span> 	 */</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">	</span><span class="NAME">_fnClone</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">aiCellWidth</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sBoxHackSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sRemoveSelector</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">			</span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">			</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iLen</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">jq</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nTarget</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">		
+<span class='line'>378</span> 		</span><span class="COMM">/* Header */</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>380</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.header</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>383</span> </span><span class="WHIT">				</span><span class="NAME">oClone.header.parentNode.removeChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.header</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>384</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>385</span> </span><span class="WHIT">			</span><span class="NAME">oClone.header</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.header</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">clone</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT">			</span><span class="NAME">oClone.header.className</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">" FixedColumns_Cloned"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>387</span> </span><span class="WHIT">			
+<span class='line'>388</span> 			</span><span class="NAME">oClone.header.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="WHIT">			</span><span class="NAME">oClone.header.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">			</span><span class="NAME">oClone.header.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">			</span><span class="NAME">oClone.header.style.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="WHIT">			
+<span class='line'>393</span> 			</span><span class="NAME">nTarget</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">this.dom.scrollContainer</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="WHIT">				</span><span class="NAME">this.dom.header.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="WHIT">			</span><span class="NAME">nTarget.appendChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.header</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">		
+<span class='line'>397</span> 			</span><span class="NAME">this._fnEqualiseHeights</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">'thead'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.header</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.header</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>398</span> 				</span><span class="NAME">sBoxHackSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sRemoveSelector</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">		
+<span class='line'>400</span> 			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.header</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">each</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="WHIT">				</span><span class="NAME">this.style.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">aiCellWidth</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">		</span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">			</span><span class="NAME">this._fnCopyClasses</span><span class="PUNC">(</span><span class="NAME">oClone.header</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.header</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">		
+<span class='line'>409</span> 		</span><span class="COMM">/* Body */</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">		</span><span class="COMM">/* Remove any heights which have been applied already and let the browser figure it out */</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">		</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'tbody tr'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">that.dom.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">css</span><span class="PUNC">(</span><span class="STRN">'height'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'auto'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="WHIT">		
+<span class='line'>413</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>414</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>415</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body.parentNode.removeChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="WHIT">		
+<span class='line'>419</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.dt.aiDisplay.length</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>421</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">clone</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body.className</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">" FixedColumns_Cloned"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.body.getAttribute</span><span class="PUNC">(</span><span class="STRN">'id'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">				</span><span class="NAME">oClone.body.removeAttribute</span><span class="PUNC">(</span><span class="STRN">'id'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">			
+<span class='line'>428</span> 			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">each</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'th'</span><span class="PUNC">+</span><span class="NAME">sRemoveSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">			
+<span class='line'>432</span> 			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'thead tr:gt(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">			
+<span class='line'>434</span> 			</span><span class="NAME">this._fnEqualiseHeights</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">'tbody'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">that.dom.body</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>435</span> 				</span><span class="NAME">sBoxHackSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sRemoveSelector</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">			
+<span class='line'>437</span> 			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'tfoot tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">each</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'th'</span><span class="PUNC">+</span><span class="NAME">sRemoveSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="WHIT">			
+<span class='line'>441</span> 			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'tfoot tr:gt(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="WHIT">			
+<span class='line'>443</span> 			
+<span class='line'>444</span> 			</span><span class="NAME">oClone.body.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>447</span> </span><span class="WHIT">			</span><span class="NAME">oClone.body.style.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>448</span> </span><span class="WHIT">			
+<span class='line'>449</span> 			</span><span class="NAME">nTarget</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">this.dom.scrollContainer</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>450</span> </span><span class="WHIT">				</span><span class="NAME">this.dom.body.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>451</span> </span><span class="WHIT">			</span><span class="NAME">nTarget.appendChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.body</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>452</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>453</span> </span><span class="WHIT">		
+<span class='line'>454</span> 		</span><span class="COMM">/* Footer */</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.dt.nTFoot</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>456</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>457</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">bAll</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>458</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>459</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.footer</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>460</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>461</span> </span><span class="WHIT">					</span><span class="NAME">oClone.footer.parentNode.removeChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.footer</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>462</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="WHIT">				</span><span class="NAME">oClone.footer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.footer</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">clone</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>464</span> </span><span class="WHIT">				</span><span class="NAME">oClone.footer.className</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">" FixedColumns_Cloned"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>465</span> </span><span class="WHIT">				
+<span class='line'>466</span> 				</span><span class="NAME">oClone.footer.style.position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="WHIT">				</span><span class="NAME">oClone.footer.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>468</span> </span><span class="WHIT">				</span><span class="NAME">oClone.footer.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"0px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>469</span> </span><span class="WHIT">				</span><span class="NAME">oClone.footer.style.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>470</span> </span><span class="WHIT">				
+<span class='line'>471</span> 				</span><span class="NAME">nTarget</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">this.dom.scrollContainer</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>472</span> </span><span class="WHIT">					</span><span class="NAME">this.dom.footer.parentNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>473</span> </span><span class="WHIT">				</span><span class="NAME">nTarget.appendChild</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oClone.footer</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>474</span> </span><span class="WHIT">			
+<span class='line'>475</span> 				</span><span class="NAME">this._fnEqualiseHeights</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="STRN">'tfoot'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.dom.footer</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.footer</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>476</span> 					</span><span class="NAME">sBoxHackSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sRemoveSelector</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>477</span> </span><span class="WHIT">				
+<span class='line'>478</span> 				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'tfoot tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oClone.footer</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">each</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>479</span> </span><span class="WHIT">					</span><span class="NAME">this.style.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">aiCellWidth</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>480</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>481</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>482</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>483</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>484</span> </span><span class="WHIT">	
+<span class='line'>485</span> 	
+<span class='line'>486</span> 	</span><span class="COMM">/**
+<span class='line'>487</span> 	 * Clone classes from one DOM node to another with (IMPORTANT) IDENTICAL structures
+<span class='line'>488</span> 	 *  @method  _fnCopyClasses
+<span class='line'>489</span> 	 *  @returns void
+<span class='line'>490</span> 	 *  @param   {element} clone Node to copy classes to
+<span class='line'>491</span> 	 *  @param   {element} original Original node to take the classes from
+<span class='line'>492</span> 	 *  @private
+<span class='line'>493</span> 	 */</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="WHIT">	</span><span class="NAME">_fnCopyClasses</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">clone</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>495</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>496</span> </span><span class="WHIT">		</span><span class="NAME">clone.className</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">original.className</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="WHIT">		</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">iLen</span><span class="PUNC">=</span><span class="NAME">clone.children.length</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">iLen</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>499</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">original.children</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">nodeType</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>500</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>501</span> </span><span class="WHIT">				</span><span class="NAME">this._fnCopyClasses</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">clone.children</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original.children</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>502</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>503</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>504</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>505</span> </span><span class="WHIT">	
+<span class='line'>506</span> 	
+<span class='line'>507</span> 	</span><span class="COMM">/**
+<span class='line'>508</span> 	 * Equalise the heights of the rows in a given table node in a cross browser way
+<span class='line'>509</span> 	 *  @method  _fnEqualiseHeights
+<span class='line'>510</span> 	 *  @returns void
+<span class='line'>511</span> 	 *  @param   {string} parent Node type - thead, tbody or tfoot
+<span class='line'>512</span> 	 *  @param   {element} original Original node to take the heights from
+<span class='line'>513</span> 	 *  @param   {element} clone Copy the heights to
+<span class='line'>514</span> 	 *  @param   {string} boxHackSelector Selector to pick which TD element to copy styles from
+<span class='line'>515</span> 	 *  @param   {string} removeSelector Which elements to remove
+<span class='line'>516</span> 	 *  @private
+<span class='line'>517</span> 	 */</span><span class="WHIT">
+<span class='line'>518</span> </span><span class="WHIT">	</span><span class="NAME">_fnEqualiseHeights</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">parent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">clone</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">boxHackSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">removeSelector</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>519</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>520</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>521</span> </span><span class="WHIT">			</span><span class="NAME">iHeight</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>522</span> </span><span class="WHIT">			</span><span class="NAME">iCalculateHeights</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">parent</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"tbody"</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.s.heights.length</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>523</span> </span><span class="WHIT">			</span><span class="NAME">jqBoxHack</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr:eq(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="NAME">boxHackSelector</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>524</span> </span><span class="WHIT">			</span><span class="NAME">iBoxHack</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jqBoxHack.outerHeight</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">jqBoxHack.height</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>525</span> </span><span class="WHIT">			</span><span class="NAME">bRubbishOldIE</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">$.browser.msie</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">$.browser.version</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"6.0"</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">$.browser.version</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"7.0"</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>526</span> </span><span class="WHIT">		
+<span class='line'>527</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr:eq(0) th'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">clone</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">attr</span><span class="PUNC">(</span><span class="STRN">'rowspan'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>528</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>529</span> </span><span class="WHIT">			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr:gt(0)'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">clone</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>530</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>531</span> </span><span class="WHIT">		
+<span class='line'>532</span> 		</span><span class="COMM">/* Remove cells which are not needed and copy the height from the original table */</span><span class="WHIT">
+<span class='line'>533</span> </span><span class="WHIT">		</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">clone</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">each</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>534</span> </span><span class="WHIT">			</span><span class="NAME">$</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="NAME">removeSelector</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">remove</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>535</span> </span><span class="WHIT">			
+<span class='line'>536</span> 			</span><span class="COMM">/* We can store the heights of the rows calculated on the first pass of a draw, to be used
+<span class='line'>537</span> 			 * on the second pass (i.e. the right hand column). This significantly speeds up a draw 
+<span class='line'>538</span> 			 * where both the left and right columns are fixed since we don't need to get the height of
+<span class='line'>539</span> 			 * each row twice
+<span class='line'>540</span> 			 */</span><span class="WHIT">
+<span class='line'>541</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iCalculateHeights</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>542</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>543</span> </span><span class="WHIT">				</span><span class="NAME">iHeight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr:eq('</span><span class="PUNC">+</span><span class="NAME">k</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="STRN">':first'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>544</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">parent</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'tbody'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>545</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>546</span> </span><span class="WHIT">					</span><span class="NAME">that.s.heights.push</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iHeight</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>547</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>548</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>549</span> </span><span class="WHIT">			</span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>550</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>551</span> </span><span class="WHIT">				</span><span class="NAME">iHeight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">that.s.heights</span><span class="PUNC">[</span><span class="NAME">k</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>552</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>553</span> </span><span class="WHIT">			
+<span class='line'>554</span> 			</span><span class="COMM">/* Can we use some kind of object detection here?! This is very nasty - damn browsers */</span><span class="WHIT">
+<span class='line'>555</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">$.browser.mozilla</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">$.browser.opera</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>556</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>557</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iHeight</span><span class="PUNC">+</span><span class="NAME">iBoxHack</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>558</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">+</span><span class="STRN">' tr:eq('</span><span class="PUNC">+</span><span class="NAME">k</span><span class="PUNC">+</span><span class="STRN">')'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">original</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iHeight</span><span class="PUNC">+</span><span class="NAME">iBoxHack</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">	
+<span class='line'>559</span> 			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>560</span> </span><span class="WHIT">			</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">$.browser.msie</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="NAME">bRubbishOldIE</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>561</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>562</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iHeight</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">/* wtf... */</span><span class="WHIT">
+<span class='line'>563</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>564</span> </span><span class="WHIT">			</span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>565</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>566</span> </span><span class="WHIT">				</span><span class="NAME">$</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">children</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">iHeight</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>567</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>568</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>569</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>570</span> </span><span class="WHIT">	
+<span class='line'>571</span> 	
+<span class='line'>572</span> 	</span><span class="COMM">/**
+<span class='line'>573</span> 	 * Set the absolute position of the fixed column tables when scrolling the DataTable
+<span class='line'>574</span> 	 *  @method  _fnPosition
+<span class='line'>575</span> 	 *  @returns void
+<span class='line'>576</span> 	 *  @private
+<span class='line'>577</span> 	 */</span><span class="WHIT">
+<span class='line'>578</span> </span><span class="WHIT">	</span><span class="NAME">_fnPosition</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>579</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>580</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT">
+<span class='line'>581</span> </span><span class="WHIT">			</span><span class="NAME">iScrollLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.scroller</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">scrollLeft</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>582</span> </span><span class="WHIT">			</span><span class="NAME">oCloneLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.dom.clone.left</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>583</span> </span><span class="WHIT">			</span><span class="NAME">oCloneRight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.dom.clone.right</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>584</span> </span><span class="WHIT">			</span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.s.dt.nTable.parentNode</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>585</span> </span><span class="WHIT">			
+<span class='line'>586</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>587</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>588</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">iBodyTop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.body.parentNode</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">position</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">top</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>589</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.dom.footer</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>590</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>591</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">iFooterTop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">this.dom.footer.parentNode.parentNode</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">position</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">top</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>592</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>593</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>594</span> </span><span class="WHIT">		
+<span class='line'>595</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.leftColumns</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>596</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>597</span> </span><span class="WHIT">			</span><span class="NAME">oCloneLeft.header.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iScrollLeft</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>598</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oCloneLeft.body</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>599</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>600</span> </span><span class="WHIT">				</span><span class="NAME">oCloneLeft.body.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iScrollLeft</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>601</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT">  </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>602</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>603</span> </span><span class="WHIT">					</span><span class="NAME">oCloneLeft.body.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iBodyTop</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>604</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>605</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>606</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.dom.footer</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>607</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>608</span> </span><span class="WHIT">				</span><span class="NAME">oCloneLeft.footer.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iScrollLeft</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>609</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT">  </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>610</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>611</span> </span><span class="WHIT">					</span><span class="NAME">oCloneLeft.footer.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iFooterTop</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>612</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>613</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>614</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>615</span> </span><span class="WHIT">		
+<span class='line'>616</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.s.rightColumns</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>617</span> </span><span class="WHIT">		</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>618</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">iPoint</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iTableWidth</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">oCloneRight.body</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">iScrollLeft</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>619</span> </span><span class="WHIT">			
+<span class='line'>620</span> 			</span><span class="NAME">oCloneRight.header.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iPoint</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>621</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">oCloneRight.body</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>622</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>623</span> </span><span class="WHIT">				</span><span class="NAME">oCloneRight.body.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iPoint</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>624</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT">  </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>625</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>626</span> </span><span class="WHIT">					</span><span class="NAME">oCloneRight.body.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iBodyTop</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>627</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>628</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>629</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="NAME">this.dom.footer</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>630</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>631</span> </span><span class="WHIT">				</span><span class="NAME">oCloneRight.footer.style.left</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iPoint</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>632</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT">  </span><span class="NAME">this.s.position</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'absolute'</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>633</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>634</span> </span><span class="WHIT">					</span><span class="NAME">oCloneRight.footer.style.top</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">iFooterTop</span><span class="PUNC">+</span><span class="STRN">"px"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>635</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>636</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>637</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>638</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>639</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>640</span> </span></pre></body></html>
