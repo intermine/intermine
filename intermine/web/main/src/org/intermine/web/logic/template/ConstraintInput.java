@@ -1,4 +1,4 @@
-package org.intermine.web.logic.template;
+ package org.intermine.web.logic.template;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -11,6 +11,7 @@ package org.intermine.web.logic.template;
  */
 
 import org.intermine.objectstore.query.ConstraintOp;
+import java.util.List;
 
 /**
  * Simple object that carries constraint values for other processing.
@@ -22,6 +23,8 @@ public class ConstraintInput
     private ConstraintOp op;
 
     private String value;
+
+    private List<String> multivalues;
 
     private String extraValue;
 
@@ -91,13 +94,15 @@ public class ConstraintInput
      * results according other criterion, for example for Gene there can specified organism name,
      * restricts resulted genes to specified organism
      */
-    public ConstraintInput(String parameterName, String pathId, String code, ConstraintOp op,
-            String value, String extraValue) {
+    public ConstraintInput(String parameterName, 
+            String pathId, String code, ConstraintOp op,
+            String value, List<String> multivalues, String extraValue) {
         this.code = code;
         this.parameterName = parameterName;
         this.pathId = pathId;
         this.op = op;
         this.value = value;
+        this.multivalues = multivalues;
         this.extraValue = extraValue;
     }
 
@@ -131,6 +136,22 @@ public class ConstraintInput
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Return multivalues
+     * @return multivalues
+     */
+    public List<String> getMultivalues() {
+        return multivalues;
+    }
+
+    /**
+     * Set multivalues
+     * @param multivalues A list of values
+     */
+    public void setMultivalues(List<String> multivalues) {
+        this.multivalues = multivalues;
     }
 
     /**
