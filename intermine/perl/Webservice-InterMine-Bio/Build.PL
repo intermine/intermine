@@ -10,6 +10,18 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => 0,
     },
+    configure_requires => {'Module::Build' => '0.36'},
+    requires => {
+        Moose => '2.0',
+        'PerlIO::gzip' => 0,
+        'File::Temp' => 0,
+        'URI' => 0,
+        'Webservice::InterMine' => '0.97',
+    },
+    recommends => {
+        'Bio::SeqIO' => 0,
+        'Bio::DB::SeqFeature::Store' => 0,
+    },
     add_to_cleanup      => [ 'Webservice-InterMine-Bio-*' ],
     create_makefile_pl => 'traditional',
 );
