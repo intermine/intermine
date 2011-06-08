@@ -19,7 +19,7 @@ IMBedding.loadTemplate(
 
         constraint1:   "Employee",
         op1:           "ONE OF",
-        value1:        "Employee A1,EmployeeA2",
+        value1:        [ "Employee A1", "EmployeeA2" ],
         code1:         "A"
     },
     '#queryplaceholder',

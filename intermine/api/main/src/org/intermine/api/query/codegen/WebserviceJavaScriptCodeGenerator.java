@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -145,7 +146,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                 while (entryIter.hasNext()) {
                     Entry<String, String> pair = entryIter.next();
                     sb.append(INDENT + INDENT + getFormattedObjKey(pair.getKey() + ":"));
-                    sb.append("\"" + pair.getValue() + "\"");
+                    sb.append(quote(pair.getValue()));
                     if (entryIter.hasNext() || conIter.hasNext()) {
                         sb.append(",");
                     }
@@ -165,6 +166,19 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString();
     }
 
+    private String quote(String str) {
+        if (str == null) {
+            return "";
+        } else if (str.startsWith("{") && str.endsWith("}")) {
+            return str;
+        } else if (str.startsWith("[") && str.endsWith("]")) {
+            return str;
+        } else {
+            return "\"" + escapeJavaScript(str) + "\"";
+        }
+    }
+
+
     private static String getFormattedObjKey(String key) {
         StringBuffer sb = new StringBuffer(key);
         while (sb.length() < 15) {
@@ -173,14 +187,19 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString();
     }
 
+    /** 
+     * Format a list of strings as a nice javascript array.
+     */
     private static void listFormatUtil(StringBuffer sb, Collection<String> coll) {
         Iterator<String> it = coll.iterator();
+        sb.append("[ ");
         while (it.hasNext()) {
-            sb.append(it.next());
+            sb.append("\"" + escapeJavaScript(it.next()) + "\"");
             if (it.hasNext()) {
-                sb.append(",");
+                sb.append(", ");
             }
         }
+        sb.append(" ]");
     }
 
     /*
