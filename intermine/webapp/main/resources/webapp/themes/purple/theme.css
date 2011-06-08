@@ -282,8 +282,14 @@ div.inline-list a:visited { color:#5C0075; }
 div.inline-list h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
 div.inline-list.gray h3,
 div.inline-list.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+div.inline-list div.right a,
+div.inline-list div.right a:hover,
+div.inline-list div.right a:visited { color:#5C0075; }
 /* collection tables */
 div.collection-table h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
+div.collection-table div.right a,
+div.collection-table div.right a:hover,
+div.collection-table div.right a:visited { color:#5C0075; }
 div.collection-table thead th,
 div.collection-table thead td { background:#F4EEF7; border-color:#DCC8E2; }
 div.collection-table table tr.odd td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }

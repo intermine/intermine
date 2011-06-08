@@ -16,13 +16,13 @@
       <div class="inline-list<c:if test="${list.size == 0}"> gray</c:if>">
         <h3>
         <c:if test="${IS_SUPERUSER}">
-          <span class="tag-editor">
+          <div class="right">
             <c:set var="descriptor" value="${list.descriptor}" />
             <tiles:insert name="inlineTagEditor.tile">
               <tiles:put name="taggable" beanName="descriptor" />
               <tiles:put name="show" value="true" />
             </tiles:insert>
-          </span>
+          </div>
         </c:if>
         ${list.size}&nbsp;${list.prefix}
       </h3>
