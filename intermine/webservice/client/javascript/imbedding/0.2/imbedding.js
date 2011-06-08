@@ -352,7 +352,7 @@ IMBedding = (function() {
             var outer = this;
             var action = function() {
                 outer.toggleExpandHelpText();
-                outer.table.fadeToggle('fast', function() {
+                outer.table.slideToggle(function() {
                     outer.fitContainerToTable();
                     if (jQuery(outer.table).is(':visible')) {
                         outer.csvLink.show();
@@ -452,20 +452,9 @@ IMBedding = (function() {
             return this.table.attr("offsetWidth") == 0;
         };
 
-        this.returnContainerToOriginalSize = function() {
-            if (this.defaultContainerwidth) {
-                this.scrollContainer.css({width: this.defaultContainerwidth});
-            }
-        };
-
         // Perform the resize
         this.fitContainerToTable = function() {
             this.scrollContainer.css({width: this.container.attr("clientWidth") + 'px'});
-            //if (this.containerNeedsExpanding()) {
-            //    this.expandContainer();
-            //} else if (this.tableIsHidden()) {
-            //    this.returnContainerToOriginalSize();
-            //}
         };
 
         // get a page url using the base url 
@@ -628,7 +617,8 @@ IMBedding = (function() {
             data: data, 
             success: callback, 
             callbackParameter: "callback",
-            error: errorHandler
+            error: errorHandler,
+            traditional: true
         });
     };
 
