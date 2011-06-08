@@ -6,7 +6,7 @@
 
 <!-- sequenceFeatureDisplayer.jsp -->
 
-<div class="feature">
+<div class="collection-table column-border-by-2">
 
 <c:set var="feature" value="${reportObject.object}"/>
 

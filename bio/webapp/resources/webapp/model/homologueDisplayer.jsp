@@ -5,10 +5,9 @@
 
 <!-- homologueDisplayer.jsp -->
 
-<div>
-
+<div class="basic-table">
 <h3>Homologues</h3>
-<table>
+<table class="tiny-font">
   <thead>
   <tr>
     <c:forEach items="${homologues}" var="entry">
@@ -25,7 +24,7 @@
 	        <td></td>
 	      </c:when>
 	      <c:otherwise>
-	        <td>
+	        <td class="one-line">
 	          <c:forEach items="${genes}" var="resultElement">
 	            <a href="report.do?id=${resultElement.id}">${resultElement.field}</a>
 	          </c:forEach>
@@ -36,7 +35,6 @@
 	  </tr>
   </tbody>
 </table>
-
 </div>
 
 <!-- /homologueDisplayer.jsp -->

@@ -43,7 +43,7 @@
 </script>
 
 <div id="cwhead">
-    <h3>Interaction Network</h3>
+    <h3 class="goog">Interaction Network</h3>
 </div>
 
 <div id="interactions-wrap">
