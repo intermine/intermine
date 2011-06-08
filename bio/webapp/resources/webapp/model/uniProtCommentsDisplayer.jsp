@@ -22,7 +22,7 @@
 				<tbody>
 		              <%-- traverse the comments --%>
 		              <c:forEach var="comment" items="${type.value}" varStatus="status">
-		                <tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
+		                <tr>
 		                  <%-- comment type and proteins objects --%>
 		                  <c:forEach var="bag" items="${comment.value}">
 		                    <c:set var="tdStyle" value="${status.count mod 2 == 0 ? 'alt' : ''}" />

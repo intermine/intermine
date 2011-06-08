@@ -8,6 +8,7 @@
 
 
 <!-- geneOntologyDisplayer.jsp -->
+<div class="basic-table">
 <h3>Gene Ontology</h3>
 
 <c:choose>
@@ -58,4 +59,5 @@
 
   </c:otherwise>
 </c:choose>
+</div>
 <!-- /geneOntologyDisplayer.jsp -->

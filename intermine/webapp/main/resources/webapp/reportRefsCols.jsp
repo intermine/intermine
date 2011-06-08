@@ -23,9 +23,7 @@
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
-
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
-
         <%-- ############# --%>
         <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
         <h3>
@@ -43,7 +41,6 @@
         </h3>
         <div class="clear"></div>
         <%-- ############# --%>
-
     <c:choose>
       <c:when test="${collection.size > 0}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
@@ -59,11 +56,11 @@
             <script type="text/javascript">trimTable('#coll_${fn:replace(placement, ":", "_")}${fieldName}_inner');</script>
           </div>
 
-          <p class="in_table" style="display:none;">
+          <div class="show-in-table" style="display:none;">
             <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
               Show all in a table »
             </html:link>
-          </p>
+          </div>
 
           </div>
           <div class="clear"></div>

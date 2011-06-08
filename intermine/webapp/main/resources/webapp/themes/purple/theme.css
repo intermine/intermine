@@ -292,13 +292,23 @@ div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#5C0075; }
 div.collection-table thead th,
 div.collection-table thead td { background:#F4EEF7; border-color:#DCC8E2; }
-div.collection-table table tr.odd td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
+div.collection-table table tr.odd td,
+div.collection-table table tbody tr:nth-child(2n) td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
 div.collection-table table td.class { color:#886644; }
 div.collection-table table a,
 div.collection-table table a:hover,
 div.collection-table table a:visited { color:#5C0075; }
 div.collection-table.gray h3,
 div.collection-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#DCC8E2; }
+div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#DCC8E2; }
+/* basic tables (on displayers etc.) */
+div.basic-table h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
+div.basic-table table a,
+div.basic-table table a:hover,
+div.basic-table table a:visited { color:#5C0075; }
+div.basic-table.gray h3,
+div.basic-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
 /* collection of collection tables */
 div.collection-of-collections div.header { background:#F4EEF7; border-top-color:#5C0075; }
 div.collection-of-collections div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
@@ -306,5 +316,12 @@ div.collection-of-collections div.header a,
 div.collection-of-collections div.header a:hover,
 div.collection-of-collections div.header a:visited { color:#5C0075; }
 div.collection-of-collections div.collection-table h3 { border-top-color:#DCC8E2; }
+/* togglers */
+div.collection-table div.toggle a,
+div.collection-table div.toggle a:hover,
+div.collection-table div.toggle a:visited,
+div.collection-table div.show-in-table a,
+div.collection-table div.show-in-table a:hover,
+div.collection-table div.show-in-table a:visited { color:#5C0075; }
 /* header, the same as table header */
 h3.goog { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
