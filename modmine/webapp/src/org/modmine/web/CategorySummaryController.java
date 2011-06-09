@@ -28,7 +28,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 
-public class ProjectsSummaryController extends TilesAction
+public class CategorySummaryController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
