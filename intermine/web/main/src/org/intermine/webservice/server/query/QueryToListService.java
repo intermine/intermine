@@ -25,6 +25,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
@@ -105,12 +106,8 @@ public class QueryToListService extends AbstractQueryService {
     protected void generateListFromQuery(PathQuery pq,
             String name, String description, List<String> tags,
             Profile profile) throws ObjectStoreException, PathException {
-        Query q = MainHelper.makeQuery(
-                pq,
-                bagManager.getUserAndGlobalBags(profile),
-                new HashMap<String, QuerySelectable>(),
-                im.getBagQueryRunner(),
-                new HashMap<String, BagQueryResult>());
+
+        Query q = getQuery(pq, profile);
 
         String tempName = name + TEMP;
 
@@ -134,6 +131,20 @@ public class QueryToListService extends AbstractQueryService {
                 profile.deleteBag(tempName);
             }
         }
+    }
+
+    protected Query getQuery(PathQuery pq, Profile profile) {
+        Query ret;
+        try {
+            ret = MainHelper.makeQuery(pq,
+                bagManager.getUserAndGlobalBags(profile),
+                new HashMap<String, QuerySelectable>(),
+                im.getBagQueryRunner(),
+                new HashMap<String, BagQueryResult>());
+        } catch (ObjectStoreException e) {
+            throw new InternalErrorException(e);
+        }
+       return ret;
     }
 
     protected void setHeaderAttributes(String name) {
