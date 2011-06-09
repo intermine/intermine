@@ -65,9 +65,9 @@
 	              </tr>
               </thead>
               <tbody>
-	              <c:forEach var="comment" items="${type.value}" varStatus="status">
+	              <c:forEach var="comment" items="${type.value}">
 	                <c:set var="tdStyle" value="${status.count mod 2 == 0 ? 'alt' : ''}" />
-	                <tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
+	                <tr>
 	                  <td class="type ${tdStyle}">${comment.value}</td>
 	                  <td class="${tdStyle}">${comment.key}</td>
 	                </tr>

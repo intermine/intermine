@@ -264,12 +264,14 @@
 
     jQuery('#legendall').svg();
     var legendall = jQuery('#legendall').svg('get');
-    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
-    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
-    legendall.text(70, 15, "Physical");
-    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
-    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
-    legendall.text(210, 15, "Genetic");
+    if (legendall) {
+	    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
+	    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
+	    legendall.text(70, 15, "Physical");
+	    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
+	    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
+	    legendall.text(210, 15, "Genetic");
+    }
 
     jQuery("svg").height("100%").width("100%");
 
