@@ -191,7 +191,7 @@ public interface Constants
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
      */
-    int WEB_SERVICE_VERSION = 4;
+    int WEB_SERVICE_VERSION = 5;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
