@@ -377,6 +377,21 @@
     <servlet-name>ws-schemata</servlet-name>
     <url-pattern>/service/schema/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-service-listing</servlet-name>
+    <servlet-class>org.intermine.webservice.server.ServicesListingsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
+  <servlet-mapping>
+    <servlet-name>ws-service-listing</servlet-name>
+    <url-pattern>/service</url-pattern>
+  </servlet-mapping>
 <!-- ================================================================================= -->
 
   <session-config>
