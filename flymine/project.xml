@@ -575,7 +575,6 @@
 
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/shared/data/bdgp-insitu/current"/>
-      <property name="src.data.dir.includes" value="*annot.csv"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
