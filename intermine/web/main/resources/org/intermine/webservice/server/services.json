@@ -6,7 +6,7 @@
         "usesAuthentication": false,
         "outputFormats": ["text"],
         "requiredParameters": [],
-        "methods": ["GET", "POST"],
+        "methods": ["GET", "POST"]
     },
     "release-version": {
         "path": "/version/release",
@@ -15,7 +15,7 @@
         "usesAuthentication": false,
         "outputFormats": ["text"],
         "requiredParameters": [],
-        "methods": ["GET", "POST"],
+        "methods": ["GET", "POST"]
     },
     "model": {
         "path": "/model",
@@ -26,7 +26,8 @@
         "requiredParameters": [],
         "methods": ["GET", "POST"],
         "schemas": {
-            "json": "/schema/model.schema"
+            "json": "schema/model.schema",
+        "xml": "schema/model.xsd"
         }
     },
     "templates": {
@@ -36,7 +37,61 @@
         "usesAuthentication": true,
         "outputFormats": ["xml", "json"],
         "requiredParameters": [],
+        "methods": ["GET", "POST"]
+    },
+    "query_to_list": {
+        "path": "/query/tolist",
+        "description": "Generate a list from a query",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["json"],
         "methods": ["GET", "POST"],
+        "requiredParameters": [
+            {
+                "parameter": "listName",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "query",
+                "description": "The xml representation of the query to run",
+                "contentType": "string",
+                "schema": "schema/query.xsd"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "query_list_append": {
+        "path": "/query/append/tolist",
+        "description": "Append items defined by a query to an existing list",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["json"],
+        "methods": ["GET", "POST"],
+        "requiredParameters": [
+            {
+                "parameter": "listName",
+                "description": "The name of the list to append to",
+                "contentType": "string"
+            },
+            {
+                "parameter": "query",
+                "description": "The xml representation of the query to run",
+                "contentType": "string",
+                "schema": "schema/query.xsd"
+            }
+        ]
     },
     "query_results": {
         "path": "/query/results",
@@ -44,32 +99,38 @@
         "requiresAuthentication": false,
         "usesAuthentication": true,
         "outputFormats": [
-            "xml", "jsonrows", "jsonobjects", "tab", "csv", 
+            "xml", "jsonrows", "jsonobjects", "tab", "csv",
             "count", "jsoncount", "html"
         ],
         "methods": ["GET", "POST"],
+        "schemas": {
+            "jsonrows": "schema/resultset.schema",
+            "xml": "schema/resultset.xsd",
+            "jsoncount": "schema/jsoncount.schema"
+        },
         "requiredParameters": [
             {
-                "parameter": "query", 
+                "parameter": "query",
                 "description": "The xml representation of the query to run",
-                "contentType": "string"
+                "contentType": "string",
+        "schema": "schema/query.xsd"
             }
         ],
         "optionalParameters": [
             {
-                "parameter": "size", 
+                "parameter": "size",
                 "description": "The maximum number of result rows to return",
                 "contentType": "integer"
             },
             {
-                "parameter": "start", 
+                "parameter": "start",
                 "description": "The first result row to return",
                 "contentType": "integer"
             },
             {
-                "parameter": "columnheaders", 
+                "parameter": "columnheaders",
                 "description": "Whether to include column headers on flat-file results",
-                "enum": ["friendly", "path", 0, 1, "true", "false"],
+                "enum": ["friendly", "path", 0, 1, "true", "false"]
             },
             {
                 "parameter": "layout",
@@ -84,19 +145,24 @@
         "requiresAuthentication": false,
         "usesAuthentication": true,
         "outputFormats": [
-            "xml", "jsonrows", "jsonobjects", "tab", "csv", 
+            "xml", "jsonrows", "jsonobjects", "tab", "csv",
             "count", "jsoncount", "html"
         ],
         "methods": ["GET", "POST"],
+        "schemas": {
+            "jsonrows": "schema/resultset.schema",
+            "xml": "schema/resultset.xsd",
+            "jsoncount": "schema/jsoncount.schema"
+        },
         "requiredParameters": [
             {
-                "parameterPattern": "^constraint[0-9]+$", 
+                "parameterPattern": "^constraint[0-9]+$",
                 "description": "The path of the constraint",
                 "contentType": "string",
                 "multipleAllowed": true
             },
             {
-                "parameterPattern": "^op[0-9]+$", 
+                "parameterPattern": "^op[0-9]+$",
                 "description": "The operation of the constraint",
                 "contentType": "string",
                 "multipleAllowed": true
@@ -104,37 +170,37 @@
         ],
         "optionalParameters": [
             {
-                "parameterPattern": "^value[0-9]+$", 
+                "parameterPattern": "^value[0-9]+$",
                 "description": "The value of the constraint",
                 "contentType": "string",
                 "multipleAllowed": true
             },
             {
-                "parameterPattern": "^extra[0-9]+$", 
+                "parameterPattern": "^extra[0-9]+$",
                 "description": "The extra value of the constraint",
                 "contentType": "string",
                 "multipleAllowed": true
             },
             {
-                "parameterPattern": "^value[0-9]+$", 
+                "parameterPattern": "^value[0-9]+$",
                 "description": "The value of the constraint",
                 "contentType": "string",
                 "multipleAllowed": true
             },
             {
-                "parameter": "size", 
+                "parameter": "size",
                 "description": "The maximum number of result rows to return",
                 "contentType": "integer"
             },
             {
-                "parameter": "start", 
+                "parameter": "start",
                 "description": "The first result row to return",
                 "contentType": "integer"
             },
             {
-                "parameter": "columnheaders", 
+                "parameter": "columnheaders",
                 "description": "Whether to include column headers on flat-file results",
-                "enum": ["friendly", "path", 0, 1, "true", "false"],
+                "enum": ["friendly", "path", 0, 1, "true", "false"]
             },
             {
                 "parameter": "layout",
@@ -151,6 +217,9 @@
         "outputFormats": ["tab", "json"],
         "requiredParameters": [],
         "methods": ["GET"],
+        "schemas": {
+            "json": "lists.schema"
+        }
     },
     "list_creation": {
         "path": "/lists",
@@ -186,6 +255,11 @@
                 "description": "A disambigation value",
                 "contentType": "string"
             },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
+                "contentType": "string"
+            }
         ]
     },
     "list_appending": {
@@ -204,14 +278,14 @@
                 "parameter": "name",
                 "description": "The name of the list to append to",
                 "contentType": "string"
-            },
+            }
         ],
         "optionalParameters": [
             {
                 "parameter": "extraValue",
                 "description": "A disambigation value",
                 "contentType": "string"
-            },
+            }
         ]
     },
     "list_union": {
@@ -237,6 +311,11 @@
             {
                 "parameter": "description",
                 "description": "A description of this new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
                 "contentType": "string"
             }
         ]
@@ -344,7 +423,7 @@
                 "parameter": "newname",
                 "description": "The name you want the list to have",
                 "contentType": "string"
-            },
+            }
         ],
         "optionalParameters": []
     },
@@ -360,7 +439,7 @@
                 "parameter": "name",
                 "description": "The name of the list you want to delete",
                 "contentType": "string"
-            },
+            }
         ],
         "optionalParameters": []
     },
@@ -371,7 +450,10 @@
         "usesAuthentication": false,
         "outputFormats": ["json", "jsoncount"],
         "methods": ["GET", "POST"],
-        "requiredParameters": {
+        "schemas": {
+            "jsoncount": "schema/jsoncount.schema"
+        },
+        "requiredParameters": [
             {
                 "parameter": "path",
                 "description": "The path whose potential values you would like a list of",
@@ -384,6 +466,6 @@
                 "description": "A map from constrained paths to their subclassed type",
                 "contentType": "json-object"
             }
-        ],
-    },
+        ]
+    }
 }
