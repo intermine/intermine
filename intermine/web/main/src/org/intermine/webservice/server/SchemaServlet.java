@@ -11,26 +11,24 @@ package org.intermine.webservice.server;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.exceptions.ResourceNotFoundException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.output.Output;
 
 /**
  * Returns a requested schema.
@@ -40,80 +38,59 @@ import org.intermine.webservice.exceptions.ResourceNotFoundException;
 public class SchemaServlet extends HttpServlet
 {
 
-	private static final Logger LOGGER = Logger.getLogger(SchemaServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(SchemaServlet.class);
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * {@inheritDoc}}
-	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-			runService(request, response);
-		}
+    /**
+     * {@inheritDoc}}
+     */
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        runService(request, response);
+    }
 
-	private void runService(HttpServletRequest request,
-			HttpServletResponse response) {
+    private void runService(HttpServletRequest request,
+            HttpServletResponse response) {
 
-        setHeaders(request, response);
-
-		try {
-			InputStream requestedFile = getFile(request);
-            PrintWriter pw = response.getWriter();
-            String callback = request.getParameter("callback");
-            if (!StringUtils.isEmpty(callback)) {
-                pw.write(callback + "(");
-            }
-			IOUtils.copy(requestedFile, pw);
-            if (!StringUtils.isEmpty(callback)) {
-                pw.write(");");
-            }
-		} catch (IOException e) {
-			LOGGER.error("Obtaining writer to handle schema request failed.", e);
-		} catch (ResourceNotFoundException e) {
-			response.setStatus(e.getHttpErrorCode());
-            try {
-                response.getWriter().print(e.getMessage());
-            } catch (IOException ex) {
-                LOGGER.error("Obtaining writer to handle schema request failed.", ex);
-            }
-			return;
-		}
-	}
-
-    private void setHeaders(HttpServletRequest request, HttpServletResponse response) {
-		String fileName = StringUtil.trimSlashes(request.getPathInfo());
-        if (fileName == null) {
-            return;
+        if (StringUtils.isEmpty(request.getPathInfo())) {
+            serveSchemaList(request, response);
+        } else {
+            serveSpecificSchema(request, response);
         }
+    }
 
-        if (fileName.endsWith("xsd")) {
-            ResponseUtil.setXMLHeader(response, fileName);
-        } else if (fileName.endsWith("schema")) {
-            if (!StringUtils.isEmpty(request.getParameter("callback"))) {
-                ResponseUtil.setJSONPHeader(response, fileName);
-            } else {
-                ResponseUtil.setJSONSchemaHeader(response, fileName);
+    private void serveSpecificSchema(HttpServletRequest req, HttpServletResponse resp) {
+        String fileName = StringUtil.trimSlashes(req.getPathInfo());
+        Properties webProperties =
+            SessionMethods.getWebProperties(req.getSession().getServletContext());
+        Set<String> schemata = new HashSet<String>(
+            Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
+        if (!schemata.contains(fileName)) {
+            resp.setStatus(Output.SC_NOT_FOUND);
+            try {
+                PrintWriter pw = resp.getWriter();
+                pw.println(fileName + " is not in the list of schemata.");
+                pw.flush();
+            } catch (IOException e) {
+                LOGGER.error("Could not write response", e);
+            }
+        } else {
+            try {
+                req.getSession().getServletContext()
+                    .getRequestDispatcher("/webservice/" + fileName).forward(req, resp);
+            } catch (ServletException e) {
+                throw new InternalErrorException(e);
+            } catch (IOException e) {
+                LOGGER.error("Could not write response", e);
             }
         }
     }
 
+    private void serveSchemaList(HttpServletRequest req, HttpServletResponse resp) {
+        final InterMineAPI im = SessionMethods.getInterMineAPI(req.getSession());
+        new SchemaListService(im).service(req, resp);
+    }
 
-	private InputStream getFile(HttpServletRequest request) {
-		String fileName = StringUtil.trimSlashes(request.getPathInfo());
-		Properties webProperties =
-			SessionMethods.getWebProperties(request.getSession().getServletContext());
-		Set<String> schemata = new HashSet<String>(
-			Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
-		if (!schemata.contains(fileName)) {
-			throw new ResourceNotFoundException(fileName + " is not in the list of schemata.");
-		} else {
-			InputStream is = getClass().getResourceAsStream(fileName);
-			if (is == null) {
-				throw new ResourceNotFoundException(fileName + 
-					" is one of our schemata, but its corresponding file was not found.");
-			} 
-			return is;
-		}
-	}
 }
