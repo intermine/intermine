@@ -48,7 +48,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     private String namespace;
     private Model model;
     private String dataset;
-    private static final String KEGG = "KEGG pathways";
+    private static final String KEGG = "KEGG pathways data set";
     private static final String REACTOME = "Reactome data set";
 
     /**
