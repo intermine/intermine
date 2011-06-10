@@ -29,7 +29,7 @@
 </script>
 
 <c:set var="colcount" value="0" />
-<table class="results-table" cellspacing="0">
+<table>
   <%-- The headers --%>
   <c:if test="${pagedResults.exactSize > 0}">
   <thead>
@@ -101,17 +101,10 @@
   <%-- Row --%>
   <c:if test="${pagedResults.estimatedSize > 0}">
   <tbody>
-    <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
-
-      <c:set var="rowClass">
-        <c:choose>
-          <c:when test="${status.count % 2 == 1}">odd</c:when>
-          <c:otherwise>even</c:otherwise>
-        </c:choose>
-      </c:set>
+    <c:forEach var="row" items="${pagedResults.rows}">
 
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
-        <tr class="<c:out value="${rowClass}"/>">
+        <tr>
 
         <%-- If a whole column is selected, find the ResultElement.id from the selected column, other columns with the same ResultElement.id may also need to be highlighted --%>
         <c:if test="${pagedResults.allSelected != -1}">
@@ -148,7 +141,7 @@
                   </c:choose>
 
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass} <c:if test="${status.count % 2 == 0}"> alt</c:if>" rowspan="${subRow[column.index].rowspan}">
+                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
                     <c:set var="disabled" value="false"/>
                     <c:if test="${(!empty pagedResults.selectedClass) && ((pagedResults.selectedClass != resultElement.type)&&(pagedResults.selectedClass != column.typeClsString) && pagedResults.selectedColumn != column.index)}">
@@ -190,36 +183,20 @@
 
     <c:if test="${tableIdentifier != null}">
       <script type=text/javascript>
-        // table with some results, hide it
-        jQuery('#${tableIdentifier} table').hide();
-        // provide a toggler instead of the "show all link"
-        jQuery('#${tableIdentifier} p.in_table a').hide();
-
-        // add the count to the title
-        var h = jQuery('#${tableIdentifier}').parent().find("h3.templateTitle div.right");
-        h.html(${pagedResults.exactSize} + ' results');
+      	<%-- add count to the title --%>
+        jQuery('#${tableIdentifier}').find("h3 div.right").text(${pagedResults.exactSize} + ' results');
 
         if (${pagedResults.exactSize} > 1) {
-          // nasty hardcode
+          <%-- create a 'more' toggler --%>
           if (${pagedResults.exactSize} < 10) {
-            var openOnclick = "jQuery('#${tableIdentifier} table').show();" +
-            "jQuery('#${tableIdentifier} p.in_table a').show();" +
-            "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
-            "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
-            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+'return false;"><span>Show all</span></a>';
+
           } else {
-            var openOnclick = "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
-            "return showMoreRowsTemplate('#${tableIdentifier}', 1, 10);";
-            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+';"><span>Show 10 rows</span></a>';
+
           }
         } else {
-            var openOnclick = "jQuery('#${tableIdentifier} table').show();" +
-            "jQuery('#${tableIdentifier} p.in_table a').show();" +
-            "jQuery('#${tableIdentifier}').parent().find('p.description').show();" +
-            "jQuery('#${tableIdentifier} p.in_table a.toggler').hide();";
-            var toggle = '<a class="toggler" href="#" onclick="'+openOnclick+'return false;"><span>Show 1 row</span></a>';
+        	<%-- one row, just show it already --%>
+			jQuery('#${tableIdentifier}').show();
         }
-        jQuery('#${tableIdentifier} p.in_table').append(toggle);
       </script>
     </c:if>
   </c:if>
@@ -281,7 +258,7 @@
     if (jQuery('#removeFromBag')) {
         jQuery('#removeFromBag').attr('disabled','');
     }
-    </script>
+    --</script>
     </c:if>
 
 </table>

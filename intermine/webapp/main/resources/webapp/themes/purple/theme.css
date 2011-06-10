@@ -318,6 +318,10 @@ div.collection-of-collections div.header a,
 div.collection-of-collections div.header a:hover,
 div.collection-of-collections div.header a:visited { color:#5C0075; }
 div.collection-of-collections div.collection-table h3 { border-top-color:#DCC8E2; }
+/* templates */
+div.template h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
+div.template.gray h3,
+div.template.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
 /* togglers */
 div.collection-table div.toggle a,
 div.collection-table div.toggle a:hover,

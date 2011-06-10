@@ -45,20 +45,22 @@
       <c:set var="actionLink" value="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=${scope}${extra}"/>
     </c:otherwise>
   </c:choose>
-  <html:link action="${actionLink}" title="${linkTitle}">
-    <h3 class="templateTitle"><div class="right"></div><img src="images/icons/templates-16.png" /> ${!empty name ? name : templateQuery.title}</h3>
-  </html:link>
-  <fmt:message var="linkTitle" key="templateList.run">
-    <fmt:param value="${templateQuery.name}"/>
-  </fmt:message>
-
-  <%-- favourites star --%>
+  <%--<html:link action="${actionLink}" title="${linkTitle}">--%>
+  <h3>
+  <div class="right"></div>
+  <div class="loading-spinner"></div>
+  <img src="images/icons/templates-16.png" /> ${!empty name ? name : templateQuery.title}
   <div class="favorites">
     <tiles:insert name="setFavourite.tile">
       <tiles:put name="name" value="${templateQuery.name}"/>
       <tiles:put name="type" value="template"/>
     </tiles:insert>
   </div>
+  </h3>
+  <%--</html:link>--%>
+  <fmt:message var="linkTitle" key="templateList.run">
+    <fmt:param value="${templateQuery.name}"/>
+  </fmt:message>
 
   <%-- description --%>
   <c:if test="${! empty descr}">

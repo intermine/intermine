@@ -1505,6 +1505,11 @@ div.basic-table table th { padding-top:6px; }
 div.collection-of-collections div.header { padding:2px 6px; border-top-width:1px; border-top-style:solid; }
 div.collection-of-collections div.header a { text-decoration:underline; }
 div.collection-of-collections div.header a.active { text-decoration:none; font-weight:bold; }
+/* templates */
+div.template { margin:0 0 30px 0; }
+div.template h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
+div.template h3 img { vertical-align:middle; }
+div.template div.right { display:inline; float:right; }
 /* togglers */
 div.collection-table div.toggle,
 div.collection-of-collections div.toggle { padding:2px; text-align:center; font-size:12px; }
@@ -1521,3 +1526,4 @@ h3.goog { border-top-width:1px; border-top-style:solid; margin-bottom:6px; paddi
 /* applicable to all */
 .one-line * { display:block; }
 .tiny-font * { font-size:11px; }
+.loading-spinner { background:url('../images/icons/ajax-loader.gif') no-repeat center; display:inline-block; width:16px; height:11px; }

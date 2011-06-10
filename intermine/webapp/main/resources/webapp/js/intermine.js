@@ -1,13 +1,26 @@
+// jQuery reqs
+if (typeof jQuery == 'undefined') {
+	throw new Error("ƒ missing jQuery!");
+} else {
+	if (jQuery().jquery < '1.4.1') {
+		throw new Error("ƒ jQuery >= 1.4.1 required");
+	}
+}
 // the prefix
 var im;
 if (!im) {
     im = {};
-    if (window.console && window.console.firebug) {
+    if (window.console && window.console.firebug) { // 'attach' Firebug
     	console.log("ƒ InterMine JavaScript Library loaded");
     	im.firebug = true;
+    	jQuery.error = console.error;
     }
 } else if (typeof org != 'object') throw new Error("ƒ InterMine JavaScript Library cannot be loaded, 'var im' is already in use");
-if (typeof jQuery == 'undefined') throw new Error("ƒ missing jQuery!");
+
+//check if element exists
+im.exists = function(e) {
+	return (jQuery(e).length > 0);
+};
 
 // (on all IE only), will apply .odd/.even classes to "known" tables (see Wiki for those)
 im.alternatingColors = function() {
@@ -23,7 +36,16 @@ im.alternatingColors = function() {
 // return a path to the current element
 im.elementPath = function(e) {
 	e = jQuery(e);
-	if (e.length != 1) throw new Error("ƒ element does not exist");
+	switch (e.length) {
+		case 0:
+			jQuery.error("ƒ element does not exist");
+			im.trace(1);
+			break;
+		case 1:
+			break;
+		default:
+			return e.each().elementPath(); // call us for each matched element
+	}
 
 	var node = e;
 	var path = Array();
@@ -42,7 +64,7 @@ im.elementPath = function(e) {
 	    path.push(name);
 	    node = parent;
 	}
-	return path.join(' < ');
+	return im.log(path.join(' < '));
 };
 
 // log message in Firebug if enabled
@@ -52,8 +74,29 @@ im.log = function(message) {
 	}
 };
 
+// return a stack trace (Firefox only)
+im.trace = function(level) {
+	if (jQuery.browser.mozilla) {
+		try {
+			kaboodakabooda++; // booda?
+		} catch (e) {
+			level = (level === undefined) ? 0 : level;
+		    var stack = ['trace:'];
+		    jQuery.each(e.stack.split("\n"), function(index, value) {
+		    	if (index > level) {
+		    		stack.push(value.substring(value.indexOf('@')));
+		    	}
+		    });
+		    return im.log(stack.join('\n'));
+		}
+	}
+};
+
 // jQuery extensions
 jQuery.fn.extend({
+	exists: function() {
+		return im.exists(this);
+	},
 	elementPath: function() {
 		return im.elementPath(this);
 	},
