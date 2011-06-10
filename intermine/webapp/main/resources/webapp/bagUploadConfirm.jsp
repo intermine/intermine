@@ -8,7 +8,7 @@
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
 
-<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data" styleId="bagUploadConfirmForm">
+<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data">
 
 <div id="sidebar">
   <div class="wrap">

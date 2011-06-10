@@ -10,7 +10,7 @@
    <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
    <c:if test="${fn:length(viewStrings) > 0}">class='button'</c:if>>
       <div class="left"></div>
-          <html:form action="/queryBuilderViewAction" styleId="submitform">
+          <html:form action="/queryBuilderViewAction">
           <input id="showResult" type="submit" name="showResult"
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>

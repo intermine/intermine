@@ -13,7 +13,7 @@
   var addedConstraint = 0;
 </script>
 <div id="constraint" style="display:none">
-    <html:form action="/queryBuilderConstraintAction" styleId="queryBuilderConstraintForm">
+    <html:form action="/queryBuilderConstraintAction">
     <c:choose>
       <c:when test="${!empty dec.path.pathString}">
         <html:hidden property="path" value="${dec.path.pathString}"/>

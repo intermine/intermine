@@ -18,7 +18,7 @@
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
 
 <html:xhtml/>
-<html:form action="/widgetAction" styleId="widgetaction${widget.id}">
+<form action="/widgetAction" id="widgetaction${widget.id}">
 <html:hidden property="link" value="${widget.link}"/>
 <html:hidden property="bagType" value="${bag.type}"/>
 <html:hidden property="bagName" value="${bag.name}" />
@@ -54,38 +54,38 @@
    <html:hidden property="externalLinkLabel${widget.id}" styleId="externalLinkLabel${widget.id}" value="${widget.externalLinkLabel}"/>
     <li>
     <label>Multiple Hypothesis Test Correction</label>
-    <html:select property="errorCorrection" styleId="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
-      <html:option value="Holm-Bonferroni">Holm-Bonferroni</html:option>
-      <html:option value="Benjamini Hochberg">Benjamini and Hochberg</html:option>
-      <html:option value="Bonferroni">Bonferroni</html:option>
-      <html:option value="None">None</html:option>
-    </html:select>
+    <select id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
+      <option value="Holm-Bonferroni">Holm-Bonferroni</option>
+      <option value="Benjamini Hochberg">Benjamini and Hochberg</option>
+      <option value="Bonferroni">Bonferroni</option>
+      <option value="None">None</option>
+    </select>
     </li>
     <li style="float:right">
     <label>Maximum value to display</label>
-    <html:select property="max" styleId="max${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}')">
-      <html:option value="0.05">0.05</html:option>
-      <html:option value="0.10">0.10</html:option>
-      <html:option value="1.00">1.00</html:option>
-    </html:select>
+    <select name="max" id="max${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}')">
+      <option value="0.05">0.05</option>
+      <option value="0.10">0.10</option>
+      <option value="1.00">1.00</option>
+    </select>
     </li>
    </c:if>
     <c:forEach items="${extraAttrMap}" var="entry">
     <c:if test="${! empty entry.key && entry.key != 'Editable'}">
       <li>
         <label>${entry.key}:</label>
-        <html:select property="selectedExtraAttribute" styleId="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
+        <select name="selectedExtraAttribute" id="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
         <c:forEach items="${entry.value}" var="extraParams">
           <%--<c:choose>
             <c:when test="${widget.selectedExtraAttribute == extraParams}">
               <option value="${extraParams}" selected>${extraParams}</option>
             </c:when>
             <c:otherwise>--%>
-              <html:option value="${extraParams}">${extraParams}</html:option>
+              <option value="${extraParams}">${extraParams}</option>
             <%--</c:otherwise>
           </c:choose>--%>
         </c:forEach>
-        </html:select>
+        </select>
       </li>
     </c:if>
   </c:forEach>
@@ -173,5 +173,5 @@
 
   </script>
 </div>
-</html:form>
+</form>
 <!-- /widget.jsp -->

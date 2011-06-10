@@ -63,7 +63,7 @@
 <div id="sidebar">
    <div id="bigGreen" class='button inactive'>
       <div class="left"></div>
-          <html:form action="/queryBuilderViewAction" styleId="submitform">
+          <html:form action="/queryBuilderViewAction">
           <input id="showResult" type="submit" name="showResult"
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>

@@ -6,7 +6,7 @@
 <html:xhtml/>
 
 <div class="body">
-      <html:form action="/modifyTemplate" styleId="modifyTemplateForm">
+      <html:form action="/modifyTemplate">
         <tiles:insert name="wsTemplateTable.tile">
           <tiles:put name="wsListId" value="all_templates"/>
           <tiles:put name="scope" value="all"/>
