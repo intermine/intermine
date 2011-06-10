@@ -66,7 +66,11 @@
           <div class="clear"></div>
         <%-- ############# --%>
       </c:when>
-      <c:otherwise></c:otherwise>
+      <c:otherwise>
+      	<script type="text/javascript">
+      		jQuery("#${fn:replace(placement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
+      	</script>
+      </c:otherwise>
     </c:choose>
     </div>
 

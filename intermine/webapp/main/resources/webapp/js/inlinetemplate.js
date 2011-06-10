@@ -35,15 +35,13 @@ function loadInlineTemplate(i) {
   jQuery(e).show();
   jQuery(e).innerHTML = placement + templateName + id;
 
-  // return the table in 'result', but hide by default
+  // return the table in 'result'
   jQuery.ajax({
     url: modifyDetailsURL,
     dataType: 'html',
     data: 'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType+'&trail='+trail,
     success: function(result) {
-	  jQuery(e).hide();
       jQuery(e).html(result);
-
       // dequeue
       loadInlineTemplate(i+1);
     },

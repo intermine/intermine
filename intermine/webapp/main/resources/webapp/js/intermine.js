@@ -84,7 +84,9 @@ im.trace = function(level) {
 		    var stack = ['trace:'];
 		    jQuery.each(e.stack.split("\n"), function(index, value) {
 		    	if (index > level) {
-		    		stack.push(value.substring(value.indexOf('@')));
+		    		if (value.toLowerCase().indexOf('jquery') < 0) {
+		    			stack.push(value.substring(value.indexOf('@')));
+		    		}
 		    	}
 		    });
 		    return im.log(stack.join('\n'));

@@ -17,7 +17,7 @@
 <c:choose>
 <c:when test="${(reportObject != null || interMineIdBag !=null) && resultsTable != null}">
 
-<div style="overflow-x: auto;">
+<div style="overflow-x:auto; display:none;">
 	<%-- results table --%>
   	<tiles:insert name="resultsTable.tile">
     	<tiles:put name="pagedResults" beanName="resultsTable" />
@@ -39,7 +39,7 @@
 </c:choose>
 
 <%-- show in table --%>
-<div class="show-in-table">
+<div class="show-in-table" style="display:none;">
 <c:choose>
   <c:when test="${resultsTable.exactSize == 0}">
     <%-- postdict the fact that we have nothing to show --%>
@@ -50,7 +50,7 @@
           var text = 'No results for this type';
         }
 
-	    jQuery('#${fn:replace(placement, ':', '_')}_${templateQuery.name} h3').parent().addClass('gray');
+	    jQuery('#${fn:replace(placement, ':', '_')}_${templateQuery.name} h3').find('div.right').text(text).parent().parent().addClass('gray');
     </script>
   </c:when>
   <c:otherwise>
