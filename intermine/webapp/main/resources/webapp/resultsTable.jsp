@@ -183,20 +183,63 @@
 
     <c:if test="${tableIdentifier != null}">
       <script type=text/javascript>
-      	<%-- add count to the title --%>
-        jQuery('#${tableIdentifier}').find("h3 div.right").text(${pagedResults.exactSize} + ' results');
-
-        if (${pagedResults.exactSize} > 1) {
-          <%-- create a 'more' toggler --%>
-          if (${pagedResults.exactSize} < 10) {
-
-          } else {
-
-          }
-        } else {
-        	<%-- one row, just show it already --%>
-			jQuery('#${tableIdentifier}').show();
-        }
+      (function() {
+	      	var exactSize = ${pagedResults.exactSize};
+	      	var tableId = '${tableIdentifier}';
+	        jQuery('#' + tableId).find("h3 div.right").text(exactSize + ' results');
+	        if (${pagedResults.exactSize} > 1) {
+	        	jQuery('#' + tableId + ' table tbody tr').hide();
+	        	jQuery('<div/>', {
+	        		className: 'toggle'
+	        	}).append(
+	                	jQuery('<a/>', {
+	        		    title: 'Collapse/Hide',
+	        		    className: 'less',
+	        		    text: 'Collapse',
+	        		    style: 'float:right; display:none;',
+	        		    click: function(e) {
+	        		    	jQuery('#' + tableId + ' div.show-in-table').hide();
+	        		    	jQuery('#' + tableId + ' table tbody tr').hide();
+	        		    	jQuery('#' + tableId + ' table').parent().hide();
+	        		    	jQuery('#' + tableId).scrollTo('fast', 'swing', -30);
+	        		    	jQuery('#' + tableId + ' div.toggle a.more').text(function() {
+	        		    		return 'Show ' + ((exactSize < 11) ? 'all ' + exactSize : 'first ' + 10) + ' rows';
+	        		    	});
+	        		    	jQuery(this).hide();
+	        		    }
+	        		})
+		        ).append(
+		            	jQuery('<a/>', {
+		    		    title: 'Show more items',
+		    		    className: 'more',
+		    		    text: function() {
+		    		    	return 'Show ' + ((exactSize < 11) ? 'all ' + exactSize : 'first ' + 10) + ' rows';
+		    		    },
+		    		    click: function(e) {
+		    		    	jQuery('#' + tableId + ' table').parent().show();
+		    		    	jQuery('#' + tableId + ' table tbody tr:hidden').each(function(index) {
+		    		    	    if (index < 10) {
+		        		    	    jQuery(this).show();
+		    		    	    }
+		    		    	});
+		    		    	var remaining = jQuery('#' + tableId + ' table tbody tr:hidden').length;
+		    		    	if (remaining > 0) {
+		        		    	jQuery(this).text(function() {
+		            		    	return 'Show ' + ((remaining < 11) ? 'last ' + remaining : 'further ' + 10) + ' rows';
+		        		    	});
+		        		    	jQuery('#' + tableId + ' div.toggle a.less').show();
+		    		    	} else {
+		        		    	jQuery(this).parent().remove();
+		        		    	jQuery('#' + tableId + ' div.show-in-table').show();
+		    		    	}
+		    		    }
+		    		})
+		    	)
+	        	.appendTo('#' + tableId + ' div.collection-table');
+	        } else {
+				jQuery('#' + tableId).show();
+	        }
+      	})();
       </script>
     </c:if>
   </c:if>
@@ -221,24 +264,6 @@
     </c:when>
     <c:otherwise>
       <c:set var="numRows" value="${pagedResults.exactSize}"/>
-
-      <%--
-      <c:choose>
-        <c:when test="${pagedResults.pageSize >= numRows}">
-          <c:choose>
-            <c:when test="${numRows == 1}">
-              <b>Showing all <span><c:out value="${numRows}"/></span> row.</b>
-            </c:when>
-            <c:otherwise>
-              <b>Showing all <span><c:out value="${numRows}"/></span> rows.</b>
-            </c:otherwise>
-          </c:choose>
-        </c:when>
-        <c:otherwise>
-          <b>Showing first <span><c:out value="${pagedResults.pageSize}"/></span> of <span><c:out value="${numRows}"/></span> rows.</b>
-        </c:otherwise>
-      </c:choose>
-      --%>
     </c:otherwise>
   </c:choose>
 
