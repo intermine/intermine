@@ -9,16 +9,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 public class ListAppendService extends ListUploadService {
 
@@ -35,28 +31,19 @@ public class ListAppendService extends ListUploadService {
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        if (!this.isAuthenticated()) {
-            throw new BadRequestException("Not authenticated.\n" + USAGE);
-        }
-
-        Profile profile = SessionMethods.getProfile(request.getSession());
-        String name = request.getParameter("name");
-        String extraFieldValue = request.getParameter("extraValue");
-
-        setListName(name);
-        setHeaderAttributes(Arrays.asList(name));
+    protected void makeList(ListInput input, String type, Profile profile, Set<String> rubbishbin)
+        throws Exception {
 
         BufferedReader r = getReader(request);
 
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
-        InterMineBag bag = profile.getSavedBags().get(name);
+        InterMineBag bag = profile.getSavedBags().get(input.getListName());
         StrMatcher matcher = getMatcher();
         if (bag == null) {
-            throw new BadRequestException(name + " is not a list you have access to");
+            throw new ServiceForbiddenException(
+                input.getListName() + " is not a list you have access to");
         }
         String line;
         while ((line = r.readLine()) != null) {
@@ -66,13 +53,16 @@ public class ListAppendService extends ListUploadService {
                 ids.add(token);
             }
             if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
-                addIdsToList(ids, bag, bag.getType(), extraFieldValue, unmatchedIds);
+                addIdsToList(ids, bag, bag.getType(), input.getExtraValue(), unmatchedIds);
                 ids.clear();
             }
         }
         if (ids.size() > 0) {
-            addIdsToList(ids, bag, bag.getType(), extraFieldValue, unmatchedIds);
+            addIdsToList(ids, bag, bag.getType(), input.getExtraValue(), unmatchedIds);
         }
+
+        setListSize(bag.size());
+
         for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
             List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
             if (i.hasNext()) {

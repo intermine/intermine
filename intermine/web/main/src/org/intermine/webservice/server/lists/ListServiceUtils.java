@@ -14,6 +14,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 class ListServiceUtils {
 
@@ -75,7 +76,7 @@ class ListServiceUtils {
         for (String listName: listNames) {
             InterMineBag bag = manager.getUserOrGlobalBag(profile, listName);
             if (bag == null) {
-                throw new BadRequestException(listName + " is not a list you have access to");
+                throw new ServiceForbiddenException(listName + " is not a list you have access to");
             }
 
             classes.add(model.getClassDescriptorByName(bag.getType()));
@@ -92,6 +93,13 @@ class ListServiceUtils {
         }
     }
 
+    /**
+     * Finds the common class for a set of classes. So for a set with the members
+     * Employee, Manager and CEO, Employee will be returned. For a set with the members
+     * Employee, Company, and CEO, an exception will be thrown.
+     * @param classes The classes that should have a common type.
+     * @return A class name.
+     */
     public static String findCommonSuperTypeOf(Set<ClassDescriptor> classes) {
         if (classes == null) {
             throw new IllegalArgumentException("classes is null");
@@ -111,24 +119,15 @@ class ListServiceUtils {
         String nameString = StringUtils.join(classNames, ", ");
         for (ClassDescriptor cd: classes) {
             String thisType = cd.getName();
-            if (currentClass == null || ListServiceUtils.getAllSuperclassNames(currentClass).contains(thisType)) {
+            if (currentClass == null || currentClass.getAllSuperclassNames().contains(thisType)) {
                 currentClass = cd;
                 continue;
             }
-            if (!getAllSuperclassNames(cd).contains(currentClass.getName())) {
-                throw new RuntimeException("Incompatible types: " + nameString);
+            if (!cd.getAllSuperclassNames().contains(currentClass.getName())) {
+                throw new BadRequestException("Incompatible types: " + nameString);
             }
         }
         return currentClass.getUnqualifiedName();
-    }
-
-    private static Set<String> getAllSuperclassNames(ClassDescriptor cd) {
-        Set<String> classNames = new HashSet<String>();
-        classNames.addAll(cd.getSuperclassNames());
-        for (ClassDescriptor superCd: cd.getSuperDescriptors()) {
-            classNames.addAll(getAllSuperclassNames(superCd));
-        }
-        return classNames;
     }
 
 }
