@@ -71,4 +71,12 @@ sub connect {
     return $ftp;
 }
 
+sub ls_remote_dir {
+    my $self = shift;
+    my $ftp = $self->connect(@_);
+    my @things = $ftp->ls;
+    $ftp->quit;
+    return @things;
+}
+
 1;

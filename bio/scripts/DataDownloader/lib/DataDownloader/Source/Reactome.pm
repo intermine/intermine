@@ -2,7 +2,7 @@ package DataDownloader::Source::Reactome;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';
-use DataDownloader::File::Functions qw(make_link);
+use DataDownloader::Util qw(make_link);
 use File::Path qw(mkpath);
 
 use constant {

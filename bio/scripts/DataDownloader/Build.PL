@@ -8,9 +8,9 @@ my $builder = Module::Build->new(
     dist_author         => q{Alex Kalderimis <perl@intermine.org>},
     dist_version_from   => 'lib/DataDownloader.pm',
     requires => {
-        'Moose' => '0.95',
+        'Moose' => '2.0',
         'MooseX::ABC' => '0.05',
-        'MooseX::FollowPBP' => 0, 
+        'MooseX::FollowPBP' => '0.5', 
         'MooseX::FileAttribute' => 0,
         'Net::FTP' => 0,
     },
