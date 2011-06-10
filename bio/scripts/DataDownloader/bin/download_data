@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use DataDownloader::Util qw(make_logger);
+
+use constant {
+    LOGDIR => $ENV{HOME} . '/download-tests/download_logs',
+    DATA_DIR => $ENV{HOME} . '/download-tests',
+};
+
+use constant DEFAULT_SOURCES => qw(
+    AffyProbes
+    Biogrid 
+    EnsemblCompara
+    FlyAnatomyOntology
+    FlyAtlas 
+    FlyBaseFasta 
+    FlyBaseOrthologs
+    FlyOntologies
+    GoAnnotation 
+    Intact 
+    IntactVocabulary
+    Interpro
+    InterproGo
+    Kegg 
+    PDB
+    PsiOntology 
+    PubMed 
+    Reactome 
+    RedFly 
+    Uniprot
+    WormbaseRNAi
+    WormIdentifiers
+);
+
+my $logger =  make_logger(LOGDIR);
+my %args   = (data_dir => DATA_DIR, logger => $logger);
+my @sources_to_get = (@ARGV) ? @ARGV : DEFAULT_SOURCES;
+
+for my $source (@sources_to_get) {
+    my $package = "DataDownloader::Source::$source";
+    eval "require $package";
+    if (my $e = $@) {
+        $logger->error("Failed to load source $source:", $e);
+        next;
+    }
+    eval {
+        my $downloader = $package->new(%args);
+        $downloader->get_data();
+    };
+    if (my $e = $@) {
+        $logger->error("Failed to download source $source:", $e);
+    }
+}
+
+exit;
