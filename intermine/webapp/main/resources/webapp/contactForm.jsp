@@ -11,7 +11,7 @@
 <html:xhtml/>
 <link rel="stylesheet" type="text/css" href="css/contactForm.css"/>
 <div class="body">
-  <html:form action="/contactAction" styleId="contactForm">
+  <html:form action="/contactAction">
   <table cellspacing="0" cellpadding="3" border="0">
   <tr>
     <td align="right"><fmt:message key="contact.name"/></td>

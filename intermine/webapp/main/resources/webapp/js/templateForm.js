@@ -2,26 +2,26 @@
  * Use bag checkbox has been clicked.
  ******************************************************************************/
 function clickUseBag(index) {
-  var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
-  if (document.templateForm["attributeOps("+index+")"] && document.templateForm["attributeOps("+index+")"] != undefined)
-      document.templateForm["attributeOps("+index+")"].disabled=useBag;
-  if (document.templateForm["attributeOptions("+index+")"]) {
-    document.templateForm["attributeOptions("+index+")"].disabled=useBag;
+  var useBag = document.getElementById("useBagConstraint("+index+")").checked;
+  if (document.getElementById("attributeOps("+index+")") && document.getElementById("attributeOps("+index+")") != undefined)
+      document.getElementById("attributeOps("+index+")").disabled=useBag;
+  if (document.getElementById("attributeOptions("+index+")")) {
+    document.getElementById("attributeOptions("+index+")").disabled=useBag;
   }
   // if attributeValues is a radio button
-  if (document.templateForm["attributeValues("+index+")"][0]) {
-    document.templateForm["attributeValues("+index+")"][0].disabled=useBag;
-    document.templateForm["attributeValues("+index+")"][1].disabled=useBag;
+  if (document.getElementById("attributeValues("+index+")")[0]) {
+    document.getElementById("attributeValues("+index+")")[0].disabled=useBag;
+    document.getElementById("attributeValues("+index+")")[1].disabled=useBag;
   }
-  if (document.templateForm["multiValues("+index+")"]) {
-    document.templateForm["multiValues("+index+")"].disabled=useBag;
+  if (document.getElementById("multiValues("+index+")")) {
+    document.getElementById("multiValues("+index+")").disabled=useBag;
   }
-  if (document.templateForm["extraValues("+index+")"]) {
-    document.templateForm["extraValues("+index+")"].disabled=useBag;
+  if (document.getElementById("extraValues("+index+")")) {
+    document.getElementById("extraValues("+index+")").disabled=useBag;
   }
-  document.templateForm["attributeValues("+index+")"].disabled=useBag;
-  document.templateForm["bag("+index+")"].disabled=!useBag;
-  document.templateForm["bagOp("+index+")"].disabled=!useBag;
+  document.getElementById("attributeValues("+index+")").disabled=useBag;
+  document.getElementById("bag("+index+")").disabled=!useBag;
+  document.getElementById("bagOp("+index+")").disabled=!useBag;
 }
 
 function forwardToLinks() {
@@ -52,8 +52,8 @@ function isBagUsed() {
   // checks if bag is used, the presumption is that there aren't more than 10
     // bag constraints
   for (var i = 0; i < 10; i++) {
-    if (document.templateForm["useBagConstraint("+i+")"]) {
-      if (document.templateForm["useBagConstraint("+i+")"].checked) {
+    if (document.getElementById("useBagConstraint("+i+")")) {
+      if (document.getElementById("useBagConstraint("+i+")").checked) {
         return true;
       }
     }
@@ -62,9 +62,9 @@ function isBagUsed() {
 }
 
 function updateAttributeValues(index) {
-  var attributeValues = document.templateForm['attributeValues('+index+')'];
+  var attributeValues = document.getElementById('attributeValues('+index+')');
   var selectedString = '';
-  var attributeOptions = document.templateForm['attributeOptions('+index+')'];
+  var attributeOptions = document.getElementById('attributeOptions('+index+')');
   if (attributeOptions != undefined) {
     var i;
     var count = 0;
@@ -83,9 +83,9 @@ function updateAttributeValues(index) {
 }
 
 function updateMultiValueAttribute(index) {
-  var multiValueAttribute = document.templateForm['multiValueAttribute('+index+')'];
+  var multiValueAttribute = document.getElementById('multiValueAttribute('+index+')');
   var selectedString = '';
-  var multiValuesOptions = document.templateForm['multiValues('+index+')'];
+  var multiValuesOptions = document.getElementById('multiValues('+index+')');
   if (multiValuesOptions) {
     var i;
     var count = 0;
@@ -121,9 +121,9 @@ function initConstraints(index) {
         if (document.getElementById("switchOff(" + index + ")").value == "ON") {
             document.getElementById("optionalEnabled_" + index).style.display = "inline"
             document.getElementById("optionalDisabled_" + index).style.display = "none"
-            if (document.templateForm["useBagConstraint(" + index + ")"]) {
+            if (document.getElementById("useBagConstraint(" + index + ")")) {
                 clickUseBag(index);
-                document.templateForm["useBagConstraint(" + index + ")"].disabled = false;
+                document.getElementById("useBagConstraint(" + index + ")").disabled = false;
             } else {
                 disableFields(index, false);
             }
@@ -133,7 +133,7 @@ function initConstraints(index) {
             disableFields(index, true);
         }
     } else {
-      if (document.templateForm["useBagConstraint(" + index + ")"]) {
+      if (document.getElementById("useBagConstraint(" + index + ")")) {
         clickUseBag(index);
       }
     }
@@ -146,9 +146,9 @@ function enableConstraint(index) {
         document.getElementById("optionalDisabled_" + index).style.display = "none"
         document.getElementById("optionalEnabled_" + index).style.display = "inline"
         disableFields(index, false);
-        if (document.templateForm["useBagConstraint(" + index + ")"]) {
+        if (document.getElementById("useBagConstraint(" + index + ")")) {
             clickUseBag(index);
-            document.templateForm["useBagConstraint(" + index + ")"].disabled = false;
+            document.getElementById("useBagConstraint(" + index + ")").disabled = false;
         }
     }
 }
@@ -163,33 +163,33 @@ function disableConstraint(index) {
 }
 
 function disableFields(index, disable) {
-    if (document.templateForm["attributeOps(" + index + ")"]) {
-        document.templateForm["attributeOps(" + index + ")"].disabled = disable;
+    if (document.getElementById("attributeOps(" + index + ")")) {
+        document.getElementById("attributeOps(" + index + ")").disabled = disable;
     }
-    if (document.templateForm["attributeValues(" + index + ")"]) {
-        document.templateForm["attributeValues(" + index + ")"].disabled = disable;
+    if (document.getElementById("attributeValues(" + index + ")")) {
+        document.getElementById("attributeValues(" + index + ")").disabled = disable;
     }
-    if (document.templateForm["multiValues(" + index + ")"]) {
-        document.templateForm["multiValues(" + index + ")"].disabled = disable;
+    if (document.getElementById("multiValues(" + index + ")")) {
+        document.getElementById("multiValues(" + index + ")").disabled = disable;
     }
-    if (document.templateForm["attributeOptions(" + index + ")"]) {
-        document.templateForm["attributeOptions(" + index + ")"].disabled = disable;
+    if (document.getElementById("attributeOptions(" + index + ")")) {
+        document.getElementById("attributeOptions(" + index + ")").disabled = disable;
     }
     // if attributeValues is a radio button
-    if (document.templateForm["attributeValues(" + index + ")"][0]) {
-        document.templateForm["attributeValues(" + index + ")"][0].disabled = disable;
-        document.templateForm["attributeValues(" + index + ")"][1].disabled = disable;
+    if (document.getElementById("attributeValues(" + index + ")")[0]) {
+        document.getElementById("attributeValues(" + index + ")")[0].disabled = disable;
+        document.getElementById("attributeValues(" + index + ")")[1].disabled = disable;
     }
-    if (document.templateForm["extraValues(" + index + ")"]) {
-        document.templateForm["extraValues(" + index + ")"].disabled = disable;
+    if (document.getElementById("extraValues(" + index + ")")) {
+        document.getElementById("extraValues(" + index + ")").disabled = disable;
     }
-    if (document.templateForm["useBagConstraint(" + index + ")"]) {
-        document.templateForm["useBagConstraint(" + index + ")"].disabled = disable;
+    if (document.getElementById("useBagConstraint(" + index + ")")) {
+        document.getElementById("useBagConstraint(" + index + ")").disabled = disable;
     }
-    if (document.templateForm["bagOp(" + index + ")"] != undefined)
-        document.templateForm["bagOp(" + index + ")"].disabled = disable;
-    if (document.templateForm["bag(" + index + ")"] != undefined)
-        document.templateForm["bag(" + index + ")"].disabled = disable;
+    if (document.getElementById("bagOp(" + index + ")") != undefined)
+        document.getElementById("bagOp(" + index + ")").disabled = disable;
+    if (document.getElementById("bag(" + index + ")") != undefined)
+        document.getElementById("bag(" + index + ")").disabled = disable;
 
     if (disable == true) {
         jQuery(".constraint_" + index).addClass("constraintHeadingDisabled");
@@ -201,45 +201,45 @@ function disableFields(index, disable) {
 function onChangeAttributeOps(index, init) {
 
       //LIKE or NOT LIKE
-      if(document.templateForm["attributeOps(" + index + ")"] != undefined && document.templateForm["attributeOps(" + index + ")"]){
-      var constraintOpIndex = document.templateForm["attributeOps(" + index + ")"].value;
+      if(document.getElementById("attributeOps(" + index + ")") != undefined && document.getElementById("attributeOps(" + index + ")")){
+      var constraintOpIndex = document.getElementById("attributeOps(" + index + ")").value;
         if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
-            if (document.templateForm["attributeValues(" + index + ")"])
-              document.templateForm["attributeValues(" + index + ")"].style.display = 'inline';
-            if (document.templateForm["attributeOptions(" + index + ")"])
-                  document.templateForm["attributeOptions(" + index + ")"].style.display = 'none';
-            if (document.templateForm["multiValues(" + index + ")"])
-                  document.templateForm["multiValues(" + index + ")"].style.display = 'none';
-            if (document.templateForm["multiValueAttribute(" + index + ")"])
-                  document.templateForm["multiValueAttribute(" + index + ")"].value = '';
+            if (document.getElementById("attributeValues(" + index + ")"))
+              document.getElementById("attributeValues(" + index + ")").style.display = 'inline';
+            if (document.getElementById("attributeOptions(" + index + ")"))
+                  document.getElementById("attributeOptions(" + index + ")").style.display = 'none';
+            if (document.getElementById("multiValues(" + index + ")"))
+                  document.getElementById("multiValues(" + index + ")").style.display = 'none';
+            if (document.getElementById("multiValueAttribute(" + index + ")"))
+                  document.getElementById("multiValueAttribute(" + index + ")").value = '';
           } // ONE OF or NONE OF
         else if (constraintOpIndex == '21' || constraintOpIndex == '22') {
-          if (document.templateForm["multiValues(" + index + ")"])
-              document.templateForm["multiValues(" + index + ")"].style.display = 'inline';
-          if (document.templateForm["attributeValues(" + index + ")"])
-              document.templateForm["attributeValues(" + index + ")"].style.display = 'none';
-              if (document.templateForm["attributeOptions(" + index + ")"])
-                  document.templateForm["attributeOptions(" + index + ")"].style.display = 'none';
+          if (document.getElementById("multiValues(" + index + ")"))
+              document.getElementById("multiValues(" + index + ")").style.display = 'inline';
+          if (document.getElementById("attributeValues(" + index + ")"))
+              document.getElementById("attributeValues(" + index + ")").style.display = 'none';
+              if (document.getElementById("attributeOptions(" + index + ")"))
+                  document.getElementById("attributeOptions(" + index + ")").style.display = 'none';
           } else {
-            if (document.templateForm["attributeOptions(" + index + ")"]) {
-                document.templateForm["attributeOptions(" + index + ")"].style.display = 'inline';
-              if (document.templateForm["attributeValues(" + index + ")"]) {
-                if (document.templateForm["attributeValues(" + index + ")"].style != undefined)
-                      document.templateForm["attributeValues(" + index + ")"].style.display = 'none';
-                if (!init && document.templateForm["attributeOptions(" + index + ")"] != undefined)
-                    document.templateForm["attributeValues(" + index + ")"].value = document.templateForm["attributeOptions("
-                                                                                                      + index + ")"].options[0].value;
+            if (document.getElementById("attributeOptions(" + index + ")")) {
+                document.getElementById("attributeOptions(" + index + ")").style.display = 'inline';
+              if (document.getElementById("attributeValues(" + index + ")")) {
+                if (document.getElementById("attributeValues(" + index + ")").style != undefined)
+                      document.getElementById("attributeValues(" + index + ")").style.display = 'none';
+                if (!init && document.getElementById("attributeOptions(" + index + ")") != undefined)
+                    document.getElementById("attributeValues(" + index + ")").value = document.getElementById("attributeOptions("
+                                                                                                      + index + ")").options[0].value;
               }
             } else {
-              if (document.templateForm["attributeValues(" + index + ")"]) {
-                if (document.templateForm["attributeValues(" + index + ")"].style != undefined)
-                      document.templateForm["attributeValues(" + index + ")"].style.display = 'inline';
+              if (document.getElementById("attributeValues(" + index + ")")) {
+                if (document.getElementById("attributeValues(" + index + ")").style != undefined)
+                      document.getElementById("attributeValues(" + index + ")").style.display = 'inline';
                 }
             }
-              if (document.templateForm["multiValues(" + index + ")"])
-                  document.templateForm["multiValues(" + index + ")"].style.display = 'none';
-              if (document.templateForm["multiValueAttribute(" + index + ")"])
-                  document.templateForm["multiValueAttribute(" + index + ")"].value = '';
+              if (document.getElementById("multiValues(" + index + ")"))
+                  document.getElementById("multiValues(" + index + ")").style.display = 'none';
+              if (document.getElementById("multiValueAttribute(" + index + ")"))
+                  document.getElementById("multiValueAttribute(" + index + ")").value = '';
           }
       }
 }

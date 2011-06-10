@@ -40,7 +40,7 @@
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
 <im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
-<html:form styleId="templateForm" action="/templateAction">
+<html:form action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
         <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
@@ -134,10 +134,10 @@
               <td class="constraint_${index}">
               <c:choose>
               <c:when test="${dec.boolean}">
-              <html:hidden property="attributeOps(${index})" value="0" disabled="false" />
-              <html:radio property="attributeValues(${index})" value="true"/>
+              <html:hidden property="attributeOps(${index})" styleId="attributeOps(${index})" value="0" disabled="false" />
+              <html:radio property="attributeValues(${index})" styleId="attributeValues(${index})" value="true"/>
               <fmt:message key="query.constraint.true" />
-              <html:radio property="attributeValues(${index})" value="false"/>
+              <html:radio property="attributeValues(${index})" styleId="attributeValues(${index})" value="false"/>
               <fmt:message key="query.constraint.false" />
               </c:when>
               <%-- if null or not null value --%>
@@ -150,7 +150,7 @@
                   <c:choose>
                   <c:when test="${!dec.lookup}">
                     <div style="float:left;margin-right:5px;">
-                    <html:select property="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
+                    <html:select property="attributeOps(${index})" styleId="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
                       <c:forEach items="${dec.validOps}" var="op">
                       <option value="${op.property}"
                         <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
@@ -167,8 +167,8 @@
                    </c:choose>
                    <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
-                   <html:hidden property="multiValueAttribute(${index})"/>
-                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
+                   <html:hidden property="multiValueAttribute(${index})" styleId="multiValueAttribute(${index})"/>
+                   <html:select property="multiValues(${index})" styleId="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
                    <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
@@ -179,7 +179,7 @@
                   <c:choose>
                   <%-- inputfield for an autocompletion --%>
                   <c:when test="${!empty dec.autoCompleter}">
-                    <input name="attributeValues(${index})" id="attributeId_${index}" size="45"
+                    <input name="attributeValues(${index})" id="attributeValues(${index})" size="45"
                       style="background: #ffffc8"
                       value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isEnter(event);"
@@ -199,13 +199,13 @@
                   <%-- normal inputfield, no auto completer exists --%>
                   <c:otherwise>
                      <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})"
-                       styleId="attribute6" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
+                       styleId="attributeValues(${index})" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
                    </c:otherwise>
                 </c:choose>
                 </span>
                  <%-- dropdown --%>
               <c:if test="${!empty dec.possibleValues}">
-                <select name="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
+                <select name="attributeOptions(${index})" id="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
                   <c:forEach items="${dec.possibleValues}" var="option">
                       <option value="${option}" <c:if test="${dec.selectedValue == option}">selected</c:if>>
                       <c:out value="${option}" /></option>
@@ -227,7 +227,7 @@
                   </fmt:message>
                 </label>
 
-            <html:select property="extraValues(${index})" value="${dec.selectedExtraValue}">
+            <html:select property="extraValues(${index})" styleId="extraValues(${index})" value="${dec.selectedExtraValue}">
               <html:option value="">Any</html:option>
                <!-- this should set to extraValue if editing existing constraint -->
               <c:forEach items="${dec.extraConstraintValues}" var="value">
@@ -254,9 +254,9 @@
         <tr>
         <td class="constraint_${index}">
           <c:if test="${!empty dec.bags && !dec.nullSelected}">
-            <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
+            <html:checkbox property="useBagConstraint(${index})" styleId="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
             key="template.constraintobe"/>&nbsp;<html:select
-            property="bagOp(${index})" disabled="true">
+            property="bagOp(${index})" styleId="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
                 <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
                   <c:out value="${bagOp.label}" />
@@ -264,7 +264,7 @@
               </c:forEach>
             </html:select>&nbsp;<fmt:message
             key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>&nbsp;<html:select
-            property="bag(${index})" disabled="true">
+            property="bag(${index})" styleId="bag(${index})" disabled="true">
               <c:forEach items="${dec.bags}" var="bag">
                 <option value="${bag}" <c:if test="${!empty dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
                   <c:out value="${bag}" />

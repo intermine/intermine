@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -152,7 +151,7 @@ public class TemplateAction extends InterMineAction
         String url = new URLGenerator(request).getPermanentBaseURL();
 
         if (!populatedTemplate.isValid()) {
-            recordError(new ActionError("errors.template.badtemplate",
+            recordError(new ActionMessage("errors.template.badtemplate",
                     StringUtil.prettyList(populatedTemplate.verifyQuery())), request);
             return mapping.findForward("template");
         }
@@ -231,7 +230,7 @@ public class TemplateAction extends InterMineAction
             }
             SessionMethods.loadQuery(template, request.getSession(), response);
             if (!template.isValid()) {
-                recordError(new ActionError("errors.template.badtemplate",
+                recordError(new ActionMessage("errors.template.badtemplate",
                         StringUtil.prettyList(template.verifyQuery())),
                         request);
             }
