@@ -20,7 +20,7 @@ use constant NON_XML_FILES => qw(
     uniprot.xsd            uniprot_sprot_varsplic.fasta.gz  
 );
 use constant ORGANISMS => qw(
-    7227 7237 6239 4932 7165 
+    7217 7227 7237 6239 4932 7165 
     7460 9606 10090 7955 
 );
 
