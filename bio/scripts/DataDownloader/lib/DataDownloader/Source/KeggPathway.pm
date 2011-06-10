@@ -1,14 +1,9 @@
-package DataDownloader::Source::KeggPathways;
+package DataDownloader::Source::KeggPathway;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';
-use URI;
-use autodie qw(open close);
-use Ouch;
+use IO::Handle;
 
-
-use Webservice::InterMine 0.9700;
-use File::Path qw(mkpath);
 use SOAP::Lite;
 
 use constant {
@@ -16,19 +11,18 @@ use constant {
     DESCRIPTION => 'Pathways from KEGG',
     SOURCE_LINK => 'http://www.genome.jp/kegg',
     SOURCE_DIR  => 'kegg',
-    SERVICE_URL => 'http://soap.genome.jp/KEGG.wsdl',
     COMPARE     => 1,
+    KEGG_WSDL   => 'http://soap.genome.jp/KEGG.wsdl',
 };
 
+sub fetch_all_data {
+    my $self = shift;
+    my $results = SOAP::Lite->service(KEGG_WSDL)->list_pathways("dem");
+    my $out = $self->get_destination_dir->file("kegg_pathways.tsv")->openw();
+    $self->debug("Found " . @$results . " pathways");
+    foreach my $path (@{$results}) {
+        $self->debug("PATHWAYS ENTRY:" . join(", ", map {"$_: " . $path->{$_}} keys %$path));
+        $out->print(join("\t", @{$path}{qw/entry_id definition/}), "\n");
+    }
 
-
-sub BUILD {
-   $wsdl = 'http://soap.genome.jp/KEGG.wsdl';
-   $results = SOAP::Lite
-             -> service($wsdl)
-             -> list_pathways("dem");
-   open(my $out, '>:utf8', $destination);
-   foreach $path (@{$results}) {
-      $out->print($path->{entry_id}\t$path->{definition});
-   }
 }
