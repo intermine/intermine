@@ -2,6 +2,7 @@ package DataDownloader::Source::Uniprot;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
+use MooseX::FollowPBP;
 use URI;
 use Ouch qw(:traditional);
 

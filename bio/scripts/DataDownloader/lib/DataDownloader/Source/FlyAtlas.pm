@@ -6,35 +6,27 @@ use autodie qw(open);
 
 use constant {
     TITLE       => 'Fly Atlas',
+    DESCRIPTION => "Microarray-based gene expression data for adult D. melanogaster tissues from FlyAtlas",
     SOURCE_LINK => 'http://www.flyatlas.org',
     SOURCE_DIR  => 'flyatlas',
     COMPARE     => 1,
-    DESCRIPTION =>
-"Microarray-based gene expression data for adult D. melanogaster tissues from FlyAtlas",
-};
+    SOURCES     => [{
+        SERVER         => "http://130.209.54.32/atlas",
+        FILE           => "20090519all.txt",
+        POST_PROCESSOR => sub {
+            my ( $self, $src, $dest ) = @_;
+            open( my $orig, '<', $src );
+            open( my $fixed, '>', $dest );
 
-sub BUILD {
-    my $self = shift;
-
-    $self->set_sources([
-        {
-            SERVER         => "http://130.209.54.32/atlas",
-            FILE           => "20090519all.txt",
-            POST_PROCESSOR => sub {
-                my ( $self, $src, $dest ) = @_;
-                open( my $orig, '<', $src );
-                open( my $fixed, '>', $dest );
-
-                while (<$orig>) {
-                    s/FakeCall    /tubule vs whole fly - T-Test_Change Direction/gx;
-                    s/Grandmean   /TubuleMean                                   /gx;
-                    s/GrandSEM    /TubuleSEM                                    /gx;
-                    s/fakepresent /TubuleCall                                   /gx;
-                    print $fixed $_;
-                }
-            },
+            while (<$orig>) {
+                s/FakeCall    /tubule vs whole fly - T-Test_Change Direction/gx;
+                s/Grandmean   /TubuleMean                                   /gx;
+                s/GrandSEM    /TubuleSEM                                    /gx;
+                s/fakepresent /TubuleCall                                   /gx;
+                print $fixed $_;
+            }
         },
-    ]);
-}
+    }],
+};
 
 1;

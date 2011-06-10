@@ -3,6 +3,7 @@ package DataDownloader::Source::ABC;
 use Moose;
 use MooseX::ABC;
 use MooseX::FollowPBP;
+use Moose::Util::TypeConstraints;
 
 require DataDownloader::Resource::HTTP;
 require DataDownloader::Resource::FTP;
@@ -25,8 +26,21 @@ sub BUILD {
 has sources => (
     is => 'rw',
     isa => 'ArrayRef[HashRef]',
+    traits => ['Array'],
     auto_deref => 1,
+    handles => {
+        _add_source => 'push',
+    },
 );
+
+sub add_source {
+    my $self = shift;
+    if (@_ > 1) {
+        $self->_add_source({@_});
+    } else {
+        $self->add_source($_[0]);
+    }
+}
 
 sub get_all_sources {
     my $self = shift;

@@ -25,17 +25,17 @@ sub BUILD {
     my $ftp = $self->connect('pub/databases/IntAct/current/psi25/species');
     my @psi_files = $ftp->ls or confess "Could not ls directory";
     my @resources = ();
-    for my $psi (@psi_files) {
+    for my $file (@psi_files) {
         # find what organism the file represents and 
         # check if we are interested in it
             
-	    my $start = substr($psi, 0, index($psi, "_"));
+	    my ($start) = split(/_/, $file);
         if ($start eq any(ORGANISMS)) {
             push @resources, {
                 SUBTITLE => "PSI - " . $start,
                 HOST => "ftp.ebi.ac.uk",
                 REMOTE_DIR => "pub/databases/IntAct/current/psi25/species",
-                FILE => $psi,
+                FILE => $file,
             };
 	    }             
     }

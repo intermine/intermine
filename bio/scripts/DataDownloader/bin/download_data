@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use DataDownloader::Util qw(make_logger);
+use MooseX::FollowPBP;
 
 use constant {
     LOGDIR => $ENV{HOME} . '/download-tests/download_logs',
