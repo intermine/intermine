@@ -21,7 +21,7 @@ import org.json.JSONArray;
 
 /**
  * Serve up the list of schemata that we have.
- * @author Alex Kalderimis
+ * @author Alexis Kalderimis
  *
  */
 public class SchemaListService extends WebService
