@@ -100,7 +100,7 @@ public class BagManager
      * @param bag The bag to add them to
      * @param profile The profile this bag belongs to
      */
-    public void addTagsToBag(List<String> tags, InterMineBag bag, Profile profile) {
+    public void addTagsToBag(Collection<String> tags, InterMineBag bag, Profile profile) {
         for (String tag: tags) {
             tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile.getUsername());
         }
