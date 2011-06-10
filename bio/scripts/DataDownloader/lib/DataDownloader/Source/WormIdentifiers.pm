@@ -20,7 +20,7 @@ sub fetch_all_data {
     my $self = shift;
     my $query = Webservice::InterMine->new_query( [SERVICE_URL] );
     $query->add_view(qw/
-          Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.ncbiGeneNumber
+          Gene.primaryIdentifier Gene.symbol Gene.secondaryIdentifier
     /);
     $query->add_constraint(
         path  => 'Gene.source',
