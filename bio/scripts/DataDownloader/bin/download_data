@@ -2,42 +2,29 @@
 
 use strict;
 use warnings;
+use File::Basename qw/dirname/;
+use lib dirname(__FILE__) . '/../lib';
 use DataDownloader::Util qw(make_logger);
 use MooseX::FollowPBP;
+use Getopt::Long;
+use YAML;
+use Carp;
 
-use constant {
-    LOGDIR => $ENV{HOME} . '/download-tests/download_logs',
-    DATA_DIR => $ENV{HOME} . '/download-tests',
-};
+my $config = "testing";
+my $verbose = 0;
 
-use constant DEFAULT_SOURCES => qw(
-    AffyProbes
-    Biogrid 
-    EnsemblCompara
-    FlyAnatomyOntology
-    FlyAtlas 
-    FlyBaseFasta 
-    FlyBaseOrthologs
-    FlyOntologies
-    GoAnnotation 
-    Intact 
-    IntactVocabulary
-    Interpro
-    InterproGo
-    Kegg 
-    PDB
-    PsiOntology 
-    PubMed 
-    Reactome 
-    RedFly 
-    Uniprot
-    WormbaseRNAi
-    WormIdentifiers
+my $result = GetOptions(
+    "environment=s" => \$config,
+    "verbose"       => \$verbose,
 );
 
-my $logger =  make_logger(LOGDIR);
-my %args   = (data_dir => DATA_DIR, logger => $logger);
-my @sources_to_get = (@ARGV) ? @ARGV : DEFAULT_SOURCES;
+my $config_file = dirname(__FILE__) . '/../config/' . $config . '.yml';
+
+my ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES) = read_config($config_file);
+
+my $logger =  make_logger($LOGDIR);
+my %args   = (data_dir => $DATA_DIR, logger => $logger);
+my @sources_to_get = (@ARGV) ? @ARGV : @$DEFAULT_SOURCES;
 
 for my $source (@sources_to_get) {
     my $package = "DataDownloader::Source::$source";
@@ -53,6 +40,38 @@ for my $source (@sources_to_get) {
     if (my $e = $@) {
         $logger->error("Failed to download source $source:", $e);
     }
-}
+} 
 
 exit;
+
+##### FUNCTIONS ####
+
+sub read_config {
+    my $config_file = shift;
+    unless (-e $config_file) {
+        croak <<"USAGE";
+Cannot use setting from $config_file as it does not exist.
+
+Usage: download_data -e flymine Uniprot
+USAGE
+    }
+
+    my $settings = YAML::LoadFile($config_file);
+
+    @{[ @{$settings}{qw/log_dir data_dir/} ]} == 2 or croak <<"USAGE";
+The config file must supply a value for both log_dir and data_dir.
+
+Usage: download_data -e flymine Uniprot
+USAGE
+
+    my $LOGDIR = (($settings->{log_dir} =~ m{^/}) 
+        ? $settings->{log_dir}
+        : $ENV{HOME}) . '/' . $settings->{log_dir};
+    my $DATA_DIR = (($settings->{log_dir} =~ m{^/})
+        ? $settings->{data_dir}
+        : $ENV{HOME}) . '/' . $settings->{data_dir};
+
+    my $DEFAULT_SOURCES = $settings->{default_sources} || [];
+
+    return ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES);
+}
