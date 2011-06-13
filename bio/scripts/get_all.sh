@@ -1,12 +1,12 @@
 #!/bin/sh
-logdir="/shared/data/download_logs/"
+logdir="/micklem/data/download_logs/"
 if [ ! -d $logdir ]
 then
   mkdir -p $logdir
 fi
 tempname="temp_log.txt"
 tempfile=$logdir$tempname
-shared_data="/shared/data"
+shared_data="/micklem/data"
 config_file="./resources/get_scripts.config"
 if [ -a $tempfile ]
 then
