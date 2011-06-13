@@ -9,14 +9,50 @@ use MooseX::FollowPBP;
 use Getopt::Long;
 use YAML;
 use Carp;
+use Module::Find qw/findsubmod/;
+
+my @available_sources = grep {$_ !~ /ABC$/} findsubmod( 'DataDownloader::Source' );
 
 my $config = "testing";
 my $verbose = 0;
+my $show_sources = 0;
+my $show_help = 0;
+
+my $script = __FILE__;
 
 my $result = GetOptions(
     "environment=s" => \$config,
     "verbose"       => \$verbose,
+    "sources"       => \$show_sources,
+    "help"          => \$show_help,
 );
+
+if ($show_help) {
+    warn <<"HELP";
+$script
+Download data from specific sources
+
+Usage: perl $script -e environment Source1 Source2...
+
+Options:
+  -e --environment  The set of configuration options to load
+  -s --sources      Show the list of available sources
+  -h --help         Show this help
+
+If no sources are selected, then then the default list from the 
+configuration file will be loaded and run.
+HELP
+    exit;
+}
+
+if ($show_sources) {
+    warn "Available sources:\n";
+    for my $src (sort @available_sources) {
+        $src =~ s/.*:://;
+        warn "\t- $src\n";
+    }
+    exit;
+}
 
 my $config_file = dirname(__FILE__) . '/../config/' . $config . '.yml';
 
