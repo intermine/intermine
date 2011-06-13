@@ -193,8 +193,8 @@
       (function() {
 	      	var exactSize = ${pagedResults.exactSize};
 	      	var tableId = '${tableIdentifier}';
-	        jQuery('#' + tableId).find("h3 div.right").text(exactSize + ' results');
 	        if (${pagedResults.exactSize} > 1) {
+	        	jQuery('#' + tableId).find("h3 div.right").text(exactSize + ' results');
 	        	jQuery('#' + tableId + ' table tbody tr').hide();
 	        	jQuery('<div/>', {
 	        		className: 'toggle'
@@ -244,7 +244,8 @@
 		    	)
 	        	.appendTo('#' + tableId + ' div.collection-table');
 	        } else {
-				jQuery('#' + tableId).show();
+	        	jQuery('#' + tableId).find("h3 div.right").text('1 result');
+				jQuery('#' + tableId + ' table').parent().show();
 	        }
       	})();
       </script>

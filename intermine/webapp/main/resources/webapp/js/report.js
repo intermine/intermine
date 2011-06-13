@@ -154,6 +154,7 @@ function showMoreRows(e, round, maxCount) {
  * @return
  */
 function collapseTable(e, maxCount) {
+  im.log(e); // is calling inner!!! #coll_im_aspect_MiscellaneousdataSets_inner
   var table = jQuery(e + ' table');
 
   var count = maxCount;

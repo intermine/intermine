@@ -133,7 +133,7 @@
   </div>
 </div>
 <br />
-<div id="cwinlinetable" class="collection-table nowrap">
+<div id="cwinlinetable" class="collection-table nowrap nomargin">
   <h3>Interactions</h3>
   <div style="overflow-x:auto;">
     <tiles:insert name="resultsTable.tile">
