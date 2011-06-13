@@ -54,43 +54,43 @@
       <th id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}">
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
-          <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-          <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-               title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+       		<fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+          	<a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
+          	title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
         </c:if>
-            <c:if test="${column.selectable && empty inlineTable}">
-              <c:set var="disabled" value="false"/>
-              <c:if test="${(!empty pagedResults.selectedClass) && (pagedResults.selectedClass != column.typeClsString)}">
-                <c:set var="disabled" value="true"/>
-              </c:if>
-              <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
-                             styleClass="selectable"
-                             onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
-                             disabled="${disabled}">
-                <c:out value="${column.columnId}"/>
-              </html:multibox>
+        <c:if test="${column.selectable && empty inlineTable}">
+			<c:set var="disabled" value="false"/>
+            <c:if test="${(!empty pagedResults.selectedClass) && (pagedResults.selectedClass != column.typeClsString)}">
+            	<c:set var="disabled" value="true"/>
             </c:if>
+            <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
+            styleClass="selectable" onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')" disabled="${disabled}">
+            	<c:out value="${column.columnId}"/>
+            </html:multibox>
+        </c:if>
 
-            <!-- Display actual column name -->
-            <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
-            <c:set var="begin" value="0"/>
-            <c:if test="${fn:length(columnDisplayNameList) > 3}">...
-                <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
-            </c:if>
-            <span class="path">
-            	<c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
-              		<c:choose>
-                		<c:when test="${status2.last}">
-                    		</span>${columnNameItem}
-                    		<c:set var="fieldName" value="${columnNameItem}"/>
-                		</c:when>
-                		<c:otherwise>
-                    		${columnNameItem} &gt;
-              			</c:otherwise>
-              		</c:choose>
-            	</c:forEach>
+		<%-- column name --%>
+        <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
+        <c:set var="begin" value="0"/>
+        <span class="path">
+        	<em>
+	        <c:if test="${fn:length(columnDisplayNameList) > 3}">&hellip;
+	        	<c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
+	        </c:if>
+       		<c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
+            	<c:choose>
+                	<c:when test="${status2.last}">
+                    	</em><br /> ${columnNameItem}
+                    	<c:set var="fieldName" value="${columnNameItem}"/>
+               		</c:when>
+                	<c:otherwise>
+                    	${columnNameItem} &gt;
+              		</c:otherwise>
+              	</c:choose>
+            </c:forEach>
             <im:typehelp type="${column.path}" fullPath="true"/>
-      </th>
+        </span>
+      	</th>
     </c:forEach>
   </tr>
   </thead>

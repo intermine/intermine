@@ -1487,9 +1487,13 @@ div.collection-table table th,
 div.collection-table table td { padding:6px; font-size:12px; }
 div.collection-table table thead th,
 div.collection-table table thead td { font-weight:normal; border-bottom-width:1px; border-bottom-style:solid; font-size:13px; padding:2px 6px; }
+div.collection-table table thead th img { margin-left:2px; }
+div.collection-table table thead th span.path { white-space:nowrap; }
+div.collection-table table thead th span.path em { font-size:9px; }
 div.collection-table table tr.odd td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
 div.collection-table table tbody tr:nth-child(2n) td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
 div.collection-table img { vertical-align:top; }
+div.collection-table.nowrap table tbody td { white-space:nowrap; }
 div.collection-table.column-border table tbody tr td.left-column-border { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-width:1px; border-left-style:solid; }

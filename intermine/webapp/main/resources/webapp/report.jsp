@@ -163,70 +163,72 @@
     <tiles:insert name="reportMenu.jsp" />
   </div>
   <script type="text/javascript">
-    jQuery('#fixed-menu').hide(); // hide for IE7
-    jQuery(window).scroll(function() {
-      // transition fix
-      if (jQuery('#menu-target').isInView('partial')) {
-        jQuery('#fixed-menu').hide();
-      } else {
-        jQuery('#fixed-menu').show();
-      }
+  	(function() {
+	    jQuery('#fixed-menu').hide(); // hide for IE7
+	    jQuery(window).scroll(function() {
+	      // transition fix
+	      if (jQuery('#menu-target').isInView('partial')) {
+	        jQuery('#fixed-menu').hide();
+	      } else {
+	        jQuery('#fixed-menu').show();
+	      }
 
-      // where are we
-      var currentAspect = null;
-      var currentAspectDistance = 9999;
+	      // where are we
+	      var currentAspect = null;
+	      var currentAspectDistance = 9999;
 
-      // distance from top (screen)
-      var screenTop = jQuery(window).scrollTop();
-      // distance from bottom (screen)
-      var screenBottom = screenTop + jQuery(window).height();
-      // center of the screen
-      var screenMiddle = ((screenBottom - screenTop) / 2) + screenTop;
+	      // distance from top (screen)
+	      var screenTop = jQuery(window).scrollTop();
+	      // distance from bottom (screen)
+	      var screenBottom = screenTop + jQuery(window).height();
+	      // center of the screen
+	      var screenMiddle = ((screenBottom - screenTop) / 2) + screenTop;
 
-      // traverse aspect blocks
-      jQuery('div.aspectBlock').each(function(i) {
-        // is this aspect in view?
-        if (jQuery(this).isInView('partial')) {
-            // top & bottom distance for the element, increase the top one as divs align
-            var elementTop = jQuery(this).offset().top + 1;
-            var elementBottom = elementTop + jQuery(this).height() - 1;
+	      // traverse aspect blocks
+	      jQuery('div.aspectBlock').each(function(i) {
+	        // is this aspect in view?
+	        if (jQuery(this).isInView('partial')) {
+	            // top & bottom distance for the element, increase the top one as divs align
+	            var elementTop = jQuery(this).offset().top + 1;
+	            var elementBottom = elementTop + jQuery(this).height() - 1;
 
-            // absolute distance from the middle of the screen is...
-            var elementTopDistance = Math.abs(elementTop - screenMiddle);
-            var elementBottomDistance = Math.abs(elementBottom - screenMiddle);
+	            // absolute distance from the middle of the screen is...
+	            var elementTopDistance = Math.abs(elementTop - screenMiddle);
+	            var elementBottomDistance = Math.abs(elementBottom - screenMiddle);
 
-            // save the one that is closer to the middle
-            if (elementTopDistance < currentAspectDistance) {
-              currentAspectDistance = elementTopDistance;
-              currentAspect = jQuery(this).attr('id');
-            }
-            if (elementBottomDistance < currentAspectDistance) {
-              currentAspectDistance = elementBottomDistance;
-              currentAspect = jQuery(this).attr('id');
-            }
-        }
-      });
+	            // save the one that is closer to the middle
+	            if (elementTopDistance < currentAspectDistance) {
+	              currentAspectDistance = elementTopDistance;
+	              currentAspect = jQuery(this).attr('id');
+	            }
+	            if (elementBottomDistance < currentAspectDistance) {
+	              currentAspectDistance = elementBottomDistance;
+	              currentAspect = jQuery(this).attr('id');
+	            }
+	        }
+	      });
 
-      if (currentAspect != null) {
-        // strip the 'Category' suffix
-        currentAspect = currentAspect.substring(0, currentAspect.length - 8);
-        // find the one link in the top menu that corresponds to where we are
-        jQuery('#fixed-menu div.links a').each(function(i) {
-            if (jQuery(this).text() == currentAspect) {
-                jQuery(this).addClass('current');
-            } else {
-                jQuery(this).removeClass('current');
-            }
-        });
-      }
+	      if (currentAspect != null) {
+	        // strip the 'Category' suffix
+	        currentAspect = currentAspect.substring(0, currentAspect.length - 8);
+	        // find the one link in the top menu that corresponds to where we are
+	        jQuery('#fixed-menu div.links a').each(function(i) {
+	            if (jQuery(this).text() == currentAspect) {
+	                jQuery(this).addClass('current');
+	            } else {
+	                jQuery(this).removeClass('current');
+	            }
+	        });
+	      }
 
-    });
+	    });
 
-    if (jQuery(window).width() < '900') {
-      jQuery('div.wrap').each(function(index) {
-          jQuery(this).addClass('smallscreen');
-      });
-    }
+	    if (jQuery(window).width() < '900') {
+	      jQuery('div.wrap').each(function(index) {
+	          jQuery(this).addClass('smallscreen');
+	      });
+	    }
+  	})();
   </script>
 </c:if>
 
