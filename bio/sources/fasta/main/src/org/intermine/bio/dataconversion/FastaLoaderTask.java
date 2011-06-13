@@ -33,7 +33,6 @@ import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Synonym;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
@@ -349,7 +348,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
         dataSet.setName(dataSetTitle);
-        if (dataSource != null) {
+        if (dataSourceName != null) {
             dataSet.setDataSource(getDataSource());
         }
         getDirectDataLoader().store(dataSet);
