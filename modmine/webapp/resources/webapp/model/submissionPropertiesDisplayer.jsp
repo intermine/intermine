@@ -6,7 +6,7 @@
 
 <!-- submissionPropertiesDisplayer.jsp -->
 
-<div class="custom-displayer" id="submission-properties-div">
+<div class="basic-table" id="submission-properties-div">
 
 <table>
   <tr>

@@ -144,8 +144,7 @@
 <TR>
 
 <TD valign="top" class="tableleftcol">
-<div>
-
+<div class="results collection-table nowrap nomargin">
 <%-- Table displaying bag elements --%>
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="pagedResults" />

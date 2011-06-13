@@ -1490,18 +1490,19 @@ div.collection-table table thead td { font-weight:normal; border-bottom-width:1p
 div.collection-table table tr.odd td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
 div.collection-table table tbody tr:nth-child(2n) td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
 div.collection-table img { vertical-align:top; }
-div.collection-table.nowrap table tbody td { white-space:nowrap; }
 div.collection-table.column-border table tbody tr td.left-column-border { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-width:1px; border-left-style:solid; }
 /* collection table on results pages */
+div.collection-table.nowrap table tbody td { white-space:nowrap; }
+div.collection-table.nomargin { margin-bottom:0; }
 div.collection-table table thead th img { margin-left:2px; } /* column description info image */
 div.collection-table table thead th input { display:block; float:left; margin-right:8px; } /* select box on results table */
 div.collection-table table thead th span.path { white-space:nowrap; } /* path to column key */
 div.collection-table table thead th span.path em { font-size:9px; }
 div.collection-table tbody td.highlightCell { background:#FFF3D3 !important; border-top-color:#E3D19F !important; border-bottom:1px solid #E3D19F !important; }
-div.collection-table div.selected-fields { padding:8px 0; }
+div.collection-table.results div.selected-fields { padding:8px 0; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.basic-table div.right { display:inline; float:right; font-size:13px; }

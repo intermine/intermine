@@ -6,7 +6,7 @@
 <c:forEach var="type" items="${response}">
   <c:if test="${not empty type}">
     <div class="collection-table">
-      <h3 class="uniprot">Curated comments from UniProt</h3>
+      <h3>Curated comments from UniProt</h3>
       <table>
 
           <c:choose>

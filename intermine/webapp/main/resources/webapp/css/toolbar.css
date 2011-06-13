@@ -2,6 +2,7 @@ div#tool_bar_div{
     float:left;
     margin:0;
 	width:100%;
+	padding-bottom:4px;
 }
 
 ul#button_bar, ul#button_bar li {

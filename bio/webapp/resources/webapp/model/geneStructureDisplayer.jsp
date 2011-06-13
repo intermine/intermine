@@ -7,7 +7,7 @@
 
 <!-- geneStructureDisplayer.jsp -->
 
-<div class="feature">
+<div class="basic-table">
 
 <c:choose>
 <c:when test="${gene.id == actualId}">
@@ -25,7 +25,7 @@
 
 <c:if test="${!empty gene.transcripts}">
 
-  <table class="compact-table" cellspacing="0">
+  <table class="tiny-font">
     <thead>
       <tr>
         <%--<th>Gene</th>--%>
