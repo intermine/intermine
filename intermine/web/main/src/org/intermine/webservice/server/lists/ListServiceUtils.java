@@ -119,13 +119,13 @@ class ListServiceUtils {
         String nameString = StringUtils.join(classNames, ", ");
         for (ClassDescriptor cd: classes) {
             String thisType = cd.getName();
-            if (currentClass == null || currentClass.getAllSuperclassNames().contains(thisType)) {
-                currentClass = cd;
-                continue;
-            }
-            if (!cd.getAllSuperclassNames().contains(currentClass.getName())) {
-                throw new BadRequestException("Incompatible types: " + nameString);
-            }
+//            if (currentClass == null || currentClass.getAllSuperclassNames().contains(thisType)) {
+//                currentClass = cd;
+//                continue;
+//            }
+//            if (!cd.getAllSuperclassNames().contains(currentClass.getName())) {
+//                throw new BadRequestException("Incompatible types: " + nameString);
+//            }
         }
         return currentClass.getUnqualifiedName();
     }
