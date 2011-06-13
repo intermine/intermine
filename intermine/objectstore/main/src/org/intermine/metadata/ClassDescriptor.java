@@ -906,4 +906,20 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         return retList;
     }
+
+    /**
+     * Get the full inheritance list for this class. This set includes not just
+     * this classes' immediate ancestors, but all their ancestors as well, as well as this class'
+     * name.
+     * @return A set of class names.
+     */
+    public Set<String> getAllSuperclassNames() {
+        Set<String> classNames = new LinkedHashSet<String>();
+        classNames.add(this.getName());
+        classNames.addAll(this.getSuperclassNames());
+        for (ClassDescriptor superCd: this.getSuperDescriptors()) {
+            classNames.addAll(superCd.getAllSuperclassNames());
+        }
+        return classNames;
+    }
 }
