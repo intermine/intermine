@@ -26,3 +26,5 @@ sub fetch_all_data {
     }
 
 }
+
+1;
