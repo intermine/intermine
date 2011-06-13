@@ -38,7 +38,7 @@
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7220 7222 7234 7260 7238"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
     </source>
 
@@ -48,14 +48,14 @@
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
       <property name="fasta.dataSourceName" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
      <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
+      <property name="src.data.dir" location="/micklem/data/flybase/current/homology"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
@@ -78,7 +78,7 @@
     </source>
 -->
     <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
@@ -104,7 +104,7 @@
     </source>
 
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/shared/data/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
 
     <source name="omim" type="omim">
@@ -119,7 +119,7 @@
       <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
     </source>
     <source name="flyatlas" type="flyatlas">
-      <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
+      <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph-expr"/>
@@ -163,17 +163,17 @@
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
     <source name="pdb" type="pdb">
-      <property name="src.data.dir" location="/shared/data/pdb/current"/>
+      <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
+      <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/gene_ontology.obo"/>
     </source>
 <!--
     <source name="uberon" type="uberon">
@@ -182,7 +182,7 @@
 -->
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/julie"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation"/>
     </source>
 
     <source name="flyreg" type="flyreg" dump="true">
