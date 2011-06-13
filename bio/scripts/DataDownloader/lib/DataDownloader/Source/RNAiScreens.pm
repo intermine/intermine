@@ -57,16 +57,17 @@ sub fetch_screen_details {
         my @cols;
         my $citation = $res->{citations}[$index]{text};
         my ($first_author) = split(/\s+/, $citation);
-        $cols[0] = $first_author;
+        $cols[1] = $first_author;
         my $citation_links = $res->{citation_links}[$index];
         for my $link (@{ $citation_links->{links} }) {
             if ($link =~ m!ncbi\.nlm\.nih.*list_uids!) {
                 my ($uid) = $link =~ /list_uids=(\d+)/g;
-                $cols[1] = $uid || '';
+                $cols[0] = $uid || '';
             }
             if ($link =~ /RNAi_public_screen\.pl/) {
-                my $res = $screen_names->scrape($link);
-                $cols[2] = $res->{title};
+                my $title = $screen_names->scrape($link)->{title};
+                $title =~ s/ - .*//;
+                $cols[2] = $title;
             }
         }
         next unless (@cols == 3);
