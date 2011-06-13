@@ -55,8 +55,8 @@
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
        		<fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-          	<a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-          	title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+          	<div class="right"><a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
+          	title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a></div>
         </c:if>
         <c:if test="${column.selectable && empty inlineTable}">
 			<c:set var="disabled" value="false"/>
@@ -101,7 +101,7 @@
   <%-- Row --%>
   <c:if test="${pagedResults.estimatedSize > 0}">
   <tbody>
-    <c:forEach var="row" items="${pagedResults.rows}">
+    <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
 
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
         <tr>
@@ -156,10 +156,17 @@
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
                            styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}"
                            styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.type} class_${column.typeClsString}"
-                           onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
                            disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>&nbsp;
+                        <script type=text/javascript>
+                        	<%-- individual checkbox handler --%>
+                        	(function() {
+                            	jQuery("input#selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}").click(function() {
+                            		itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this);
+                            	});
+                        	})();
+                        </script>
                       </c:if>
                     </c:if>
                     <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
@@ -244,6 +251,25 @@
     </c:if>
   </c:if>
 
+    <c:if test="${! pagedResults.emptySelection}">
+    <script type="text/javascript" charset="utf-8">
+    if (jQuery('#newBagName')) {
+        jQuery('#newBagName').attr('disabled','');
+  }
+  if (jQuery('#saveNewBag')) {
+    jQuery('#saveNewBag').attr('disabled','');
+  }
+    if (jQuery('#addToBag')) {
+        jQuery('#addToBag').attr('disabled','');
+    }
+    if (jQuery('#removeFromBag')) {
+        jQuery('#removeFromBag').attr('disabled','');
+    }
+    </script>
+    </c:if>
+
+</table>
+
   <div class="selected-fields">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
   <c:choose>
@@ -266,27 +292,7 @@
       <c:set var="numRows" value="${pagedResults.exactSize}"/>
     </c:otherwise>
   </c:choose>
-
   </div>
-
-    <c:if test="${! pagedResults.emptySelection}">
-    <script type="text/javascript" charset="utf-8">
-    if (jQuery('#newBagName')) {
-        jQuery('#newBagName').attr('disabled','');
-  }
-  if (jQuery('#saveNewBag')) {
-    jQuery('#saveNewBag').attr('disabled','');
-  }
-    if (jQuery('#addToBag')) {
-        jQuery('#addToBag').attr('disabled','');
-    }
-    if (jQuery('#removeFromBag')) {
-        jQuery('#removeFromBag').attr('disabled','');
-    }
-    --</script>
-    </c:if>
-
-</table>
 
 <c:if test="${empty bagName && empty inlineTable}">
    <div>
@@ -296,4 +302,5 @@
    </tiles:insert>
    </div>
 </c:if>
+
 <%--</html:form>--%>
