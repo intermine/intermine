@@ -4,7 +4,7 @@
     <intro-text>
         GO, Pathways, Diseases, Phenotype, Domains
     </intro-text>
-    <tile-name>model/function.jsp</tile-name>
+    <tile-name>model/genes.jsp</tile-name>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
   </aspect>
