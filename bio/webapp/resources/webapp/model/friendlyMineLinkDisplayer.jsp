@@ -55,7 +55,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 <tiles:importAttribute />
 <div id="friendlyMines">
 <c:forEach items="${mines}"  var="entry">
-    <b>${entry.key}</b><div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div><br/>
+    <b>${entry.key}</b><div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
       <script type="text/javascript" charset="utf-8">
         getFriendlyMineLinks('${entry.key}', '${entry.value}', '${organisms}', '${identifierList}');
       </script>

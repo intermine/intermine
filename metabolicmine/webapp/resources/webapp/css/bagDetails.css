@@ -136,7 +136,7 @@ table.results td { border-right:none; }
 /* widgets */
 #WidgetsCategory ol.widgetList li { float:left; margin:5px 15px 5px 0; }
 #WidgetsCategory ol.widgetList li a { background: url("../images/icons/toggle-expand-16.png") no-repeat left;
-    border:none; color: #1F7492; padding: 2px 2px 2px 16px; }
+    border:none; color: #1F7492; padding: 2px 2px 2px 16px; cursor:pointer; }
 #WidgetsCategory ol.widgetList li a.active { background: url("../images/icons/toggle-collapse-16.png") no-repeat left;
     font-weight: bold; }
 

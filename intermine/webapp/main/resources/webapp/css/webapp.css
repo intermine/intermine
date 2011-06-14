@@ -1382,6 +1382,9 @@ form#queryBuilderTemplateSettings span.errors {
 
 form#queryBuilderTemplateSettings table input[type="text"], form#queryBuilderTemplateSettings table textarea { width:500px; }
 
+/* pagin */
+span.tablePageLinks span, span.tablePageLinks a { margin-right:5px; }
+
 /* widgets on list results */
 p#toggleWidgets, ol#widgetList { line-height:32px; vertical-align:middle; }
 
@@ -1503,6 +1506,8 @@ div.collection-table table thead th span.path { white-space:nowrap; } /* path to
 div.collection-table table thead th span.path em { font-size:9px; }
 div.collection-table tbody td.highlightCell { background:#FFF3D3 !important; border-top-color:#E3D19F !important; border-bottom:1px solid #E3D19F !important; }
 div.collection-table.results div.selected-fields { padding:8px 0; }
+div.collection-table.results table { border-top-width:1px; border-top-style:solid; }
+div.collection-table.results table thead th { padding-top:6px; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.basic-table div.right { display:inline; float:right; font-size:13px; }

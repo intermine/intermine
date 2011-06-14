@@ -343,6 +343,8 @@ div.collection-table.column-border table tbody tr td.left-column-border { border
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#F7F5DA; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#F7F5DA; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#F7F5DA; }
+/* collection table on results pages */
+div.collection-table.results table { border-top-color:#662F2E; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { background:#F7F1EE; border-top-color:#662F2E; color:#662F2E; text-shadow:1px 1px 1px #FFF; }
 div.basic-table table a,

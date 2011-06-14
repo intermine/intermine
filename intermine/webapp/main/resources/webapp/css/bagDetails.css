@@ -119,3 +119,7 @@ div.table.template div.templateDetails p.description { line-height:auto !importa
   text-align:left; padding-left:6px; }
 div.table.template div.templateDetails div.favorites img { float:left; padding:4px 4px 4px 6px; }
 div.template.table div.templateDetails { margin:0 !important; width:100%; }
+
+/* external links in friendly mines */
+#friendlyMines ul li { display:inline; margin:0 16px 0 0; }
+#friendlyMines ul li a { background:url("../images/icons/external_link.png") no-repeat right; padding-right:10px; }
