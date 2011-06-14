@@ -21,8 +21,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.config.WebConfig;
 
-
-
 /**
  * @author "Xavier Watkins"
  *
