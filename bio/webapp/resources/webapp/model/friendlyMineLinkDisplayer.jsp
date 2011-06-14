@@ -50,7 +50,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 
 </script>
 
-<h3>View orthologues in other Mines:</h3>
+<h3 class="goog">View orthologues in other Mines:</h3>
 
 <tiles:importAttribute />
 <div id="friendlyMines">

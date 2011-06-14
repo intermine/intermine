@@ -48,60 +48,62 @@
       </div>
     </div>
     <script type="text/javascript">
-      // show form
-      jQuery('div.title a').click(function() {
-        jQuery('div.title div.form').show();
-        jQuery('div.title h1').hide();
-      });
+      <%-- show form --%>
+      (function() {
+	      jQuery('div.title a').click(function() {
+	        jQuery('div.title div.form').show();
+	        jQuery('div.title h1').hide();
+	      });
 
-      // current name
-      var currentName = '${bag.name}';
+	      <%-- current name --%>
+	      var currentName = '${bag.name}';
 
-      /** Save name */
-      function saveName() {
-        var newName = jQuery('div.title input.text').attr('value').replace(/^\s*|\s*$/g,"");
-        AjaxServices.rename(currentName, 'bag', newName, function(result) {
-            if (result.indexOf("Invalid name") == 0) {
-                // invalid name
-                jQuery('#error_msg.errors').prepend(result).show();
-                jQuery('div.title div.form').hide();
-                jQuery('div.title h1').show();
-            } else  if (result.indexOf("already exists") > -1 && result.indexOf("<i>") == 0) {
-                // name already exists
-                jQuery('#error_msg.errors').prepend(result.replace(/<\/?[^>]+>/gi, "")).show();
-                jQuery('div.title div.form').hide();
-                jQuery('div.title h1').show();
-            } else {
-                // OK
-                if (currentName != result) { // we will need to redirect
-                  var urlObj = jQuery(location);
-                  var url = jQuery(location).attr('href');
-                  // replace the list name in "bagName/name=" before next "&"
-                  var a = url.indexOf("name=");
-                  if (a > -1) {
-                    var z = url.substring(a, url.length).indexOf("&");
-                    // redirect
-                    urlObj.attr('href', url.substring(0, a + 5) + result.replace(/ /g,"+") + url.substring(a + z, url.length));
-                  } else {
-                    a = url.indexOf("bagName=");
-                    // redirect
-                    urlObj.attr('href', url.substring(0, a + 8) + result.replace(/ /g,"+"));
-                  }
-                } else { // no name change
-                  jQuery('div.title div.form').hide();
-                  jQuery('div.title h1').show();
-                }
-            }
-        });
-      }
-      jQuery('div.title input.save').click(function() {
-        saveName();
-      });
-      jQuery('div.title input.text').bind('keyup', function(e) {
-        if((e.keyCode ? e.keyCode : e.which) == 13) {
-          saveName();
-        }
-      });
+	      <%-- save name --%>
+	      function saveName() {
+	        var newName = jQuery('div.title input.text').attr('value').replace(/^\s*|\s*$/g,"");
+	        AjaxServices.rename(currentName, 'bag', newName, function(result) {
+	            if (result.indexOf("Invalid name") == 0) {
+	                // invalid name
+	                jQuery('#error_msg.errors').prepend(result).show();
+	                jQuery('div.title div.form').hide();
+	                jQuery('div.title h1').show();
+	            } else  if (result.indexOf("already exists") > -1 && result.indexOf("<i>") == 0) {
+	                // name already exists
+	                jQuery('#error_msg.errors').prepend(result.replace(/<\/?[^>]+>/gi, "")).show();
+	                jQuery('div.title div.form').hide();
+	                jQuery('div.title h1').show();
+	            } else {
+	                // OK
+	                if (currentName != result) { // we will need to redirect
+	                  var urlObj = jQuery(location);
+	                  var url = jQuery(location).attr('href');
+	                  // replace the list name in "bagName/name=" before next "&"
+	                  var a = url.indexOf("name=");
+	                  if (a > -1) {
+	                    var z = url.substring(a, url.length).indexOf("&");
+	                    // redirect
+	                    urlObj.attr('href', url.substring(0, a + 5) + result.replace(/ /g,"+") + url.substring(a + z, url.length));
+	                  } else {
+	                    a = url.indexOf("bagName=");
+	                    // redirect
+	                    urlObj.attr('href', url.substring(0, a + 8) + result.replace(/ /g,"+"));
+	                  }
+	                } else { // no name change
+	                  jQuery('div.title div.form').hide();
+	                  jQuery('div.title h1').show();
+	                }
+	            }
+	        });
+	      }
+	      jQuery('div.title input.save').click(function() {
+	        saveName();
+	      });
+	      jQuery('div.title input.text').bind('keyup', function(e) {
+	        if((e.keyCode ? e.keyCode : e.which) == 13) {
+	          saveName();
+	        }
+	      });
+      })();
     </script>
 
     <%-- tags --%>
@@ -142,73 +144,75 @@
           </div>
         </td>
         <script type="text/javascript">
-          /** show more */
-          function moreDescription() {
-            var t = jQuery('table.fields td.description div.text span.text').html();
-            if (t.length > 120) {
-                jQuery('table.fields td.description div.text p').html(
-                    '<span class="text">' + t.substring(0, 100) + '</span>' +
-                    '<span class="ellipsis">&hellip;</span> ' +
-                    '<span class="hidden">' + t.substring(100, t.length) + '</span>'
-                );
-                // toggler
-                jQuery('table.fields td.description div.text p').append('<a class="more">more</a>');
-            } else {
-                jQuery('table.fields td.description div.text p').html('<span class="text">' + t + '</span>');
-                // toggler
-                jQuery('table.fields td.description div.text a.more').remove();
-            }
-          }
-          moreDescription();
+        	(function() {
+		          /** show more */
+		          function moreDescription() {
+		            var t = jQuery('table.fields td.description div.text span.text').html();
+		            if (t.length > 120) {
+		                jQuery('table.fields td.description div.text p').html(
+		                    '<span class="text">' + t.substring(0, 100) + '</span>' +
+		                    '<span class="ellipsis">&hellip;</span> ' +
+		                    '<span class="hidden">' + t.substring(100, t.length) + '</span>'
+		                );
+		                // toggler
+		                jQuery('table.fields td.description div.text p').append('<a class="more">more</a>');
+		            } else {
+		                jQuery('table.fields td.description div.text p').html('<span class="text">' + t + '</span>');
+		                // toggler
+		                jQuery('table.fields td.description div.text a.more').remove();
+		            }
+		          }
+		          moreDescription();
 
-          /** description edit toggler */
-          jQuery('table.fields td.description a.more').live('click', function() {
-            jQuery(this).parent().find('span.text').html(
-                jQuery(this).parent().find('span.text').html() + jQuery(this).parent().find('span.hidden').html()
-            );
-            jQuery(this).parent().find('span').not('span.text').remove();
-            jQuery(this).remove();
-          });
+		          /** description edit toggler */
+		          jQuery('table.fields td.description a.more').live('click', function() {
+		            jQuery(this).parent().find('span.text').html(
+		                jQuery(this).parent().find('span.text').html() + jQuery(this).parent().find('span.hidden').html()
+		            );
+		            jQuery(this).parent().find('span').not('span.text').remove();
+		            jQuery(this).remove();
+		          });
 
-          /** description edit toggler */
-          jQuery('table.fields td.description a.edit').click(function() {
-            // hide the div
-            jQuery('table.fields td.description div.text').hide();
-            // show the form
-            jQuery('table.fields td.description div.form').show();
-            // focus, make it usable
-            jQuery('table.fields td.description input.text').focus();
-          });
+		          /** description edit toggler */
+		          jQuery('table.fields td.description a.edit').click(function() {
+		            // hide the div
+		            jQuery('table.fields td.description div.text').hide();
+		            // show the form
+		            jQuery('table.fields td.description div.form').show();
+		            // focus, make it usable
+		            jQuery('table.fields td.description input.text').focus();
+		          });
 
-          /** Save description */
-          function saveDescription() {
-            var newDescription = jQuery('table.fields td.description input.text').val().replace(/[\n\r]+/g, "\n\r<br/>");
-            AjaxServices.saveBagDescription('${bag.name}', newDescription, function(returnedDescription){
-                // populate the value
-                jQuery('table.fields td.description div.text span.text').html(returnedDescription);
-                // switch the visibility
-                jQuery('table.fields td.description div.text').show();
-                jQuery('table.fields td.description div.form').hide();
+		          /** Save description */
+		          function saveDescription() {
+		            var newDescription = jQuery('table.fields td.description input.text').val().replace(/[\n\r]+/g, "\n\r<br/>");
+		            AjaxServices.saveBagDescription('${bag.name}', newDescription, function(returnedDescription){
+		                // populate the value
+		                jQuery('table.fields td.description div.text span.text').html(returnedDescription);
+		                // switch the visibility
+		                jQuery('table.fields td.description div.text').show();
+		                jQuery('table.fields td.description div.form').hide();
 
-                // set the link name based on whether we've cleared or not
-                if (returnedDescription.length > 0) {
-                  jQuery('table.fields td.description div.text a.edit').html('Edit');
-                }
-                else {
-                  jQuery('table.fields td.description div.text a.edit').html('Set');
-                }
+		                // set the link name based on whether we've cleared or not
+		                if (returnedDescription.length > 0) {
+		                  jQuery('table.fields td.description div.text a.edit').html('Edit');
+		                }
+		                else {
+		                  jQuery('table.fields td.description div.text a.edit').html('Set');
+		                }
 
-                moreDescription();
-            });
-          }
-          jQuery('table.fields td.description input.text').bind('keyup', function(e) {
-             if((e.keyCode ? e.keyCode : e.which) == 13) {
-               saveDescription();
-             }
-          });
-          jQuery('table.fields td.description input.save').click(function() {
-             saveDescription();
-          });
+		                moreDescription();
+		            });
+		          }
+		          jQuery('table.fields td.description input.text').bind('keyup', function(e) {
+		             if((e.keyCode ? e.keyCode : e.which) == 13) {
+		               saveDescription();
+		             }
+		          });
+		          jQuery('table.fields td.description input.save').click(function() {
+		             saveDescription();
+		          });
+        	})();
         </script>
       </tr>
     </table>
@@ -230,15 +234,17 @@
     <tiles:insert name="bagDetailsMenu.jsp" />
   </div>
   <script type="text/javascript">
-    jQuery('#fixed-menu').hide(); // hide for IE7
-    jQuery(window).scroll(function() {
-      // transition fix
-      if (jQuery('#menu-target').isInView('partial')) {
-        jQuery('#fixed-menu').hide();
-      } else {
-        jQuery('#fixed-menu').show();
-      }
-    });
+  	(function() {
+	    jQuery('#fixed-menu').hide(); // hide for IE7
+	    jQuery(window).scroll(function() {
+	      // transition fix
+	      if (jQuery('#menu-target').isInView('partial')) {
+	        jQuery('#fixed-menu').hide();
+	      } else {
+	        jQuery('#fixed-menu').show();
+	      }
+	    });
+  	})();
   </script>
 
   <%-- main content --%>
@@ -260,7 +266,7 @@
     <%-- convert to a different type & orthologues --%>
     <div class="box grid_4" id="convertList">
       <div class="feature convert">
-        <h3>Convert to a different type</h3>
+        <h3 class="goog">Convert to a different type</h3>
         <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
         <html:hidden property="bagName" value="${bag.name}"/>
           <tiles:insert name="convertBag.tile">
@@ -275,7 +281,7 @@
     <%-- download list --%>
     <div class="box grid_4" id="download">
       <div class="feature">
-        <h3>Download</h3>
+        <h3 class="goog">Download</h3>
         <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
         <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
         <tiles:get name="export.tile"/>
@@ -349,73 +355,79 @@
             <tiles:put name="bag" beanName="bag" />
         </tiles:insert>
       </div>
+	  <div class="clear"></div>
+	  <div class="collection-table nowrap nomargin">
+		  <div style="overflow-x:auto;">
+		      <tiles:insert name="resultsTable.tile">
+		        <tiles:put name="pagedResults" beanName="pagedResults" />
+		          <tiles:put name="currentPage" value="bagDetails" />
+		          <tiles:put name="bagName" value="${bag.name}" />
+		          <tiles:put name="highlightId" value="${highlightId}"/>
+		      </tiles:insert>
+	      </div>
 
-      <tiles:insert name="resultsTable.tile">
-        <tiles:put name="pagedResults" beanName="pagedResults" />
-          <tiles:put name="currentPage" value="bagDetails" />
-          <tiles:put name="bagName" value="${bag.name}" />
-          <tiles:put name="highlightId" value="${highlightId}"/>
-      </tiles:insert>
-
-      <div class="selected">
-        <span class="desc">Selected:</span>
-        <span id="selectedIdFields"></span>
+	      <div class="selected">
+	        <span class="desc">Selected:</span>
+	        <span id="selectedIdFields"></span>
+	      </div>
       </div>
     </div>
 
     <script type="text/javascript">
-      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
-      function toggleResults() {
-        // expanding or contracting?
-        jQuery('#ListArea').toggle();
+    	(function() {
+		      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
+		      function toggleResults() {
+		        // expanding or contracting?
+		        jQuery('#ListArea').toggle();
 
-        if (jQuery("#ListCategory h2 div.button").hasClass('active')) {
-          jQuery("#ListCategory h2 div.button input").attr('value', '+ Show');
-        } else {
-          jQuery("#ListCategory h2 div.button input").attr('value', '- Hide');
-        }
+		        if (jQuery("#ListCategory h2 div.button").hasClass('active')) {
+		          jQuery("#ListCategory h2 div.button input").attr('value', '+ Show');
+		        } else {
+		          jQuery("#ListCategory h2 div.button input").attr('value', '- Hide');
+		        }
 
-        jQuery("#ListCategory h2 div.button").toggleClass('active');
-      }
-      // let us not forget that results will be shown on successful search and when paginating that requires synchronous call
-      <c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
-        jQuery(document).ready(function() { toggleResults(); });
-      </c:if>
+		        jQuery("#ListCategory h2 div.button").toggleClass('active');
+		      }
+		      // let us not forget that results will be shown on successful search and when paginating that requires synchronous call
+		      <c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
+		        jQuery(document).ready(function() { toggleResults(); });
+		      </c:if>
 
-      // shuffle "selected" around:
-      jQuery("#results b").not("table.results b").remove();
-      var s = jQuery.trim(jQuery("#results span#selectedIdFields").first().html());
-      jQuery("#results span#selectedIdFields").first().remove();
-      jQuery("#results span#selectedIdFields").html(s);
+		      // shuffle "selected" around:
+		      jQuery("#results b").not("table.results b").remove();
+		      var s = jQuery.trim(jQuery("#results span#selectedIdFields").first().html());
+		      jQuery("#results span#selectedIdFields").first().remove();
+		      jQuery("#results span#selectedIdFields").html(s);
 
-      if (s.length == 0) { // hide when we have not selected anything before reload
-        jQuery('#results div.selected span.desc').hide();
-      }
+		      if (s.length == 0) { // hide when we have not selected anything before reload
+		        jQuery('#results div.selected span.desc').hide();
+		      }
 
-      // monitor checkboxes for changes
-      jQuery('#results input').each(function(index) {
-        jQuery(this).click(function() {
-          if (jQuery('#results div.selected span.desc').is(':visible')) {
-            if (jQuery('#results div.selected #selectedIdFields').html().length == 0) {
-                jQuery('#results div.selected span.desc').hide();
-            }
-          } else {
-            if (jQuery('#results div.selected #selectedIdFields').html().length > 0) {
-                jQuery('#results div.selected span.desc').show();
-            }
-          }
-        });
-      });
+		      // monitor checkboxes for changes
+		      jQuery('#results input').each(function(index) {
+		        jQuery(this).click(function() {
+		          if (jQuery('#results div.selected span.desc').is(':visible')) {
+		            if (jQuery('#results div.selected #selectedIdFields').html().length == 0) {
+		                jQuery('#results div.selected span.desc').hide();
+		            }
+		          } else {
+		            if (jQuery('#results div.selected #selectedIdFields').html().length > 0) {
+		                jQuery('#results div.selected span.desc').show();
+		            }
+		          }
+		        });
+		      });
 
-      // apply highlight class to rows that were selected before reload
-      jQuery('#results input:checked').each(function(index) {
-        jQuery(this).parent().parent().find('td').not('th td').addClass('highlightCell');
-      });
+		      // apply highlight class to rows that were selected before reload
+		      jQuery('#results input:checked').each(function(index) {
+		        jQuery(this).parent().parent().find('td').not('th td').addClass('highlightCell');
+		      });
 
-      // toggler event
-      jQuery('#ListCategory h2 div.button').click(function() {
-        toggleResults();
-      });
+		      // toggler event
+		      jQuery('#ListCategory h2 div.button').click(function() {
+		        toggleResults();
+		      });
+    	})();
     </script>
 
     <div class="clear"></div>
@@ -476,7 +488,7 @@
       <div class="feature">
         <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
         <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
-        <h3>Template results for '${bag.name}' <span>(<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></h3>
+        <h3 class="goog">Template results for '${bag.name}' <span>(<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></h3>
         <fmt:message key="bagDetails.templatesHelp">
             <fmt:param><img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/></fmt:param>
         </fmt:message>
@@ -491,13 +503,15 @@
 </c:when>
 <c:otherwise>
   <script type="text/javascript">
-    jQuery(document).ready(function() {
-      // parse the message because the messaging is eeeu
-      var m = jQuery(jQuery('#error_msg.topBar.errors').html()).text().replace('Hide', '').trim();
-      // append link to all lists
-      var l = ', <html:link styleClass="inline" action="/bag?subtab=view">view all lists</html:link> instead.';
-      jQuery('#error_msg.topBar.errors').html(jQuery('#error_msg.topBar.errors').html().replace(m, m+l));
-    });
+  	(function() {
+	    jQuery(document).ready(function() {
+	      // parse the message because the messaging is eeeu
+	      var m = jQuery(jQuery('#error_msg.topBar.errors').html()).text().replace('Hide', '').trim();
+	      // append link to all lists
+	      var l = ', <html:link styleClass="inline" action="/bag?subtab=view">view all lists</html:link> instead.';
+	      jQuery('#error_msg.topBar.errors').html(jQuery('#error_msg.topBar.errors').html().replace(m, m+l));
+	    });
+  	})();
   </script>
 </c:otherwise>
 </c:choose>

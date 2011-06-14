@@ -191,6 +191,16 @@ h3.interactions { color:#4896B2; font-size:13px; margin:10px 0 10px; }
 #pagecontentcontainer.bagUploadConfirm-page #chooseName,
 #pagecontentcontainer.bagUploadConfirm-page #additionalMatches { background:#FEFEFE; }
 
+/* list analysis page */
+#pagecontentcontainer.bagDetails-page #header_wrap { background-color:#F5F5F5; background-image:url("report/header-bg.png"); }
+#pagecontentcontainer.bagDetails-page #menu-target { background:#F5F5F5; }
+#pagecontentcontainer.bagDetails-page #toc-menu-wrap { background:#AFAFAF; }
+#pagecontentcontainer.bagDetails-page #fixed-menu { background:#AFAFAF; }
+#pagecontentcontainer.bagDetails-page #toc-menu-wrap div.wrap a,
+#pagecontentcontainer.bagDetails-page #fixed-menu div.wrap a { background:#F5F5F5; color:#4B3F4B; }
+#pagecontentcontainer.bagDetails-page #fixed-menu span,
+#pagecontentcontainer.bagDetails-page #toc-menu-wrap span { color:#FFF; }
+
 /* report page */
 #pagecontentcontainer.report-page #header_wrap { background-color:#F5F5F5; background-image:url("report/header-bg.png"); }
 #pagecontentcontainer.report-page #object_header h1.title span { color:#1F7492; }
