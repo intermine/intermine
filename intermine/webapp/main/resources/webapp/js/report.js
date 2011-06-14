@@ -1,47 +1,4 @@
 /**
- * jQuery function extension performing a 'scroll to target'
- */
-jQuery.fn.extend({
-  /**
-   * @speed A string or number determining how long the animation will run
-   * @easing A string indicating which easing function to use for the transition (linear or swing).
-   * @val Extra offset in px
-   * @onComplete A function to call once the animation is complete
-   */
-    scrollTo : function(speed, easing, val, onComplete) {
-        return this.each(function() {
-            var targetOffset = jQuery(this).offset().top + val;
-
-            jQuery('html,body').animate({
-                scrollTop: targetOffset
-            }, speed, easing, onComplete);
-        });
-    }
-});
-
-/**
- * jQuery function extension checking if an element is (fully/partially) visible
- */
-jQuery.fn.extend({
-  /**
-   * @visibility Full or partial visibility?
-   */
-  isInView : function(visibility) {
-    var pageTop = jQuery(window).scrollTop();
-    var pageBottom = pageTop + jQuery(window).height();
-
-    var elementTop = jQuery(this).offset().top;
-    var elementBottom = elementTop + jQuery(this).height();
-
-    if (visibility == 'partial') {
-      return ((elementBottom >= pageTop) && (elementTop <= pageBottom));
-    } else {
-      return ((elementBottom < pageBottom) && (elementTop > pageTop));
-    }
-  }
-});
-
-/**
  * The purpose of this function is to display max 10 rows in a "verbose" table (=
  * cached...)
  *
@@ -154,20 +111,15 @@ function showMoreRows(e, round, maxCount) {
  * @return
  */
 function collapseTable(e, maxCount) {
-  im.log(e); // is calling inner!!! #coll_im_aspect_MiscellaneousdataSets_inner
   var table = jQuery(e + ' table');
-
-  var count = maxCount;
 
   // show but the first 10 rows
   table.find('tbody tr').each(function(index) {
-    if (count > 0) {
+    if (index < 10) {
       jQuery(this).show();
     } else {
       jQuery(this).hide();
     }
-
-    count--;
   });
 
   // scroll to the table

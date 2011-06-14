@@ -94,6 +94,22 @@ im.trace = function(level) {
 	}
 };
 
+// scroll to an element
+im.scrollTo = function(e, speed, easing, offset, onComplete) {
+    return jQuery('html,body').animate({scrollTop: jQuery(e).offset().top + offset}, speed, easing, onComplete);
+};
+
+// is element in the viewport?
+im.isInView = function(e, visibility) {
+    var pageTop = jQuery(window).scrollTop();
+    var pageBottom = pageTop + jQuery(window).height();
+
+    var elementTop = jQuery(e).offset().top;
+    var elementBottom = elementTop + jQuery(e).height();
+
+    return (visibility == 'partial') ?  ((elementBottom >= pageTop) && (elementTop <= pageBottom)) : ((elementBottom < pageBottom) && (elementTop > pageTop));
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
@@ -104,6 +120,12 @@ jQuery.fn.extend({
 	},
 	log: function(message) {
 		im.log(message);
+	},
+	scrollTo: function(speed, easing, offset, onComplete) {
+		return im.scrollTo(this, speed, easing, offset, onComplete);
+	},
+	isInView: function(visibility) {
+		return im.isInView(this, visibility);
 	}
 });
 
