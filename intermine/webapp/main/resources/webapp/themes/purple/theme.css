@@ -303,6 +303,8 @@ div.collection-table.column-border table tbody tr td.left-column-border { border
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#DCC8E2; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#DCC8E2; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#DCC8E2; }
+/* collection table on results pages */
+div.collection-table.results table { border-top-color:#5C0075; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
 div.basic-table table a,

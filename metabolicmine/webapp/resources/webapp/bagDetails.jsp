@@ -356,7 +356,7 @@
         </tiles:insert>
       </div>
 	  <div class="clear"></div>
-	  <div class="collection-table nowrap nomargin">
+	  <div class="collection-table nowrap nomargin results">
 		  <div style="overflow-x:auto;">
 		      <tiles:insert name="resultsTable.tile">
 		        <tiles:put name="pagedResults" beanName="pagedResults" />
@@ -444,23 +444,24 @@
       <a name="widgets"><h2>Widgets displaying properties of '${bag.name}'</h2></a>
       <ol class="widgetList">
         <c:forEach items="${widgets}" var="widget">
-          <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+          <li><a title="toggle widget" name="${widget.id}" class="active">${widget.title}</a></li>
         </c:forEach>
       </ol>
     </div>
 
-    <script language="javascript">
-      function toggleWidget(widgetid,linkid) {
-        jQuery('#'+widgetid).toggle();
-        if(jQuery('#'+linkid).hasClass('active')) {
-          jQuery('#'+linkid).removeClass('active');
-          AjaxServices.saveToggleState(widgetid, false);
-        } else {
-          jQuery('#'+linkid).addClass('active');
-          AjaxServices.saveToggleState(widgetid, true);
-        }
-      }
-    </script>
+	<script type="text/javascript">
+	(function() {
+	    <%-- widget toggler --%>
+		jQuery('ol.widgetList li a').each(function() {
+			jQuery(this).click(function() {
+				jQuery(this).toggleClass('active');
+				var widgetName = jQuery(this).attr('name');
+				var widget = jQuery('#widgetcontainer' + widgetName).toggle();
+				AjaxServices.saveToggleState('widgetcontainer' + widgetName, widget.is(":visible"));
+			});
+		});
+	})();
+	</script>
 
     <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
@@ -512,7 +513,7 @@
 	      jQuery('#error_msg.topBar.errors').html(jQuery('#error_msg.topBar.errors').html().replace(m, m+l));
 	    });
   	})();
-  </script>
+  --</script>
 </c:otherwise>
 </c:choose>
 
