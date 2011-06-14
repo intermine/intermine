@@ -44,7 +44,8 @@ public abstract class AbstractQueryService extends WebService {
 
         Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
 
-        if (getFormat() == WebService.JSON_OBJ_FORMAT) {
+        if (getFormat() == WebService.JSON_OBJ_FORMAT
+                || getFormat() == WebService.JSONP_OBJ_FORMAT) {
             return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(),
                     savedBags);
         } else {
