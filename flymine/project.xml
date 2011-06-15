@@ -140,19 +140,6 @@
       <property name="ensemblcompara.organisms" value="7227"/>
       <property name="ensemblcompara.homologues" value="9606"/>
     </source>
-
-
-    <source name="tiffin" type="tiffin">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
-    </source>
-
-    <source name="tiffin-expression" type="tiffin-expression">
-      <property name="src.data.dir" location="/shared/data/tiffin/"/>
-      <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
-    </source>
-
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
       <property name="dataSetTitle" value="AnoEST clusters"/>
@@ -182,7 +169,7 @@
 -->
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
     </source>
 
     <source name="flyreg" type="flyreg" dump="true">
