@@ -42,13 +42,13 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
-import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
+import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -159,6 +159,11 @@ public abstract class WebService
         return formatIsJSON() && (getFormat() % 2 == 1);
     }
 
+    protected boolean formatIsJsonObj() {
+        int format = getFormat();
+        return (format == JSON_OBJ_FORMAT || format == JSONP_OBJ_FORMAT);
+    }
+
     protected boolean formatIsFlatFile() {
         int format = getFormat();
         return (format == TSV_FORMAT || format == CSV_FORMAT);
@@ -240,14 +245,14 @@ public abstract class WebService
     }
 
     /**
-     * Subclasses can put initialisation. 
+     * Subclasses can put initialisation.
      */
     protected void initState() {
         // No-op stub
     }
 
     /**
-     * Subclasses can put initialisation checks here. The main use case is for confirming 
+     * Subclasses can put initialisation checks here. The main use case is for confirming
      * authentication.
      */
     protected void validateState() {
