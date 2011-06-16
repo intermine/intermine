@@ -56,7 +56,7 @@ if ($show_sources) {
 
 my $config_file = dirname(__FILE__) . '/../config/' . $config . '.yml';
 
-my ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES) = read_config($config_file);
+my ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES, $OPTS) = read_config($config_file);
 
 my $logger =  make_logger($LOGDIR);
 my %args   = (data_dir => $DATA_DIR, logger => $logger);
@@ -69,8 +69,9 @@ for my $source (@sources_to_get) {
         $logger->error("Failed to load source $source:", $e);
         next;
     }
+    my $source_options = $OPTS->{$source} || {};
     eval {
-        my $downloader = $package->new(%args);
+        my $downloader = $package->new(%args, options => $source_options);
         $downloader->get_data();
     };
     if (my $e = $@) {
@@ -109,5 +110,5 @@ USAGE
 
     my $DEFAULT_SOURCES = $settings->{default_sources} || [];
 
-    return ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES);
+    return ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES, $settings);
 }
