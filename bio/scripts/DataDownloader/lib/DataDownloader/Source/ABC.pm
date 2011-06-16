@@ -23,6 +23,12 @@ sub BUILD {
     }
 }
 
+has options => (
+    is => 'ro',
+    isa => 'HashRef',
+    default => sub { {} },
+);
+
 has sources => (
     is => 'rw',
     isa => 'ArrayRef[HashRef]',
