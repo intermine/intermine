@@ -24,3 +24,16 @@ default_sources:
   - "Uniprot"
   - "WormbaseRNAi"
   - "WormIdentifiers"
+
+Uniprot:
+    organisms:
+        - 10090 
+        - 4932 
+        - 6239 
+        - 7165 
+        - 7217 
+        - 7227 
+        - 7237 
+        - 7460 
+        - 7955 
+        - 9606 
