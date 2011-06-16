@@ -10,9 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -154,13 +155,14 @@ public class BeginAction extends InterMineAction
         request.setAttribute("tabs", bagOfTabs);
 
         // preferred bags (Gucci)
-        ArrayList<String> preferredBags = new ArrayList<String>();
+        List<String> preferredBags = new LinkedList<String>();
         TagManager tagManager = im.getTagManager();
         List<Tag> preferredBagTypeTags = tagManager.getTags(
                 "im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferredBags.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
+        Collections.sort(preferredBags);
         request.setAttribute("preferredBags", preferredBags);
 
         // organism dropdown on list upload
