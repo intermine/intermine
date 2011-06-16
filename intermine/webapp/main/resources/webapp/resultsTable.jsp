@@ -18,8 +18,8 @@
 <script type="text/javascript">
   function changePageSize() {
     var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
-    var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
-    var page = ${pagedResults.startRow}/pagesize;
+    var pagesize = jQuery("form#changeTableSizeForm select[name='pageSize'] option:selected").text();
+    var page = parseInt(${pagedResults.startRow})/pagesize;
     url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
     if ('${param.trail}' != '') {
         url += '&trail=${param.trail}';
