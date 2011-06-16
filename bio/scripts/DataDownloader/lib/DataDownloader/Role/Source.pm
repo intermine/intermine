@@ -53,7 +53,6 @@ sub _build_logger {
     return make_logger();
 }
 
-
 sub log_start {
     my $self = shift;
     $self->info("Starting data download for " . $self->get_title);
