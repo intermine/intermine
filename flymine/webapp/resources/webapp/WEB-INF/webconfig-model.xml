@@ -736,7 +736,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
+                     placement="Function"
                      types="Gene,Protein"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JMOLDisplayer"
