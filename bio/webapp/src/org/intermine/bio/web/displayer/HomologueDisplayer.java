@@ -80,9 +80,13 @@ public class HomologueDisplayer extends ReportDisplayer
         }
 
         for (Homologue homologue : gene.getHomologues()) {
+            if ("paralogue".equals(homologue.getType())) {
+                continue;
+            }
             for (DataSet dataSet : homologue.getDataSets()) {
                 if (dataSets.contains(dataSet.getName())) {
                     Organism org = homologue.getHomologue().getOrganism();
+
                     organismIds.put(org.getSpecies(), org.getId().toString());
                     try {
                         if (PathUtil.resolvePath(symbolPath, homologue.getHomologue()) != null) {
