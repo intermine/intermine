@@ -1,4 +1,5 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- heatMap.jsp -->
 
@@ -11,9 +12,29 @@
 
 <div class="body" id="expression_div">
     <div id="heatmap_div">
-        <p><h2>${ExpressionScoreTitle}</h2></p>
-        <p><i>${ExpressionScoreSummary}<a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores">
-            the Celniker group</a>.</i></p>
+        <p>
+          <h2>
+              <c:choose>
+                <c:when test="${ExpressionType == 'gene'}">
+                  ${WEB_PROPERTIES['heatmap.geneExpressionScoreTitle']}
+                </c:when>
+                <c:when test="${ExpressionType == 'exon'}">
+                  ${WEB_PROPERTIES['heatmap.exonExpressionScoreTitle']}
+                </c:when>
+                <c:otherwise>
+                  ${ExpressionType}
+                </c:otherwise>
+              </c:choose>
+          </h2>
+        </p>
+        <p>
+          <i>
+            ${WEB_PROPERTIES['heatmap.expressionScoreSummary']}
+            <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores"> the Celniker group</a>.
+            We have taken log2 of each expression score to create the heatmap thus results in a range between 0 and 16. The Heatmap visualization is powered by
+            <a href="http://www.canvasxpress.org">cavasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">control</a>.
+          </i>
+        </p>
         <br/>
         <div id="heatmapContainer">
             <table>
@@ -60,7 +81,20 @@
             </table>
         </div>
         <div id="description" style="padding: 5px">
-            <i>${ExpressionScoreDescription}</i>To see <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
+            <i>
+              <c:choose>
+                <c:when test="${ExpressionType == 'gene'}">
+                  ${WEB_PROPERTIES['heatmap.geneExpressionScoreDescription']}
+                </c:when>
+                <c:when test="${ExpressionType == 'exon'}">
+                  ${WEB_PROPERTIES['heatmap.exonExpressionScoreDescription']}
+                </c:when>
+                <c:otherwise>
+                  ${ExpressionType}
+                </c:otherwise>
+              </c:choose>
+            </i>
+            To see <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
             further information about the submission</a> and <a href="http://www.modencode.org/docs/flyscores/" target="_blank">original score tables</a>.
         </div>
     </div>

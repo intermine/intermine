@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,52 +96,6 @@ public class HeatMapController extends TilesAction
     .asList(EXPRESSION_ORDERED_CONDITION_CELLLINE);
     private static final List<String> EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE = Arrays
     .asList(EXPRESSION_ORDERED_CONDITION_DEVELOPMENTALSTAGE);
-
-    private static String geneExpressionScoreTitle = "Drosophila Gene Expression Scores";
-    private static String expressionScoreSummary = "These expression levels are derived "
-        + "from RNA-seq data from ";
-    private static String geneExpressionScoreDescription = "This heatmap shows estimated "
-        + "expression levels for annotated genes, using signals from Affymetrix "
-        + "Drosophila tiling arrays. The arrays were hybridized with total RNAs "
-        + "extracted from 25 cell lines and 30 developmental stages. The original gene "
-        + "scores table provides expression scores for all genes listed in the FlyBase "
-        + "version 5.12 annotation. Each gene was assigned a score equal to the maximum"
-        + " exon score for all the exons associated with the gene in the annotation. "
-        + "That is, we made no effort to derive distinct scores for known isoforms. "
-        + "[Note: Some exons are annotated as components of more than one genes. Such "
-        + "exons are represented in more than one row, with different values for "
-        + "geneID, geneName and FBgn.] IMPORTANT: Hybridization efficiencies vary "
-        + "significantly from probe to probe and exon to exon. Consequently, the data "
-        + "in these tables are useful for comparing a single gene in multiple RNA "
-        + "samples (i.e. you may compare scores within a row). But they are NOT useful"
-        + " for comparing different genes or exons from a single RNA sample (i.e. do "
-        + "NOT try to compare scores within a column). We have taken log2 of each "
-        + "expression score to create the heatmap. ";
-
-    private static String exonExpressionScoreTitle = "Drosophila Exon Expression Score";
-    private static String exonExpressionScoreDescription = "This heatmap shows estimated "
-        + "expression levels for annotated exons, using signals from Affymetrix "
-        + "Drosophila tiling arrays. The arrays were hybridized with total RNAs "
-        + "extracted from 25 cell lines and 30 developmental stages. * IMPORTANT: "
-        + "Hybridization efficiencies vary significantly from probe to probe and exon "
-        + "to exon. Consequently, the data in these tables are useful for comparing a "
-        + "single exon in multiple RNA samples (i.e. you may compare scores within a "
-        + "row). But they are NOT useful for comparing different genes or exons from a"
-        + " single RNA sample (i.e. do NOT try to compare scores within a column). * "
-        + "The original exons scores table provides scores for all exons annotated in "
-        + "either FlyBase (v5.12) or in the unpublished annotation MB6 from the WUSL "
-        + "sub-group led by Michael Brent. * The primary data were Affymetrix signal "
-        + "graph files. Each signal graph incorporates data from three (biologically "
-        + "independent) replicate arrays. * For each exon, all probes contained within"
-        + " the annotated coordinates were scored as follows: 1. A preliminary score is"
-        + " the median intensity for all probes completely contained within the exon. "
-        + "2. Scores less than zero were converted to zero. (Negative scores occur in "
-        + "the signal graph files as a consequence of background correction.) 3. All "
-        + "scores from a single sample (i.e. cell line or developmental stage) were "
-        + "normalized by median-centering to a value of 100. That is, we divided each "
-        + "score in a sample by the grand median of all scores in that sample, and "
-        + "multiplied by 100, thereby setting the median of each sample to 100. We have"
-        + " taken log2 of each expression score to create the heatmap. ";
 
     /**
      * {@inheritDoc}
@@ -279,9 +232,7 @@ public class HeatMapController extends TilesAction
             request.setAttribute("maxExpressionScore", df.format(logGeneExpressionScoreMax));
             request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logGeneExpressionScoreMax));
             request.setAttribute("expressionScoreDCCid", dCCid);
-            request.setAttribute("ExpressionScoreTitle", geneExpressionScoreTitle);
-            request.setAttribute("ExpressionScoreSummary", expressionScoreSummary);
-            request.setAttribute("ExpressionScoreDescription", geneExpressionScoreDescription);
+            request.setAttribute("ExpressionType", "gene");
             request.setAttribute("FeatureCount", geneExpressionScoreMapDevelopmentalStage.size());
 
         } else if ("Exon".equals(bag.getType())) {
@@ -393,9 +344,7 @@ public class HeatMapController extends TilesAction
             request.setAttribute("maxExpressionScore", df.format(logExonExpressionScoreMax));
             request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExonExpressionScoreMax));
             request.setAttribute("expressionScoreDCCid", dCCid);
-            request.setAttribute("ExpressionScoreTitle", exonExpressionScoreTitle);
-            request.setAttribute("ExpressionScoreSummary", expressionScoreSummary);
-            request.setAttribute("ExpressionScoreDescription", exonExpressionScoreDescription);
+            request.setAttribute("ExpressionType", "exon");
             request.setAttribute("FeatureCount", exonExpressionScoreMapDevelopmentalStage.size());
 
         } else {
