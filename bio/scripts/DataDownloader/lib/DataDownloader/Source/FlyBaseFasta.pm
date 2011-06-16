@@ -16,11 +16,12 @@ use constant FILE_TYPES =>
 
 sub BUILD {
     my $self = shift;
+
     for my $species ( grep {length == 4} $self->ls_remote_dir("genomes") ) {
-        for my $file ($self->ls_remote_dir("genomes/$s/current/fasta")) {
+        for my $file ($self->ls_remote_dir("genomes/$species/current/fasta")) {
             $self->add_source(
                 HOST       => 'ftp.flybase.net',
-                REMOTE_DIR => "genomes/$s/current/fasta",
+                REMOTE_DIR => "genomes/$species/current/fasta",
                 FILE       => $file,
                 EXTRACT    => 1,
             ) if ( $file =~ FILE_TYPES );
