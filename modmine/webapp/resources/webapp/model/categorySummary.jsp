@@ -38,12 +38,23 @@ An individual 'submission' is a single instance of an experiment which tests var
 </a></tr>
 </table>
 
+
+
+
+
+
+
+
+
+
+
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
-<c:forEach items="${catExp}" var="cat" varStatus="cat_status">
+
   <tr><th>&nbsp;</th><th><h4><a name="${cat_status.count}">${cat.key}</a></h4></th><th class="lastcol">&nbsp;</th></tr>
 
- <c:forEach items="${cat.value}" var="exp"  varStatus="status">
+ <c:forEach items="${experiments}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
+
 
   <tr>
 
@@ -202,7 +213,6 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 
 
 </tr>
-</c:forEach>
 </c:forEach>
 </table>
 

@@ -35,6 +35,9 @@
 <definition name="projectsSummary.tile" path="/model/projectsSummary.jsp"
         controllerUrl="/initProjectsSummary.do"/>
 
+<definition name="categorySummary.tile" path="/model/categorySummary.jsp"
+        controllerUrl="/initCategorySummary.do"/>
+
 <definition name="chromatinStates.tile" path="/model/chromatinStates.jsp"/>
 
 <definition name="modMineSearch.tile" path="/modMineSearch.jsp"/>
@@ -48,6 +51,11 @@
   <definition name="projectsSummary.page" extends="layout.template">
     <put name="body" value="projectsSummary.tile"/>
     <put name="pageName" value="projectsSummary"/>
+  </definition>
+
+  <definition name="categorySummary.page" extends="layout.template">
+    <put name="body" value="categorySummary.tile"/>
+    <put name="pageName" value="categorySummary"/>
   </definition>
 
   <definition name="chromatinStates.page" extends="layout.template">

@@ -10,6 +10,8 @@ package org.modmine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public class CategorySummaryController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form,
@@ -45,18 +48,39 @@ public class CategorySummaryController extends TilesAction
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
 
-            Map<String, List<DisplayExperiment>> experiments =
-                MetadataCache.getProjectExperiments(os);
+//            List<DisplayExperiment> cats;
+//            String categoryName = request.getParameter("category");
+//            if (categoryName != null) {
+//                cats = new ArrayList<DisplayExperiment>();
+//                cats.add(MetadataCache.getExperimentByName(os, categoryName));
+//            } else {
+//                cats = MetadataCache.getExperiments(os);
+//            }
+
+            
+//            List<DisplayExperiment> cats;
+//            String categoryName = request.getParameter("category");
+//            if (categoryName != null) {
+//                cats = new ArrayList<DisplayExperiment>();
+//                cats.addAll(MetadataCache.getCategoryExperiments(os).get(categoryName));
+//            } else {
+//                cats = MetadataCache.getExperiments(os);
+//            }
+//            request.setAttribute("categories", cats);
+
+//            Map<String, List<DisplayExperiment>> experiments =
+//                MetadataCache.getProjectExperiments(os);
+//            request.setAttribute("experiments", experiments);
+
+            List<DisplayExperiment> experiments;
+            String categoryName = request.getParameter("category");
+            experiments =
+                MetadataCache.getCategoryExperiments(os).get(categoryName);
             request.setAttribute("experiments", experiments);
 
+            
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
-
-            //            final ServletContext  = servlet.getServletContext();
-            //          Map<String, List<DisplayExperiment>> categories =
-            //          CategoryExperiments.getCategoryExperiments(servletContext, os);
-            //      request.setAttribute("catExp", categories);
-
 
             // using the categories form experiment.category (chado)
             Map<String, List<DisplayExperiment>> categoriesNew =
