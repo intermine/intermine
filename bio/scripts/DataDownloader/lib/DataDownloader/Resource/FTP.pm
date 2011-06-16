@@ -1,6 +1,7 @@
 package DataDownloader::Resource::FTP;
 
 use Moose;
+use Ouch qw/:traditional/;
 use MooseX::FollowPBP;
 use Number::Format qw(format_bytes);
 extends 'DataDownloader::Resource::ABC';
@@ -22,10 +23,15 @@ sub fetch {
         $con->hash(\*STDERR, ($bytes / 80));
     }
 
-    $con->get("$file", "$temp") or die "Failed to download $file - ", $con->message;
-
+    my $was_successful = $con->get("$file", "$temp");
     my $dl_size = -s $temp;
-    warn "Downloaded file is wrong size ($dl_size != $bytes)" unless ($dl_size == $bytes);
+    unless ($was_successful or ($dl_size == $bytes)) {
+        throw "Download Error" => $con->message;
+    }
+
+    if ($bytes and $dl_size != $bytes) {
+        throw "Download Error" => "$file is wrong size ($dl_size != $bytes)";
+    }
 
     $self->make_destination(
         $self->get_temp_file => $self->get_destination
