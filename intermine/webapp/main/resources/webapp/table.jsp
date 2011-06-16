@@ -18,13 +18,14 @@
 <!--//<![CDATA[
   function changePageSize() {
     var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
-    var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
-    var page = ${resultsTable.startRow}/pagesize;
+    var pagesize = jQuery("form#changeTableSizeForm select[name='pageSize'] option:selected").text();
+    var page = parseInt(${resultsTable.startRow})/pagesize;
     url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
     if ('${param.trail}' != '') {
         url += '&trail=${param.trail}';
     }
-    document.location.href=url;
+    alert(url);
+    //document.location.href=url;
   }
 
   var columnsToDisable = ${columnsToDisable};
@@ -220,15 +221,15 @@
 </c:choose>
 
 <script type="text/javascript">
-	// exists function
-	jQuery.fn.exists = function(){ return jQuery(this).length>0; }
-	// set the actual number of results on top of the table
-	jQuery(document).ready(function() {
-		if (document.resultsCountText && jQuery("strong#numberOfResults").exists()) {
-			// get only the digits
-			jQuery("strong#numberOfResults").text(document.resultsCountText.replace(/[^\d]/g, ""));
-		}
-	});
+  // exists function
+  jQuery.fn.exists = function(){ return jQuery(this).length>0; }
+  // set the actual number of results on top of the table
+  jQuery(document).ready(function() {
+    if (document.resultsCountText && jQuery("strong#numberOfResults").exists()) {
+      // get only the digits
+      jQuery("strong#numberOfResults").text(document.resultsCountText.replace(/[^\d]/g, ""));
+    }
+  });
 </script>
 
 <!-- /table.jsp -->
