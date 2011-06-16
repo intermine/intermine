@@ -32,6 +32,9 @@
 <action path="/initProjectsSummary"
   type="org.modmine.web.ProjectsSummaryController" />
 
+<action path="/initCategorySummary"
+  type="org.modmine.web.CategorySummaryController" />
+
 <action path="/initModMineSearch"
   type="org.modmine.web.ModMineSearchController" />
 
@@ -53,6 +56,7 @@
 
 <action path="/heatMap" forward="heatMap.page" />
 <action path="/projectsSummary" forward="projectsSummary.page" />
+<action path="/categorySummary" forward="categorySummary.page" />
 <action path="/chromatinStates" forward="chromatinStates.page" />
 
 <action path="/initSubmissions"
