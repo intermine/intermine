@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-Webservice::InterMine::Bio - The great new Webservice::InterMine::Bio!
+Webservice::InterMine::Bio - Access data from InterMine queries in biological formats.
 
 =head1 VERSION
 
@@ -15,28 +15,41 @@ Version 0.97
 
 our $VERSION = '0.97';
 
-use Exporter qw/import/;
-
-our @EXPORT_OK = qw/GFF3 BIO_PERL FASTA/;
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+This module provides roles that can be used to access data in standard biological formats,
+and even interface directly with BioPerl classes.
 
     use Webservice::InterMine::Bio qw/BIO_PERL/;
     use Webservice::InterMine 'flymine';
 
     my $query = Webservice::InterMine->new_query(with => BIO_PERL);
+    $query->add_sequence_features("Gene", "Gene.exons", "Gene.transcripts");
+    my $feature_store = $query->get_feature_store(); # Get a Bio::DB::SeqFeature::Store
     ...
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+This module exports (optionally) constants that simplify references to the 
+roles in this package, by providing means to name these roles in the 
+manner expected by C<new_query>. So:
+
+=over 2
+
+=item * GFF3 => ['Webservice::InterMine::Bio::GFFQuery']
+
+=item * FASTA => ['Webservice::InterMine::Bio::FastaQuery']
+
+=item * BIO_PERL => [ both.. ]
+
+=back
 
 =cut
+
+use Exporter qw/import/;
+
+our @EXPORT_OK = qw/GFF3 BIO_PERL FASTA/;
 
 use constant {
     GFF3 => ['Webservice::InterMine::Bio::GFFQuery'],
@@ -53,19 +66,17 @@ Alex Kalderimis, C<< <dev at intermine.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-webservice-intermine-bio at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Webservice-InterMine-Bio>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-webservice-intermine-bio at rt.cpan.org>, 
+or through the web interface at 
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Webservice-InterMine-Bio>.  
+I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Webservice::InterMine::Bio
-
 
 You can also look for information at:
 
@@ -89,9 +100,17 @@ L<http://search.cpan.org/dist/Webservice-InterMine-Bio/>
 
 =back
 
-
 =head1 ACKNOWLEDGEMENTS
 
+The funding bodies that support InterMine:
+
+=over 2
+
+=item * The Wellcome Trust L<http://www.wellcome.ac.uk/>
+
+=item * The NIH/NHGRI L<http://www.nih.gov/>
+
+=back
 
 =head1 LICENSE AND COPYRIGHT
 

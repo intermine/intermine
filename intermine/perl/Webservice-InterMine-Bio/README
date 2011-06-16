@@ -1,16 +1,12 @@
 Webservice-InterMine-Bio
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
-
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
-
+This package provides a set of Roles to extend the 
+functionality of InterMine webservice queries (see 
+L<Webservice::InterMine>. Specifically, it provides
+access to biologically specific webservices, which 
+can provide results in GFF3 and FASTA formats, as 
+well as providing convenience methods for accessing
+BioPerl functionality directly from a query.
 
 INSTALLATION
 
