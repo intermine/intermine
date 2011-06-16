@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -75,6 +74,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
         ontology = createItem("Ontology");
         ontology.setAttribute("name", "GO");
+        store(ontology);
 
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
