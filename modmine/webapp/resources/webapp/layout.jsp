@@ -11,7 +11,7 @@
 <!-- layout.jsp -->
 <html:xhtml/>
 
-<html:html locale="true" xhtml="true">
+<html:html lang="true" xhtml="true">
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
 
