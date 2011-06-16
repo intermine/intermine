@@ -19,10 +19,6 @@ use constant {
 use constant NON_XML_FILES => qw(
     uniprot.xsd            uniprot_sprot_varsplic.fasta.gz  
 );
-use constant ORGANISMS => qw(
-    7217 7227 7237 6239 4932 7165 
-    7460 9606 10090 7955 
-);
 
 sub BUILD {
     my $self = shift;
@@ -32,8 +28,9 @@ sub BUILD {
       FILE       => $_,
       EXTRACT    => (/gz$/) ? 1 : 0,
     }} NON_XML_FILES;
+    my $organisms = $self->get_options->{organisms} || [];
 
-    for my $org (ORGANISMS) {
+    for my $org (@$organisms) {
         my $sp_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %sp_params = (
             query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes',
