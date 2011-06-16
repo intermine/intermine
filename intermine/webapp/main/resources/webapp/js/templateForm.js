@@ -34,12 +34,12 @@ function forwardToLinks() {
     return;
   }
   document.getElementById('actionType').value = 'links';
-  document.templateForm.submit();
+  jQuery('#templateForm').submit();
 }
 
 function exportTemplate() {
     document.getElementById('actionType').value = 'exportTemplate';
-    document.templateForm.submit();
+    jQuery('#templateForm').submit();
 }
 
 function codeGenTemplate(method) {
