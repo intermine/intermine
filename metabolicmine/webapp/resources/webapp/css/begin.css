@@ -7,6 +7,14 @@
     margin-bottom: 10px;
 }
 
+ul#topnav a {
+  margin-right:4px;
+}
+
+ul#topnav li.last a {
+  margin-right:0;
+}
+
 /* ======== the schtajl ======== */
 
 ol#news li {
