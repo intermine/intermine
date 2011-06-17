@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ResultElement;
@@ -57,7 +56,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.struts.ReportTemplateController;
 
 /**
  * A pageable and configurable table of data.
@@ -88,8 +86,6 @@ public class PagedTable
 
     private String selectedClass;
     private int selectedColumn;
-
-    private static final Logger LOG = Logger.getLogger(PagedTable.class);
 
     /**
      * Construct a PagedTable with a list of column names

@@ -18,8 +18,11 @@ import java.net.URLEncoder;
  * Util class for URL processing.
  * @author Jakub Kulaviak
  **/
-public class URLUtil
+public final class URLUtil
 {
+
+    private URLUtil() {
+    }
 
     /**
      * Encodes URL. Parses url and encodes parameter names and
