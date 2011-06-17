@@ -87,8 +87,8 @@ public class TemplateToListService extends QueryToListService {
 
         PathQuery pq = populatedTemplate.getQueryToExecute();
 
-        populatedTemplate.clearView();
-        populatedTemplate.addView(newViewString);
+        pq.clearView();
+        pq.addView(newViewString);
 
         return pq;
     }
