@@ -91,9 +91,10 @@ get '/mines/admin:format?' => sub {
 func can_administer($mine) {
     my $administrators = get_admins;
     if (params->{authToken}) {
-        my $secrets = get_secrets;
-        my $secret_key = params->{authToken};
-        return (defined($secret_key) and ($secret_key eq $secrets->{$mine}));
+        my $current_key = get_secrets->{lc($mine)};
+        return true unless ($current_key); # Mines without keys can be administered.
+        my $param_key = params->{authToken};
+        return (defined($param_key) and ($param_key eq $current_key));
     } else {
         debug("Authenticating against session");
         return true if (session('user') and $administrators->{session('user')});
@@ -104,11 +105,11 @@ post '/register' => sub {
     no warnings 'uninitialized';
     my $mines = get_minehash;
     my $name  = params->{name};
-    my $echo_params = params();
-    if (exists $echo_params->{authToken}) {
-        $echo_params->{authToken} = 'HIDDEN';
+    my %echo_params = params;
+    if (exists $echo_params{authToken}) {
+        $echo_params{authToken} = 'HIDDEN';
     }
-    my $param_echo_string = 'Parameters supplied: ' . to_json($echo_params);
+    my $param_echo_string = 'Parameters supplied: ' . to_json(\%echo_params);
 
     my $storage_name = lc($name);
     my $response =
