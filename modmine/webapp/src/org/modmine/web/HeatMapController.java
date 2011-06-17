@@ -144,13 +144,14 @@ public class HeatMapController extends TilesAction
                 dCCid = (String) row.get(5).getField();
 
                 // TODO patch to canvasXpress bug
+                /*
                 if (geneId.indexOf(":") > 0) {
                     geneId = geneId.replaceAll(":", " ");
                 }
 
                 if (geneSymbol.indexOf(":") > 0) {
                     geneSymbol = geneSymbol.replaceAll(":", " ");
-                }
+                } */
 
                 if (geneSymbol == null) {
                     geneSymbol = geneId;
@@ -257,13 +258,14 @@ public class HeatMapController extends TilesAction
                 dCCid = (String) row.get(5).getField();
 
                 // TODO patch to canvasXpress bug
+                /*
                 if (exonId.indexOf(":") > 0) {
                     exonId = exonId.replaceAll(":", " ");
                 }
 
                 if (exonSymbol.indexOf(":") > 0) {
                     exonSymbol = exonSymbol.replaceAll(":", " ");
-                }
+                }*/
 
                 if (exonSymbol == null) {
                     exonSymbol = exonId;
@@ -487,7 +489,6 @@ public class HeatMapController extends TilesAction
         heatmapData.put("y", yInHeatmapData);
         JSONObject jo = new JSONObject(heatmapData);
 
-        LOG.info("json\\n>>>>>" + jo.toString());
         return jo.toString();
     }
 }
