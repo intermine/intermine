@@ -12,11 +12,12 @@ package org.intermine.webservice.server.template;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -24,6 +25,12 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
+/**
+ * A class to append items from a set of template results to a
+ * list.
+ * @author alex
+ *
+ */
 public class TemplateListAppendService extends TemplateToListService
 {
 
@@ -37,7 +44,7 @@ public class TemplateListAppendService extends TemplateToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description,
+        String name, String description, List<String> tags,
         Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
                 pq,
@@ -49,6 +56,7 @@ public class TemplateListAppendService extends TemplateToListService
         InterMineBag list = profile.getSavedBags().get(name);
         try {
             list.addToBagFromQuery(q);
+            im.getBagManager().addTagsToBag(tags, list, profile);
         } finally {
             output.addResultItem(Arrays.asList("" + list.size()));
         }
