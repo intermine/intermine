@@ -35,31 +35,31 @@ li { margin-left:auto; }
 #search-bochs .text, #lists-bochs .text, #genomic-bochs .text, #upload-bochs .text, #templates-bochs .text { padding:10px; font-size:14px; }
 #search-bochs h3 a, #lists-bochs h3 a, #genomic-bochs h3 a, #upload-bochs h3 a, #templates-bochs h3 a { color:#000; text-decoration:none; }
 
-#search-bochs { border:1px solid #FBC9B2; background:#FBF4F1; height:212px; }
-  #search-bochs h3 { background:#FBC9B2; padding-left:80px; }
+#search-bochs { border:1px solid #FBC9B2; background:#FBF4F1; height:240px; }
+  #search-bochs h3 { background:#FBC9B2; padding-left:85px; }
   #search-bochs input#dataSearch { width:279px; }
   #search-bochs input#dataSearch.eg { color:#666; }
   #search-bochs input#exptSearch { width:200px; }
   #search-bochs input#exptSearch.eg { color:#666; }
   #search-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#genomic-bochs { border:1px solid #192F39; height:212px; }
-  #genomic-bochs h3 { background:#192F39; padding-left:80px; }
+#genomic-bochs { border:1px solid #192F39; height:180px; }
+  #genomic-bochs h3 { background:#192F39; padding-left:85px; }
     #genomic-bochs h3 a { color:#FFF; }
   #genomic-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#upload-bochs { border:1px solid #63B7DE; height:290px; }
+#upload-bochs { border:1px solid #63B7DE; height:275px; }
   #upload-bochs h3 { background:#63B7DE; padding-left:80px; }
   #upload-bochs img.title { position:absolute; top:10px; left:10px; }
   #upload-bochs select { display:block; width:278px; margin-bottom:4px; }
   #upload-bochs textarea { width:273px; }
 
-#templates-bochs { border:1px solid #E8D9FF; height:290px; }
-  #templates-bochs h3 { background:#E8D9FF; padding-left:80px; }
+#templates-bochs { border:1px solid #E8D9FF; height:275px; }
+  #templates-bochs h3 { background:#E8D9FF; padding-left:85px; }
   #templates-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#lists-bochs { border:1px solid #D0FCC5; height:290px; }
-  #lists-bochs h3 { background:#D0FCC5; padding-left:80px; }
+#lists-bochs { border:1px solid #D0FCC5; height:275px; }
+  #lists-bochs h3 { background:#D0FCC5; padding-left:90px; }
   #lists-bochs img.title { position:absolute; top:10px; left:10px; }
 
 /* 3 boxes */
