@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.net.URLEncoder" language="java" %>
 
 <!-- heatMap.jsp -->
 
@@ -134,7 +135,29 @@
                                           varLabelRotate: 45,
                                           centerData: false,
                                           autoExtend: false},
-                                          {click: function(o) {/*basiclly disable click function*/}}
+                                          {click: function(o) {
+                                                   var featureId = o.y.smps;
+                                                   var condition = o.y.vars;
+
+                                                   if ("${ExpressionType}" == "gene") {
+
+                                                       var query = '<query name="" model="genomic" view="GeneExpressionScore.score GeneExpressionScore.cellLine.name GeneExpressionScore.gene.primaryIdentifier GeneExpressionScore.gene.secondaryIdentifier GeneExpressionScore.gene.symbol GeneExpressionScore.gene.name GeneExpressionScore.gene.source GeneExpressionScore.organism.shortName GeneExpressionScore.submission.title GeneExpressionScore.submission.design GeneExpressionScore.submission.DCCid" sortOrder="GeneExpressionScore.score asc" constraintLogic="A and B"><constraint path="GeneExpressionScore.gene" code="B" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="GeneExpressionScore.cellLine" code="A" op="LOOKUP" value="' + condition + '"/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else if ("${ExpressionType}" == "exon") {
+
+                                                       var query = '<query name="" model="genomic" view="ExonExpressionScore.score ExonExpressionScore.cellLine.name ExonExpressionScore.exon.primaryIdentifier ExonExpressionScore.exon.symbol  ExonExpressionScore.exon.gene.primaryIdentifier ExonExpressionScore.exon.gene.symbol ExonExpressionScore.organism.shortName ExonExpressionScore.submission.title ExonExpressionScore.submission.design ExonExpressionScore.submission.DCCid" sortOrder="ExonExpressionScore.exon.primaryIdentifier asc" constraintLogic="A and B"><constraint path="ExonExpressionScore.exon" code="A" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="ExonExpressionScore.cellLine" code="B" op="LOOKUP" value="' + condition + '" extraValue=""/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else {
+                                                      alert("${ExpressionType}");
+                                                   }
+                                                   // window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + o.y.smps);
+                                                  }}
                                          );
 
             if (feature_count > 3) {
@@ -152,7 +175,7 @@
                 jQuery("#cl-km").attr('disabled', 'disabled');
             }
 
-            hm_cl.clusterVariables();
+            hm_cl.clusterVariables(); // clustering method will call draw action within it.
             // cx_cellline.kmeansVariables();
             hm_cl.draw();
 
@@ -168,7 +191,29 @@
                                           varLabelRotate: 45,
                                           centerData: false,
                                           autoExtend: false},
-                                          {click: function(o) {}}
+                                          {click: function(o) {
+                                                   var featureId = o.y.smps;
+                                                   var condition = o.y.vars;
+
+                                                   if ("${ExpressionType}" == "gene") {
+
+                                                       var query = '<query name="" model="genomic" view="GeneExpressionScore.score GeneExpressionScore.developmentalStage.name GeneExpressionScore.gene.primaryIdentifier GeneExpressionScore.gene.secondaryIdentifier GeneExpressionScore.gene.symbol GeneExpressionScore.gene.name GeneExpressionScore.gene.source GeneExpressionScore.organism.shortName GeneExpressionScore.submission.title GeneExpressionScore.submission.design GeneExpressionScore.submission.DCCid" sortOrder="GeneExpressionScore.score asc" constraintLogic="A and B"><constraint path="GeneExpressionScore.gene" code="B" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="GeneExpressionScore.developmentalStage" code="A" op="LOOKUP" value="' + condition + '"/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else if ("${ExpressionType}" == "exon") {
+
+                                                       var query = '<query name="" model="genomic" view="ExonExpressionScore.score ExonExpressionScore.developmentalStage.name ExonExpressionScore.exon.primaryIdentifier ExonExpressionScore.exon.symbol  ExonExpressionScore.exon.gene.primaryIdentifier ExonExpressionScore.exon.gene.symbol ExonExpressionScore.organism.shortName ExonExpressionScore.submission.title ExonExpressionScore.submission.design ExonExpressionScore.submission.DCCid" sortOrder="ExonExpressionScore.exon.primaryIdentifier asc" constraintLogic="A and B"><constraint path="ExonExpressionScore.exon" code="A" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="ExonExpressionScore.developmentalStage" code="B" op="LOOKUP" value="' + condition + '" extraValue=""/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else {
+                                                      alert("${ExpressionType}");
+                                                   }
+                                                   // window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + o.y.smps);
+                                                  }}
                                          );
 
             if (feature_count > 3) {

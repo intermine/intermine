@@ -122,238 +122,232 @@ public class HeatMapController extends TilesAction
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
         if ("Gene".equals(bag.getType())) {
-            // for Gene expression
-            query = queryGeneExpressionScore(bag.getName(), query);
-            ExportResultsIterator result = executor.execute(query);
 
-            // Key: gene symbol or PID - Value: list of ExpressionScore objs
-            Map<String, List<ExpressionScore>> geneExpressionScoreMapCellLine =
-                new LinkedHashMap<String, List<ExpressionScore>>();
-
-            Map<String, List<ExpressionScore>> geneExpressionScoreMapDevelopmentalStage =
-                new LinkedHashMap<String, List<ExpressionScore>>();
-
-            while (result.hasNext()) {
-                List<ResultElement> row = result.next();
-
-                String geneId = (String) row.get(0).getField();
-                String geneSymbol = (String) row.get(1).getField();
-                Double score = (Double) row.get(2).getField();
-                String cellLine = (String) row.get(3).getField();
-                String developmentalStage = (String) row.get(4).getField();
-                dCCid = (String) row.get(5).getField();
-
-                // TODO patch to canvasXpress bug
-                /*
-                if (geneId.indexOf(":") > 0) {
-                    geneId = geneId.replaceAll(":", " ");
-                }
-
-                if (geneSymbol.indexOf(":") > 0) {
-                    geneSymbol = geneSymbol.replaceAll(":", " ");
-                } */
-
-                if (geneSymbol == null) {
-                    geneSymbol = geneId;
-                }
-
-                if (cellLine == null && developmentalStage != null) {
-                    if (!geneExpressionScoreMapDevelopmentalStage.containsKey(geneSymbol)) {
-                        // Create a list with space for n (size of conditions) ExpressionScore
-                        List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
-                                Collections.nCopies(
-                                        EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                                .size(), new ExpressionScore()));
-
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, geneId, geneSymbol);
-
-                        expressionScoreList.set(
-                                EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                        .indexOf(developmentalStage), aScore);
-
-                        geneExpressionScoreMapDevelopmentalStage.put(
-                                geneSymbol, expressionScoreList);
-                    } else {
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, geneId, geneSymbol);
-
-                        geneExpressionScoreMapDevelopmentalStage
-                                .get(geneSymbol).set(EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                        .indexOf(developmentalStage), aScore);
-                    }
-                } else if (developmentalStage == null && cellLine != null) {
-                    if (!geneExpressionScoreMapCellLine.containsKey(geneSymbol)) {
-                        // Create a list with space for n (size of conditions) ExpressionScore
-                        List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
-                                Collections.nCopies(EXPRESSION_CONDITION_LIST_CELLLINE.size(),
-                                        new ExpressionScore()));
-
-                        ExpressionScore aScore = new ExpressionScore(cellLine,
-                                score, geneId, geneSymbol);
-
-                        expressionScoreList.set(
-                                EXPRESSION_CONDITION_LIST_CELLLINE
-                                        .indexOf(cellLine), aScore);
-
-                        geneExpressionScoreMapCellLine.put(geneSymbol,
-                                expressionScoreList);
-                    } else {
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, geneId, geneSymbol);
-
-                        geneExpressionScoreMapCellLine
-                                .get(geneSymbol).set(EXPRESSION_CONDITION_LIST_CELLLINE
-                                        .indexOf(cellLine), aScore);
-                    }
-                } else {
-                    String msg = "CellLine and DevelopmentalStage must be mutually exclusive and "
-                        + "can not be NULL at the same time...";
-                    throw new RuntimeException(msg);
-                }
-            }
-
-            String geneExpressionScoreJSONCellLine = parseToJSON("CellLine",
-                    geneExpressionScoreMapCellLine);
-            String geneExpressionScoreJSONDevelopmentalStage = parseToJSON("DevelopmentalStage",
-                    geneExpressionScoreMapDevelopmentalStage);
-
-            request.setAttribute("expressionScoreJSONCellLine",
-                    geneExpressionScoreJSONCellLine);
-            request.setAttribute("expressionScoreJSONDevelopmentalStage",
-                    geneExpressionScoreJSONDevelopmentalStage);
-
-            // To make a legend for the heat map
-            Double logGeneExpressionScoreMin =
-                Math.log(ModMineUtil.getMinGeneExpressionScore(os) + 1) / Math.log(2);
-            Double logGeneExpressionScoreMax =
-                Math.log(ModMineUtil.getMaxGeneExpressionScore(os) + 1) / Math.log(2);
-
-            request.setAttribute("minExpressionScore", df.format(logGeneExpressionScoreMin));
-            request.setAttribute("maxExpressionScore", df.format(logGeneExpressionScoreMax));
-            request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logGeneExpressionScoreMax));
-            request.setAttribute("expressionScoreDCCid", dCCid);
-            request.setAttribute("ExpressionType", "gene");
-            request.setAttribute("FeatureCount", geneExpressionScoreMapDevelopmentalStage.size());
+            findGeneExpression(request, query, bag, executor, dCCid, os, df);
 
         } else if ("Exon".equals(bag.getType())) {
-            // for Exon expression
-            query = queryExonExpressionScore(bag.getName(), query);
-            ExportResultsIterator result = executor.execute(query);
 
-            Map<String, List<ExpressionScore>> exonExpressionScoreMapCellLine =
-                new LinkedHashMap<String, List<ExpressionScore>>();
-
-            Map<String, List<ExpressionScore>> exonExpressionScoreMapDevelopmentalStage =
-                new LinkedHashMap<String, List<ExpressionScore>>();
-
-            while (result.hasNext()) {
-                List<ResultElement> row = result.next();
-
-                String exonId = (String) row.get(0).getField();
-                String exonSymbol = (String) row.get(1).getField();
-                Double score = (Double) row.get(2).getField();
-                String cellLine = (String) row.get(3).getField();
-                String developmentalStage = (String) row.get(4).getField();
-                dCCid = (String) row.get(5).getField();
-
-                // TODO patch to canvasXpress bug
-                /*
-                if (exonId.indexOf(":") > 0) {
-                    exonId = exonId.replaceAll(":", " ");
-                }
-
-                if (exonSymbol.indexOf(":") > 0) {
-                    exonSymbol = exonSymbol.replaceAll(":", " ");
-                }*/
-
-                if (exonSymbol == null) {
-                    exonSymbol = exonId;
-                }
-
-                if (cellLine == null && developmentalStage != null) {
-                    if (!exonExpressionScoreMapDevelopmentalStage.containsKey(exonSymbol)) {
-                        List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
-                                Collections.nCopies(
-                                        EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                                .size(), new ExpressionScore()));
-
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, exonId, exonSymbol);
-
-                        expressionScoreList.set(
-                                EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                        .indexOf(developmentalStage), aScore);
-
-                        exonExpressionScoreMapDevelopmentalStage.put(
-                                exonSymbol, expressionScoreList);
-                    } else {
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, exonId, exonSymbol);
-
-                        exonExpressionScoreMapDevelopmentalStage
-                                .get(exonSymbol).set(EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
-                                        .indexOf(developmentalStage), aScore);
-                    }
-                } else if (developmentalStage == null && cellLine != null) {
-                    if (!exonExpressionScoreMapCellLine.containsKey(exonSymbol)) {
-                        // Create a list with space for n (size of conditions) ExpressionScore
-                        List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
-                                Collections.nCopies(EXPRESSION_CONDITION_LIST_CELLLINE.size(),
-                                        new ExpressionScore()));
-
-                        ExpressionScore aScore = new ExpressionScore(cellLine,
-                                score, exonId, exonSymbol);
-
-                        expressionScoreList.set(
-                                EXPRESSION_CONDITION_LIST_CELLLINE
-                                        .indexOf(cellLine), aScore);
-
-                        exonExpressionScoreMapCellLine.put(exonSymbol,
-                                expressionScoreList);
-                    } else {
-                        ExpressionScore aScore = new ExpressionScore(
-                                developmentalStage, score, exonId, exonSymbol);
-
-                        exonExpressionScoreMapCellLine
-                                .get(exonSymbol).set(EXPRESSION_CONDITION_LIST_CELLLINE
-                                        .indexOf(cellLine), aScore);
-                    }
-                } else {
-                    String msg = "CellLine and DevelopmentalStage must be mutually exclusive and "
-                        + "can not be NULL at the same time...";
-                    throw new RuntimeException(msg);
-                }
-            }
-
-            String exonExpressionScoreJSONCellLine = parseToJSON("CellLine",
-                    exonExpressionScoreMapCellLine);
-            String exonExpressionScoreJSONDevelopmentalStage = parseToJSON("DevelopmentalStage",
-                    exonExpressionScoreMapDevelopmentalStage);
-
-            request.setAttribute("expressionScoreJSONCellLine",
-                    exonExpressionScoreJSONCellLine);
-            request.setAttribute("expressionScoreJSONDevelopmentalStage",
-                    exonExpressionScoreJSONDevelopmentalStage);
-
-            // To make a legend for the heat map, take log2 of the original scores
-            Double logExonExpressionScoreMin =
-                Math.log(ModMineUtil.getMinExonExpressionScore(os) + 1) / Math.log(2);
-            Double logExonExpressionScoreMax =
-                Math.log(ModMineUtil.getMaxExonExpressionScore(os) + 1) / Math.log(2);
-
-            request.setAttribute("minExpressionScore", df.format(logExonExpressionScoreMin));
-            request.setAttribute("maxExpressionScore", df.format(logExonExpressionScoreMax));
-            request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExonExpressionScoreMax));
-            request.setAttribute("expressionScoreDCCid", dCCid);
-            request.setAttribute("ExpressionType", "exon");
-            request.setAttribute("FeatureCount", exonExpressionScoreMapDevelopmentalStage.size());
+            findExonExpression(request, query, bag, executor, dCCid, os, df);
 
         } else {
             return null;
         }
 
         return null;
+    }
+
+    private void findGeneExpression(HttpServletRequest request, PathQuery query,
+            InterMineBag bag, PathQueryExecutor executor, String dCCid,
+            ObjectStore os, DecimalFormat df) {
+        // for Gene expression
+        query = queryGeneExpressionScore(bag.getName(), query);
+        ExportResultsIterator result = executor.execute(query);
+
+        // Key: gene symbol or PID - Value: list of ExpressionScore objs
+        Map<String, List<ExpressionScore>> geneExpressionScoreMapCellLine =
+            new LinkedHashMap<String, List<ExpressionScore>>();
+
+        Map<String, List<ExpressionScore>> geneExpressionScoreMapDevelopmentalStage =
+            new LinkedHashMap<String, List<ExpressionScore>>();
+
+        while (result.hasNext()) {
+            List<ResultElement> row = result.next();
+
+            String geneId = (String) row.get(0).getField();
+            String geneSymbol = (String) row.get(1).getField();
+            Double score = (Double) row.get(2).getField();
+            String cellLine = (String) row.get(3).getField();
+            String developmentalStage = (String) row.get(4).getField();
+            dCCid = (String) row.get(5).getField();
+
+            if (geneSymbol == null) {
+                geneSymbol = geneId;
+            }
+
+            if (cellLine == null && developmentalStage != null) {
+                if (!geneExpressionScoreMapDevelopmentalStage.containsKey(geneSymbol)) {
+                    // Create a list with space for n (size of conditions) ExpressionScore
+                    List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
+                            Collections.nCopies(
+                                    EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                            .size(), new ExpressionScore()));
+
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, geneId, geneSymbol);
+
+                    expressionScoreList.set(
+                            EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                    .indexOf(developmentalStage), aScore);
+
+                    geneExpressionScoreMapDevelopmentalStage.put(
+                            geneSymbol, expressionScoreList);
+                } else {
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, geneId, geneSymbol);
+
+                    geneExpressionScoreMapDevelopmentalStage
+                            .get(geneSymbol).set(EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                    .indexOf(developmentalStage), aScore);
+                }
+            } else if (developmentalStage == null && cellLine != null) {
+                if (!geneExpressionScoreMapCellLine.containsKey(geneSymbol)) {
+                    // Create a list with space for n (size of conditions) ExpressionScore
+                    List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
+                            Collections.nCopies(EXPRESSION_CONDITION_LIST_CELLLINE.size(),
+                                    new ExpressionScore()));
+
+                    ExpressionScore aScore = new ExpressionScore(cellLine,
+                            score, geneId, geneSymbol);
+
+                    expressionScoreList.set(
+                            EXPRESSION_CONDITION_LIST_CELLLINE
+                                    .indexOf(cellLine), aScore);
+
+                    geneExpressionScoreMapCellLine.put(geneSymbol,
+                            expressionScoreList);
+                } else {
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, geneId, geneSymbol);
+
+                    geneExpressionScoreMapCellLine
+                            .get(geneSymbol).set(EXPRESSION_CONDITION_LIST_CELLLINE
+                                    .indexOf(cellLine), aScore);
+                }
+            } else {
+                String msg = "CellLine and DevelopmentalStage must be mutually exclusive and "
+                    + "can not be NULL at the same time...";
+                throw new RuntimeException(msg);
+            }
+        }
+
+        String geneExpressionScoreJSONCellLine = parseToJSON("CellLine",
+                geneExpressionScoreMapCellLine);
+        String geneExpressionScoreJSONDevelopmentalStage = parseToJSON("DevelopmentalStage",
+                geneExpressionScoreMapDevelopmentalStage);
+
+        request.setAttribute("expressionScoreJSONCellLine",
+                geneExpressionScoreJSONCellLine);
+        request.setAttribute("expressionScoreJSONDevelopmentalStage",
+                geneExpressionScoreJSONDevelopmentalStage);
+
+        // To make a legend for the heat map
+        Double logGeneExpressionScoreMin =
+            Math.log(ModMineUtil.getMinGeneExpressionScore(os) + 1) / Math.log(2);
+        Double logGeneExpressionScoreMax =
+            Math.log(ModMineUtil.getMaxGeneExpressionScore(os) + 1) / Math.log(2);
+
+        request.setAttribute("minExpressionScore", df.format(logGeneExpressionScoreMin));
+        request.setAttribute("maxExpressionScore", df.format(logGeneExpressionScoreMax));
+        request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logGeneExpressionScoreMax));
+        request.setAttribute("expressionScoreDCCid", dCCid);
+        request.setAttribute("ExpressionType", "gene");
+        request.setAttribute("FeatureCount", geneExpressionScoreMapDevelopmentalStage.size());
+    }
+
+    private void findExonExpression(HttpServletRequest request, PathQuery query,
+            InterMineBag bag, PathQueryExecutor executor, String dCCid,
+            ObjectStore os, DecimalFormat df) {
+        // for Exon expression
+        query = queryExonExpressionScore(bag.getName(), query);
+        ExportResultsIterator result = executor.execute(query);
+
+        Map<String, List<ExpressionScore>> exonExpressionScoreMapCellLine =
+            new LinkedHashMap<String, List<ExpressionScore>>();
+
+        Map<String, List<ExpressionScore>> exonExpressionScoreMapDevelopmentalStage =
+            new LinkedHashMap<String, List<ExpressionScore>>();
+
+        while (result.hasNext()) {
+            List<ResultElement> row = result.next();
+
+            String exonId = (String) row.get(0).getField();
+            String exonSymbol = (String) row.get(1).getField();
+            Double score = (Double) row.get(2).getField();
+            String cellLine = (String) row.get(3).getField();
+            String developmentalStage = (String) row.get(4).getField();
+            dCCid = (String) row.get(5).getField();
+
+            if (exonSymbol == null) {
+                exonSymbol = exonId;
+            }
+
+            if (cellLine == null && developmentalStage != null) {
+                if (!exonExpressionScoreMapDevelopmentalStage.containsKey(exonSymbol)) {
+                    List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
+                            Collections.nCopies(
+                                    EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                            .size(), new ExpressionScore()));
+
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, exonId, exonSymbol);
+
+                    expressionScoreList.set(
+                            EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                    .indexOf(developmentalStage), aScore);
+
+                    exonExpressionScoreMapDevelopmentalStage.put(
+                            exonSymbol, expressionScoreList);
+                } else {
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, exonId, exonSymbol);
+
+                    exonExpressionScoreMapDevelopmentalStage
+                            .get(exonSymbol).set(EXPRESSION_CONDITION_LIST_DEVELOPMENTALSTAGE
+                                    .indexOf(developmentalStage), aScore);
+                }
+            } else if (developmentalStage == null && cellLine != null) {
+                if (!exonExpressionScoreMapCellLine.containsKey(exonSymbol)) {
+                    // Create a list with space for n (size of conditions) ExpressionScore
+                    List<ExpressionScore> expressionScoreList = new ArrayList<ExpressionScore>(
+                            Collections.nCopies(EXPRESSION_CONDITION_LIST_CELLLINE.size(),
+                                    new ExpressionScore()));
+
+                    ExpressionScore aScore = new ExpressionScore(cellLine,
+                            score, exonId, exonSymbol);
+
+                    expressionScoreList.set(
+                            EXPRESSION_CONDITION_LIST_CELLLINE
+                                    .indexOf(cellLine), aScore);
+
+                    exonExpressionScoreMapCellLine.put(exonSymbol,
+                            expressionScoreList);
+                } else {
+                    ExpressionScore aScore = new ExpressionScore(
+                            developmentalStage, score, exonId, exonSymbol);
+
+                    exonExpressionScoreMapCellLine
+                            .get(exonSymbol).set(EXPRESSION_CONDITION_LIST_CELLLINE
+                                    .indexOf(cellLine), aScore);
+                }
+            } else {
+                String msg = "CellLine and DevelopmentalStage must be mutually exclusive and "
+                    + "can not be NULL at the same time...";
+                throw new RuntimeException(msg);
+            }
+        }
+
+        String exonExpressionScoreJSONCellLine = parseToJSON("CellLine",
+                exonExpressionScoreMapCellLine);
+        String exonExpressionScoreJSONDevelopmentalStage = parseToJSON("DevelopmentalStage",
+                exonExpressionScoreMapDevelopmentalStage);
+
+        request.setAttribute("expressionScoreJSONCellLine",
+                exonExpressionScoreJSONCellLine);
+        request.setAttribute("expressionScoreJSONDevelopmentalStage",
+                exonExpressionScoreJSONDevelopmentalStage);
+
+        // To make a legend for the heat map, take log2 of the original scores
+        Double logExonExpressionScoreMin =
+            Math.log(ModMineUtil.getMinExonExpressionScore(os) + 1) / Math.log(2);
+        Double logExonExpressionScoreMax =
+            Math.log(ModMineUtil.getMaxExonExpressionScore(os) + 1) / Math.log(2);
+
+        request.setAttribute("minExpressionScore", df.format(logExonExpressionScoreMin));
+        request.setAttribute("maxExpressionScore", df.format(logExonExpressionScoreMax));
+        request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExonExpressionScoreMax));
+        request.setAttribute("expressionScoreDCCid", dCCid);
+        request.setAttribute("ExpressionType", "exon");
+        request.setAttribute("FeatureCount", exonExpressionScoreMapDevelopmentalStage.size());
     }
 
     /**
