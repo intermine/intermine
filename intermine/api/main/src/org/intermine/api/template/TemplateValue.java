@@ -38,7 +38,7 @@ public class TemplateValue
      */
     public enum ValueType { SIMPLE_VALUE, BAG_VALUE, OBJECT_VALUE };
 
-    public TemplateValue(PathConstraint constraint, ConstraintOp op,  
+    public TemplateValue(PathConstraint constraint, ConstraintOp op,
             ValueType valueType, SwitchOffAbility switchOffAbility) {
         this(constraint, op, null, valueType, null, null, switchOffAbility);
     }
@@ -91,7 +91,6 @@ public class TemplateValue
      * @param op constraint operation
      * @param values Multiple values
      * @param valueType the type of this constraint: simple value, bag or object
-     * @param extraValue extra value
      * @param switchOffAbility the required/optional status of the constraint
      */
     public TemplateValue(PathConstraint constraint, ConstraintOp op,
@@ -104,17 +103,17 @@ public class TemplateValue
 
     /**
      * Private contructor called by all other constructors. This is private as it
-     * does not make sense to provide values for all properties. 
+     * does not make sense to provide values for all properties.
      *
      * @param constraint the constraint
      * @param op constraint operation
      * @param value value of the constraint
      * @param valueType the type of this constraint: simple value, bag or object
      * @param extraValue extra value
-     * @param values The multi-values 
+     * @param values The multi-values
      * @param switchOffAbility the required/optional status of the constraint
      */
-    private TemplateValue(PathConstraint constraint, ConstraintOp op, String value, 
+    private TemplateValue(PathConstraint constraint, ConstraintOp op, String value,
             ValueType valueType, String extraValue, List<String> values, SwitchOffAbility switchOffAbility) {
         if (value != null && values != null) {
             throw new IllegalArgumentException("Cannot have both value and values");
