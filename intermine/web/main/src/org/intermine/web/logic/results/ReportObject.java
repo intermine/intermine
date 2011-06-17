@@ -34,14 +34,13 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
@@ -102,11 +101,11 @@ public class ReportObject
      * @param object InterMineObject
      * @param webConfig WebConfig
      * @param im InterMineAPI
-     * @param webProperties
+     * @param webProperties web properties config
      * @throws Exception Exception
      */
-    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im, Properties webProperties)
-        throws Exception {
+    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im,
+            Properties webProperties) throws Exception {
         this.object = object;
         this.webConfig = webConfig;
         this.im = im;
@@ -651,7 +650,8 @@ public class ReportObject
 
         /** Attributes, References, Collections through FieldDescriptors **/
         nullRefsCols =
-            im.getObjectStoreSummary().getNullReferencesAndCollections(getClassDescriptor().getName());
+            im.getObjectStoreSummary()
+                .getNullReferencesAndCollections(getClassDescriptor().getName());
         for (FieldDescriptor fd : getClassDescriptor().getAllFieldDescriptors()) {
             // only continue if we have not included this object in an inline list
             if (bagOfInlineListNames.get(fd.getName()) == null) {
