@@ -166,7 +166,7 @@
      <img title="search" src="themes/purple/homepage/search-ico-right.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
      <div class="text">
-       <span style="width:71px; float:left;">&nbsp;</span>
+       <span style="width:76px; float:left;">&nbsp;</span>
         <p>Enter names, identifiers or keywords for genes, proteins, pathways, ontology terms, etc. (e.g.
         <a onclick="preFillInput('zen', 'input#dataSearch');return false;" title="Search for zen"
           href="#"><strong>zen</strong></a>,
@@ -203,7 +203,7 @@
      <img title="lists" src="images/icons/genomic-search-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a></h3>
      <div class="text">
-       <span style="width:71px; height:20px; float:left;">&nbsp;</span>
+       <span style="width:76px; height:20px; float:left;">&nbsp;</span>
        <p>
          <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
          <img src="themes/modmine/genome_region.jpg" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
@@ -257,7 +257,7 @@ the new list. You can also use any of modMine's queries to create a list.
      <h3>Regulatory Network</h3>
 
      <center><a href="/${WEB_PROPERTIES['webapp.path']}/wormRegulatoryNetwork.do">Worm <div class="heatmap"><img src="themes/modmine/worm-network-detail2.jpg" alt="Worm Regulatory Network"/></div></a></center>
-     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly <div class="heatmap"><img src="themes/modmine/fly-network-detail2.jpg" alt="Fly Regulatory Network"/></div></a></center>    
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly <div class="heatmap"><img src="themes/modmine/fly-network-detail2.jpg" alt="Fly Regulatory Network"/></div></a></center>
 
      <div class="text">
        <p><strong>Explore</strong> an hierarchical view of the physical regulatory networks.
@@ -265,7 +265,7 @@ the new list. You can also use any of modMine's queries to create a list.
      </div>
    </div>
    </div>
-      
+
    <div style="clear:both;"></div>
 
       <div class="span-14">
@@ -308,11 +308,11 @@ the new list. You can also use any of modMine's queries to create a list.
      <img title="templates" src="images/icons/templates-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
      <div class="text">
-        <span style="width: 72px; float: left;">&nbsp;</span>
+        <span style="width: 77px; float: left;">&nbsp;</span>
         <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
            designed around common tasks performed by our biologist community.</p>
         <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
-        <br /><br />
+        <br />
         <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">Templates</a>
      </div>
    </div>
@@ -337,8 +337,8 @@ the new list. You can also use any of modMine's queries to create a list.
 
    <div style="clear:both;"></div>
 
-   
-   
+
+
 </div>
 </div>
 
