@@ -9,8 +9,6 @@
 
 <!-- bagDetails.jsp -->
 
-<html:xhtml/>
-
 <div class="body">
 
 <c:choose>
