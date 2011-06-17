@@ -17,9 +17,13 @@ div.imbedded-table-tooltip {
 .imbedded-table-container {
     margin: 20px;
     border: 1px solid #DDD;
-    width: 700px;
+    width: 70%;
     padding-bottom: 5px;
     border-radius: 2px 2px;
+}
+
+.imbedded-scroll-container {
+    overflow: auto;
 }
 
 .imbedded-table-titlebox {
@@ -39,6 +43,7 @@ div.imbedded-table-tooltip {
     font-weight: bold;
     background: #FF0084;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {

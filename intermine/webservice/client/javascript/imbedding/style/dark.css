@@ -30,6 +30,10 @@ div.imbedded-table-tooltip {
     border-color: #333;
 }
 
+.imbedded-scroll-container {
+    overflow: auto;
+}
+
 .imbedded-table-titlebox {
     font-size: 120%;
     background: #333;
@@ -48,6 +52,7 @@ a.imbedded-table-title {
     font-weight: bold;
     background: #666;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {
