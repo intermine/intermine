@@ -65,6 +65,10 @@
     <source name="ensembl-hgnc" type="ensembl-hgnc">
      <property name="src.data.dir" location="/shared/data/metabolic/ensembl-ids/current"/>
     </source> 
+   <source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
+     <property name="organisms" value="9606"/>
+    </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/shared/data/mgi/current"/>
     </source>
