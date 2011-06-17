@@ -39,7 +39,7 @@ table.results tr th{background-color:#000;color:#FFF;font-size:12px;}
 /*table.results tr.odd TD{border-bottom:1px solid #CACACA;border-right:1px solid #CACACA;}*/
 ul#nav{font-size:13px;margin-left:-5px;margin-top:10px;}
 ul#nav a{color:#4B3F4B;font-weight:700;text-decoration:none;}
-ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 8px;}
+ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 2px;}
 ul#nav li#mymine{background:url(img/menu-gray-hover-left.png) repeat-x top;}
 ul#nav li#mymine a,ul#nav a:hover,#submenu.submenu_mymine form{color:#FFF;}
 ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
