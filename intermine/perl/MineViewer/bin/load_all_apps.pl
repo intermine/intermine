@@ -1,4 +1,5 @@
 use Dancer ':syntax';
+use Dancer::App;
 use Plack::Builder;
 use Cwd;
 
@@ -15,7 +16,6 @@ sub make_app {
         my $env = shift;
         set appdir      => $appdir;
         set appname     => 'mineview-' . $config;
-        warn("CONFIG $config");
         set environment => $config;
         set views       => $view_dir;
         set public      => 'public';

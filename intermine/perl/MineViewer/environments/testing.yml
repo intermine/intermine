@@ -1,4 +1,6 @@
 
+appname: "MineView"
+
 # configuration file for development environment
 
 # the logger engine to use
@@ -66,3 +68,7 @@ additional_summary_fields:
         - "address.address"
     CEO:
         - "company.name"
+
+
+google_fonts: 
+    - "family=Cabin+Sketch:bold&v1"

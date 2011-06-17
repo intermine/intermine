@@ -3,7 +3,7 @@
 # all the settings in this file will be loaded at Dancer's startup.
 
 # Your application's name
-appname: "AlzheimersMine"
+appname: "NeuroView"
 
 project:
     title: "NeuroGenes"

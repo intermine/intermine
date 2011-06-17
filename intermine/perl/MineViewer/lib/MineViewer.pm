@@ -2,9 +2,11 @@ package MineViewer;
 use strict;
 use warnings;
 use Dancer ':syntax';
+use Dancer::Config;
 use Dancer::Plugin::DBIC;
 use Dancer::Plugin::ProxyPath;
 use Scalar::Util qw/blessed/;
+use Try::Tiny;
 
 # For caching results we do not expect to change
 use Attribute::Memoize;
@@ -35,26 +37,31 @@ use Webservice::InterMine 0.9700;
 use Webservice::InterMine::Bio qw/GFF3 FASTA/;
 
 # The connection to the main intermine webservice
-my $service_args = setting('service_args');
-my $service      = Webservice::InterMine->get_service(@$service_args);
 
-my $last_update     = 0;
+my %last_update;
 my $update_interval = setting('update_interval');
-my $list_names      = setting('gene_list_names');
 
 use constant RESULT_OPTIONS => ( as => 'jsonobjects' );
 
+
+sub service {
+    my $service_args = setting('service_args');
+    my $service  = Webservice::InterMine->get_service(@$service_args);
+    return $service;
+}
+
 before sub {
-    if ( $last_update < ( time - $update_interval ) ) {
-        $service->refresh_lists;
-        $last_update = time;
+    try {
+        service->refresh_lists;
+    } catch {
+        send_error("Could not connect to service: " . to_dumper(setting('service_args')), 500);
     }
 };
 
 before_template sub {
     my $tokens = shift;
     $tokens->{pluraliser} = \&pluraliser;
-    $tokens->{service} = $service;
+    $tokens->{service} = service();
     $tokens->{decamelise} = \&decamelise;
 };
 
@@ -105,11 +112,12 @@ sub pluraliser : Memoize {
 }
 
 sub get_lists {
+    my $list_names      = setting('gene_list_names');
     my %lists =
       map { $_->name => $_ }
-      grep { defined } map { $service->list($_) } @$list_names;
+      grep { defined } map { service()->list($_) } @$list_names;
     my $tag = setting('list_tag');
-    $lists{ $_->name } = $_ for ( grep { $_->has_tag($tag) } $service->lists );
+    $lists{ $_->name } = $_ for ( grep { $_->has_tag($tag) } service()->lists );
     my @lists = sort { $a->name cmp $b->name } values %lists;
     return @lists;
 }
@@ -120,15 +128,14 @@ get '/lists' => sub {
 
     return template 'no_lists' unless @lists;
 
-    my $list_query = get_list_query( $lists[0] );
-    my $items = $list_query->results(as => 'jsonobjects');
+    my $query = get_list_query( $lists[0] );
 
     template lists => {
         use_data_tables => 1,
         class_keys => get_class_keys_for( $lists[0]->type ),
-        items      => $items,
+        items      => [],
         lists      => [@lists],
-        list_query => $list_query,
+        list_query => $query,
         tsv_uri    => proxy->uri_for( '/list/' . $lists[0]->name . '.tsv' ),
         json_uri   => proxy->uri_for( '/list/' . $lists[0]->name . '.json' ),
         xml_uri    => proxy->uri_for( '/list/' . $lists[0]->name . '.xml' ),
@@ -144,13 +151,13 @@ get '/lists.options' => sub {
 
 any '/lists.export' => sub {
     my @lists = (params->{list}) ? ( 
-        $service->list(params->{list}) || get_lists()) : get_lists();
+        service->list(params->{list}) || get_lists()) : get_lists();
     template export => {lists => [@lists]}, {layout => undef};
 };
 
 my $list_item_controller = sub {
     my @lists = (params->{list}) ? ( 
-        $service->list(params->{list}) || get_lists()) : get_lists();
+        service->list(params->{list}) || get_lists()) : get_lists();
     my $list_query = get_list_query( $lists[0] );
     my $items = $list_query->results(as => 'jsonobjects');
     template list_items => {
@@ -165,7 +172,7 @@ post '/lists.items' => $list_item_controller;
 sub get_items_in_list {
     my $list  = shift;
     my $query = get_list_query($list);
-    my $items = $query->results( as => 'jsonobjects' );
+    my $items = $query->results(as => 'jsonobjects');
     return $items;
 }
 
@@ -173,7 +180,7 @@ sub get_list_query {
     my $list       = shift;
     my $main_field = get_class_keys_for( $list->type )->[0];
     my $query      = $list->build_query;
-    if ($service->model
+    if (service->model
                 ->get_classdescriptor_by_name($list->type)
                 ->get_field_by_name($main_field)) {
         $query->set_sort_order( $list->type . '.' . $main_field => 'asc' );
@@ -186,7 +193,6 @@ sub get_class_keys_for : Memoize {
     my $class      = shift;
     my $class_keys = setting('class_keys');
     if ( my $keys = $class_keys->{$class} ) {
-        debug( "Returning " . to_dumper($keys) );
         return $keys;
     }
     else {
@@ -203,8 +209,8 @@ get '/list/:list.gff3' => sub {
 
 sub get_list_gff3 : Memoize {
     my $list_name = shift;
-    my $list = $service->list($list_name) or die "Cannot find list $list_name";
-    my $query = $service->new_query( class => $list->type, with => GFF3 );
+    my $list = service->list($list_name) or die "Cannot find list $list_name";
+    my $query = service->new_query( class => $list->type, with => GFF3 );
     if ($list->type eq 'Gene') {
         $query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
         $query->add_outer_join('Gene.exons');
@@ -219,8 +225,8 @@ sub get_list_gff3 : Memoize {
 }
 
 get '/list/:list.fasta' => sub {
-    my $list = $service->list( params->{list} );
-    my $query = $service->new_query( class => 'Gene', with => FASTA );
+    my $list = service->list( params->{list} );
+    my $query = service->new_query( class => 'Gene', with => FASTA );
     $query->add_constraint( 'Gene', 'IN', $list );
     content_type 'text/plain';
     header 'Content-Disposition' => 'attachment: filename='
@@ -229,7 +235,7 @@ get '/list/:list.fasta' => sub {
 };
 
 get '/list/:list.tsv' => sub {
-    my $list  = $service->list( params->{list} );
+    my $list  = service->list( params->{list} );
     my $query = get_list_query($list);
     content_type 'text/plain';
     header 'Content-Disposition' => 'attachment: filename='
@@ -240,7 +246,7 @@ get '/list/:list.tsv' => sub {
 };
 
 get '/list/:list.json' => sub {
-    my $list  = $service->list( params->{list} );
+    my $list  = service->list( params->{list} );
     my $query = get_list_query($list);
     content_type 'application/json';
     header 'Content-Disposition' => 'attachment: filename='
@@ -252,7 +258,7 @@ get '/list/:list.json' => sub {
 };
 
 get '/list/:list.xml' => sub {
-    my $list  = $service->list( params->{list} );
+    my $list  = service->list( params->{list} );
     my $query = get_list_query($list);
     content_type 'text/xml';
     header 'Content-Disposition' => 'attachment: filename='
@@ -272,7 +278,7 @@ sub JSON::Boolean::TO_JSON {
 }
 
 get '/list/:list.table' => sub {
-    my $list = $service->list(params->{list})
+    my $list = service->list(params->{list})
         or return to_json({problem => "This list is not available"});
     my $query = get_list_query($list);
     my $rows = $query->results( as => 'jsonrows' );
@@ -302,21 +308,47 @@ get '/list/:list.table' => sub {
     return to_json({aoColumns => [@views], aaData => $table_data});
 };
 
-get '/list/:list' => sub {
+any '/list/:list.items' => sub {
 
-    my @lists = ( $service->list( params->{list} ) );
+    my @lists = ( service->list( params->{list} ) );
 
     return send_error( "No gene lists found", 500 ) unless @lists;
 
     my $query     = get_list_query( $lists[0] );
-    my $items     = $query->results(as => 'jsonobjects');
+    my $start     = params->{start} || 0;
+    my $items     = $query->results(as => 'jsonobjects', start => $start, size => 100);
     my $list_name = $lists[0]->name;
+
+    template list_items => {
+        class_keys => get_class_keys_for( $lists[0]->type ),
+        items      => $items,
+        lists      => [@lists],
+        start      => $start,
+        page_size  => 100,
+    }, {layout => undef};
+
+};
+
+
+get '/list/:list' => sub {
+
+    my @lists = ( service->list( params->{list} ) );
+
+    return send_error( "No gene lists found", 500 ) unless @lists;
+
+    my $query     = get_list_query( $lists[0] );
+    my $start     = params->{start} || 0;
+    my $items     = $query->results(as => 'jsonobjects', start => $start, size => 100);
+    my $list_name = $lists[0]->name;
+    
 
     template lists => {
         class_keys => get_class_keys_for( $lists[0]->type ),
         items      => $items,
         lists      => [@lists],
         list_query => $query,
+        start      => $start,
+        page_size  => 100,
         tsv_uri    => proxy->uri_for( '/list/' . $list_name . '.tsv' ),
         json_uri   => proxy->uri_for( '/list/' . $list_name . '.json' ),
         xml_uri    => proxy->uri_for( '/list/' . $list_name . '.xml' ),
@@ -328,7 +360,7 @@ get '/list/:list' => sub {
 
 sub get_gff_url : Memoize {
     my $identifier = shift;
-    my $gff_query = $service->new_query( class => 'Gene', with => GFF3 );
+    my $gff_query = service->new_query( class => 'Gene', with => GFF3 );
     $gff_query->add_sequence_features(qw/Gene Gene.exons Gene.transcripts/);
     $gff_query->add_outer_join('Gene.exons');
     $gff_query->add_outer_join('Gene.transcripts');
@@ -338,7 +370,7 @@ sub get_gff_url : Memoize {
 
 sub get_fasta_url : Memoize {
     my $identifier = shift;
-    my $fasta_query = $service->new_query( class => 'Gene', with => FASTA );
+    my $fasta_query = service->new_query( class => 'Gene', with => FASTA );
     $fasta_query->add_constraint( 'id', '=', $identifier );
     return $fasta_query->get_fasta_uri;
 }
@@ -346,7 +378,7 @@ sub get_fasta_url : Memoize {
 sub get_summary_fields : Memoize {
     my $type           = shift;
     my $summary_fields = setting('additional_summary_fields');
-    my $cd             = $service->model->get_classdescriptor_by_name($type);
+    my $cd             = service->model->get_classdescriptor_by_name($type);
     my @returners;
     for my $key ( keys %$summary_fields ) {
         if ( $cd->sub_class_of($key) ) {
@@ -378,7 +410,8 @@ sub get_item_query : Memoize {
     my $type       = ucfirst(shift);
     my $identifier = shift;
     my @ids        = split( /;/, $identifier );
-    my $query      = $service->new_query( class => $type );
+
+    my $query      = service->new_query( class => $type );
     $query->add_views('*');
     if ( @ids == 1 ) {
         add_extra_views_to_query( $type, $query );
@@ -405,7 +438,7 @@ sub get_item_details : Memoize {
 
 sub get_homologues : Memoize {
     my $identifier = shift;
-    my $homologue_query = $service->new_query( class => 'Gene' );
+    my $homologue_query = service->new_query( class => 'Gene' );
     $homologue_query->add_views(qw/* organism.name/);
     $homologue_query->add_constraint( 'organism.name', '!=', 'Homo sapiens' );
     $homologue_query->add_constraint( 'homologues.homologue', 'LOOKUP',
@@ -414,9 +447,10 @@ sub get_homologues : Memoize {
     return $homologues;
 }
 
-get qr{/gene/id/(\d+)}i => sub {
+get qr{/gene/id/(\w+)}i => sub {
     my ($id) = splat;
-    my $query = $service->new_query(class => 'Gene');
+    return template item_error => { params } unless ($id =~ /^\d+$/);
+    my $query = service->new_query(class => 'Gene');
     $query->add_views('*');
     add_extra_views_to_query(Gene => $query);
     $query->add_constraint( 'id', '=', $id );
@@ -443,14 +477,14 @@ sub do_gene_report {
     my $identifier = $obj->{primaryIdentifier} || $obj->{symbol} || $obj->{secondaryIdentifier}; 
     my @comments = get_user_comments($identifier);
 
-    my $cd = $service->model->get_classdescriptor_by_name( $obj->{class} );
+    my $cd = service->model->get_classdescriptor_by_name( $obj->{class} );
     debug("Getting lists");
     my @all_lists = get_lists();
     my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
     debug("Getting contained in");
     my %contained_in = eval {
       map { $_->name, $_ } 
-      $service->lists_with_object( $obj->{objectId} )
+      service->lists_with_object( $obj->{objectId} )
     };
 
     # Generate Links for Sequence exports
@@ -491,7 +525,8 @@ sub get_export_url {
 
 get '/:type/id/:id' => sub {
     my $type = ucfirst( params->{'type'} );
-    my $query = $service->new_query( class => $type );
+    return template item_error => {params} unless (params->{id} =~ /^\d+$/);
+    my $query = service->new_query( class => $type );
     $query->add_views('*');
     add_extra_views_to_query( $type, $query );
     $query->add_constraint( 'id', '=', params->{id} );
@@ -513,12 +548,12 @@ sub do_item_report {
     my ($obj) = $query->results(RESULT_OPTIONS)
       or return template item_error => { query => $query, params };
 
-    my $cd = $service->model->get_classdescriptor_by_name( $obj->{class} );
+    my $cd = service->model->get_classdescriptor_by_name( $obj->{class} );
     my @all_lists = get_lists();
     my @lists = grep { $cd->sub_class_of( $_->type ) } @all_lists;
     my %contained_in = eval {
       map { $_->name, $_ } 
-      $service->lists_with_object( $obj->{objectId} )
+      service->lists_with_object( $obj->{objectId} )
     };
 
     my $type       = ucfirst( params->{'type'} );
@@ -553,7 +588,7 @@ sub do_item_report {
 sub get_templates : Memoize {
     my $type = shift;
     opendir( my $dir, 'views' );
-    my $cd = $service->model->get_classdescriptor_by_name( ucfirst($type) );
+    my $cd = service->model->get_classdescriptor_by_name( ucfirst($type) );
     my @templates;
     for ( readdir($dir) ) {
         next unless /_templates\.tt/;
@@ -597,11 +632,11 @@ post '/removecomment' => sub {
 post '/add_ids_to_list' => sub {
     my @ids       = split( ',', params->{ids} );
     my $list_name = params->{list};
-    my $list      = $service->list($list_name)
+    my $list      = service->list($list_name)
       or return to_json(
         { problem => "$list_name does not exist at this service" } );
     my $prior_count = $list->size;
-    my $query = $service->new_query( class => $list->type );
+    my $query = service->new_query( class => $list->type );
     $query->add_constraint( 'id', 'ONE OF', [@ids] );
     $list += $query;
     my $new_item_count = $list->size - $prior_count;
@@ -614,9 +649,9 @@ post '/create_new_list' => sub {
     my $list_name = params->{"list"};
     my $type      = params->{"type"};
     my $desc      = params->{"description"};
-    my $query     = $service->new_query( class => $type );
+    my $query     = service->new_query( class => $type );
     $query->add_constraint( 'id', 'ONE OF', [@ids] );
-    my $list = $service->new_list(
+    my $list = service->new_list(
         content     => $query,
         name        => $list_name,
         description => $desc,
@@ -628,21 +663,21 @@ post '/create_new_list' => sub {
 post '/remove_list_item' => sub {
     my @ids       = split( ',', params->{"ids"} );
     my $list_name = params->{"list"};
-    my $list = $service->list($list_name)
+    my $list = service->list($list_name)
         or return to_json({problem => "$list_name is not available"});
-    my $query = $service->new_query( class => $list->type );
+    my $query = service->new_query( class => $list->type );
     $query->add_constraint( 'id', 'ONE OF', [@ids] );
     my $prior_count = $list->size;
     $list -= $query;
     my $removed_count = $prior_count - $list->size;
-    $service->delete_temp_lists();
+    service->delete_temp_lists();
     return to_json({info => "Removed $removed_count " .
             pluraliser($list->type) . " from $list_name"});
 };
 
 post '/deletelist' => sub {
     my $list_name = params->{"list"};
-    my $list = $service->list($list_name)
+    my $list = service->list($list_name)
         or return to_json({problem => "$list_name is not available"});
     $list->delete();
     return to_json({info => "Deleted " . $list->name});
@@ -652,7 +687,7 @@ post '/deletelists' => sub {
     my @list_names = split(/;/, params->{"lists"});
     my @lists;
     for my $list_name (@list_names) {
-        my $list = $service->list($list_name)
+        my $list = service->list($list_name)
             or return to_json({problem => "$list_name is not available"});
         push @lists, $list;
     }
@@ -676,31 +711,31 @@ post '/performlistop' => sub {
         or return to_json({problem => "$op is not a list operation"});
     my @lists;
     for my $list_name (@list_names) {
-        my $list = $service->list($list_name)
+        my $list = service->list($list_name)
             or return to_json({problem => "$list_name is not available"});
         push @lists, $list;
     }
     my @rhs;
     if (my $rhs_names = params->{rhs}) {
         for my $name (split(/;/, $rhs_names)) {
-            my $list = $service->list($name)
+            my $list = service->list($name)
                 or return to_json({problem => "$name is not available"});
             push @rhs, $list;
         }
     }
 
     my @args = (params->{rhs}) ? ([@lists], [@rhs]) : ([@lists]);
-    my $try = eval {$service->$method(@args)};
+    my $try = eval {service->$method(@args)};
     if (my $e = $@) {
         return to_json({problem => $e});
     }
-    my $new_list = $service->new_list(
+    my $new_list = service->new_list(
         content => $try,
         name => $name, 
         description => $desc, 
         tags => [ setting('list_tag') ],
     );
-    $service->delete_temp_lists();
+    service->delete_temp_lists();
     return to_json({info => "Created " . $new_list->name});
 };
 

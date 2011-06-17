@@ -38,11 +38,21 @@
         [% INCLUDE list_items.tt %]
     </div>
     <div id="list-table-box" style="display:none;">
-        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]"></img>
+        <img src="[% proxy.uri_for('/images/loading-bar.gif') %]"/>
     </div>
 
 <script type="text/javascript">
 var colWidth = [% settings.list_column_width %];
+
+function slideOutLeft(elem) {
+    var lefty = $(elem);
+    lefty.animate({left: 0}, function() {lefty.remove()});
+}
+
+function slideInFromRight(elem) {
+    var righty = $(elem);
+    righty.animate({marginLeft: righty.outerWidth()});
+}
 
 jQuery(function() {
     jQuery('#lists').multiselect({
@@ -125,13 +135,12 @@ function getCurrentList() {
     return current;
 }
 
-function handleListSelection() {
-    var listname = getCurrentList();
-    updateExportBox( "[% proxy.uri_for('/') %]", listname);
-    window.location.hash = escape(listname);
+function loadGridView(listname, opts) {
+    var throbber = '<img src="[% proxy.uri_for('/images/loading-bar.gif') %]"/>';
+    jQuery('#list-item-box').html(throbber);
     jQuery('#list-item-box').load("[% proxy.uri_for('/list/') %]" 
-            + escape(listname) + ' #list-items', null, function() {
-        jQuery('#list-items').makeacolumnlists({
+            + escape(listname) + '.items', opts, function() {
+        jQuery('#list-items ul').makeacolumnlists({
             cols: colWidth, colWidth: 0, 
             equalHeight: true, startN: 1
             });
@@ -141,6 +150,13 @@ function handleListSelection() {
         });
         jQuery('input[name=list-display-format]').change();
     });
+}
+
+function handleListSelection() {
+    var listname = getCurrentList();
+    updateExportBox( "[% proxy.uri_for('/') %]", listname);
+    window.location.hash = escape(listname);
+    loadGridView(listname);
 }
 
 function removeitem(listName, objId) {
@@ -162,10 +178,8 @@ function removeitem(listName, objId) {
 }
 function initialiseListPage() {
     var currentList = unescape(window.location.hash.substr(1));
-    updateExportBox( "[% proxy.uri_for('/') %]", currentList);
-    if (currentList) {
-        updateListDisplay('[% proxy.uri_for("/lists") %]', currentList);
-    }
+    updateListSelector('[% proxy.uri_for("/lists.options") %]', 
+            currentList);
 }
 
 jQuery(function() {
