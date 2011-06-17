@@ -63,6 +63,7 @@ public class AvailableListsService extends WebService
         return listManager.getLists();
     }
 
+    @Override
     protected int getDefaultFormat() {
         if (hasCallback()) {
             return JSONP_FORMAT;
@@ -97,7 +98,9 @@ public class AvailableListsService extends WebService
                 Profile profile = SessionMethods.getProfile(request.getSession());
                 return new JSONListFormatter(im, profile);
             }
-            default: {throw new BadRequestException("Unknown request format");}
+            default: {
+                throw new BadRequestException("Unknown request format");
+            }
         }
     }
 
