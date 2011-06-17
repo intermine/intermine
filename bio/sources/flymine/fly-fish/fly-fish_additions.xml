@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="MRNAExpressionTerm" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="type" type="java.lang.String"/>
-  </class>
+  <class name="MRNAExpressionTerm" extends="OntologyTerm" is-interface="true"/>
   <class name="MRNAExpressionResult" is-interface="true">
     <attribute name="stageRange" type="java.lang.String"/>
     <attribute name="expressed" type="java.lang.Boolean"/>
