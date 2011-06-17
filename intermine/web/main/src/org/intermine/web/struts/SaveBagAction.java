@@ -20,7 +20,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagOperations;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
@@ -132,7 +131,7 @@ public class SaveBagAction extends InterMineAction
 
         if ("saveNewBag".equals(operation)) {
             ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bag"));
-            forwardParameters.addParameter("bagName",bag.getName());
+            forwardParameters.addParameter("bagName", bag.getName());
             forwardParameters.addParameter("trackExecution", "false");
             return forwardParameters.forward();
         }
