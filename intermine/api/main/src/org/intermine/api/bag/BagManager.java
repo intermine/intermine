@@ -136,7 +136,9 @@ public class BagManager
         Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>();
 
         allBags.putAll(getGlobalBags());
-        allBags.putAll(profile.getSavedBags());
+        if (profile != null) {
+            allBags.putAll(profile.getSavedBags());
+        }
 
         return allBags;
     }
