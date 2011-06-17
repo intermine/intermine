@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.template;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -14,13 +24,19 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
-public class TemplateListAppendService extends TemplateToListService 
+public class TemplateListAppendService extends TemplateToListService
 {
+
+    /**
+     * Constructor.
+     * @param im The reference to the InterMine settings bundle.
+     */
     public TemplateListAppendService(InterMineAPI im) {
         super(im);
     }
 
-    protected void generateListFromQuery(PathQuery pq, 
+    @Override
+    protected void generateListFromQuery(PathQuery pq,
         String name, String description,
         Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
@@ -35,6 +51,6 @@ public class TemplateListAppendService extends TemplateToListService
             list.addToBagFromQuery(q);
         } finally {
             output.addResultItem(Arrays.asList("" + list.size()));
-        } 
+        }
     }
 }
