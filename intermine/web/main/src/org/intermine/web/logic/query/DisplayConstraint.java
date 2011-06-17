@@ -426,17 +426,18 @@ public class DisplayConstraint
             boolean existPossibleValues =
                 (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
             for (ConstraintOp op : allOps) {
-                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+                if (existPossibleValues
+                    || (!op.getIndex().equals(ConstraintOp.MATCHES.getIndex())
+                        && !op.getIndex().equals(ConstraintOp.DOES_NOT_MATCH.getIndex()))
+                ) {
+                    validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+                }
             }
             if (existPossibleValues) {
                 for (ConstraintOp op : PathConstraintMultiValue.VALID_OPS) {
                     validOps.add(new DisplayConstraintOption(op.toString(),
                         op.getIndex()));
                 }
-            } else {
-                //remove not like and like
-                validOps.remove(validOps.size() - 1);
-                validOps.remove(validOps.size() - 1);
             }
         } else if (isLookup()) {
             // this must be a LOOKUP constraint
