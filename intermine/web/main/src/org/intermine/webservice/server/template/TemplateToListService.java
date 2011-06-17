@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.template;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +34,14 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.QueryToListService;
 import org.intermine.webservice.server.template.result.TemplateResultRequestParser;
 
-public class TemplateToListService extends QueryToListService {
+/**
+ * A service for turning the results of a template query into a list.
+ * @author Alexis Kalderimis
+ *
+ */
+public class TemplateToListService extends QueryToListService
+{
 
-    private static final String TEMPLATE_PARAM = "template";
     private static final String NEW_VIEW_PARAM = "path";
 
     private final TemplateManager templateManager;
@@ -42,10 +57,7 @@ public class TemplateToListService extends QueryToListService {
         templateManager = im.getTemplateManager();
     }
 
-    /**
-     * Generate a pathquery for use with this service.
-     * @param request the http request
-     */
+    @Override
     protected PathQuery getQuery(HttpServletRequest request) {
 
         String newViewString = request.getParameter(NEW_VIEW_PARAM);
