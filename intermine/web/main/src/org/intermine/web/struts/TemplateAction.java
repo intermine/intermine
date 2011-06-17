@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -375,12 +376,18 @@ public class TemplateAction extends InterMineAction
                             String multiValueAttribute = tf.getMultiValueAttribute(key);
                             if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {
                                 constraintValue = tf.getMultiValueAttribute(key);
+                                List<String> multiValues = new ArrayList<String>();
+                                multiValues.addAll(Arrays.asList(constraintValue.split(",")));
+                                value = new TemplateValue(c, constraintOp,
+                                        TemplateValue.ValueType.SIMPLE_VALUE, multiValues,
+                                        switchOffAbility);
                             } else {
                                 constraintValue = (String) tf.getAttributeValues(key);
+                                String extraValue = (String) tf.getExtraValues(key);
+                                value = new TemplateValue(c, constraintOp, constraintValue,
+                                        TemplateValue.ValueType.SIMPLE_VALUE, extraValue,
+                                        switchOffAbility);
                             }
-                            String extraValue = (String) tf.getExtraValues(key);
-                            value = new TemplateValue(c, constraintOp, constraintValue,
-                                TemplateValue.ValueType.SIMPLE_VALUE, extraValue, switchOffAbility);
                         }
                     }
                 }
