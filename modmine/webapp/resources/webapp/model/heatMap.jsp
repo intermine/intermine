@@ -31,8 +31,9 @@
           <i>
             ${WEB_PROPERTIES['heatmap.expressionScoreSummary']}
             <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores"> the Celniker group</a>.
-            We have taken log2 of each expression score to create the heatmap thus results in a range between 0 and 16. The Heatmap visualization is powered by
-            <a href="http://www.canvasxpress.org">cavasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">control</a>.
+            Expression levels are expressed as log2 of the actual value.
+            Heatmap visualization powered by
+            <a href="http://www.canvasxpress.org">canvasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">display options</a>.
           </i>
         </p>
         <br/>
