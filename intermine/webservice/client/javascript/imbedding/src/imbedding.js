@@ -39,12 +39,42 @@ IMBedding = (function() {
         return x1 + x2;
     }
 
+    var decamelise = function(str) {
+        var chrs = str.split("");
+        var newStr = "";
+        var lastChrWasLower = false;
+        for (var i in chrs) {
+            var ch = chrs[i];
+            var thisIsUpper = (ch.match(/[A-Z]/) != null);
+            if (lastChrWasLower && thisIsUpper) {
+                newStr += " ";
+                newStr += ch.toLowerCase();
+            } else {
+                newStr += ch;
+            }
+            lastChrWasLower = !thisIsUpper;
+        }
+        return newStr;
+    };
+
+    // Defines a pattern to assess what kinds of attributes we don't want to see.
+    var uglyAttributes = /^primaryIdentifier$/;
+
     var mungeHeader = function(header) {
         var parts = header.split(" > ");
         if (parts.length == 1) {
-            return parts[0];
+            return decamelise(parts[0]);
         } else {
-            var ret = parts.slice(parts.length - 2, parts.length).join(" ");
+            var retParts;
+            if (uglyAttributes.test(parts[parts.length - 1])) {
+                retParts = parts.slice(parts.length - 2, parts.length - 1);
+            } else {
+                retParts = parts.slice(parts.length - 2, parts.length);
+            }
+            for (var i in retParts) {
+                retParts[i] = decamelise(retParts[i]);
+            }
+            var ret = retParts.join(" ");
             return ret;
         }
     };
@@ -598,7 +628,6 @@ IMBedding = (function() {
     };
 
     var getResults = function(url, data, target, options) {
-        var callback = getCallback(target, options);
         var errorHandler = getErrorHandler(options);
         if (! data.format) {
             data.format = "jsonptable";
@@ -612,14 +641,21 @@ IMBedding = (function() {
             jQuery(target).empty().append(throbber);
         }
 
-        jQuery.jsonp({
-            url: url, 
-            data: data, 
-            success: callback, 
-            callbackParameter: "callback",
-            error: errorHandler,
-            traditional: true
-        });
+        if (data.format == "jsonobjects" || data.format == "jsonrows" || data.format == "jsoncount") {
+            // The user expects us to make a same-domain request.
+            var callback = target;
+            jQuery.getJSON(url, data, target);
+        } else {
+            var callback = getCallback(target, options);
+            jQuery.jsonp({
+                url: url, 
+                data: data, 
+                success: callback, 
+                callbackParameter: "callback",
+                error: errorHandler,
+                traditional: true
+            });
+        }
     };
 
     var getConstraints = function(constraints) {
@@ -628,9 +664,20 @@ IMBedding = (function() {
             var whereClause = constraints[i];
             var whereString = "<constraint ";
             for (attr in whereClause) {
-                whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
+                if (attr != "values") {
+                    whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
+                }
             }
-            whereString += "/>";
+            if (whereClause.values) {
+                whereString += ">";
+                var values = whereClause.values;
+                for (var i in values) {
+                    whereString += "<value>" + values[i] + "</value>";
+                }
+                whereString += "</constraint>";
+            } else {
+                whereString += "/>";
+            }
             constraintsString += whereString;
         }
         return constraintsString;
