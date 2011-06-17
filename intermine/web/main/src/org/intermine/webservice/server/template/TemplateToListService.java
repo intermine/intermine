@@ -42,7 +42,10 @@ public class TemplateToListService extends QueryToListService {
         templateManager = im.getTemplateManager();
     }
 
-    @Override
+    /**
+     * Generate a pathquery for use with this service.
+     * @param request the http request
+     */
     protected PathQuery getQuery(HttpServletRequest request) {
 
         String newViewString = request.getParameter(NEW_VIEW_PARAM);
