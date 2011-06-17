@@ -179,7 +179,7 @@
                   <c:choose>
                   <%-- inputfield for an autocompletion --%>
                   <c:when test="${!empty dec.autoCompleter}">
-                    <input name="attributeValues(${index})" id="attributeValues(${index})" size="45"
+                    <input name="attributeValues(${index})" id="attributeId_${index}" size="45"
                       style="background: #ffffc8"
                       value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isEnter(event);"
