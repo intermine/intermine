@@ -24,8 +24,7 @@
     if ('${param.trail}' != '') {
         url += '&trail=${param.trail}';
     }
-    alert(url);
-    //document.location.href=url;
+    document.location.href=url;
   }
 
   var columnsToDisable = ${columnsToDisable};
