@@ -13,7 +13,7 @@
 
 <tiles:importAttribute/>
 <tiles:importAttribute name="builder" scope="request" ignore="true"/>
-
+<html:xhtml/>
 <script type="text/javascript" src="js/templateForm.js"></script>
 <script type="text/javascript" src="js/autocompleter.js"></script>
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
