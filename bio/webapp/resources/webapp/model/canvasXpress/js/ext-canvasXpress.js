@@ -2,7 +2,6 @@
 // license says free for any use but no re-distribution, so please download it
 // directly from that site yourself or make/choose your own icons
 Ext.canvasXpress = Ext.extend(Ext.Panel, {
-  showExampleData: false,
   data: false,
   options: false,
   events: false,
@@ -14,11 +13,6 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   canvasId: Ext.id(),
   initComponent: function() {
     Ext.canvasXpress.superclass.initComponent.apply(this, arguments);
-    if (! this.data && this.showExampleData) {
-      this.data = false;
-    } else if (! this.data && !this.showExampleData){
-      this.data = {};
-    }
     this.resetChanges();
   },
   onRender:function() {
