@@ -433,6 +433,10 @@ public class DisplayConstraint
                     validOps.add(new DisplayConstraintOption(op.toString(),
                         op.getIndex()));
                 }
+            } else {
+                //remove not like and like
+                validOps.remove(validOps.size() - 1);
+                validOps.remove(validOps.size() - 1);
             }
         } else if (isLookup()) {
             // this must be a LOOKUP constraint
@@ -744,7 +748,9 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
-                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()) {
+                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()) {
                 return true;
             }
             if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
@@ -778,6 +784,8 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()
                     || selectedOperator == ConstraintOp.LOOKUP.getIndex()
                     || selectedOperator == ConstraintOp.ONE_OF.getIndex()
                     || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {
