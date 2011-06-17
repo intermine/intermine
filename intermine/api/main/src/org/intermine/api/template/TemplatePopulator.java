@@ -11,7 +11,6 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.stripAll;
-import static org.apache.commons.lang.StringUtils.strip;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.model.InterMineObject;
@@ -251,7 +248,7 @@ public final class TemplatePopulator
             if (constraintPath.endIsAttribute()) {
                 constraintPath = constraintPath.getPrefix();
             }
-            PathConstraint newConstraint = 
+            PathConstraint newConstraint =
                 new PathConstraintBag(constraintPath.getNoConstraintsString(),
                     templateValue.getOperation(), templateValue.getValue());
             template.replaceConstraint(originalConstraint, newConstraint);
@@ -287,7 +284,7 @@ public final class TemplatePopulator
                 // if op has been changed to something other than IN or NOT_IN make this becomes
                 // a regular attribute constraint
                 if (!PathConstraintMultiValue.VALID_OPS.contains(templateValue.getOperation())) {
-                    newConstraint = new PathConstraintAttribute(pathString, 
+                    newConstraint = new PathConstraintAttribute(pathString,
                         templateValue.getOperation(), templateValue.getValue());
                 } else {
                     newConstraint = new PathConstraintMultiValue(pathString,
