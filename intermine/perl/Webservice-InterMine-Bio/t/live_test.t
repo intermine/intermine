@@ -1,11 +1,12 @@
 use Test::More;
 use Webservice::InterMine::Bio qw/GFF3 FASTA/;
-use Webservice::InterMine 'localhost/flymine';
+use Webservice::InterMine;
 
 unless ($ENV{RELEASE_TESTING}) {
     plan skip_all => "Live test for release testing only";
 } else {
-    my $query = Webservice::InterMine->new_query(with => GFF3);
+    my $service = Webservice::InterMine->get_service('localhost/flymine');
+    my $query = $service->new_query(with => GFF3);
 
     $query->add_sequence_features(qw/Gene Gene.exons Gene.exons.transcripts/);
 
@@ -20,7 +21,7 @@ unless ($ENV{RELEASE_TESTING}) {
 
     print $_ for ($db->get_features_by_type('ncRNA'));
 
-    my $faq = Webservice::InterMine->new_query(with => FASTA);
+    my $faq = $service->new_query(with => FASTA);
 
     $faq->add_sequence_features(qw/Gene.exons/);
 
