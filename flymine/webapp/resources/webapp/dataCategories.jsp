@@ -162,7 +162,7 @@
        <p><i>S. cerevisiae</i></p>
     </td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org" target="_new" class="extlink">BioGRID</a> - Version 3.1.76 </td>
+    <td> <a href="http://www.thebiogrid.org" target="_new" class="extlink">BioGRID</a> - Version 3.1.77 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381927" target="_new" class="extlink">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
