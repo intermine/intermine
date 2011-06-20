@@ -31,9 +31,9 @@
         <p>
           <i>
             ${WEB_PROPERTIES['heatmap.expressionScoreSummary']}
-            <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores"> the Celniker group</a>.
-            Expression levels are expressed as log2 of the actual value.
-            Heatmap visualization powered by
+            <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores"> the Celniker group</a>
+            and are log2 of the actual value.
+            <br>Heatmap visualization powered by
             <a href="http://www.canvasxpress.org">canvasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">display options</a>.
           </i>
         </p>
