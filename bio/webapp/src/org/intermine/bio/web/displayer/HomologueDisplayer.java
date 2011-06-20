@@ -12,6 +12,7 @@ package org.intermine.bio.web.displayer;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,17 +21,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.util.PathUtil;
-import org.intermine.model.bio.DataSet;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Homologue;
 import org.intermine.model.bio.Organism;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +72,6 @@ public class HomologueDisplayer extends ReportDisplayer
         } catch (PathException e) {
             return;
         }
-
         Gene gene = (Gene) reportObject.getObject();
         Set<String> dataSets = new HashSet<String>();
         JSONObject params = config.getParameterJson();
@@ -78,35 +83,44 @@ public class HomologueDisplayer extends ReportDisplayer
         } catch (JSONException e) {
             throw new RuntimeException("Error parsing configuration value 'dataSets'", e);
         }
+        PathQuery q = getQuery(im, gene.getId(), dataSets);
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(q);
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            Organism organism = (Organism) row.get(0).getObject();
+            InterMineObject homologueObject = (InterMineObject) row.get(1).getObject();
 
-        for (Homologue homologue : gene.getHomologues()) {
-            if ("paralogue".equals(homologue.getType())) {
-                continue;
-            }
-            for (DataSet dataSet : homologue.getDataSets()) {
-                if (dataSets.contains(dataSet.getName())) {
-                    Organism org = homologue.getHomologue().getOrganism();
-
-                    organismIds.put(org.getSpecies(), org.getId().toString());
-                    try {
-                        if (PathUtil.resolvePath(symbolPath, homologue.getHomologue()) != null) {
-                            ResultElement re = new ResultElement(homologue.getHomologue(),
-                                    symbolPath, true);
-                            addToMap(homologues, org.getShortName(), re);
-                        } else {
-                            ResultElement re = new ResultElement(homologue.getHomologue(),
-                                    primaryIdentifierPath, true);
-                            addToMap(homologues, org.getShortName(), re);
-                        }
-                    } catch (PathException e) {
-                        LOG.error("Failed to resolve path: " + symbolPath + " for gene: " + gene);
-                    }
+            organismIds.put(organism.getSpecies(), organism.getId().toString());
+            try {
+                if (homologueObject.getFieldValue("symbol") != null) {
+                    ResultElement re = new ResultElement(homologueObject,
+                            symbolPath, true);
+                    addToMap(homologues, organism.getShortName(), re);
+                } else {
+                    ResultElement re = new ResultElement(homologueObject,
+                            primaryIdentifierPath, true);
+                    addToMap(homologues, organism.getShortName(), re);
                 }
+            } catch (IllegalAccessException e) {
+                LOG.error("Failed to resolve path: " + symbolPath + " for gene: " + gene);
             }
         }
 
         request.setAttribute("organismIds", organismIds);
         request.setAttribute("homologues", homologues);
+    }
+
+    private static PathQuery getQuery(InterMineAPI im, Integer geneId, Set<String> dataSets) {
+        PathQuery q = new PathQuery(im.getModel());
+        q.addViews("Gene.homologues.homologue.organism.shortName",
+                "Gene.homologues.homologue.primaryIdentifier");
+        q.addConstraint(Constraints.eq("Gene.id", "" + geneId));
+        q.addConstraint(Constraints.oneOfValues("Gene.homologues.dataSets.name", dataSets));
+        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
+        q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+        return q;
     }
 
     private void addToMap(Map<String, Set<ResultElement>> homologues, String species,
