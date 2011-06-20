@@ -25,7 +25,7 @@ import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
 /**
- * Class for tracking the users login.
+ * Class for tracking when the users log into their accounts.
  * @author dbutano
  */
 public class LoginTracker extends TrackerAbstract
