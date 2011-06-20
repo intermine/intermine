@@ -10,6 +10,10 @@ package org.intermine.bio.io.gff3;
  *
  */
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,11 +23,6 @@ import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -451,7 +450,9 @@ public class GFF3Record
                 Object oldValue = encodedList.get(i);
                 String newValue;
                 try {
-                    newValue = attributeEncoding("" + oldValue);
+                    newValue = URLEncoder.encode("" + oldValue, "UTF-8");
+                    // decode white space from "+"
+                    newValue = newValue.replaceAll("\\+", " ");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + oldValue, e);
                 }
@@ -462,37 +463,5 @@ public class GFF3Record
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
-    }
-
-    /**
-     * The following characters have reserved meanings in GFF3 format and must be escaped
-     * when used in other contexts:
-     *     ;  (semicolon)
-     *     =  (equals)
-     *     %  (percent)
-     *     &  (ampersand)
-     *     ,  (comma)
-     *
-     * See: http://www.sequenceontology.org/gff3.shtml
-     *
-     * @param attr
-     * @return encoded attr
-     * @throws UnsupportedEncodingException
-     */
-    private String attributeEncoding(String attr) throws UnsupportedEncodingException {
-
-        String semicolonEncoded = URLEncoder.encode(";", "UTF-8");
-        String equalsEncoded = URLEncoder.encode("=", "UTF-8");
-        String percentEncoded = URLEncoder.encode("%", "UTF-8");
-        String ampersandEncoded = URLEncoder.encode("&", "UTF-8");
-        String commaEncoded = URLEncoder.encode(",", "UTF-8");
-
-        attr = attr.replaceAll(";", semicolonEncoded);
-        attr = attr.replaceAll("=", equalsEncoded);
-        attr = attr.replaceAll("%", percentEncoded);
-        attr = attr.replaceAll("&", ampersandEncoded);
-        attr = attr.replaceAll(",", commaEncoded);
-
-        return attr;
     }
 }
