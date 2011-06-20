@@ -24,6 +24,10 @@ import org.intermine.api.tracker.track.LoginTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ * Class for tracking the users login.
+ * @author dbutano
+ */
 public class LoginTracker extends TrackerAbstract
 {
     private static final Logger LOG = Logger.getLogger(LoginTracker.class);
@@ -75,6 +79,10 @@ public class LoginTracker extends TrackerAbstract
         return "CREATE TABLE " + trackTableName + "(username text, timestamp timestamp)";
     }
 
+    /**
+     * Track when the user logs in his account
+     * @param username the user name
+     */
     protected void trackLogin(String username) {
         LoginTrack loginTrack = new LoginTrack(username, new Timestamp(System.currentTimeMillis()));
         if (loginTracker  != null) {
