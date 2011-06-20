@@ -124,8 +124,7 @@ public class UniprotConverter extends BioDirectoryConverter
     // process the sprot file, then the trembl file
     private void processFiles(File[] files) {
         if (files == null) {
-            LOG.error("No data files found.");
-            return;
+            throw new RuntimeException("No data files found.");
         }
         for (int i = 0; i <= 1; i++) {
             File file = files[i];
