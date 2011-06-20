@@ -56,7 +56,7 @@
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7220 7222 7234 7260 7238 559292"/>
-      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
 
