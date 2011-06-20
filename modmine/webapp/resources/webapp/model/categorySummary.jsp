@@ -32,32 +32,29 @@ An individual 'submission' is a single instance of an experiment which tests var
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><a name="index">
 <c:forEach items="${catExp}" var="catInd" varStatus="catInd_status">
-<td><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do#${catInd_status.count}"  title="Go to category: ${catInd.key}" >${catInd.key}
+<td><a href="/${WEB_PROPERTIES['webapp.path']}/categorySummary.do?category=${catInd.key}"  title="Go to category: ${catInd.key}" >${catInd.key}
 <img src="images/right-arrow.gif" /></a></td>
 </c:forEach>
 </a></tr>
 </table>
 
-
-
-
-
-
-
-
-
-
-
+<br>
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 
-  <tr><th>&nbsp;</th><th><h4><a name="${cat_status.count}">${cat.key}</a></h4></th><th class="lastcol">&nbsp;</th></tr>
+ <c:forEach items="${experiments}" var="exp"  varStatus="exp_status">
 
- <c:forEach items="${experiments}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
+<c:if test="${exp_status.first}">
+<c:set var="category" value="${exp.category}"></c:set>
+ <tr><th>&nbsp;</th><th><h4>${category}</h4></th><th class="lastcol">&nbsp;</th></tr>
+</c:if>
 
+<c:if test="${exp.category ne category}">
+<c:set var="category" value="${exp.category}"></c:set>
+ <tr><th>&nbsp;</th><th><h4>${category}</h4></th><th class="lastcol">&nbsp;</th></tr>
+</c:if>
 
-  <tr>
-
+<tr>
   <td >
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}">
@@ -227,7 +224,42 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 <tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
 </table>
 
+<%--
+<!-- links to all subs in category -->
+<table cellspacing="4"><tr>
+<td>
+<im:querylink text="Fly" showArrow="true" skipBuilder="true">
+<query name="" model="genomic" 
+    view="Submission.DCCid Submission.title Submission.experimentType" 
+    sortOrder="Submission.DCCid asc" constraintLogic="A and B">
+<constraint path="Submission.organism.genus" code="A" op="=" value="Drosophila"/>
+<constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
+</query>
+</im:querylink>
+</td>
+<td>
+<im:querylink text="Worm" showArrow="true" skipBuilder="true">
+<query name="" model="genomic" 
+    view="Submission.DCCid Submission.title Submission.experimentType" 
+    sortOrder="Submission.DCCid asc" constraintLogic="A and B">
+<constraint path="Submission.organism.genus" code="A" op="=" value="Caenorhabditis"/>
+<constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
+</query>
+</im:querylink>
+</td>
+<td>
+<im:querylink text="All submissions" showArrow="true" skipBuilder="true">
+<query name="" model="genomic" 
+    view="Submission.DCCid Submission.title Submission.experimentType" 
+    sortOrder="Submission.DCCid asc">
+<constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
+</query>
+</im:querylink>
+</td>
+</tr></table>
+--%>
 
+<%--
 <!-- links to all subs -->
 <table cellspacing="4"><tr>
 
@@ -238,7 +270,6 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
    sortOrder="Submission.experimentType asc">
   <constraint path="Submission.organism.shortName" op="=" value="D. melanogaster"/>
 </query>
-
 </im:querylink>
     </td>
 
@@ -261,4 +292,4 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 </im:querylink>
     </td>
   </tr></table>
-
+--%>
