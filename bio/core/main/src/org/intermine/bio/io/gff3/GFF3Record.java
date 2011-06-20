@@ -451,7 +451,7 @@ public class GFF3Record
                 Object oldValue = encodedList.get(i);
                 String newValue;
                 try {
-                    newValue = URLEncoder.encode("" + oldValue, "UTF-8");
+                    newValue = attributeEncoding("" + oldValue);
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + oldValue, e);
                 }
@@ -462,5 +462,37 @@ public class GFF3Record
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
+    }
+
+    /**
+     * The following characters have reserved meanings in GFF3 format and must be escaped
+     * when used in other contexts:
+     *     ;  (semicolon)
+     *     =  (equals)
+     *     %  (percent)
+     *     &  (ampersand)
+     *     ,  (comma)
+     *
+     * See: http://www.sequenceontology.org/gff3.shtml
+     *
+     * @param attr
+     * @return encoded attr
+     * @throws UnsupportedEncodingException
+     */
+    private String attributeEncoding(String attr) throws UnsupportedEncodingException {
+
+        String semicolonEncoded = URLEncoder.encode(";", "UTF-8");
+        String equalsEncoded = URLEncoder.encode("=", "UTF-8");
+        String percentEncoded = URLEncoder.encode("%", "UTF-8");
+        String ampersandEncoded = URLEncoder.encode("&", "UTF-8");
+        String commaEncoded = URLEncoder.encode(",", "UTF-8");
+
+        attr = attr.replaceAll(";", semicolonEncoded);
+        attr = attr.replaceAll("=", equalsEncoded);
+        attr = attr.replaceAll("%", percentEncoded);
+        attr = attr.replaceAll("&", ampersandEncoded);
+        attr = attr.replaceAll(",", commaEncoded);
+
+        return attr;
     }
 }
