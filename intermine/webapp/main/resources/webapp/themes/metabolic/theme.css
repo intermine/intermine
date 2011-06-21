@@ -255,33 +255,33 @@ div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; background:#F6F5F7 
 div.feature p.toggle a:hover { color:#1F7492; }
 
 /* theme color classes (used on Report page currently) */
-div.report-page div.table .theme-1-color, div.report-page div.box .theme-1-color { color:#1F7492 !important; } /* Matisse */
-div.report-page div.table .theme-1-background, div.report-page div.box .theme-1-background { background-color:#1F7492 !important; } /* Matisse */
-div.report-page div.table .theme-1-border, div.report-page div.box .theme-1-border { border-color:#1F7492 !important; } /* Matisse */
+div.table .theme-1-color, div.box .theme-1-color { color:#1F7492 !important; } /* Matisse */
+div.table .theme-1-background, div.box .theme-1-background { background-color:#1F7492 !important; } /* Matisse */
+div.table .theme-1-border, div.box .theme-1-border { border-color:#1F7492 !important; } /* Matisse */
 
-div.report-page div.table .theme-2-color, div.report-page div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
-div.report-page div.table .theme-2-background, div.report-page div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
-div.report-page div.table .theme-2-border, div.report-page div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-color, div.box .theme-2-color { color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-background, div.box .theme-2-background { background-color:#A16AAF !important; } /* Wisteria */
+div.table .theme-2-border, div.box .theme-2-border { border-color:#A16AAF !important; } /* Wisteria */
 
-div.report-page div.table .theme-3-color, div.report-page div.box .theme-3-color { color:#E6F7FE !important; } /* Lily White */
-div.report-page div.table .theme-3-background, div.report-page div.box .theme-3-background { background-color:#E6F7FE !important; } /* Lily White */
-div.report-page div.table .theme-3-border, div.report-page div.box .theme-3-border { border-color:#E6F7FE !important; } /* Lily White */
+div.table .theme-3-color, div.box .theme-3-color { color:#E6F7FE !important; } /* Lily White */
+div.table .theme-3-background, div.box .theme-3-background { background-color:#E6F7FE !important; } /* Lily White */
+div.table .theme-3-border, div.box .theme-3-border { border-color:#E6F7FE !important; } /* Lily White */
 
-div.report-page div.table .theme-4-color, div.report-page div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
-div.report-page div.table .theme-4-background, div.report-page div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
-div.report-page div.table .theme-4-border, div.report-page div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-color, div.box .theme-4-color { color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-background, div.box .theme-4-background { background-color:#F0E3F7 !important; } /* French Lilac */
+div.table .theme-4-border, div.box .theme-4-border { border-color:#F0E3F7 !important; } /* French Lilac */
 
-div.report-page div.table .theme-5-color, div.report-page div.box .theme-5-color { color:#F5F5F5 !important; } /* Wild Sand */
-div.report-page div.table .theme-5-background, div.report-page div.box .theme-5-background { background-color:#F5F5F5 !important; } /* Wild Sand */
-div.report-page div.table .theme-5-border, div.report-page div.box .theme-5-border { border-color:#F5F5F5 !important; } /* Wild Sand */
+div.table .theme-5-color, div.box .theme-5-color { color:#F5F5F5 !important; } /* Wild Sand */
+div.table .theme-5-background, div.box .theme-5-background { background-color:#F5F5F5 !important; } /* Wild Sand */
+div.table .theme-5-border, div.box .theme-5-border { border-color:#F5F5F5 !important; } /* Wild Sand */
 
-div.report-page div.table .theme-6-color, div.report-page div.box .theme-6-color { color:#F6FCFE !important; } /* Foam */
-div.report-page div.table .theme-6-background, div.report-page div.box .theme-6-background { background-color:#F6FCFE !important; } /* Foam */
-div.report-page div.table .theme-6-border, div.report-page div.box .theme-6-border { border-color:#F6FCFE !important; } /* Foam */
+div.table .theme-6-color, div.box .theme-6-color { color:#F6FCFE !important; } /* Foam */
+div.table .theme-6-background, div.box .theme-6-background { background-color:#F6FCFE !important; } /* Foam */
+div.table .theme-6-border, div.box .theme-6-border { border-color:#F6FCFE !important; } /* Foam */
 
-div.report-page div.table .theme-7-color, div.report-page div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
-div.report-page div.table .theme-7-background, div.report-page div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
-div.report-page div.table .theme-7-border, div.report-page div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-color, div.box .theme-7-color { color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-background, div.box .theme-7-background { background-color:#FFF3D3 !important; } /* Milk Punch */
+div.table .theme-7-border, div.box .theme-7-border { border-color:#FFF3D3 !important; } /* Milk Punch */
 
 /* redefine for inline lists/boxes with no results (gray) */
 div.box.gray h3 { color:#ABABAB; border-top-color:#6E6E6E !important; background:#F6F5F7 !important; }
