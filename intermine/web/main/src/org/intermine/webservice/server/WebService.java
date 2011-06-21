@@ -272,7 +272,7 @@ public abstract class WebService
      */
     private void authenticate(HttpServletRequest request) {
         String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-        if (authString == null || authString.length() == 0) {
+        if (authString == null || authString.length() == 0 || formatIsJSONP() ) {
             return;
         }
 
