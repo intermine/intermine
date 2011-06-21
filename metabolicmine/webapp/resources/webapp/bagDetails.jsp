@@ -462,25 +462,25 @@
     </div>
     </c:forEach>
 
+    </div>
+
     <div class="clear"></div>
 
     <div id="TemplatesCategory" class="aspectBlock">
     <div class="box grid_12">
-        <a name="templates"><h2>Templates</h2></a>
-    </div>
+        <a name="templates"><h2>Template results for '${bag.name}'</h2></a>
 
-    <%-- templates --%>
-    <div class="box grid_12">
-      <div class="feature theme-1-border">
-        <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
-        <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
-        <h3>Template results for '${bag.name}' <span>(<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></h3>
-        <fmt:message key="bagDetails.templatesHelp">
-            <fmt:param><img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/></fmt:param>
-        </fmt:message>
-      </div>
+        <%-- Each aspect --%>
+        <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+          <tiles:insert name="reportAspect.tile">
+            <tiles:put name="placement" value="im:aspect:${aspect}"/>
+            <tiles:put name="trail" value="|bag.${bag.name}"/>
+            <tiles:put name="interMineIdBag" beanName="bag"/>
+            <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+            <tiles:put name="opened" value="${status.index == 0}" />
+          </tiles:insert>
+        </c:forEach>
     </div>
-
     </div>
 
   </div>
