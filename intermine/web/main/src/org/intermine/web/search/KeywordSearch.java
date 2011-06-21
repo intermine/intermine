@@ -1457,7 +1457,7 @@ public final class KeywordSearch
                 queryString = queryString.replace(s, "*");
             }
         }
-        return queryString;
+        return queryString.toLowerCase();
     }
 
     private static void loadIndexFromDatabase(ObjectStore os, String path) {
