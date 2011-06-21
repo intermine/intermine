@@ -658,27 +658,31 @@ IMBedding = (function() {
         }
     };
 
+    var makeConstraint = function(whereClause) {
+        var i = 0, len = 0, whereString = "<constraint ", attr = null;
+        for (attr in whereClause) {
+            if (attr != "values") {
+                whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
+            }
+        }
+        if (whereClause.values) {
+            whereString += ">";
+            len = whereString.values.length;
+            while(i++ < len) {
+                whereString += "<value>" + whereString.values[i] + "</value>";
+            }
+            whereString += "</constraint>";
+        } else {
+            whereString += "/>";
+        }
+        return whereString;
+    }
+
+
     var getConstraints = function(constraints) {
-        var constraintsString = "";
-        for (var i = 0; i < constraints.length; i++) {
-            var whereClause = constraints[i];
-            var whereString = "<constraint ";
-            for (attr in whereClause) {
-                if (attr != "values") {
-                    whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
-                }
-            }
-            if (whereClause.values) {
-                whereString += ">";
-                var values = whereClause.values;
-                for (var i in values) {
-                    whereString += "<value>" + values[i] + "</value>";
-                }
-                whereString += "</constraint>";
-            } else {
-                whereString += "/>";
-            }
-            constraintsString += whereString;
+        var constraintsString = "", cl = constraints.length, i = 0;
+        while (i++ < cl) {
+            constraintsString += makeConstraint(constraints[i]);
         }
         return constraintsString;
     };
