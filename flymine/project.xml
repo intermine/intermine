@@ -36,27 +36,27 @@
     </source>
 
     <source name="wormbase-identifiers" type="wormbase-identifiers">
-      <property name="src.data.dir" location="/shared/data/wormbase/current"/>
+      <property name="src.data.dir" location="/old_shared_data/wormbase/current"/>
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/shared/data/metabolic/ensembl-ids/current"/>
+     <property name="src.data.dir" location="/old_shared_data/metabolic/ensembl-ids/current"/>
     </source> 
    <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
+     <property name="src.data.dir" location="/old_shared_data/metabolic/ncbi/current/"/>
      <property name="organisms" value="9606"/>
     </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
-      <property name="src.data.dir" location="/shared/data/mgi/current"/>
+      <property name="src.data.dir" location="/old_shared_data/mgi/current"/>
     </source>
    <source name="rgd-identifiers" type="rgd-identifiers">
-      <property name="src.data.dir" location="/shared/data/metabolic/rgd-identifiers/current"/>
+      <property name="src.data.dir" location="/old_shared_data/metabolic/rgd-identifiers/current"/>
     </source>
 
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7220 7222 7234 7260 7238 559292"/>
-      <property name="src.data.dir" location="/micklem/data/uniprot/current/split"/>
+      <property name="uniprot.organisms" value="261594"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/akash"/>
       <property name="createinterpro" value="true"/>
     </source>
 
@@ -79,7 +79,7 @@
 
 <!--
     <source name="anopheles-identifiers" type="anopheles-identifiers">
-      <property name="src.data.dir" location="/shared/data/anopheles-identifiers/mappings/current"/>
+      <property name="src.data.dir" location="/old_shared_data/anopheles-identifiers/mappings/current"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
 -->
@@ -88,24 +88,24 @@
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
+      <property name="src.data.dir" location="/old_shared_data/wormbase-rnai/current"/>
     </source>
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
-      <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
+      <property name="src.data.file" location="/old_shared_data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
-      <property name="src.data.dir" location="/shared/data/bdgp-clones"/>
+      <property name="src.data.dir" location="/old_shared_data/bdgp-clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
 
     <source name="long-oligo" type="long-oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
-      <property name="src.data.dir" location="/shared/data/long-oligo"/>
+      <property name="src.data.dir" location="/old_shared_data/long-oligo"/>
     </source>
 
     <source name="ensembl" type="ensembl">
-     <property name="src.data.dir" location="/shared/data/ensembl/current"/>
+     <property name="src.data.dir" location="/old_shared_data/ensembl/current"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
 
@@ -114,35 +114,35 @@
     </source>
 
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
+      <property name="src.data.dir" location="/old_shared_data/metabolic/omim/test"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/kegg/current"/>
+      <property name="src.data.dir" location="/old_shared_data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
     </source>
     <source name="kegg-orthologues" type="kegg-orthologues">
-      <property name="src.data.dir" location="/shared/data/kegg/orthologues"/>
+      <property name="src.data.dir" location="/old_shared_data/kegg/orthologues"/>
       <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
-      <property name="src.data.dir" location="/shared/data/anoph-expr"/>
+      <property name="src.data.dir" location="/old_shared_data/anoph-expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
-      <property name="geneFile" value="/shared/data/anoph-expr/reporter_gene_mappingFile.txt"/>
+      <property name="geneFile" value="/old_shared_data/anoph-expr/reporter_gene_mappingFile.txt"/>
     </source>
 
     <source name="treefam" type="treefam">
-      <property name="src.data.dir" location="/shared/data/treefam/current"/>
+      <property name="src.data.dir" location="/old_shared_data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <property name="geneFile" value="/old_shared_data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239 7165 4932"/>
       <property name="treefam.homologues" value="9606 10090 10116 7955"/>
     </source>
 
     <source name="ensembl-compara" type="ensembl-compara">
-      <property name="src.data.dir" location="/shared/data/ensembl/compara"/>
+      <property name="src.data.dir" location="/old_shared_data/ensembl/compara"/>
       <property name="ensemblcompara.organisms" value="7227"/>
       <property name="ensemblcompara.homologues" value="9606"/>
     </source>
@@ -153,7 +153,7 @@
     </source>
 
     <source name="protein-structure" type="protein-structure">
-      <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
+      <property name="src.data.dir" location="/old_shared_data/kenji/data/all/"/>
     </source>
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
@@ -170,33 +170,33 @@
     </source>
 <!--
     <source name="uberon" type="uberon">
-      <property name="src.data.file" location="/shared/data/uberon/uberon.obo"/>
+      <property name="src.data.file" location="/old_shared_data/uberon/uberon.obo"/>
     </source>
 -->
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
+      <property name="ontologyfile" location="/old_shared_data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/old_shared_data/go-annotation/current"/>
     </source>
 
     <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/shared/data/redfly/current/tfbs"/>
+      <property name="src.data.dir" location="/old_shared_data/redfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/shared/data/redfly/current/crm"/>
+      <property name="src.data.dir" location="/old_shared_data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="src.data.dir" location="/shared/data/drsc/current"/>
+      <property name="src.data.dir" location="/old_shared_data/drsc/current"/>
       <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
-      <property name="screenDetailsFile" location="/shared/data/drsc/current/RNAi_screen_details"/>
+      <property name="screenDetailsFile" location="/old_shared_data/drsc/current/RNAi_screen_details"/>
     </source>
     <source name="fly-fish" type="fly-fish">
-      <property name="src.data.dir" location="/shared/data/flyfish"/>
+      <property name="src.data.dir" location="/old_shared_data/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
@@ -540,18 +540,18 @@
     </source>
 
     <source name="interpro-go" type="interpro-go">
-      <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
+      <property name="src.data.dir" location="/old_shared_data/go-annotation/interpro/current"/>
     </source>
 
 <!-- text files, didn't see a gain from BioPAX 
     <source name="reactome" type="reactome">
-      <property name="src.data.dir" location="/shared/data/reactome/current"/>
+      <property name="src.data.dir" location="/old_shared_data/reactome/current"/>
       <property name="reactome.organisms" value="7227 4932 6239"/>
     </source>
 -->
 
     <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
+      <property name="src.data.dir" location="/old_shared_data/biopax/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
@@ -559,7 +559,7 @@
     </source>
 
     <source name="reactome-curated" type="biopax">
-      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
+      <property name="src.data.dir" location="/old_shared_data/biopax/reactome/current/curated"/>
       <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="FlyReactome data set"/>
@@ -567,29 +567,29 @@
     </source>
 
     <source name="bdgp-insitu" type="bdgp-insitu">
-      <property name="src.data.dir" location="/shared/data/bdgp-insitu/current"/>
+      <property name="src.data.dir" location="/old_shared_data/bdgp-insitu/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-      <property name="src.data.file" location="/shared/data/ontologies/fly-development/current/fly_development.obo"/>
+      <property name="src.data.file" location="/old_shared_data/ontologies/fly-development/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/old_shared_data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
 
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir"
-                location="/shared/data/drosdel/2008-03-19/chromosome_structure_variations/"/>
+                location="/old_shared_data/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
 
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/mirna/miranda/current"/>
+      <property name="src.data.dir" location="/old_shared_data/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
@@ -604,7 +604,7 @@
     </source>
 
     <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
+      <property name="src.data.dir" location="/old_shared_data/affy-probes/current"/>
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
 
