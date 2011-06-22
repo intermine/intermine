@@ -19,8 +19,6 @@
       <span id="${issueType}removeAllLink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
   </div>
 
-  <img alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
-
   <span>
     <c:choose>
       <c:when test="${messageParam != null}">
