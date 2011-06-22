@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 
 /**
@@ -81,13 +82,23 @@ public class LoadBagValuesTask extends Task
             throw new BuildException("Exception while creating ObjectStore", e);
         }
         if (uos instanceof ObjectStoreInterMineImpl) {
+            Connection conn = null;
+            Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
             try {
-                Connection conn = ((ObjectStoreInterMineImpl) uos).getConnection();
+                conn = ((ObjectStoreInterMineImpl) uos).getConnection();
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                    DatabaseUtil.addIntermineCurrentColumn(conn);
+                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current", "boolean");
+                    DatabaseUtil.updateColumn(db, "savedbag", "intermine_current", "true");
                 }
             } catch (SQLException sqle) {
                 throw new BuildException("Problems connecting bagvalues table", sqle);
+            } finally {
+                try {
+                    if (conn != null) {
+                        conn.close();
+                    }
+                } catch (SQLException sqle) {
+                }
             }
         }
         try {

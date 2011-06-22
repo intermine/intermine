@@ -37,6 +37,8 @@ import org.intermine.sql.writebatch.TableBatch;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
+import sun.net.ConnectionResetException;
+
 /**
  * Collection of commonly used Database utilities
  *
@@ -859,16 +861,43 @@ public final class DatabaseUtil
     }
 
     /**
-     * Add the column intermine_current (type boolean) in the savedbag table
+     * Add a column in the table specified in input
+     * @param con the connection to use
+     * @param tableName the table where to add the column
+     * @param columnName the column to add
+     * @param type the type
+     * @throws SQLException if there is a database problem
+     */
+    public static void addColumn(Database database, String tableName, String columnName, String type)
+        throws SQLException {
+        Connection connection = database.getConnection();
+        if (DatabaseUtil.tableExists(connection, tableName)
+            && !DatabaseUtil.columnExists(connection, tableName, columnName)) {
+            try {
+                String sqlAddColumn = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + type;
+                connection.createStatement().execute(sqlAddColumn);
+            } finally {
+                connection.close();
+            }
+        }
+    }
+
+    /**
+     * Add the column intermine_current (type boolean) in the savedbag table and set it to true
      * @param con the connection to use
      * @throws SQLException if there is a database problem
      */
-    public static void addIntermineCurrentColumn(Connection con)
+    public static void updateColumn(Database database, String tableName, String columnName, String newValue)
         throws SQLException {
-        String sqlAddIntermineCurrentColumn = "ALTER TABLE savedbag ADD COLUMN intermine_current boolean";
-        String sqlUpdateCurrentColumnValue = "UPDATE savedbag SET intermine_current=true";
-        con.createStatement().execute(sqlAddIntermineCurrentColumn);
-        con.createStatement().execute(sqlUpdateCurrentColumnValue);
+        Connection connection = database.getConnection();
+        if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
+            try {
+                String sqlUpdateColumnValue = "UPDATE " + tableName + " SET " + columnName + "=" + newValue;
+                connection.createStatement().execute(sqlUpdateColumnValue);
+            } finally {
+                connection.close();
+            }
+        }
     }
 }
 

@@ -11,6 +11,7 @@ package org.intermine.task;
  */
 
 import java.util.Properties;
+import java.util.Random;
 
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.MetadataManager;
@@ -112,6 +113,7 @@ public class StoreMetadataTask extends Task
                 MetadataManager.store(db, MetadataManager.MISSING_TABLES, missingTablesString);
             }
             MetadataManager.store(db, MetadataManager.NO_NOTXML, "" + noNotXml);
+            MetadataManager.store(db, MetadataManager.SERIAL_NUMBER, Long.toString(new Random().nextLong()));
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

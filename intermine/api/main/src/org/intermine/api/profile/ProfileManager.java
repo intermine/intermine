@@ -11,6 +11,7 @@ package org.intermine.api.profile;
  */
 
 import java.io.StringReader;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.TemplateQuery;
@@ -52,6 +54,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PasswordHasher;
 import org.intermine.util.PropertiesUtil;
@@ -114,6 +117,7 @@ public class ProfileManager
                     }
                 }
             }
+            verifyListUpgrade();
         } catch (ObjectStoreException e) {
             throw new IllegalStateException("Error upgrading version number in database", e);
         } catch (SQLException e) {
@@ -629,6 +633,51 @@ public class ProfileManager
 
         public boolean isValid() {
             return System.currentTimeMillis() < expiry.getTime();
+        }
+    }
+
+    /**
+     * Verify if we need to upgrade the list
+     */
+    public void verifyListUpgrade() {
+        try {
+            String productionSerialNumber = MetadataManager.retrieve(((ObjectStoreInterMineImpl) os)
+                .getDatabase(), MetadataManager.SERIAL_NUMBER);
+            String userprofileSerialNumber = MetadataManager.retrieve(
+                ((ObjectStoreInterMineImpl) uosw).getDatabase(), MetadataManager.SERIAL_NUMBER);
+            LOG.info("Production database has serialNumber \"" + productionSerialNumber + "\"");
+            LOG.info("Userprofile database has serialNumber \"" + userprofileSerialNumber + "\"");
+            if (productionSerialNumber != null) {
+                if (userprofileSerialNumber == null
+                    || !userprofileSerialNumber.equals(productionSerialNumber)) {
+                    LOG.warn("Serial number not equal: list upgrate needed");
+                    //set current attribute to false
+                    Connection conn = null;
+                    try {
+                        conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
+                        if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                            DatabaseUtil.updateColumn(
+                                         ((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                                         "savedbag", "intermine_current", "false");
+                        }
+                    } catch (SQLException sqle) {
+                        throw new BuildException("Problems connecting bagvalues table", sqle);
+                    } finally {
+                        try {
+                            if (conn != null) {
+                                conn.close();
+                            }
+                        } catch (SQLException sqle) {
+                        }
+                    }
+                    // update the userprofileSerialNumber
+                    MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                            MetadataManager.SERIAL_NUMBER, productionSerialNumber);
+                }
+            }
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Error reading or writing serial number from/to" +
+                                            " database", sqle);
         }
     }
 }
