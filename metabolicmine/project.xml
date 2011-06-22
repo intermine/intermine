@@ -62,6 +62,13 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
+    <source name="mgi-alleles" type="mgi-alleles">
+      <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/"/>
+      <property name="src.data.dir.includes" value="MGI_PhenotypicAllele.rpt"/>
+    </source>
+    <source name="mammalian-phenotype-ontology" type="mammalian-phenotype-ontology">
+      <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/mp-ontology/MPheno_OBO.obo"/>
+    </source>
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
