@@ -40,17 +40,17 @@
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/micklem/data/old_shared_data/metabolic/ensembl-ids/current"/>
+     <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-ids/current"/>
     </source> 
    <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/old_shared_data/metabolic/ncbi/current/"/>
+     <property name="src.data.dir" location="/micklem/data/metabolic/ncbi/current/"/>
      <property name="organisms" value="9606"/>
     </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/old_shared_data/mgi/current"/>
     </source>
    <source name="rgd-identifiers" type="rgd-identifiers">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/metabolic/rgd-identifiers/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/rgd-identifiers/current"/>
     </source>
 
     <!-- uniprot must be processed immediately after chado -->
@@ -114,7 +114,7 @@
     </source>
 
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/metabolic/omim/test"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/micklem/data/old_shared_data/kegg/current"/>
