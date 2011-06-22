@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<class name="Allele" is-interface="true" extends="BioEntity">
+  <attribute name="type" type="java.lang.String"/>
+  <reference name="publication" referenced-type="Publication"/>
+  <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
+  <collection name="highLevelPhenotypeTerms" referenced-type="MammalianPhenotypeTerm"/>
+</class>
+<class name="Gene" is-interface="true" extends="BioEntity">
+  <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
+</class>
+<class name="MammalianPhenotypeTerm" extends="OntologyTerm" is-interface="true"/>
+</classes>
