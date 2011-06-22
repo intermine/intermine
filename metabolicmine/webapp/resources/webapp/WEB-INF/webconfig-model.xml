@@ -424,6 +424,12 @@
                      placement="Homology"
                      parameters="{'dataSets': ['Ensembl Compara data set']}"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAtlasDisplayer"
+                     jspName="model/proteinAtlasDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
 </reportdisplayers>
 
 <!-- widgets -->
