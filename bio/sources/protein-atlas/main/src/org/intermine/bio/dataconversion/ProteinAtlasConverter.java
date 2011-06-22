@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,7 +35,7 @@ public class ProteinAtlasConverter extends BioFileConverter
     private static final String DATASET_TITLE = "Protein Atlas expression";
     private static final String DATA_SOURCE_NAME = "Protein Atlas";
     private Map<String, String> genes = new HashMap<String, String>();
-    private Map<String, String> tissues = new HashMap<String, String>();
+    private Map<String, Item> tissues = new HashMap<String, Item>();
 
     private String taxonId = "9606";
 
@@ -56,11 +57,41 @@ public class ProteinAtlasConverter extends BioFileConverter
         File currentFile = getCurrentFile();
         if ("normal_tissue.csv".equals(currentFile.getName())) {
             processNormalTissue(reader);
+        } else if ("tissue_to_organ.tsv".equals(currentFile.getName())){
+            processTissueToOrgan(reader);
         } else {
             throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
         }
     }
 
+    private void  processTissueToOrgan(Reader reader) throws ObjectStoreException, IOException {
+        // file has two colums:
+        // Tissue name <\t> Tissue group 
+        
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+
+        Map<String, Item> tissueGroups = new HashMap<String, Item>();
+        
+        // Read all lines into gene records
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+            String tissueName = line[0];
+            String tissueGroupName = line[1];
+            
+            Item tissue = getTissue(tissueName);
+            Item tissueGroup = tissueGroups.get(tissueGroupName);
+            if (tissueGroup == null) {
+                tissueGroup = createItem("TissueGroup");
+                tissueGroup.setAttribute("name", tissueGroupName);
+                store(tissueGroup);
+                tissueGroups.put(tissueGroupName, tissueGroup);
+            }
+            tissue.setAttribute("name", tissueName);
+            tissue.setReference("tissueGroup", tissueGroup);
+            store(tissue);
+        }
+    }
+    
     private void processNormalTissue(Reader reader) throws ObjectStoreException, IOException {
         // data has format
         // "Gene","Tissue","Cell type","Level","Expression type","Reliability"
@@ -76,12 +107,12 @@ public class ProteinAtlasConverter extends BioFileConverter
         Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         lineIter.next();  // discard header
 
-        // Read all lines into gene records
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
             String geneId = getGeneId(line[0]);
-            String tissueId = getTissueId(line[1]);
+            String capitalisedTissueName = StringUtils.capitalize(line[1]);
+            Item tissueId = getTissue(capitalisedTissueName);
 
             String cellType = line[2];
             String level = line[3];
@@ -99,16 +130,15 @@ public class ProteinAtlasConverter extends BioFileConverter
         }
     }
 
-    private String getTissueId(String tissueName) throws ObjectStoreException {
-        String tissueId = tissues.get(tissueName);
-        if (tissueId == null) {
-            Item tissue = createItem("Tissue");
-            tissue.setAttribute("name", tissueName);
-            store(tissue);
-            tissueId = tissue.getIdentifier();
-            tissues.put(tissueName, tissueId);
+    // store tells us we have been called with the upper case name from the tissue_to_organ file
+    // 
+    private Item getTissue(String tissueName) throws ObjectStoreException {
+        Item tissue = tissues.get(tissueName);
+        if (tissue == null) {
+            tissue = createItem("Tissue");
+            tissues.put(tissueName, tissue);
         }
-        return tissueId;
+        return tissue;
     }
 
     private String getGeneId(String primaryIdentifier) throws ObjectStoreException {
