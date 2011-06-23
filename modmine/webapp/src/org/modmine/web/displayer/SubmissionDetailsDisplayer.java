@@ -93,7 +93,7 @@ public class SubmissionDetailsDisplayer extends ReportDisplayer
         request.setAttribute("multiplyMappedReadCount", s.getMultiplyMappedReadCount());
         request.setAttribute("uniquelyMappedReadCount", s.getUniquelyMappedReadCount());
         request.setAttribute("totalReadCount", s.getTotalMappedReadCount());
+        request.setAttribute("notice", s.getNotice());
 
-        // TODO submission notice
     }
 }
