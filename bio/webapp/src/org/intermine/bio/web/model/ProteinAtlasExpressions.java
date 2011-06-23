@@ -1,9 +1,13 @@
 package org.intermine.bio.web.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.TreeMap;
 
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -23,12 +27,11 @@ import org.intermine.api.results.ResultElement;
  */
 public class ProteinAtlasExpressions {
 
-    /** @var holds list of (initial) results */
-    private ArrayList<Map<String, String>> results;
+    /** @var holds mapped queue of mapped results (organ -> queue of results by db column key) */
+    private TreeMap<String, ExpressionList> results;
 
-    /** @var the different expressions */
-    private Expressions stainingExpressions;
-    private Expressions aPEExpressions;
+    /** @var reliability of expressions */
+    private String reliability;
 
     /** @var column keys we have in the results table */
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
@@ -39,13 +42,49 @@ public class ProteinAtlasExpressions {
         add("tissue");
     }};
 
+    // XXX remove
+    private ArrayList<String> organs =  new ArrayList<String>() {{
+        add("Central nervous system (Brain)");
+        add("Blood and immune system (Hematopoietic)");
+        add("Liver and pancreas");
+        add("Digestive tract (GI-tract)");
+        add("Respiratory system (Lung)");
+        add("Cardiovascular system (Heart and blood vessels)");
+        add("Breast and female reproductive system (Female tissues)");
+        add("Placenta");
+        add("Male reproductive system (Male tissues)");
+        add("Urinary tract (Kidney and bladder)");
+        add("Skin and soft tissues");
+        add("Endocrine glands");
+    }};
+
+    /**
+     *
+     * @return the map of lists sorted by Organ name
+     */
+    public Map<String, ExpressionList> getByOrgan() {
+        return results;
+    }
+
+    /**
+     *
+     * @return the expressions reliability
+     */
+    public String getReliability() {
+        return reliability;
+    }
+
     /**
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
      * @param values
      */
     public ProteinAtlasExpressions(ExportResultsIterator values) {
-        results = new ArrayList<Map<String, String>>();
+        // TODO add a clause correctly adding expressions to the appropriate organ list
 
+        results = new TreeMap<String, ExpressionList>();
+        Comparator<Map<String, String>> byLevelComparator = new ByLevelComparator();
+
+        // ResultElement -> Map of Lists
         while (values.hasNext()) {
             List<ResultElement> valuesRow = values.next();
 
@@ -54,88 +93,68 @@ public class ProteinAtlasExpressions {
             for (int i=0; i < expressionColumns.size(); i++)  {
                 resultRow.put(expressionColumns.get(i), valuesRow.get(i).getField().toString());
             }
-            results.add(resultRow);
+
+            // XXX remove
+            Double which = Math.random() * 10;
+            resultRow.put("organ", organs.get((int) (which - (which % 1))));
+
+            // add to the appropriate organ list
+            String organSlug = resultRow.get("organ").toLowerCase().replaceAll("[^a-z0-9-]", "");
+            if (!results.containsKey(organSlug)) {
+                results.put(organSlug, new ExpressionList(15, byLevelComparator));
+            }
+            PriorityQueue<Map<String, String>> q = results.get(organSlug);
+            q.add(resultRow);
+
+            // setup reliability for this set
+            if (reliability == null) {
+                reliability = resultRow.get("reliability");
+            }
         }
     }
 
-    /**
-     * Get Staining Expressions
-     * @return
-     */
-    public Expressions getStainingExpressions() {
-        if (stainingExpressions == null) {
-            stainingExpressions = new StainingExpressions(results);
+    @SuppressWarnings("serial")
+    public class ExpressionList extends PriorityQueue<Map<String, String>> {
+
+        public ExpressionList(int i, Comparator<Map<String, String>> comparator) {
+            super(i, comparator);
         }
-        return stainingExpressions;
+
+        public Map<String, String> getItem() {
+            return (Map<String, String>) this.poll();
+        }
     }
 
-    /**
-     * Get APE Expressions
-     * @return
-     */
-    public Expressions getAPEExpressions() {
-        if (aPEExpressions == null) {
-            aPEExpressions = new APEExpressions(results);
-        }
-        return aPEExpressions;
-    }
+    public class ByLevelComparator implements Comparator<Map<String, String>> {
 
-    /**
-     * Hold Expressions of a given type (Staining/APE)
-     * @author radek
-     *
-     */
-    public class Expressions {
-
-        protected ArrayList<Map<String, String>> expressions = new ArrayList<Map<String, String>>();
-
-        public Expressions(ArrayList<Map<String, String>> results, String type) {
-            for (Map<String, String> expression : results) {
-                if (expression.get("expressionType").toLowerCase().contains(type.toLowerCase())) {
-                    expressions.add(expression);
-                }
+        private Integer levelOrder(String level) {
+            if ("strong".equals(level)) {
+                return 1;
+            } else if ("moderate".equals(level)) {
+                return 2;
+            } else if ("weak".equals(level)) {
+                return 3;
+            } else if ("negative".equals(level)) {
+                return 4;
+            } else {
+                return 5;
             }
         }
 
-        public List<Map<String, String>> getFilter() {
-            return results;
-        }
+        @Override
+        public int compare(Map<String, String> a, Map<String, String> b) {
+            Integer aLevel = levelOrder(a.get("level").toLowerCase());
+            Integer bLevel = levelOrder(b.get("level").toLowerCase());
 
-        /**
-         * Uncached expression filtered on reliability and level conditions
-         * @param reliability
-         * @param level
-         * @return
-         */
-        public List<Map<String, String>> getFilter(String reliability, String level) {
-            List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-
-            for (Map<String, String> expression : results) {
-                if (
-                        reliability.toLowerCase().equals(expression.get("reliability").toLowerCase()) &&
-                        level.toLowerCase().equals(expression.get("level").toLowerCase())
-                        ) {
-                    result.add(expression);
+            if (aLevel < bLevel) {
+                return -1;
+            } else {
+                if (aLevel > bLevel) {
+                    return 1;
+                } else {
+                    return 0;
                 }
             }
-
-            return result;
-        }
-
-    }
-
-    public class StainingExpressions extends Expressions {
-
-        public StainingExpressions(ArrayList<Map<String, String>> results) {
-            super(results, "Staining");
-        }
-
-    }
-
-    public class APEExpressions extends Expressions {
-
-        public APEExpressions(ArrayList<Map<String, String>> results) {
-            super(results, "APE");
         }
     }
 
