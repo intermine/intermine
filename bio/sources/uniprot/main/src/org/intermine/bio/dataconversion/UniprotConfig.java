@@ -20,8 +20,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import sun.security.krb5.Config;
-
 /**
  *
  * @author julie sullivan
@@ -129,11 +127,6 @@ public class UniprotConfig
                         + key + ".  This line has not been processed.");
             }
         }
-
-        System.out.println(geneDesignation);
-        ConfigEntry configEntry = getConfig("261594");
-        System.out.println(configEntry.uniqueIdentifier);
-        System.out.println(configEntry.getIdentifierMethod(configEntry.uniqueIdentifier));
     }
 
     private ConfigEntry getConfig(String taxonId) {
