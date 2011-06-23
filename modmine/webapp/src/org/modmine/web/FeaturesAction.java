@@ -10,18 +10,20 @@ package org.modmine.web;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -30,7 +32,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
+import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.struts.GFF3ExportForm;
+import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -48,6 +52,8 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.TableExportForm;
+import org.modmine.web.model.SpanQueryResultRow;
+import org.modmine.web.model.SpanUploadConstraint;
 
 /**
  * Generate queries for overlaps of submission features and overlaps with gene flanking regions.
@@ -56,6 +62,9 @@ import org.intermine.web.struts.TableExportForm;
   */
 public class FeaturesAction extends InterMineAction
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(FeaturesAction.class);
+
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
@@ -82,17 +91,11 @@ public class FeaturesAction extends InterMineAction
         String action = request.getParameter("action");
 
         String dccId = null;
+        String sourceFile = null;
         String experimentName = null;
 
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
-
-        final String DCC_PREFIX = "modENCODE_";        
-        String[] wrongSubs = new String[]{DCC_PREFIX + "2753", DCC_PREFIX + "2754",
-                DCC_PREFIX + "2755", DCC_PREFIX + "2783", DCC_PREFIX + "2979",
-                DCC_PREFIX + "3247", DCC_PREFIX + "3251", DCC_PREFIX + "3253"};
-
-        final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
 
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
@@ -112,12 +115,6 @@ public class FeaturesAction extends InterMineAction
 
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
-
-            // temp fix for unmerged peak scores
-            if (experimentName.equalsIgnoreCase(
-                    "Genome-wide localization of essential replication initiators")) {
-                addMergingPeaks(featureType, q);
-            }
 
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
@@ -148,10 +145,10 @@ public class FeaturesAction extends InterMineAction
                 q.setDescription(description);
 
                 for (String subId : expSubsIds) {
-                    if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(new Integer(subId)))
+                    if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(subId))
                     {
                         allUnlocated.addAll(
-                                MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
+                                MetadataCache.getUnlocatedFeatureTypes(os).get(subId));
                     }
                 }
 
@@ -176,6 +173,8 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
+            sourceFile = request.getParameter("file");
+
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
@@ -198,7 +197,7 @@ public class FeaturesAction extends InterMineAction
 
                 // to build the query description
                 String experimentType = "";
-                if (sub.getExperimentType() != null) {
+                if (!StringUtils.isBlank(sub.getExperimentType())) {
                     experimentType = StringUtil.indefiniteArticle(sub.getExperimentType())
                         + " " + sub.getExperimentType() + " experiment in";
                 }
@@ -227,10 +226,6 @@ public class FeaturesAction extends InterMineAction
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-                // temp fix for unmerged peak scores
-                if (unmergedPeaks.contains(dccId)) {
-                    addMergingPeaks(featureType, q);
-                }
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -240,6 +235,12 @@ public class FeaturesAction extends InterMineAction
                     q.addView(featureType + ".submissions.DCCid");
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
+
+             // source file
+                if (sourceFile != null) {
+                    q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
+                }
+
             }
         } else if ("subEL".equals(type)) {
             // For the expression levels
@@ -272,8 +273,24 @@ public class FeaturesAction extends InterMineAction
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
-            // Use feature pids as the value in lookup constraint
-            String value = request.getParameter("value");
+            @SuppressWarnings("unchecked")
+            Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap =
+                 (Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>>) request
+                                .getSession().getAttribute("spanOverlapFullResultMap");
+
+            @SuppressWarnings("unchecked")
+            Map<SpanUploadConstraint, String> spanConstraintMap =
+                (HashMap<SpanUploadConstraint, String>)  request
+                .getSession().getAttribute("spanConstraintMap");
+
+            String spanUUIDString = request.getParameter("spanUUIDString");
+            String criteria = request.getParameter("criteria");
+
+             // Use feature pids as the value in lookup constraint
+            Set<Integer> value =
+                getSpanOverlapFeatures(spanUUIDString, criteria, spanOverlapFullResultMap);
+
+            // Create a path query
             String path = "SequenceFeature";
             q.addView(path + ".primaryIdentifier");
             q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
@@ -283,9 +300,10 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".submissions.title");
             q.addView(path + ".organism.name");
 
-            q.addConstraint(Constraints.lookup(path, value, null));
+//            q.addConstraint(Constraints.lookup(path, value, null));
+            q.addConstraint(Constraints.inIds(path, value));
 
-            String organism = request.getParameter("extraValue");
+            String organism = getSpanOrganism(spanUUIDString, spanConstraintMap);
             Set<String> organisms = new HashSet<String>();
             organisms.add(organism);
             taxIds = getTaxonIds(organisms);
@@ -323,9 +341,17 @@ public class FeaturesAction extends InterMineAction
             exportForm.setIncludeHeaders(true);
 
             if ("gff3".equals(format)) {
+                boolean makeUcscCompatible = readUcscParameter(request);
+
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
+                ((GFF3ExportForm) exportForm).setMakeUcscCompatible(makeUcscCompatible);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
+            }
+
+            if ("sequence".equals(format)) {
+                exportForm = new SequenceExportForm();
+                exportForm.setDoGzip(doGzip);
             }
 
             exporter.export(pt, request, response, exportForm);
@@ -337,12 +363,13 @@ public class FeaturesAction extends InterMineAction
 
         } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
+            //q.clearView();
             q.addView(featureType + ".id");
-            // temp fix for unmerged peak scores
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-            if (unmergedPeaks.contains(dccId)) {
-                addMergingPeaks(featureType, q);
+            sourceFile = request.getParameter("file");
+            if (sourceFile != null) {
+                q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
 
             Profile profile = SessionMethods.getProfile(session);
@@ -362,17 +389,6 @@ public class FeaturesAction extends InterMineAction
     }
 
     /**
-     * @param featureType
-     * @param dccId
-     * @param q
-     */
-    private void addMergingPeaks(String featureType, PathQuery q) {
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R1_*"));
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R2_*"));
-        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*Rep*"));
-    }
-
-    /**
      * @param project
      * @return
      */
@@ -384,6 +400,14 @@ public class FeaturesAction extends InterMineAction
             rootChoice = "Gene";
         }
         return rootChoice;
+    }
+
+    private boolean readUcscParameter(HttpServletRequest request) {
+        String ucscParameter = request.getParameter("UCSC");
+        if (ucscParameter != null) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -479,6 +503,51 @@ public class FeaturesAction extends InterMineAction
             }
         }
         return taxIds;
+    }
+
+    /**
+     * To export all overlap features
+     * @param spanUUIDString
+     * @param criteria could be "all" or a span string
+     * @param request HttpServletRequest
+     * @return comma separated feature pids as a string
+     */
+    private Set<Integer> getSpanOverlapFeatures(String spanUUIDString, String criteria,
+            Map<String, Map<GenomicRegion, List<SpanQueryResultRow>>> spanOverlapFullResultMap) {
+
+        Set<Integer> featureSet = new HashSet<Integer>();
+        Map<GenomicRegion, List<SpanQueryResultRow>> featureMap = spanOverlapFullResultMap
+                .get(spanUUIDString);
+
+        if ("all".equals(criteria)) {
+            for (List<SpanQueryResultRow> l : featureMap.values()) {
+                if (l != null) {
+                    for (SpanQueryResultRow r : l) {
+                        featureSet.add(r.getFeatureId());
+                    }
+                }
+            }
+
+        } else {
+            GenomicRegion spanToExport = new GenomicRegion(criteria);
+            for (SpanQueryResultRow r : featureMap.get(spanToExport)) {
+                featureSet.add(r.getFeatureId());
+            }
+        }
+
+        return featureSet;
+    }
+
+    private String getSpanOrganism(String spanUUIDString,
+            Map<SpanUploadConstraint, String> spanConstraintMap) {
+
+        for (Entry<SpanUploadConstraint, String> e : spanConstraintMap.entrySet()) {
+            if (e.getValue().equals(spanUUIDString)) {
+                return e.getKey().getSpanOrgName();
+            }
+        }
+
+        return null;
     }
 }
 

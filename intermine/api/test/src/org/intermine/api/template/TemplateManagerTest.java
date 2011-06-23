@@ -14,12 +14,12 @@ import org.intermine.pathquery.PathQuery;
 
 public class TemplateManagerTest extends InterMineAPITestCase {
 
-    private Profile superUser, testUser, emptyUser;
+    private Profile superUser, emptyUser;
     private TemplateQuery global1, private1, user1, overrideGlobal;
     private TemplateManager templateManager;
 
     public TemplateManagerTest() throws Exception {
-        super();
+        super(null);
     }
 
     public void setUp() throws Exception {
@@ -31,9 +31,6 @@ public class TemplateManagerTest extends InterMineAPITestCase {
 
         // superUser profile already exists
         superUser = pm.getSuperuserProfile();
-
-        testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
-        pm.createProfile(testUser);
 
         emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(emptyUser);
@@ -79,12 +76,12 @@ public class TemplateManagerTest extends InterMineAPITestCase {
     }
 
     public void testGetUserOrGlobalTemplate() throws Exception {
-        // superuser should have same behaviour as get user template
+//        // superuser should have same behaviour as get user template
         assertEquals(global1, templateManager.getUserTemplate(superUser, "global1"));
         assertEquals(private1, templateManager.getUserTemplate(superUser, "private1"));
         assertNull(templateManager.getUserTemplate(superUser, "user1"));
 
-        // normal user: user template of same name should override global
+//        // normal user: user template of same name should override global
         assertEquals(user1, templateManager.getUserTemplate(testUser, "user1"));
         assertNull(templateManager.getUserTemplate(testUser, "global1"));
         testUser.saveTemplate(overrideGlobal.getName(), overrideGlobal);

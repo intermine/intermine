@@ -9,12 +9,21 @@ div.imbedded-table-tooltip {
     font-weight: bold;
 }
 
+.imbedded-count-displayer {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .imbedded-table-container {
     margin: 20px;
     border: 1px solid #DDD;
-    width: 600px;
+    width: 70%;
     padding-bottom: 5px;
     border-radius: 2px 2px;
+}
+
+.imbedded-scroll-container {
+    overflow: auto;
 }
 
 .imbedded-table-titlebox {
@@ -34,6 +43,7 @@ div.imbedded-table-tooltip {
     font-weight: bold;
     background: #FF0084;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {
@@ -49,6 +59,10 @@ div.imbedded-table-tooltip {
 
 .imbedded-cell {
     padding: 4px;
+}
+
+.imbedded-cell > a {
+    color: #444;
 }
 
 .imbedded-cell > a:hover {
@@ -81,7 +95,7 @@ div.imbedded-table-tooltip {
     color: white ! important;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
+.imbedded-exportlink, .imbedded-pagelink {
     color: black ! important;
     font-size: 13px;
     padding-right: 5px;
@@ -99,4 +113,14 @@ div.imbedded-table-tooltip {
 
 .imbedded-table-container > a:hover {
     color: #FF0084 ! important;
+}
+
+.imbedded-table-expand-help {
+    color: #888;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }

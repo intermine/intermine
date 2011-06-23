@@ -1,5 +1,14 @@
 package org.intermine.api;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -44,15 +53,24 @@ public class InterMineAPITestCase extends TestCase {
     protected InterMineAPI im;
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
+    protected Profile testUser;
+
+    /**
+     * @param arg
+     */
+    public InterMineAPITestCase(String arg) {
+        super(arg);
+    }
 
     public void setUp() throws Exception {
+
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         clearDatabase();
         clearUserprofile();
 
-        TrackerDelegate trackerDelegate = new TrackerDelegate(new HashMap<String, Tracker>());
+        TrackerDelegate trackerDelegate = new TrackerDelegate(new String[0], uosw);
         ObjectStoreSummary oss = new ObjectStoreSummary(new Properties());
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
 
@@ -68,7 +86,11 @@ public class InterMineAPITestCase extends TestCase {
         Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pmTmp.createProfile(superUser);
 
-        im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate);
+        testUser = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        pmTmp.createProfile(testUser);
+
+        im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
+
     }
 
     public void tearDown() throws Exception {
@@ -89,6 +111,7 @@ public class InterMineAPITestCase extends TestCase {
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
         }
+        osw.close();
     }
 
     private void clearUserprofile() throws Exception {
@@ -99,7 +122,6 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         ObjectStore uos = uosw.getObjectStore();
         SingletonResults res = uos.executeSingleton(q, 1000, false, false, false);
-
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             UserProfile userProfile = (UserProfile) resIter.next();

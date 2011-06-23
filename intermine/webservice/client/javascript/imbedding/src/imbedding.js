@@ -1,11 +1,18 @@
 IMBedding = (function() {
+    // Add in a console in case there is no global one.
+    if (typeof(console) == undefined) {
+        console = {log: function() {}};
+    }
     var baseUrl = null;
     var tables = {};
     var defaultTableSize = 10;
+    var defaultQuery = {from: "genomic"};
     var placeholder = '#placeholder';
     var templateResultsPath = "/service/template/results";
     var queryResultsPath = "/service/query/results";
-    var availableTemplatesPath = "/service/templates";
+    var availableTemplatesPath = "/service/templates/json";
+    var possibleValuesPath = "/service/path/values";
+    var modelPath = "/service/model/json";
     var getColumnClass = function(index) {
         return ((index % 2 == 0) ? "imbedded-column-even" : "imbedded-column-odd");
     };
@@ -13,92 +20,133 @@ IMBedding = (function() {
         return ((index % 2 == 0) ? "imbedded-row-even" : "imbedded-row-odd");
     };
 
-    var defaultOptions = {
-        openOnLoad: false,
-        throbberSrc: "images/throbber.gif",
-        onTitleClick: "collapse",
-        showExportLinks: true,
-        showCount: true,
-        previousText: "Previous",
-        nextText: "Next",
-        showMineLink: true
+    var defaultTemplateCallback = function(data) {
+        window.im_templates = data.templates;
+    };
+    var defaultModelCallback = function(data) {
+        window.im_model = data.model;
     };
 
-    var fitContainerToTable = function(tableId, containerId) {
-        var table = document.getElementById(tableId);
-        var container = document.getElementById(containerId);
-        if (table.offsetWidth > container.offsetWidth) {
-            if (! container.defaultWidth) {
-                container.defaultWidth = container.offsetWidth;
-            }
-            container.style.width = (table.offsetWidth + 1) + 'px';
-        } else if (table.offsetWidth == 0) {
-            if (container.defaultWidth) {
-                container.style.width = container.defaultWidth + 'px';
-            }
+    var addCommas = function(nStr, separator) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + separator + '$2');
         }
-    };
+        return x1 + x2;
+    }
 
-    var getTableResizer = function(tableId, containerId, uid) {
-        return function() {
-            var table = tables[uid];
-            var action = function() {
-                $('#imbedded-csvlink-' + uid).toggle();
-                $('#imbedded-tsvlink-' + uid).toggle();
-                $('#imbedded-mineresultslink-' + uid).toggle();
-                $('#' + tableId).fadeToggle('slow', function() {
-                    fitContainerToTable(tableId, containerId);
-                    updateVisibilityOfPagers(uid);
-                });
-            };
-            if (! table.isFilledIn) {
-                $.jsonp({
-                    url: localiseUrl(table.pagePath, table.options),
-                    success: function(data) {
-                        fillInTable(uid, data, table.options);
-                        action();
-                    },
-                    callbackParameter: "callback"
-                });
+    var decamelise = function(str) {
+        var chrs = str.split("");
+        var newStr = "";
+        var lastChrWasLower = false;
+        for (var i in chrs) {
+            var ch = chrs[i];
+            var thisIsUpper = (ch.match(/[A-Z]/) != null);
+            if (lastChrWasLower && thisIsUpper) {
+                newStr += " ";
+                newStr += ch.toLowerCase();
             } else {
-                action();
+                newStr += ch;
             }
-        };
+            lastChrWasLower = !thisIsUpper;
+        }
+        return newStr;
     };
 
-    var hidePagers = function(uid) {
-        var table = tables[uid];
-        var nextLink = $("#imbedded-nextlink-" + uid);
-        var prevLink = $("#imbedded-prevlink-" + uid);
-        nextLink.hide();
-        prevLink.hide();
+    // Defines a pattern to assess what kinds of attributes we don't want to see.
+    var uglyAttributes = /^primaryIdentifier$/;
+
+    var mungeHeader = function(header) {
+        var parts = header.split(" > ");
+        if (parts.length == 1) {
+            return decamelise(parts[0]);
+        } else {
+            var retParts;
+            if (uglyAttributes.test(parts[parts.length - 1])) {
+                retParts = parts.slice(parts.length - 2, parts.length - 1);
+            } else {
+                retParts = parts.slice(parts.length - 2, parts.length);
+            }
+            for (var i in retParts) {
+                retParts[i] = decamelise(retParts[i]);
+            }
+            var ret = retParts.join(" ");
+            return ret;
+        }
     };
 
-    var updateVisibilityOfPagers = function(uid) {
-        if (! $('#imbedded-table-' + uid).is(':visible')) {
-            hidePagers(uid);
-            return;
+    var cellCreater = function(cell, localiser) {
+        var a = document.createElement("a");
+        a.target = "_blank";
+        if (cell.url) {
+            a.href = localiser(cell.url);
         }
-        var table = tables[uid];
-        var nextLink = $("#imbedded-nextlink-" + uid);
-        var prevLink = $("#imbedded-prevlink-" + uid);
-        table.nextLink = getNextUrl(table.pagePath, table.count, table.start, table.size, table.options);
-        table.prevLink = getPrevUrl(table.pagePath, table.start, table.size, table.options); 
+        a.innerHTML = cell.value;
+        return a;
+    };
 
-        if (table.start > 0) {
-            prevLink.show();
-        } else {
-            prevLink.hide();
+    var defaultOptions = {
+        formatCount: true,
+        thousandsSeparator: ",",
+        additionText: "Load [x] more rows",
+        afterBuildTable: function(table) {},
+        afterTableUpdate: function(table, resultSet) {},
+        allRowsText: "Show remaining rows",
+        collapseHelpText: "hide table",
+        countText: "[x] rows",
+        createCellContent: cellCreater,
+        defaultQueryName: "Query Results",
+        emptyCellText: "[NONE]",
+        errorHandler: function(error, statusCode) {console.log("Error:", error, statusCode); alert("Sorry - this table could not be loaded:\n" + error);},
+        expandHelpText: "show table",
+        exportCSVText: "Export as CSV file",
+        exportTSVText: "Export as TSV file",
+        mineLinkText: "View in Mine",
+        nextText: "Next",
+        onTitleClick: "collapse",
+        onTableToggle: function(table) {},
+        openOnLoad: false,
+        previousText: "Previous",
+        queryTitleText: null,
+        replaceRightArrows: true,
+        rightArrowStyle: "\u21E8", // block right arrow (unicode hex representation)
+        resultsDescriptionText: null,
+        showAdditionsLink: true,
+        showAllCeiling: 75,
+        showAllLink: true,
+        showCount: true,
+        showExportLinks: true,
+        showMineLink: true,
+        throbberSrc: "images/throbber.gif",
+        titleHoverCursor: "pointer",
+        headerMunger: mungeHeader
+    };
+
+    var localiseUrl = function(url, options) {
+        if (url.match(/^(http|https|ftp):\/\//)) {
+            return url;
         }
-        if (table.lastRow >= table.count) {
-            nextLink.hide();
+        var ret;
+        if (options && "baseUrl" in options) {
+            ret = options.baseUrl;
         } else {
-            nextLink.show();
+            ret = baseUrl;
         }
+        if ((! ret.match(/\/$/)) && (! url.match(/^\//))) {
+            ret += "/";
+        } else if (url.match(/^\//)) {
+            ret = ret.replace(/\/$/, '');
+        }
+
+        return ret + url;
     };
 
     var showIMTooltip = function(x, y, content) {
-     $('<div></div>').html(content)
+     jQuery('<div></div>').html(content)
                      .attr("id", "imtooltip")
                      .addClass("imbedded-table-tooltip")
                      .appendTo("body")
@@ -111,297 +159,530 @@ IMBedding = (function() {
      var tt = document.getElementById("imtooltip");
     };
 
-    var buildTable = function(data, target, passedOpts) {
-        var options = jQuery.extend({}, defaultOptions, passedOpts);
-        var uid = new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
-        uid = uid.replace(/\s+/g, '');
-        tables[uid] = {options: options};
+    var Table = function(data, passedOpts) {
 
-        var container = document.createElement("div");
-        container.setAttribute("class", "imbedded-table-container");
-        container.id = "imbedded-table-container-" + uid;
-            
-        var titlebox = document.createElement("div");
-        titlebox.setAttribute("class", "imbedded-table-titlebox");
-        var title = document.createElement("a");
-        title.className = "imbedded-table-title";
-        title.appendChild(document.createTextNode(data.title));
-        if (options.showCount) {
-            var countDisplayer = document.createElement("span");
-            countDisplayer.id = "imbedded-count-displayer-" + uid;
-            title.appendChild(countDisplayer);
-        }
-        titlebox.appendChild(title);
-        container.appendChild(titlebox);
-        var nextLink = document.createElement("a");
-        nextLink.id = "imbedded-nextlink-" + uid;
-        nextLink.setAttribute("class", 
-                "imbedded-pagelink imbedded-next");
-        nextLink.href = target;
-        tables[uid].nextLink = getNextUrl(data.current, null, data.start, data.size, options);
-        $(nextLink).click(function() {
-            /*$(table).children('tbody').detach();
-            var throbber = document.createElement("img");
-            throbber.src = options.throbberSrc;
-            $(table).append(throbber);*/
-            $.jsonp({
-                url: tables[uid].nextLink,
-                callbackParameter: "callback",
-                success: function(data) {
-                    fillInTable(uid, data, options);
-                    updateVisibilityOfPagers(uid);
-                    fitContainerToTable(table.id, container.id);
-                }
-            });
-        });
-        nextLink.innerHTML = options.nextText;;
-        container.appendChild(nextLink);
-        var prevLink = document.createElement("a");
-        prevLink.id = "imbedded-prevlink-" + uid;
-        prevLink.setAttribute("class", "imbedded-pagelink imbedded-prev");
-        if (! options.openOnLoad) {
-            prevLink.style.display = "none";
-            nextLink.style.display = "none";
-        }
-        prevLink.href = target;
-        $(prevLink).click(function() {
-            /*$(table).children('tbody').detach();
-            var throbber = document.createElement("img");
-            throbber.src = options.throbberSrc;
-            $(table).append(throbber);*/
-            $.jsonp({
-                url: tables[uid].prevLink,
-                callbackParameter: "callback",
-                success: function(data) {
-                    fillInTable(uid, data, options);
-                    updateVisibilityOfPagers(uid);
-                    fitContainerToTable(table.id, container.id);
-                }
-            });
-        });
-        prevLink.innerHTML = options.previousText;
-        container.appendChild(prevLink);
-        if (data.start <= 0) {
-            $(prevLink).hide();
-        }
-        var table = document.createElement("table");
-        table.setAttribute("start", data.start);
-        tables[uid].start = data.start;
-        tables[uid].lastRow = data.size;
-        tables[uid].size = data.size;
-        table.setAttribute("lastrow", data.size);
-        table.setAttribute("size", data.size);
-        table.id = "imbedded-table-" + uid;
-        $.jsonp({
-            url: localiseUrl(data.count, options),
-            success: function(countData) {
-                if (options.showCount) {
-                    $("#imbedded-count-displayer-" + uid).html(
-                        " (" + countData.count + " results)");
-                }
-                tables[uid].count = countData.count;
-                updateVisibilityOfPagers(uid);
-            }, 
-            callbackParameter: "callback"
-        });
-
-        var tableClasses = "imbedded-table";
-        table.className = tableClasses;
-        tables[uid].pagePath = data.current + "&size=" + data.size;
-        tables[uid].isFilledIn = false;
-
-        var colHeaderRow = document.createElement("tr");
-        colHeaderRow.setAttribute("class", "imbedded-table-row imbedded-column-header-row");
-        var colCount = data.views.length;
-        var counter = document.createElement("td");
-        counter.setAttribute("class", 
-                    "imbedded-cell imbedded-column-header");
-        colHeaderRow.appendChild(counter);
-        for (var i = 0; i < colCount; i++) {
-            var cell = document.createElement("td");
-            cell.setAttribute("class", "imbedded-cell imbedded-column-header");
-            cell.innerHTML = data.columnHeaders[i];
-            colHeaderRow.appendChild(cell);
-        }
-        table.appendChild(colHeaderRow);
+        this._constructor = function(data, passedOpts) {
+            var outer = this;
+            this.options = jQuery.extend({}, defaultOptions, passedOpts);
 
 
-        container.appendChild(table);
-        if (options.showExportLinks) {
-            var csvLink = document.createElement("a");
-            csvLink.id = "imbedded-csvlink-" + uid;
-            csvLink.setAttribute("class", "imbedded-exportlink");
-            csvLink.href = localiseUrl(data.csv_url, options);
-            csvLink.innerHTML = "Export as CSV file";
-            container.appendChild(csvLink);
-            var tsvLink = document.createElement("a");
-            tsvLink.id = "imbedded-tsvlink-" + uid;
-            tsvLink.setAttribute("class", "imbedded-exportlink");
-            tsvLink.href = localiseUrl(data.tsv_url, options);
-            tsvLink.innerHTML = "Export as TSV file";
-            container.appendChild(tsvLink);
-            if (!options.openOnLoad) {
-                csvLink.style.display = "none";
-                tsvLink.style.display = "none";
+            this.uid = new Date().getTime() + "-" + Math.floor(Math.random() * 1001);
+            this.uid.replace(/\s+/g, '');
+            this.start = data.start;
+            this.lastRow = data.size;
+            this.size = data.size;
+            this.pageSize = data.size;
+            this.additionSize = data.size;
+            this.pagePath = data.current;
+            this.isFilledIn = false;
+            this.count = null;
+
+            this.container = jQuery('<div id="imbedded-table-container-' 
+                    + this.uid + '" class="imbedded-table-container"></div>');
+            this.titlebox = jQuery('<div id="imbedded-table-titlebox-' 
+                    + this.uid + '" class="imbedded-table-titlebox"></div>');
+            var queryTitle = this.options.queryTitleText || data.title || this.options.defaultQueryName;
+            if (this.options.replaceRightArrows) {
+                queryTitle = queryTitle.replace("-->", this.options.rightArrowStyle);
             }
-        }
-        if (options.showMineLink && options.onTitleClick != "mine") {
-            var mineResultsLink = document.createElement("a");
-            mineResultsLink.target = "_blank";
-            mineResultsLink.id = "imbedded-mineresultslink-" + uid;
-            mineResultsLink.setAttribute("class", "imbedded-mineresultslink");
-            mineResultsLink.href = localiseUrl(data.mineResultsLink, options);
-            mineResultsLink.innerHTML = "View in Mine";
-            container.appendChild(mineResultsLink);
-            if (!options.openOnLoad) {
-                mineResultsLink.style.display = "none";
+            this.title = jQuery('<a id="imbedded-table-title-' 
+                    + this.uid + '" class="imbedded-table-title">' + queryTitle + '</a>');
+            this.expandHelp = jQuery('<span id="imbedded-table-expand-help-' 
+                    + this.uid + '" class="imbedded-table-expand-help">' 
+                    + this.options.expandHelpText + '</span>');
+            this.countDisplayer = jQuery('<span id="imbedded-count-displayer-' 
+                    + this.uid + '" class="imbedded-count-displayer"></span>');
+            this.nextUrl = this.getNextUrl();
+            this.nextLink = jQuery('<a id="imbedded-nextlink-' 
+                    + this.uid + '" class="imbedded-pagelink imbedded-next">' 
+                    + this.options.nextText + '</a>')
+                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
+                    .click(function() {
+                        jQuery.jsonp({
+                            url: outer.nextUrl,
+                            callbackParameter: "callback",
+                            success: function(data) {outer.changePage(data)}
+                        });
+                    });
+
+            this.prevLink = jQuery('<a id="imbedded-prevlink-' 
+                    + this.uid + '" class="imbedded-pagelink imbedded-prev">' 
+                    + this.options.previousText + '</a>')
+                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
+            this.prevLink.click(function() {
+                jQuery.jsonp({
+                    url: outer.prevUrl,
+                    callbackParameter: "callback",
+                    success: function(data) {outer.changePage(data)}
+                });
+            });
+
+            this.scrollContainer = jQuery('<div class="imbedded-scroll-container"></div>');
+            this.table = jQuery('<table style="display: none;" id="imbedded-table-' 
+                    + this.uid + '" class="imbedded-table"></table>');
+
+            this.colHeaderRow = jQuery('<tr class="imbedded-table-row imbedded-column-header-row"></tr>');
+            this.colHeaderRow.append('<td class="imbedded-cell imbedded-column-header"></td>');
+            for (var i = 0; i < data.views.length; i++) {
+                var cell = document.createElement("td");
+                cell.setAttribute("class", "imbedded-cell imbedded-column-header");
+                cell.innerHTML = this.options.headerMunger(data.columnHeaders[i], i, this.uid);
+                cell.setAttribute("title", data.columnHeaders[i]);
+                this.colHeaderRow.append(cell);
             }
-        }
-        table.style.display = "none";
-        jQuery(target).empty().append(container);
-        if (options.openOnLoad) {
-            $.jsonp({
-                url: localiseUrl(tables[uid].pagePath, options),
+
+            this.csvLink = jQuery('<a id="imbedded-csvlink-' + this.uid 
+                    + '" class="imbedded-exportlink">'
+                    + this.options.exportCSVText + '</a>')
+                    .attr("href", this.localiseUrl(data.csv_url));
+
+            this.tsvLink = jQuery('<a id="imbedded-tsvlink-' + this.uid 
+                    + '" class="imbedded-exportlink">' 
+                    + this.options.exportTSVText + '</a>')
+                    .attr("href", this.localiseUrl(data.tsv_url));
+
+            this.mineLink = jQuery('<a id="imbedded-mineresultslink-' + this.uid 
+                    + '" class="imbedded-exportlink imbedded-mineresultslink">'
+                    + this.options.mineLinkText + '</a>')
+                    .attr("href", this.localiseUrl(data.mineResultsLink));
+
+            var additionInner = this.options.additionText.replace("[x]", " " + data.size + " ");
+            this.additionLink = jQuery('<a id="imbedded-adder-' + this.uid 
+                + '" class="imbedded-addition-link imbedded-pagelink">' + additionInner + '</a>')
+                .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
+                .click(function() {outer.loadMoreRows()});
+
+            this.showAllLink = jQuery('<a id="imbedded-showall-' 
+                    + this.uid + '" class="imbedded-showall-link imbedded-pagelink">'
+                    + this.options.allRowsText + '</a>')
+                    .mouseover(function() { jQuery(this).css({cursor: "pointer"}) })
+                    .click(function() {outer.loadMoreRows(true)});
+
+            jQuery().add(this.csvLink).add(this.tsvLink).add(this.mineLink).attr({target: '_blank'});
+
+            // Pager links that go forwards
+            this.morePagers = jQuery().add(this.nextLink).add(this.showAllLink).add(this.additionLink);
+            // all pager links
+            this.pagers = jQuery().add(this.prevLink).add(this.morePagers);
+
+            jQuery.jsonp({
+                url: this.localiseUrl(data.count),
+                success: function(countData) {
+                    if (outer.options.showCount) {
+                        var displayCount = (outer.options.formatCount) 
+                            ? addCommas(countData.count, outer.options.thousandsSeparator)
+                            : countData.count;
+                        var count = outer.options.countText.replace("[x]", displayCount);
+                        outer.countDisplayer.text("(" + count + ")");
+                    }
+                    outer.count = countData.count;
+                    if (countData.count == 0) {
+                        outer.title.unbind("click");
+                        outer.expandHelp.remove();
+                        outer.title.css({cursor: "default"});
+                        if (outer.options.openOnLoad) {
+                            outer.resizeTable();
+                        }
+                    }
+                    outer.updateVisibilityOfPagers();
+                }, 
+                callbackParameter: "callback"
+            });
+
+            if (data.start <= 0) {
+                this.prevLink.hide();
+            }
+
+            if (! this.options.openOnLoad) {
+                jQuery().add(this.prevLink)
+                        .add(this.nextLink)
+                        .add(this.csvLink)
+                        .add(this.tsvLink)
+                        .add(this.mineLink)
+                        .hide();
+            }
+
+            if (this.options.showCount) {
+                this.title.append(this.countDisplayer);
+            }
+
+            // Slot it all together
+            this.titlebox.append(this.title);
+            this.scrollContainer.append(this.table);
+            this.container.append(this.titlebox)
+                        .append(this.nextLink)
+                        .append(this.prevLink)
+                        .append(this.scrollContainer);
+
+            if (this.options.showExportLinks) {
+                this.container.append(this.csvLink)
+                            .append(this.tsvLink);
+            }
+
+            if (this.options.showMineLink && this.options.onTitleClick != "mine") {
+                this.container.append(this.mineLink);
+            }
+            if (this.options.showAdditionsLink) {
+                this.container.append(this.additionLink);
+            }
+            if (this.options.showAllLink) {
+                this.container.append(this.showAllLink);
+            }
+
+            if (this.options.onTitleClick == "collapse") {
+                this.title.append(this.expandHelp);
+                this.title.click(function() {outer.resizeTable()})
+                          .mouseover(function() { jQuery(this).css({cursor: "pointer"}) });
+            } else if (this.options.onTitleClick == "mine") {
+                this.title.attr({href: this.localiseUrl(data.mineResultsLink), target: "_blank"});
+            } else if (this.options.onTitleClick instanceof Function) {
+                this.title.click(this.options.onTitleClick)
+                          .mouseover(function() { 
+                            jQuery(this).css({cursor: outer.options.titleHoverCursor}) 
+                          });
+            }
+
+
+            var queryDescription = this.options.resultsDescriptionText || data.description;
+            this.titlebox.hover(
+                function(event) {
+                    showIMTooltip(event.pageX, event.pageY, queryDescription);
+                },
+                function(event) {
+                    jQuery('.imbedded-table-tooltip').remove();
+                }
+            );
+
+            if (this.options.openOnLoad) {
+                this.resizeTable();
+            } else {
+                var throbber = document.createElement("img");
+                throbber.src = this.options.throbberSrc;
+                this.table.append(throbber);
+            }
+        };
+
+        this.changePage = function(data, append) {
+            this.fillInTable(data, append);
+            this.updateVisibilityOfPagers();
+            this.fitContainerToTable();
+        };
+
+        this.toggleExpandHelpText = function() {
+            if (this.expandHelp.text() === this.options.expandHelpText) {
+                this.expandHelp.text(this.options.collapseHelpText);
+            } else {
+                this.expandHelp.text(this.options.expandHelpText);
+            }
+        };
+
+        // Make sure that the table container 
+        // is large enough to fit the table it contains.
+        this.resizeTable = function() {
+            var outer = this;
+            var action = function() {
+                outer.toggleExpandHelpText();
+                outer.table.slideToggle(function() {
+                    outer.fitContainerToTable();
+                    if (jQuery(outer.table).is(':visible')) {
+                        outer.csvLink.show();
+                        outer.tsvLink.show();
+                        outer.mineLink.show();
+                    } else {
+                        outer.csvLink.hide();
+                        outer.tsvLink.hide();
+                        outer.mineLink.hide();
+                    }
+                    if (outer.csvLink.is(':visible')) {
+                        outer.csvLink.css({display: 'inline'});
+                    }
+                    if (outer.tsvLink.is(':visible')) {
+                        outer.tsvLink.css({display: 'inline'});
+                    }
+                    if (outer.mineLink.is(':visible')) {
+                        outer.mineLink.css({display: 'inline'});
+                    }
+                    outer.updateVisibilityOfPagers();
+                });
+                outer.options.onTableToggle(outer);
+            };
+            var url = this.localiseUrl(this.getPageUrl());
+            if (! this.isFilledIn) {
+                this.container.css({cursor: "wait"});
+                jQuery.jsonp({
+                    url: url,
+                    success: function(data) {
+                        outer.fillInTable(data);
+                        action();
+                        outer.container.css({cursor: "default"});
+                    },
+                    callbackParameter: "callback"
+                });
+            } else {
+                action();
+            }
+        };
+
+
+        this.updateVisibilityOfPagers = function() {
+            if (! this.table.is(':visible')) {
+                this.hidePagers();
+                return;
+            }
+            this.nextUrl = this.getNextUrl();
+            this.prevUrl = this.getPrevUrl();
+
+
+            if (this.start > 0) {
+                this.prevLink.show();
+            } else {
+                this.prevLink.hide();
+            }
+            if (this.lastRow >= this.count) {
+                this.morePagers.hide();
+            } else {
+                this.morePagers.show();
+            }
+            if (this.count > this.options.showAllCeiling) {
+                this.showAllLink.hide();
+            }
+        };
+
+        this.hidePagers = function() {
+            this.pagers.hide();
+        };
+
+        this.loadMoreRows = function(showAll) {
+            var outer = this;
+            var noOfRowsToGet = this.additionSize;
+            var append = true;
+            var url = this.getNextUrl(noOfRowsToGet, showAll);
+            jQuery.jsonp({
+                url: url,
                 success: function(data) {
-                    fillInTable(uid, data, options);
-                    $(table).fadeToggle();
-                    fitContainerToTable(table.id, container.id);
-                    updateVisibilityOfPagers(uid);
+                    outer.size += noOfRowsToGet;
+                    outer.changePage(data, append);
                 },
                 callbackParameter: "callback"
             });
-        } else {
-            var throbber = document.createElement("img");
-            throbber.src = options.throbberSrc;
-            $(table).append(throbber);
-        }
-        if (options.onTitleClick == "collapse") {
-            title.href = "#" + container.id;
-            jQuery(titlebox).click(getTableResizer(table.id, container.id, uid));
-        } else if (options.onTitleClick == "mine") {
-            title.href = localiseUrl(data.mineResultsLink, options);
-            title.target = "_blank";
-        }
-        jQuery(title).hover(
-            function(event) {
-                showIMTooltip(event.pageX, event.pageY, data.description);
-            },
-            function(event) {
-                jQuery('.imbedded-table-tooltip').remove();
+        };
+
+        this.containerNeedsExpanding = function() {
+            return this.table.attr("offsetWidth") >= this.scrollContainer.attr("offsetWidth");
+        };
+
+        this.expandContainer = function() {
+            if (! this.defaultContainerwidth) {
+                this.defaultContainerwidth = this.scrollContainer.attr("offsetWidth") + 'px';
             }
-        );
-    };
+            this.scrollContainer.css({width: (this.table.attr("offsetWidth") + 1) + 'px'});
+        };
 
-    var getNextUrl =function(basePath, count, start, size, options) {
-        var nextStart = (count != null) ? Math.min(count, (start + size)) : (start + size);
-        var ret = localiseUrl(basePath, options) + "&start=" + nextStart;
-        return ret;
-    }
-        
-    var getPrevUrl = function(basePath, start, size, options) {
-        var nextStart = Math.max(0, (start - size));
-        return localiseUrl(basePath, options) + "&start=" + nextStart;
-    }
+        this.tableIsHidden = function() {
+            return this.table.attr("offsetWidth") == 0;
+        };
 
-    var fillInTable = function(uid, resultSet, options) {
-        var table = jQuery("#imbedded-table-" + uid);
-        // Remove any data this table already contains
-        table.children('tbody').detach();
-        // Remove the throbber
-        table.children('img').detach();
+        // Perform the resize
+        this.fitContainerToTable = function() {
+            this.scrollContainer.css({width: this.container.attr("clientWidth") + 'px'});
+        };
 
-        var resultCount = resultSet.results.length;
-        for (var i = 0; i < resultCount; i++) {
-            var dataRow = document.createElement("tr");
-            dataRow.setAttribute("class", "imbedded-table-row imbedded-data-row " + getRowClass(i));
-            var numCell = document.createElement("td");
-            numCell.setAttribute("class", "imbedded-cell " + getColumnClass(0));
-            numCell.innerHTML = i + 1 + parseInt(resultSet.start);
-            dataRow.appendChild(numCell);
+        // get a page url using the base url 
+        // and the given page size (or the default one)
+        this.getPageUrl = function(size) {
+            size = size || this.size;
+            return this.pagePath + "&size=" + size;
+        };
 
-            var colCount = resultSet.results[i].length;
+        // Construct the url to page forwards to
+        this.getNextUrl = function(size, showAll) {
+            size = size || this.size;
+            var naiveNext = this.start + size;
+            
+            var nextStart = (this.count != null) ? Math.min(this.count, naiveNext) : naiveNext;
+            nextStart = Math.max(this.lastRow, nextStart);
+            var basePath = showAll ? this.pagePath : this.getPageUrl(size);
+            var ret = this.localiseUrl(basePath) + "&start=" + nextStart;
+            return ret;
+        };
 
-            for (var j = 0; j < colCount; j++) {
-                var cell = resultSet.results[i][j];
-                var tableCell = document.createElement("td");
-                tableCell.setAttribute("class", "imbedded-cell " + getColumnClass(j));
-                if (cell.value) {
-                    var a = document.createElement("a");
-                    a.target = "_blank";
-                    a.href = localiseUrl(cell.url, options);
-                    a.innerHTML = cell.value;
-                    tableCell.appendChild(a);
-                } else {
-                    tableCell.innerHTML = "[NONE]";
+        // Construct the url to page backwards to
+        this.getPrevUrl = function(size) {
+            size = size || this.size;
+
+            var nextStart = Math.max(0, (this.start - size));
+            var basePath = this.getPageUrl(size);
+            var ret = this.localiseUrl(basePath) + "&start=" + nextStart;
+            return ret;
+        }
+
+        // construct a url using the path fragment given and the
+        // baseUrl we know, because we requested it in the first place
+        this.localiseUrl = function(url) {
+            return localiseUrl(url, this.options);
+        };
+
+        this.getLocaliser =function(options) {
+            return function(url) {
+                return localiseUrl(url, options);
+            };
+        };
+
+        // insert rows of data into the table
+        // either appending them, or replacing the 
+        // current ones
+        this.fillInTable = function(resultSet, append) {
+            // Remove any data this table already contains
+            if (! append) {
+                this.table.children('tbody').detach();
+                this.table.append(this.colHeaderRow);
+            }
+            // Remove the throbber
+            this.table.children('img').detach();
+
+            var resultCount = resultSet.results.length;
+            for (var i = 0; i < resultCount; i++) {
+                var rowNumber = i + 1 + parseInt(resultSet.start);
+                var dataRow = document.createElement("tr");
+                dataRow.setAttribute("class", "imbedded-table-row imbedded-data-row " 
+                        + getRowClass(rowNumber - 1));
+                var numCell = document.createElement("td");
+                numCell.setAttribute("class", "imbedded-cell " + getColumnClass(0));
+                numCell.innerHTML = rowNumber;
+                dataRow.appendChild(numCell);
+
+                var colCount = resultSet.results[i].length;
+
+                for (var j = 0; j < colCount; j++) {
+                    var cell = resultSet.results[i][j];
+                    var tableCell = document.createElement("td");
+                    tableCell.setAttribute("class", "imbedded-cell " + getColumnClass(j));
+                    if (cell.value != null) {
+                        var elem = this.options.createCellContent(cell, this.getLocaliser(this.options));
+                        tableCell.appendChild(elem);
+                    } else {
+                        tableCell.innerHTML = this.options.emptyCellText;
+                        jQuery(tableCell).addClass("imbedded-null");
+                    }
+                    dataRow.appendChild(tableCell);
                 }
-                dataRow.appendChild(tableCell);
+                this.table.append(dataRow);
             }
-            table.append(dataRow);
-        }
-        tables[uid].start = resultSet.start;
-        tables[uid].lastRow = resultCount + resultSet.start;
-        tables[uid].isFilledIn = true;
-        IMBedding.afterBuildTable(uid, resultSet);
+            if (! append) {
+                this.start = resultSet.start;
+            }
+            this.lastRow = resultCount + resultSet.start;
+            this.isFilledIn = true;
+            if (this.options.afterTableUpdate) {
+                this.options.afterTableUpdate(this, resultSet);
+            }
+            IMBedding.afterTableUpdate(this.table, resultSet);
+        };
+
+        this._constructor(data, passedOpts);
+
     };
 
-    var localiseUrl = function(url, options) {
-        var ret;
-        if (options && "baseUrl" in options) {
-            ret = options.baseUrl;
-        } else {
-            ret = baseUrl;
+    var buildTable = function(data, target, passedOpts) {
+        var table = new Table(data, passedOpts);
+        tables[table.uid] = table;
+
+        jQuery(target).empty().append(table.container);
+        if (table.options.afterBuildTable) {
+            table.options.afterBuildTable(table);
         }
-        if ((! ret.match(/\/$/)) && (! url.match(/^\//))) {
-            ret += "/";
-        }
-        return ret + url;
-    }
+        IMBedding.afterBuildTable(table);
+    };
+        
 
     var getCallback = function(target, options) {
         if (target instanceof Function) {
             return target;
         } else {
-            return function(data) {buildTable(data, target, options)};
-        }
-    };
-    var handleError = function(options, textStatus) {
-        if (textStatus == "error") {
-            alert("Something was wrong with your query - please edit it");
-        } else {
-            alert(textStatus);
+            return function(data) {
+                if ("wasSuccessful" in data) {
+                    if (data.wasSuccessful) {
+                        buildTable(data, target, options);
+                    } else {
+                        errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                        errorHandler(data.error, data.statusCode);
+                    }
+                } else {
+                    errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                    errorHandler("Incorrect data format returned from server", 500);
+                }
+            }
         }
     };
     var loadUrl = function(url, target) {
             url += "&format=jsonptable";
             return getResults(url, {}, target);
     };
+
+    var getErrorHandler = function(options) {
+        if (options && "errorHandler" in options) {
+            return options["errorHandler"];
+        } else {
+            return defaultOptions.errorHandler;
+        }
+    };
+
     var getResults = function(url, data, target, options) {
-        var callback = getCallback(target, options);
+        var errorHandler = getErrorHandler(options);
         if (! data.format) {
             data.format = "jsonptable";
         }
         if (! data.size && data.format == "jsonptable") {
             data.size = defaultTableSize;
         }
-        $.jsonp({
-            url: url, 
-            data: data, 
-            success: callback, 
-            callbackParameter: "callback",
-            error: handleError
-        });
+        if (!target instanceof Function) {
+            var throbber = document.createElement("img");
+            throbber.src = defaultOptions.throbberSrc;
+            jQuery(target).empty().append(throbber);
+        }
+
+        if (data.format == "jsonobjects" || data.format == "jsonrows" || data.format == "jsoncount") {
+            // The user expects us to make a same-domain request.
+            var callback = target;
+            jQuery.getJSON(url, data, target);
+        } else {
+            var callback = getCallback(target, options);
+            jQuery.jsonp({
+                url: url, 
+                data: data, 
+                success: callback, 
+                callbackParameter: "callback",
+                error: errorHandler,
+                traditional: true
+            });
+        }
     };
 
-    var getConstraints = function(constraints) {
-        var constraintsString = "";
-        for (var i = 0; i < constraints.length; i++) {
-            var whereClause = constraints[i];
-            var whereString = "<constraint ";
-            for (attr in whereClause) {
+    var makeConstraint = function(whereClause) {
+        var i = 0, len = 0, whereString = "<constraint ", attr = null;
+        for (attr in whereClause) {
+            if (attr != "values") {
                 whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
             }
+        }
+        if (whereClause.values) {
+            whereString += ">";
+            len = whereString.values.length;
+            while(i++ < len) {
+                whereString += "<value>" + whereString.values[i] + "</value>";
+            }
+            whereString += "</constraint>";
+        } else {
             whereString += "/>";
-            constraintsString += whereString;
+        }
+        return whereString;
+    }
+
+
+    var getConstraints = function(constraints) {
+        var constraintsString = "", cl = constraints.length, i = 0;
+        while (i++ < cl) {
+            constraintsString += makeConstraint(constraints[i]);
         }
         return constraintsString;
     };
@@ -410,34 +691,41 @@ IMBedding = (function() {
         if (typeof(source) == "string") {
             return source;
         } else if (source instanceof Object) {
-            var xmlString = '<query model="';
-            if ("model" in source) {
-                xmlString += source.model;
-            } else if ("from" in source) {
-                xmlString += source.from;
+            var query = jQuery.extend({}, defaultQuery, source);
+            var xmlString = '<query '
+
+            if ("title" in query) {
+                xmlString += 'title="' + query.title + '" ';
+            }
+
+            xmlString += 'model="';
+            if ("model" in query) {
+                xmlString += query.model;
+            } else if ("from" in query) {
+                xmlString += query.from;
             } else {
                 throw("No model in query");
             }
 
             xmlString += '" view="';
-            if ("view" in source) {
-                xmlString += source.view.join(" ");
-            } else if ("select" in source) {
-                xmlString += source.select.join(" ");
+            if ("view" in query) {
+                xmlString += query.view.join(" ");
+            } else if ("select" in query) {
+                xmlString += query.select.join(" ");
             } else {
-                throw("No view in source");
+                throw("No view in query");
             }
             xmlString += '" ';
-            if ("constraintLogic" in source) {
-                xmlString += 'constraintLogic="' + source.constraintLogic + '" ';
+            if ("constraintLogic" in query) {
+                xmlString += 'constraintLogic="' + query.constraintLogic + '" ';
             }
-            if ("sortOrder" in source) {
-                xmlString += 'sortOrder="' + source.sortOrder + '" ';
+            if ("sortOrder" in query) {
+                xmlString += 'sortOrder="' + query.sortOrder + '" ';
             }
             xmlString += ">";
-            if ("joins" in source) {
-                for (var i = 0; i < source.joins.length; i++) {
-                    var join = source.joins[i];
+            if ("joins" in query) {
+                for (var i = 0; i < query.joins.length; i++) {
+                    var join = query.joins[i];
                     var joinString = '<join ';
                     
                     for (attr in join) {
@@ -447,11 +735,11 @@ IMBedding = (function() {
                     xmlString += joinString;
                 }
             }
-            if ("where" in source) {
-                xmlString += getConstraints(source.where);
+            if ("where" in query) {
+                xmlString += getConstraints(query.where);
             }
-            if ("constraints" in source) {
-                xmlString += getConstraints(source.constraints);
+            if ("constraints" in query) {
+                xmlString += getConstraints(query.constraints);
             }
             xmlString += '</query>';
             return xmlString;
@@ -473,9 +761,60 @@ IMBedding = (function() {
         }
     };
 
+    var _loadJSInclude = function(scriptPath, callback) {
+        var scriptNode = document.createElement('SCRIPT');
+        scriptNode.type = 'text/javascript';
+        scriptNode.src = scriptPath;
+
+        var headNode = document.getElementsByTagName('HEAD');
+        if (headNode[0] != null) {
+            headNode[0].appendChild(scriptNode);
+        }
+
+        if (callback != null) {
+            scriptNode.onreadystagechange = callback;            
+            scriptNode.onload = callback;
+        }
+    }
+
+    var _check_for_jsonp = function(callback) {
+        if (typeof(jQuery.jsonp) == 'undefined') {
+            _loadJSInclude('http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js', callback);
+        } else {
+            callback();
+        }
+    }
+    var _check_for_jquery = function(callback) {
+        if (typeof(jQuery) == 'undefined') {
+            _loadJSInclude('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js', function() {_check_for_jsonp(callback)});
+        } else {
+            _check_for_jsonp(callback);
+        }
+    }
+
+    var loadDependencies = function(callback) {
+        _check_for_jquery(callback);
+    }
+
     return {
-        afterBuildTable: function(uid, data) {},
+        getTables: function() {return tables},
+        getTable: function(id) {return tables[id]},
+        setErrorHandler: function(errorHandler) {handleError = errorHandler},
+        afterTableUpdate: function(table, data) {},
+        afterBuildTable: function(table) {},
         makeQueryXML: getXML,
+        setDefaultQuery: function(obj) {
+            defaultQuery = obj;
+            return defaultQuery;
+        },
+        setDefaultOptions: function(obj) {
+            loadDependencies(function() {
+                jQuery.extend(defaultOptions, obj);
+            });
+        },
+        getDefaultOptions: function() {
+            return defaultOptions;
+        },
         setBaseUrl: function(url) {
             baseUrl = url;
             return baseUrl;
@@ -484,16 +823,64 @@ IMBedding = (function() {
             return baseUrl;
         },
         loadTemplate: function(data, target, options) {
-            if ("baseUrl" in data) {
-                baseUrl = data.baseUrl;
-            }
-            var url = localiseUrl(templateResultsPath, options); 
-            return getResults(url, data, target, options);
+            loadDependencies(function() {
+                if ("baseUrl" in data) {
+                    baseUrl = data.baseUrl;
+                }
+                var url = localiseUrl(templateResultsPath, options); 
+                getResults(url, data, target, options);
+            });
         },
         loadQuery: function(query, data, target, options) {
-            data.query = getXML(query);
-            var url = localiseUrl(queryResultsPath, options);
-            return getResults(url, data, target, options);
+            loadDependencies(function() {
+                data.query = getXML(query);
+                var url = localiseUrl(queryResultsPath, options);
+                getResults(url, data, target, options);
+            });
+        },
+        loadPossibleValues: function(path, subclasses, options) {
+            loadDependencies(function() {
+                var url = localiseUrl(possibleValuesPath, options);
+                var params = {path: path};
+                if (subclasses) {
+                    params.typeConstraints = JSON.stringify(subclasses);
+                }
+                options = options || {};
+                if (options.format) {
+                    params.format = options.format;
+                }
+                jQuery.jsonp({
+                    url: url, 
+                    data: params, 
+                    success: options.callback, 
+                    callbackParameter: "callback"
+                });
+            });
+        },
+        loadModel: function(options) {
+            loadDependencies(function() {
+                var url = localiseUrl(modelPath, options);
+                options = options || {};
+                var callback = options.callback || defaultModelCallback;
+                jQuery.jsonp({
+                    url: url, 
+                    success: callback, 
+                    callbackParameter: "callback"
+                });
+            });
+        },
+        loadTemplates: function(options) {
+            loadDependencies(function() {
+                var url = localiseUrl(availableTemplatesPath, options);
+                options = options || {};
+                var callback = options.callback || defaultTemplateCallback;
+                jQuery.jsonp({
+                    url: url, 
+                    success: callback, 
+                    callbackParameter: "callback"
+                });
+            });
         }
     };
 })();
+

@@ -26,6 +26,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
@@ -49,7 +50,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
     private Profile profile;
     private ProfileManager pm;
     private ObjectStore os;
-    private ObjectStoreWriter osw, uosw;
+    private ObjectStoreWriter uosw;
 
     public TemplateSummariserTest(String arg) {
         super(arg);
@@ -57,8 +58,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        os = osw.getObjectStore();
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
 
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         pm = new ProfileManager(os, uosw);
@@ -76,10 +76,11 @@ public class TemplateSummariserTest extends StoreDataTestCase
         twoConstraints.setEditable(depCon, true);
         profile.saveTemplate("template", twoConstraints);
     }
-    
+
     public void tearDown() throws Exception {
         profile.deleteTemplate("template", null);
         removeUserProfile(profile.getUsername());
+        uosw.close();
     }
 
     private void removeUserProfile(String username) throws ObjectStoreException {

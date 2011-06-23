@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-	prefix="str"%>
+  prefix="str"%>
 
 
 <tiles:importAttribute />
@@ -17,10 +17,10 @@
 <div class="body">
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${labs}" var="item" varStatus="status">
-		<c:if test="${status.count%2 eq 1}"><tr></c:if>
-			<td><html:link
-				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
+  <c:forEach items="${labs}" var="item" varStatus="status">
+    <c:if test="${status.count%2 eq 1}"><tr></c:if>
+      <td><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
 

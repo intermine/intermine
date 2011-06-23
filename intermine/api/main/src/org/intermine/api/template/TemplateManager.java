@@ -11,17 +11,16 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
@@ -34,7 +33,6 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
@@ -49,9 +47,9 @@ public class TemplateManager
 {
 
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
-    private Profile superProfile;
-    private Model model;
-    private TagManager tagManager;
+    private final Profile superProfile;
+    private final Model model;
+    private final TagManager tagManager;
     private TemplateTracker templateTracker;
 
     /**
@@ -136,7 +134,7 @@ public class TemplateManager
      * @param profile the user to fetch templates
      * @return a map of template name to template query, the map will be empty if no templates found
      */
-    protected Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+    public Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
         // where name collisions occur user templates take precedence
         Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
 
@@ -146,50 +144,71 @@ public class TemplateManager
         return allTemplates;
     }
 
+    /**
+     * Fetch all user and global templates that are valid. These templates can be expected
+     * to work with the mine in their current state.
+     * @param profile The user to fetch templates for.
+     * @return A map of templates and their names.
+     */
+    public Map<String, TemplateQuery> getWorkingTemplates(Profile profile) {
+        Map<String, TemplateQuery> allTemplates = getUserAndGlobalTemplates(profile);
+        Map<String, TemplateQuery> workingTemplates = new TreeMap<String, TemplateQuery>();
+        filterOutBrokenTemplates(allTemplates, workingTemplates);
+        return workingTemplates;
+    }
+
+    /**
+     * Fetch all global templates that are valid. These templates can be expected
+     * to work with the mine in their current state.
+     * @return A map of templates and their names.
+     */
+    public Map<String, TemplateQuery> getWorkingTemplates() {
+        Map<String, TemplateQuery> publicTemplates = getGlobalTemplates();
+        Map<String, TemplateQuery> workingTemplates = new TreeMap<String, TemplateQuery>();
+        filterOutBrokenTemplates(publicTemplates, workingTemplates);
+        return workingTemplates;
+    }
+
+    private void filterOutBrokenTemplates(Map<String, TemplateQuery> in,
+            Map<String, TemplateQuery> out) {
+        for (Entry<String, TemplateQuery> pair: in.entrySet()) {
+            if (pair.getValue().isValid()) {
+                out.put(pair.getKey(), pair.getValue());
+            }
+        }
+    }
 
     /**
      * Get a list of template queries that should appear on report pages for the given type
      * under the specified aspect.
      * @param aspect the aspect to fetch templates for
-     * @param type the type of report page
+     * @param allClasses the type of report page and superclasses
      * @return a list of template queries
      */
-    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect, String type) {
+    public List<TemplateQuery> getReportPageTemplatesForAspect(String aspect,
+            Set<String> allClasses) {
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
-
         List<TemplateQuery> aspectTemplates = getAspectTemplates(aspect);
-
-        Set<String> allClasses;
-        if (type.contains(",")) {
-            allClasses = new HashSet<String>(Arrays.asList(type.split(",")));
-        } else {
-            allClasses = Collections.singleton(type);
-        }
-
         for (TemplateQuery template : aspectTemplates) {
             if (isValidReportTemplate(template, allClasses)) {
                 templates.add(template);
             }
         }
-
         Collections.sort(templates, TEMPLATE_COMPARATOR);
         return templates;
     }
-
 
     /**
      * Return true if a template should appear on a report page.  All logic should be contained
      * in this method.
      * @param template the template to check
-     * @param classes the class of the report page and it's superclasses
+     * @param classes the class of the report page and its superclasses
      * @return true if template should be displayed on the report page
      */
     private boolean isValidReportTemplate(TemplateQuery template, Collection<String> classes) {
 
-        // is this template tagged to be hidden on report pages
-        List<Tag> noReportTags = tagManager.getTags(TagNames.IM_REPORT, template.getName(),
-                TagTypes.TEMPLATE, superProfile.getUsername());
-        if (noReportTags.size() < 1) {
+        // must be tagged to be on report page
+        if (!hasTag(superProfile, TagNames.IM_REPORT, template)) {
             return false;
         }
 
@@ -199,30 +218,27 @@ public class TemplateManager
         }
         PathConstraint constraint = template.getEditableConstraints().get(0);
 
-        if (constraint.getOp().equals(ConstraintOp.LOOKUP)) {
-            if (!classes.contains(constraint.getPath())) {
-                return false;
-            }
+        Path path = null;
+        try {
+            path = template.makePath(constraint.getPath());
+        } catch (PathException e) {
+            // not a valid path
+            return false;
+        }
+
+        // find if type that is being constrained inherits from type of report page
+        String constrainedType;
+        if (path.endIsAttribute()) {
+            constrainedType = path.getPrefix().getEndType().getSimpleName();
         } else {
-            Path path = null;
-            try {
-                path = template.makePath(constraint.getPath());
-            } catch (PathException e) {
-                // not a valid path
-                return false;
-            }
-            // if this a root path can only be a LOOKUP constraint
-            if (path.isRootPath()) {
-                return false;
-            }
-            String parentPath = path.getPrefix().getNoConstraintsString();
-            if (!classes.contains(parentPath)) {
-                return false;
-            }
+            // this is a LOOKUP constraint
+            constrainedType = path.getEndType().getSimpleName();
+        }
+        if (!classes.contains(constrainedType)) {
+            return false;
         }
         return true;
     }
-
 
     /**
      * Get public templates for a particular aspect.
@@ -232,7 +248,6 @@ public class TemplateManager
     public List<TemplateQuery> getAspectTemplates(String aspect) {
         return getAspectTemplates(aspect, null);
     }
-
 
     /**
      * Get public templates for a particular aspect.
@@ -270,7 +285,6 @@ public class TemplateManager
         return aspectTemplates;
     }
 
-
     /**
      * Return a map from template name to template query containing superuser templates that are
      * tagged as public and are valid for the current data model.
@@ -278,7 +292,6 @@ public class TemplateManager
      */
     public Map<String, TemplateQuery> getValidGlobalTemplates() {
         Map<String, TemplateQuery> validTemplates = new HashMap<String, TemplateQuery>();
-
         for (Map.Entry<String, TemplateQuery> entry : getGlobalTemplates().entrySet()) {
             if (entry.getValue().isValid()) {
                 validTemplates.put(entry.getKey(), entry.getValue());
@@ -296,6 +309,15 @@ public class TemplateManager
         return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC);
     }
 
+    /**
+     * Return a map from template name to template query containing superuser templates that are
+     * tagged as public.
+     * @param filterOutAdmin if true, filter out templates tagged with IM_ADMIN
+     * @return a map from template name to template query
+     */
+    public Map<String, TemplateQuery> getGlobalTemplates(boolean filterOutAdmin) {
+        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC, filterOutAdmin);
+    }
 
     /**
      * Return template queries used for converting between types in bag upload and lookup queries,
@@ -312,8 +334,6 @@ public class TemplateManager
         return conversionTemplates;
     }
 
-
-
     /**
      * Return a map from template name to template query of template in the given profile that are
      * tagged with a particular tag.
@@ -322,17 +342,43 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag) {
+        return getTemplatesWithTag(profile, tag, false);
+    }
+
+    /**
+     * Return a map from template name to template query of template in the given profile that are
+     * tagged with a particular tag.
+     * @param profile a user profile to get templates from
+     * @param tag the tag to search for
+     * @param filterOutAdmin if true, filter out templates tagged with IM_ADMIN
+     * @return a map from template name to template query
+     */
+    private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag,
+            boolean filterOutAdmin) {
         Map<String, TemplateQuery> templatesWithTag = new HashMap<String, TemplateQuery>();
 
         for (Map.Entry<String, TemplateQuery> entry : profile.getSavedTemplates().entrySet()) {
-            TemplateQuery bag = entry.getValue();
-            List<Tag> tags = tagManager.getTags(tag, bag.getName(), TagTypes.TEMPLATE,
+            TemplateQuery template = entry.getValue();
+            List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());
             if (tags.size() > 0) {
+                // if filtering by admin tag, don't include this template if it's tagged with ADMIN
+                if (filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
+                    continue;
+                }
                 templatesWithTag.put(entry.getKey(), entry.getValue());
             }
         }
         return templatesWithTag;
+    }
+
+    private boolean hasTag(Profile profile, String tagName, TemplateQuery template) {
+        List<Tag> tags = tagManager.getTags(tagName, template.getName(), TagTypes.TEMPLATE,
+                profile.getUsername());
+        if (tags.size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -361,6 +407,7 @@ public class TemplateManager
         List<Entry<String, Double>> listOrdered =
             new LinkedList<Entry<String, Double>>(templateLnRank.entrySet());
         Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
+            @Override
             public int compare (Entry<String, Double> e1, Entry<String, Double> e2) {
                 return -e1.getValue().compareTo(e2.getValue());
             }
@@ -368,9 +415,9 @@ public class TemplateManager
         for (Entry<String, Double> entry : listOrdered) {
             mostPopularTemplateOrder.add(entry.getKey());
         }
-        if (mostPopularTemplateOrder != null && size != null) {
-            if (mostPopularTemplateOrder != null && mostPopularTemplateOrder.size() > size) {
-                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size);
+        if (size != null) {
+            if (mostPopularTemplateOrder.size() > size.intValue()) {
+                mostPopularTemplateOrder = mostPopularTemplateOrder.subList(0, size.intValue());
             }
         }
         return mostPopularTemplateOrder;
@@ -409,8 +456,8 @@ public class TemplateManager
                                             mostPopularTemplateNames));
         }
         if (templates != null && size != null) {
-            if (templates.size() > size) {
-                templates = templates.subList(0, size);
+            if (templates.size() > size.intValue()) {
+                templates = templates.subList(0, size.intValue());
             }
         }
         return templates;
@@ -418,11 +465,12 @@ public class TemplateManager
 
     private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
     {
-        private List<String> mostPopularTemplateNames;
+        private final List<String> mostPopularTemplateNames;
 
         public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
             this.mostPopularTemplateNames = mostPopularTemplateNames;
         }
+        @Override
         public int compare(TemplateQuery template1, TemplateQuery template2) {
             String templateName1 = template1.getName();
             String templateName2 = template2.getName();

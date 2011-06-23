@@ -39,7 +39,7 @@
 
 </table>
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">Switch to Experimentss View</a></td></tr>
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
 </table>
 
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
@@ -313,6 +313,8 @@ ${exp.category}
 
             <li class="gff"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
                 title="Download in GFF3 format">GFF3</a></li>
+            <li class="gff">(<a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3&UCSC"
+                title="Download in GFF3 format">for UCSC</a>)</li>
             <li class="seq"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
                 title="Download the sequences">FASTA</a></li>
 
@@ -333,7 +335,7 @@ ${exp.category}
 </c:forEach>
 </table>
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">Switch to Experimentss View</a></td></tr>
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
 </table>
 
 </div>

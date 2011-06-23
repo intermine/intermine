@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.Util;
 
 /**
  * This class handles the ontologies for OboToModel.
@@ -224,7 +224,7 @@ public class OboToModelProcessor
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if ("is_a".equals(relationshipType) && r.direct) {
-                BioConverterUtil.addToSetMap(childToParents, child, parent);
+                Util.addToSetMap(childToParents, child, parent);
            /**
            * HAS_PART (inverse of part_of)
            * parent = EST
@@ -284,13 +284,17 @@ public class OboToModelProcessor
                 if (parent.equals(CHROMOSOME)) {
                     continue;
                 }
-                BioConverterUtil.addToSetMap(reversePartOfs, parent, oboTerm);
+                if (!StringUtils.isEmpty(oboTerm) && !StringUtils.isEmpty(parent)) {
+                    Util.addToSetMap(reversePartOfs, parent, oboTerm);
+                }
             }
         }
     }
 
     private void assignPartOf(String parent, String child) {
-        BioConverterUtil.addToSetMap(partOfs, child, parent);
+        if (!StringUtils.isEmpty(child) && !StringUtils.isEmpty(parent)) {
+            Util.addToSetMap(partOfs, child, parent);
+        }
     }
 
     private void assignPartOfsToChild(String parent, String child) {
@@ -321,7 +325,9 @@ public class OboToModelProcessor
         for (String child : childToParents.keySet()) {
             Set<String> parents = childToParents.get(child);
             for (String parent : parents) {
-                BioConverterUtil.addToSetMap(parentToChildren, parent, child);
+                if (!StringUtils.isEmpty(child) && !StringUtils.isEmpty(parent)) {
+                    Util.addToSetMap(parentToChildren, parent, child);
+                }
             }
         }
     }
@@ -498,7 +504,9 @@ public class OboToModelProcessor
             // this relationship is in config, so we can't delete
             // remove parent relationship instead
             if (isManyToMany(collectionName, child)) {
-                BioConverterUtil.addToSetMap(invalidPartOfs, parent, collectionName);
+                if (!StringUtils.isEmpty(collectionName) && !StringUtils.isEmpty(parent)) {
+                    Util.addToSetMap(invalidPartOfs, parent, collectionName);
+                }
                 continue;
             }
             removeRelationship(map1, map2, child, collectionName);
@@ -652,7 +660,9 @@ public class OboToModelProcessor
                             }
                             String child = bits[0];
                             String parent = bits[1];
-                            BioConverterUtil.addToSetMap(manyToMany, child, parent.trim());
+                            if (!StringUtils.isEmpty(parent) && !StringUtils.isEmpty(child)) {
+                                Util.addToSetMap(manyToMany, child, parent.trim());
+                            }
                         } else {
                             terms.add(line);
                         }

@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+######################################################################
+# This is an automatically generated script to run your query.
+# To use it you will require the InterMine Perl client libraries.
+# These can be installed from CPAN, using your preferred client, eg:
+#
+#    sudo cpan Webservice::InterMine
+#
+# For help using these modules, please see these resources:
+#
+#  * http://search.cpan.org/perldoc?Webservice::InterMine
+#       - API reference
+#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook
+#       - A How-To manual
+#  * http://www.intermine.org/wiki/PerlWebServiceAPI
+#       - General Usage
+#  * http://www.intermine.org/wiki/WebService
+#       - Reference documentation for the underlying REST API
+#
+######################################################################
+
+# The following import statement sets TEST_PROJECT_TITLE as your default
+use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
+
+my $template = Webservice::InterMine->template('TEMP_NAME')
+    or die 'Could not find template';
+
+$template->show_with(
+    # A:  Employee.age
+    opA    => '>',
+    valueA => '10',
+);

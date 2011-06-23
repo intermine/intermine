@@ -158,10 +158,7 @@ public class SimpleConstraint extends Constraint
     protected static final List<ConstraintOp> STRING_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
-        ConstraintOp.LESS_THAN,
-        ConstraintOp.LESS_THAN_EQUALS,
-        ConstraintOp.GREATER_THAN,
-        ConstraintOp.GREATER_THAN_EQUALS,
+        ConstraintOp.CONTAINS,
         ConstraintOp.MATCHES,
         ConstraintOp.DOES_NOT_MATCH});
 
@@ -176,6 +173,7 @@ public class SimpleConstraint extends Constraint
         ConstraintOp.LESS_THAN_EQUALS,
         ConstraintOp.GREATER_THAN,
         ConstraintOp.GREATER_THAN_EQUALS,
+        ConstraintOp.CONTAINS,
         ConstraintOp.MATCHES,
         ConstraintOp.DOES_NOT_MATCH});
 
@@ -251,7 +249,7 @@ public class SimpleConstraint extends Constraint
         if (Number.class.isAssignableFrom(arg)) {
             return NUMBER_OPS;
         } else if (String.class.equals(arg)) {
-            return BOOLEAN_OPS;
+            return STRING_OPS;
         } else if (Boolean.class.equals(arg)) {
             return BOOLEAN_OPS;
         } else if (Date.class.equals(arg)) {

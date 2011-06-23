@@ -10,8 +10,13 @@ package org.intermine.api.tracker;
  *
  */
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Queue;
+
 import org.apache.log4j.Logger;
+import org.intermine.api.tracker.track.Track;
 import org.intermine.sql.DatabaseUtil;
 
 /**
@@ -22,10 +27,19 @@ import org.intermine.sql.DatabaseUtil;
 public abstract class TrackerAbstract implements Tracker
 {
     private static final Logger LOG = Logger.getLogger(TrackerAbstract.class);
-    protected Connection connection = null;
+    protected Queue<Track> trackQueue = null;
     protected String trackTableName;
-    protected String[] trackTableColumns;
     protected TrackerLogger trackerLogger = null;
+
+    /**
+     * Construct a Tracker setting the tracks queue and the table name
+     * @param trackQueue the queue of track to record
+     * @param trackTableName the table where store the tracks
+     */
+    protected TrackerAbstract(Queue<Track> trackQueue, String trackTableName) {
+        this.trackQueue = trackQueue;
+        this.trackTableName = trackTableName;
+    }
 
     /**
      * Return the table's name associated to the tracker
@@ -38,8 +52,9 @@ public abstract class TrackerAbstract implements Tracker
     /**
      * Create the table where the tracker saves data
      * @throws Exception when a database error access is verified
+     * @param connection the userprofile connection
      */
-    public void createTrackerTable() throws Exception {
+    public void createTrackerTable(Connection connection) throws Exception {
         try {
             if (trackTableName != null && !"".equals(trackTableName)) {
                 if (!DatabaseUtil.tableExists(connection, trackTableName)) {
@@ -61,16 +76,31 @@ public abstract class TrackerAbstract implements Tracker
     public void storeTrack(Track track) {
         if (trackTableName != null) {
             if (track.validate()) {
-                Object[] values = getFormattedTrack(track);
-                synchronized (values) {
-                    trackerLogger = new TrackerLogger(connection, trackTableName,
-                                                      trackTableColumns, values);
-                    new Thread(trackerLogger).start();
+                try {
+                    trackQueue.add(track);
+                } catch (IllegalStateException ise) {
+                    LOG.error("Problem adding the track to the queue", ise);
                 }
             } else {
                 LOG.error("Failed to write to track table: input non valid");
             }
+        } else {
+            LOG.error("The trackTableName is null, set it");
         }
+    }
+
+    /**
+     * Return the tracker's name
+     * @return String tracker's name
+     */
+    public abstract String getName();
+
+    /**
+     * Set the queue of tracks
+     * @param trackQueue the queue to set
+     */
+    public void setTrackQueue(Queue<Track> trackQueue) {
+        this.trackQueue = trackQueue;
     }
 
     /**
@@ -80,46 +110,20 @@ public abstract class TrackerAbstract implements Tracker
     public abstract String getStatementCreatingTable();
 
     /**
-     * Format a track into an array of String to be saved in the database
-     * @param track the track to format
-     * @return Object[] an array of Objects
+     * Close the result set and statement objects specified in input
+     * @param rs the ResultSet object to close
+     * @param stm the STatement object to close
      */
-    public abstract Object[] getFormattedTrack(Track track);
-
-    /**
-     * Release the database connection
-     * @param conn the connection to release
-     */
-    public void releaseConnection(Connection conn) {
-        if (conn != null) {
+    protected void releaseResources(ResultSet rs, Statement stm) {
+        if (rs != null) {
             try {
-                if (!conn.getAutoCommit()) {
-                    Exception e = new Exception();
-                    e.fillInStackTrace();
-                    LOG.warn("releaseConnection called while in transaction - rolling back."
-                              + System.getProperty("line.separator"), e);
-                    conn.rollback();
-                    conn.setAutoCommit(true);
+                rs.close();
+                if (stm != null) {
+                    stm.close();
                 }
-                conn.close();
             } catch (SQLException e) {
-                LOG.error("Could not release SQL connection " + conn, e);
+                LOG.error("Problem closing  resources.", e);
             }
-        }
-    }
-
-    /**
-     * Override finalise method to flush the track table and release the connection
-     * @throws Throwable
-     */
-    @Override
-    protected synchronized void finalize() throws Throwable {
-        super.finalize();
-        LOG.warn("Garbage collecting Tracker " + getClass().getName());
-        try {
-            releaseConnection(connection);
-        } catch (RuntimeException e) {
-            LOG.error("Exception while garbage-collecting Tracker: " + e);
         }
     }
 }

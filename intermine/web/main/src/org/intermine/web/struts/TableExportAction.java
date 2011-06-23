@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +28,12 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebTable;
+import org.intermine.api.template.SwitchOffAbility;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -109,7 +114,21 @@ public class TableExportAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
+        PathQuery pathQuery = pt.getWebTable().getPathQuery();
+        PathQuery newPathQuery = null;
+        if (pathQuery instanceof TemplateQuery) {
+            TemplateQuery templateQuery = (TemplateQuery) pathQuery;
+            Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
+                                                   templateQuery.getConstraintSwitchOffAbility();
+            for (Map.Entry<PathConstraint, SwitchOffAbility> entry
+                : constraintSwitchOffAbilityMap.entrySet()) {
+                if (entry.getValue().compareTo(SwitchOffAbility.OFF) == 0) {
+                    templateQuery.removeConstraint(entry.getKey());
+                }
+            }
+        }
+
+        newPathQuery = new PathQuery(pathQuery);
         newPathQuery.clearView();
         try {
             newPathQuery.addViews(new ArrayList<String>(StringUtil

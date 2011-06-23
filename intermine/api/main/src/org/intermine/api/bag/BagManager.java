@@ -43,10 +43,10 @@ import org.intermine.objectstore.query.Results;
 public class BagManager
 {
     private static final Logger LOG = Logger.getLogger(BagManager.class);
-    private Profile superProfile;
+    private final Profile superProfile;
     private final TagManager tagManager;
     private final Model model;
-    private ObjectStore osProduction;
+    private final ObjectStore osProduction;
 
     /**
      * The BagManager references the super user profile to fetch global bags.
@@ -95,6 +95,28 @@ public class BagManager
     }
 
     /**
+     * Add tags to a bag.
+     * @param tags A list of tag names to add
+     * @param bag The bag to add them to
+     * @param profile The profile this bag belongs to
+     */
+    public void addTagsToBag(Collection<String> tags, InterMineBag bag, Profile profile) {
+        for (String tag: tags) {
+            tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile.getUsername());
+        }
+    }
+
+    /**
+     * Get a list of tags for a given bag.
+     * @param bag The bag to get tags for.
+     * @return A list of Tag objects
+     */
+    public List<Tag> getTagsForBag(InterMineBag bag) {
+        List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
+        return tags;
+    }
+
+    /**
      * Fetch bags for the given profile.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
@@ -129,7 +151,9 @@ public class BagManager
         Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>();
 
         allBags.putAll(getGlobalBags());
-        allBags.putAll(profile.getSavedBags());
+        if (profile != null) {
+            allBags.putAll(profile.getSavedBags());
+        }
 
         return allBags;
     }
@@ -194,6 +218,21 @@ public class BagManager
      */
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type,
                                                                boolean onlyCurrent) {
+        return filterBagsByType(getUserAndGlobalBags(profile), type, onlyCurrent);
+    }
+
+    /**
+     * Fetch user bags curent of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getCurrentUserBagsOfType(Profile profile, String type) {
+        return filterBagsByType(getUserBags(profile), type, true);
+    }
+
+    private Map<String, InterMineBag> filterBagsByType(Map<String, InterMineBag> bags,
+            String type, boolean onlyCurrent) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
@@ -206,7 +245,7 @@ public class BagManager
         }
 
         Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
-        for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
+        for (Map.Entry<String, InterMineBag> entry : bags.entrySet()) {
             InterMineBag bag = entry.getValue();
             if (classAndSubs.contains(bag.getType())) {
                 if ((onlyCurrent && bag.isCurrent()) || !onlyCurrent) {
@@ -276,7 +315,7 @@ public class BagManager
         Iterator<Object> resIter = res.iterator();
         while (resIter.hasNext()) {
             Integer osBagId = (Integer) resIter.next();
-            if (osBagIdToInterMineBag.get(osBagId) != null) {
+            if (osBagIdToInterMineBag.containsKey(osBagId)) {
                 bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
             }
         }

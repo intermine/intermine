@@ -1,24 +1,55 @@
-/**
+package org.intermine.webservice.server.output;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.intermine.webservice.server.output;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * @author alex
+ * Base class for formatters that process JSON data. The
+ * following basic structure is assumed: The result set
+ * is a single JavaScript object literal, with an optional
+ * callback provided by the user, and some result
+ * status meta-data to round it off (see formatFooter).
+
+ * @author Alex Kalderimis
  *
  */
 public class JSONFormatter extends Formatter {
 
     private boolean hasCallback = false;
+    private String outro = "";
+    private boolean shouldQuote = false;
+    private boolean hasPrintedSomething = false;
+    private boolean isExpectingPrimitive = false;
+    private String header = null;
 
     /**
      * The key for the callback
      */
     public static final String KEY_CALLBACK = "callback";
+    public static final String KEY_INTRO = "intro";
+    public static final String KEY_OUTRO = "outro";
+    public static final String KEY_QUOTE = "should_quote";
+    /**
+     * A map of optional key value pairs that should go in the header of the object.
+     * The map should be of type Map<String, String> - woe betide you if you violate
+     * this stern imprecation.
+     */
+    public static final String KEY_KV_PAIRS = "key_value_pairs";
 
     /**
      * Constructor
@@ -34,14 +65,48 @@ public class JSONFormatter extends Formatter {
      * @param attributes the attributes passed in from the containing output
      */
     @Override
-    public String formatHeader(Map<String, String> attributes) {
+    public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new StringBuilder();
-        if (attributes.get(KEY_CALLBACK) != null) {
+        if (attributes != null && attributes.get(KEY_CALLBACK) != null) {
             hasCallback = true;
             sb.append(attributes.get(KEY_CALLBACK)).append("(");
         }
         sb.append("{");
+        if (attributes != null && attributes.containsKey(KEY_KV_PAIRS)) {
+            @SuppressWarnings("unchecked")
+            Map<String, String> kvPairs = (Map<String, String>) attributes.get(KEY_KV_PAIRS);
+            for (Entry<String, String> pair: kvPairs.entrySet()) {
+                sb.append("\""
+                        + StringEscapeUtils.escapeJavaScript(pair.getKey())
+                        + "\":"
+                        + quoteValue(StringEscapeUtils.escapeJavaScript(pair.getValue()))
+                        + ",");
+            }
+        }
+        if (attributes != null && attributes.get(KEY_INTRO) != null) {
+            sb.append(attributes.get(KEY_INTRO));
+            if (attributes.containsKey(KEY_OUTRO)) {
+                outro = attributes.get(KEY_OUTRO).toString();
+            } else {
+                isExpectingPrimitive = true;
+            }
+        }
+        if (attributes != null && attributes.containsKey(KEY_QUOTE)) {
+            shouldQuote = (Boolean) attributes.get(KEY_QUOTE);
+        }
+        header = sb.toString();
         return sb.toString();
+    }
+
+    private String quoteValue(String val) {
+        if (val == null) {
+            return "null";
+        }
+        if ("null".equals(val) || "true".equals(val) || "false".equals(val)
+                || StringUtils.isNumeric(val)) {
+            return val;
+        }
+        return "\"" + val + "\"";
     }
 
     /**
@@ -58,21 +123,61 @@ public class JSONFormatter extends Formatter {
     public String formatResult(List<String> resultRow) {
         if (resultRow.isEmpty()) { return ""; }
         Iterator<String> iter = resultRow.iterator();
-        StringBuffer buffer = new StringBuffer(iter.next());
-        while (iter.hasNext()) {
-            buffer.append(",").append(iter.next());
+        String first = iter.next();
+        if (shouldQuote && !"".equals(first)) {
+            first = "\"" + first + "\"";
         }
+
+        StringBuffer buffer = new StringBuffer(first);
+        while (iter.hasNext()) {
+            String next = iter.next();
+            if (shouldQuote && !"".equals(next)) {
+                next = "\"" + next + "\"";
+            }
+            buffer.append(",").append(next);
+        }
+        declarePrinted();
         return buffer.toString();
     }
 
+    protected void declarePrinted() {
+        hasPrintedSomething = true;
+    }
+
+
     /**
-     * Put on the final brace, and close the call-back bracket if needed
+     * Put on the final brace, and close the call-back bracket if needed.
+     * If an error has been reported, format that nicely,
+     * escaping problematic JavaScript characters appropriately
+     * in the message portion.
+     *
+     * @param errorMessage The message reporting the problem encountered
+     *      in processing this request, or null if there was none
+     * @param errorCode The status code for the request (200 on success)
+     *
      * @see org.intermine.webservice.server.output.Formatter#formatFooter()
      * @return The formatted footer string.
      */
     @Override
-    public String formatFooter() {
-        StringBuilder sb = new StringBuilder();
+    public String formatFooter(String errorMessage, int errorCode) {
+        StringBuilder sb = new StringBuilder(outro);
+        if (!hasPrintedSomething && isExpectingPrimitive) {
+            sb.append("null");
+        }
+        if ((header != null) && !hasPrintedSomething
+                && (header.endsWith("{") || header.endsWith(","))) {
+            // That's fine
+        } else {
+            sb.append(',');
+        }
+
+        sb.append("\"wasSuccessful\":");
+        if (errorCode != Output.SC_OK) {
+            sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJavaScript(errorMessage) + "\"");
+        } else {
+            sb.append("true,\"error\":null");
+        }
+        sb.append(",\"statusCode\":" + errorCode);
         sb.append("}");
         if (hasCallback) {
             sb.append(");");

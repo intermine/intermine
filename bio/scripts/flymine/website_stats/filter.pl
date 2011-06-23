@@ -8,7 +8,7 @@ my($SRCFILE)="tmp/FL100";
 
 #### Arrays/Hashes/Variables
 my(%countT)=(); # Templates
-my(%countOD)=(); # ObjectDetails
+my(%countOD)=(); # Report
 my(%countBD)=(); # BagDetails
 my(%countBU)=(); # BagUpload
 my(%countDV)=(); # Data Volume
@@ -16,7 +16,7 @@ my(%countDV)=(); # Data Volume
 my(%uniqIP)=();
 my(%countUIP);   # Unique IP
 
-my(%countODNR)=(); # ObjectDetails - No Repeat
+my(%countODNR)=(); # Report - No Repeat
 my(%countBDNR)=(); # BagDetails - No Repeat
 my($fingerPrintOD)="~~~";
 my($fingerPrintBD)="~~~";
@@ -89,11 +89,11 @@ while (<F>)
         $countT{$idx}=0 unless (defined $countT{$idx});
         $countT{$idx}++;
     }
-    #### Object Details
-    elsif ($url =~ /objectDetails.do/)
+    #### Report
+    elsif ($url =~ /report.do/)
     {
         next unless ($url =~ /id=([^&]+)/);
-        $countODNR{$yearMonth}=$countOD{$yearMonth}=0 
+        $countODNR{$yearMonth}=$countOD{$yearMonth}=0
             unless (defined $countOD{$yearMonth});
         $countOD{$yearMonth}++;
 
@@ -105,7 +105,7 @@ while (<F>)
     elsif ($url =~ /bagDetails.do/)
     {
         next unless ($url =~ /bagName=([^&]+)/);
-        $countBDNR{$yearMonth}=$countBD{$yearMonth}=0 
+        $countBDNR{$yearMonth}=$countBD{$yearMonth}=0
             unless (defined $countBD{$yearMonth});
         $countBD{$yearMonth}++;
 
@@ -156,8 +156,8 @@ foreach $ym (sort keys %idxYM)
     print F "Month: ".$ym."\n";
     print F "uniq IPs: ".$countUIP{$ym}."\n";
     printf F "Data volume (MB): %.0f\n",$countDV{$ym}/1024/1024;
-    print F "objectDetails (hits): ".$countOD{$ym}."\n";
-    print F "objectDetails (hits - no repeat): ".$countODNR{$ym}."\n";
+    print F "report (hits): ".$countOD{$ym}."\n";
+    print F "report (hits - no repeat): ".$countODNR{$ym}."\n";
     if (defined $countBD{$ym})
     {
         print F "bagDetails (hits): ".$countBD{$ym}."\n";

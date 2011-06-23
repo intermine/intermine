@@ -19,8 +19,8 @@ function clearElement(e) {
 
 </script>
 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get" style="display:inline;">
-<fmt:message key="header.search"/>
-<input style="width:150px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="searchTerm" value="${ids}" onFocus="clearElement(this);" />
+<fmt:message key="header.search"/>&nbsp;<input
+style="width:150px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="searchTerm" value="${ids}" onFocus="clearElement(this);" />
 <input type="submit" id="quickSearchButton" name="searchSubmit" value="GO" />
 </form>
 <!-- /quickSearch.jsp -->

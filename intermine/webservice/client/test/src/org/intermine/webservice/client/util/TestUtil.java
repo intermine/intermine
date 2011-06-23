@@ -40,7 +40,7 @@ public class TestUtil extends TestCase
         return "http://localhost:8080/intermine-test/service";
     }
     
-    public static void checkRow(List<String> actual, String ... expected) {
+    public static void checkRow(List<String> actual, Object ... expected) {
         assertEquals(expected.length, actual.size());
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], actual.get(i));

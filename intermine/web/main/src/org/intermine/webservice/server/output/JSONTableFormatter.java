@@ -14,13 +14,14 @@ package org.intermine.webservice.server.output;
  * @author Alexis Kalderimis
  *
  */
-public class JSONTableFormatter extends JSONResultFormatter {
+public class JSONTableFormatter extends JSONResultFormatter
+{
 
     /**
      * The key for setting the header attributes for the title.
      */
     public static final String KEY_TITLE = "title";
-    
+
     /**
      * The key for setting the header attributes for the description.
      */
@@ -30,7 +31,7 @@ public class JSONTableFormatter extends JSONResultFormatter {
      * The key for setting the header attributes for the title.
      */
     public static final String KEY_COLUMN_HEADERS = "columnHeaders";
-    
+
     /**
      * The key for setting the header attributes for the count.
      */

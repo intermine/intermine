@@ -1,34 +1,15 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- begin.jsp -->
+<!-- newBegin.jsp -->
 <html:xhtml/>
 
-<!-- metabolicMine CSS -->
-<!--[if lt IE 8]><link rel="stylesheet" href="/metabolicmine/model/public/css/ie.css" type="text/css" media="screen, projection"/><![endif]-->
-
 <div id="corner">&nbsp;</div>
-
-<script type="text/javascript">
-  // specify what happens to element in a small browser window (better add class than modify from here)
-  if ($(window).width() < '1205') {
-    // cite etc
-    $('ul#topnav').addClass('smallScreen');
-    // corners
-    $('#corner').addClass('smallScreen');
-    if ($(window).width() < '1125') {
-      $('#help').addClass('smallScreen');
-    }
-  }
-  // placeholder value for search boxes
-  var placeholder = '<c:out value="${WEB_PROPERTIES['homeSearch.identifiers']}" />';
-  // class used when toggling placeholder
-  var inputToggleClass = 'eg';
-</script>
 
 <!-- preview div -->
 <div id="ctxHelpDiv" class="preview">
@@ -46,45 +27,93 @@
   </div>
 </div>
 
-<!-- BluePrint CSS container -->
-<div class="container">
+<div id="content-wrap">
 
   <script type="text/javascript">
+
+  // specify what happens to element in a small browser window (better add class than modify from here)
+  if (jQuery(window).width() < '1205') {
+    // cite etc
+    jQuery('ul#topnav').addClass('smallScreen');
+    // corners
+    jQuery('#corner').addClass('smallScreen');
+    if (jQuery(window).width() < '1125') {
+      jQuery('#help').addClass('smallScreen');
+    }
+  }
+
+  /**
+   * A function that will save a cookie under a key-value pair
+   * @key Key under which to save the cookie
+   * @value Value to associate with the key
+   * @days (optional) The number of days from now when to expire the cookie
+   */
+    jQuery.setCookie = function(key, value, days) {
+      if (days == null) {
+        document.cookie = key + "=" + escape(value);
+      } else {
+        // form date
+        var expires = new Date();
+        expires.setDate(expires.getDate() + days);
+        // form cookie
+        document.cookie = encodeURIComponent(key) + "=" + encodeURIComponent(value) + "; expires=" + expires.toUTCString();
+      }
+    };
+
+  /**
+   * A function that will get a cookie's value based on a provided key
+   * @key Key under which the cookie is saved
+   */
+    jQuery.getCookie = function(key) {
+      return (r = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ?
+      decodeURIComponent(r[1]) : null;
+    };
+
     // minimize big welcome box into an info message
-    function toggleWelcome() {
+    function toggleWelcome(speed) {
+      // default speed
+      if (speed == null) speed = "slow";
+
       // minimizing?
-      if ($("#welcome").is(':visible')) {
+      if (jQuery("#welcome").is(':visible')) {
         // hide the big box
-        $('#welcome').slideUp();
+        if (speed == "fast") {
+          jQuery('#welcome').toggle();
+        } else {
+          jQuery('#welcome').slideUp();
+        }
         // do we have words to say?
-        var welcomeText = $("#welcome-content.current").text();
+        var welcomeText = jQuery("#welcome-content.current").text();
         if (welcomeText.length > 0) {
-          $("#ctxHelpDiv.welcome").slideDown("slow", function() {
+          jQuery("#ctxHelpDiv.welcome").slideDown(speed, function() {
             // ...display a notification with an appropriate text
             if (welcomeText.length > 150) {
               // ... substr
-              $("#ctxHelpTxt.welcome").html(welcomeText.substring(0, 150) + '&hellip;');
+              jQuery("#ctxHelpTxt.welcome").html(welcomeText.substring(0, 150) + '&hellip;');
             } else {
-              $("#ctxHelpTxt.welcome").html(welcomeText);
+              jQuery("#ctxHelpTxt.welcome").html(welcomeText);
             }
-            });
+          });
         }
+        // set the cookie
+        jQuery.setCookie("welcome-visibility", "minimized", 365);
       } else {
-        $("#ctxHelpDiv.welcome").slideUp(function() {
-          $("#welcome").slideDown("slow");
+        jQuery("#ctxHelpDiv.welcome").slideUp(function() {
+          jQuery("#welcome").slideDown(speed);
+          // set the cookie
+          jQuery.setCookie("welcome-visibility", "maximized", 365);
         });
       }
     }
   </script>
-  <div id="welcome" class="span-12 last wide-blue">
-    <a class="close" href="#" title="Close" onclick="toggleWelcome();return false;">&nbsp;</a>
-        <div class="top"></div>
-        <div class="center span-12 last">
+  <div id="welcome">
+        <div class="center">
+          <a class="close" title="Close" onclick="toggleWelcome();">Close</a>
           <div class="bochs" id="bochs-1">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
                   <img src="themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
               </div>
-              <div id="welcome-content" class="span-8 last current">
+              <div id="welcome-content" class="current">
               <h2>First time here?</h2>
               <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data &amp; Tools to support the Metabolic
               Disease research community.</p>
@@ -92,6 +121,8 @@
               <p>If you are short of time, just navigate through our set of <a class="nice" href="#" onclick="switchBochs(2);return false;">Feature Hints</a>. For a basic overview of
               the site and its features try the <a class="nice" href="<c:url value="http://www.metabolicmine.org/tour/start.html" />"
                   onclick="javascript:window.open('<c:url value="http://www.metabolicmine.org/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=1000,height=800');return false">Quick Tour</a>, it takes about ten minutes.</p>
+
+              <br />
               <a class="button blue" href="<c:url value="http://www.metabolicmine.org/tour/start.html" />"
                   onclick="javascript:window.open('<c:url value="http://www.metabolicmine.org/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=1000,height=800');return false">
                     <div><span>Take a tour</span></div>
@@ -100,11 +131,11 @@
             </div>
 
             <div class="bochs" id="bochs-2" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
                 src="themes/metabolic/thumbs/feature-search.jpg"
                 alt="metabolicMine Search" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>Search</h2>
                 <p>Our search engine operates across many data fields giving you the
                 highest chance of getting a result. Just type your search words in the
@@ -117,30 +148,32 @@
                 </ul>
                 <p>Search supports AND, OR, NOT and wildcard*. You can access Search from
                 the home page or use QuickSearch, located top right on every page.</p>
-                <a class="button gray" href="#" onclick="switchBochs(3);return false;"><div><span>Next Hint: Facets</span></div></a>
+                <br />
+                <a class="button gray" onclick="switchBochs(3);"><div><span>Next Hint: Facets</span></div></a>
               </div>
             </div>
 
             <div class="bochs" id="bochs-3" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try Faceted Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
                 src="themes/metabolic/thumbs/feature-facets.jpg"
                 alt="metabolicMine Facets" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>Facets</h2>
                 <p><strong>Facets</strong> show you the different places where your search words were found (eg. within Gene, Protein, Go Term, Template, Publication etc).
                 You can use the facets to filter for the type of results that are most important to you. When you've filtered by facets, you can even save the results
                 straight to a List.</p>
-                <a class="button gray" href="#" onclick="switchBochs(4);return false;"><div><span>Next Hint: Lists</span></div></a>
+                <br />
+                <a class="button gray" onclick="switchBochs(4);"><div><span>Next Hint: Lists</span></div></a>
               </div>
             </div>
 
             <div class="bochs" id="bochs-4" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
                 src="themes/metabolic/thumbs/feature-lists.jpg"
                 alt="metabolicMine Lists" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>Lists</h2>
                 <p>The <strong>Lists</strong> area lets you operate on whole sets of data at once. You can
                 upload your own Lists (favourite Genes, SNPs etc) or save them from results tables.
@@ -153,19 +186,20 @@
                   <li>Uncover hidden relationships with our analysis <strong>Widgets</strong></li>
                 </ul>
                 <p>You can work with Lists from the Home page or select Lists from the Tab bar, located at the top of every page.</p>
-                <a class="button gray" href="#" onclick="switchBochs(5);return false;"><div><span>Next Hint: Templates</span></div></a>
+                <br />
+                <a class="button gray" onclick="switchBochs(5);"><div><span>Next Hint: Templates</span></div></a>
             </div>
            </div>
 
             <div class="bochs" id="bochs-5" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
                 src="themes/metabolic/thumbs/feature-templates.jpg"
                 alt="metabolicMine Templates" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>Templates</h2>
-                <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
-                provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
+                <p>Our predefined <strong>template searches</strong> are designed around the common tasks performed by our Biologist Community.
+                Templates provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
                 <p>Templates cover common questions like:</p>
                 <ul>
                     <li>I have a List of SNPs - do any of them affect Genes?</li>
@@ -173,16 +207,17 @@
                     <li>I'm interested in this chromosome region - what's in there that could be linked with this disease?</li>
                 </ul>
                 <p>You can work with Templates from the Home page or select Templates from the Tab bar, located at the top of every page.</p>
-                <a class="button gray" href="#" onclick="switchBochs(6);return false;"><div><span>Next Hint: MyMine</span></div></a>
+                <br />
+                <a class="button gray" onclick="switchBochs(6);"><div><span>Next Hint: MyMine</span></div></a>
             </div>
            </div>
 
             <div class="bochs" id="bochs-6" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
                 src="themes/metabolic/thumbs/feature-mymine.jpg"
                 alt="metabolicMine MyMine" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>MyMine</h2>
                 <p><strong>MyMine</strong> is your <u>personal space</u> on metabolicMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
                 <p>Your account allows you to:</p>
@@ -193,348 +228,476 @@
                 </ul>
                 <p>You can access mMyMine from the Tab bar, located at the top of every page.</p>
                 <p>Note: Your data and e-mail address are confidential and we won't send you unsolicited mail.</p>
-                <a class="button gray" href="#" onclick="switchBochs(7);return false;"><div><span>Next Hint: QueryBuilder</span></div></a>
+                <br />
+                <a class="button gray" onclick="switchBochs(7);"><div><span>Next Hint: QueryBuilder</span></div></a>
             </div>
            </div>
 
             <div class="bochs" id="bochs-7" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb">
               <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
                 src="themes/metabolic/thumbs/feature-querybuilder.jpg"
                 alt="metabolicMine QueryBuilder" /></a></div>
-              <div id="welcome-content" class="span-8 last">
+              <div id="welcome-content">
                 <h2>QueryBuilder</h2>
                 <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of metabolicMine.</p>
                 <p>Its advanced interface lets you:</p>
                 <ul>
-                  <li>Construct your own custom queries
-                  <li>Modify your previous queries
+                  <li>Construct your own custom searches
+                  <li>Modify your previous searches
                   <li>You can even edit our predefined Templates.
                 </ul>
-                <p>The easiest way to get started with QB is by editing one of our pre-existing Template queries.
+                <p>The easiest way to get started with QB is by editing one of our pre-existing Template searches.
                 Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong> to see how to change a Template output or add a filter.</p>
-
                 <p>You can access QueryBuilder from the Tab bar, located at the top of every page.</p>
+                <br/>
+                <br/>
             </div>
            </div>
 
-        <div class="span-12 last">
+           <div style="clear:both;"></div>
+
               <ul id="switcher">
-                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">Start</a></li>
-                <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">1</a></li>
-                <li id="switcher-3" class="switcher"><a onclick="switchBochs(3);return false;" href="#">2</a></li>
-                <li id="switcher-4" class="switcher"><a onclick="switchBochs(4);return false;" href="#">3</a></li>
-                <li id="switcher-5" class="switcher"><a onclick="switchBochs(5);return false;" href="#">4</a></li>
-                <li id="switcher-6" class="switcher"><a onclick="switchBochs(6);return false;" href="#">5</a></li>
-                <li id="switcher-7" class="switcher"><a onclick="switchBochs(7);return false;" href="#">6</a></li>
+                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);">Start</a></li>
+                <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);">1</a></li>
+                <li id="switcher-3" class="switcher"><a onclick="switchBochs(3);">2</a></li>
+                <li id="switcher-4" class="switcher"><a onclick="switchBochs(4);">3</a></li>
+                <li id="switcher-5" class="switcher"><a onclick="switchBochs(5);">4</a></li>
+                <li id="switcher-6" class="switcher"><a onclick="switchBochs(6);">5</a></li>
+                <li id="switcher-7" class="switcher"><a onclick="switchBochs(7);">6</a></li>
               </ul>
-            </div>
         </div>
-        <div class="bottom span-12 last"></div>
     </div>
 
     <script type="text/javascript">
+    // are we showing a minimized welcome box?
+    if (jQuery.getCookie("welcome-visibility") == "minimized") toggleWelcome("fast");
+
     /* hide switcher of we are on first time here */
-    if ($("#switcher-1").hasClass('current')) {
-      $("#switcher").hide();
+    if (jQuery("#switcher-1").hasClass('current')) {
+      jQuery("#switcher").hide();
     }
 
     /* div switcher for welcome bochs using jQuery */
     function switchBochs(newDivId) {
       // no current
-      javascript:jQuery(".switcher").each (function() { javascript:jQuery(this).removeClass('current'); });
+      jQuery(".switcher").each (function() { jQuery(this).removeClass('current'); });
       // apply current
-      javascript:jQuery('#switcher-'+newDivId).addClass('current');
+      jQuery('#switcher-'+newDivId).addClass('current');
       // hide them all bochs
-      javascript:jQuery(".bochs").each (function() { javascript:jQuery(this).hide(); });
+      jQuery(".bochs").each (function() { jQuery(this).hide(); });
       // then show our baby
-      javascript:jQuery('#bochs-'+newDivId).fadeIn();
+      jQuery('#bochs-'+newDivId).fadeIn();
 
       // apply active class
-      $("#welcome-content").each (function() { javascript:jQuery(this).removeClass('current'); });
-      $('#bochs-'+newDivId+' > #welcome-content').addClass('current');
+      jQuery("#welcome-content").each (function() { jQuery(this).removeClass('current'); });
+      jQuery('#bochs-'+newDivId+' > #welcome-content').addClass('current');
 
       // show/hide switcher?
-      if ($("#switcher-1").hasClass('current')) {
-        $("#switcher").hide();
+      if (jQuery("#switcher-1").hasClass('current')) {
+        jQuery("#switcher").hide();
       } else {
-        $("#switcher").show();
+        jQuery("#switcher").show();
       }
     }
   </script>
 
-    <div id="actions" class="span-12 last wide-gray">
+    <div id="boxes">
+        <div id="search-bochs">
+            <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
+            <div class="inner">
+                <h3>Search</h3>
+                <span class="ugly-hack">&nbsp;</span>
 
-      <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-          <!--
-          <a class="more" title="Want to see more?"
-             onclick="javascript:jQuery('#more-actions').slideToggle(); return false;">&nbsp;</a>
-          -->
-          <div class="top"></div>
-          <div class="center span-12 last">
-              <div class="span-4 search">
                 <script type="text/javascript">
                   /* pre-fill search input with a term */
                   function preFillInput(term) {
-                    var e = $("input#actionsInput");
+                    var e = jQuery("input#actionsInput");
                     e.val(term);
-              if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
-              e.focus();
+                    if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
+                    e.focus();
                   }
                 </script>
-                <div class="image">
-                    <img src="images/icons/search-64.png" alt="Search" />
-                  </div>
-                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
-                  <div style="clear:both;"> </div>
-                  <p>Enter a gene, protein, SNP or other identifier [eg.
-                  <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
-                    href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
-                  <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
-                    href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
-                  <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
-                    href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
-                  <br />Alternatively, search for disease, keywords or publications [eg.
-                  <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
-                    href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
-                  <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
-                    href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
-                  <a onclick="preFillInput('13658959');return false;" title="Search for PMID"
-                    href="keywordSearchResults.do?searchTerm=13658959"><strong>PMID</strong></a>,
-                 <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
-                    href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>
-                  ]</p>
-                  <p>[Supports AND, OR, NOT and wildcard*]</p>
-            <div class="input">
-              <input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, Insulin, rs876498" />
+
+                <p>Enter a gene, protein, SNP or other identifier [eg.
+                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
+                  href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
+                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
+                  href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
+                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
+                  href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
+                <br />Alternatively, search for disease, keywords or publications [eg.
+                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
+                  href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
+                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
+                  href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
+                <a onclick="preFillInput('13658959');return false;" title="Search for PMID"
+                  href="keywordSearchResults.do?searchTerm=13658959"><strong>PMID</strong></a>,
+               <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
+                  href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>]</p>
+
+                <form id="mainSearchForm" action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
+                    <div class="bottom">
+                        <center>
+                            <a class="button orange">
+                              <div><span>Search</span></div>
+                            </a>
+                        </center>
+                    </div>
+               </form>
+			   <script type="text/javascript">
+					jQuery('#mainSearchForm a').click(function() {
+			  			document.getElementById("mainSearchForm").submit();
+					});
+			   </script>
+
+                <div style="clear:both;"></div>
             </div>
-              </div>
-              <div class="span-4 lists">
-                <div class="image">
-                    <img src="images/icons/lists-64.png" alt="Lists" />
-                  </div>
-                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyse Lists of Data</a></h3>
-                  <div style="clear:both;"> </div>
-          <p>
-          <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
-          <strong>Explore</strong> and <strong>Analyse</strong>. Upload your own data or browse our Public
-          sets. Covering Pathways to Publications, discover hidden relationships with our analysis widgets.</p>
-              </div>
-              <div class="span-4 last templates">
-                  <div class="image">
-                    <img src="images/icons/templates-64.png" alt="Templates" />
-                  </div>
-                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
-                  <div style="clear:both;"> </div>
-                  <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
-                  designed around common tasks performed by our biologist community.</p>
-                  <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
-              </div>
-              <div class="span-12 last">
-                  <div class="span-4 search">
-                      <input id="mainSearchButton" class="button orange-gray" type="submit" value="Search" />
-                  </div>
-                  <div class="span-4 lists">
-                      <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">
-                        <div><span>Lists</span></div>
-                      </a>
-                  </div>
-                  <div class="span-4 last templates">
-                      <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">
-                        <div><span>Templates</span></div>
-                      </a>
-                  </div>
-              </div>
-          </div>
-          <div class="bottom"></div>
-        </form>
-    </div>
-
-    <div id="api" class="span-6 white-half">
-        <div class="top"></div>
-        <div class="center span-6 last">
-            <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-            <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
-            <p>You can fetch data from metabolicMine directly from your own programs via a REST web service.  More information:</p>
-            <ul>
-                <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=perl">Perl API</a></li>
-                <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=java">Java API</a></li>
-            </ul>
         </div>
-        <div class="bottom span-6 last"></div>
+        <div id="lists-bochs">
+            <img class="title" src="images/icons/lists-64.png" title="lists"/>
+            <div class="inner">
+                <h3>Analyse Lists of Data</h3>
+                <div class="right">
+                  <p>
+                  <img style="float: right; padding-left: 5px; margin-right: 4px;" alt="widget charts" src="themes/metabolic/thumbs/widget-charts-5.png">
+                  <strong>Explore</strong> and <strong>Analyse</strong>. Upload your own data or browse our Public sets.
+                  Covering Pathways to Publications, discover hidden relationships with our analysis widgets.</p>
+                </div>
+
+                <div class="left">
+                  <span class="ugly-hack">&nbsp;</span>
+                  <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
+                      <select name="type">
+                        <option value="Gene">Gene</option>
+                        <option value="Protein">Protein</option>
+                        <option value="SNP">SNP</option>
+                      </select>
+                      <select name="extraFieldValue">
+                        <option value="H. sapiens">H. sapiens</option>
+                        <option value="M. musculus">M. musculus</option>
+                        <option value="R. norvegicus">R. norvegicus</option>
+                      </select>
+                      <div class="textarea">
+                        <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+                      </div>
+                  </form>
+                </div>
+                <div style="clear:both;"></div>
+
+                <div class="bottom">
+                  <a class="advanced" class="adv" href="bag.do?subtab=upload">file upload</a>
+                  <a class="button green">
+                    <div><span>Analyse list</span></div>
+                  </a>
+                  <script type="text/javascript">
+                    jQuery('#lists-bochs a.button').click(function() {
+                      document.buildBagForm.submit();
+                    });
+                  </script>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="rss" class="span-6 last white-half" style="display:none;">
-      <script type="text/javascript">
-      // feed URL
-      var feedURL = "${WEB_PROPERTIES['project.rss']}";
-      // limit number of entries displayed
-      var maxEntries = 2;
-      // where are we appending entries? (jQuery syntax)
-      var target = 'table#articles';
+    <div style="clear:both"></div>
 
-      var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
-      months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
+    <div id="bottom-wrap">
+      <div id="templates-bochs">
+        <img class="title" src="images/icons/templates-64.png" title="templates"/>
+          <div class="inner">
+            <h3>Use Template Searches</h3>
+            <p><span class="ugly-hack"></span>Get started with <strong>powerful searches</strong> using our predefined Templates. These
+              customizable templates have been designed around common tasks performed by our biologist community.</p>
+          </div>
 
-      $(document).ready(function () {
-          // DWR fetch, see AjaxServices.java
-          AjaxServices.getNewsPreview(feedURL, function (data) {
-              if (data) {
-                  // show us
-                  $('#rss').slideToggle('slow');
+          <c:if test="${!empty tabs}">
+            <div id="templates">
+                <table id="menu" border="0" cellspacing="0">
+                    <tr>
+                      <!-- templates tabs -->
+                      <c:forEach var="item" items="${tabs}">
+                        <td><div class="container"><span id="tab${item.key}">
+                          <c:forEach var="row" items="${item.value}">
+                            <c:choose>
+                              <c:when test="${row.key == 'name'}">
+                                <c:out value="${row.value}" />
+                              </c:when>
+                            </c:choose>
+                          </c:forEach>
+                        </span></div></td>
+                      </c:forEach>
+                    </tr>
+                </table>
 
-                  // declare
-                  var feedTitle, feedDescription, feedDate, feedLink, row, feed;
+                <div id="tab-content">
+                    <div id="ribbon"></div>
 
-                  // convert to XML, jQuery manky...
-                  try {
-                      // Internet Explorer
-                      feed = new ActiveXObject("Microsoft.XMLDOM");
-                      feed.async = "false";
-                      feed.loadXML(data);
-                  } catch (e) {
-                      try {
-                          // ...the good browsers
-                          feed = new DOMParser().parseFromString(data, "text/xml");
-                      } catch (e) {
-                          // ... BFF
-                          alert(e.message);
-                          return;
-                      }
-                  }
+                    <!-- templates content -->
+                    <c:forEach var="item" items="${tabs}">
+                      <div id="content${item.key}" class="content" style="display:none;">
+                        <c:forEach var="row" items="${item.value}">
+                          <c:choose>
+                            <c:when test="${row.key == 'identifier'}">
+                              <c:set var="aspectTitle" value="${row.value}"/>
+                            </c:when>
+                            <c:when test="${row.key == 'description'}">
+                              <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
+                            </c:when>
+                            <c:when test="${row.key == 'name'}">
+                              <p>Search for <c:out value="${row.value}" />:</p>
+                            </c:when>
+                            <c:when test="${row.key == 'templates'}">
+                              <table>
+                                <c:forEach var="template" items="${row.value}" varStatus="status">
+                                  <c:if test="${status.count %2 == 1}">
+                                    <c:choose>
+                                      <c:when test="${status.first}">
+                                        <tr>
+                                      </c:when>
+                                      <c:otherwise>
+                                        </tr><tr>
+                                      </c:otherwise>
+                                    </c:choose>
+                                  </c:if>
+                                  <td>
+                                    <a href="template.do?name=${template.name}"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"themes/metabolic/homepage/arrow-green-ico.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a>
+                                  </td>
+                                </c:forEach>
+                              </table>
+                              <p class="more"><a href="templates.do?filter=${aspectTitle}">More queries</a></p>
+                            </c:when>
+                          </c:choose>
+                        </c:forEach>
+                      </div>
+                    </c:forEach>
+                </div>
+            </div>
+          </c:if>
+      </div>
+      <div style="clear: both;"></div>
 
-                  var items = feed.getElementsByTagName("item"); // ATOM!!!
-                  for (var i = 0; i < items.length; i++) {
-                      // early bath
-                      if (i == maxEntries) return;
+        <div id="low">
+            <div id="rss" style="display:none;">
+                <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+                <table id="articles"></table>
+                <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
+                  <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
+                </c:if>
+            </div>
 
-                      feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
-                      feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
-                      // we have a feed date
-                      if (items[i].getElementsByTagName("pubDate")[0]) {
-                          feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
-                          feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+            <div id="api">
+                <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+                <img src="images/begin/perl-java-python-ico.png" alt="perl java python" />
+                <p>
+                    You can fetch data from <c:out value="${WEB_PROPERTIES['project.title']}"/>
+                    directly from your own programs via a REST web service. More information:
+                </p>
+                <ul>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
+                </ul>
+            </div>
 
-                          // build table row
-                          row = '<tr>' + '<td class="date">' + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
-                          + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
-                          + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
-                          + '</tr>';
-                      } else {
-                          feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+</div>
 
-                          // build table row
-                          row = '<tr>'
-                          + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
-                          + '</tr>';
-                      }
+<div id="footer">
+    <div class="column">
+        <a href="#" onclick="showContactForm();return false;">Contact Us</a>
+        <span>|</span>
+        <a href="http://blog.metabolicmine.org/faq">FAQ</a>
+        <span>|</span>
+        <a href="http://blog.metabolicmine.org/about">About</a>
+        <span>|</span>
+        <br />
+        <a href="http://www.intermine.org">InterMine</a>
+        <span>|</span>
+        <a href="http://www.flymine.org">FlyMine</a>
+        <span>|</span>
+        <a href="http://www.modmine.org">modMine</a>
+        <span>|</span>
+        <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
 
-                      // append, done
-                      $(target).append(row);
-                  }
-              }
-          });
-      });
+        <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
+    </div>
+    <div class="column last">
+        <a href="http://wellcome.ac.uk/" title="Wellcome Trust">
+          <img src="themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
+         </a>
+         <a href="http://www.cam.ac.uk/" title="University of Cambridge">
+          <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
+        </a>
+    </div>
 
-          // trim text to a specified length
-      function trimmer(grass, length) {
+    <div style="clear:both;"></div>
+</div>
+
+<script type="text/javascript">
+
+    // 'open up' the first tab
+    jQuery("table#menu td:first").addClass("active").find("div").append('<span class="right"></span><span class="left"></span>').show();
+    jQuery("div.content:first").show();
+
+    // onclick behavior for tabs
+    jQuery("table#menu td").click(function() {
+        jQuery("table#menu td.active").find("div").find('.left').remove();
+        jQuery("table#menu td.active").find("div").find('.right').remove();
+        jQuery("table#menu td").removeClass("active");
+
+        jQuery(this).addClass("active").find("div").append('<span class="right"></span><span class="left"></span>');
+        jQuery("#tab-content .content").hide();
+
+        if (jQuery(this).is('span')) {
+            // span
+            var activeTab = jQuery(this).attr("id").substring(3);
+        } else {
+            // td, div (IE)
+            var activeTab = jQuery(this).find("span").attr("id").substring(3);
+        }
+        jQuery('#content' + activeTab).fadeIn();
+
+        return false;
+    });
+
+    // feed URL
+    var feedURL = "${WEB_PROPERTIES['project.rss']}";
+    // limit number of entries displayed
+    var maxEntries = 2;
+    // where are we appending entries? (jQuery syntax)
+    var target = 'table#articles';
+
+    var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
+    months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
+
+    jQuery(document).ready(function () {
+        // DWR fetch, see AjaxServices.java
+        AjaxServices.getNewsPreview(feedURL, function (data) {
+            if (data) {
+                // show us
+                jQuery('#rss').slideToggle('slow');
+
+                // declare
+                var feedTitle, feedDescription, feedDate, feedLink, row, feed;
+
+                // convert to XML, jQuery manky...
+                try {
+                    // Internet Explorer
+                    feed = new ActiveXObject("Microsoft.XMLDOM");
+                    feed.async = "false";
+                    feed.loadXML(data);
+                } catch (e) {
+                    try {
+                        // ...the good browsers
+                        feed = new DOMParser().parseFromString(data, "text/xml");
+                    } catch (e) {
+                        // ... BFF
+                        alert(e.message);
+                        return;
+                    }
+                }
+
+                var items = feed.getElementsByTagName("item"); // ATOM!!!
+                for (var i = 0; i < items.length; i++) {
+                    // early bath
+                    if (i == maxEntries) return;
+
+                    feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
+                    feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+                    // we have a feed date
+                    if (items[i].getElementsByTagName("pubDate")[0]) {
+                        feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+                        feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+                        // build table row
+                        row = '<tr>' + '<td class="date">' + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+                        + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+                        + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                        + '</tr>';
+                    } else {
+                        feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+                        // build table row
+                        row = '<tr>'
+                        + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                        + '</tr>';
+                    }
+
+                    // append, done
+                    jQuery(target).append(row);
+                }
+            }
+        });
+    });
+
+        // trim text to a specified length
+    function trimmer(grass, length) {
         if (!grass) return;
         grass = stripHTML(grass);
         if (grass.length > length) return grass.substring(0, length) + '...';
         return grass;
+    }
+
+    // strip HTML
+    function stripHTML(html) {
+        var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
+    }
+
+    var placeholder = '<c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" />';
+    var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
+    var inputToggleClass = 'eg';
+
+    /*
+    function preFillInput(target, term) {
+        var e = jQuery("input#actionsInput");
+        e.val(term);
+        if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
+        e.focus();
+    }
+    */
+
+    // e.g. values only available when JavaScript is on
+    jQuery('input#actionsInput').toggleClass(inputToggleClass);
+    jQuery('textarea#listInput').toggleClass(inputToggleClass);
+
+    // register input elements with blur & focus
+    jQuery('input#actionsInput').blur(function() {
+        if (jQuery(this).val() == '') {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val(placeholder);
+        }
+    });
+    jQuery('textarea#listInput').blur(function() {
+        if (jQuery(this).val() == '') {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val(placeholderTextarea);
+        }
+    });
+    jQuery('input#actionsInput').focus(function() {
+        if (jQuery(this).hasClass(inputToggleClass)) {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val('');
+        }
+    });
+    jQuery('textarea#listInput').focus(function() {
+        if (jQuery(this).hasClass(inputToggleClass)) {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val('');
+        }
+    });
+
+    // associate functions with search that redir to a keyword objects listing instead of search results
+    jQuery('#mainSearchButton').click(function() {
+      // if placeholder text in place, take us elsewhere
+      if (jQuery("#actionsInput").val() == placeholder) {
+        jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+        return false;
       }
-
-      // strip HTML
-          function stripHTML(html) {
-             var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
-          }
-      </script>
-        <div class="top"></div>
-        <div class="center span-6 last">
-            <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
-            <table id="articles">
-              <!-- append babies here -->
-            </table>
-        </div>
-        <div class="more span-6 last"><a target="new" href="http://blog.metabolicmine.org/" class="more">&nbsp;</a></div>
-    </div>
-
-  <!--
-    <div id="testimonials" class="span-4 last blue">
-        <div class="top"></div>
-        <div class="center span-4 last">
-            <h4>User Feedback</h4>
-            <img src="/metabolicmine/themes/metabolic/img/stockphoto.jpg" alt="Stock Photo" />
-            <p>It's not how fat you are, it's what you do with it that counts, and that is why we feel that
-                metabolicMine is a valid addition to the data mining lorem.</p>
-            <q>- E. Novak-Brown, University of Cambridge</q>
-        </div>
-        <div class="bottom span-4 last"></div>
-    </div>
-    -->
-
-    <div id="footer" class="span-12 last">
-        <div class="span-6">
-            <a href="#" onclick="showContactForm();return false;">Contact Us</a>
-            <span>|</span>
-            <a href="http://blog.metabolicmine.org/faq">FAQ</a>
-            <span>|</span>
-            <a href="http://blog.metabolicmine.org/about">About</a>
-      <span>|</span>
-            <!-- <a href="#">Cite</a>
-      <span>|</span> -->
-            <br />
-            <a href="http://www.intermine.org">InterMine</a>
-            <span>|</span>
-            <a href="http://www.flymine.org">FlyMine</a>
-            <span>|</span>
-            <a href="http://www.modmine.org">modMine</a>
-            <span>|</span>
-            <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
-
-            <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
-        </div>
-        <div class="span-6 last">
-            <a href="http://wellcome.ac.uk/" title="Wellcome Trust">
-              <img src="themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
-             </a>
-             <!--
-             <a href="http://www.gen.cam.ac.uk/" title="Department of Genetics">
-               <img src="/metabolicmine/themes/metabolic/icons/genetics-ico.gif" alt="Department of Genetics" />
-             </a>
-             -->
-             <a href="http://www.cam.ac.uk/" title="University of Cambridge">
-              <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
-            </a>
-        </div>
-    </div>
- </div>
-
- <script type="text/javascript">
-   // e.g. values only available when JavaScript is on
-  $('input#actionsInput').toggleClass(inputToggleClass);
-
-  // register input elements with blur & focus
-  $('input#actionsInput').blur(function() {
-    if ($(this).val() == '') {
-      $(this).toggleClass(inputToggleClass);
-      $(this).val(placeholder);
-    }
-  });
-  $('input#actionsInput').focus(function() {
-    if ($(this).hasClass(inputToggleClass)) {
-      $(this).toggleClass(inputToggleClass);
-      $(this).val('');
-    }
-  });
-
-  // associate functions with search that redir to a keyword objects listing instead of search results
-  $('#mainSearchButton').click(function() {
-    // if placeholder text in place, take us elsewhere
-    if ($("#actionsInput").val() == placeholder) {
-      $(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
-      return false;
-    }
-  });
-
+    });
 </script>
+
+<!-- /newBegin.jsp -->

@@ -1,0 +1,39 @@
+<div id="page">
+    <div id="content">
+        <div id="header" style="background-image: url('<% proxy.uri_for('/images/intermine_logo_header.png') %>');repeat: no-repeat;position: top right">
+            <h1>Login</h1>
+            <h2>
+                Please log in to administer the list of 
+                <a title="Visit InterMine" class="mine-name" href="http://www.intermine.org">InterMine</a>
+                implementations
+            </h2>
+        </div>
+        <div id="login-box">
+        <% IF failed %>
+        <div id="message">
+            <p class="failed-login-message">
+            Sorry, your previous login attempt failed. 
+            Please double-check the <strong>user name</strong> 
+            and <strong>password</strong>.
+            </p>
+        </div>
+        <% END %>
+            <form id="login" method="POST" action="<% proxy.uri_for("/login") %>">
+            <fieldset>
+                <label for="user">Name</label>
+                <input type="text" name="user" id="user" spellcheck="false" placeholder="Username" class="text" />
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password"/>
+                <input type="hidden" name="path" value="<% path %>" />
+            </fieldset>
+            <input type=submit value="Log in"/>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+        setTimeout(function() { $('#message').fadeOut(3000); }, 3000);
+    });
+</script>
+

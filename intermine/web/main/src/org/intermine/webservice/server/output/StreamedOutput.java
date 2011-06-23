@@ -19,6 +19,7 @@ import java.util.Map;
  * So the data can not be retrieved later. Before streaming they are formatted with
  * associated formatter.
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  **/
 public class StreamedOutput extends Output
 {
@@ -27,7 +28,7 @@ public class StreamedOutput extends Output
 
     private PrintWriter writer;
 
-    private Formatter formatter;
+    private final Formatter formatter;
 
     private boolean headerPrinted = false;
 
@@ -41,12 +42,15 @@ public class StreamedOutput extends Output
         this.formatter = formatter;
     }
 
-    private void printHeader() {
-        String header = formatter.formatHeader(getHeaderAttributes());
-        if (header != null && header.length() > 0) {
-            writer.println(header);
+    private void ensureHeaderIsPrinted() {
+        if (!headerPrinted) {
+            String header = formatter.formatHeader(getHeaderAttributes());
+            if (header != null && header.length() > 0) {
+                writer.println(header);
+            }
+            headerPrinted = true;
         }
-        headerPrinted = true;
+        return;
     }
 
     /** Forwards data to associated writer
@@ -54,7 +58,7 @@ public class StreamedOutput extends Output
      * **/
     @Override
     public void addResultItem(List<String> item) {
-        if (!headerPrinted) { printHeader(); }
+        ensureHeaderIsPrinted();
         writer.println(formatter.formatResult(item));
         resultsCount++;
     }
@@ -79,17 +83,17 @@ public class StreamedOutput extends Output
      */
     @Override
     public void flush() {
-        if (headerPrinted) {
-            writer.print(formatter.formatFooter());
-        }
+        ensureHeaderIsPrinted();
+        writer.print(formatter.formatFooter(getError(), getCode()));
         writer.flush();
+        writer.close();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setHeaderAttributes(Map<String, String> attributes) {
+    public void setHeaderAttributes(Map<String, Object> attributes) {
         if (headerPrinted) {
             throw new RuntimeException("Attempt to set header attributes "
                 + "although header was printed already.");
@@ -100,6 +104,7 @@ public class StreamedOutput extends Output
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getResultsCount() {
         return resultsCount;
     }

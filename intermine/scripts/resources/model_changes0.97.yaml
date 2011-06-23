@@ -1,0 +1,5 @@
+---
+---
+# Translate one to the other
+"Disease.omimId" : identifier
+"Gene.omimDiseases" : diseases

@@ -49,7 +49,7 @@ public class PathQuery implements Cloneable
     /** Version number for the userprofile and PathQuery XML format. */
     public static final int USERPROFILE_VERSION = 2;
 
-    private Model model;
+    private final Model model;
     private List<String> view = new ArrayList<String>();
     private List<OrderElement> orderBy = new ArrayList<OrderElement>();
     private Map<PathConstraint, String> constraints = new LinkedHashMap<PathConstraint, String>();
@@ -58,6 +58,8 @@ public class PathQuery implements Cloneable
         = new LinkedHashMap<String, OuterJoinStatus>();
     private Map<String, String> descriptions = new LinkedHashMap<String, String>();
     private String description = null;
+    private String title = null;
+
 
     // Verification variables:
     private boolean isVerified = false;
@@ -968,7 +970,23 @@ public class PathQuery implements Cloneable
         }
     }
 
+
+    /**
+     * Returns the paths descriptions for the view.
+     * @param pq
+     * @return A list of column names
+     */
+    public List<String> getColumnHeaders() {
+        List<String> columnNames = new ArrayList<String>();
+        for (String viewString : getView()) {
+            columnNames.add(getGeneratedPathDescription(viewString));
+        }
+        return columnNames;
+    }
+
     // -------------------- Query description control --------------------
+    // The two attributes description and title are used for display
+    // in various queries contexts.
 
     /**
      * Sets the description for this PathQuery.
@@ -987,6 +1005,23 @@ public class PathQuery implements Cloneable
      */
     public synchronized String getDescription() {
         return description;
+    }
+
+    /**
+     * Gets the title for this query.
+     * @return The title of the query
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Sets the name of the query.
+     * @param title the new title, or null for none.
+     */
+    public void setTitle(String title) {
+        deVerify();
+        this.title = title;
     }
 
     // -------------------- Removals --------------------
@@ -1704,6 +1739,7 @@ public class PathQuery implements Cloneable
         PathConstraintSubclass[] subclassConstraintArray = subclassConstraints.toArray(new
                 PathConstraintSubclass[0]);
         Arrays.sort(subclassConstraintArray, new Comparator<PathConstraintSubclass>() {
+                @Override
                 public int compare(PathConstraintSubclass o1, PathConstraintSubclass o2) {
                     return o1.getPath().length() - o2.getPath().length();
                 }
@@ -2088,12 +2124,13 @@ public class PathQuery implements Cloneable
 
     private class ConstraintComparator implements Comparator<PathConstraint>
     {
-        private List<PathConstraint> listToSortBy;
+        private final List<PathConstraint> listToSortBy;
 
         public ConstraintComparator (List<PathConstraint> listToSortBy) {
             this.listToSortBy = listToSortBy;
         }
 
+        @Override
         public int compare(PathConstraint c1, PathConstraint c2) {
             // if neither in list we don't care how they compare, but want a consistent order
             if (!listToSortBy.contains(c1) && !listToSortBy.contains(c2)) {
@@ -2114,6 +2151,14 @@ public class PathQuery implements Cloneable
         return "PathQuery( view: " + view + ", orderBy: " + orderBy + ", constraints: "
             + constraints + ", logic: " + logic + ", outerJoinStatus: " + outerJoinStatus
             + ", descriptions: " + descriptions + ", description: " + description + ")";
+    }
+
+    /**
+     * Convert a PathQuery to XML, using the default value of PathQuery.USERPROFILE_VERSION
+     * @return This query as xml
+     */
+    public synchronized String toXml() {
+    	return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
     /**

@@ -71,12 +71,12 @@ function clearBagName(element) {
 
 <div class="filterBar">
             Search Queries:&nbsp;
-            <input type="text" id="${ws_input_id}" name="newName_${name}" size="20"
+            <input type="text" id="filterText" name="newName_${name}" size="20"
                 onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
                 onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
                 onKeyPress="return disableEnterKey(event);"
                 disabled="true"
-                value="${initialFilterText}"/>
+                value=""/>
 
           <c:if test="${PROFILE.loggedIn || type == 'template'}">
             Filter:&nbsp;
@@ -107,7 +107,7 @@ function clearBagName(element) {
             <c:forEach items="${ASPECTS}" var="entry">
               <c:set var="set" value="${entry.value}"/>
               <option value="${set.name}"
-                <c:if test="${aspect.name == set.name}">
+                <c:if test="${aspect.name == set.name || initialFilterText == set.name}">
                   selected
                 </c:if>
               >${set.name}</option>
@@ -200,7 +200,6 @@ function clearBagName(element) {
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
-  <tiles:put name="delayDisplay" value="${!empty initialFilterText}"/>
   <tiles:put name="loginMessageKey" value="${loginMessageKey}"/>
   <tiles:put name="showCount" value="${showCount}"/>
   <tiles:put name="templatesPublicPage" value="${templatesPublicPage}"/>
@@ -208,9 +207,15 @@ function clearBagName(element) {
 
  <script type="text/javascript">
 <%-- enable filter only after the list is populated --%>
-<!--//<![CDATA[
-    jQuery('#${ws_input_id}').attr('disabled','');
-//]]>-->
+    jQuery('#filterText').attr('disabled','');
+    if (document.getElementById('${ws_input_aspect}') !=null 
+            && document.getElementById('${ws_input_aspect}').value != '') {
+     filterAspect('${type}', '${wsListId}');
+    } else if (document.getElementById('filterText').value != '') {
+        filterWebSearchablesHandler(null, document.getElementById('filterText'), '${type}', '${wsListId}');
+    } else {
+        showWSList('${wsListId}', '${type}');
+    }
   </script>
 
 <c:if test="${empty userShowDescription}">
@@ -218,13 +223,5 @@ function clearBagName(element) {
 <%-- If show description checkbox is not checked, then descriptions should be hidden --%>
     showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', false);
     </script>
-</c:if>
-
-<c:if test="${!empty initialFilterText}">
-  <script type="text/javascript">
-<!--//<![CDATA[
-    filterWebSearchablesHandler(null, jQuery('#${ws_input_id}').get(0), '${type}', '${wsListId}');
-//]]>-->
-  </script>
 </c:if>
 <!-- /wsFilterList.jsp -->

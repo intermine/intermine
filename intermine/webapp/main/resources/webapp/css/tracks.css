@@ -1,0 +1,18 @@
+div.trackscontainer{
+   width:1100px;
+   height:670px;
+   margin: 0 auto 20px;
+   text-align:left;
+   padding-top: 15px;
+   padding-right: 10px;
+   padding-bottom: 50px;
+   padding-left: 30px;
+}
+
+div.trackscontainer h3{
+    text-align:left;
+}
+
+#trackcontainerlogin.trackscontainer {
+   height:350px;
+}

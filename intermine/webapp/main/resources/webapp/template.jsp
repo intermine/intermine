@@ -31,20 +31,16 @@
       recordCurrentConstraintsOrder();
   });
 
-    function codeGenTemplate(method) {
-        jQuery('#actionType').val(method);
-        jquery('#templateForm').submit();
-    }
-
 </script>
 </c:if>
+
 <c:choose>
 <c:when test="${!empty templateQuery}">
 <%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
 <im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
-<html:form styleId="templateForm" action="/templateAction">
+<html:form action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
         <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
@@ -61,6 +57,7 @@
         <%-- constraint list --%>
             <c:forEach items="${dcl}" var="dec" >
                 <c:set var="index" value="${index+1}"/>
+                <input type="hidden" name="constraint${index}" value="${dec.path}">
                 <li id="constraintElement${index}_${index}">
                 <%-- builder=yes means we are in template preview --%>
                 <c:if test="${!empty builder && builder=='yes'}">
@@ -137,10 +134,10 @@
               <td class="constraint_${index}">
               <c:choose>
               <c:when test="${dec.boolean}">
-              <html:hidden property="attributeOps(${index})" value="0" disabled="false" />
-              <html:radio property="attributeValues(${index})" value="true"/>
+              <html:hidden property="attributeOps(${index})" styleId="attributeOps(${index})" value="0" disabled="false" />
+              <html:radio property="attributeValues(${index})" styleId="attributeValues(${index})" value="true"/>
               <fmt:message key="query.constraint.true" />
-              <html:radio property="attributeValues(${index})" value="false"/>
+              <html:radio property="attributeValues(${index})" styleId="attributeValues(${index})" value="false"/>
               <fmt:message key="query.constraint.false" />
               </c:when>
               <%-- if null or not null value --%>
@@ -153,7 +150,7 @@
                   <c:choose>
                   <c:when test="${!dec.lookup}">
                     <div style="float:left;margin-right:5px;">
-                    <html:select property="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
+                    <html:select property="attributeOps(${index})" styleId="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
                       <c:forEach items="${dec.validOps}" var="op">
                       <option value="${op.property}"
                         <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
@@ -170,8 +167,8 @@
                    </c:choose>
                    <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
-                   <html:hidden property="multiValueAttribute(${index})"/>
-                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
+                   <html:hidden property="multiValueAttribute(${index})" styleId="multiValueAttribute(${index})"/>
+                   <html:select property="multiValues(${index})" styleId="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
                    <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
@@ -202,13 +199,13 @@
                   <%-- normal inputfield, no auto completer exists --%>
                   <c:otherwise>
                      <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})"
-                       styleId="attribute6" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
+                       styleId="attributeValues(${index})" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
                    </c:otherwise>
                 </c:choose>
                 </span>
                  <%-- dropdown --%>
               <c:if test="${!empty dec.possibleValues}">
-                <select name="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
+                <select name="attributeOptions(${index})" id="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
                   <c:forEach items="${dec.possibleValues}" var="option">
                       <option value="${option}" <c:if test="${dec.selectedValue == option}">selected</c:if>>
                       <c:out value="${option}" /></option>
@@ -230,7 +227,7 @@
                   </fmt:message>
                 </label>
 
-            <html:select property="extraValues(${index})" value="${dec.selectedExtraValue}">
+            <html:select property="extraValues(${index})" styleId="extraValues(${index})" value="${dec.selectedExtraValue}">
               <html:option value="">Any</html:option>
                <!-- this should set to extraValue if editing existing constraint -->
               <c:forEach items="${dec.extraConstraintValues}" var="value">
@@ -250,25 +247,24 @@
         <%-- help link --%>
         <td rowspan="${rowspanExternalTd}" valign="${valignExternalTd}">
           <c:if test="${!empty dec.helpMessage}">
-            <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}"/></span>
+            <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}" type="big"/></span>
           </c:if>
         </td>
         </tr>
         <tr>
         <td class="constraint_${index}">
           <c:if test="${!empty dec.bags && !dec.nullSelected}">
-            <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />
-            <fmt:message key="template.constraintobe"/>
-            <%--Contained in bag:--%>
-            <html:select property="bagOp(${index})" disabled="true">
+            <html:checkbox property="useBagConstraint(${index})" styleId="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
+            key="template.constraintobe"/>&nbsp;<html:select
+            property="bagOp(${index})" styleId="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
                 <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
                   <c:out value="${bagOp.label}" />
                 </option>
               </c:forEach>
-            </html:select>
-            <fmt:message key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>
-            <html:select property="bag(${index})" disabled="true">
+            </html:select>&nbsp;<fmt:message
+            key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>&nbsp;<html:select
+            property="bag(${index})" styleId="bag(${index})" disabled="true">
               <c:forEach items="${dec.bags}" var="bag">
                 <option value="${bag}" <c:if test="${!empty dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
                   <c:out value="${bag}" />
@@ -310,21 +306,26 @@
           <html:hidden property="name"/>
           <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
-          <!-- Twisted by the Dark Side young Skywalker has become... -->
+          <%-- For some reason, we are faking up the real sumbit actions with these buttons... --%>
           <div class="floatRight">
           <input type="button" onclick="jQuery('input#editQueryButton').click();" class="editQueryBuilder" value="<fmt:message key="template.submitToQuery"/>" />
           <c:if test="${IS_SUPERUSER}">
             <input type="button" onclick="jQuery('input#editTemplateButton').click();" class="editTemplate" value="<fmt:message key="template.submitToQueryEdit"/>" />
           </c:if>
           </div>
-          <!-- default action, if you do not care about submit button ordering -->
-          <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
-            <fmt:message key="template.submitToResults"/>
-          </html:submit>
+          <%-- default action, if you do not care about submit button ordering --%>
+          <div id="smallGreen" class='button'>
+            <div class="left"></div>
+            <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
+              <fmt:message key="template.submitToResults"/>
+            </html:submit>
+            <div class="right"></div>
+          </div>
+          <div class="clear"></div>
 
 
-          <!-- these are not the drones you are looking for... -->
-      <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
+          <%-- These elements are hidden - look for the real (js) ones above... --%>
+          <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
             <fmt:message key="template.submitToQuery"/>
           </html:submit>
           <html:submit property="editTemplate" styleId="editTemplateButton" style="display:none;">
@@ -334,6 +335,9 @@
 </c:if>
 </html:form>
 
+<c:if test="${!empty builder && builder=='yes'}">
+<br/>
+</c:if>
 <div class="templateActions">
 <table>
   <tr>
@@ -345,18 +349,50 @@
       <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
     </td>
     <td>
-      <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
+      <div id="permalink">
+        <a href="#" title="Get a URL to run this template from the command line or a script">web service URL</a>
+        <div class="popup" style="display:none;">
+          <span class="close"></span>
+          <p style="width:95%;">
+          Use the URL below to fetch results for this template from the command line or a script
+          <i>(please note that you will need to use authentication to access private templates and lists)</i>:
+          </p>
+          <input type="text" value="None">
+        </div>
+      </div>
+      <script type="text/javascript">
+        <%-- permalink handlers --%>
+        jQuery('#permalink a').click(function(e) {
+          jQuery('#actionType').val("webserviceURL");
+          jQuery.ajax({
+            url: "<html:rewrite page='/templateAction.do'/>",
+            data: jQuery('#templateForm').serialize(),
+            success: function(data) {
+              jQuery('#permalink div.popup').show().find('input').val(data).select();
+            },
+            dataType: "text"
+          });
+          e.preventDefault();
+        });
+        jQuery('#permalink div.popup span.close').click(function(e) {
+          jQuery('#permalink div.popup').hide();
+        });
+      </script>
     </td>
     <td>
       <c:choose>
         <c:when test="${empty builder}">
           <a href="javascript:codeGenTemplate('perl');">Perl</a>
           <span>|</span>
+          <a href="javascript:codeGenTemplate('python');">Python</a>
+          <span>|</span>
           <a href="javascript:codeGenTemplate('java');">Java</a>
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
         </c:when>
         <c:otherwise>
           <a href="javascript:;">Perl</a>
+          <span>|</span>
+          <a href="javascript:;">Python</a>
           <span>|</span>
           <a href="javascript:;">Java</a>
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>

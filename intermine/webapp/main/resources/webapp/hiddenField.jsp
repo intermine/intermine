@@ -6,7 +6,7 @@
 <div style="white-space: nowrap">
   <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
   <c:if test="${object[fieldDescriptor.name] == null}">
-    <fmt:message key="objectDetails.nullField"/>
+    <fmt:message key="report.nullField"/>
   </c:if>
   <c:if test="${object[fieldDescriptor.name] != null}">
     <fmt:message key="hidden.field"/>

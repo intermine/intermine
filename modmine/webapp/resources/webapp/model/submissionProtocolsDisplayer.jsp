@@ -8,6 +8,8 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
   prefix="str"%>
 
+<!-- submissionProtocolsDisplayer.jsp -->
+
 <tiles:importAttribute />
 
 <html:xhtml />
@@ -49,15 +51,15 @@ jQuery(document).ready(function () {
  jQuery(".tbox").children('doopen').show();
  jQuery(".tbox").children('doclose').hide();
 
-	jQuery('.tbox').click(function () {
-	var text = jQuery(this).children('doclose');
+  jQuery('.tbox').click(function () {
+  var text = jQuery(this).children('doclose');
 
-	if (text.is(':hidden')) {
-	     jQuery(this).children('doclose').show("slow");
-	   } else {
-	       jQuery(this).children('doopen').show("slow");
-	    }
-	 });
+  if (text.is(':hidden')) {
+       jQuery(this).children('doclose').show("slow");
+     } else {
+         jQuery(this).children('doopen').show("slow");
+      }
+   });
 
   jQuery("doopen").click(function(){
      jQuery(this).toggle("slow");
@@ -70,7 +72,7 @@ jQuery(document).ready(function () {
     });
 
 
-	});
+  });
 
 </script>
 
@@ -87,10 +89,9 @@ jQuery(document).ready(function () {
 
 <tr class="<c:out value="${pRowClass}"/>">
 
-
     <td>${prot.type}</td>
     <td><html:link
-    href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prot.id}">
+    href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${prot.id}">
     ${prot.name}
     </html:link></td>
     <td>
@@ -98,20 +99,14 @@ jQuery(document).ready(function () {
 
 
     <td class="description">
-<div class="tbox">
+    <div class="tbox">
     <doopen><img src="images/undisclosed.gif">
-<ii>
-    ${fn:substring(prot.description,0,80)}...
-
-    </ii>
+      <i>${fn:substring(prot.description,0,80)}... </i>
     </doopen>
-
     <doclose><img src="images/disclosed.gif">
-     <i>
-    ${prot.description}
-    </i>
+      <i>${prot.description}</i>
     </doclose>
-</div>
+    </div>
     </td>
 
     </tr>
@@ -141,6 +136,8 @@ jQuery(document).ready(function () {
     })
 </script>
 
+    <c:set var="dccNumber" value="${fn:substringAfter(DCCid,'modENCODE_')}"/>
+    <c:set var="geoUrl" value="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=" />
 
 <c:choose>
 <c:when test="${fn:length(pagedResults.rows) > 1}">
@@ -236,7 +233,7 @@ jQuery(document).ready(function () {
                 <c:if test="${fn:length(fn:substringBefore(resultElement.field,'File')) gt 0}">
                   <c:set var="output" value="true"/>
                   <c:set var="isFile" value="true" />
-  							</c:if>
+            </c:if>
 
               </c:when>
               <c:otherwise>
@@ -246,42 +243,57 @@ jQuery(document).ready(function () {
                 </c:if>
 
                 <c:if test="${output}">
-														<td
-															id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-															rowspan="${subRow[column.index].rowspan}"
-															class="<c:out value="${stepClass}${rowClass}"/>">
-															<c:choose>
-															<c:when
-																test="${fn:startsWith(fn:trim(resultElement.field), 'http://')
-																|| fn:startsWith(fn:trim(resultElement.field), 'ftp://')
-																}">
-																<a href="${resultElement.field}" class="value extlink">
-																<c:set var="elements"
-																	value="${fn:split(resultElement.field,'/')}" />
-																	<c:out
-																	value="${elements[fn:length(elements) - 1]}" /> </a>
-															</c:when>
+                <td
+                id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
+                    rowspan="${subRow[column.index].rowspan}"
+                        class="<c:out value="${stepClass}${rowClass}"/>">
+                        <c:choose>
+                        <c:when
+                        test="${fn:startsWith(fn:trim(resultElement.field), 'http://')
+                            || fn:startsWith(fn:trim(resultElement.field), 'ftp://')
+                            }">
+                        <a href="${resultElement.field}" class="value extlink">
+                        <c:set var="elements"
+                            value="${fn:split(resultElement.field,'/')}" />
+                        <c:out
+                        value="${elements[fn:length(elements) - 1]}" /> </a>
+                        </c:when>
 
-															<c:when test="${isFile}">
-																<c:out value="${resultElement.field}" /></td>
-														<c:set var="isFile" value="false" />
-                            <c:set var="doLink" value="true" />
-														</c:when>
+                        <c:when
+                        test="${fn:startsWith(fn:trim(resultElement.field), 'GSM')}">
+                        <a href="${geoUrl}${resultElement.field}" class="value extlink">
+                        <c:out
+                            value="${resultElement.field}" />
+                        </c:when>
 
-                              <c:when test="${doLink}">
-                                <a href="${WEB_PROPERTIES['ftp.prefix']}/${DCCid}/extracted/${resultElement.field}" class="value extlink">
-                                <c:out value="${resultElement.field}" /> </a></td>
-                            <c:set var="doLink" value="false" />
-                            </c:when>
+                        <c:when test="${isFile}">
+                        <c:out value="${resultElement.field}" /></td>
+                        <c:set var="isFile" value="false" />
+                        <c:set var="doLink" value="true" />
+                        </c:when>
 
+                        <c:when test="${doLink}">
 
+                        <c:forEach items="${files}" var="file" varStatus="f_status">
+                        <c:if 
+                        test="${resultElement.field == file.name}">
+                        <c:set var="url" value="${file.url}" />
+                        </c:if>
+                        </c:forEach>
+                        <a href="${url}" title="Download file ${resultElement.field}" class="value extlink"> 
+                        <%--
+                        <a href="${WEB_PROPERTIES['ftp.url']}/get_file/${dccNumber}/extracted/${resultElement.field}" class="value extlink">
+                        --%>
+                        <c:out value="${resultElement.field}" /> </a></td>
+                        <c:set var="doLink" value="false" />
+                        </c:when>
 
-                    <c:otherwise>
-                      <tiles:insert name="objectView.tile" />
-                  </c:otherwise>
-                  </c:choose>
-                  </td>
-                </c:if>
+                        <c:otherwise>
+                        <tiles:insert name="objectView.tile" />
+                        </c:otherwise>
+                        </c:choose>
+                        </td>
+                        </c:if>
               </c:otherwise>
             </c:choose>
           </c:if>
@@ -325,4 +337,4 @@ text="<h3>Browse metadata for this submission (click to view)</h3>"  skipBuilder
 </c:choose>
 </div>
 
-
+<!-- /submissionProtocolsDisplayer.jsp -->

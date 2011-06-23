@@ -101,7 +101,7 @@ public class PathQueryExecutor extends QueryExecutor
             throw new RuntimeException("Creating export results iterator failed", e);
         }
     }
-    
+
     public int count(PathQuery pq) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map<String, BagQueryResult> returnBagQueryResults =
@@ -121,7 +121,7 @@ public class PathQueryExecutor extends QueryExecutor
      * @param limit maximum number of results
      * @return results
      */
-    
+
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
             final int limit) {
         try {

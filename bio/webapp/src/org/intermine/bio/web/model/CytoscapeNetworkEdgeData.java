@@ -22,42 +22,58 @@ import java.util.Set;
  */
 public class CytoscapeNetworkEdgeData
 {
-    private String soureceId;
+    private String id; // as in a form of "<sourceId>-<targetId>"
+    private String sourceId; // Use InterMine Id
     private String sourceLabel; // sometimes no values
-    private String targetId;
+    private String targetId; // Use InterMine Id
     private String targetLabel; // sometimes no values
     private String interactionType; // edge id and label
     private String direction; // both or one
     /** key - datasource name, value - interaction short name **/
     private Map<String, Set<String>> dataSources;
     private Map<String, String> extraInfo; // such as color, etc.
+    // TODO private Map<String, Object> extraInfo, combine dataSources and extraInfo
 
     /**
      * @return interactionString a record in format of "source<tab>interactionType<tab>target"
      */
     public String generateInteractionString() {
-        return soureceId + "\\t" + interactionType + "\\t" + targetId;
+        return sourceId + "\\t" + interactionType + "\\t" + targetId;
     }
 
     /**
      * @return interactionString a record in format of "target<tab>interactionType<tab>source"
      */
     public String generateReverseInteractionString() {
-        return targetId + "\\t" + interactionType + "\\t" + soureceId;
+        return targetId + "\\t" + interactionType + "\\t" + sourceId;
+    }
+
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
      * @return the soureceId
      */
-    public String getSoureceId() {
-        return soureceId;
+    public String getSourceId() {
+        return sourceId;
     }
 
     /**
      * @param soureceId the soureceId to set
      */
-    public void setSoureceId(String soureceId) {
-        this.soureceId = soureceId;
+    public void setSourceId(String soureceId) {
+        this.sourceId = soureceId;
     }
 
     /**
@@ -156,5 +172,26 @@ public class CytoscapeNetworkEdgeData
      */
     public void setExtraInfo(Map<String, String> extraInfo) {
         this.extraInfo = extraInfo;
+    }
+
+    /**
+     * @param obj a CytoscapeNetworkEdgeData object
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CytoscapeNetworkEdgeData) {
+            CytoscapeNetworkEdgeData e = (CytoscapeNetworkEdgeData) obj;
+            return (id.equals(e.getId()));
+        }
+        return false;
+    }
+
+    /**
+     * @return hashCode
+     */
+    @Override
+    public int hashCode() {
+        return (sourceId + "-" + targetId).hashCode();
     }
 }

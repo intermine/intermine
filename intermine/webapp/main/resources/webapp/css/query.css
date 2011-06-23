@@ -79,6 +79,9 @@ div.modelbrowse {
   width:495px;
 }
 
+#queryBuilderContainer {
+  margin-top:10px;
+}
 /* Outer Joins diagram */
 li.block {
   list-style:none;
@@ -181,3 +184,27 @@ img.tinyQuestionMark {
 #ctxHelpDiv {
   margin-bottom:10px;
 }
+
+.queryActions {
+  margin: 15px 8px;
+}
+
+.queryActions table {
+  width: 100%;
+  border-spacing: 0px;
+  border-top: 1px solid gray;
+  border-left: 1px solid gray;
+
+}
+
+.queryActions td {
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
+  padding: 1px 0px 1px 0px;
+  width: 25%;
+  font-size: 11px;
+  text-align: center;
+}
+
+#sidebar { margin-left:830px;height:35px;
+  width:495px;}

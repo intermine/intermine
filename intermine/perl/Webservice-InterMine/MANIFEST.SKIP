@@ -1,3 +1,4 @@
+\.git
 ^_build
 ^Build$
 ^blib
@@ -21,3 +22,9 @@ old_t
 make_distribution\.pl
 .*rej
 \.orig$
+_Inline
+get_gnarly_data.pl
+nytprof
+.*\.out
+scripts
+\.prove.*

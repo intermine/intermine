@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%-- JavaScript functions required once on the page before using <im:viewable ...>
-	 and <im:sortable ...>
+   and <im:sortable ...>
      The prefixes are the set of values later passed as the idPrefix attribute
      when using <im:viewable>
 --%>
@@ -62,7 +62,7 @@ function enablePathHighlighting() {
 
 /* Install document mouse up handler to reenable highlighting */
 
-Event.observe(document, "mouseup", enablePathHighlighting);
+jQuery(document).mouseup(enablePathHighlighting);
 
 //-->
 </script>

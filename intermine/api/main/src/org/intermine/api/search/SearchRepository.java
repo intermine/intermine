@@ -91,7 +91,8 @@ public class SearchRepository
 
     /**
      * Initialise and index web searchables of the given type from the profile.  If scope is
-     * GLOBAL will restrict to those tagged public.
+     * GLOBAL will restrict to those tagged public and NOT hidden.
+     *
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     private void populateWebSearchables(String type) {
@@ -109,7 +110,7 @@ public class SearchRepository
 
             wsMap = new SearchFilterEngine().filterByTags(wsMap,
                     new ArrayList<String>(Collections.singleton(TagNames.IM_PUBLIC)), type,
-                    profile.getUsername(), tagManager);
+                    profile.getUsername(), tagManager, false);
         }
         webSearchablesMap.put(type, wsMap);
         reindex(type);

@@ -47,6 +47,11 @@ public interface TagNames
     String IM_HIDDEN = "im:hidden";
 
     /**
+     * String used to tag objects that should be hidden at jsp page
+     */
+    String IM_ADMIN = "im:admin";
+
+    /**
      * String used to tag objects by some aspect
      */
     String IM_ASPECT_PREFIX = "im:aspect:";

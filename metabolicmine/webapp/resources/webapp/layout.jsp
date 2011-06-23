@@ -11,7 +11,7 @@
 <!-- layout.jsp -->
 <html:xhtml/>
 
-<html:html locale="true" xhtml="true">
+<html:html lang="true" xhtml="true">
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
 
@@ -64,7 +64,7 @@
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
 
-  <div id="pagecontentcontainer" align="center">
+  <div id="pagecontentcontainer" align="center" class="${pageName}${subtabs[subtabName]}-page">
     <c:choose>
     <c:when test="${!empty fixedLayout}">
       <div id="pagecontent">
@@ -76,8 +76,6 @@
 
   <div id="navtrail">
 
-  <!-- contact us -->
-
     <p id="contactUsLink" class="alignleft">
     <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
     </p>
@@ -86,22 +84,11 @@
     <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
     </p>
 
-    <!-- Nav trail -->
+  <c:if test="${pageName != 'report'}">
   <fmt:message key="${pageName}.tab" var="tab" />
-  <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-    <p class="alignright">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
-    <c:if test="${! empty tab }">
-      &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
-      <c:if test="${pageName != tab}">
-        <fmt:message key="${pageName}.title" var="pageTitle">
-          <fmt:param value="${param.name}"/>
-        </fmt:message>
-        &nbsp;&gt;&nbsp;<c:out value="${pageTitle}" />
-      </c:if>
+    <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
+        <p class="alignright"><im:contextHelp/></p>
     </c:if>
-    <im:contextHelp/>
-</p>
   </c:if>
  </div>
 
@@ -143,7 +130,7 @@
     <c:if test="${!empty googleAnalyticsId}">
         <script type="text/javascript">
             document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
+        --</script>
         <script type="text/javascript">
             var pageTracker = _gat._getTracker('${googleAnalyticsId}');
             pageTracker._initData();
@@ -156,5 +143,18 @@
   </div>
 </body>
 </html:html>
+
+<script type="text/javascript">
+<%-- remove any 'handwritten images' (metabolic) if we have a hint for the user that would overlay them --%>
+  if (jQuery('#hints').is(":visible")) {
+    jQuery.each(["#pagecontent", "#pagecontentmax"], function(index, target) {
+      var element = jQuery(target);
+      if (element.length > 0) {
+        element.css('background-image', 'none');
+      }
+    });
+  }
+</script>
+
 <!-- /layout.jsp -->
 

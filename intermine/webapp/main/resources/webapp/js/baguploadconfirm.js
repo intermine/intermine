@@ -1,147 +1,320 @@
 var duplicateArray = new Array();
 var tdColorArray = new Array();
-
+var highlightColor = '#FFF3D3';
 
 function initForm(bagName) {
     if (bagName != null && bagName != "") {
-        document.bagUploadConfirmForm.newBagName.disabled = true;
+        jQuery("#newBagName").attr('disabled', 'disabled');
     }
 }
 
-function addId2Bag(id, row, parentId, issueType){
-  setLinkState('removeAllLink', 'active');
-  if (document.getElementById('add_' + issueType + '_' + id).className == 'fakelink') {
-    document.getElementById('add_' + issueType + '_' + id).className = '';
-    document.getElementById('rem_' + issueType + '_' + id).className = "fakelink";
+/**
+ * Run a function checking if we already have items in the bag
+ */
+function checkIfAlreadyInTheBag() {
+    // run a function checking if we already have items in the bag
+    jQuery('span.fakelink').each(function(index) {
+      // get the element id
+      var id = jQuery(this).attr("id");
+      // parse out the actual identifier
+      var identifier = id.substring(id.lastIndexOf("_") + 1);
 
-    highlightRow('row_' + issueType + '_' + row);
-
-    var bagList = document.getElementById('matchIDs').value;
-    if (bagList.indexOf(id) == -1) {
-      if (bagList.length != 0) {
-        bagList += " ";
+      // check if we have it
+      if (isIdentifierInTheBag(identifier)) {
+        // ...then select it
+        jQuery(this).click();
+        // ...and remove the controls
+        jQuery(this).parent().html("<p>Already in your list.</p>")
       }
-      document.getElementById('matchIDs').value = bagList + id;
+    });
+}
+
+/**
+ * give us a list of items in the bag currently
+ */
+function getIdentifiersInTheBag() {
+  return jQuery("#matchIDs").val().split(" ");
+}
+
+/**
+ * check if value is already in a bag
+ * @param identifier, actual object ID
+ * @returns {Boolean}
+ */
+function isIdentifierInTheBag(identifier) {
+  var array = getIdentifiersInTheBag();
+  for (var i = 0; i < array.length; i++) {
+    if (identifier == array[i]) {
+      return true;
     }
-    document.getElementById('matchCount').innerHTML++;
-    var idArray = duplicateArray[parentId];
-    if (idArray == null) {
-      duplicateArray[parentId] = new Array(id);
-      document.getElementById(issueType + 'Count').innerHTML--;
-      document.getElementById('td_' + issueType + '_' + parentId).style.backgroundColor = '#CCCCCC';
+  }
+  return false;
+}
 
-      // we used to edit div with a count of items...
-      if (document.getElementById('initialIdCount') != null) {
-        document.getElementById('initialIdCount').innerHTML++;
+/**
+ * We cannot rely on JSP to give us an accurate number of matches we have
+ * in a bag anymore, thus run this method to count the number of rows
+ * highlighted (= used)
+ */
+function hasUnhighlightedRows() {
+  var unhighlighted = false;
+  jQuery("#additionalMatches table.inlineResultsTable tbody tr").each(function(index) {
+    if (jQuery(this).find('td:not(.identifier)').first().attr('style') != 'background-color: rgb(255, 243, 211);') {
+      unhighlighted = true;
+      return false;
+    }
+  });
+  return unhighlighted;
+}
+
+/**
+ * Add an identifier into the bag
+ * @param objectId of the actual row
+ * @param row number relative to the table in question
+ * @param parentId is the identifier we were trying to upload
+ * @param issueType, e.g.: 'duplicate' etc.
+ * @return
+ */
+function addId2Bag(objectId, row, parentId, issueType) {
+  // I can remove now...
+  setLinkState('removeAllLink', 'active');
+
+  if (jQuery('#add_' + issueType + '_' + objectId).hasClass('fakelink')) {
+      // switch the class on add/remove links
+      jQuery('span#add_' + issueType + '_' + objectId).removeClass('fakelink');
+      jQuery('span#rem_' + issueType + '_' + objectId).addClass('fakelink');
+
+      // colour the row columns (even associated rows, based on object id)
+      jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+        var rowId = jQuery(this).parent().attr('class').split(" ")[1];
+        colourRow(rowId, true);
+      });
+
+      if (!isIdentifierInTheBag(objectId)) {
+        // update the number of matches count
+        updateCount('#matchCount', 1);
+
+        // now update the count of items in a JS var from bagUploadConfirm.jsp
+        if (matchCount != null) {
+          matchCount++;
+        }
       }
+
+      // remove identifier from a list of additional matches to upload
+      addIdToListOfMatches(objectId);
+
+      var idArray = duplicateArray[parentId];
+      if (idArray == null) {
+        duplicateArray[parentId] = new Array(objectId);
+
+        // decrease count
+        updateCount('#' + issueType + 'Count', -1);
+
+        // apply bg color to identifier(s)
+        jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+          var tdId = jQuery(this).parent().parent().attr('id').substring(3);
+          jQuery('td#td_' + issueType + '_' + tdId).addClass('highlight');
+        });
+
+        // decrease count
+        updateCount('#initialIdCount', -1);
+      } else {
+        idArray[idArray.length] = objectId;
+        duplicateArray[parentId] = idArray;
+      }
+
+      setLinkState(issueType + 'removeAllLink', 'active');
+
+      // update the text of the button that saves our list
+      updateFurtherMatchesDisplay();
+    } else {
+      // update the color anyways, we are already included through another object
+      //jQuery('span#add_' + issueType + '_' + objectId).parent().parent().css('background-color', highlightColor);
+    }
+}
+
+/**
+ * Remove identifier from the bag
+ * @param objectId of the actual row
+ * @param row number relative to the table in question
+ * @param parentId is the identifier we were trying to upload
+ * @param issueType, e.g.: 'duplicate' etc.
+ * @return
+ */
+function removeIdFromBag(objectId, row, parentId, issueType) {
+    setLinkState('addAllLink', 'active');
+
+    if (jQuery('#rem_' + issueType + '_' + objectId).hasClass('fakelink')) {
+    // switch the class on remove/add links
+    jQuery('span#rem_' + issueType + '_' + objectId).removeClass('fakelink');
+    jQuery('span#add_' + issueType + '_' + objectId).addClass('fakelink');
+
+    // decolour the row columns (even associated rows, based on object id)
+    jQuery('span#add_' + issueType + '_' + objectId).each(function(i) {
+      var rowId = jQuery(this).parent().attr('class').split(" ")[1];
+      colourRow(rowId, false);
+    });
+
+    if (isIdentifierInTheBag(objectId)) {
+      // update the number of matches count
+      updateCount('#matchCount', -1);
+
       // now update the count of items in a JS var from bagUploadConfirm.jsp
       if (matchCount != null) {
-        matchCount++;
+        matchCount--;
       }
     }
-    else {
-      idArray[idArray.length] = id;
-      duplicateArray[parentId] = idArray;
+
+    // remove identifier from a list of additional matches to upload
+    removeIdFromListOfMatches(objectId);
+
+    var idArray = duplicateArray[parentId];
+    if (idArray != null) {
+      if (idArray.length == 1) {
+        // increase count
+        updateCount('#' + issueType + 'Count', 1);
+
+        // 'remove' background color from identifier
+        jQuery('span#add_' + issueType + '_' + objectId).each(function(i){
+          var tdId = jQuery(this).parent().parent().attr('id').substring(3);
+          jQuery('td#td_' + issueType + '_' + tdId).removeClass('highlight');
+        });
+
+        // reduce count
+        updateCount('#initialCount', -1);
+
+        duplicateArray[parentId] = null;
+      } else {
+        var idArrayCopy = new Array();
+
+        jQuery.each(idArray, function(i, value) {
+          if (objectId != value) {
+            idArrayCopy[idArrayCopy.length] = idArray[i];
+          }
+        });
+
+        duplicateArray[parentId] = idArrayCopy;
+      }
     }
-    toggleForm(1);
-    setLinkState(issueType + 'removeAllLink', 'active');
+
+    setLinkState(issueType + 'addAllLink', 'active');
 
     // update the text of the button that saves our list
-    if (document.getElementById('saveList') != null) {
-      document.getElementById('saveList').value = "Save a list of " + matchCount + " " + listType;
-      // "further matches" text
-      if (document.getElementById('furtherMatches') != null) {
-        if (matchCount < totalCount) {
-          document.getElementById('furtherMatches').innerHTML = furtherMatchesText;
-        }
-        else {
-          document.getElementById('furtherMatches').innerHTML = "";
-        }
-      }
-    }
+    updateFurtherMatchesDisplay();
   }
 }
 
-function highlightRow(rowId) {
-    colourRow(rowId, true);
+/**
+ * Set color on row elements
+ * @param rowClass
+ * @param highlighted true if we are highlighting now
+ * @return
+ */
+function colourRow(rowClass, highlighted) {
+  // match all 'row_duplicate_0' elements
+  jQuery('td.' + rowClass).each(function(index) {
+    // are we highlighting?
+    if (highlighted) {
+      tdColorArray[rowClass] = jQuery(this).css('background-color');
+      jQuery(this).css('background-color', highlightColor);
+    } else {
+      // set color back (transparent)
+      jQuery(this).css('background-color', tdColorArray[rowClass]);
+    }
+  });
+
+}
+
+/**
+ * Will update a count in an element, checks if element exists first
+ * @param element jQuery syntax
+ * @param amount integer
+ * @return
+ * @deprecated possibly... :)
+ */
+function updateCount(element, amount) {
+  // exists?
+  if (jQuery(element).length > 0) {
+    // parse value
+    var count = parseInt(jQuery(element).text()) + amount;
+    // set value
+    jQuery(element).text(count);
+  }
+}
+
+/**
+ * Will check the current number of matches vs the total count and appropriately show info message
+ *  and update form button text with the totals
+ * @return
+ */
+function updateFurtherMatchesDisplay() {
+  // update the text of the button that saves our list
+  if (jQuery('input#saveList').length > 0) {
+    if (matchCount > 0) {
+      // button style
+      jQuery('input#saveList').parent().removeClass('inactive');
+      // button text
+      if (matchCount > 1) {
+        jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType + "s");
+      } else {
+        jQuery('input#saveList').val("Save a list of " + matchCount + " " + listType);
+      }
+    } else {
+      // button style
+      jQuery('input#saveList').parent().addClass('inactive');
+      // button text
+      jQuery('input#saveList').val("0 " + listType);
+    }
+    // "further matches" text
+    if (jQuery('p#furtherMatches').length > 0) {
+      if (hasUnhighlightedRows()) {
+        jQuery('p#furtherMatches').html(furtherMatchesText);
+      } else {
+        jQuery('p#furtherMatches').html(null);
+      }
+    }
+  }
 }
 
 function unHighlightRow(rowId) {
     colourRow(rowId, false);
 }
 
-function colourRow(rowId, highlighted) {
-    var first = document.getElementById(rowId);
-    var el = first;
-    while (true) {
-        if (el.style) {
-          if (highlighted) {
-                tdColorArray[rowId] = el.style.backgroundColor;
-                el.style.backgroundColor = "#CCCCCC";
-          } else {
-             el.style.backgroundColor = tdColorArray[rowId];
-          }
-        }
-        el = el.nextSibling;
-        if (el == null) {
-            break;
-        }
+/**
+ * Will add an identifier to a list of matches in #matchIDs hidden input element
+ * @param identifier we were trying to upload
+ * @return
+ */
+function addIdToListOfMatches(identifier) {
+  var bagList = jQuery('input#matchIDs').val();
+
+  if (bagList.indexOf(identifier) == -1) {
+    // add an extra space if we have elements inside already
+    if (bagList.length > 0) {
+      bagList += " ";
     }
+    jQuery('input#matchIDs').val(bagList + identifier);
+  }
 }
 
-function removeIdFromBag(id,row, parentId, issueType){
-    setLinkState('addAllLink', 'active');
-    if(document.getElementById('rem_'+issueType+'_'+id).className=='fakelink'){
-        document.getElementById('rem_'+issueType+'_'+id).className = '';
-        document.getElementById('add_'+issueType+'_'+id).className = "fakelink";
+/**
+ * Will remove an identifier from a list of matches in #matchIDs hidden input element
+ * @param identifier we were trying to upload
+ * @return
+ */
+function removeIdFromListOfMatches(identifier) {
+  // get the list of identifiers
+  var bagList = jQuery("#matchIDs").val();
 
-        unHighlightRow('row_'+issueType+'_'+row);
-
-        var bagList = document.getElementById('matchIDs').value;
-        if(bagList.indexOf(id) != -1){
-            bagList = bagList.split(id).join('').split('  ').join(' ');
-            document.getElementById('matchIDs').value = bagList.replace(/^s+/, '').replace(/s+$/, '');//Trim
-        }
-        var bagList = document.getElementById('matchIDs').value;
-        document.getElementById('matchCount').innerHTML--;
-        var idArray = duplicateArray[parentId];
-        if(idArray.length == 1){
-            document.getElementById(issueType+'Count').innerHTML++;
-            document.getElementById('td_'+issueType+'_'+parentId).style.backgroundColor = '#FFFFFF';
-            // we used to edit div with a count of items...
-            if (document.getElementById('initialIdCount') != null) {
-              document.getElementById('initialIdCount').innerHTML--;
-            }
-            // now update the count of items in a JS var from bagUploadConfirm.jsp
-            if (matchCount != null) {
-              matchCount--;
-            }
-            duplicateArray[parentId] = null;
-        } else {
-            var idArrayCopy = new Array();
-            for (var i=0;i<idArray.length;i++){
-                if(id!=idArray[i]){
-                    idArrayCopy[idArrayCopy.length]=idArray[i];
-                }
-            }
-            duplicateArray[parentId] = idArrayCopy;
-        }
-        toggleForm(document.getElementById('matchCount').innerHTML);
-        setLinkState(issueType+'addAllLink', 'active');
-        // update the text of the button that saves our list
-        if (document.getElementById('saveList') != null) {
-          document.getElementById('saveList').value = "Save a list of " + matchCount + " " + listType;
-          // "further matches" text
-          if (document.getElementById('furtherMatches') != null) {
-            if (matchCount < totalCount) {
-              document.getElementById('furtherMatches').innerHTML = furtherMatchesText;
-            }
-            else {
-              document.getElementById('furtherMatches').innerHTML = "";
-            }
-          }
-        }
-    }
+  // if we have found the identifier in the string
+  if (bagList.indexOf(identifier) > -1) { // jQuery.inArray() not consistent...
+    // remove the identifier from an array
+    bagList = jQuery.grep(bagList.split(' '), function(value) { return value != identifier; });
+    // turn array into string and replace all "," with a space
+    jQuery("#matchIDs").val(bagList.toString().replace(new RegExp(",","g"), ' '));
+  } else {
+    // trying to remove an element that is not in the list
+  }
 }
 
 function addAll(issue, flatArray){
@@ -154,10 +327,10 @@ function addAll(issue, flatArray){
             return;
         }
     }
-  for (i=0;i<a.length-1;i++) {
+  for (i = 0; i < a.length -1; i++) {
     // split rows into vars
     var b = a[i].split(",");
-    addId2Bag(b[0],b[1],b[2],b[3]);
+    addId2Bag(b[0], b[1], b[2], b[3]);
   }
   toggleBagLinks(issue, 'add');
 }
@@ -172,10 +345,10 @@ function removeAll(issue, flatArray){
             return;
         }
     }
-  for (i=0;i<a.length-1;i++) {
+  for (i = 0; i < a.length -1; i++) {
     // split rows into vars
     var b = a[i].split(",");
-    removeIdFromBag(b[0],b[1],b[2],b[3]);
+    removeIdFromBag(b[0], b[1], b[2], b[3]);
   }
   toggleBagLinks(issue, 'remove');
 }
@@ -198,6 +371,11 @@ function toggleBagLink(issue, action) {
   if (issue != 'all') {
     addAllLink = issue + addAllLink;
     removeAllLink = issue + removeAllLink;
+
+    // update individual adders in the sidebar as well
+    if (jQuery('#sidebar').length > 0) {
+      jQuery('#sidebar ul li.' + issue).toggleClass('added');
+    }
   }
   if (action == 'remove') {
     setLinkState(addAllLink, 'active');
@@ -209,13 +387,18 @@ function toggleBagLink(issue, action) {
 
 }
 
+/**
+ * Switch between the state of the 'links' that add/remove identifiers
+ * @param link
+ * @param state
+ * @return
+ */
 function setLinkState(link, state) {
-  if (document.getElementById(link)) {
+  if (jQuery('#' + link).length > 0) {
     if (state == 'active') {
-      document.getElementById(link).className = "fakelink";
+      jQuery('#' + link).addClass("fakelink");
     } else {
-      document.getElementById(link).className = "";
+      jQuery('#' + link).removeClass("fakelink");
     }
   }
 }
-

@@ -13,7 +13,7 @@ package org.intermine.bio.web.model;
 import java.util.Map;
 
 /**
- * This is a Java Bean to represent Cytoscape Web node data.
+ * This is a POJO to represent Cytoscape Web node data.
  * Easy to be extended.
  *
  * @author Fengyuan Hu
@@ -22,7 +22,7 @@ import java.util.Map;
 public class CytoscapeNetworkNodeData
 {
     private Integer interMineId;
-    private String soureceId; // TODO change to id
+    private String soureceId; // TODO combine interMineId to only one id
     private String sourceLabel; // sometimes no values
     private String featueType; //e.g. miRNA/TF
     private String position;

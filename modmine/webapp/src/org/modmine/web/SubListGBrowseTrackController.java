@@ -28,6 +28,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
@@ -121,6 +122,24 @@ public class SubListGBrowseTrackController extends TilesAction
             request.setAttribute("GBROWSE_BASE_URL", GBROWSE_BASE_URL);
         }
 
+        
+        // do the same for files associated with a submission
+        // note: we need submission and not dccId because the gbrowse displayer uses
+        // submissions titles.
+        Map<Submission, List<ResultFile>> subFiles =
+            new LinkedHashMap<Submission, List<ResultFile>>();        
+        for (Submission sub : subs) {
+            List<ResultFile> files =
+                MetadataCache.getFilesByDccId(im.getObjectStore(), sub.getdCCid());
+            for (ResultFile file : files) {
+                String fileName = file.getName();
+                int index = fileName.lastIndexOf(System.getProperty("file.separator"));
+                file.setName(fileName.substring(index + 1));
+            }
+            subFiles.put(sub, files);
+        }
+        request.setAttribute("files", subFiles);
+        
         return null;
     }
 }

@@ -32,7 +32,7 @@ public class WebServiceRequestParser
     private static final Integer DEFAULT_START = new Integer(0);
 
     /** 10 000 000 default size actually means that web service will return all results */
-    private static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
+    public static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
 
     private static final Integer MAX_COUNT_LIMIT = new Integer(10000000);
 
@@ -60,6 +60,17 @@ public class WebServiceRequestParser
      * Value of parameter when user wants jsonp data
     **/
     public static final String FORMAT_PARAMETER_JSONP = "jsonp";
+
+    /**
+     * Value of parameter when user wants json data in a data table
+    **/
+    public static final String FORMAT_PARAMETER_JSON_DATA_TABLE = "jsondatatable";
+
+    /**
+     * Value of parameter when user wants jsonp data in a data table
+    **/
+    public static final String FORMAT_PARAMETER_JSONP_DATA_TABLE = "jsonpdatatable";
+
 
     /**
      * Value of parameter when user wants json data as
@@ -114,6 +125,9 @@ public class WebServiceRequestParser
 
     /** The callback to be supplied for jsonp calls **/
     public static final String CALLBACK_PARAMETER = "callback";
+
+    /** The parameter for requesting column headers **/
+    public static final String ADD_HEADER_PARAMETER = "columnheaders";
 
     /**
      * Parses common parameters for all web services. Must be called from parseRequest

@@ -1,0 +1,5 @@
+<project name="reactome" default="default" basedir=".">
+  <description>build, test, package reactome</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

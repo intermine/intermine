@@ -30,19 +30,6 @@
         <attribute name="url" value="http://www.flybase.org"/>
     </item>
 
-    <item id="30" class="" implements="DataSource">
-        <attribute name="name" value="SBC"/>
-        <attribute name="description" value="Stockholm Bioinformatics Center"/>
-        <attribute name="url" value="http://inparanoid.sbc.su.se"/>
-    </item>
-
-    <item id="31" class="" implements="DataSet">
-        <attribute name="name" value="InParanoid data set"/>
-        <attribute name="description" value="InParanoid eukaryotic orthologue groups"/>
-        <attribute name="url" value="http://inparanoid.sbc.su.se/download/current/sqltables"/>
-        <reference name="dataSource" ref_id="30"/>
-    </item>
-
     <item id="40" class="" implements="DataSource">
         <attribute name="name" value="WormBase"/>
         <attribute name="description" value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
@@ -125,18 +112,7 @@
         <reference name="dataSource" ref_id="110"/>
     </item>
 
-    <item id="120" class="" implements="DataSource">
-        <attribute name="name" value="Homophila"/>
-        <attribute name="description" value="Homophila: Human Disease to Drosophila Gene Database"/>
-        <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
-    </item>
-    <item id="121" class="" implements="DataSet">
-        <attribute name="name" value="Homophila data set"/>
-        <attribute name="description" value="Homophila human disease to Drosophila gene data set"/>
-        <attribute name="version" value="2.1"/>
-        <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
-        <reference name="dataSource" ref_id="120"/>
-    </item>
+
     <item id="150" class="" implements="DataSource">
         <attribute name="name" value="Kenji Mizuguchi"/>
         <attribute name="description" value="Kenji Mizuguchi's group at the Department of Biochemistry"/>
@@ -322,32 +298,10 @@
         <reference name="dataSource" ref_id="490"/>
     </item>
 
-<!-- not used
-    <item id="500" class="" implements="DataSource">
-        <attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
-        <attribute name="url" value="http://www.pnas.org"/>
-    </item>
-    <item id="501" class="" implements="DataSet">
-        <attribute name="name" value="Rossi et al, 2005 MAGE data set"/>
-        <attribute name="description" value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
-        <attribute name="url" value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
-        <reference name="dataSource" ref_id="500"/>
-    </item>
 
-    <item id="510" class="" implements="DataSource">
-        <attribute name="name" value="The Weatherall Institute of Molecular Medicine, Oxford University"/>
-        <attribute name="url" value="http://www.imm.ox.ac.uk/"/>
-    </item>
-    <item id="511" class="" implements="DataSet">
-        <attribute name="name" value="FDCP"/>
-        <attribute name="description" value="Molecular Signatures of Self-Renewal, Differentiation,  and Lineage Choice in Multipotential Hemopoietic Progenitor Cells In Vitro"/>
-        <attribute name="url" value="http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm"/>
-        <reference name="dataSource" ref_id="510"/>
-    </item>
--->
     <item id="520" class="" implements="DataSource">
         <attribute name="name" value="PDB"/>
-        <attribute name="description" value="The RCSB Protein Data Bank (PDB)"/>
+        <attribute name="description" value="RCSB Protein Data Bank (PDB)"/>
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
     </item>
     <item id="521" class="" implements="DataSet">

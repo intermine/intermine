@@ -27,7 +27,8 @@ public class PathConstraintAttribute extends PathConstraint
     public static final Set<ConstraintOp> VALID_OPS = new HashSet<ConstraintOp>(Arrays.asList(
                 ConstraintOp.DOES_NOT_MATCH, ConstraintOp.EQUALS, ConstraintOp.GREATER_THAN,
                 ConstraintOp.GREATER_THAN_EQUALS, ConstraintOp.LESS_THAN,
-                ConstraintOp.LESS_THAN_EQUALS, ConstraintOp.MATCHES, ConstraintOp.NOT_EQUALS));
+                ConstraintOp.LESS_THAN_EQUALS, ConstraintOp.MATCHES, ConstraintOp.NOT_EQUALS,
+                ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN));
     private String value;
 
     /**

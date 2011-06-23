@@ -12,9 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,13 +24,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintBag;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableHttpExporter;

@@ -65,6 +65,7 @@ public class XmlDataLoaderTest extends TestCase
             file.delete();
         }
         loader.close();
+        writer.close();
     }
 
 

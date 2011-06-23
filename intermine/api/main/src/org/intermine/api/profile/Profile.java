@@ -51,7 +51,7 @@ public class Profile
 
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository;
+    private final SearchRepository searchRepository;
 
     /**
      * Construct a Profile
@@ -121,6 +121,17 @@ public class Profile
      */
     public boolean isLoggedIn() {
         return getUsername() != null;
+    }
+
+    /**
+     * Return true if and only if the user logged is superuser
+     * @return Return true if superuser
+     */
+    public boolean isSuperuser() {
+        if (username != null && manager.getSuperuser().equals(username)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -361,10 +372,14 @@ public class Profile
     /**
      * Delete a bag from the user account, if user is logged in also deletes from the userprofile
      * database.
+     * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @throws ObjectStoreException if problems deleting bag
      */
     public void deleteBag(String name) throws ObjectStoreException {
+        if (!savedBags.containsKey(name)) {
+            throw new BagDoesNotExistException(name + " not found");
+        }
         InterMineBag bagToDelete = savedBags.get(name);
         if (isLoggedIn()) {
             bagToDelete.delete();
@@ -386,8 +401,7 @@ public class Profile
      */
     public void renameBag(String oldName, String newName) throws ObjectStoreException {
         if (!savedBags.containsKey(oldName)) {
-            throw new IllegalArgumentException("Attempting to rename a bag that doesn't"
-                    + " exist: " + oldName);
+            throw new BagDoesNotExistException("Attempting to rename " + oldName);
         }
         if (savedBags.containsKey(newName)) {
             throw new ProfileAlreadyExistsException("Attempting to rename a bag to a new name that"

@@ -191,17 +191,17 @@
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/usingSubclasses.png" title="${tooltipSubclasses}"/>
-                <span class="subclass"><c:out value="${node.type}"/></span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="subclass"><c:out value="${node.type}"/></span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:when>
               <c:when test="${node.hasSubclasses}">
-                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
                 <fmt:message key="query.hasSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/hasSubclasses.png" title="${tooltipSubclasses}"/>
               </c:when>
               <c:otherwise>
-                <span class="${type}"">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}"">${node.type}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:otherwise>
             </c:choose>
           </c:if>
@@ -229,21 +229,17 @@
       <c:if test="${!(node.reverseReference && node.reference)}">
         <c:choose>
           <c:when test="${!node.selected && !isNull && summary && KEYLESS_CLASSES_MAP[node.type] == null}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#${node.pathString}" title="${selectNodeTitle}">
-              <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
+              <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show"/>
             </html:link>
           </c:when>
-          <c:when test="${summary}">
-              <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
-          </c:when>
+          <c:when test="${summary}"><img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show"/></c:when>
           <c:when test="${!node.selected && !isNull}">
-            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#${node.pathString}" title="${selectNodeTitle}">
-              <img class="arrow" src="images/show.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
+            <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
+              <img class="arrow" src="images/show.gif" width="43" height="13" title="show"/>
             </html:link>
           </c:when>
-          <c:otherwise>
-            <img class="arrow" src="images/show-disabled.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
-          </c:otherwise>
+          <c:otherwise><img class="arrow" src="images/show-disabled.gif" width="43" height="13" title="show"/></c:otherwise>
         </c:choose>
         <c:choose>
           <c:when test="${isNull || !node.canCreateConstraint}">

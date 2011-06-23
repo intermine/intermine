@@ -4,6 +4,7 @@
 package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -34,12 +36,15 @@ import org.intermine.util.IteratorIterable;
 import org.json.JSONArray;
 
 /**
- * @author alex
+ * A test for the JSONRowIterator
+ * @author Alex Kalderimis
  *
  */
 public class JSONRowIteratorTest extends TestCase {
 
     private ObjectStoreDummyImpl os;
+    private final InterMineAPI apiWithRedirection = new DummyAPI();
+    private final InterMineAPI apiWithoutRedirection = new DummyAPI(false);
     private Company wernhamHogg;
     private CEO jennifer;
     private Manager david;
@@ -203,8 +208,8 @@ public class JSONRowIteratorTest extends TestCase {
         os.setResultsSize(1);
 
         String jsonString = "[" +
-                "{value: 'David Brent', url: '/objectDetails.do?id=3'}," +
-                "{value: '39', url: '/objectDetails.do?id=3'}" +
+                "{id: 3, class: 'Manager', value: 'David Brent', url: '/report.do?id=3'}," +
+                "{id: 3, class: 'Manager', value: '39', url: '/report.do?id=3'}" +
                 "]";
         JSONArray expected = new JSONArray(jsonString);
 
@@ -223,7 +228,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -233,6 +238,72 @@ public class JSONRowIteratorTest extends TestCase {
         assertEquals(1, got.size());
 
         assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+
+        jsonString = "[" +
+            "{id: 3, class: 'Manager', value: 'David Brent', url: 'Link for:Manager [address=null, age=\"39\", department=null, departmentThatRejectedMe=null, end=\"null\", fullTime=\"false\", id=\"3\", name=\"David Brent\", seniority=\"null\", title=\"null\"]'}," +
+            "{id: 3, class: 'Manager', value: '39', url: 'Link for:Manager [address=null, age=\"39\", department=null, departmentThatRejectedMe=null, end=\"null\", fullTime=\"false\", id=\"3\", name=\"David Brent\", seniority=\"null\", title=\"null\"]'}," +
+        "]";
+        expected = new JSONArray(jsonString);
+
+        iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        jsonIter = new JSONRowIterator(iter, apiWithRedirection);
+
+        got = new ArrayList<JSONArray>();
+        for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
+            got.add(gotRow);
+        }
+
+        assertEquals(1, got.size());
+
+        assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+    }
+
+    public void testResultsWithNulls() throws Exception {
+        os.setResultsSize(2);
+
+        List<String> jsonStrings = Arrays.asList(
+                "[" +
+                "{id: 3, class: 'Manager', value: 'David Brent', url: '/report.do?id=3'}," +
+                "{id: 3, class: 'Manager', value: '39', url: '/report.do?id=3'}" +
+                "]",
+                "[" +
+                "{value: null, url: null}," +
+                "{value: null, url: null}" +
+                "]");
+
+        ResultsRow row = new ResultsRow();
+        row.add(david);
+
+        ResultsRow emptyRow = new ResultsRow();
+        emptyRow.add(null);
+
+        os.addRow(row);
+        os.addRow(emptyRow);
+
+        PathQuery pq = new PathQuery(model);
+        pq.addViews("Manager.name", "Manager.age");
+
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
+
+        List<JSONArray> got = new ArrayList<JSONArray>();
+        for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
+            got.add(gotRow);
+        }
+
+        assertEquals(2, got.size());
+
+        for (int i = 0; i < got.size(); i++) {
+            JSONArray expected = new JSONArray(jsonStrings.get(i));
+            assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(i)));
+        }
+
     }
 
     public void testMultipleSimpleObjects() throws Exception {
@@ -240,24 +311,24 @@ public class JSONRowIteratorTest extends TestCase {
 
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add("[" +
-                "{url: '/objectDetails.do?id=5', value:30}," +
-                "{url: '/objectDetails.do?id=5', value:'Tim Canterbury'}" +
+                "{id: 5, class: 'Employee', url: '/report.do?id=5', value:30}," +
+                "{id: 5, class: 'Employee', url: '/report.do?id=5', value:'Tim Canterbury'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: '/objectDetails.do?id=6', value:32}," +
-                "{url: '/objectDetails.do?id=6', value:'Gareth Keenan'}" +
+                "{id: 6, class: 'Employee', url: '/report.do?id=6', value:32}," +
+                "{id: 6, class: 'Employee', url: '/report.do?id=6', value:'Gareth Keenan'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: '/objectDetails.do?id=7', value:26}," +
-                "{url: '/objectDetails.do?id=7', value:'Dawn Tinsley'}" +
+                "{id: 7, class: 'Employee', url: '/report.do?id=7', value:26}," +
+                "{id: 7, class: 'Employee', url: '/report.do?id=7', value:'Dawn Tinsley'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: '/objectDetails.do?id=8', value:41}," +
-                "{url: '/objectDetails.do?id=8', value:'Keith Bishop'}" +
+                "{id: 8, class: 'Employee', url: '/report.do?id=8', value:41}," +
+                "{id: 8, class: 'Employee', url: '/report.do?id=8', value:'Keith Bishop'}" +
                 "]");
         jsonStrings.add("[" +
-                "{url: '/objectDetails.do?id=9', value:28}," +
-                "{url: '/objectDetails.do?id=9', value:'Lee'}" +
+                "{id: 9, class: 'Employee', url: '/report.do?id=9', value:28}," +
+                "{id: 9, class: 'Employee', url: '/report.do?id=9', value:'Lee'}" +
                 "]");
 
         ResultsRow row1 = new ResultsRow();
@@ -287,7 +358,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -345,7 +416,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -356,31 +427,31 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{value:'Tim Canterbury',url:'/objectDetails.do?id=5'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/report.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{value:'Gareth Keenan',url:'/objectDetails.do?id=6'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/report.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{value:'Lee',url:'/objectDetails.do?id=9'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 9, class: 'Employee', value:'Lee',url:'/report.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{value:'Alex',url:'/objectDetails.do?id=10'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 10, class: 'Employee', value:'Alex',url:'/report.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
@@ -388,36 +459,36 @@ public class JSONRowIteratorTest extends TestCase {
             assertEquals(null, JSONObjTester.getProblemsComparing(ja, got.get(index)));
         }
     }
-    
-	// Should be ok with a result set of size 0, and produce no objects
-	public void testZeroResults() throws ObjectStoreException {
-        
+
+    // Should be ok with a result set of size 0, and produce no objects
+    public void testZeroResults() throws ObjectStoreException {
+
         PathQuery pq = new PathQuery(model);
         pq.addViews(
-        		"Employee.age", "Employee.name", 
-        		"Employee.department.name", 
-        		"Employee.department.manager.name", 
-        		"Employee.department.manager.address.address", 
-        		"Employee.department.manager.department.name", 
-        		"Employee.department.company.id", 
-        		"Employee.department.company.contractors.id", 
-        		"Employee.department.company.contractors.companys.name", 
-        		"Employee.department.company.contractors.companys.vatNumber", 
-        		"Employee.department.manager.department.company.name", 
-        		"Employee.department.company.contractors.companys.address.address");
-        
+                "Employee.age", "Employee.name",
+                "Employee.department.name",
+                "Employee.department.manager.name",
+                "Employee.department.manager.address.address",
+                "Employee.department.manager.department.name",
+                "Employee.department.company.id",
+                "Employee.department.company.contractors.id",
+                "Employee.department.company.contractors.companys.name",
+                "Employee.department.company.contractors.companys.vatNumber",
+                "Employee.department.manager.department.company.name",
+                "Employee.department.company.contractors.companys.address.address");
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = new ArrayList(); // empty results
         Results results = new DummyResults(q, resultList);
-        
+
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
-        
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
+
         assert(!jsonIter.hasNext());
-	    
-	}
+
+    }
 
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
         os.setResultsSize(1);
@@ -465,7 +536,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         List<JSONArray> got = new ArrayList<JSONArray>();
         for (JSONArray gotRow : new IteratorIterable<JSONArray>(jsonIter)) {
@@ -476,35 +547,35 @@ public class JSONRowIteratorTest extends TestCase {
         List<String> jsonStrings = new ArrayList<String>();
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{value:'Tim Canterbury',url:'/objectDetails.do?id=5'}," +
-                "{value:'30',url:'/objectDetails.do?id=5'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 5, class: 'Employee', value:'Tim Canterbury',url:'/report.do?id=5'}," +
+                "{id: 5, class: 'Employee', value:'30',url:'/report.do?id=5'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Sales',url:'/objectDetails.do?id=11'}," +
-                "{value:'Gareth Keenan',url:'/objectDetails.do?id=6'}," +
-                "{value:'32',url:'/objectDetails.do?id=6'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 11, class: 'Department', value:'Sales',url:'/report.do?id=11'}," +
+                "{id: 6, class: 'Employee', value:'Gareth Keenan',url:'/report.do?id=6'}," +
+                "{id: 6, class: 'Employee', value:'32',url:'/report.do?id=6'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{value:'Lee',url:'/objectDetails.do?id=9'}," +
-                "{value:'28',url:'/objectDetails.do?id=9'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 9, class: 'Employee', value:'Lee',url:'/report.do?id=9'}," +
+                "{id: 9, class: 'Employee', value:'28',url:'/report.do?id=9'}" +
                 "]");
         jsonStrings.add(
                 "[" +
-                "{value:'Wernham-Hogg',url:'/objectDetails.do?id=1'}," +
-                "{value:101,url:'/objectDetails.do?id=1'}," +
-                "{value:'Warehouse',url:'/objectDetails.do?id=13'}," +
-                "{value:'Alex',url:'/objectDetails.do?id=10'}," +
-                "{value:'24',url:'/objectDetails.do?id=10'}" +
+                "{id: 1, class: 'Company', value:'Wernham-Hogg',url:'/report.do?id=1'}," +
+                "{id: 1, class: 'Company', value:101,url:'/report.do?id=1'}," +
+                "{id: 13, class: 'Department', value:'Warehouse',url:'/report.do?id=13'}," +
+                "{id: 10, class: 'Employee', value:'Alex',url:'/report.do?id=10'}," +
+                "{id: 10, class: 'Employee', value:'24',url:'/report.do?id=10'}" +
                 "]");
 
         for (int index = 0; index < jsonStrings.size(); index++) {
@@ -527,7 +598,7 @@ public class JSONRowIteratorTest extends TestCase {
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
 
-        JSONRowIterator jsonIter = new JSONRowIterator(iter);
+        JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
         try {
             jsonIter.remove();

@@ -51,7 +51,7 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
             }
             Organism org = organisms.get(taxonId);
             if (org == null) {
-                org = (Organism) getDirectDataLoader().createObject(Organism.class);
+                org = getDirectDataLoader().createObject(Organism.class);
                 org.setTaxonId(taxonId);
                 getDirectDataLoader().store(org);
                 organisms.put(taxonId, org);

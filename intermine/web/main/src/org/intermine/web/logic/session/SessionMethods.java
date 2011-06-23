@@ -59,8 +59,8 @@ import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
@@ -423,22 +423,22 @@ public final class SessionMethods
     }
 
     /**
-     * Return the displayObjects Map from the session or create and return it if it doesn't exist.
+     * Return the ReportObjects Map from the session or create and return it if it doesn't exist.
      *
-     * @param session the HttpSession to get the displayObjects Map from
-     * @return the (possibly new) displayObjects Map
+     * @param session the HttpSession to get the ReportObjects Map from
+     * @return the (possibly new) ReportObjects Map
      */
-    public static DisplayObjectFactory getDisplayObjects(HttpSession session) {
-        DisplayObjectFactory displayObjects =
-            (DisplayObjectFactory) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
+    public static ReportObjectFactory getReportObjects(HttpSession session) {
+        ReportObjectFactory reportObjects =
+            (ReportObjectFactory) session.getAttribute(Constants.REPORT_OBJECT_CACHE);
 
-        // Build map from object id to DisplayObject
-        if (displayObjects == null) {
-            displayObjects = new DisplayObjectFactory(session);
-            session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, displayObjects);
+        // Build map from object id to ReportObject
+        if (reportObjects == null) {
+            reportObjects = new ReportObjectFactory(session);
+            session.setAttribute(Constants.REPORT_OBJECT_CACHE, reportObjects);
         }
 
-        return displayObjects;
+        return reportObjects;
     }
 
     /**
@@ -452,7 +452,7 @@ public final class SessionMethods
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
                     new HashMap<String, TemplateQuery>()));
-        session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
+        session.setAttribute(Constants.REPORT_OBJECT_CACHE, new ReportObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
@@ -1050,5 +1050,26 @@ public final class SessionMethods
      */
     public static void setCategories(ServletContext servletContext, Set<String> categories) {
         servletContext.setAttribute(Constants.CATEGORIES, categories);
+    }
+
+    /**
+     * Sets the blocking error codes into the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @param errorKey the Set of error codes
+     */
+    public static void setErrorOnInitialiser(ServletContext servletContext, Set<String> errorKey) {
+        servletContext.setAttribute(Constants.INITIALISER_KEY_ERROR, errorKey);
+    }
+
+    /**
+     * Gets the error codes from the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @return a Set of blocking error codes
+     */
+    public static Set<String> getErrorOnInitialiser(ServletContext servletContext) {
+        return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null)
+               ? (Set<String>) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
     }
 }

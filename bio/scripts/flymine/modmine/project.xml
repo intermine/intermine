@@ -12,6 +12,8 @@ THE BUILD SCRIPT.
 NOT TO BE USED FOR A BUILD
                 
 -->
+
+
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
@@ -20,7 +22,7 @@ NOT TO BE USED FOR A BUILD
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+    <source name="chado-db-flybase-dmel" type="chado-db"  dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -30,12 +32,21 @@ NOT TO BE USED FOR A BUILD
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
-    <source name="chado-db-flybase-dpse-dmoj" type="chado-db">
+    <source name="chado-db-flybase-dpse" type="chado-db">
         <property name="source.db.name" value="flybase"/>
-        <property name="organisms" value="7237 7230"/>
+        <property name="organisms" value="7237"/>
         <property name="dataSourceName" value="FlyBase"/>
         <property name="processors" value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
+    <source name="chado-db-flybase-others" type="chado-db" >
+      <property name="source.db.name" value="flybase"/>
+      <property name="organisms" value="Dmoj Dana Dsim Dvir Dyak"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
+      <property name="converter.class"
+                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
     <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
@@ -47,7 +58,7 @@ NOT TO BE USED FOR A BUILD
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="7227 6239 7237"/>
+      <property name="uniprot.organisms" value="7227 6239 7237 7230 7244 7245"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
@@ -56,7 +67,7 @@ NOT TO BE USED FOR A BUILD
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 7237 6239 7230"/>
+      <property name="fasta.taxonId" value="7227 6239 7230 7237 7244 7245"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -67,6 +78,7 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
+
 <!--    ADDED FOR r20 -->
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
@@ -81,7 +93,7 @@ NOT TO BE USED FOR A BUILD
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239"/>
-      <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/>
+<!--  <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/> -->
     </source>
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
@@ -104,18 +116,21 @@ NOT TO BE USED FOR A BUILD
     </source>
 -->
 <!-- END -->
+
     <source name="interpro" type="interpro" dump="true">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
+<!-- REMOVED FOR treefam
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/modmine/sources/orthologues/inparanoid/current/"/>
     </source>
+-->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
         <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="psi-intact" type="psi">
         <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-        <property name="intact.organisms" value="7227 6239 7237 7230"/>
+        <property name="intact.organisms" value="7227 6239 7230 46245 7240 7244 7245"/>
     </source>
     <source name="biogrid" type="biogrid">
         <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
@@ -129,12 +144,12 @@ NOT TO BE USED FOR A BUILD
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/modmine/sources/go-annotation/current/"/>
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/modmine/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/shared/data/modmine/sources/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
@@ -164,6 +179,42 @@ NOT TO BE USED FOR A BUILD
         <property name="fasta.classAttribute" value="primaryIdentifier"/>
         <property name="fasta.includes" value="dmoj-all-gene-*.fasta"/>
         <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dana-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila ananassae"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsim-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila simulans"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dvir-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila virilis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dyak-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila yakuba"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName"
@@ -196,6 +247,50 @@ NOT TO BE USED FOR A BUILD
         <property name="fasta.dataSourceName" value="FlyBase"/>
         <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+    <source name="flybase-dana-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila ananassae"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsim-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila simulans"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dvir-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila virilis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+     <source name="flybase-dyak-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-CDS-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila yakuba"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
@@ -206,18 +301,6 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-<!--
-    <source name="flybase-dpse-5prime-utr-fasta" type="fasta">
-      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
-      <property name="fasta.taxonId" value="7237"/>
-      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="dpse-all-five_prime_UTR-*.fasta"/>
-      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
-      <property name="fasta.dataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
-    </source>
--->
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
@@ -228,7 +311,17 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-<!--
+
+    <source name="flybase-dpse-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dpse-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
     <source name="flybase-dpse-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7237"/>
@@ -239,23 +332,135 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+<!-- EMPTY FASTA FILES CAUSE BUILD FAIL: TODO    
+    <source name="flybase-dana-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila ananassae"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dana-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7217"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dana-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila ananassae"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+
+    <source name="flybase-dmoj-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7230"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmoj-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmoj-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7230"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dmoj-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+
+    <source name="flybase-dsim-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila simulans"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dsim-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7240"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dsim-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila simulans"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+
+    <source name="flybase-dvir-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila virilis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dvir-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7244"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dvir-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila virilis"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
 -->
+    <source name="flybase-dyak-5prime-utr-fasta" type="fasta" dump="true">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila yakuba"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+<!--
+    <source name="flybase-dyak-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7245"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dyak-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila yakuba"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+-->
+    <!-- new in 23 -->
+    <source name="drosophila-homology" type="drosophila-homology">
+      <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
+      <property name="src.data.dir.includes" value="*.tsv"/>
+    </source>
+
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.includes" value="*dna*.fa"/>
       <property name="fasta.dataSetTitle" value="WormBase C. elegans data set"/>
       <property name="fasta.dataSourceName" value="WormBase"/>
-      <property name="src.data.dir" location="/shared/data/wormbase/ws190/fasta"/>
+      <property name="src.data.dir" location="/shared/data/wormbase/ws220/fasta"/>
     </source>
     <source name="interpro-go" type="interpro-go">
         <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
-        <property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
-        <property name="pubmed.organisms" value="7227 6239 7237 7230"/>
+        <property name="src.data.dir" location="/shared/data/pubmed/current"/>
+        <property name="pubmed.organisms" value="7227 6239 7237 7230 7217 7244 7245 7240"/>
         <property name="src.data.dir.includes" value="gene2pubmed"/>
-        <property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
+        <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
         <property name="src.data.file" location="/shared/data/ontologies/fly-development/current/fly_development.obo"/>
@@ -320,9 +525,8 @@ NOT TO BE USED FOR A BUILD
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        
         <!-- LIEB -->
-        <source name="modencode-lieb-metadata" type="chado-db" dump="true">
+        <source name="modencode-lieb-metadata" type="chado-db" >
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -363,9 +567,8 @@ NOT TO BE USED FOR A BUILD
             <property name="processors" value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
             <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        
         <!-- SNYDER -->
-        <source name="modencode-snyder-metadata" type="chado-db" >
+        <source name="modencode-snyder-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -376,7 +579,7 @@ NOT TO BE USED FOR A BUILD
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
         <!-- KARPEN -->
-        <source name="modencode-karpen-metadata" type="chado-db" dump="true">
+        <source name="modencode-karpen-metadata" type="chado-db" >
             <property name="organisms" value="7227"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
@@ -408,7 +611,6 @@ NOT TO BE USED FOR A BUILD
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-
         <!-- CELNIKERLAI -->
         <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
             <property name="organisms" value="7227"/>
@@ -431,7 +633,6 @@ NOT TO BE USED FOR A BUILD
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-    
         <!-- WATERSTONPIANO -->
         <source name="modencode-waterstonpiano-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
@@ -444,13 +645,17 @@ NOT TO BE USED FOR A BUILD
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
 
-        <!-- Cherbas Flyscore -->
+        <!-- Flyscore on modENCODE -->
         <source name="fly-expression-score" type="fly-expression-score">
             <property name="src.data.dir" location="/shared/data/fly-expression-score"/>
         </source>
         <!-- TF-mRNA network -->
         <source name="tf-mrna-network" type="tf-mrna-network">
             <property name="src.data.dir" location="/shared/data/tf-mrna-network"/>
+        </source>
+        <!-- worm network added rel 22-->
+        <source name="worm-network" type="worm-network">
+            <property name="src.data.dir" location="/shared/data/worm-network"/>
         </source>
 
         <source name="update-publications" type="update-publications" dump="true">
@@ -489,3 +694,6 @@ ant -v precompute-queries -Drelease=test
     <post-process name="create-search-index"/>
   </post-processing>
 </project>
+
+
+

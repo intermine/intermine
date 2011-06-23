@@ -48,7 +48,6 @@ public class KeggPathwayConverter extends BioFileConverter
 
     protected Map<String, String> pathwayIdentifiers = new HashMap<String, String>();
     protected Map<String, Item> pathwaysNotStored = new HashMap<String, Item>();
-    protected Map<String, String> organismIdentifiers = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -97,9 +96,9 @@ public class KeggPathwayConverter extends BioFileConverter
                 configs[1] = "primaryIdentifier";
                 config.put(organism, configs);
             }
-            if (attributes[1].equals("taxonId")) {
+            if ("taxonId".equals(attributes[1])) {
                 config.get(organism)[0] = value;
-            } else if (attributes[1].equals("identifier")) {
+            } else if ("identifier".equals(attributes[1])) {
                 config.get(organism)[1] = value;
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
@@ -116,15 +115,7 @@ public class KeggPathwayConverter extends BioFileConverter
      */
     public void process(Reader reader) throws Exception {
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
-        // there are two files
-        // data is in format
-        // CG | list of space separated map Ids
-        // and
-        // Map Id | name
-
         File currentFile = getCurrentFile();
-
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             Pattern filePattern = Pattern.compile("^(\\S+)_gene_map.*");
@@ -133,16 +124,7 @@ public class KeggPathwayConverter extends BioFileConverter
                 continue;
             }
             if (currentFile.getName().startsWith("map_title")) {
-                String mapIdentifier = line[0];
-                String mapName = line[1];
-                Item pathway = pathwaysNotStored.remove(mapIdentifier);
-                if (pathway == null) {
-                    pathway = createItem("Pathway");
-                    pathway.setAttribute("identifier", mapIdentifier);
-                }
-                pathway.setAttribute("name", mapName);
-                pathwayIdentifiers.put(mapIdentifier, pathway.getIdentifier());
-                store(pathway);
+                processPathway(line);
             } else if (matcher.find()) {
                 String organism = matcher.group(1);
                 String taxonId = config.get(organism)[0];
@@ -168,15 +150,14 @@ public class KeggPathwayConverter extends BioFileConverter
                     ReferenceList referenceList = new ReferenceList("pathways");
                     String [] mapArray = mapIdentifiers.split(" ");
                     for (int i = 0; i < mapArray.length; i++) {
-                        String pathwayId = pathwayIdentifiers.get(mapArray[i]);
-                        if (pathwayId == null) {
-                            Item pathway = createItem("Pathway");
-                            pathway.setAttribute("identifier", mapArray[i]);
-                            pathwaysNotStored.put(mapArray[i], pathway);
-                            pathwayId = pathway.getIdentifier();
-                            pathwayIdentifiers.put(mapArray[i], pathwayId);
+                        String identifier = mapArray[i];
+                        String refId = pathwayIdentifiers.get(identifier);
+                        if (refId == null) {
+                            Item item = getPathway(identifier);
+                            refId = item.getIdentifier();
+                            pathwaysNotStored.put(identifier, item);
                         }
-                        referenceList.addRefId(pathwayId);
+                        referenceList.addRefId(refId);
                     }
                     getGene(geneName, organism, referenceList);
                 }
@@ -218,15 +199,7 @@ public class KeggPathwayConverter extends BioFileConverter
         if (gene == null) {
             gene = createItem("Gene");
             gene.setAttribute(config.get(organism)[1], identifier);
-            String organismId = organismIdentifiers.get(taxonId);
-            if (organismId == null) {
-                Item organismItem = createItem("Organism");
-                organismItem.setAttribute("taxonId", taxonId);
-                organismId = organismItem.getIdentifier();
-                store(organismItem);
-                organismIdentifiers.put(taxonId, organismId);
-            }
-            gene.setReference("organism", organismId);
+            gene.setReference("organism", getOrganism(taxonId));
             gene.addCollection(referenceList);
             geneItems.put(identifier, gene);
             store(gene);
@@ -240,5 +213,22 @@ public class KeggPathwayConverter extends BioFileConverter
             }
         }
         return gene;
+    }
+    private void processPathway(String[] line) throws ObjectStoreException {
+        String identifier = line[0];
+        String name = line[1];
+        Item pathway = pathwaysNotStored.remove(identifier);
+        if (pathway == null) {
+            pathway = getPathway(identifier);
+        }
+        pathway.setAttribute("name", name);
+        store(pathway);
+    }
+
+    private Item getPathway(String identifier) {
+        Item item = createItem("Pathway");
+        item.setAttribute("identifier", identifier);
+        pathwayIdentifiers.put(identifier, item.getIdentifier());
+        return item;
     }
 }

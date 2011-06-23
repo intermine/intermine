@@ -1,0 +1,1 @@
+../bio/scripts/flymine/modmine/automine.sh

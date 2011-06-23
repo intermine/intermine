@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -26,7 +27,8 @@ import org.intermine.web.logic.session.SessionMethods;
  **/
 public class ListManager
 {
-    private BagManager bagManager;
+    private final BagManager bagManager;
+    private final Profile profile;
 
     /**
      * ListManager constructor.
@@ -34,20 +36,41 @@ public class ListManager
      */
     public ListManager(HttpServletRequest request) {
         this.bagManager = SessionMethods.getInterMineAPI(request.getSession()).getBagManager();
+        this.profile = SessionMethods.getProfile(request.getSession());
     }
 
+
     /**
-     * Returns public lists that contain object with specified id.
+     * Returns public current lists that contain object with specified id.
      * @param objectId object id
-     * @return list
+     * @return A list of list names
      */
     public List<String> getListsNames(Integer objectId) {
         List<String> ret = new ArrayList<String>();
 
-        Collection<InterMineBag> bags = bagManager.getGlobalBagsContainingId(objectId);
+        Collection<InterMineBag> bags
+            = bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
+
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
         }
         return ret;
+    }
+
+    /**
+     * Returns the lists available to the current user.
+     * @return A collection of lists the current user can access.
+     */
+    public Collection<InterMineBag> getLists() {
+        return bagManager.getUserAndGlobalBags(profile).values();
+    }
+
+    /**
+     * Returns the current lists available to the current user which contain the
+     * specified object.
+     * @return A collection of lists.
+     */
+    public Collection<InterMineBag> getListsContaining(Integer objectId) {
+        return bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
     }
 }

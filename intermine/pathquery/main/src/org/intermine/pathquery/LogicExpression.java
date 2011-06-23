@@ -396,9 +396,9 @@ public class LogicExpression
                 AST child = ast.getFirstChild();
                 while (child != null) {
                     Node childNode = null;
-                    if ("or".equals(child.getText())) {
+                    if ("or".equals(child.getText().toLowerCase())) {
                         childNode = new Or(child);
-                    } else if ("and".equals(child.getText())) {
+                    } else if ("and".equals(child.getText().toLowerCase())) {
                         childNode = new And(child);
                     } else {
                         childNode = new Variable(child.getText());

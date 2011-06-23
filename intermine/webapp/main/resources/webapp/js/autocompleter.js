@@ -62,29 +62,41 @@
           FRAME = input + "_IEbugFixFrame";
       }
 
-    // AJAX request to load a long or short array
+      // AJAX request to load a long or short array
       function loadList() {
-      AjaxServices.getContent( document.getElementById(INPUT).value,
-                                     getWholeList(),
-                                     FIELD,
-                                     CLASS_NAME,
-                                     function (array) {
-                                             $(INPUT).focus();
-                                            if (array[0] == "true") {
-                                                if (getWholeList()) {
-                                                      setCutList(getElementList(array));
-                                                      setLongList(CUT_LIST);
-                                                } else {
-                                                     setShortList(getElementList(array));
-                                                }
-                                                setPrefix(document.getElementById(INPUT).value);
-                                                    printList(getElementList(array));
-                                            } else if (array[0] != '') {
-                                                printError(array[0]);
-                                            }
-                                      }
-                                 );
-    }
+
+        (function() {
+
+          var suffix = document.getElementById(INPUT).value;
+          var wholeList = getWholeList();
+          var field = FIELD;
+          var className = CLASS_NAME;
+
+          /**
+           * @param suffix string of input before request for more results
+           * @param wholeList whether or not to show the entire list or a truncated version
+           * @param field field name from the table for the lucene search
+           * @param className class name (table in the database) for lucene search
+           * @return an array of values for this classname.field
+           */
+          AjaxServices.getContent(suffix, wholeList, field, className,
+            function (array) {
+              jQuery('#'+INPUT).focus();
+              if (array[0] == "true") {
+                if (getWholeList()) {
+                  setCutList(getElementList(array));
+                  setLongList(CUT_LIST);
+                } else {
+                  setShortList(getElementList(array));
+                }
+                setPrefix(document.getElementById(INPUT).value);
+                printList(getElementList(array));
+              } else if (array[0] != '') {
+                printError(array[0]);
+              }
+            });
+        })();
+      }
 
     // output if an error appears
     function printError(error) {

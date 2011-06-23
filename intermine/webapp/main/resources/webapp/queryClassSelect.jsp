@@ -15,8 +15,7 @@
   var helpMap = {${helpMap}};
 
   function showClassSelectHelp() {
-      var i = document.queryClassSelectForm.className.selectedIndex;
-      var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
+      var fullSelectedClassName = jQuery("#queryClassSelector").val();
       var selectedClassName =
           fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
       if (selectedClassName.length > 0) {
@@ -32,8 +31,7 @@
   }
 
   function handleClassClick(e) {
-    var i = document.queryClassSelectForm.className.selectedIndex;
-      if (e.detail == 2 &&  document.queryClassSelectForm.className[i].value != '') {
+      if (e.detail == 2 &&  jQuery("#queryClassSelector").val() != '') {
           jQuery('#queryClassForm').submit();
       }
   }
@@ -55,7 +53,7 @@
   <table border=0>
     <tr>
       <td>
-        <html:form styleId="queryClassForm" action="/queryClassSelect">
+        <html:form action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
           <c:forEach items="${preferredTypeList}" var="type">
             <html:option value="${type}" style="font-weight:bold">${type}</html:option>

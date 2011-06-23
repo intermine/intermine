@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -41,7 +40,6 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -67,8 +65,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
-
-    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -116,14 +112,10 @@ public class PortalQueryAction extends InterMineAction
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-            = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
-
-            LOG.debug("XXXa: " + matches);
-            LOG.debug("XXXb: " + issues);
-
             if (matches.isEmpty() && issues.isEmpty()) {
                 return new ForwardParameters(mapping.findForward("noResults")).forward();
             }
@@ -131,8 +123,8 @@ public class PortalQueryAction extends InterMineAction
             // check the matches first...
             for (Map.Entry<Integer, List> entry : matches.entrySet()) {
                 String id = entry.getKey().toString();
-                return new ForwardParameters(mapping.findForward("objectDetails"))
-                .addParameter("id", id).forward();
+                return new ForwardParameters(mapping.findForward("report"))
+                    .addParameter("id", id).forward();
             }
 
             // and if there are none check the issues
@@ -143,15 +135,15 @@ public class PortalQueryAction extends InterMineAction
                     Object obj = issue.getValue().get(qt).get(idList[0]).get(0);
 
                     // parse the string representation of the object
-                    String ob = obj.toString().substring(obj.toString().indexOf('[')+1);
+                    String ob = obj.toString().substring(obj.toString().indexOf('[') + 1);
                     String id = null;
                     String[] result = ob.split(", ");
                     for (String token : result) {
                         String[] pair = token.split("=");
                         if (pair[0].equalsIgnoreCase("id")) {
                             id = pair[1].replaceAll("\"", "").replaceAll("]", "");
-                            return new ForwardParameters(mapping.findForward("objectDetails"))
-                            .addParameter("id", id).forward();
+                            return new ForwardParameters(mapping.findForward("report"))
+                                .addParameter("id", id).forward();
                         }
                         continue;
                     }
@@ -225,7 +217,7 @@ public class PortalQueryAction extends InterMineAction
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
-                        return goToObjectDetails(mapping, converted.get(0).toString());
+                        return goToReport(mapping, converted.get(0).toString());
                     }
                     return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
@@ -242,7 +234,7 @@ public class PortalQueryAction extends InterMineAction
             return goToResults(mapping, session, webResults);
         // Go to the object details page
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
-            return goToObjectDetails(mapping, bagList.get(0).toString());
+            return goToReport(mapping, bagList.get(0).toString());
         // Make a bag
         } else if (bagList.size() >= 1) {
             return createBagAndGoToBagDetails(mapping, imBag, bagList);
@@ -261,8 +253,8 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("table", identifier).addParameter("trail", "").forward();
     }
 
-    private ActionForward goToObjectDetails(ActionMapping mapping, String id) {
-        return new ForwardParameters(mapping.findForward("objectDetails"))
+    private ActionForward goToReport(ActionMapping mapping, String id) {
+        return new ForwardParameters(mapping.findForward("report"))
             .addParameter("id", id).forward();
     }
 

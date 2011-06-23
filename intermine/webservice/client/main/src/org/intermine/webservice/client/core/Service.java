@@ -22,7 +22,7 @@ import org.intermine.webservice.client.util.HttpConnection;
 /**
  * This class provides the base level common functionality required to access
  * any InterMine service. It is also designed to act as a base class that can be
- * customized for specific types of InterMine services. It encapsulates all protocol-level
+ * customised for specific types of InterMine services. It encapsulates all protocol-level
  * interactions with the server.
  *
  * @author Jakub Kulaviak
@@ -38,7 +38,7 @@ public class Service
 
     private static Logger logger = Logger.getLogger(Service.class);
 
-    protected URL url;
+    protected URL resourceUrl;
 
     private String rootUrl;
 
@@ -51,11 +51,11 @@ public class Service
     private String password;
 
     /**
-     * Constructor. {@link ServiceFactory} should be used always to create service and not this
+     * Constructor. {@link ServiceFactory} should be used always to create services and not this
      * constructor.
-     * @param rootUrl base url of all services, it is prefix common for all services,
+     * @param rootUrl the base URL of all services, it is the common prefix for all services,
      *      Example: http://www.flymine.org/service
-     * @param serviceRelativeUrl part of url specific for this service
+     * @param serviceRelativeUrl the part of the URL specific to this service
      *      Example: query/results
      * @param applicationName application name, information for server which application uses
      * this service
@@ -74,20 +74,20 @@ public class Service
             rootUrl = rootUrl + "/";
         }
         try {
-            this.url = new URL(rootUrl + serviceRelativeUrl);
+            this.resourceUrl = new URL(rootUrl + serviceRelativeUrl);
         } catch (MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
     }
-    
+
     /**
-     * Sets the username and password for all requests.
+     * Sets the user-name and password for all requests.
      *
-     * @param userName a username
+     * @param userName a user-name
      * @param password a password
      */
     public void setAuthentication(String userName, String password) {
-        if (userName == null || password == null || userName.length() == 0 
+        if (userName == null || password == null || userName.length() == 0
                 || password.length() == 0) {
             throw new ServiceException("User name or password or both are empty.");
         }
@@ -104,7 +104,7 @@ public class Service
         assureOutputFormatSpecified(request);
         String url = request.getUrl(true);
         request.setHeader(VERSION_HEADER, getVersion().toString());
-        request.setHeader(USER_AGENT_HEADER, getApplicationName() + " " 
+        request.setHeader(USER_AGENT_HEADER, getApplicationName() + " "
                 + "JavaLibrary/" + getVersion().toString());
         setAuthenticationHeader(request);
         HttpConnection connection = new HttpConnection(request);
@@ -118,12 +118,12 @@ public class Service
         if (userName != null && password != null) {
             String authValue = userName + ":" + password;
             String encodedValue = new String(Base64.encodeBase64(authValue.getBytes()));
-            request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);            
+            request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);
         }
     }
 
     private void assureOutputFormatSpecified(Request request) {
-        if (request.getParameter("format") == null 
+        if (request.getParameter("format") == null
                 && getFormatValue(request.getContentType()) != null) {
             request.setParameter("format", getFormatValue(request.getContentType()));
         }
@@ -145,31 +145,31 @@ public class Service
     public void setConnectionTimeout(int timeout) {
         this.timeout = timeout;
     }
-    
+
     /**
      * Returns service URL
-     * Example: http://www.flymine.org/query/results
+     * Example: http://www.flymine.org/query/service/query/results
      * @return URL
      */
     public String getUrl() {
-        if (url != null) {
-            return url.toString();
+        if (resourceUrl != null) {
+            return resourceUrl.toString();
         } else {
             return null;
         }
     }
 
     /**
-     * Returns services root url.
-     * Example: http://www.flymine.org/service 
+     * Returns service's root URL.
+     * Example: http://www.flymine.org/service
      * @return URL
      */
     public String getRootUrl() {
         return rootUrl;
     }
-    
+
     /**
-     * Creates GET request. 
+     * Creates GET request.
      * @param url URL of request
      * @param contentType required content type of response
      * @return created request
@@ -179,7 +179,7 @@ public class Service
     }
 
     /**
-     * Creates POST request. 
+     * Creates POST request.
      * @param requestUrl URL of request
      * @param contentType required content type of response
      * @return created request

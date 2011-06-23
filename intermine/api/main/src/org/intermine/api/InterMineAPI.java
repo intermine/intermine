@@ -51,44 +51,53 @@ public class InterMineAPI
     protected ObjectStoreSummary oss;
     protected BagQueryRunner bagQueryRunner;
     protected TrackerDelegate trackerDelegate;
+    private LinkRedirectManager linkRedirector;
 
     // query executors are cached per profile
-    private Map<Profile, WebResultsExecutor> wreCache =
+    private final Map<Profile, WebResultsExecutor> wreCache =
         new IdentityHashMap<Profile, WebResultsExecutor>();
-    private Map<Profile, PathQueryExecutor> pqeCache =
+    private final Map<Profile, PathQueryExecutor> pqeCache =
         new IdentityHashMap<Profile, PathQueryExecutor>();
 
-    public InterMineAPI() {
+    /**
+     * Protected no-argument constructor only used for building test implementations of this class.
+     */
+    protected InterMineAPI() {
     }
+
     /**
      * Construct an InterMine API object.
+     *
      * @param objectStore the production database
      * @param userProfileWriter a writer for the userprofile database
      * @param classKeys the class keys
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
      * @param trackerDelegate the trackers delegate
+     * @param linkRedirector class that builds URLs that replace report links
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
             Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            ObjectStoreSummary oss, TrackerDelegate trackerDelegate) {
+            ObjectStoreSummary oss, TrackerDelegate trackerDelegate, LinkRedirectManager
+            linkRedirector) {
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.oss = oss;
-        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
-
-        Profile superUserProfile = profileManager.getProfile(profileManager.getSuperuser(),
-            classKeys);
-        this.bagManager = new BagManager(superUserProfile, model);
-        this.templateManager = new TemplateManager(superUserProfile, model,
-                                                  trackerDelegate.getTemplateTracker());
-        this.templateSummariser = new TemplateSummariser(objectStore,
-                profileManager.getProfileObjectStoreWriter());
-        this.bagQueryRunner =
-            new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
-        this.trackerDelegate = trackerDelegate;
+        // only null for testing
+        if (userProfileWriter != null) {
+            this.profileManager = new ProfileManager(objectStore, userProfileWriter);
+            this.bagManager = new BagManager(profileManager.getSuperuserProfile(), model);
+            this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model,
+                    trackerDelegate.getTemplateTracker());
+            this.templateSummariser = new TemplateSummariser(objectStore,
+                    profileManager.getProfileObjectStoreWriter());
+            this.bagQueryRunner =
+                new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+            this.trackerDelegate = trackerDelegate;
+            this.linkRedirector = linkRedirector;
+        }
     }
 
     /**
@@ -145,8 +154,7 @@ public class InterMineAPI
         synchronized (wreCache) {
             WebResultsExecutor retval = wreCache.get(profile);
             if (retval == null) {
-                retval = new WebResultsExecutor(objectStore, classKeys, bagQueryRunner, profile,
-                        bagManager);
+                retval = new WebResultsExecutor(this, profile);
                 wreCache.put(profile, retval);
             }
             return retval;
@@ -202,5 +210,12 @@ public class InterMineAPI
      */
     public TrackerDelegate getTrackerDelegate() {
         return trackerDelegate;
+    }
+
+    /**
+     * @return the linkRedirector
+     */
+    public LinkRedirectManager getLinkRedirector() {
+        return linkRedirector;
     }
 }

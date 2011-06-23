@@ -10,18 +10,19 @@
 
   <c:choose>
     <c:when test="${empty subtabs[subtabName]  || subtabs[subtabName] == 'perl'}">
-      <!-- <div id="leftCol"> -->
-            <div align="center" style="padding-top: 20px;">
-              <tiles:insert name="apiPerl.tile"/>
-            </div>
-      <!-- </div> -->
+        <div align="center" style="padding-top: 20px;">
+          <tiles:insert name="apiPerl.tile"/>
+        </div>
+    </c:when>
+    <c:when test="${subtabs[subtabName] == 'python'}">
+        <div align="center" style="padding-top: 20px;">
+          <tiles:insert name="apiPython.tile"/>
+        </div>
     </c:when>
     <c:otherwise>
-      <!-- <div id="rightCol"> -->
-              <div align="center" style="padding-top: 20px;">
-              <tiles:insert name="apiJava.tile"/>
-              </div>
-      <!-- </div> -->
+          <div align="center" style="padding-top: 20px;">
+          <tiles:insert name="apiJava.tile"/>
+          </div>
     </c:otherwise>
   </c:choose>
 

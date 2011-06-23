@@ -55,6 +55,7 @@
     <merge-additions file="bio/sources/biopax/biopax_additions.xml"/>
     <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/sources/interpro-go/interpro-go_additions.xml"/>
+    <merge-additions file="bio/sources/protein-atlas/protein-atlas_additions.xml"/>
   </target>
 
 </project>

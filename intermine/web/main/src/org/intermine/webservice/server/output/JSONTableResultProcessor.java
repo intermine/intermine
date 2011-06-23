@@ -25,7 +25,6 @@ public class JSONTableResultProcessor extends JSONResultProcessor
 
     /**
      * Constructor.
-     * @param baseUrl The base URL to be used for constructing links with.
      */
     public JSONTableResultProcessor() {
         // empty constructor

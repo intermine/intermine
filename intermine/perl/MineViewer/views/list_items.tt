@@ -1,0 +1,34 @@
+
+<div id="list-items">
+    [% INCLUDE list_items_pagers.tt %]
+    <ul>
+    [% FOREACH item IN items %]
+        [% itemname = '' %]
+        [% FOREACH key IN class_keys %]
+            [% resolved = item %]
+            [% keyparts = key.split('\.') %]
+            [% FOREACH kp IN keyparts %]
+                [% resolved = resolved.$kp %]
+            [% END %]
+            [% itemname = resolved %]
+            [% LAST IF itemname %]
+        [% END %]
+        [% deleter_id = "deleter-" _ item.objectId %]
+        [% href = proxy.uri_for('/' _ item.class _ '/id/' _ item.objectId) %]
+        [% lname = lists.0.name %]
+        [% itemid = item.objectId %]
+        <li>
+        <span onmouseover="jQuery('#[% deleter_id %]').show()"
+                onmouseout="jQuery('#[% deleter_id %]').hide()"
+                id="item-[% item.objectId %]">
+            <a href="[% href %]">[% itemname %]</a>
+            <a icon="delete" style="display:none;cursor:pointer;" 
+                id="[% deleter_id %]"
+                title="Remove this item"
+                onclick="removeitem('[% lname %]', '[% itemid %]')"></a>
+        </span> 
+        </li>
+    [% END %]
+    </ul>
+
+</div>

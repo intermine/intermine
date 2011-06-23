@@ -33,7 +33,7 @@ import org.modmine.web.logic.RegulatoryNetworkDBUtil;
 import org.modmine.web.logic.RegulatoryNetworkDataFormatUtil;
 
 /**
- * Controller Action for flyRegulatoryNetwork.jsp Prepare the regulatory network
+ * Controller Action for flyRegulatoryNetwork.jsp to prepare the regulatory network
  * data and display in cytoscape web.
  *
  * @author Fengyuan Hu
@@ -53,7 +53,6 @@ public class FlyRegulatoryNetworkController extends TilesAction
             ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        // Get InterMineAPI
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
@@ -66,7 +65,8 @@ public class FlyRegulatoryNetworkController extends TilesAction
                 .getFlyRegulatoryEdges(model, executor);
 
         if (interactionNodeSet == null || interactionEdgeSet == null) {
-            request.setAttribute("classMissingMessage", "Class is missiong in the model...");
+            request.setAttribute("classMissingMessage",
+                "Interaction Class is missiong in the model...");
             return null;
         }
 

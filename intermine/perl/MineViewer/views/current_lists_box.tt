@@ -1,0 +1,36 @@
+<div id="current-lists-box">
+    <button style="width:100%;[% UNLESS contained_in.pairs.size %]display:none;[% END %]" id="list-collapser">
+        Show lists this [% obj.class %] is in
+    </button>
+    <div id="contained-in-box" style="display:none">
+    <ul id="contained-in">
+        [% FOREACH p IN contained_in.pairs %]
+            [% deleter_id = 'deleter-' _ p.key.replace('[^A-Za-z0-9]', '_') %]
+            [% lname = p.key %]
+            [% itemid = obj.objectId %]
+        <li>
+            <span onmouseover="jQuery('#[% deleter_id %]').show()"
+                onmouseout="jQuery('#[% deleter_id %]').hide()"
+                id="list-[% lname %]">
+            <a href="[% proxy.uri_for('/list/' _ p.key) %]">
+            [% p.key %] ([% p.value.size %] [% pluraliser(p.value.type) %])
+            </a>
+            [% IF p.value.is_authorized %]
+            <a icon="delete" style="display:none;cursor:pointer;" 
+                id="[% deleter_id %]"
+                onclick="removeitem('[% lname %]', '[% itemid %]')">
+                Remove from
+            </a>
+            [% END %]
+        </li>
+        [% END %]
+    </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+jQuery(function() {
+    jQuery('#list-collapser').button()
+    .click(function() {jQuery('#contained-in-box').slideToggle()});
+});
+</script>

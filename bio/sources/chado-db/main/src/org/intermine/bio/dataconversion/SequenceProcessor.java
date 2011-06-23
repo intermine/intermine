@@ -45,7 +45,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -2064,7 +2063,7 @@ public class SequenceProcessor extends ChadoProcessor
         try {
             returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier,
                     false);
-        } catch (SAXException e) {
+        } catch (ObjectStoreException e) {
             throw new RuntimeException("Couldn't create synonym", e);
         }
         fdat.addExistingSynonym(identifier);

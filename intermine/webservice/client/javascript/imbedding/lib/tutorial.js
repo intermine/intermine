@@ -1,7 +1,7 @@
 availableTemplates = null;
 var model = {};
 var baseUrl = "http://squirrel.flymine.org/intermine-test";
-var flyMineBase = "http://preview.flymine.org/preview";
+var flyMineBase = "http://squirrel.flymine.org/report-page";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";
@@ -20,16 +20,18 @@ $(function() {
         root: "lib/jquery-syntax/"
     });
     $('#showGraphAreaContainer').hide();
-    loadTable1();
     loadTable3a();
     loadTable3b();
+    loadTable3c();
+    loadTable3d();
     loadTable4a();
     loadTable4b();
     loadTable4c();
     loadTable4d();
+    loadTable4e();
     loadTable4();
     loadTable5();
-    $('#faq').accordion({collapsible: true, autoHeight: false});
+    $('#faq').accordion({collapsible: true, autoHeight: false, active: false});
 });
 
 function setActiveStyleSheet(title) {
@@ -46,12 +48,14 @@ function setActiveStyleSheet(title) {
 function loadTable1() {
     IMBedding.loadTemplate(
         {
-            name:           "Gene_Identifiers",
+              name: "AnatomyTerm_Alleles",
+              constraint1: "Gene.alleles.alleleClass",
+              op1: "=",
+              value1: "*loss of function*",
+              constraint2: "Gene.alleles.phenotypeAnnotations.description",
+              op2: "=",
+              value2: "*eye disc*"
 
-            constraint1:    "Gene.secondaryIdentifier",
-            op1:            "<",
-            value1:         "CG1046",
-            code1:          "A"
         },
         "#placeholderEx2",
         {openOnLoad: true, baseUrl: flyMineBase}
@@ -68,7 +72,9 @@ function loadTable2() {
             code1:          "A"
         },
         "#positionExample",
-        {baseUrl: flyMineBase}
+        {
+            baseUrl: flyMineBase,
+        }
     );
 }
 function loadTable3a() {
@@ -99,6 +105,41 @@ function loadTable3b() {
         },
         "#placeholderEx3b",
         {onTitleClick: "none", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable3c() {
+    var callback = function() {
+        alert( "You clicked on:\n" + $(this).text());
+    };
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+            size: 10,
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
+        },
+        "#placeholderEx3c",
+        {onTitleClick: callback, titleHoverCursor: "help", baseUrl: flyMineBase}
+    );
+}
+
+function loadTable3d() {
+    IMBedding.loadTemplate(
+        {
+            name:           "Gene_allGOTerms2",
+            size: 10,
+
+            constraint1:    "Gene",
+            op1:            "LOOKUP",
+            value1:         "CG11348",
+            code1:          "A"
+        },
+        "#placeholderEx3d",
+        {baseUrl: flyMineBase}
     );
 }
 
@@ -183,6 +224,42 @@ function loadTable4d() {
         {baseUrl: flyMineBase}
     );
 }
+function loadTable4e() {
+    var ops = {
+        baseUrl: flyMineBase,
+        nextText: "avanti", 
+        previousText: "indietro",
+        additionText: "carica altre [x] righe",
+        allRowsText: "carica tutte righe",
+        emptyCellText: "[NIENTE]",
+        collapseHelpText: "chiudi tabella",
+        expandHelpText: "mostra tabella",
+        exportCSVText: "Esporta il risultato in formato CSV", 
+        exportTSVText: "Esporta il risultato in formato TSV", 
+        mineLinkText: "Guarda in Mine",
+        resultsDescriptionText: "il risultato della loro interrogazione",
+        queryTitleText: "Organismo --> Tutti genia con un dominio specifico",
+        countText: "[x] righe",
+        thousandsSeparator: "."
+    };
+    IMBedding.loadTemplate(
+        {
+            name:           "Organism_GeneDomain_new",
+            size: 15,
+
+            constraint1:    "ProteinDomain.proteins.genes.organism.name",
+            op1:            "=",
+            value1:         "Drosophila melanogaster",
+            code1:          "A",
+
+            constraint2:    "ProteinDomain.shortName",
+            op2:            "=",
+            value2:         "*homeo*",
+            code2:          "B"
+        },
+        "#placeholderEx4e", ops
+    );
+}
 function loadTable4() {
     IMBedding.loadTemplate(
         {
@@ -227,7 +304,11 @@ function loadGraph1() {
     IMBedding.loadQuery(
         {
             select: ["Employee.age", "Employee.department.company.name"],
-            from: "testmodel"
+            from: "testmodel",
+            where: [
+                {path: "Employee.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Employee.department.company.name", op: "!=", value: "Company*"}
+            ]
         },
         {size: 1000, format: "jsonpobjects"},
         function(resultSet) {
@@ -359,7 +440,11 @@ function loadGraph2() {
     IMBedding.loadQuery(
         {
             select: ["Manager.age", "Manager.seniority", "Manager.name"],
-            where: [{path: "Manager.age", op: ">", value: 30}],
+            where: [
+                {path: "Manager.age", op: ">", value: 30},
+                {path: "Manager.department.company.name", op: "!=", value: "Diffic*"},
+                {path: "Manager.department.company.name", op: "!=", value: "Company*"}
+                ],
             from: "testmodel"
         },
         {size: 1000, format: "jsonpobjects"},
@@ -399,7 +484,9 @@ function loadGraph2() {
                         y = item.datapoint[1].toFixed(2);
                     var key = parseInt(x) + "-" + parseInt(y);
                     var manager = managers[key];
-                    showTooltip(item.pageX, item.pageY, manager.name);
+                    if (manager) {
+                        showTooltip(item.pageX, item.pageY, manager.name);
+                    }
                 }
                 else {
                     $("#tooltip").remove();
@@ -727,7 +814,7 @@ function loadUserQuery() {
     var data = {size: 10};
     var newValue = firstline + "IMBedding.setBaseUrl('";
 
-    var urlToQuery = flyMineBase;
+    var urlToQuery = flyMineBase;
     newValue += urlToQuery + "');\n\n";
     var opts = {baseUrl: urlToQuery};
 
@@ -902,8 +989,7 @@ $(function() {
             loadTemplateInfo(
                 "http://squirrel.flymine.org/intermine-test/service/templates");
         } else if (this.value == "flymine") {
-            loadTemplateInfo(
-                "http://preview.flymine.org/preview/service/templates");
+            loadTemplateInfo(flyMineBase + "/service/templates");
         }
     });
     $('#source-radios-q').buttonset();
@@ -912,15 +998,19 @@ $(function() {
             loadModel(
                 "http://squirrel.flymine.org/intermine-test/service/model");
         } else if (this.value == "flymine") {
-            loadModel(
-                "http://preview.flymine.org/preview/service/model");
+            loadModel(flyMineBase + "/service/model");
         }
     });
     $('#sortOrderSelector').button();
     $('#sortDirectionDiv').buttonset();
     $('#boxselector').change(function() {
-        document.getElementById('jsonarea').disabled = ($(this).val() == "xml");
-        document.getElementById('xmlarea').disabled = ($(this).val() == "json");
+        if ($(this).val() == "xml") {
+            $('#xmlarea').show();
+            $('#jsonarea').hide();
+        } else {
+            $('#xmlarea').hide();
+            $('#jsonarea').show();
+        }
     });
     $("input:checkbox").button();
     $('#radio').buttonset();
@@ -1403,12 +1493,12 @@ var loadTemplateInfo = function(url) {
             format: "jsonp"
         },
         success: function( data ) {
-            window.availableTemplates = data;
+            window.availableTemplates = data.templates;
             var names = [];
-            for (name in data) {
+            for (name in data.templates) {
                 names.push({
                     value: name,
-                    label: data[name].title
+                    label: data.templates[name].title
                 });
             }
             $('#templateName').autocomplete({
@@ -1437,10 +1527,10 @@ var loadModel = function(url) {
         callbackParameter: "callback",
         data: {format: "jsonp"},
         success: function( data ) {
-            model = data;
+            model = data.model;
             $("#root-class").children('option').remove();
             var names = [];
-            for (name in data.classes) {
+            for (name in model.classes) {
                 names.push(name);
             };
             names = names.sort();
@@ -1462,7 +1552,6 @@ var loadModel = function(url) {
 
 
 $(function() {
-    loadTemplateInfo(
-        "http://preview.flymine.org/preview/service/templates");
-    loadModel("http://preview.flymine.org/preview/service/model");
+    loadTemplateInfo(flyMineBase + "/service/templates");
+    loadModel(flyMineBase + "/service/model");
 });

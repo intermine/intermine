@@ -3,7 +3,7 @@ package Webservice::InterMine::PathFeature;
 use Moose;
 
 #use InterMine::Model; # Can't quite work out why, but it doesn't compile without this
-use InterMine::TypeLibrary qw(PathString);
+use InterMine::Model::Types qw(PathString);
 
 around BUILDARGS => sub {
     my $orig  = shift;

@@ -113,6 +113,7 @@ public class ContactForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getMonkey()));
+            request.setAttribute("response", "Please check that you have provided your email."); // ajax
         }
 
         StringBuffer buffer = new StringBuffer();
@@ -147,6 +148,7 @@ public class ContactForm extends ValidatorForm
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("errors.contact.invalidmessage"));
+            request.setAttribute("response", "Please check that you have provided your message."); // ajax
         }
 
         return errors;

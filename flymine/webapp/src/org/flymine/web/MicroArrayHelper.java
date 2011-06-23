@@ -35,9 +35,13 @@ import org.intermine.model.bio.MicroArrayResult;
  * @author Thomas Riley
  * @author Richard Smith
  */
-public class MicroArrayHelper
+public final class MicroArrayHelper
 {
     //private static Map queries = new HashMap();
+
+    private MicroArrayHelper() {
+        // don't
+    }
 
     /**
      * For a given gene and experiment retrieve results and assays and displayOrder attribute.

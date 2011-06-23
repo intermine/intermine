@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+######################################################################
+# This is an automatically generated script to run your query.
+# To use it you will require the InterMine Perl client libraries.
+# These can be installed from CPAN, using your preferred client, eg:
+#
+#    sudo cpan Webservice::InterMine
+#
+# For help using these modules, please see these resources:
+#
+#  * http://search.cpan.org/perldoc?Webservice::InterMine
+#       - API reference
+#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook
+#       - A How-To manual
+#  * http://www.intermine.org/wiki/PerlWebServiceAPI
+#       - General Usage
+#  * http://www.intermine.org/wiki/WebService
+#       - Reference documentation for the underlying REST API
+#
+######################################################################
+
+# The following import statement sets TEST_PROJECT_TITLE as your default
+use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
+
+my $query = Webservice::InterMine->new_query;
+
+# The view specifies the output columns
+$query->add_view(qw/
+    Gene.primaryIdentifier
+    Gene.secondaryIdentifier
+    Gene.symbol
+    Gene.name
+    Gene.organism.shortName
+/);
+
+# edit the line below to change the sort order:
+# $query->add_sort_order('Gene.primaryIdentifier', 'ASC');
+
+# You can edit the constraint values below
+$query->add_constraint(
+    path   => 'Gene.organism.commonName',
+    op     => 'ONE OF',
+    values => [
+        'fruit fly',
+        'honey bee',
+    ],
+    code  => 'A',
+);
+
+# Edit the code below to specify your own custom logic:
+# $query->set_logic("A");
+
+$query->show;

@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -57,6 +58,8 @@ public class SpanUploadOptionsController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute("tabName", "spanUpload");
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
@@ -64,10 +67,12 @@ public class SpanUploadOptionsController extends TilesAction
         // >>>>> Get data from MetadataCache and CategoryExperiments <<<<<
         Set<String> orgSet = new HashSet<String>();
 
-        // Category-Experiment Map
-        // Category is ordered
+        // Category-Experiment Map, Category is ordered
         Map<String, List<DisplayExperiment>> cagExpMap = MetadataCache
                 .getCategoryExperiments(os);
+
+        // Read GBrowse tracks
+        MetadataCache.getGBrowseTracks();
 
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
@@ -159,14 +164,6 @@ public class SpanUploadOptionsController extends TilesAction
             orgMap.put(org, cagMap);
         }
 
-//        // set trees as request attributes
-//        // Organism-Org Tree Map
-//        Map<String, String> orgMap = new HashMap<String, String>();
-//        for (String org : orgSet) {
-//            //request.setAttribute(org, buildHtmlTree(orgMap, org));
-//            orgMap.put(org, buildHtmlTree(theMap, org));
-//        }
-
         // Only organisms with experiments (which must have features) will be shown
         Set<String> orgWithFTSet = new LinkedHashSet<String>();
         for (DisplayExperiment exp : expWithFtSet) {
@@ -174,81 +171,12 @@ public class SpanUploadOptionsController extends TilesAction
         }
         List<String> orgWithFTList = new ArrayList<String>(orgWithFTSet);
         Collections.sort(orgList);
-        // >>>>> Setup request <<<<<
-//        request.setAttribute("orgList", orgList);
+
         request.setAttribute("orgList", orgWithFTList);
         request.setAttribute("expFTMap", expFTMap);
-//        request.setAttribute("theMap", theMap);
         request.setAttribute("orgMap", orgMap);
         request.setAttribute("spanConstraint", "Organism");
 
         return null;
-    }
-
-    /**
-     * Build a tree for spanUploadOptions.jsp use.
-     *
-     * @Deprecated
-     * @param orgMap Organism-Org Tree Map
-     * @param org organism name
-     * @return aTree the HTML tree
-     */
-    @Deprecated
-    private String buildHtmlTree(
-            Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> theMap,
-            String org) {
-
-        StringBuffer aTree = new StringBuffer();
-        Set<String> ftSet = new HashSet<String>();
-
-        // id = organism.shortname
-        aTree.append("<li>");
-        aTree.append("<div id='tree'>");
-        aTree.append("<ul id='" + org + "'>");
-
-        Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>> cagMap = theMap.get(org);
-        for (String cag : cagMap.keySet()) {
-            aTree.append("<li><a href='#'>");
-            aTree.append(cag);
-            aTree.append("</a><ul>");
-            Map<DisplayExperiment, Map<Integer, List<String>>> expMap = cagMap.get(cag);
-            for (DisplayExperiment exp : expMap.keySet()) {
-                // Add all feature types to ftSet for one organism
-                // a better scenario is - after users select experiments, the feature types change
-                // according to the experiment, filter out the ft that don't belong to the selected
-                // experiments, maybe not...
-                for (Integer sub : expMap.get(exp).keySet()) {
-                    ftSet.addAll(expMap.get(exp).get(sub));
-                }
-                // Continue building the tree
-                aTree.append("<li id='" + exp.getName() + "'><a href='#'>");
-                aTree.append(exp.getName());
-                aTree.append("</a></li>");
-            }
-
-            aTree.append("</ul></li>");
-        }
-
-        aTree.append("</ul>");
-        aTree.append("</div>");
-        aTree.append("</li>");
-
-        // Add feature types to html as checkboxes
-        // e.g.
-        // <input type="checkbox" name="vehicle" value="Bike" /> I have a bike<br />
-        // <input type="checkbox" name="vehicle" value="Car" /> I have a car
-        aTree.append("<li>");
-        aTree.append("<fieldset>");
-        aTree.append("<legend>Feature Types:</legend>");
-        aTree.append("<div id='featureType'>");
-        for (String ft : ftSet) {
-            aTree.append("<input type='checkbox' name='featureTypes' value='"
-                    + ft + "'/>" + ft + "<br/>");
-        }
-        aTree.append("</div>");
-        aTree.append("</fieldset>");
-        aTree.append("</li>");
-
-        return aTree.toString();
     }
 }

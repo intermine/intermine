@@ -21,11 +21,13 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility methods for naming queries and lists.
+ *
  * @author Julie Sullivan
  */
 public final class NameUtil
 {
     private NameUtil() {
+        // don't
     }
 
     private static final String QUERY_NAME_PREFIX = "query_";
@@ -40,14 +42,7 @@ public final class NameUtil
      * query/list names
      */
     static {
-        SPEC_CHAR_TO_TEXT.put("‘", new String("QUOTE"));
-        SPEC_CHAR_TO_TEXT.put("’", new String("QUOTE"));
-        SPEC_CHAR_TO_TEXT.put("“", new String("QUOTE"));
-        SPEC_CHAR_TO_TEXT.put("”", new String("QUOTE"));
-        SPEC_CHAR_TO_TEXT.put("‹", new String("LESS_THAN_SIGN"));
-        SPEC_CHAR_TO_TEXT.put("›", new String("GREATER_THAN_SIGN"));
         SPEC_CHAR_TO_TEXT.put("!", new String("EXCLAMATION_POINT"));
-        SPEC_CHAR_TO_TEXT.put("£", new String("POUND_SIGN"));
         SPEC_CHAR_TO_TEXT.put("$", new String("DOLLAR_SIGN"));
         SPEC_CHAR_TO_TEXT.put("%", new String("PERCENT_SIGN"));
 
@@ -120,19 +115,17 @@ public final class NameUtil
      */
     private static String replaceSpecialChars(String name) {
         String tmp = name;
-        String rebuiltName = "";
-
+        StringBuffer rebuiltName = new StringBuffer();
         for (int i = 0; i < tmp.length(); i++) {
             char c = tmp.charAt(i);
             String str = String.valueOf(c);
-
             if (!isValidName(str)) {
-                rebuiltName += getSpecCharToText(str);
+                rebuiltName.append(getSpecCharToText(str));
             } else {
-                rebuiltName += str;
+                rebuiltName.append(str);
             }
         }
-        return rebuiltName;
+        return name.replaceAll("[^a-zA-Z 0-9]+", "");
     }
 
     /**

@@ -28,6 +28,7 @@
          <html:option value="${value}">${value}</html:option>
        </c:forEach>
     </html:select>
+  &nbsp;
     <html:submit property="convertToThing">Convert</html:submit>
     </p>
     </c:forEach>

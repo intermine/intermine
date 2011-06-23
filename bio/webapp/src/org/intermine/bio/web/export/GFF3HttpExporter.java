@@ -73,9 +73,11 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         ServletContext servletContext = session.getServletContext();
 
         Set<Integer> organisms = null;
+        boolean makeUcscCompatible = false;
         // try to find the organism from the form
         if (form != null && form instanceof GFF3ExportForm) {
             organisms = ((GFF3ExportForm) form).getOrganisms();
+            makeUcscCompatible = ((GFF3ExportForm) form).makeUcscCompatible();
         }
 
         if (doGzip) {
@@ -86,7 +88,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         }
 
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
-        SequenceFeature.class);
+                SequenceFeature.class);
 
         // get the project title to be written in GFF3 records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
@@ -112,8 +114,8 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 }
             }
             removeFirstItemInPaths(paths);
-            exporter = new GFF3Exporter(writer,
-                    indexes, getSoClassNames(servletContext), paths, sourceName, organisms);
+            exporter = new GFF3Exporter(writer, indexes, getSoClassNames(servletContext), paths,
+                    sourceName, organisms, makeUcscCompatible);
             ExportResultsIterator iter = null;
             try {
                 iter = getResultRows(pt, request);

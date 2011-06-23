@@ -65,7 +65,11 @@ public class ModifyTemplateAction extends InterMineAction
             }
         }
         saveErrors(request, (ActionMessages) errors);
-        return getReturn(mtf.getPageName(), mapping);
+        if (request.getParameter("export") != null || mtf.getTemplateButton() != null) {
+            return null;
+        } else {
+            return getReturn(mtf.getPageName(), mapping);
+        }
     }
 
     /**

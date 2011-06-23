@@ -3,15 +3,19 @@
  */
 package org.intermine.webservice.server.output;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -41,6 +45,8 @@ public class JSONRowResultProcessorTest extends TestCase {
     private ExportResultsIterator emptyIterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
+
+    private final InterMineAPI api = new DummyAPI();
 
     /**
      * @param name
@@ -102,6 +108,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         os.addRow(row4);
         os.addRow(row5);
 
+
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.age", "Employee.name");
 
@@ -112,11 +119,11 @@ public class JSONRowResultProcessorTest extends TestCase {
             List resultList = os.execute(q, 0, 5, true, true, new HashMap());
             Results results = new DummyResults(q, resultList);
             iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-            
+
             List emptyList = new ArrayList();
             Results emptyResults = new DummyResults(q, emptyList);
             emptyIterator = new ExportResultsIterator(pq, emptyResults, pathToQueryNode);
-            
+
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
@@ -131,51 +138,41 @@ public class JSONRowResultProcessorTest extends TestCase {
     }
 
     public void testJSONRowResultProcessor() {
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         assertTrue(processor != null);
     }
-    
+
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
         List<List<String>> expected = Arrays.asList(inner);
-        
+
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         processor.write(emptyIterator, out);
 
         assertEquals(expected.toString(), out.getResults().toString());
     }
 
     @SuppressWarnings("unchecked")
-    public void testWrite() {
-        List<List<String>> expected = Arrays.asList(
-        Arrays.asList("[" +
-                "{\"value\":30,\"url\":\"/objectDetails.do?id=5\"}," +
-                "{\"value\":\"Tim Canterbury\",\"url\":\"/objectDetails.do?id=5\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":32,\"url\":\"/objectDetails.do?id=6\"}," +
-                "{\"value\":\"Gareth Keenan\",\"url\":\"/objectDetails.do?id=6\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":26,\"url\":\"/objectDetails.do?id=7\"}," +
-                "{\"value\":\"Dawn Tinsley\",\"url\":\"/objectDetails.do?id=7\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":41,\"url\":\"/objectDetails.do?id=8\"}," +
-                "{\"value\":\"Keith Bishop\",\"url\":\"/objectDetails.do?id=8\"}" +
-                "]", ""),
-        Arrays.asList("[" +
-                "{\"value\":28,\"url\":\"/objectDetails.do?id=9\"}," +
-                "{\"value\":\"Lee\",\"url\":\"/objectDetails.do?id=9\"}" +
-                "]")
-        );
+    public void testWrite() throws IOException {
+        InputStream is = getClass().getResourceAsStream("JSONRowResultProcessorTest.expected");
+        StringWriter sw = new StringWriter();
+        IOUtils.copy(is, sw);
+        String expected = sw.toString();
 
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor(api);
         processor.write(iterator, out);
 
-        assertEquals(expected.toString(), out.getResults().toString());
+        /* For debugging, as ant can't give long enough error messages */
+//        FileWriter fw = new FileWriter(new File("/tmp/ant_" + this.getClass().getName() + ".out"));
+//        fw.write("EXPECTED:\n=====\n");
+//        fw.write(expected);
+//        fw.write("\nGOT:\n======\n");
+//        fw.write(out.getResults().toString());
+//        fw.close();
+
+        assertEquals(expected, out.getResults().toString() + "\n");
 
     }
 

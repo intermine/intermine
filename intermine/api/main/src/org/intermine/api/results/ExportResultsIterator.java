@@ -45,11 +45,11 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
-    private List<Path> paths = new ArrayList<Path>();
+    private final List<Path> paths = new ArrayList<Path>();
     private int columnCount;
-    private Results results;
+    private final Results results;
     private boolean isGoingFaster = false;
-    private PathQuery originatingQuery;
+    private final PathQuery originatingQuery;
 
 
      /**
@@ -70,13 +70,13 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     }
 
     public PathQuery getQuery() {
-    	return originatingQuery;
+        return originatingQuery;
     }
-    
+
     public List<Path> getViewPaths() {
-    	return Collections.unmodifiableList(paths);
+        return Collections.unmodifiableList(paths);
     }
-    
+
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
@@ -87,18 +87,20 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
                 path = pq.makePath(pathString);
                 paths.add(path);
             } catch (PathException e) {
-                throw new RuntimeException("Path " + pathString + " in view of PathQuery is invalid", e);
+                throw new RuntimeException("Path " + pathString
+                        + " in view of PathQuery is invalid", e);
             }
         }
         columns = convertColumnTypes(results.getQuery().getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
-    
-    
+
+
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -109,6 +111,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<ResultElement> next() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
@@ -120,6 +123,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
      * This method is not supported.
      * {@inheritDoc}
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
@@ -239,7 +243,6 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollections(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
-        	System.err.println("breaking");
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
@@ -273,12 +276,16 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
         for (Object column : cols) {
             if (column instanceof List) {
                 List<List> collection = (List<List>) row.get(columnNo);
-                for (List subRow : collection) {
-                    if (multiRow) {
-                        hasCollections = true;
-                        expandCollections(subRow, retval, templateResults, (List) column);
-                    } else {
-                        expandCollectionsJustOneRow(subRow, retval, templateResults, (List) column);
+                if (collection != null) {
+                    for (List subRow : collection) {
+                        if (multiRow) {
+                            hasCollections = true;
+                            expandCollections(subRow,
+                                    retval, templateResults, (List) column);
+                        } else {
+                            expandCollectionsJustOneRow(subRow,
+                                    retval, templateResults, (List) column);
+                        }
                     }
                 }
             }
@@ -292,7 +299,6 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollectionsJustOneRow(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
-        
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }

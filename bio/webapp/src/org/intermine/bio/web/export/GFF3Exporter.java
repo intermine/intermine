@@ -79,6 +79,8 @@ public class GFF3Exporter implements Exporter
     // this one to store the lower case class names of  soClassNames,
     // for comparison with path elements classes.
     private Set<String> cNames = new HashSet<String>();
+    private boolean makeUcscCompatible = false;
+
     /**
      * Constructor.
      * @param out output stream
@@ -89,15 +91,18 @@ public class GFF3Exporter implements Exporter
      *  as corresponding columns in results table
      * @param sourceName name of Mine to put in GFF source column
      * @param organisms taxon id of the organisms
+     * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
-            List<String> attributesNames, String sourceName, Set<Integer> organisms) {
+            List<String> attributesNames, String sourceName, Set<Integer> organisms,
+            boolean makeUcscCompatible) {
         this.out = out;
         this.featureIndexes = indexes;
         this.soClassNames = soClassNames;
         this.attributesNames = attributesNames;
         this.sourceName = sourceName;
         this.organisms = organisms;
+        this.makeUcscCompatible = makeUcscCompatible;
 
         for (String s : soClassNames.keySet()) {
             this.cNames.add(s.toLowerCase());
@@ -306,7 +311,7 @@ public class GFF3Exporter implements Exporter
     private void makeRecord() {
 
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
-                attributes);
+                attributes, makeUcscCompatible);
 
         if (gff3Record != null) {
             // have a chromosome ref and chromosomeLocation ref
@@ -407,7 +412,7 @@ public class GFF3Exporter implements Exporter
 
     private void finishLastRow() {
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
-                attributes);
+                attributes, makeUcscCompatible);
 
         if (gff3Record != null) {
             // have a chromsome ref and chromosomeLocation ref

@@ -7,9 +7,6 @@
       <fieldconfig fieldExpr="alleleClass"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Author">
@@ -27,32 +24,29 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.BioEntity">
+    <headerconfig>
+      <titles>
+        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.shortName*" />
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-    </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
-  </class>
-
-  <class className="org.intermine.model.bio.BlastMatch">
-    <fields>
-      <fieldconfig fieldExpr="query.primaryIdentifier"/>
-      <fieldconfig fieldExpr="hit.primaryIdentifier"/>
-      <fieldconfig fieldExpr="EValue"/>
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.CDNAClone">
+    <fields>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
   </class>
 
@@ -68,10 +62,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Chromosome">
@@ -80,10 +70,6 @@
       <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
 
@@ -97,12 +83,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="available"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.Clone">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
   </class>
 
@@ -141,12 +121,8 @@
 
   <class className="org.intermine.model.bio.Disease">
     <fields>
-      <fieldconfig fieldExpr="omimId"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="identifier"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Exon">
@@ -160,10 +136,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInInlineCollection="false"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.FlyAtlasResult">
@@ -174,12 +146,22 @@
       <fieldconfig fieldExpr="mRNASignalSEM"/>
       <fieldconfig fieldExpr="presentCall"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Gene">
+    <headerconfig>
+      <customlinks>
+        <customlink
+          url="http://flybase.org/reports/{primaryIdentifier}.html"
+          image="flybase_logo_link.png"
+        />
+      </customlinks>
+    </headerconfig>
+    <inlinelist>
+      <table path="synonyms.value" showInHeader="true" lineLength="100" />
+      <table path="probeSets.primaryIdentifier" showLinksToObjects="true" />
+      <table path="pathways.name" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -190,40 +172,29 @@
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.shortName" />
     </fields>
     <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-      <displayer src="cytoscapeNetworkDisplayer.tile"/>
-      <displayer src="/model/interMineLinkDisplayer.jsp"/>
     </longdisplayers>
     <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-  <fieldconfig fieldExpr="subject.name"/>
-  <fieldconfig fieldExpr="subject.symbol"/>
+      <fieldconfig fieldExpr="subject.secondaryIdentifier"/>
+      <fieldconfig fieldExpr="subject.name"/>
+      <fieldconfig fieldExpr="subject.symbol"/>
       <fieldconfig fieldExpr="ontologyTerm.identifier" />
       <fieldconfig fieldExpr="ontologyTerm.name" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOEvidenceCode">
     <fields>
       <fieldconfig fieldExpr="code"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
     <class className="org.intermine.model.bio.GOTerm">
@@ -232,16 +203,12 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Homologue">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
-      <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
     </fields>
@@ -295,10 +262,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.MicroArrayExperiment">
@@ -331,11 +294,6 @@
       <fieldconfig fieldExpr="length"/>
       <fieldconfig fieldExpr="tm"/>
     </fields>
-    <longdisplayers>
-      <!-- disable the SequenceFeature displayer (GBrowse) because
-           MicroarrayOligos aren't located at the moment -->
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Motif">
@@ -388,15 +346,17 @@
   <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="relationship"/>
+      <fieldconfig fieldExpr="parentTerm.name"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
+      <fieldconfig fieldExpr="childTerm.name"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.OntologyTerm">
+    <headerconfig>
+      <titles mainTitles="identifier|name" subTitles="ontology.name" />
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -412,13 +372,13 @@
   </class>
 
   <class className="org.intermine.model.bio.Organism">
+    <headerconfig>
+      <titles mainTitles="name"/>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.OrthologueEvidence">
@@ -435,13 +395,15 @@
   </class>
 
   <class className="org.intermine.model.bio.Pathway">
+    <headerconfig>
+      <titles mainTitles="identifier|name"/>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier" />
       <fieldconfig fieldExpr="name" />
     </fields>
     <longdisplayers>
       <displayer src="pathwayLinkDisplayer.tile"/>
-      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -472,16 +434,15 @@
   </class>
 
   <class className="org.intermine.model.bio.Protein">
+    <inlinelist>
+      <table path="synonyms.value" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
       <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="cytoscapeNetworkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.ProteinDomain">
@@ -491,9 +452,6 @@
       <fieldconfig fieldExpr="shortName"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.ProteinStructure">
@@ -507,12 +465,8 @@
       <fieldconfig fieldExpr="prosaZScore"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
-      <fieldconfig fieldExpr="alignment" showInResults="false" />
+      <fieldconfig fieldExpr="alignment" doNotTruncate="true" showInResults="false" showInInlineCollection="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modelledStructure.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Protocol">
@@ -523,6 +477,12 @@
   </class>
 
   <class className="org.intermine.model.bio.Publication">
+    <headerconfig>
+      <titles mainTitles="firstAuthor|year" />
+    </headerconfig>
+    <inlinelist>
+      <table path="authors.name" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
@@ -532,10 +492,6 @@
       <fieldconfig fieldExpr="pages"/>
       <fieldconfig fieldExpr="pubMedId"/>
     </fields>
-
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.RegulatoryRegion">
@@ -546,10 +502,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Reporter">
@@ -565,9 +517,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="code"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
 
@@ -577,9 +526,6 @@
       <fieldconfig fieldExpr="cellLine"/>
       <fieldconfig fieldExpr="publication.title"/>
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.RNAiScreenHit">
@@ -627,26 +573,12 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="stockCenter"/>
-      <fieldconfig fieldExpr="alleles.primaryIdentifier" showInSummary="false" />
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.SyntenicRegion">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.name"/>
-      <fieldconfig fieldExpr="organism.taxonId"/>
     </fields>
   </class>
 
@@ -662,15 +594,12 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TFmodule">
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
-      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -685,10 +614,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInSummary="false"/>
       <fieldconfig fieldExpr="gene.symbol" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TransposableElement">
@@ -742,10 +667,85 @@
     </fields>
   </class>
 
-  <tableExportConfig id="sequence"
-                     className="org.intermine.bio.web.export.SequenceHttpExporter"/>
-  <tableExportConfig id="gff3"
-                     className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+  <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+  <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+
+  <reportdisplayers>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
+                     jspName="model/sequenceFeatureDisplayer.jsp"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
+                     placement="summary"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.flymine.web.displayer.FlyAtlasDisplayer"
+                     jspName="model/flyAtlasDisplayer.jsp"
+                     replacesFields="microArrayResults"
+                     placement="Expression"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Homology"
+                     parameters="{'dataSets': ['TreeFam data set', 'KEGG orthologues data set']}"
+                     types="Gene"/>
+
+   <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
+                    jspName="model/drosophilaHomologueDisplayer.jsp"
+                    replacesFields=""
+                    placement="Homology"
+                    types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+                     jspName="model/cytoscapeNetworkDisplayer.jsp"
+                     replacesFields="interactions"
+                     placement="Interactions"
+                     types="Gene,Protein"/>
+
+   <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+                     jspName="model/geneOntologyDisplayer.jsp"
+                     replacesFields="goAnnotation,ontologyAnnotations"
+                     placement="Function"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
+                     jspName="model/gbrowseDisplayer.jsp"
+                     replacesFields=""
+                     placement="Genes"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
+                     jspName="model/geneStructureDisplayer.jsp"
+                     replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
+                     placement="Genes"
+                     types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
+                     jspName="model/overlappingFeaturesDisplayer.jsp"
+                     replacesFields="overlappingFeatures"
+                     placement="Genes"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
+                     jspName="model/regulatoryRegionsDisplayer.jsp"
+                     replacesFields="regulatoryRegions"
+                     placement="Regulation"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+                     jspName="model/uniProtCommentsDisplayer.jsp"
+                     replacesFields=""
+                     placement="Function"
+                     types="Gene,Protein"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JMOLDisplayer"
+                    jspName="model/JMOLDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="ProteinStructure"/>
+
+  </reportdisplayers>
 
    <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"

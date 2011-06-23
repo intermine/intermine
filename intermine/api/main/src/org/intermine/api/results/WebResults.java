@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.flatouterjoins.MultiRow;
@@ -28,6 +30,7 @@ import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -67,6 +70,8 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     private Map<String, QuerySelectable> pathToQueryNode;
     private Map<String, BagQueryResult> pathToBagQueryResult;
     private PathQuery pathQuery;
+    private LinkRedirectManager redirector;
+    private InterMineAPI im;
 
     // incremented each time goFaster() is called, and decremented each time releaseGoFaster() is
     // called.  the objectstore goFaster() method is only called when goingFaster == 1 and the
@@ -79,20 +84,19 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @param pathQuery used to get the paths of the columns
      * @param results the underlying Results object
-     * @param model the Model
+     * @param im intermine API
      * @param pathToQueryNode the mapping between Paths (in the columnPaths argument) and the
      * QueryNodes in the results object
-     * @param classKeys the Map from class name to set of defined keys
      * @param pathToBagQueryResult a Map containing results from LOOKUP operations
      */
-    public WebResults(PathQuery pathQuery, Results results, Model model,
-                      Map<String, QuerySelectable> pathToQueryNode,
-                      Map<String, List<FieldDescriptor>> classKeys,
-                      Map<String, BagQueryResult> pathToBagQueryResult) {
+    public WebResults(InterMineAPI im, PathQuery pathQuery, Results results,
+            Map<String, QuerySelectable> pathToQueryNode,
+            Map<String, BagQueryResult> pathToBagQueryResult) {
+        this.im = im;
         this.osResults = results;
-        this.flatResults = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) ((List) osResults),
+        this.flatResults = new ResultsFlatOuterJoinsImpl(((List) osResults),
                 osResults.getQuery());
-        this.model = model;
+        model = im.getModel();
         this.columnPaths = new ArrayList<Path>();
         try {
             for (String pathString : pathQuery.getView()) {
@@ -101,12 +105,12 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
         } catch (PathException e) {
             throw new RuntimeException("Error creating WebResults because PathQuery is invalid", e);
         }
-        this.classKeys = classKeys;
+        classKeys = im.getClassKeys();
         this.pathToQueryNode = pathToQueryNode;
         this.pathToBagQueryResult = pathToBagQueryResult;
         this.pathQuery = pathQuery;
         pathToIndex = getPathToIndex();
-
+        redirector = im.getLinkRedirector();
         addColumnsInternal(columnPaths);
     }
 
@@ -420,18 +424,18 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                     // 2) we have an object but attribute is null -> create a ResultElement with
                     // value null
                     // 3) the object is null (outer join) so add null value rowCells
-                    Object fieldValue;
-                    try {
-                        fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
-                    } catch (PathException e) {
-                        throw new IllegalArgumentException("Path: \"" + columnName
-                                + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
-                                + parentColumnName + "\", query: \""
-                                + PathQueryBinding.marshal(pathQuery, "", pathQuery.getModel()
-                                    .getName(), PathQuery.USERPROFILE_VERSION)
-                                + "\", columnIndex: \"" + columnIndex + "\", initialList: \""
-                                + initialList + "\"", e);
-                    }
+//                    Object fieldValue;
+//                    try {
+//                        fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
+//                    } catch (PathException e) {
+//                        throw new IllegalArgumentException("Path: \"" + columnName
+//                                + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
+//                                + parentColumnName + "\", query: \""
+//                                + PathQueryBinding.marshal(pathQuery, "", pathQuery.getModel()
+//                                    .getName(), PathQuery.USERPROFILE_VERSION)
+//                                + "\", columnIndex: \"" + columnIndex + "\", initialList: \""
+//                                + initialList + "\"", e);
+//                    }
                     if (o != null) {
                         String fieldCDName = path.getLastClassDescriptor().getName();
                         String unqualifiedFieldCD = TypeUtil.unqualifiedName(fieldCDName);
@@ -444,6 +448,15 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                                             fieldName);
                         }
                         ResultElement resultElement = new ResultElement(o, path, isKeyField);
+                        // link to report page by default, unless it says otherwise in config
+
+                        if (redirector != null) {
+                            String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
+                            if (linkRedirect != null) {
+                                resultElement.setLinkRedirect(linkRedirect);
+                            }
+                        }
+
                         if (rowspan >= 0) {
                             rowCells.add(new MultiRowFirstValue(resultElement, rowspan));
                         } else {

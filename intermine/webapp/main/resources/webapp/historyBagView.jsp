@@ -33,16 +33,6 @@
     <c:otherwise>
 
     <table>
-    <c:if test="${PROFILE.loggedIn}">
-        <tr><td align="right">
-            Filter:&nbsp;
-            <tiles:insert name="tagSelect.tile">
-                    <tiles:put name="type" value="bag" />
-                    <tiles:put name="selectId" value="mainSelect" />
-                    <tiles:put name="onChangeFunction" value="filterByTag" />
-            </tiles:insert>
-        </td></tr>
-    </c:if>
     <tr><td>
 
       <html:form action="/modifyBag">
@@ -104,8 +94,7 @@
 
               <td class="sorting"><c:out value="${savedBag.value.type}"/></td>
               <td class="sorting" align="right">
-                <c:out value="${savedBag.value.size}"/>
-                <c:choose>
+                <c:out value="${savedBag.value.size}"/>&nbsp;<c:choose>
                   <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
                   <c:otherwise>values</c:otherwise>
                 </c:choose>

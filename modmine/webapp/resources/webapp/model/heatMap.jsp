@@ -1,13 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="mm"%>
-<%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-    prefix="str"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.net.URLEncoder" language="java" %>
 
 <!-- heatMap.jsp -->
 
@@ -15,100 +8,70 @@
 
 <tiles:importAttribute />
 
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    google.load("visualization", "1", {});
-    google.load("prototype", "1.6");
-</script>
-<script type="text/javascript" src="model/bioheatmap/js/bioheatmap.js"></script>
-<script type="text/javascript">
-  function drawHeatMap() {
-         //============= Heatmap body =============
-         var heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
-
-         var data_body = new google.visualization.DataTable();
-
-         data_body.addColumn('string', 'Gene Name');
-
-         <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
-             <c:if test="${ges_status.first}">
-                 <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                    data_body.addColumn('number', "${geScores.condition}");
-                 </c:forEach>
-             </c:if>
-         </c:forEach>
-
-         <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
-             data_body.addRows(1);
-             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
-
-             <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
-             </c:forEach>
-         </c:forEach>
-
-          heatmap.draw(data_body, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
-                                                                                 endColor: {r:255, g:255, b:0, a:1},
-                                                                                 passThroughBlack: false,
-                                                                                 numberOfColors: 256,
-                                                                                 cellHeight: 10,
-                                                                                 cellWidth: 10,
-                                                                                 fontHeight: 7,
-                                                                                 drawBorder: false});
-
-          google.visualization.events.addListener(heatmap, 'select', function() {
-                    var rowNo = heatmap.getSelection()[0].row;
-                    var colNo = heatmap.getSelection()[0].column;
-                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
-                });
-
-        //============= Heatmap legend =============
-        var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
-
-        var data_legend = new google.visualization.DataTable();
-        var nCols = 100;
-        var nRows = 1;
-        for (col = 0; col < nCols; col++) {
-            data_legend.addColumn('number', 1);
-        }
-
-        var max = ${maxExpressionScore};
-        var min = ${minExpressionScore};
-        var dataStep = (Math.abs(min) + Math.abs(max))/((nCols)*nRows);
-        var value = min;
-        for (var i = 0; i < nRows; i++) {
-            data_legend.addRows(1);
-            for (col = 0; col < nCols; col++) {
-                data_legend.setCell(i, col, value);
-                value += dataStep;
-            }
-        }
-
-        heatmap_legend.draw(data_legend, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
-                                                                                        endColor: {r:255, g:255, b:0, a:1},
-                                                                                        passThroughBlack: false,
-                                                                                        numberOfColors: 256,
-                                                                                        cellWidth: 2,
-                                                                                        cellHeight: 15,
-                                                                                        useRowLabels: false,
-                                                                                        drawBorder: false });
-  }
-</script>
+<!--[if IE]><script type="text/javascript" src="model/canvasXpress/js/excanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="model/canvasXpress/js/canvasXpress.min.js"></script>
 
 <div class="body" id="expression_div">
     <div id="heatmap_div">
-        <p><h2>${ExpressionScoreTitle}</h2></p>
-        <p><i>${ExpressionScoreSummary}<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores">
-            the Celniker group</html:link>.</i></p>
+        <p>
+          <h2>
+              <c:choose>
+                <c:when test="${ExpressionType == 'gene'}">
+                  ${WEB_PROPERTIES['heatmap.geneExpressionScoreTitle']}
+                </c:when>
+                <c:when test="${ExpressionType == 'exon'}">
+                  ${WEB_PROPERTIES['heatmap.exonExpressionScoreTitle']}
+                </c:when>
+                <c:otherwise>
+                  ${ExpressionType}
+                </c:otherwise>
+              </c:choose>
+          </h2>
+        </p>
+        <p>
+          <i>
+            ${WEB_PROPERTIES['heatmap.expressionScoreSummary']}
+            <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores"> the Celniker group</a>
+            and are log2 of the actual value.
+            <br>Heatmap visualization powered by
+            <a href="http://www.canvasxpress.org">canvasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">display options</a>.
+          </i>
+        </p>
         <br/>
-        <div id="heatmapContainer"></div>
-        <div id="heatmapLegend_div">
-            <table id="heatmapLegend_table" border="0" style="padding-left:30px;">
-                <tr>
-                    <td style="vertical-align:middle;">${minExpressionScore}</td>
-                    <td id="heatmapLegendContainer"></td>
-                    <td style="vertical-align:middle;">${maxExpressionScoreCeiling}</td>
-                </tr>
+        <div id="heatmapContainer">
+            <table>
+              <tr>
+                <td>
+                    <div style="padding: 0px 0px 5px 30px;">
+                     <span>Cell Line Clustering - Hierarchical:</span>
+                     <select id="cl-hc">
+                         <option value="single" selected="selected">Single</option>
+                         <option value="complete">Complete</option>
+                         <option value="average">Average</option>
+                     </select>
+                     <span> and K-means:</span>
+                     <select id="cl-km">
+                         <option value="3" selected="selected">3</option>
+                     </select>
+                    </div>
+                    <canvas id="canvas_cl" width="525" height="550"></canvas>
+                </td>
+                <td>
+                     <div style="padding: 0px 0px 5px 25px;">
+                     <span>Developmental Stage Clustering - Hierarchical:</span>
+                     <select id="ds-hc">
+                         <option value="single" selected="selected">Single</option>
+                         <option value="complete">Complete</option>
+                         <option value="average">Average</option>
+                     </select>
+                     <span> and K-means:</span>
+                     <select id="ds-km">
+                         <option value="3" selected="selected">3</option>
+                     </select>
+                    </div>
+                     <canvas id="canvas_ds" width="550" height="550"></canvas>
+                </td>
+              </tr>
             </table>
         </div>
         <div id="description_div">
@@ -120,20 +83,32 @@
             </table>
         </div>
         <div id="description" style="padding: 5px">
-            <i>${ExpressionScoreDescription}</i>To see <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
-            further information about the submission</html:link> and <a href="http://www.modencode.org/docs/flyscores/" target="_blank">original score tables</a>.
+            <i>
+              <c:choose>
+                <c:when test="${ExpressionType == 'gene'}">
+                  ${WEB_PROPERTIES['heatmap.geneExpressionScoreDescription']}
+                </c:when>
+                <c:when test="${ExpressionType == 'exon'}">
+                  ${WEB_PROPERTIES['heatmap.exonExpressionScoreDescription']}
+                </c:when>
+                <c:otherwise>
+                  ${ExpressionType}
+                </c:otherwise>
+              </c:choose>
+            </i>
+            To see <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
+            further information about the submission</a> and <a href="http://www.modencode.org/docs/flyscores/" target="_blank">original score tables</a>.
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
+
     if ('${expressionScoreDCCid}'=='') {
         jQuery('#heatmap_div').remove();
         jQuery('#expression_div').html('<i>Expression scores are not available</i>');
      } else {
          jQuery("#description").hide();
-
-         drawHeatMap();
 
          jQuery("#description_div").click(function () {
                if(jQuery("#description").is(":hidden")) {
@@ -143,40 +118,150 @@
                }
                jQuery("#description").toggle("slow");
             });
+
+           var feature_count = parseInt(${FeatureCount});
+
+            // hm - heatmap; cl - cellline; ds - developmentalstage; hc - hierarchical clustering; km - kmeans
+            var hm_cl = new CanvasXpress('canvas_cl',
+                                         ${expressionScoreJSONCellLine},
+                                         {graphType: 'Heatmap',
+                                          title: 'Cell Line',
+                                          // heatmapType: 'yellow-purple',
+                                          dendrogramSpace: 6,
+                                          smpDendrogramPosition: 'right',
+                                          varDendrogramPosition: 'bottom',
+                                          setMin: ${minExpressionScore},
+                                          setMax: ${maxExpressionScore},
+                                          varLabelRotate: 45,
+                                          centerData: false,
+                                          autoExtend: false},
+                                          {click: function(o) {
+                                                   var featureId = o.y.smps;
+                                                   var condition = o.y.vars;
+
+                                                   if ("${ExpressionType}" == "gene") {
+
+                                                       var query = '<query name="" model="genomic" view="GeneExpressionScore.score GeneExpressionScore.cellLine.name GeneExpressionScore.gene.primaryIdentifier GeneExpressionScore.gene.secondaryIdentifier GeneExpressionScore.gene.symbol GeneExpressionScore.gene.name GeneExpressionScore.gene.source GeneExpressionScore.organism.shortName GeneExpressionScore.submission.title GeneExpressionScore.submission.design GeneExpressionScore.submission.DCCid" sortOrder="GeneExpressionScore.score asc" constraintLogic="A and B"><constraint path="GeneExpressionScore.gene" code="B" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="GeneExpressionScore.cellLine" code="A" op="LOOKUP" value="' + condition + '"/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else if ("${ExpressionType}" == "exon") {
+
+                                                       var query = '<query name="" model="genomic" view="ExonExpressionScore.score ExonExpressionScore.cellLine.name ExonExpressionScore.exon.primaryIdentifier ExonExpressionScore.exon.symbol  ExonExpressionScore.exon.gene.primaryIdentifier ExonExpressionScore.exon.gene.symbol ExonExpressionScore.organism.shortName ExonExpressionScore.submission.title ExonExpressionScore.submission.design ExonExpressionScore.submission.DCCid" sortOrder="ExonExpressionScore.exon.primaryIdentifier asc" constraintLogic="A and B"><constraint path="ExonExpressionScore.exon" code="A" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="ExonExpressionScore.cellLine" code="B" op="LOOKUP" value="' + condition + '" extraValue=""/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else {
+                                                      alert("${ExpressionType}");
+                                                   }
+                                                   // window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + o.y.smps);
+                                                  }}
+                                         );
+
+            if (feature_count > 3) {
+                hm_cl.clusterSamples();
+                hm_cl.kmeansSamples();
+
+                for (var i=4; i < feature_count; ++i) {
+                    jQuery('#cl-km').
+                              append(jQuery("<option></option>").
+                              attr("value",i).
+                              text(i));
+                }
+
+            } else {
+                jQuery("#cl-km").attr('disabled', 'disabled');
+            }
+
+            hm_cl.clusterVariables(); // clustering method will call draw action within it.
+            // cx_cellline.kmeansVariables();
+            hm_cl.draw();
+
+            var hm_ds = new CanvasXpress('canvas_ds',
+                                         ${expressionScoreJSONDevelopmentalStage},
+                                         {graphType: 'Heatmap',
+                                          title: 'Developmental Stage',
+                                          // heatmapType: 'yellow-purple',
+                                          dendrogramSpace: 6,
+                                          smpDendrogramPosition: 'right',
+                                          setMin: ${minExpressionScore},
+                                          setMax: ${maxExpressionScore},
+                                          varLabelRotate: 45,
+                                          centerData: false,
+                                          autoExtend: false},
+                                          {click: function(o) {
+                                                   var featureId = o.y.smps;
+                                                   var condition = o.y.vars;
+
+                                                   if ("${ExpressionType}" == "gene") {
+
+                                                       var query = '<query name="" model="genomic" view="GeneExpressionScore.score GeneExpressionScore.developmentalStage.name GeneExpressionScore.gene.primaryIdentifier GeneExpressionScore.gene.secondaryIdentifier GeneExpressionScore.gene.symbol GeneExpressionScore.gene.name GeneExpressionScore.gene.source GeneExpressionScore.organism.shortName GeneExpressionScore.submission.title GeneExpressionScore.submission.design GeneExpressionScore.submission.DCCid" sortOrder="GeneExpressionScore.score asc" constraintLogic="A and B"><constraint path="GeneExpressionScore.gene" code="B" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="GeneExpressionScore.developmentalStage" code="A" op="LOOKUP" value="' + condition + '"/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else if ("${ExpressionType}" == "exon") {
+
+                                                       var query = '<query name="" model="genomic" view="ExonExpressionScore.score ExonExpressionScore.developmentalStage.name ExonExpressionScore.exon.primaryIdentifier ExonExpressionScore.exon.symbol  ExonExpressionScore.exon.gene.primaryIdentifier ExonExpressionScore.exon.gene.symbol ExonExpressionScore.organism.shortName ExonExpressionScore.submission.title ExonExpressionScore.submission.design ExonExpressionScore.submission.DCCid" sortOrder="ExonExpressionScore.exon.primaryIdentifier asc" constraintLogic="A and B"><constraint path="ExonExpressionScore.exon" code="A" op="LOOKUP" value="' + featureId + '" extraValue=""/><constraint path="ExonExpressionScore.developmentalStage" code="B" op="LOOKUP" value="' + condition + '" extraValue=""/></query>';
+                                                       var encodedQuery = encodeURIComponent(query);
+                                                       encodedQuery = encodedQuery.replace("%20", "+");
+                                                       window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "%0A++++++++++++&trail=|query&method=xml");
+
+                                                   } else {
+                                                      alert("${ExpressionType}");
+                                                   }
+                                                   // window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + o.y.smps);
+                                                  }}
+                                         );
+
+            if (feature_count > 3) {
+                hm_ds.clusterSamples();
+                hm_ds.kmeansSamples();
+
+                for (var i=4; i < feature_count; ++i) {
+                    jQuery('#ds-km').
+                              append(jQuery("<option></option>").
+                              attr("value",i).
+                              text(i));
+                }
+
+            } else {
+                jQuery("#ds-hc").attr('disabled', 'disabled');
+                jQuery("#ds-km").attr('disabled', 'disabled');
+            }
+
+            hm_ds.draw();
+
+           jQuery('#cl-hc').change(function() {
+                hm_cl.linkage = this.value;
+                if (feature_count >= 3) { hm_cl.clusterSamples(); }
+                hm_cl.clusterVariables();
+                hm_cl.draw();
+           });
+
+           jQuery('#cl-km').change(function() {
+                hm_cl.kmeansClusters = parseInt(this.value);
+                hm_cl.kmeansSamples();
+                // hm_cl.kmeansVariables();
+                hm_cl.draw();
+           });
+
+           jQuery('#ds-hc').change(function() {
+                hm_ds.linkage = this.value;
+                hm_ds.clusterSamples();
+                hm_ds.draw();
+            });
+
+            jQuery('#ds-km').change(function() {
+                hm_ds.kmeansClusters = parseInt(this.value);
+                hm_ds.kmeansSamples();
+                hm_ds.draw();
+           });
+
      }
-</script>
+
+    </script>
 
 <!-- /heatMap.jsp -->
-
-<%--
-// methods that return example datatables and display options
-var BioHeatMapExampleData = {
-
-    // ---------------------------------------------------------------
-    // Example 3 DATA: large random matrix (can use for stress testing)
-    // ---------------------------------------------------------------
-    example3 : function() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Gene Name');
-
-       var nCols = 50;
-       var nRows = 20;
-       for (col = 1; col < nCols; col++) {
-           data.addColumn('number', 'Col' + col);
-
-       }
-       var max = 10;
-       var min = -10;
-       for (var i = 0; i < nRows; i++) {
-           data.addRows(1);
-           data.setCell(i, 0, 'Row' + i);
-           for (col = 1; col < nCols; col++) {
-               var value = (Math.random() * (max - min + 1)) + min;
-               data.setCell(i, col, value);
-           }
-       }
-
-        return data;
-    }
-}
---%>

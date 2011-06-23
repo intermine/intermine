@@ -23,5 +23,7 @@
     <typedef
         name="write-templatetrack-xml"
         classname="org.intermine.web.task.TemplateTrackWriteTask"/>
-
+    <typedef
+        name="update-templatetrack-table"
+        classname="org.intermine.web.task.UpdateTrackTableTask"/>
 </antlib>

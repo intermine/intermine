@@ -186,10 +186,9 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
                       </table>';
         if (summaryRowsCount > 10) {
-            content += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
-        } else {
-            content += '</div>';
-        }
+            content += '<div><p>Note: showing only the first 10 rows of summary.</p></div>';
+       }
+       content += '<p><a href="columnSummary.do?tableName=' + tableName + '&summaryPath=' + columnName + '">View all</a></p></div>';
 
         dialog.setContent(content);
         setTimeout("updateCountInColumnSummary()", 200);
@@ -567,7 +566,7 @@ function filterFavourites(type, wsListId) {
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
         tags['favourites_' + wsListId] = 'im:favourite';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -584,7 +583,7 @@ function filterAspect(type, wsListId) {
         delete tags['aspects_' + wsListId]
     }
 
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -593,7 +592,7 @@ function filterByUserTag(type, wsListId, tag) {
     selectedUserTag = tag;
 
     // boring stuff to reload new filtered web searchables from server
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -609,7 +608,7 @@ function changeScope(type, wsListId) {
         document.getElementById(id).value = 'all';
         document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
@@ -637,7 +636,7 @@ function clearFilter(type, wsListId) {
     if ($(aspectId) != null) {
         $(aspectId).value = '';
     }
-    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    var filterTextElement = document.getElementById('filterText');
     filterTextElement.value = '';
 
     showAll(wsListId, type);
@@ -793,92 +792,3 @@ function reDrawConstraintLogic() {
   });
 }
 
-
-function submitOrthologueLinkForm(bagType, bagName, index) {
-    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
-    var selectedOrganism =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].text;
-    document.orthologueLinkForm.action=document.getElementById("formAction" + index).value;
-    document.orthologueLinkForm.method="post";
-
-    // use remote mapping, just post the original list
-    if (document.getElementById("orthologueMapping" + index + "Local").checked) {
-        document.getElementById("externalids").value = document.getElementById("originalExternalids").value;
-        document.getElementById("orthologue" + index).disabled = false;
-        document.getElementById("orthologue" + index).value = selectedOrganism;
-        document.getElementById("orthologueLinkForm").submit();
-        return;
-    }
-
-    // LOCAL intermine
-    // convert orthologues then post
-    if (document.getElementById("orthologueMapping" + index + "Remote")) {
-        // convert orthologues
-        AjaxServices.convertObjects(bagType, bagName, 'orthologue', selectedOrganism, function(identifiers) {
-            if (identifiers != null && identifiers != '') {
-                document.getElementById("externalids").value = identifiers;
-                document.getElementById("orthologue" + index).disabled = true;
-                document.getElementById("orthologueLinkForm").submit();
-            } else {
-                alert("Error.  No orthologues found.");
-                return;
-            }
-        });
-    }
-}
-
-function checkOrthologueMapping(index, remoteMine, localMine) {
-
-    var myForm = document.getElementById("orthologueLinkForm");
-
-    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
-    var datasets =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].value;
-    var bits = datasets.split("|");
-    var localMapping = bits[0];
-    var remoteMapping = bits[1];
-
-    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
-    var selectedOrganism =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].text;
-
-    var selectLocal = false;
-
-    // hide/show the radio button and name of intermine if they do/don't have orthologues
-    if (localMapping != null && localMapping != "") {
-        display('orthologueMappingLocalLabel' + index, true);
-        if (remoteMapping != null && remoteMapping != "") {
-            display('orthologueMappingRemoteLabel' + index, true);
-            display('orthologueMappingRemoteRadio' + index, true);
-            display('orthologueMappingLocalRadio' + index, true);
-        } else {
-            display('orthologueMappingRemoteLabel' + index, false);
-            display('orthologueMappingRemoteRadio' + index, false);
-            display('orthologueMappingLocalRadio' + index, false);
-            // check hidden radio button so that `local` mine is selected
-            // radio button is hidden but script needs this value to be checked
-            document.getElementById("orthologueMapping" + index + "Local").checked = false;
-            document.getElementById("orthologueMapping" + index + "Remote").checked = true;
-        }
-    } else {
-        // don't show radio button, there's only one option
-        display('orthologueMappingRemoteLabel' + index, true);
-        display('orthologueMappingLocalLabel' + index, false);
-        display('orthologueMappingRemoteRadio' + index, false);
-        display('orthologueMappingLocalRadio' + index, false);
-        //check hidden radio button so that `remote` mine is selected
-        // radio button is hidden but script needs this value to be checked
-        document.getElementById("orthologueMapping" + index + "Local").checked = true;
-        document.getElementById("orthologueMapping" + index + "Remote").checked = false;
-    }
-
-    // if there is only one option, don't show a dropdown
-//    if (orthologueSelect.length == 1) {
-//        display('orthologueSelectDisplay' + index, true);
-//        display('orthologueSelect' + index, false);
-//        // update text to be selected value
-//        document.getElementById('orthologueSelect' + index).innerHtml
-//            = orthologueSelect.options[0].text;
-//    } else {
-//        // show dropdown
-//        display('orthologueSelectDisplay' + index, false);
-//        display('orthologueSelect' + index, true);
-//    }
-}

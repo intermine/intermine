@@ -31,6 +31,8 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.tracker.xml.TrackManagerBinding;
+import org.intermine.api.tracker.xml.TrackManagerHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -85,7 +87,7 @@ public class ProfileManagerBinding
                          + " took " + totalTime + "ms.");
             }
 
-            TemplateTrackBinding.marshal(profileManager.getProfileObjectStoreWriter(), writer);
+            TrackManagerBinding.marshal(profileManager.getProfileObjectStoreWriter(), writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -166,7 +168,7 @@ public class ProfileManagerBinding
 class ProfileManagerHandler extends DefaultHandler
 {
     private ProfileHandler profileHandler = null;
-    private TemplateTrackHandler templateTrackHandler = null;
+    private TrackManagerHandler trackHandler = null;
     private ProfileManager profileManager = null;
     private ObjectStoreWriter osw;
     private boolean abortOnError;
@@ -203,8 +205,8 @@ class ProfileManagerHandler extends DefaultHandler
             } else {
                 version = Integer.parseInt(value);
             }
-            templateTrackHandler = new TemplateTrackHandler(
-                                   profileManager.getProfileObjectStoreWriter());
+            //templateTrackHandler = new TemplateTrackHandler(
+              //                     profileManager.getProfileObjectStoreWriter());
         }
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
@@ -214,8 +216,12 @@ class ProfileManagerHandler extends DefaultHandler
             profileHandler.startElement(uri, localName, qName, attrs);
         }
 
-        if ("templatetracks".equals(qName) || "templatetrack".equals(qName)) {
-            templateTrackHandler.startElement(uri, localName, qName, attrs);
+        if ("tracks".equals(qName)) {
+            trackHandler = new TrackManagerHandler(profileManager.getProfileObjectStoreWriter());
+        }
+
+        if (trackHandler != null) {
+            trackHandler.startElement(uri, localName, qName, attrs);
         }
     }
 
@@ -258,8 +264,8 @@ class ProfileManagerHandler extends DefaultHandler
             profileHandler.endElement(uri, localName, qName);
         }
 
-        if ("templatetracks".equals(qName)) {
-            templateTrackHandler.endElement(uri, localName, qName);
+        if (trackHandler != null) {
+            trackHandler.endElement(uri, localName, qName);
         }
     }
 }

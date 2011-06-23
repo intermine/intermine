@@ -60,12 +60,19 @@
           <fmt:message key="menu.bag"/>
         </a>
       </li>
-      <li id="query"  <c:if test="${tab == 'customQuery'}">class="activelink"</c:if>>
+      <li id="query" <c:if test="${tab == 'customQuery'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do">
           <fmt:message key="menu.customQuery"/>&nbsp;
         </a>
       </li>
-      <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
+      <c:if test="${WEB_PROPERTIES['genomicRegionSearch.display'] == 'true'}">
+          <li id="genomicRegionSearch" <c:if test="${tab == 'genomicRegionSearch'}">class="activelink"</c:if>>
+            <a href="/${WEB_PROPERTIES['webapp.path']}/genomicRegionSearch.do">
+              <fmt:message key="menu.genomicRegionSearch"/>
+            </a>
+          </li>
+      </c:if>
+      <li id="category" <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
           <fmt:message key="menu.dataCategories"/>
         </a>
@@ -82,7 +89,7 @@
       </li>
     </ul>
   <ul id="loginbar">
-        <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
+        <li><a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a></li>
         <c:if test="${PROFILE.loggedIn}">
             <li>
               <!-- display (optionally trimmed) username -->
@@ -104,7 +111,15 @@
   <c:set var="loggedin" value="${PROFILE.loggedIn}"/>
 
   <!-- Submenu section -->
-  <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 api:api.perl.tab.title:perl:0 api:api.java.tab.title:java:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
+  <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 api:api.perl.tab.title:perl:0 api:api.python.tab.title:python:0 api:api.java.tab.title:java:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1" />
+  <c:choose>
+   <c:when test="${PROFILE.superuser}">
+       <c:set var="itemList" value="${itemList} mymine:mymine.tracks.tab.title:tracks:1 mymine:mymine.password.tab.title:password:1"></c:set>
+   </c:when>
+   <c:otherwise>
+       <c:set var="itemList" value="${itemList} mymine:mymine.password.tab.title:password:1"></c:set>
+   </c:otherwise>
+  </c:choose>
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:choose>
     <c:when test="${tab == 'mymine'}">
@@ -133,21 +148,26 @@
           <c:if test="${tabArray[0] == tab}">
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
-              <li id="subactive_${tab}"
+              <%-- open li element --%>
+        <li id="subactive_${tab}"
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
                 </c:choose>
-              >
+              > <%-- Close li element --%>
                 <div><span><fmt:message key="${tabArray[1]}" /></span></div>
               </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
+              <%-- open li --%>
               <li
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-                </c:choose>><div>
+                </c:choose>
+        >
+        <%-- close li --%>
+        <div>
                 <span onclick="alert('You need to log in'); return false;">
                   <fmt:message key="${tabArray[1]}"/>
                 </span>
@@ -155,11 +175,14 @@
               </li>
             </c:when>
             <c:otherwise>
+              <%-- open li --%>
               <li
                 <c:choose>
                   <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
                   <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-                </c:choose>>
+                </c:choose>
+        >
+        <%-- close li --%>
                 <div>
                 <a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
                   <fmt:message key="${tabArray[1]}"/>

@@ -9,5 +9,5 @@ org.modmine.web.GBrowseParser.GBrowseTrack track = ((org.modmine.web.GBrowsePars
 
 <c:set var="track" value="<%=track%>"/>
 <html:link
-  href="${WEB_PROPERTIES['gbrowse.prefix']}/${track.organism}/?label=${track.track}/${track.subTrack}" title="View ${track.subTrack} in GBrowse" target="_blank"><c:out value="${track.track}/${track.subTrack}"/>
+  href="${WEB_PROPERTIES['gbrowse.prefix']}/${track.organism}/?label=${track.track}/${track.subTrack}" title="View ${track.track}/${track.subTrack} in GBrowse" target="_blank"><c:out value="${track.subTrack}"/>
 </html:link>

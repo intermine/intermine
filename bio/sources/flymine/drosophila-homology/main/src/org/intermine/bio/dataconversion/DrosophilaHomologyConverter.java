@@ -24,7 +24,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -86,6 +85,8 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             String homoOrganismRefId = parseSymbol(line[6]);
             createHomologue(getGene(geneIdentifier, geneOrganismRefId),
                             getGene(homologue, homoOrganismRefId));
+            createHomologue(getGene(homologue, homoOrganismRefId),
+                    getGene(geneIdentifier, geneOrganismRefId));
         }
     }
 
@@ -105,7 +106,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String getGene(String identifier, String organismRefId)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
             return geneRefId;
@@ -119,8 +120,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         return geneRefId;
     }
 
-    private String parseSymbol(String symbol)
-        throws ObjectStoreException  {
+    private String parseSymbol(String symbol)  {
         if (!symbol.contains("\\")) {
             return getOrganism("7227");
         }

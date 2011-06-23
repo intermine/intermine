@@ -732,24 +732,25 @@ public class PagedTable
     private void updateRows() {
         List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> newRows
             = new ArrayList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>();
-        String invalidStartMessage = "Invalid start row of table: " + getStartRow();
-        if (getStartRow() < 0) {
+        String invalidStartMessage = "Invalid start row of table: " + startRow;
+        if (startRow < 0) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
 
         try {
-            if (getStartRow() == 0) {
+            if (startRow == 0) {
                 // no problem - 0 is always valid
             } else {
-                getAllRows().getResultElements(getStartRow());
+                webTable.getResultElements(startRow);
             }
         } catch (IndexOutOfBoundsException e) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
 
-        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
+        int max = startRow + pageSize;
+        for (int i = startRow; i < max; i++) {
             try {
-                newRows.add(getAllRows().getResultElements(i));
+                newRows.add(webTable.getResultElements(i));
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
                 break;

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # default usage: minimine.sh dccid
-#         it will - create an appropriate properties file modmine.properties.dccid 
+#         it will - create an appropriate properties file modmine.properties.dccid
 #                 - build a modmine webapp for the data in the relevant schema in chado
 #                 - run some acceptance tests
 #                 - send a report to the feedback.destination in the properties file
@@ -56,13 +56,13 @@ REL=dccid      # generic
 progname=$0
 
 function usage () {
-	cat <<EOF
+  cat <<EOF
 
 Usage: $progname  [-i] [-t] [-w] [-v]]
-	-i: interactive mode (for testing)
-	-t: no acceptance test run
-	-w: no webapp will be built
-	-v: verbode mode
+  -i: interactive mode (for testing)
+  -t: no acceptance test run
+  -w: no webapp will be built
+  -v: verbode mode
 
 examples:
 
@@ -77,19 +77,19 @@ $progname	-v -w	37
                     - run acceptance tests
                     - don't build the webapp
 EOF
-	exit 0
+  exit 0
 }
 
 while getopts ":Vitvw" opt; do
-	case $opt in
+  case $opt in
 
-	i )  echo; echo "Interactive mode" ; INTERACT=y;;
-	t )  echo; echo "No acceptance test run" ; TEST=n;;
-	v )  echo; echo "Verbose mode" ; V=-v;;
-	w )  echo; echo "Webapp will not be built" ; WEBAPP=n;;
-	h )  usage ;;
-	\?)  usage ;;
-	esac
+  i )  echo; echo "Interactive mode" ; INTERACT=y;;
+  t )  echo; echo "No acceptance test run" ; TEST=n;;
+  v )  echo; echo "Verbose mode" ; V=-v;;
+  w )  echo; echo "Webapp will not be built" ; WEBAPP=n;;
+  h )  usage ;;
+  \?)  usage ;;
+  esac
 done
 
 shift $(($OPTIND - 1))
@@ -97,7 +97,7 @@ shift $(($OPTIND - 1))
 # set release (default dev)
  if [ -n "$1" ]
  then
- 		REL=$1
+     REL=$1
 else
 echo
 echo "You need to specify which submission you want to process (dcc id)"
@@ -223,25 +223,25 @@ fi
 # os.query.max-limit=9500000
 # os.query.max-offset=9500000
 # os.queue-len=100
-# 
+#
 # os.production.logfile=productionLog
-# 
+#
 # os.production.class=org.intermine.objectstore.intermine.ObjectStoreInterMineImpl
 # os.production.alias=modmine
 # os.production.modmine.db=db.production
 # os.production.model=genomic
 # os.production.modmine.truncatedClasses=org.flymine.model.genomic.BioProperty
-# 
+#
 # db.production.datasource.class=org.postgresql.jdbc3.Jdbc3PoolingDataSource
 # db.production.datasource.dataSourceName=db.production
 # db.production.datasource.maxConnections=50
 # db.production.driver=org.postgresql.Driver
 # db.production.platform=PostgreSQL
-# 
+#
 # os.production.verboseQueryLog=true
 # os.production.minBagTableSize=3000
-# 
-# 
+#
+#
 # #
 # # COMMON TARGET ITEMS DATABASE
 # #
@@ -249,7 +249,7 @@ fi
 # db.common-tgt-items.datasource.databaseName=common-tgt-items-modmine-vet
 # db.common-tgt-items.datasource.user=modvet
 # db.common-tgt-items.datasource.password=modvet
-# 
+#
 # #
 # # DCC METADATA
 # #
@@ -257,7 +257,7 @@ fi
 # db.modencode-metadata.datasource.databaseName=modchado
 # db.modencode-metadata.datasource.user=chadovet
 # db.modencode-metadata.datasource.password=chadovet
-# 
+#
 # #
 # # PRODUCTION DB
 # #
@@ -265,7 +265,7 @@ fi
 # db.production.datasource.databaseName=modmine-DCCID
 # db.production.datasource.user=modvet
 # db.production.datasource.password=modvet
-# 
+#
 # #
 # # USERPROFILE
 # #
@@ -273,41 +273,41 @@ fi
 # db.userprofile-production.datasource.databaseName=modmine-vet-userprofile
 # db.userprofile-production.datasource.user=modvet
 # db.userprofile-production.datasource.password=modvet
-# 
+#
 # #build.compiler=jikes
 # build.compiler=modern
-# 
+#
 # # Web server
 # #================
 # www.serverlocation=modmine@mod2:/var/www/html
-# 
+#
 # # Web application
 # #================
 # webapp.deploy.url=http://mod2.modencode.org:8080
 # webapp.baseurl=http://mod2.modencode.org:8080
 # webapp.path=modmineDCCID
 # webapp.logdir=/webapp/apache-tomcat-5.5.25/logs
-# 
+#
 # # tomcat manager
 # webapp.manager=manager
 # webapp.password=password
-# 
+#
 # # ObjectStores to use - this should not need to change
 # webapp.os.alias=os.production
 # webapp.userprofile.os.alias=osw.userprofile-production
-# webapp.viewByID.prefix=objectDetails.do?id=
-# 
+# webapp.viewByID.prefix=report.do?id=
+#
 # # gbrowse properties
 # #===================
 # gbrowse.prefix=http://modencode.oicr.on.ca/cgi-bin/gbrowse
 # gbrowse_image.prefix=http://modencode.oicr.on.ca/cgi-bin/gbrowse_img
-# 
+#
 # mail.host=mail.flymine.org
 # mail.from=help@modencode.org
 # mail.subject=Password for modMine
 # mail.text=Your password is: {0}
-# 
-# 
+#
+#
 # # project settings
 # #=================
 # project.title=modMine DCCID
@@ -317,13 +317,13 @@ fi
 # project.releaseVersion=DCCID
 # project.contact=<a href="mailto:sergio%5Bat%5Dmodmine.org">sergio[at]modmine.org</a>
 # project.funded.by=modENCODE is funded by the <a href="http://www.genome.gov/25521166/">NIH</a>
-# 
+#
 # superuser.account=kmr@flymine.org
-# 
-# portal.welcome = Welcome to vetting modMine 
-# 
+#
+# portal.welcome = Welcome to vetting modMine
+#
 # feedback.destination = sergio@modencode.org
-# 
+#
 # project.standalone=true
 
 

@@ -61,7 +61,6 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 
 
 <html:xhtml/>
-
 <%-- set default to true --%>
 <c:if test="${empty showNames}">
   <c:set var="showNames" value="true" scope="request"/>
@@ -100,7 +99,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
   </c:otherwise>
 </c:choose>
 
-<div id="${wsListId}_${type}_container" class="wsListContainer">
+<div id="${wsListId}_${type}_container" class="wsListContainer" style="display:none;">
 
     <div id='${wsListId}_${type}_ws_list' class="wsList">
 
@@ -113,9 +112,9 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
           </fmt:param>
         </fmt:message>
       </em>
-   </div>  
+   </div>
 </c:if>
-      
+
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
@@ -185,7 +184,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 
           <c:set var="extraParams" value=""/>
           <c:if test="${!empty currentObjectId}">
-            <c:set var="extraParams" 
+            <c:set var="extraParams"
                    value="&highlightId=${currentObjectId}&amp;gotoHighlighted=true"/>
           </c:if>
 
@@ -207,7 +206,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
                   <b><c:out value="${entry.value.type}" /></b>)
                 </c:otherwise>
               </c:choose>
-            </c:catch>                            
+            </c:catch>
           </c:if>
 
                   <tiles:insert name="setFavourite.tile" flush="false">
@@ -236,20 +235,12 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
         jQuery('#'+wsListId + '_' + type + '_container').show();
     }
     function hideWSList(wsListId, type) {
-    	jQuery('#'+wsListId + '_' + type + '_spinner').show();
-    	jQuery('#'+wsListId + '_' + type + '_container').hide();
+      jQuery('#'+wsListId + '_' + type + '_spinner').show();
+      jQuery('#'+wsListId + '_' + type + '_container').hide();
     }
     setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
 </script>
-
-<c:if test="${empty delayDisplay || !delayDisplay}">
-  <script type="text/javascript">
-<!--//<![CDATA[
-    showWSList('${wsListId}', '${type}');
-//]]>-->
-  </script>
-</c:if>
 
 </div>
 <!-- /webSearchableList.jsp -->
