@@ -74,10 +74,10 @@ public class ProteinAtlasDisplayer extends ReportDisplayer {
                 ExportResultsIterator values = executor.execute(query);
 
                 // parse values
-                ProteinAtlasExpressions results = new ProteinAtlasExpressions(values);
+                ProteinAtlasExpressions pae = new ProteinAtlasExpressions(values);
 
                 // attach to results
-                request.setAttribute("lolcat", results);
+                request.setAttribute("expressions", pae);
             }
 
             //result.put("gene", geneComments2(values));
@@ -104,6 +104,7 @@ public class ProteinAtlasDisplayer extends ReportDisplayer {
                 "Gene.proteinAtlasExpression.reliability",
                 "Gene.proteinAtlasExpression.tissue.name",
                 "Gene.primaryIdentifier");
+        // TODO order by organ name
         query.addOrderBy("Gene.proteinAtlasExpression.expressionType", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Gene.primaryIdentifier", genePrimaryID));
 
