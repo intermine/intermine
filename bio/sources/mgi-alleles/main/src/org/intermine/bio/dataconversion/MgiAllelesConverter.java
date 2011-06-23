@@ -40,7 +40,7 @@ public class MgiAllelesConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, Item> alleles = new HashMap<String, Item>();
-    
+
     private Item ontology;
 
     /**
@@ -53,7 +53,7 @@ public class MgiAllelesConverter extends BioFileConverter
 
     }
 
-    
+
     @Override
     public void close() throws Exception {
         for (Item allele : alleles.values()) {
@@ -72,7 +72,7 @@ public class MgiAllelesConverter extends BioFileConverter
         File currentFile = getCurrentFile();
         if ("MGI_PhenotypicAllele.rpt".equals(currentFile.getName())) {
             processPhenotypicAlleles(reader);
-        } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile.getName())){
+        } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile.getName())) {
             processGenotypes(reader);
         } else {
             throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
@@ -94,30 +94,25 @@ public class MgiAllelesConverter extends BioFileConverter
             String alleleStr = line[1];
             String background = line[2];
             String termId = line[3];
-            
-            
+
+
             if (!genotypeName.equals(lastGenotypeName)) {
                 // store
                 if (currentGenotype != null) {
                     store(currentGenotype);
                 }
-                
-                String[] alleles = alleleStr.split("\\|");
 
-                // TODO create alleles
-                
-                
+                String[] alleleSymbols = alleleStr.split("\\|");
+
                 // TODO set zygosity
-                
+
                 currentGenotype = createItem("Genotype");
                 currentGenotype.setAttribute("name", genotypeName);
                 currentGenotype.setAttribute("geneticBackground", background);
-                if (alleles.length == 1) {
+                if (alleleSymbols.length == 1) {
                     currentGenotype.setAttribute("zygosity", "homozygote");
                 }
-                System.out.println("alleles: " + Arrays.asList(alleles));
-                for (String alleleSymbol : alleles) {
-                    System.out.println("alleleSymbol: " + alleleSymbol);
+                for (String alleleSymbol : alleleSymbols) {
                     Item allele = getAlleleItem(alleleSymbol);
                     currentGenotype.addToCollection("alleles", allele);
                 }
@@ -129,7 +124,7 @@ public class MgiAllelesConverter extends BioFileConverter
             store(currentGenotype);
         }
     }
-    
+
     private void processPhenotypicAlleles(Reader reader) throws ObjectStoreException, IOException {
         if (ontology == null) {
             ontology = createItem("Ontology");
@@ -176,7 +171,6 @@ public class MgiAllelesConverter extends BioFileConverter
                     allele.addToCollection("highLevelPhenotypeTerms", getTermItemId(termId));
                 }
             }
-            store(allele);
         }
     }
 
@@ -189,7 +183,7 @@ public class MgiAllelesConverter extends BioFileConverter
         }
         return allele;
     }
-    
+
     private String getPubItemId(String pubmed) throws ObjectStoreException {
         String pubItemId = pubs.get(pubmed);
         if (pubItemId == null) {
