@@ -33,6 +33,7 @@ public class UniprotConfig
     private List<String> xrefs = new ArrayList<String>();
     private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
     private String geneDesignation = "gene designation";
+    private Map<String, String> strains = new HashMap<String, String>();
 
     /**
      * read configuration file
@@ -68,6 +69,14 @@ public class UniprotConfig
             return null;
         }
         return entry.getUniqueIdentifier();
+    }
+
+    /**
+     * @param taxonId taxonid of the strain
+     * @return the taxonId to use
+     */
+    public String getStrain(String taxonId) {
+        return strains.get(taxonId);
     }
 
     private void readConfig() {
@@ -108,12 +117,14 @@ public class UniprotConfig
                 configEntry.setUniqueIdentifier(value);
             } else if ("gene-designation".equals(attributes[1])) {
                 geneDesignation = value;
+            } else if ("strain".equals(attributes[1])) {
+                configEntry.setStrain(value);
+                strains.put(value, taxonId);
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {
-                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
-                    + ".  This line has not been processed.";
-                LOG.error(msg);
+                LOG.error("Problem processing properties '" + PROP_FILE + "' on line "
+                        + key + ".  This line has not been processed.");
             }
         }
     }
@@ -192,6 +203,7 @@ public class UniprotConfig
     {
         private String uniqueIdentifier = null;
         private Map<String, IdentifierConfig> identifiers = new HashMap<String, IdentifierConfig>();
+        private String strain = null;
 
         /**
          * @return the uniqueIdentifier
@@ -204,6 +216,19 @@ public class UniprotConfig
          */
         protected void setUniqueIdentifier(String uniqueIdentifier) {
             this.uniqueIdentifier = uniqueIdentifier;
+        }
+
+        /**
+         * @return the strain
+         */
+        public String getStrain() {
+            return strain;
+        }
+        /**
+         * @param strain the strain to set
+         */
+        public void setStrain(String strain) {
+            this.strain = strain;
         }
 
         /**

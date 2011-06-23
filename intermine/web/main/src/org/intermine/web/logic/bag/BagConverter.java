@@ -21,8 +21,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.config.WebConfig;
 
-
-
 /**
  * @author "Xavier Watkins"
  *
@@ -71,17 +69,6 @@ public abstract class BagConverter
     public abstract ActionMessage getActionMessage(String externalids, int convertedSize,
             String type, String parameters)
         throws ObjectStoreException, UnsupportedEncodingException;
-
-    /**
-     *
-     * @param profile user's profile
-     * @param bagType class of list
-     * @param bagName name of list
-     * @param constraintValue value of constraint
-     * @return string of comma delimited identifiers
-     */
-    public abstract String getConvertedObjectFields(Profile profile, String bagType,
-            String bagName, String constraintValue);
 
     /**
     *

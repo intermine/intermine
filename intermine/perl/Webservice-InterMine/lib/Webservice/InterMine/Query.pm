@@ -6,10 +6,13 @@ use Webservice::InterMine::ConstraintFactory;
 extends 'Webservice::InterMine::Query::Core';
 with(
     'Webservice::InterMine::Query::Roles::Runnable',
-    'Webservice::InterMine::Query::Roles::QueryUrl',
+    'Webservice::InterMine::Query::Roles::QueryParameters',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::WriteOutLegacy',
-    'Webservice::InterMine::Query::Roles::Serviced',
+    'Webservice::InterMine::Query::Roles::Templateable',
+    'Webservice::InterMine::Query::Roles::Listable',
+    'Webservice::InterMine::Role::Serviced',
+    'Webservice::InterMine::Role::Showable',
 );
 
 __PACKAGE__->meta->make_immutable;
@@ -131,17 +134,33 @@ Adds a join description to the query (see L<Webservice::InterMine::Cookbook::Rec
 
 Adds a path description to the query (see L<Webservice::InterMine::Cookbook::Recipe4>).
 
-=head2 logic([EXPR or $str])
+=head2 logic
 
-Gets or sets the current logic for the query as an object (calling C<code>
-on the logic object gets a human readable string version). Illegal logic
+Get the logic for the query as an object. The Logic object is string overloaded to
+its human readable string representation (also available with ->code). 
+
+see: L<Webservice::InterMine::LogicalSet>
+
+=head2 set_logic(EXPR or $str)
+
+Sets the current logic for the query. Illegal logic
 expressions or strings will cause exceptions to be thrown.
 
-=head2 results([as => $format])
+Examples:
 
-Gets the results for this query in a variety of formats. (see
-L<Webservice::InterMine::Cookbook::Recipe5>) The four default
-formats are:
+  # Parse a string
+  $query->set_logic("A and (B or C)");
+
+  # Perform boolean logic on constraint objects
+  $query->set_logic($conA & ($conB | $conC));
+
+=head2 results([as => Str, size => Int, start => Int, columnheaders => Bool])
+
+Gets a page of results (defined by start and size - defaulting
+to all results from the beginning) in a requested format. (See
+L<Webservice::InterMine::Cookbook::Recipe5>) 
+
+The formats are:
 
 =over 4
 
@@ -150,6 +169,9 @@ formats are:
 Returns all rows as one string, with fields separated by tabs and lines
 separated by new-lines ("\n"). If you are wanting to simply store
 the results in a flat file, this is probably what you want.
+
+If you would like column headers, add the parameter: 
+<code>columnheaders => 1</code>
 
 =item * strings
 
@@ -163,6 +185,40 @@ Returns an arrayref of hashrefs, where the keys are the view columns.
 
 Returns an arrayref of arrayrefs, where the fields are in the same
 order as the view columns.
+
+=item * count 
+
+Returns the total number or results, rather than the results themselves.
+
+=item * jsonobjects
+
+By default returns an arrayref of native perl data structures (hashrefs) which 
+correspond to the data format of InterMine jsonobjects 
+(L<http://www.intermine.org/wiki/JSONObjectFormat>). 
+
+Optionally it can return the jsonobjects processed as:
+
+=over 8
+
+=item * raw: the raw text string
+
+=item * inflate: inflated objects using autoload
+
+The inflated objects allow method access to the internal hash using
+autoloaded accessors, but all objects will be blessed into the same type
+(L<Webservice::InterMine::ResultObject>), so there is no guarantee of 
+interface (other than inspecting the internal hash).
+
+=item * instantiate: real Moose objects
+
+The instantiated objects allow method access to their internal hash using
+true accessors, with type-constraints, inheritance, support for "isa" and 
+"ref", coercion of attributes, delegating collections, 
+and all the other things you would expect from
+a Moose object. Each object will be instantiated as an instance of its
+class (ie. a $gene will be a member of the "Gene" class).
+
+=back
 
 =back
 

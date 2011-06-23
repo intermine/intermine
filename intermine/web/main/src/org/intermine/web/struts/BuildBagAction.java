@@ -13,7 +13,9 @@ package org.intermine.web.struts;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -98,6 +100,18 @@ public class BuildBagAction extends InterMineAction
          */
         if (formFile != null && formFile.getFileName() != null
                 && formFile.getFileName().length() > 0) {
+            // attach file name as the name of the bag
+            String fileName = formFile.getFileName();
+            // strip suffix
+            Integer lastPos = fileName.lastIndexOf('.');
+            if (lastPos > 0) {
+                fileName = fileName.substring(0, lastPos);
+            }
+            // replace underscores
+            fileName = fileName.replaceAll("_", " ");
+            // attach
+            request.setAttribute("bagName", fileName);
+
             String mimetype = formFile.getContentType();
             if (!"application/octet-stream".equals(mimetype) && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText", mimetype), request);

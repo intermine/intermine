@@ -10,12 +10,18 @@ package org.intermine.webservice.server;
  *
  */
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
@@ -35,12 +42,13 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
-import org.intermine.webservice.server.output.HTMLOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
+import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
+import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -75,6 +83,14 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  */
 public abstract class WebService
 {
+
+    /** Default jsonp callback **/
+    public static final String DEFAULT_CALLBACK = "callback";
+
+    public static final int EMPTY_FORMAT = -1;
+
+    public static final int UNKNOWN_FORMAT = -2;
+
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
 
@@ -128,6 +144,12 @@ public abstract class WebService
     /** JSONP count format constant **/
     public static final int JSONP_COUNT_FORMAT = 29;
 
+    /** JSON data table format constant **/
+    public static final int JSON_DATA_TABLE_FORMAT = 30;
+
+    /** JSONP data table format constant **/
+    public static final int JSONP_DATA_TABLE_FORMAT = 31;
+
     protected boolean formatIsJSON() {
         int format = getFormat();
         return (format >= JSON_RANGE_START && format <= JSON_RANGE_END);
@@ -135,6 +157,16 @@ public abstract class WebService
 
     protected boolean formatIsJSONP() {
         return formatIsJSON() && (getFormat() % 2 == 1);
+    }
+
+    protected boolean formatIsJsonObj() {
+        int format = getFormat();
+        return (format == JSON_OBJ_FORMAT || format == JSONP_OBJ_FORMAT);
+    }
+
+    protected boolean formatIsFlatFile() {
+        int format = getFormat();
+        return (format == TSV_FORMAT || format == CSV_FORMAT);
     }
 
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
@@ -197,13 +229,34 @@ public abstract class WebService
             }
 
             authenticate(request);
+            initState();
+            validateState();
 
             execute(request, response);
-
         } catch (Throwable t) {
             sendError(t, response);
         }
-        output.flush();
+        try {
+            output.flush();
+        } catch (Throwable t) {
+            logError(t, "Error flushing", 500);
+        }
+
+    }
+
+    /**
+     * Subclasses can put initialisation.
+     */
+    protected void initState() {
+        // No-op stub
+    }
+
+    /**
+     * Subclasses can put initialisation checks here. The main use case is for confirming
+     * authentication.
+     */
+    protected void validateState() {
+        // No-op stub
     }
 
     /**
@@ -212,12 +265,14 @@ public abstract class WebService
      * authentication.
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
      *
+     * THIS IS NOT BASIC AUTHENTICATION - WE NEED TO FIX THIS!!
+     *
      * @param request
      *            request
      */
     private void authenticate(HttpServletRequest request) {
         String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-        if (authString == null || authString.length() == 0) {
+        if (authString == null || authString.length() == 0 || formatIsJSONP() ) {
             return;
         }
 
@@ -255,31 +310,48 @@ public abstract class WebService
 
     private void sendError(Throwable t, HttpServletResponse response) {
         String msg = WebServiceConstants.SERVICE_FAILED_MSG;
+        if (t.getMessage() != null && t.getMessage().length() >= 0) {
+            msg = t.getMessage();
+        }
         int code;
         if (t instanceof ServiceException) {
-            if (t.getMessage() != null && t.getMessage().length() >= 0) {
-                msg = t.getMessage();
-            }
+
             ServiceException ex = (ServiceException) t;
             code = ex.getHttpErrorCode();
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
         logError(t, msg, code);
-        sendErrorMsg(response, formatErrorMsg(msg, code), code);
+        if (!formatIsJSONP()) {
+            // Don't set errors statuses on jsonp requests, to enable
+            // better error checking in the browser.
+            response.setStatus(code);
+        } else {
+            // But do set callbacks
+            String callback = getCallback();
+            if (callback == null) {
+                callback = "makeInterMineResultsTable";
+            }
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
+            output.setHeaderAttributes(attributes);
+        }
+        output.setError(msg, code);
+        logger.debug("Set error to : " + msg + "," + code);
     }
 
     private void logError(Throwable t, String msg, int code) {
-        if (code == Output.SC_INTERNAL_SERVER_ERROR) {
-            logger.error(
-                    "Service failed by internal error. Request parameters: \n"
-                            + requestParametersToString(), t);
-        } else {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(b);
-            t.printStackTrace(ps);
-            ps.flush();
 
+        // Stack traces for all!
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(b);
+        t.printStackTrace(ps);
+        ps.flush();
+
+        if (!(t instanceof NullPointerException) && (code == Output.SC_INTERNAL_SERVER_ERROR)) {
+            logger.error("Service failed by internal error. Request parameters: \n"
+                            + requestParametersToString() + b.toString());
+        } else {
             logger.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code) + "\n" + b.toString());
         }
@@ -306,55 +378,6 @@ public abstract class WebService
         return sb.toString();
     }
 
-    private void sendErrorMsg(HttpServletResponse response, String msg, int code) {
-        // When status is set, buffer with previous results is cleaned and
-        // that's why errors must be set again
-
-        if (!response.isCommitted()) {
-            // Cheating here. It is an xml output, but when content type is set
-            // to html, then
-            // browsers try to display in more readable way then xml
-            response.setContentType("text/html");
-            try {
-                // Error message is written together with response status code
-                // and it is written to the output as well. So it is displayed
-                // in browser in case of problems.
-                // Used deprecated setStatus method because there isn't any
-                // other
-                // method for sending error with simple description which
-                // wouldn't be formatted
-                // by server
-                response.setStatus(code, msg);
-                if (code != Output.SC_NO_CONTENT) {
-                    response.getWriter().print(msg);
-                }
-            } catch (IOException e) {
-                logger.error("Writing error to response failed.", e);
-            }
-        } else {
-            try {
-                response.getWriter().print(msg);
-            } catch (IOException e) {
-                logger.error("Writing error to response failed.", e);
-            }
-        }
-    }
-
-    private String formatErrorMsg(String content, int errorCode) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<error>");
-        printMessage(StatusDictionary.getDescription(errorCode), sb);
-        printMessage(content, sb);
-        sb.append("</error>");
-        return sb.toString();
-    }
-
-    private void printMessage(String string, StringBuilder sb) {
-        sb.append("<message>");
-        sb.append(string);
-        sb.append("</message>");
-    }
- 
     /**
      * Returns true if the format requires the count, rather than the full or
      * paged result set.
@@ -374,80 +397,245 @@ public abstract class WebService
         }
     }
 
+    public boolean formatIsXML() {
+        return (getFormat() == XML_FORMAT);
+    }
+
+    protected Output makeXMLOutput(PrintWriter out) {
+        ResponseUtil.setXMLHeader(response, "result.xml");
+        return new StreamedOutput(out, new XMLFormatter());
+    }
+
+    private static final String COMPRESS = "compress";
+    private static final String GZIP = "gzip";
+    private static final String ZIP = "zip";
+
+    protected boolean isGzip() {
+        return GZIP.equalsIgnoreCase(request.getParameter(COMPRESS));
+    }
+
+    protected boolean isZip() {
+        return ZIP.equalsIgnoreCase(request.getParameter(COMPRESS));
+    }
+
+    protected boolean isUncompressed() {
+        return StringUtils.isEmpty(request.getParameter(COMPRESS));
+    }
+
+    protected String getExtension() {
+        if (isGzip()) {
+            return ".gz";
+        } else if (isZip()) {
+            return ".zip";
+        } else {
+            return "";
+        }
+    }
+
     private void initOutput(HttpServletResponse response) {
+        int format = getFormat();
+
+        // HTML is a special case
+        if (format == HTML_FORMAT) {
+            output = new MemoryOutput();
+            ResponseUtil.setHTMLContentType(response);
+            return;
+        }
+
         PrintWriter out;
+        OutputStream os;
         try {
             // set reasonable buffer size
             response.setBufferSize(8 * 1024);
-            out = response.getWriter();
+            os = response.getOutputStream();
+            if (isGzip()) {
+                os = new GZIPOutputStream(os);
+            } else if (isZip()) {
+                os = new ZipOutputStream(new BufferedOutputStream(os));
+            }
+            out = new PrintWriter(os);
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-        int format = getFormat();
+
+        String filename = getDefaultFileName();
         switch (format) {
             case XML_FORMAT:
-                output = new StreamedOutput(out, new XMLFormatter());
-                ResponseUtil.setXMLHeader(response, "result.xml");
+                output = makeXMLOutput(out);
                 break;
             case TSV_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
-                ResponseUtil.setTabHeader(response, "result.tsv");
+                filename = "result.tsv";
+                if (isUncompressed()) {
+                    ResponseUtil.setTabHeader(response, filename);
+                }
                 break;
             case CSV_FORMAT:
                 output = new StreamedOutput(out, new CSVFormatter());
-                ResponseUtil.setCSVHeader(response, "result.csv");
+                filename = "result.csv";
+                if (isUncompressed()) {
+                    ResponseUtil.setCSVHeader(response, filename);
+                }
                 break;
             case COUNT_FORMAT:
                 output = new StreamedOutput(out, new TabFormatter());
-                ResponseUtil.setPlainTextHeader(response, "resultcount.txt");
+                filename = "resultcount.txt";
+                if (isUncompressed()) {
+                    ResponseUtil.setPlainTextHeader(response, filename);
+                }
                 break;
             case JSON_FORMAT:
                 output = new StreamedOutput(out, new JSONFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_FORMAT:
                 output = new StreamedOutput(out, new JSONFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "result.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_OBJ_FORMAT:
                 output = new StreamedOutput(out, new JSONObjectFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_OBJ_FORMAT:
                 output = new StreamedOutput(out, new JSONObjectFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "result.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_TABLE_FORMAT:
                 output = new StreamedOutput(out, new JSONTableFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_TABLE_FORMAT:
                 output = new StreamedOutput(out, new JSONTableFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                filename = "resulttable.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
+                break;
+            case JSON_DATA_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
+                break;
+            case JSONP_DATA_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONTableFormatter());
+                filename = "resulttable.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             case JSON_ROW_FORMAT:
                 output = new StreamedOutput(out, new JSONRowFormatter());
-                ResponseUtil.setJSONHeader(response, "result.json");
+                ResponseUtil.setJSONHeader(response,
+                        "result.json" + getExtension());
                 break;
             case JSONP_ROW_FORMAT:
                 output = new StreamedOutput(out, new JSONRowFormatter());
-                ResponseUtil.setJSONPHeader(response, "result.json");
+                ResponseUtil.setJSONPHeader(response,
+                        "result.json" + getExtension());
                 break;
             case JSON_COUNT_FORMAT:
                 output = new StreamedOutput(out, new JSONCountFormatter());
-                ResponseUtil.setJSONHeader(response, "resultcount.json");
+                filename = "resultcount.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename);
+                }
                 break;
             case JSONP_COUNT_FORMAT:
                 output = new StreamedOutput(out, new JSONCountFormatter());
-                ResponseUtil.setJSONPHeader(response, "resultcount.json");
-                break;
-            case HTML_FORMAT:
-                output = new HTMLOutput(out);
-                ResponseUtil.setHTMLContentType(response);
+                filename = "resultcount.jsonp";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONPHeader(response, filename);
+                }
                 break;
             default:
-                throw new BadRequestException("Invalid format.");
+                output = getDefaultOutput(out, os);
         }
+        if (!isUncompressed()) {
+            filename += getExtension();
+            ResponseUtil.setGzippedHeader(response, filename);
+            if (isZip()) {
+                try {
+                    ((ZipOutputStream) os).putNextEntry(new ZipEntry(filename));
+                } catch (IOException e) {
+                    throw new InternalErrorException(e);
+                }
+            }
+        }
+    }
+
+    protected String getDefaultFileName() {
+        return "result.tsv";
+    }
+
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+        output = new StreamedOutput(out, new TabFormatter());
+        ResponseUtil.setTabHeader(response, getDefaultFileName());
+        return output;
+    }
+
+    /**
+     * Returns true if the request wants column headers as well as result rows
+     * @return true if the request declares it wants column headers
+     */
+    public boolean wantsColumnHeaders() {
+        String wantsCols = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0".equals(wantsCols));
+        return !no;
+    }
+
+    /**
+     * Get an enum which represents the column header style (path, friendly, or none)
+     * @return a column header style
+     */
+    public ColumnHeaderStyle getColumnHeaderStyle() {
+        if (wantsColumnHeaders()) {
+            String style = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+            if ("path".equalsIgnoreCase(style)) {
+                return ColumnHeaderStyle.PATH;
+            } else {
+                return ColumnHeaderStyle.FRIENDLY;
+            }
+        } else {
+            return ColumnHeaderStyle.NONE;
+        }
+    }
+
+    private String parseFormatFromPathInfo() {
+        String pathInfo = request.getPathInfo();
+        pathInfo = StringUtil.trimSlashes(pathInfo);
+        if ("xml".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_XML;
+        } else if ("json".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
+        } else if ("jsonp".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
+        } else if ("tsv".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_TAB;
+        } else if ("csv".equalsIgnoreCase(pathInfo)) {
+            return WebServiceRequestParser.FORMAT_PARAMETER_CSV;
+        }
+        return null;
+    }
+
+    protected int getDefaultFormat() {
+        return EMPTY_FORMAT;
     }
 
     /**
@@ -456,10 +644,14 @@ public abstract class WebService
      * @return format
      */
     public int getFormat() {
-        String format = request
-                .getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        String format;
+        if (request.getPathInfo() != null) {
+            format = parseFormatFromPathInfo();
+        } else {
+           format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        }
         if (StringUtils.isEmpty(format)) {
-            return TSV_FORMAT;
+            return getDefaultFormat();
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_XML
                 .equalsIgnoreCase(format)) {
@@ -468,6 +660,10 @@ public abstract class WebService
         if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
                 .equalsIgnoreCase(format)) {
             return HTML_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_TAB
+                .equalsIgnoreCase(format)) {
+            return TSV_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
                 .equalsIgnoreCase(format)) {
@@ -509,6 +705,14 @@ public abstract class WebService
                 .equalsIgnoreCase(format)) {
             return JSON_FORMAT;
         }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_DATA_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSON_DATA_TABLE_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_DATA_TABLE
+                .equalsIgnoreCase(format)) {
+            return JSONP_DATA_TABLE_FORMAT;
+        }
         if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT
                 .equalsIgnoreCase(format)) {
             return JSONP_COUNT_FORMAT;
@@ -517,7 +721,7 @@ public abstract class WebService
                 .equalsIgnoreCase(format)) {
             return JSON_COUNT_FORMAT;
         }
-        return TSV_FORMAT;
+        return UNKNOWN_FORMAT;
     }
 
     /**
@@ -526,10 +730,25 @@ public abstract class WebService
      */
     public String getCallback() {
         if (formatIsJSONP()) {
-            return request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
+            if (! hasCallback()) {
+                return DEFAULT_CALLBACK;
+            } else {
+                return request.getParameter(
+                        WebServiceRequestParser.CALLBACK_PARAMETER);
+            }
         } else {
             return null;
         }
+    }
+
+    /**
+      * Determine whether a callback was supplied to this request.
+      * @return Whether or not a callback was supplied.
+      */
+    public boolean hasCallback() {
+        String cb = request.getParameter(
+                WebServiceRequestParser.CALLBACK_PARAMETER);
+        return (cb != null && ! "".equals(cb));
     }
 
     /**

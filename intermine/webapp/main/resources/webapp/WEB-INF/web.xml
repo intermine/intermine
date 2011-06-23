@@ -71,6 +71,48 @@
   </servlet-mapping>
 
   <servlet>
+  <servlet-name>ws-query-to-list</servlet-name>
+  <servlet-class>org.intermine.webservice.server.query.QueryToListServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-query-to-list</servlet-name>
+  <url-pattern>/service/query/tolist/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-query-append</servlet-name>
+  <servlet-class>org.intermine.webservice.server.query.QueryListAppendServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-query-append</servlet-name>
+  <url-pattern>/service/query/append/tolist/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-query-upload</servlet-name>
+  <servlet-class>org.intermine.webservice.server.query.QueryUploadServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-query-upload</servlet-name>
+  <url-pattern>/service/query/upload</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
   <servlet-name>ws-lists</servlet-name>
   <servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
   <init-param>
@@ -81,7 +123,119 @@
 
   <servlet-mapping>
   <servlet-name>ws-lists</servlet-name>
-  <url-pattern>/service/listswithobject</url-pattern>
+  <url-pattern>/service/listswithobject/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-list-append</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListAppendServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-list-append</servlet-name>
+  <url-pattern>/service/lists/append/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-list-union</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListUnionServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-list-union</servlet-name>
+  <url-pattern>/service/lists/union/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-list-subtract</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListSubtractionServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-list-subtract</servlet-name>
+  <url-pattern>/service/lists/subtract/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-list-intersect</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListIntersectionServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-list-intersect</servlet-name>
+  <url-pattern>/service/lists/intersect/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-list-diff</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListDifferenceServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-list-diff</servlet-name>
+  <url-pattern>/service/lists/diff/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-available-lists</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.AvailableListsServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-available-lists</servlet-name>
+  <url-pattern>/service/lists/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-rename-list</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListRenameServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-rename-list</servlet-name>
+  <url-pattern>/service/lists/rename/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-template-upload</servlet-name>
+  <servlet-class>org.intermine.webservice.server.template.TemplateUploadServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-template-upload</servlet-name>
+  <url-pattern>/service/template/upload</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -96,6 +250,34 @@
   <servlet-mapping>
   <servlet-name>ws-template-results</servlet-name>
   <url-pattern>/service/template/results</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-template-to-list</servlet-name>
+  <servlet-class>org.intermine.webservice.server.template.TemplateToListServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-template-to-list</servlet-name>
+  <url-pattern>/service/template/tolist/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-template-append</servlet-name>
+  <servlet-class>org.intermine.webservice.server.template.TemplateListAppendServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-template-append</servlet-name>
+  <url-pattern>/service/template/append/tolist/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -123,7 +305,7 @@
 
   <servlet-mapping>
     <servlet-name>ws-model</servlet-name>
-    <url-pattern>/service/model</url-pattern>
+    <url-pattern>/service/model/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -154,6 +336,62 @@
     <url-pattern>/service/version/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-check-resource</servlet-name>
+    <servlet-class>org.intermine.webservice.server.AvailableServicesServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-check-resource</servlet-name>
+    <url-pattern>/service/check/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-possible-values</servlet-name>
+    <servlet-class>org.intermine.webservice.server.path.PossibleValuesServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-possible-values</servlet-name>
+    <url-pattern>/service/path/values</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-schemata</servlet-name>
+    <servlet-class>org.intermine.webservice.server.SchemaServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-schemata</servlet-name>
+    <url-pattern>/service/schema/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-service-listing</servlet-name>
+    <servlet-class>org.intermine.webservice.server.ServicesListingsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
+  <servlet-mapping>
+    <servlet-name>ws-service-listing</servlet-name>
+    <url-pattern>/service</url-pattern>
+  </servlet-mapping>
 <!-- ================================================================================= -->
 
   <session-config>
@@ -187,6 +425,31 @@
     <url-pattern>/query.do</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>ExpireHeader</filter-name>
+    <filter-class>org.intermine.web.filters.ExpiresHeaderFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>ExpireHeader</filter-name>
+    <url-pattern>*.js</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>ExpireHeader</filter-name>
+    <url-pattern>*.css</url-pattern>
+  </filter-mapping>
+
+ <filter>
+  <filter-name>CompressingFilter</filter-name>
+  <filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
+ </filter>
+
+ <filter-mapping>
+  <filter-name>CompressingFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+ </filter-mapping>
+
   <error-page>
     <error-code>500</error-code>
     <location>/static/flymine-offline/</location>
@@ -203,4 +466,13 @@
     <error-code>404</error-code>
     <location>/pagenotfound.do</location>
   </error-page>
+
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <trim-directive-whitespaces>true</trim-directive-whitespaces>
+    </jsp-property-group>
+  </jsp-config>
+
+  <!--@MODEL_INCLUDE@-->
 </web-app>

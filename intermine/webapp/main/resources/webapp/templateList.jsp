@@ -9,33 +9,25 @@
 
 <html:xhtml/>
 
-<tiles:importAttribute name="displayObject" ignore="true"/>
+<tiles:importAttribute name="reportObject" ignore="true"/>
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
 <tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="trail" ignore="true"/>
 
-<c:if test="${!empty displayObject}">
-  <c:set var="interMineObject" value="${displayObject.object}"/>
+<c:if test="${!empty reportObject}">
+  <c:set var="interMineObject" value="${reportObject.object}"/>
 </c:if>
-
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
-  <tiles:insert name="objectDetailsTemplate.jsp">
-    <tiles:put name="displayObject" beanName="displayObject"/>
+  <tiles:insert name="reportTemplate.jsp">
+    <tiles:put name="reportObject" beanName="reportObject"/>
     <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
     <tiles:put name="templateQuery" beanName="templateQuery"/>
     <tiles:put name="placement" value="${placement}"/>
     <tiles:put name="scope" value="${scope}"/>
     <tiles:put name="trail" value="${trail}"/>
   </tiles:insert>
-  <c:if test="${!status.last}">
-    <hr class="seperator"/>
-  </c:if>
 </c:forEach>
-
-<c:if test="${empty templates && !empty noTemplatesMsgKey}">
-  <div class="altmessage"><fmt:message key="${noTemplatesMsgKey}"/></div>
-</c:if>
 
 <!-- /templateList.jsp -->

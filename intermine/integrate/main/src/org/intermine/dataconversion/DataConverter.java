@@ -129,6 +129,9 @@ public abstract class DataConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public Integer store(Item item) throws ObjectStoreException {
+        if (item == null) {
+            throw new IllegalArgumentException("Store called with null item");
+        }
         if (storeHook != null) {
             storeHook.processItem(this, item);
         }

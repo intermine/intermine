@@ -39,17 +39,17 @@ Organism:    <html:select styleId="typeSelector" property="organism">
     <th>features</th>
     <th></th>
   </tr>
-  
+
   <c:forEach items="${subs}" var="subCounts">
     <c:set var="sub" value="${subCounts.key}"></c:set>
     <tr>
-      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
-      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
+      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
       <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
 
-       <td class="sorting">    
-      <c:forEach items="${sub.developmentalStages}" var="devStage">            
-                        <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${devStage.id}"><c:out value="${devStage.name}"/></html:link>
+       <td class="sorting">
+      <c:forEach items="${sub.developmentalStages}" var="devStage">
+                        <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${devStage.id}"><c:out value="${devStage.name}"/></html:link>
                         <span class="tinylink">
                         <im:querylink text="ALL" skipBuilder="true">
                          <query name="" model="genomic"
@@ -59,7 +59,7 @@ Organism:    <html:select styleId="typeSelector" property="organism">
                         <constraint op="=" value="${devStage.type}" description=""
                                     identifier="" code="A">
                         </constraint>
-                      </node>  
+                      </node>
                       <node path="Submission.properties.name" type="String">
                         <constraint op="=" value="${devStage.name}" description=""
                                     identifier="" code="B">
@@ -84,12 +84,13 @@ Organism:    <html:select styleId="typeSelector" property="organism">
                 <c:if test="${rowNumber.first}">
                     <c:set var="class" value="firstrow"/>
                 </c:if>
-                <tr>                 
+                <tr>
                     <td class="firstcolumn ${class}">${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value}</html:link></td>
-                    <td class="${class}" align="right">export: 
+                    <td class="${class}" align="right">export:
                <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
                <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
                <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+               (<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3&UCSC">for UCSC</html:link>)
                     </td>
                     <td class="${class}" align="right">
                 <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}"> CREATE LIST</html:link>
@@ -108,17 +109,17 @@ Organism:    <html:select styleId="typeSelector" property="organism">
                             target="_blank">
                             <html:img src="model/images/dgb_vs.png" title="View in GBrowse" />
                         </html:link></c:if>
-          
+
         <c:if test="${!empty worm}">
                         <html:link
                             href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ds=${sub.dCCid}"
                             target="_blank">
                             <html:img src="model/images/wgb_vs.png" title="View in GBrowse" />
                         </html:link>
-                    </c:if>          
-    
+                    </c:if>
+
           </td>
-          
+
 
 
   </tr>

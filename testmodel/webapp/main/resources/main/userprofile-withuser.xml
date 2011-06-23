@@ -1,0 +1,87 @@
+<userprofile username="intermine-test-user" password="intermine-test-user-password">
+    <items>
+        <item id="1" class="Manager">
+            <attribute name="name" value="David Brent"/>
+        </item>
+        <item id="2" class="Manager">
+            <attribute name="name" value="Bernd Stromberg"/>
+        </item>
+        <item id="3" class="Manager">
+            <attribute name="name" value="Timo Becker"/>
+        </item>
+        <item id="4" class="Manager">
+            <attribute name="name" value="Neil Godwin"/>
+        </item>
+        <item id="5" class="Employee">
+            <attribute name="name" value="Brenda"/>
+        </item>
+        <item id="6" class="Employee">
+            <attribute name="name" value="Devon White"/>
+        </item>
+        <item id="7" class="Employee">
+            <attribute name="name" value="Hans Schmelzer"/>
+        </item>
+        <item id="8" class="Employee">
+            <attribute name="name" value="Frank Möllers"/>
+        </item>
+        <item id="9" class="Employee">
+            <attribute name="name" value="Herr Pötsch"/>
+        </item>
+        <item id="10" class="Department">
+            <attribute name="name" value="Kantine"/>
+        </item>
+        <item id="11" class="Department">
+            <attribute name="name" value="Quotes"/>
+        </item>
+        <item id="12" class="Department">
+            <attribute name="name" value="Verwaltung"/>
+        </item>
+        <item id="13" class="Department">
+            <attribute name="name" value="Archiven"/>
+        </item>
+    </items>
+    <bags>
+        <bag name="My-Favourite-Employees" type="Manager">
+            <bagElement id="1"/>
+            <bagElement id="2"/>
+            <bagElement id="3"/>
+            <bagElement id="4"/>
+        </bag>
+        <bag name="The great unknowns" type="Employee">
+            <bagElement id="5"/>
+            <bagElement id="6"/>
+            <bagElement id="7"/>
+        </bag>
+        <bag name="Umlaut holders" type="Employee">
+            <bagElement id="8"/>
+            <bagElement id="9"/>
+        </bag>
+        <bag name="Unusual departments" type="Department">
+            <bagElement id="10"/>
+            <bagElement id="11"/>
+            <bagElement id="12"/>
+            <bagElement id="13"/>
+        </bag>
+    </bags>
+    <template-queries>
+        <template name="private-template-1" title="A private template for testing" 
+            longDescription="Find all full time basic employees for a certain company, and present them sorted by department name">
+            <query name="private-template-1" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc">
+                <constraint path="Employee.department.company.name" op="=" value="*" editable="true" code="A"/>
+                <constraint path="Employee.fullTime" op="=" value="true" editable="false" code="B"/>
+                <constraint path="Employee" op="!=" loopPath="Employee.department.manager" editable="false" code="C"/>
+            </query>
+        </template>
+        <template name="private-template-2" title="Another private template" longDescription="Display info about companies associated with a particular VAT number">
+            <query name="private-template-2" model="testmodel" view="Company.name Company.address.address Company.vatNumber">
+                <constraint path="Company.vatNumber" op="&gt;=" value="0" editable="true" code="A"/>
+                <constraint path="Company.name" op="!=" value="Diffic*" editable="false" code="B"/>
+            </query>
+        </template>
+        <template name="BrokenPrivate" title="This template should not validate">
+            <query name="BrokenPrivate" model="testmodel" view="Employee.name Employee.age Employee.favouriteColour">
+                <constraint path="Employee.childhoodPet" type="Dog"/>
+            </query>
+        </template>
+    </template-queries>
+</userprofile>

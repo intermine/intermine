@@ -11,7 +11,7 @@
 <!-- layout.jsp -->
 <html:xhtml/>
 
-<html:html locale="true" xhtml="true">
+<html:html lang="true" xhtml="true">
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
 
@@ -61,7 +61,7 @@
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
   </tiles:insert>
 
-  <div id="pagecontentcontainer" align="center">
+  <div id="pagecontentcontainer" align="center" class="${pageName}${subtabs[subtabName]}-page">
     <c:choose>
     <c:when test="${!empty fixedLayout}">
       <div id="pagecontent">
@@ -70,37 +70,6 @@
       <div id="pagecontentmax">
     </c:otherwise>
     </c:choose>
-
-  <div id="navtrail">
-
-  <!-- contact us -->
-
-    <p id="contactUsLink" style="display:none;" class="alignleft">
-    <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
-    </p>
-
-    <p id="takeATourLink" style="display:none;" class="alignleft">
-    <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
-    </p>
-
-    <!-- Nav trail -->
-  <fmt:message key="${pageName}.tab" var="tab" />
-  <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-    <p class="alignright">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
-    <c:if test="${! empty tab }">
-      &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
-      <c:if test="${pageName != tab}">
-        <fmt:message key="${pageName}.title" var="pageTitle">
-          <fmt:param value="${param.name}"/>
-        </fmt:message>
-        &nbsp;&gt;&nbsp;<c:out value="${pageTitle}" />
-      </c:if>
-    </c:if>
-    <im:contextHelp/>
-</p>
-  </c:if>
- </div>
 
 <div style="clear: both;"></div>
 
@@ -116,6 +85,12 @@
       </tiles:insert>
 
       <tiles:get name="body"/>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+  jQuery("p#contactUsLink").toggle();
+});
+</script>
 
       <%-- Render messages --%>
       <tiles:get name="errorMessages"/>

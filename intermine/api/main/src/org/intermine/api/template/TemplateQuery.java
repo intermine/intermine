@@ -23,13 +23,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -60,7 +64,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
     /** Descriptions of constraints */
     Map<PathConstraint, String> constraintDescriptions = new HashMap<PathConstraint, String>();
-    /** Configuration for switch-off-ability of constraints */
+    /** Configuration for sbitch-off-ability of constraints */
     Map<PathConstraint, SwitchOffAbility> constraintSwitchOffAbility =
         new HashMap<PathConstraint, SwitchOffAbility>();
 
@@ -102,7 +106,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
 
     /**
      * Fetch the PathQuery to execute for this template.  The returned query excludes any optional
-     * constraints that have been switched off before the template is executed.
+     * constraints that have been sbitched off before the template is executed.
      * @return the PathQuery that should be executed for this query
      */
     @Override
@@ -294,48 +298,48 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     }
 
     /**
-     * Sets the switch-off-ability of a constraint.
+     * Sets the sbitch-off-ability of a constraint.
      *
-     * @param constraint the constraint to set the switch-off-ability on
-     * @param switchOffAbility a SwitchOffAbility instance
-     * @throws NullPointerException if the constraint or switchOffAbility is null
+     * @param constraint the constraint to set the sbitch-off-ability on
+     * @param sbitchOffAbility a SwitchOffAbility instance
+     * @throws NullPointerException if the constraint or sbitchOffAbility is null
      * @throws NoSuchElementException if the constraint is not in the query
      */
     public synchronized void setSwitchOffAbility(PathConstraint constraint,
-            SwitchOffAbility switchOffAbility) {
+            SwitchOffAbility sbitchOffAbility) {
         if (constraint == null) {
-            throw new NullPointerException("Cannot set switch-off-ability on null constraint");
+            throw new NullPointerException("Cannot set sbitch-off-ability on null constraint");
         }
-        if (switchOffAbility == null) {
-            throw new NullPointerException("Cannot set null switch-off-ability on constraint "
+        if (sbitchOffAbility == null) {
+            throw new NullPointerException("Cannot set null sbitch-off-ability on constraint "
                     + constraint);
         }
         if (!getConstraints().containsKey(constraint)) {
             throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
-        constraintSwitchOffAbility.put(constraint, switchOffAbility);
+        constraintSwitchOffAbility.put(constraint, sbitchOffAbility);
     }
 
     /**
-     * Gets the switch-off-ability of a constraint.
+     * Gets the sbitch-off-ability of a constraint.
      *
-     * @param constraint the constraint to get the switch-off-ability for
+     * @param constraint the constraint to get the sbitch-off-ability for
      * @return a SwitchOffAbility instance
      * @throws NullPointerException is the constraint is null
      * @throws NoSuchElementException if the constraint is not in the query
      */
     public synchronized SwitchOffAbility getSwitchOffAbility(PathConstraint constraint) {
         if (constraint == null) {
-            throw new NullPointerException("Cannot set switch-off-ability on null constraint");
+            throw new NullPointerException("Cannot set sbitch-off-ability on null constraint");
         }
         if (!getConstraints().containsKey(constraint)) {
             throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
-        SwitchOffAbility switchOffAbility = constraintSwitchOffAbility.get(constraint);
-        if (switchOffAbility == null) {
+        SwitchOffAbility sbitchOffAbility = constraintSwitchOffAbility.get(constraint);
+        if (sbitchOffAbility == null) {
             return SwitchOffAbility.LOCKED;
         }
-        return switchOffAbility;
+        return sbitchOffAbility;
     }
 
     /**
@@ -381,9 +385,9 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         if (description != null) {
             constraintDescriptions.put(replacement, description);
         }
-        SwitchOffAbility switchOffAbility = constraintSwitchOffAbility.remove(old);
-        if (switchOffAbility != null) {
-            constraintSwitchOffAbility.put(replacement, switchOffAbility);
+        SwitchOffAbility sbitchOffAbility = constraintSwitchOffAbility.remove(old);
+        if (sbitchOffAbility != null) {
+            constraintSwitchOffAbility.put(replacement, sbitchOffAbility);
         }
     }
 
@@ -413,7 +417,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * removed - i.e. a query that will return all possible results of executing
      * the template.  The original template is left unaltered.
      *
-     * @return a clone of the original tempate without editable constraints.
+     * @return a clone of the original template without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
         TemplateQuery clone = clone();
@@ -463,7 +467,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
-    @Override
     public String getName() {
         return name;
     }
@@ -482,6 +485,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @param title the title
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -545,29 +549,68 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * Returns a JSON string representation of the template query.
      * @return A string representation of the template query.
      */
-    public synchronized String toJSON() {
-        StringWriter sw = new StringWriter();
-        sw.append("{name:\"" + name + "\",");
-        sw.append("title:\"" + title + "\",");
-        sw.append("constraints:[");
+	public synchronized String toJSON() {
+		StringBuffer sb = new StringBuffer("{");
+		addJsonProperty(sb, "name", getName());
+		addJsonProperty(sb, "title", getTitle());
+		addJsonProperty(sb, "description", getDescription());
+		addJsonProperty(sb, "comment", getComment());
+		addJsonProperty(sb, "view", getView());
+
+        sb.append(",\"constraints\":[");
         Iterator<PathConstraint> iter = getEditableConstraints().iterator();
         Map<PathConstraint, String> codeForConstraint = getConstraints();
         while (iter.hasNext()) {
             PathConstraint pc = iter.next();
-            sw.append("{path:\"" + pc.getPath() + "\",");
-            sw.append("op:'" + pc.getOp().toString() + "'");
-            String value = PathConstraint.getValue(pc);
-            if (value != null) {
-                sw.append(",value:\"" + value + "\"");
-            }
-            sw.append(",code:'" + codeForConstraint.get(pc) + "'}");
-            if (iter.hasNext()) {
-                sw.append(",");
-            }
+			StringBuffer pcw = new StringBuffer("{");
+
+			addJsonProperty(pcw, "path", pc.getPath());
+			addJsonProperty(pcw, "op", pc.getOp().toString());
+			addJsonProperty(pcw, "value", PathConstraint.getValue(pc));
+			addJsonProperty(pcw, "code", codeForConstraint.get(pc));
+			addJsonProperty(pcw, "extraValue", PathConstraint.getExtraValue(pc));
+
+			pcw.append("}");
+			
+			sb.append(pcw.toString());
+			if (iter.hasNext()) {
+				sb.append(",");
+			}
         }
-        sw.append("]}");
-        return sw.toString();
+        sb.append("]");
+		
+		sb.append("}");
+        return sb.toString();
     }
+
+	private void addJsonProperty(StringBuffer sb, String key, Object value) {
+		if (value != null) {
+			if (!sb.toString().endsWith("{")) {
+				sb.append(",");
+			}
+			sb.append(formatKVPair(key, value));
+		}
+	}
+	
+	private String formatKVPair(String key, Object value) {
+		if (value instanceof List) {
+            StringBuffer sb = new StringBuffer("[");
+            boolean needsSep = false;
+            for (Object obj: (List) value) {
+                if (needsSep) {
+                    sb.append(",");
+                }
+                sb.append("\"" + StringEscapeUtils.escapeJavaScript(obj.toString()) + "\"");
+                needsSep = true;
+            }
+            sb.append("]");
+			return("\"" + key + "\":" + sb.toString());
+		} else if (value instanceof String) {
+			value = StringEscapeUtils.escapeJavaScript((String) value);
+			return("\"" + key + "\":\""  + value + "\"");
+		}
+		throw new IllegalArgumentException(value + " must be either String or a list of strings");
+	}
 
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
@@ -586,5 +629,36 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public void setEdited(boolean edited) {
         this.edited = edited;
+    }
+
+    /*
+     * Removed from the view all the direct attributes that aren't editable constraints
+     */
+    public TemplateQuery removeDirectAttributesFromView() {
+        TemplateQuery templateQuery = (TemplateQuery) super.clone();
+        List<String> viewPaths = templateQuery.getView();
+        PathQuery pathQuery = templateQuery.getPathQuery();
+        String rootClass = null;
+        try {
+            rootClass = templateQuery.getRootClass();
+            for (String viewPath : viewPaths) {
+                Path path = pathQuery.makePath(viewPath);
+                if (path.getElementClassDescriptors().size() == 1
+                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
+                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
+                        templateQuery.removeView(viewPath);
+                        for (OrderElement oe : templateQuery.getOrderBy()) {
+                            if (oe.getOrderPath().equals(viewPath)) {
+                                templateQuery.removeOrderBy(viewPath);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PathException pe) {
+            LOG.error("Error updating the template's view", pe);
+        }
+        return templateQuery;
     }
 }

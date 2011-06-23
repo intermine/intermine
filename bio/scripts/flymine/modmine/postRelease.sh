@@ -5,15 +5,17 @@
 # sc
 
 ARKDIR=/micklem/releases/modmine
-DBHOST=modprod1
+DBHOST=modfast
 DBUSER=modmine
-DATADIR=/shared/data/modmine/subs/chado
+DATADIR=/micklem/data/modmine/subs/chado
 LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
-#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
-PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="celniker waterston"
+PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
+#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white"
 
 progname=$0
 
@@ -144,8 +146,11 @@ function archive_mine {
 echo
 #echo "Dumping current release $REL ..."
 #pg_dump -F c -i -h modprod0 -f $ARKDIR/r$REL/modmine-r$REL modmine-r$REL -U modmine
+# use the build dump (from modfast)
+# mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
 echo "Dumping modmine-build in modfast..."
-pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-build modmine-build -U modminebuild
+pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
+
 #create release on archive server
 echo
 echo "Creating empty archive modmine-r$REL on modalone..."
@@ -164,7 +169,7 @@ echo
 function do_branch {
 # do branch 
 RETURNDIR=$PWD
-svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL
+svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL -m "modmine $REL branch"
 cd /home/modmine/svn
 svn co svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL modmine-$REL
 cd $RETURNDIR

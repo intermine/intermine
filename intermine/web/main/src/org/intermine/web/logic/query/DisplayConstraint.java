@@ -426,10 +426,12 @@ public class DisplayConstraint
             boolean existPossibleValues =
                 (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
             for (ConstraintOp op : allOps) {
-                if (!existPossibleValues && (op.getIndex() == 6 || op.getIndex() == 7)) {
-                    continue;
+                if (existPossibleValues
+                    || (!op.getIndex().equals(ConstraintOp.MATCHES.getIndex())
+                        && !op.getIndex().equals(ConstraintOp.DOES_NOT_MATCH.getIndex()))
+                ) {
+                    validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
                 }
-                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
             }
             if (existPossibleValues) {
                 for (ConstraintOp op : PathConstraintMultiValue.VALID_OPS) {
@@ -610,7 +612,9 @@ public class DisplayConstraint
             Map<String, InterMineBag> bags =
                 bagManager.getCurrentUserOrGlobalBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
-                return new ArrayList<String>(bags.keySet());
+                List<String> bagList = new ArrayList<String>(bags.keySet());
+                Collections.sort(bagList);
+                return bagList;
             }
         }
         return null;
@@ -745,7 +749,9 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
-                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()) {
+                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()) {
                 return true;
             }
             if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
@@ -779,6 +785,8 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()
                     || selectedOperator == ConstraintOp.LOOKUP.getIndex()
                     || selectedOperator == ConstraintOp.ONE_OF.getIndex()
                     || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {

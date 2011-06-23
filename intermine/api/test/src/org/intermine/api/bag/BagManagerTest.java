@@ -205,9 +205,14 @@ public class BagManagerTest extends TestCase
         assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(testUser, "Address"));
     }
 
+    public void testGetUserBagsOfType() throws Exception {
+        Map<String, InterMineBag> expected = createExpected(userAddressBag);
+        assertEquals(expected, bagManager.getCurrentUserBagsOfType(testUser, "Address"));
+    }
+
     public void testGetUserOrGlobalBagsOfTypeNoUserBags() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalCompanyBag);
-        assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(emptyUser, "Company"));
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(emptyUser, "Company"));
     }
 
     // user bags with same name as global bag take precedence

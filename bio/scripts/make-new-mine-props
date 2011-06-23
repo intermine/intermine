@@ -8,14 +8,10 @@
 #              webapp.path project.releaseVersion gbrowse.database.source \
 #              db.production.datasource.serverName
 
-BEGIN {
-  my $DIR = ($0 =~ m:(.*)/.*:)[0];
-  push (@INC, $DIR . '/../../intermine/perl/lib');
-  push (@INC, $DIR . '/lib');
-}
-
 use warnings;
 use strict;
+use File::Basename;
+use lib dirname(__FILE__) . '/../../intermine/perl/InterMine-Util/lib';
 
 use Getopt::Std;
 
@@ -23,13 +19,10 @@ use InterMine::Util qw(get_latest_properties_version $INTERMINE_CONF_DIR);
 
 my $RELEASE_VERSION_PROP = "project.releaseVersion";
 
-sub usage
-{
+sub usage {
   my $message = shift;
 
-  if (defined $message) {
-    warn "$message\n\n";
-  }
+  warn "$message\n\n" if $message;
 
   die <<"USAGE";
 $0 [-a machine_1,machine_2] [-d date_string] <mine_name> <property_name> [property_name_2 ...]
@@ -106,8 +99,9 @@ MESSAGE
 
 my %processed = ();
 
-while (defined (my $line = <$current_file>)) {
-  if ($line =~ /^\s*([^=]+)=(.*)/) {
+while (<$current_file>) {
+  my $new_line = $_;
+  if (/^\s*([^=]+)=(.*)/) {
     my $prop_name = $1;
     my $prop_value = $2;
     if (grep {$_ eq $prop_name} @properties_to_process) {
@@ -119,7 +113,7 @@ while (defined (my $line = <$current_file>)) {
           # swap machine names
           $prop_value =~ s/($machines)/($1 eq $machine_1) ? $machine_2 : $machine_1/eg;
 
-          $line = "$prop_name=$prop_value\n";
+          $new_line = "$prop_name=$prop_value\n";
         }
       }
       if ($prop_value =~ /^(.*?-|r|.*?-r|)(\d+)(.*)/) {
@@ -127,19 +121,18 @@ while (defined (my $line = <$current_file>)) {
           #$line = "$prop_name=$1$new_version$3\n";
           # changed to accomodate date..
           if (defined $date_string && $prop_name eq $RELEASE_VERSION_PROP) {
-            $line = "$prop_name=$1$new_version $date_string\n"
+            $new_line = "$prop_name=$1$new_version $date_string\n"
           } else {
-            $line = "$prop_name=$1$new_version$3\n";
+            $new_line = "$prop_name=$1$new_version$3\n";
           }
 
         } else {
-          unlink_and_die "line has wrong version ($2): $line";
+          unlink_and_die "line has wrong version ($2): $_";
         }
       }
     }
   }
-} continue {
-  print $new_prop_file $line;
+  print $new_prop_file $new_line;
 }
 
 close $new_prop_file or die "can't close $new_prop_filename: $!\n";

@@ -21,16 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 public class ResponseUtil
 {
 
-    /**
-     * Sets response header and content type for excel output.
-     * @param response response
-     * @param fileName file name of downloaded file
-     */
-    public static void setExcelHeader(HttpServletResponse response, String fileName) {
-        setNoCache(response);
-        setExcelContentType(response);
-        setFileName(response, fileName);
-    }
 
     /**
      * Sets response header and content type for tab separated
@@ -99,6 +89,13 @@ public class ResponseUtil
     public static void setJSONHeader(HttpServletResponse response,
             String filename) {
         setJSONContentType(response);
+        setFileName(response, filename);
+        setNoCache(response);
+    }
+
+    public static void setJSONSchemaHeader(HttpServletResponse response,
+            String filename) {
+        setJSONSchemaContentType(response);
         setFileName(response, filename);
         setNoCache(response);
     }
@@ -179,14 +176,6 @@ public class ResponseUtil
     }
 
     /**
-     * Sets Excel content type.
-     * @param response response
-     */
-    private static void setExcelContentType(HttpServletResponse response) {
-        response.setContentType("application/vnd.ms-excel");
-    }
-
-    /**
      * Sets XML content type.
      * @param response response
      */
@@ -234,6 +223,14 @@ public class ResponseUtil
      */
     public static void setJSONContentType(HttpServletResponse response) {
         response.setContentType("application/json");
+    }
+
+    /**
+     * Sets the content type to "application/schema+json"
+     * @param response The response we are sending out into the world
+     */
+    public static void setJSONSchemaContentType(HttpServletResponse response) {
+        response.setContentType("application/schema+json");
     }
 
     /**

@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -51,6 +52,7 @@ public class BagUploadConfirmAction extends InterMineAction
         }
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = (! "".equals(confirmForm.getNewBagName()))
@@ -82,19 +84,24 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (request.getParameter("upgradeBagName") == null) {
-	        InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
-	        bag.addIdsToBag(contents, bagType);
-	        session.removeAttribute("bagQueryResult");
+            InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
+            bag.addIdsToBag(contents, bagType);
+            //track the list creation
+            im.getTrackerDelegate().trackListCreation(bagType, bag.getSize(),
+                                   ListBuildMode.IDENTIFIERS, profile, session.getId());
+            session.removeAttribute("bagQueryResult");
         } else {
-        	String bagToUpgradeName = bagName;
-        	InterMineBag bagToUpgrade = profile.getSavedBags().get(bagToUpgradeName);
-        	bagToUpgrade.upgradeOsb(contents);
-        	session.removeAttribute("bagQueryResult_" + bagToUpgradeName);
+            String bagToUpgradeName = bagName;
+            InterMineBag bagToUpgrade = profile.getSavedBags().get(bagToUpgradeName);
+            bagToUpgrade.upgradeOsb(contents);
+            session.removeAttribute("bagQueryResult_" + bagToUpgradeName);
         }
+
         ForwardParameters forwardParameters
             = new ForwardParameters(mapping.findForward("bagDetails"));
-        return forwardParameters.addParameter("bagName", bagName).forward();
+        forwardParameters.addParameter("bagName", bagName);
+        forwardParameters.addParameter("trackExecution", "false");
+        return forwardParameters.forward();
     }
 }

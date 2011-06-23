@@ -139,7 +139,7 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
+        return (!resultMaps.isEmpty() && resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
     }
 
     /**

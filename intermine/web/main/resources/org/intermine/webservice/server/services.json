@@ -1,0 +1,471 @@
+{
+    "ws-version": {
+        "path": "/version",
+        "description": "The version of the API of this webservice",
+        "requiresAuthentication": false,
+        "usesAuthentication": false,
+        "outputFormats": ["text"],
+        "requiredParameters": [],
+        "methods": ["GET", "POST"]
+    },
+    "release-version": {
+        "path": "/version/release",
+        "description": "The release of this data warehouse",
+        "requiresAuthentication": false,
+        "usesAuthentication": false,
+        "outputFormats": ["text"],
+        "requiredParameters": [],
+        "methods": ["GET", "POST"]
+    },
+    "model": {
+        "path": "/model",
+        "description": "The data model for this data warehouse",
+        "requiresAuthentication": false,
+        "usesAuthentication": false,
+        "outputFormats": ["xml", "json"],
+        "requiredParameters": [],
+        "methods": ["GET", "POST"],
+        "schemas": {
+            "json": "schema/model.schema",
+        "xml": "schema/model.xsd"
+        }
+    },
+    "templates": {
+        "path": "/templates",
+        "description": "The template queries accessible from this webservice",
+        "requiresAuthentication": false,
+        "usesAuthentication": true,
+        "outputFormats": ["xml", "json"],
+        "requiredParameters": [],
+        "methods": ["GET", "POST"]
+    },
+    "query_to_list": {
+        "path": "/query/tolist",
+        "description": "Generate a list from a query",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["json"],
+        "methods": ["GET", "POST"],
+        "requiredParameters": [
+            {
+                "parameter": "listName",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "query",
+                "description": "The xml representation of the query to run",
+                "contentType": "string",
+                "schema": "schema/query.xsd"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "query_list_append": {
+        "path": "/query/append/tolist",
+        "description": "Append items defined by a query to an existing list",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["json"],
+        "methods": ["GET", "POST"],
+        "requiredParameters": [
+            {
+                "parameter": "listName",
+                "description": "The name of the list to append to",
+                "contentType": "string"
+            },
+            {
+                "parameter": "query",
+                "description": "The xml representation of the query to run",
+                "contentType": "string",
+                "schema": "schema/query.xsd"
+            }
+        ]
+    },
+    "query_results": {
+        "path": "/query/results",
+        "description": "Results for an arbitrary query",
+        "requiresAuthentication": false,
+        "usesAuthentication": true,
+        "outputFormats": [
+            "xml", "jsonrows", "jsonobjects", "tab", "csv",
+            "count", "jsoncount", "html"
+        ],
+        "methods": ["GET", "POST"],
+        "schemas": {
+            "jsonrows": "schema/resultset.schema",
+            "xml": "schema/resultset.xsd",
+            "jsoncount": "schema/jsoncount.schema"
+        },
+        "requiredParameters": [
+            {
+                "parameter": "query",
+                "description": "The xml representation of the query to run",
+                "contentType": "string",
+        "schema": "schema/query.xsd"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "size",
+                "description": "The maximum number of result rows to return",
+                "contentType": "integer"
+            },
+            {
+                "parameter": "start",
+                "description": "The first result row to return",
+                "contentType": "integer"
+            },
+            {
+                "parameter": "columnheaders",
+                "description": "Whether to include column headers on flat-file results",
+                "enum": ["friendly", "path", 0, 1, "true", "false"]
+            },
+            {
+                "parameter": "layout",
+                "description": "Which optional elements to include in HTML results",
+                "contentType": "string"
+            }
+        ]
+    },
+    "template_results": {
+        "path": "/template/results",
+        "description": "Results for a template using given values",
+        "requiresAuthentication": false,
+        "usesAuthentication": true,
+        "outputFormats": [
+            "xml", "jsonrows", "jsonobjects", "tab", "csv",
+            "count", "jsoncount", "html"
+        ],
+        "methods": ["GET", "POST"],
+        "schemas": {
+            "jsonrows": "schema/resultset.schema",
+            "xml": "schema/resultset.xsd",
+            "jsoncount": "schema/jsoncount.schema"
+        },
+        "requiredParameters": [
+            {
+                "parameterPattern": "^constraint[0-9]+$",
+                "description": "The path of the constraint",
+                "contentType": "string",
+                "multipleAllowed": true
+            },
+            {
+                "parameterPattern": "^op[0-9]+$",
+                "description": "The operation of the constraint",
+                "contentType": "string",
+                "multipleAllowed": true
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameterPattern": "^value[0-9]+$",
+                "description": "The value of the constraint",
+                "contentType": "string",
+                "multipleAllowed": true
+            },
+            {
+                "parameterPattern": "^extra[0-9]+$",
+                "description": "The extra value of the constraint",
+                "contentType": "string",
+                "multipleAllowed": true
+            },
+            {
+                "parameterPattern": "^value[0-9]+$",
+                "description": "The value of the constraint",
+                "contentType": "string",
+                "multipleAllowed": true
+            },
+            {
+                "parameter": "size",
+                "description": "The maximum number of result rows to return",
+                "contentType": "integer"
+            },
+            {
+                "parameter": "start",
+                "description": "The first result row to return",
+                "contentType": "integer"
+            },
+            {
+                "parameter": "columnheaders",
+                "description": "Whether to include column headers on flat-file results",
+                "enum": ["friendly", "path", 0, 1, "true", "false"]
+            },
+            {
+                "parameter": "layout",
+                "description": "Which optional elements to include in HTML results",
+                "contentType": "string"
+            }
+        ]
+    },
+    "available_lists": {
+        "path": "/lists",
+        "description": "The lists accessible from this webservice",
+        "requiresAuthentication": false,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "requiredParameters": [],
+        "methods": ["GET"],
+        "schemas": {
+            "json": "lists.schema"
+        }
+    },
+    "list_creation": {
+        "path": "/lists",
+        "description": "Create a list by uploading a set of identifiers",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST"],
+        "content": {
+            "description": "Comma and whitespace delimited identifiers",
+            "contentType": "text/plain"
+        },
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "type",
+                "description": "The class for the objects in the new list",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "extraValue",
+                "description": "A disambigation value",
+                "contentType": "string"
+            },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_appending": {
+        "path": "/lists/append",
+        "description": "Append to a list by uploading a set of identifiers",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST"],
+        "content": {
+            "description": "Comma and whitespace delimited identifiers",
+            "contentType": "text/plain"
+        },
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "The name of the list to append to",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "extraValue",
+                "description": "A disambigation value",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_union": {
+        "path": "/lists/union",
+        "description": "Create a list by merging a set of other lists",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST", "GET"],
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "lists",
+                "description": "The names of the lists to merge",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "tags",
+                "description": "A semi-colon delimited list of tags to associate with this list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_intersection": {
+        "path": "/lists/intersect",
+        "description": "Create a list by intersecting other lists",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST", "GET"],
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "lists",
+                "description": "The names of the lists to merge",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_difference": {
+        "path": "/lists/diff",
+        "description": "Create a list from the symmetric difference of other lists",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST", "GET"],
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "lists",
+                "description": "The names of the lists to diff",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_subtraction": {
+        "path": "/lists/subtract",
+        "description": "Create a list by subtracting one set of lists from another",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST", "GET"],
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "A name for the new list",
+                "contentType": "string"
+            },
+            {
+                "parameter": "references",
+                "description": "The names of the lists to subtract from",
+                "contentType": "string"
+            },
+            {
+                "parameter": "subtract",
+                "description": "The names of the lists to subtract",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "description",
+                "description": "A description of this new list",
+                "contentType": "string"
+            }
+        ]
+    },
+    "list_renaming": {
+        "path": "/lists/rename",
+        "description": "Rename an existing list",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["POST", "GET"],
+        "requiredParameters": [
+            {
+                "parameter": "oldname",
+                "description": "The name the list has now",
+                "contentType": "string"
+            },
+            {
+                "parameter": "newname",
+                "description": "The name you want the list to have",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": []
+    },
+    "list_deletion": {
+        "path": "/lists",
+        "description": "Delete an existing list",
+        "requiresAuthentication": true,
+        "usesAuthentication": true,
+        "outputFormats": ["tab", "json"],
+        "methods": ["DELETE"],
+        "requiredParameters": [
+            {
+                "parameter": "name",
+                "description": "The name of the list you want to delete",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": []
+    },
+    "path_values": {
+        "path": "/path/values",
+        "description": "Get all the possible values a path may have",
+        "requiresAuthentication": false,
+        "usesAuthentication": false,
+        "outputFormats": ["json", "jsoncount"],
+        "methods": ["GET", "POST"],
+        "schemas": {
+            "jsoncount": "schema/jsoncount.schema"
+        },
+        "requiredParameters": [
+            {
+                "parameter": "path",
+                "description": "The path whose potential values you would like a list of",
+                "contentType": "string"
+            }
+        ],
+        "optionalParameters": [
+            {
+                "parameter": "typeConstraints",
+                "description": "A map from constrained paths to their subclassed type",
+                "contentType": "json-object"
+            }
+        ]
+    }
+}

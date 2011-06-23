@@ -24,3 +24,65 @@ Revision history for Webservice-InterMine
         * Fixed bug in ResultIterator due to loose quotes. Thanks Kim.
         * Added support for new JSON formats, including inflation
         * Added bug in Join.pm which was preventing builds.
+0.9501  Thu Feb  3 13:36:04 GMT 2011
+        * Added bug due to mis-matching test counts in acceptance test
+0.9600  Fri Feb 18 16:37:38 GMT 2011
+        * Better verification of version strings, and better coercion of urls
+        * Load queries from local xml
+        * Support for InterMine xml shortcuts (lt for &lt;, etc.)
+        * Tests in support of json rows format
+0.9601  Fri Feb 25 16:26:39 GMT 2011
+        * Bug fixes (including a couple of useless imports)
+        * Queries stringify to their xml representation
+        * More documentation
+0.9602  Mon Feb 28 19:25:19 GMT 2011
+        * Model bug fix required changes to some tests, and 
+          one or two places in the path logic
+0.9603: Tue Mar  1 15:28:18 GMT 2011
+        * Now using the TestModel instance - big effect on test run speed
+0.9604: Thu Mar  3 17:27:14 GMT 2011
+        * Removed last use of testmodel_model.xml, and removed it from dist
+        * Changed logic writer to set_logic for consistency
+        * Added command line utilities
+        * Added moose hygiene test, and made it pass
+        * More POD (especially in important roles)
+        * Added size and start (paging) capabilities to Runnable queries
+0.9605: Sat 12 Mar 2011 21:25:56 EST
+        * Added Webservice::InterMine::Simple (see benchmarks)
+            There is a compilation penalty inherent in the use of Moose
+            and meta-class introspection. While perfectly acceptable 
+            when multiple queries are made withing the same process, 
+            for the common use case of a single query, the user may wish for
+            something more performant. In this case, a script that uses 
+            Webservice::InterMine::Simple will gain a full magnitude increase
+            in performance (3.5p/s vs 0.33p/s). However, multiple queries
+            within the same process do not see a similar improvement, it being
+            more in the range of 300% (70p/s vs 250p/s). Where speed is important,
+            and more sophisticated features are not required, a Simple service
+            may be appealing
+         * Added support for headers.
+0.9700: Wed 2 June 2011
+        * Changed result parsing logic - uses a JSON format internally for all 
+          non trivial parsing to ensure safety of field content and diagnostics 
+          of errors.
+        * Enabled lazy iteration of result sets by default. This improves responsiveness
+        for large datasets.
+        * Incorporated iteration into queries as a transparent feature.
+        * Added list services (creation, deletion, renaming, intersection, unions, differences, subtraction, appending)
+        * Added summary methods (show)
+        * Added template and query upload methods
+0.9701: Sat 4 June 2011
+        * Improved template parsing speed by only parsing what is requested
+        * Improved show printing format with more appropriate column sizes, and column guides.
+0.9702: Sat 4 June 2011
+        * Bug-fix release - subclass parsing was broken
+0.9702: Sun 5 June 2011
+        * Bug-fix release - Fixed handling of empty result sets - added test
+        for recently fixed bugs.
+0.9703: Sun 5 June 2011
+        * Bug-fix release - subclass parsing was broken
+0.9704: Sun 5 June 2011
+        * Added possible values service methods.
+0.9705: Wed Jun  8 19:34:43 BST 2011
+        * Avoid hitting url limits by posting where possible
+

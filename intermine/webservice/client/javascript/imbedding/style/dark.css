@@ -14,6 +14,11 @@ div.imbedded-table-tooltip {
     color: white;
 }
 
+.imbedded-count-displayer {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
@@ -23,6 +28,10 @@ div.imbedded-table-tooltip {
     -moz-border-radius: 10px;
     background: #333;
     border-color: #333;
+}
+
+.imbedded-scroll-container {
+    overflow: auto;
 }
 
 .imbedded-table-titlebox {
@@ -35,7 +44,6 @@ div.imbedded-table-tooltip {
 a.imbedded-table-title {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     color: white;
-    color: #444;
 }
 
 .imbedded-column-header-row {
@@ -44,6 +52,7 @@ a.imbedded-table-title {
     font-weight: bold;
     background: #666;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {
@@ -69,6 +78,10 @@ a.imbedded-table-title {
     font-style: bold;
 }
 
+.imbedded-cell > a {
+    color: #444;
+}
+
 .imbedded-row-odd {
     background: white;
 }
@@ -85,7 +98,7 @@ a.imbedded-table-title {
     background: #A7E1C3;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
+.imbedded-exportlink, .imbedded-pagelink {
     font-family: "Cuprum", "Helvetica", "sans-serif";
     text-decoration: none;
     color: white ! important;
@@ -99,4 +112,14 @@ a.imbedded-table-title {
 
 .imbedded-table-container > a:hover {
     text-decoration: underline;
+}
+
+.imbedded-table-expand-help {
+    color: #666;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }

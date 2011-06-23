@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -117,6 +118,12 @@ public class SaveBagAction extends InterMineAction
             pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
+            //tracks the list creation
+            if ("saveNewBag".equals(operation)) {
+                InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                im.getTrackerDelegate().trackListCreation(bag.getType(), bag.getSize(),
+                                        ListBuildMode.QUERY, profile, session.getId());
+            }
         } catch (ObjectStoreException e) {
             LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
@@ -124,8 +131,10 @@ public class SaveBagAction extends InterMineAction
         }
 
         if ("saveNewBag".equals(operation)) {
-            return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
-                bag.getName()).forward();
+            ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bag"));
+            forwardParameters.addParameter("bagName", bag.getName());
+            forwardParameters.addParameter("trackExecution", "false");
+            return forwardParameters.forward();
         }
         return mapping.findForward("results");
     }

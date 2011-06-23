@@ -30,7 +30,7 @@
 
   <fmt:message key="templateBuilder.saveIntro"/>
 
-  <html:form styleId="queryBuilderTemplateSettings" action="/templateSettingsAction">
+  <html:form action="/templateSettingsAction">
     <div align="center">
     <table>
       <tr>

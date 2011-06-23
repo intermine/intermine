@@ -59,8 +59,7 @@
 </tiles:insert>
 
 
-<c:out value="${webSearchable.size}"/>
-<b><c:choose>
+<c:out value="${webSearchable.size}"/>&nbsp;<b><c:choose>
 <c:when test="${webSearchable.size != 1}">
   <c:out value="${webSearchable.type}s" />
 </c:when>

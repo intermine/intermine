@@ -8,6 +8,7 @@
 
 <!-- bagBuild.jsp -->
 <html:xhtml/>
+
 <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
 
 <script language="javascript">

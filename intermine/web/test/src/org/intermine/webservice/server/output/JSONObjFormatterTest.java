@@ -48,7 +48,7 @@ public class JSONObjFormatterTest extends TestCase {
     StringWriter sw;
     PrintWriter pw;
 
-    Map<String, String> attributes;
+    Map<String, Object> attributes;
 
     JSONObjResultProcessor processor;
 
@@ -64,9 +64,9 @@ public class JSONObjFormatterTest extends TestCase {
         sw = new StringWriter();
         pw = new PrintWriter(sw);
 
-        attributes = new HashMap<String, String>();
+        attributes = new HashMap<String, Object>();
         attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
+        attributes.put(JSONResultFormatter.KEY_VIEWS, Arrays.asList("foo", "bar", "baz"));
         attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
 
         tim = new Employee();
@@ -157,8 +157,12 @@ public class JSONObjFormatterTest extends TestCase {
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        String expected = "],'executionTime':'" + executionTime + "'}";
-        assertEquals(expected, fmtr.formatFooter());
+        String expected = "],\"executionTime\":\"" + executionTime
+                        + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        assertEquals(expected, fmtr.formatFooter(null, 200));
+        expected = "],\"executionTime\":\"" + executionTime
+        + "\",\"wasSuccessful\":false,\"error\":\"this error\",\"statusCode\":501}";
+        assertEquals(expected, fmtr.formatFooter("this error", 501));
     }
 
     public void testFormatAll() {
@@ -178,6 +182,5 @@ public class JSONObjFormatterTest extends TestCase {
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
-
     }
 }

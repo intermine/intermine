@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -105,6 +106,9 @@ public final class WidgetUtil
 
             Iterator itAll = rAll.iterator();
 
+            HypergeometricDistributionImpl h = new HypergeometricDistributionImpl(populationTotal,
+                    sampleTotal, sampleTotal);
+
             // loop through results again to calculate p-values
             while (itAll.hasNext()) {
 
@@ -118,9 +122,8 @@ public final class WidgetUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    // (k,n,M,N)
-                    double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
-                                                         countAll.intValue(), populationTotal);
+                    h.setNumberOfSuccesses(countAll.intValue());
+                    double p = h.upperCumulativeProbability(countBag.intValue());
 
                     try {
                         resultsMap.put(id, new BigDecimal(p));

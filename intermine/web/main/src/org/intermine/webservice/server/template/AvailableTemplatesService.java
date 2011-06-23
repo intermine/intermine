@@ -10,6 +10,7 @@ package org.intermine.webservice.server.template;
  *
  */
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +21,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
+import org.intermine.webservice.server.output.StreamedOutput;
 
 /**
  * Fetch the names of public template queries for use with the Templates web service.
@@ -37,10 +42,7 @@ public class AvailableTemplatesService extends WebService
 {
 
     private static final String DEFAULT_CALLBACK = "analyseTemplates";
-
-    private static final String FILE_BASE_NAME= "templates";
-
-    private static final String XML = "xml";
+    private static final String FILE_BASE_NAME = "templates";
 
     /**
      * Constructor.
@@ -51,29 +53,46 @@ public class AvailableTemplatesService extends WebService
     }
 
     @Override
+    protected Output makeXMLOutput(PrintWriter out) {
+        ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
+        return new StreamedOutput(out, new PlainFormatter());
+    }
+
+    @Override
+    protected int getDefaultFormat() {
+        return XML_FORMAT;
+    }
+
+    @Override
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String pathFromUrl = request.getPathInfo();
-        pathFromUrl = StringUtil.trimSlashes(pathFromUrl);
-
         TemplateManager templateManager = im.getTemplateManager();
-        Map<String, TemplateQuery> templates = templateManager.getGlobalTemplates();
+        Map<String, TemplateQuery> templates;
+        boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
+        if (isAuthenticated()) {
+            Profile profile = SessionMethods.getProfile(request.getSession());
+            templates = (includeBroken)
+                            ? templateManager.getUserAndGlobalTemplates(profile)
+                            : templateManager.getWorkingTemplates(profile);
 
-        if (pathFromUrl != null && XML.equalsIgnoreCase(pathFromUrl)) {
-            ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + "." + XML);
+        } else {
+            templates = (includeBroken)
+                            ? templateManager.getGlobalTemplates()
+                            : templateManager.getWorkingTemplates();
+        }
+
+        if (formatIsXML()) {
+            ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
             output.addResultItem(Arrays.asList(TemplateHelper.templateMapToXml(templates,
                     PathQuery.USERPROFILE_VERSION)));
         } else if (formatIsJSON()) {
             ResponseUtil.setJSONHeader(response,  FILE_BASE_NAME + ".json");
-            Map<String, String> attributes = new HashMap<String, String>();
+            Map<String, Object> attributes = new HashMap<String, Object>();
             if (formatIsJSONP()) {
-                String callback = getCallback();
-                if (callback == null || "".equals(callback)) {
-                    callback = DEFAULT_CALLBACK;
-                }
-                attributes.put(JSONFormatter.KEY_CALLBACK, callback);
+                attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
             }
+            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
             output.setHeaderAttributes(attributes);
             output.addResultItem(Arrays.asList(TemplateHelper.templateMapToJson(templates)));
         } else {

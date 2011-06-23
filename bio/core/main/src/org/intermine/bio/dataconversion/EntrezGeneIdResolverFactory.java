@@ -25,7 +25,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.PropertiesUtil;
 
-public class EntrezGeneIdResolverFactory extends IdResolverFactory {
+/**
+ * ID resolver for Entrez genes.
+ *
+ * @author Richard Smith
+ */
+public class EntrezGeneIdResolverFactory extends IdResolverFactory
+{
     protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
     private final String clsName = "gene";
     private final String propName = "resolver.entrez.file";

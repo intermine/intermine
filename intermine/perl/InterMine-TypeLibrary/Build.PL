@@ -10,6 +10,8 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/InterMine/TypeLibrary.pm',
     requires => {
         'MooseX::Types' => 0,
+        'Math::BigInt' => 0,
+        'Scalar::Util' => 0,
     },
     build_requires => {
         'Test::More' => 0,

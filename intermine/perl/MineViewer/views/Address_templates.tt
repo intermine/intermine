@@ -1,0 +1,23 @@
+<div id="residents-placeholder" class="placeholder">
+    <img src="[% proxy.uri_for('/images/loading-bar.gif') %]">LOADING...</img>
+</div>
+
+<script type="text/javascript">
+$(function() {
+    var query = {
+        title: "Street --> Residents",
+        select: ["Employee.name", "Employee.age", "Employee.address.address"],
+        from: "testmodel",
+        where: [
+            {
+                path: "Employee.address.address", 
+                op: "=",   
+                value: "*[% obj.address.replace('\d+', '') %]*"
+            }
+        ]
+    };
+    IMBedding.loadQuery(query, {size: 10}, '#residents-placeholder',
+        [% INCLUDE template_options.tt %]
+    );
+});
+</script>

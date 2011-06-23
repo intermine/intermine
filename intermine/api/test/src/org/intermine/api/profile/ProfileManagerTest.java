@@ -82,7 +82,6 @@ public class ProfileManagerTest extends StoreDataTestCase
         super.setUp();
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
-
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         uos = uosw.getObjectStore();
         pm = new ProfileManager(os, uosw);
@@ -223,6 +222,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         uosw.commitTransaction();
         uosw.close();
+        osw.close();
     }
 
     private void removeUserProfile(String username) throws ObjectStoreException {

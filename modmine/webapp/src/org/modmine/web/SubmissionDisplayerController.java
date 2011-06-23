@@ -50,7 +50,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SubmissionDisplayerController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+    private static final Logger LOG = Logger.getLogger(SubmissionDisplayerController.class);
 
     /**
      * {@inheritDoc}
@@ -127,7 +127,14 @@ public class SubmissionDisplayerController extends TilesAction
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
 
+        Map<String, Map<String, Long>> expFeatEL =
+            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
+        request.setAttribute("expFeatEL", expFeatEL);
 
+        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+            MetadataCache.getSubFileSourceCounts(os);
+        request.setAttribute("subFeatFileSource", subFeatFileSource);
+        
         return null;
     }
 }

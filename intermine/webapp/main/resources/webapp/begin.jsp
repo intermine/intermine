@@ -42,6 +42,26 @@
                         <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
                       </c:forEach>
                     </select>
+
+            <c:if test="${!empty WEB_PROPERTIES['begin.listUpload.values']}">
+            <tr>
+                <td align="right" class="label">
+                       <label>
+                         <fmt:message key="bagBuild.extraConstraint">
+                               <fmt:param value="${extraBagQueryClass}"/>
+                         </fmt:message>
+                       </label>
+                   </td>
+                   <td>
+                     <select name="extraFieldValue">
+                      <c:forEach var="value" items="${WEB_PROPERTIES['begin.listUpload.values']}">
+                        <option value="<c:out value="${value}" />"><c:out value="${value}" /></option>
+                      </c:forEach>
+                    </select>
+                 </td>
+            </tr>
+        </c:if>
+
                     <div class="textarea">
                       <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                     </div>
@@ -57,17 +77,46 @@
         </div>
         <div id="welcome-bochs">
             <div class="inner">
-                <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
+              <c:choose>
+                <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
+                  <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedTitle']}" /></h3>
+                </c:when>
+                <c:otherwise>
+                  <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
+                </c:otherwise>
+              </c:choose>
                 <br />
-                <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
+                <c:choose>
+                  <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
+                    <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedDescription']}" escapeXml="false" /></p>
+                  </c:when>
+                  <c:otherwise>
+                    <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
+                  </c:otherwise>
+                </c:choose>
                 <c:if test="${!empty WEB_PROPERTIES['begin.thirdBox.linkTitle']}">
                   <div class="bottom">
                       <center>
-                          <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
-                          onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                        <c:choose>
+                          <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLink'])}">
+                            <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />"
+                            onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                          </c:when>
+                          <c:otherwise>
+                            <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
+                            onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                          </c:otherwise>
+                        </c:choose>
                             <div>
                               <span>
-                                <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
+                                <c:choose>
+                                  <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle'])}">
+                                    <c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle']}" />
+                                  </c:when>
+                                  <c:otherwise>
+                                    <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
+                                  </c:otherwise>
+                                </c:choose>
                               </span>
                             </div>
                           </a>
@@ -113,7 +162,7 @@
                           <c:set var="aspectTitle" value="${row.value}"/>
                         </c:when>
                         <c:when test="${row.key == 'description'}">
-                          <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
+                          <p><c:out value="${row.value}" />&nbsp;<a href="dataCategories.do">Read more</a></p><br/>
                         </c:when>
                         <c:when test="${row.key == 'name'}">
                           <p>Query for <c:out value="${fn:toLowerCase(row.value)}" />:</p>
@@ -144,12 +193,17 @@
             </div>
 
             <div id="api">
-                <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-                <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
-                <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
+                <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+                <img src="images/begin/perl-java-python-ico.png" alt="perl java" />
+                <p>
+                    Access our <c:out value="${WEB_PROPERTIES['project.title']}"/> data via
+                    our Application Programming Interface (API) too!
+                    We provide client libraries in the following languages:
+                </p>
                 <ul>
-                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do">Perl API</a>
-                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java API</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
                 </ul>
             </div>
 
@@ -192,7 +246,7 @@
     // feed URL
     var feedURL = "${WEB_PROPERTIES['project.rss']}";
     // limit number of entries displayed
-    var maxEntries = 2;
+    var maxEntries = 3;
     // where are we appending entries? (jQuery syntax)
     var target = 'table#articles';
 
@@ -272,7 +326,7 @@
         var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
     }
 
-    var placeholder = '<c:out value="${WEB_PROPERTIES['quickSearch.identifiers']}" />';
+    var placeholder = '<c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" />';
     var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
     var inputToggleClass = 'eg';
 

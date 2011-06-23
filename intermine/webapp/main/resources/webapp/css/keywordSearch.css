@@ -26,7 +26,7 @@
    text-align:left;
    width: 425px;
 }
-        
+
 .keywordSearch .examples li {
   font-size: 0.9em;
   text-align: left;
@@ -43,30 +43,23 @@
 }
 
 .keywordSearchIndexColumn {
-	float: left;
-	margin: 5px;
-}
-
-.keywordSearchIndex h2,
-.keywordSearchIndex a,
-.keywordSearchIndex a:visited,
-.keywordSearchIndex a:hover {
-	color: #fff;
+  float: left;
+  margin: 5px;
 }
 
 .keywordSearchResults {
-	text-align: center;
+  text-align: center;
 }
 
 .keywordSearchResults table {
-	margin: 1em 0px;
-	text-align: left;
-	width: 100%;
+  margin: 1em 0px;
+  text-align: left;
+  width: 100%;
 }
 
 .keywordSearchResult .objectKeys {
-	font-weight: bold;
-	margin-bottom: 0.5em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
 }
 
 .keywordSearchResult .objectKeys span.objectKey {
@@ -78,14 +71,14 @@
 }
 
 .keywordSearchResults .facets {
-	background: #927F97;
-	border: 1px solid #C1DAD7;
-	color: #fff;
-	float: left;
-	margin-top: 1em;
-	padding: 0 0.5em;
-	text-align: left;
-	width: 220px;
+  background: #927F97;
+  border: 1px solid #C1DAD7;
+  color: #fff;
+  float: left;
+  margin-top: 1em;
+  padding: 0 0.5em;
+  text-align: left;
+  width: 220px;
 }
 
 .keywordSearchResults ol {
@@ -100,18 +93,18 @@
 }
 
 .facetHeader {
-	font-weight: bold;
+  font-weight: bold;
     margin: 0.5em 0 0.25em 0;
-    text-decoration: underline;	
-}	
+    text-decoration: underline;
+}
 
 .facetContents {
     margin-bottom: 0.5em;
 }
 
 .facetMoreLink {
-	border-bottom: 1px dashed #fff;
-	text-align: right;
+  border-bottom: 1px dashed #fff;
+  text-align: right;
 }
 
 .keywordSearchResults .facets a {

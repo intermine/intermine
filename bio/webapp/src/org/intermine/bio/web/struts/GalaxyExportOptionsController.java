@@ -12,11 +12,13 @@ package org.intermine.bio.web.struts;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
+import org.intermine.api.template.SwitchOffAbility;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -87,8 +91,24 @@ public class GalaxyExportOptionsController extends TilesAction
             query.addView(path + ".chromosomeLocation.end");
             query.addView(path + ".organism.name");
 
+            // use ids or pids
+            String[] idsInStr = value.split(",");
+            Set<Integer> ids = new HashSet<Integer>();
+            boolean isIds = true;
+            for (String id : idsInStr) {
+                if (!Pattern.matches("^\\d*$", id)) {
+                    isIds = false;
+                    break;
+                }
+                ids.add(Integer.valueOf(id));
+            }
 
-            query.addConstraint(Constraints.lookup(path, value, null));
+            if (isIds) {
+                query.addConstraint(Constraints.inIds(path, ids));
+            } else {
+                query.addConstraint(Constraints.lookup(path, value, null));
+            }
+
         } else {
             String tableName = request.getParameter("table");
             PagedTable pt = SessionMethods.getResultsTable(session, tableName);
@@ -151,15 +171,28 @@ public class GalaxyExportOptionsController extends TilesAction
             }
         }
 
-        String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
-                                                   PathQuery.USERPROFILE_VERSION);
-        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
-        StringBuffer stringUrl = new StringBuffer(
-                new URLGenerator(request).getPermanentBaseURL()
-                        + "/service/query/results?query=" + encodedQueryXML
-                        + "&size=1000000");
+        if (query instanceof TemplateQuery) {
+            TemplateQuery templateQuery = (TemplateQuery) query;
+            Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
+                                                   templateQuery.getConstraintSwitchOffAbility();
+            for (Map.Entry<PathConstraint, SwitchOffAbility> entry
+                : constraintSwitchOffAbilityMap.entrySet()) {
+                if (entry.getValue().compareTo(SwitchOffAbility.OFF) == 0) {
+                    templateQuery.removeConstraint(entry.getKey());
+                }
+            }
+        }
 
-        request.setAttribute("viewURL", stringUrl.toString());
+        String queryXML = PathQueryBinding.marshal(query, "", model.getName(),
+                                                   PathQuery.USERPROFILE_VERSION);
+
+        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
+        String link = new URLGenerator(request).getPermanentBaseURL()
+                        + "/service/query/results?query="
+                        + encodedQueryXML
+                        + "&size=1000000";
+
+        request.setAttribute("viewURL", link);
 
         return null;
     }

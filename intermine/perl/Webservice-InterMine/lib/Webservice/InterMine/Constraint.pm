@@ -18,11 +18,9 @@ sub requirements_are_met_by {
         if ( my ($attr) =
             grep { $name eq $_->name } @required_attributes )
         {
+            my $tc = $attr->type_constraint;
             $matches++ # don't die, because that kind of defeats the point
-              if eval {
-                      $attr->verify_against_type_constraint(
-                          $args{$name} );
-              };
+              if eval {$tc->check($args{$name}) || $tc->assert_coerce($args{$name})};
         }
     }
     return ( $matches == @required_attributes );

@@ -1,12 +1,12 @@
 #!/bin/sh
-logdir="/shared/data/download_logs/"
+logdir="/micklem/data/download_logs/"
 if [ ! -d $logdir ]
 then
   mkdir -p $logdir
 fi
 tempname="temp_log.txt"
 tempfile=$logdir$tempname
-shared_data="/shared/data"
+shared_data="/micklem/data"
 config_file="./resources/get_scripts.config"
 if [ -a $tempfile ]
 then
@@ -155,14 +155,25 @@ echo "Getting Redfly GFF files"
     fi
 echo "==========================================================="
 echo
+# broken, alex, fix me!
+#echo "==========================================================="
+#echo "Getting Reactome BioPAX files"
+#./get_reactome
+#    if [ $? -ne 0 ]
+#    then
+#        echo "error getting Reactome files" 2>&1 >> $tempfile
+#    fi
+#echo "==========================================================="
+echo
 echo "==========================================================="
-echo "Getting Reactome BioPAX files"
-./get_reactome
+echo "Getting BioGRID"
+./get_biogrid "$shared_data/psi/biogrid" $tempfile
     if [ $? -ne 0 ]
     then
-        echo "error getting Reactome files" 2>&1 >> $tempfile
+        echo "error getting BioGRID files" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
+echo
 
 
 today=$(date +"%F")

@@ -12,12 +12,14 @@ use List::Util qw/reduce/;
 use List::MoreUtils qw/uniq/;
 
 use MooseX::Types::Moose qw/Str Bool/;
-use InterMine::TypeLibrary qw(
-  PathList PathHash SortOrder SortOrderList
+use InterMine::Model::Types qw/PathList PathHash PathString/;
+use Webservice::InterMine::Types qw(
+  SortOrder SortOrderList
   ConstraintList LogicOrStr JoinList
   QueryName PathDescriptionList
   ConstraintFactory
 );
+
 use Webservice::InterMine::Join;
 use Webservice::InterMine::PathDescription;
 use Webservice::InterMine::Path qw(:validate type_of);
@@ -30,6 +32,19 @@ our @EXPORT_OK = qw(AND OR);
 has '+name' => ( 
     isa => QueryName, 
     coerce => 1,
+);
+
+has root_path => (
+    init_arg  => 'class', 
+    isa       => PathString, 
+    is        => 'ro',
+    coerce    => 1,
+    predicate => 'has_root_path',
+    trigger    => sub {
+        my ($self, $root) = @_;
+        my $err = validate_path( $self->model, $root, $self->type_dict );
+        confess $err if $err;
+    },
 );
 
 has _sort_order => (
@@ -49,25 +64,48 @@ has _sort_order => (
         sort_orders    => 'elements',
         joined_so      => 'join',
         clear_sort_order => 'clear',
+        sort_order_is_empty =>  'is_empty',
     },
 );
+
+sub prefix_pathfeature {
+    my ($self, $pf) = @_;
+    if ($self->has_root_path) {
+        my $root = $self->root_path;
+        unless ($pf->path =~ /^$root/) {
+            my $new_path = $self->root_path . '.' . $pf->path;
+            $pf->set_path($new_path);
+        }
+    }
+}
 
 sub add_sort_order {
     my $self = shift;
     my @args = @_;
     my $so = Webservice::InterMine::SortOrder->new(@args);
+    $self->prefix_pathfeature($so);
     $self->push_sort_order($so);
 }
+
 sub sort_order {
     my $self = shift;
     confess "You can't use this method to modify this attribute"
         if shift;
-    return $self->joined_so(' ');
+    if (grep {not defined} $self->sort_orders) {
+        return '';
+    } else {
+        return $self->joined_so(' ');
+    } 
+}
+
+sub DEMOLISH {
+    my $self = shift;
+    $self->suspend_validation;
 }
 
 sub _build__sort_order {
     my $self = shift;
-    ( $self->view )->[0];
+    return $self->get_view(0);
 }
 
 sub set_sort_order {
@@ -85,17 +123,39 @@ has view => (
     writer  => '_set_view',
     handles => {
         views         => 'elements',
-        add_view      => 'push',
+        _add_views    => 'push',
+        get_view      => 'get',
         joined_view   => 'join',
         view_is_empty => 'is_empty',
         clear_view    => 'clear',
+        view_size     => 'count',
     },
 );
 
-after add_view => sub {
+sub add_views {
     my $self = shift;
-    $self->_set_view( $self->joined_view(' ') );
-};
+    return $self->add_view(@_);
+}
+
+sub add_view {
+    my $self = shift;
+    my @views = map {split} @_;
+    if (my $root = $self->root_path) {
+        @views = map {(/^$root/) ? $_ : "$root.$_"} @views;
+    }
+    my @expanded_views;
+    for my $view (@views) {
+        if ($view =~ /(.*)\.\*$/) {
+            my $path = $1;
+            my $cd = $self->model->get_classdescriptor_by_name(type_of($self->model, $path));
+            my @expanded = map { $path . '.' . $_->name } sort $cd->attributes;
+            push @expanded_views, @expanded;
+        } else {
+            push @expanded_views, $view;
+        }
+    }
+    $self->_add_views(@expanded_views);
+}
 
 after qr/^add_/ => sub {
     my $self = shift;
@@ -216,11 +276,34 @@ has joins => (
     }
 );
 
+=head2 add_join( $path )
+
+Specifies the join style of a path on the query. 
+The default join style this method adds is "OUTER", but
+it can be specified with C<path =&gt; $path, style =&gt; $style>.
+Possible join styles are INNER and OUTER.
+
+=cut
+
 sub add_join {
     my $self = shift;
     my $join = Webservice::InterMine::Join->new(@_);
+    $self->prefix_pathfeature($join);
     $self->push_join($join);
     return $self;
+}
+
+=head2 add_outer_join( $path )
+
+specify that this path is to be treated as an outer join.
+
+=cut
+
+sub add_outer_join {
+    my $self = shift;
+    my $path = shift;
+    confess "Too many arguments to 'add_outer_join', 1 expected" if @_;
+    $self->add_join($path);
 }
 
 has path_descriptions => (
@@ -241,11 +324,13 @@ has path_descriptions => (
 sub add_pathdescription {
     my $self = shift;
     my $pd   = Webservice::InterMine::PathDescription->new(@_);
+    $self->prefix_pathfeature($pd);
     $self->push_path_description($pd);
     return $self;
 }
 has logic => (
-    is      => 'rw',
+    writer  => 'set_logic',
+    reader  => 'logic',
     isa     => LogicOrStr,
     lazy    => 1,
     clearer => 'clear_logic',
@@ -308,8 +393,21 @@ sub check_logic {
     my ( $self, $value ) = @_;
     unless ( blessed $value) {
         my $new_value = _parse_logic( $value, $self->coded_constraints );
-        $self->logic($new_value);
+        $self->set_logic($new_value);
     }
+}
+
+use Webservice::InterMine::LogicParser;
+
+has logic_parser => (
+    isa => 'Webservice::InterMine::LogicParser',
+    is => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_logic_parser {
+    my $self = shift;
+    return Webservice::InterMine::LogicParser->new(query => $self);
 }
 
 sub _parse_logic {
@@ -363,6 +461,7 @@ sub add_constraint {
             $constraint->set_code( ++$code );
         }
     }
+    $self->prefix_pathfeature($constraint);
     $self->push_constraint($constraint);
     return $constraint;
 }
@@ -425,6 +524,22 @@ sub clean_out_SCCs {
     }
 }
 
+sub to_string {
+    my $self = shift;
+    my $ret = '';
+    $ret .= 'VIEW: [' . $self->joined_view(', ') . ']';
+    if ($self->constraints) {
+        $ret .= ', CONSTRAINTS: [';
+        for my $con ($self->constraints) {
+            $ret .= '[' . $con->to_string . '],';
+        }
+        $ret .= ']';
+    }
+    $ret .= ', LOGIC: ' . $self->logic->code if ($self->coded_constraints > 1);
+    $ret .= ', SORT_ORDER: ' . $self->joined_so(' ');
+    return $ret;
+}
+
 #########################
 ### VALIDATION
 
@@ -447,6 +562,13 @@ sub _validate {    # called internally, obeys is_validating
     @errs = grep { $_ } @errs;
     croak join( '', @errs ) if @errs;
 }
+
+before _validate => sub {
+    my $self = shift;
+    if ($self->has_root_path and $self->view_is_empty) {
+        $self->add_view('id');
+    }
+};
 
 sub validate_paths {
     my $self = shift;
@@ -472,9 +594,11 @@ sub validate_consistency {
 sub validate_sort_order {
     my $self = shift;
     return if $self->view_is_empty;
-    for my $so ($self->sort_orders) {
-        unless ( grep { $so->path eq $_ } $self->views ) {
-            return $so->path . " is not in the view\n";
+    if ($self->has_sort_order) {
+        for my $so ($self->sort_orders) {
+            unless ( grep { $so->path eq $_ } $self->views ) {
+                return $so->path . " is not in the view\n";
+            }
         }
     }
     return;

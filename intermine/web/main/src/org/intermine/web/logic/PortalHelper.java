@@ -41,7 +41,7 @@ public final class PortalHelper
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 
-    private static final String INTERNAL_REPORT_PAGE = "objectDetails.do";
+    private static final String INTERNAL_REPORT_PAGE = "report.do";
     private static final String EXTERNAL_PORTAL_PAGE = "portal.do";
 
     private PortalHelper() {
@@ -183,11 +183,11 @@ public final class PortalHelper
      * @param baseUrl The base URL to use to create the link.
      * @return The URL.
      */
-    public static String generateObjectDetailsLink(ResultElement elem, String baseUrl) {
-        return baseUrl + generateObjectDetailsPath(elem);
+    public static String generateReportLink(ResultElement elem, String baseUrl) {
+        return baseUrl + generateReportPath(elem);
     }
 
-    public static String generateObjectDetailsPath(ResultElement elem) {
+    public static String generateReportPath(ResultElement elem) {
         String url = null;
         StringBuilder sb = new StringBuilder();
         sb.append("/").append(INTERNAL_REPORT_PAGE).append("?id=");

@@ -56,12 +56,13 @@ public class ProfileTest extends TestCase
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(Model.getInstanceByName("testmodel")));
-        profileManager = new DummyProfileManager(userprofileOS);
+        profileManager = new DummyProfileManager();
 
     }
 
     public void tearDown() throws Exception {
         profileManager.close();
+        userprofileOS.close();
     }
 
     public void testModifySavedMaps() throws Exception {
@@ -167,12 +168,10 @@ public class ProfileTest extends TestCase
 
     class DummyProfileManager extends ProfileManager
     {
-        public DummyProfileManager(ObjectStore os)
+        public DummyProfileManager()
             throws ObjectStoreException {
-
-            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"));
+            super(objectstoreOS, userprofileOS);
         }
-
         public void saveProfile(Profile profile) {
             throw new UnsupportedOperationException();
         }

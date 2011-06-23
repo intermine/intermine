@@ -1,5 +1,6 @@
 <%@ tag body-content="empty" %>
 <%@ attribute name="text" required="false" rtexprvalue="true"%>
+<%@ attribute name="type" required="false" %>
 <%@ attribute name="key" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -11,4 +12,17 @@
   <fmt:message var="text" key="${key}"/>
 </c:if>
 
-<c:if test="${!empty text}"><im:help text="${text}"><img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?"></im:help></c:if>
+<c:if test="${!empty text}">
+  <c:choose>
+    <c:when test="${!empty type}">
+      <im:help text="${text}">
+        <img src="images/icons/information.png" alt="?">
+      </im:help>
+    </c:when>
+    <c:otherwise>
+      <im:help text="${text}">
+        <img class="tinyQuestionMark" style="padding-bottom:4px;" src="images/icons/information-small-blue.png" alt="?">
+      </im:help>
+    </c:otherwise>
+  </c:choose>
+</c:if>

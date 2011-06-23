@@ -1,0 +1,44 @@
+package testprojecttitle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.services.TemplateService;
+import org.intermine.webservice.client.template.TemplateParameter;
+
+/**
+ * This is an automatically generated Java program to run the TEST_PROJECT_TITLE template, im_available_organisms
+ * Description: For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines.
+ *
+ * @author TEST_PROJECT_TITLE
+ *
+ */
+public class TemplateImAvailableOrganisms
+{
+    private static final String ROOT = "TEST_SERVICE_ROOT/service";
+
+    /**
+     * @param args command line arguments
+     */
+    public static void main(String[] args) {
+
+        TemplateService service = new ServiceFactory(ROOT).getTemplateService();
+
+        List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
+        // You can edit the constraint values below
+        parameters.add(new TemplateParameter("Gene.primaryIdentifier", "eq", "zen"));
+
+        // Name of template
+        String name = "im_available_organisms";
+
+        List<List<String>> rows = service.getAllResults(name, parameters);
+        System.out.println("Results:");
+        for (List<String> row : rows) {
+            for (String cell : row) {
+                System.out.print(cell + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+}

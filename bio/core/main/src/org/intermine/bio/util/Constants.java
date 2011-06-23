@@ -15,8 +15,11 @@ package org.intermine.bio.util;
  *
  * @author Kim Rutherford
  */
-public class Constants
+public final class Constants
 {
+    private Constants() {
+        // don't
+    }
 
     /**
      * The category to pass to ObjectStoreInterMineImpl.precompute().

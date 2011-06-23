@@ -10,6 +10,7 @@ package org.intermine.webservice.server.output;
  *
  */
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -25,6 +26,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -65,7 +67,9 @@ public class JSONRowFormatterTest extends TestCase {
     StringWriter sw;
     PrintWriter pw;
 
-    Map<String, String> attributes;
+    private final InterMineAPI dummyAPI = new DummyAPI();
+
+    Map<String, Object> attributes;
 
     JSONRowResultProcessor processor;
 
@@ -73,23 +77,23 @@ public class JSONRowFormatterTest extends TestCase {
     protected void setUp() throws Exception {
 
         testProps = new Properties();
-        testProps.load(getClass().getResourceAsStream(
-                "JSONRowFormatterTest.properties"));
+        testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
 
         os = new ObjectStoreDummyImpl();
 
         sw = new StringWriter();
         pw = new PrintWriter(sw);
 
-        attributes = new HashMap<String, String>();
+        attributes = new HashMap<String, Object>();
         attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
+        attributes.put(JSONResultFormatter.KEY_VIEWS, Arrays.asList("foo", "bar", "baz"));
         attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
         attributes.put(JSONRowFormatter.KEY_TITLE, "Test Results");
         attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, "some.csv.url");
         attributes.put(JSONRowFormatter.KEY_EXPORT_TSV_URL, "some.tsv.url");
         attributes.put(JSONRowFormatter.KEY_PREVIOUS_PAGE, "url.to.previous");
         attributes.put(JSONRowFormatter.KEY_NEXT_PAGE, "url.to.next");
+        attributes.put("SOME_NULL_KEY", null);
 
         tim = new Employee();
         tim.setId(new Integer(5));
@@ -145,7 +149,7 @@ public class JSONRowFormatterTest extends TestCase {
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
         iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-        processor = new JSONRowResultProcessor();
+        processor = new JSONRowResultProcessor(dummyAPI);
     }
 
     /*
@@ -166,6 +170,12 @@ public class JSONRowFormatterTest extends TestCase {
 
         String expected = testProps.getProperty("result.header");
         assertEquals(expected, fmtr.formatHeader(attributes));
+
+        String callback = "user_defined_callback";
+        expected = callback + "(" + expected;
+        attributes.put(JSONRowFormatter.KEY_CALLBACK, callback);
+
+        assertEquals(expected, fmtr.formatHeader(attributes));
     }
 
     public void testFormatResult() {
@@ -183,11 +193,24 @@ public class JSONRowFormatterTest extends TestCase {
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        String expected = "],'executionTime':'" + executionTime + "'}";
-        assertEquals(expected, fmtr.formatFooter());
+        String expected = "],\"executionTime\":\"" + executionTime
+             + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        assertEquals(expected, fmtr.formatFooter(null, 200));
+
+        expected = "],\"executionTime\":\"" + executionTime
+           + "\",\"wasSuccessful\":false,\"error\":\"Not feeling like it\","
+           + "\"statusCode\":400}";
+
+        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
+
+        expected += ");";
+        attributes.put(JSONRowFormatter.KEY_CALLBACK, "should_not_appear_in_footer");
+
+        fmtr.formatHeader(attributes); // needs to be called to set the callback parameter
+        assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
     }
 
-    public void testFormatAll() {
+    public void testFormatAll() throws IOException {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
@@ -198,7 +221,33 @@ public class JSONRowFormatterTest extends TestCase {
         Date now = Calendar.getInstance().getTime();
         DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
         String executionTime = dateFormatter.format(now);
-        String expected = testProps.getProperty("result.all").replace("{0}",
+        String expected = testProps.getProperty("result.all.good").replace("{0}",
+                executionTime);
+        assertTrue(pw == out.getWriter());
+        assertEquals(5, out.getResultsCount());
+        /* For debugging, as ant can't give long enough error messages */
+//        FileWriter fw = new FileWriter(new File("/tmp/ant_debug.txt"));
+//        fw.write("EXPECTED:\n=====\n");
+//        fw.write(expected);
+//        fw.write("\nGOT:\n======\n");
+//        fw.write(sw.toString());
+//        fw.close();
+        assertEquals(expected, sw.toString());
+    }
+
+    public void testFormatAllBad() {
+        JSONRowFormatter fmtr = new JSONRowFormatter();
+        StreamedOutput out = new StreamedOutput(pw, fmtr);
+        out.setHeaderAttributes(attributes);
+
+        // These are the two steps the service must perform to get good JSON.
+        processor.write(iterator, out);
+        out.setError("Not feeling like it.", 500);
+        out.flush();
+        Date now = Calendar.getInstance().getTime();
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
+        String executionTime = dateFormatter.format(now);
+        String expected = testProps.getProperty("result.all.bad").replace("{0}",
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());

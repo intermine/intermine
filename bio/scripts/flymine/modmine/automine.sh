@@ -18,6 +18,7 @@
 
 SUBDIR=/micklem/data/modmine/subs
 DATADIR=$SUBDIR/chado
+REPORTS=$SUBDIR/reports
 
 MIRROR=$DATADIR/mirror 
 LOADDIR=$DATADIR/load
@@ -27,11 +28,10 @@ FTPARK=$DATADIR/ark
 PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
-SUBDIR=/shared/data/modmine/subs
-REPORTS=$SUBDIR/reports
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../bio/scripts/flymine/modmine/
 
+ARKDIR=/micklem/releases/modmine
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 
@@ -91,7 +91,7 @@ $progname [-F] [-M] [-R] [-V] [-P] [-T] [-f file_name] [-g] [-i] [-r release] [-
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
   -P project_name: as -M, but restricted to a project.
-  -T list of projects: as -M, but using a (comma separated) list of projects.
+  -L list of projects: as -M, but using a (comma separated) list of projects.
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -142,7 +142,7 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:T:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -151,8 +151,8 @@ while getopts ":FMRQVP:T:abf:gipr:stvwx" opt; do
 	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
-	T )  PLIST=$OPTARG;echo "- Test build (metadata only) with projects $PLIST"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
+	P )  P=$OPTARG; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with project $P";;
+	L )  L=$OPTARG; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -178,7 +178,6 @@ shift $(($OPTIND - 1))
 # -m1 to grep only the first occurrence (multiple modencode sources)
 #
 
-DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
 MINEHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 production.datasource.serverName | awk -F "=" '{print $2}'`
 DBUSER=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.user | awk -F "=" '{print $2}'`
 DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.password | awk -F "=" '{print $2}'`
@@ -189,24 +188,33 @@ if [ -n "$P" ]
 then
 CHADODB="modchado-$P"
 echo "- Single project: $P"
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep metadata.datasource.serverName  | grep -w $P | awk -F "=" '{print $2}'`
 else
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
 
 #***
-LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
+LOG="$LOGDIR/$USER.$REL.$P"`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
-elif [ -n "$PLIST" ]
+elif [ -n "$L" ]
 then
-SOURCES=modmine-static,"$PLIST"
+SOURCES=modmine-static
+IFS=$','
+for p in $L
+do 
+echo "---> $p"
+SOURCES="$SOURCES",modencode-"$p"-metadata
+done
+IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 SOURCES=modmine-static,modencode-metadata
-#SOURCES=flyrnai-screens
+#SOURCES=modencode-metadata,worm-network
 fi
 
 
@@ -216,6 +224,7 @@ echo "==================================="
 echo "Building modmine-$REL on $MINEHOST."
 echo "==================================="
 echo "current directory: $MINEDIR"
+echo "modencode data sources on: *** $DBHOST ***"
 echo "Log: $LOG"
 if [ "$FULL" = "n" ]
 then
@@ -302,7 +311,7 @@ fi
 
 if [ "$CHADOAPPEND" = "n" ]
 then 
-dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
+dropdb -e "$CHADODB" -h "$DBHOST" -U "$DBUSER";
 createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 # initialise it
 cd $MINEDIR
@@ -379,7 +388,13 @@ do
     gzip -S .chadoxml -d $sub
     mv $DCCID $MIRROR/$1/$sub
   	FOUND=y
+    
+    if [ "$sub" = "2745.chadoxml" ]
+    then
+    changeFeatType $MIRROR/$1/$sub > $LOADDIR/$sub
+    else
     dewiggle $MIRROR/$1/$sub > $LOADDIR/$sub
+    fi
 
     if [ -n "$2" ]
     then
@@ -441,10 +456,18 @@ function fillChado {
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
 EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
 
+# check if the sub is already in chado: in case skip!
+ISIN=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select experiment_id from experiment_prop where name = 'dcc_id' and  value='$DCCID';"`
+if [ -n "$ISIN" ]
+then
+echo "Submission $DCCID is already in chado: skipping it.."
+echo "`date "+%y%m%d.%H%M"` $DCCID already loaded, skipping it.." >> $LOG
+else
+
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
 echo >> $LOG
-echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo -n "`date "+%y%m%d.%H%M"`  $DCCID " >> $LOG
 
 ## we should test more the use with this option (according to profiler is cheaper)
 #stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
@@ -484,18 +507,19 @@ then
 echo -n "  ** ERROR loading patch file **" >> $LOG
 fi
 else
-echo -n " no patch file " >> $LOG
+echo -n "  no patch file " >> $LOG
 echo "$DCCID: no patch file."
 fi
 
 else
 echo
-echo -n "  ERROR: stag-storenode FAILED, skipping submission." >> $LOG
+echo -n "  ERROR: stag-storenode FAILED." >> $LOG
 echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
 echo
 STAGFAIL=y
 fi
 
+fi
 }
 
 function processOneChadoSub {
@@ -505,9 +529,9 @@ cd $MIRROR/$1
 # if it is a symbolic link and this is not the given input
 # we skip that file
 if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
- then
+then
  continue
- fi
+fi
 echo
 echo "================"
 echo "$sub..."
@@ -593,6 +617,12 @@ function dewiggle {
 sed '/<wiggle_data id/,/<\/wiggle_data>/d' $1 | sed '/<data_wiggle_data/,/<\/data_wiggle_data>/d'
 }
 
+function changeFeatType {
+# needed to deal with piano 2745 (mRNA->transcript)    
+sed 's/<name>mRNA</<name>transcript</g' $1 | sed 's/<accession>0000234</<accession>0000673</g'   
+}
+
+
 function doProjectList {
 #--------------------------------------------------
 # building the list of live dccid for each project 
@@ -676,6 +706,7 @@ interact "START WGET NOW"
 
 for sub in $LOOPVAR
 do
+
  wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 
 cd $PATCHDIR
@@ -881,6 +912,19 @@ loadChadoSubs waterston
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
+elif [ -n "$L" ]
+then
+IFS=$','
+for p in $L
+do 
+echo "---> $p"
+IFS=$'\t\n'
+loadChadoSubs $p
+IFS=$','
+echo " " >> $LOG
+echo " " >> $LOG
+done
+IFS=$'\t\n'
 else
 loadChadoSubs
 fi
@@ -889,7 +933,6 @@ interact
 else
 echo "Using previously loaded chado..."
 fi # if $STAG=y
-
 
 
 #---------------------------------------
@@ -913,14 +956,14 @@ elif [ $RESTART = "y" ]
 then
 # restart build after failure
 echo; echo "Restarting build using last available back-up db.."
-../bio/scripts/project_build -V $REL $V -l localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -l localhost $ARKDIR/build/mod-final.dmp\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $QRESTART = "y" ]
 then
 # restart build without recovering last dumped db
 echo; echo "Quick restart of the build (using current db).."
-../bio/scripts/project_build -V $REL $V -r localhost /tmp/mod-all\
-|| { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
+../bio/scripts/project_build -V $REL $V -r localhost $ARKDIR/build/mod-final.dmp\
+|| { printf "%b" "\n modMine build (quick restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
 # new build. static, metadata, organism
@@ -942,7 +985,7 @@ cd ../bio/scripts
 fi
 # .. and build modmine
 cd $MINEDIR
-../bio/scripts/project_build -V $REL $V -b localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -b localhost $ARKDIR/build/mod-final.dmp\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 
@@ -973,9 +1016,14 @@ interact
 #---------------------------------------
 # and run acceptance tests
 #---------------------------------------
-if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
+if [ "$TEST" = "y" ] && [ "$VALIDATING" = "n" ]
 then
+if [ -n "$P" ]
+then
+NAMESTAMP="$P"_`date "+%y%m%d"`
+else
 NAMESTAMP="$REL"_`date "+%y%m%d.%H%M"`
+fi
 runTest $NAMESTAMP
 fi
 

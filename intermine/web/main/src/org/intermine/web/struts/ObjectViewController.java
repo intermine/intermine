@@ -25,8 +25,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayObjectFactory;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -37,7 +37,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ObjectViewController extends TilesAction
 {
 
-    protected static final Logger LOG = Logger.getLogger(ObjectDetailsController.class);
+    protected static final Logger LOG = Logger.getLogger(ReportController.class);
 
     /**
      * {@inheritDoc}
@@ -50,7 +50,7 @@ public class ObjectViewController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
 
         String idString = (String) context.getAttribute("id");
 
@@ -68,14 +68,22 @@ public class ObjectViewController extends TilesAction
             return null;
         }
 
-        DisplayObject dobj = displayObjects.get(object);
-        FieldConfig fc = dobj.getFieldConfigMap().get(fieldName);
+        ReportObject dobj = reportObjects.get(object);
+        FieldConfig fc = null;
+        for (FieldConfig fct : dobj.getFieldConfigs()) {
+            if (fct.getFieldExpr() == fieldName) {
+                fc = fct;
+                break;
+            }
+        }
+
+
         // truncate fields by default, unless it says otherwise in config
         boolean doNotTruncate = false;
         if (fc != null) {
             doNotTruncate = fc.getDoNotTruncate();
         }
-        request.setAttribute("doNotTruncate", doNotTruncate);
+        request.setAttribute("doNotTruncate", Boolean.valueOf(doNotTruncate));
         request.setAttribute("fieldName", fieldName);
         return null;
     }

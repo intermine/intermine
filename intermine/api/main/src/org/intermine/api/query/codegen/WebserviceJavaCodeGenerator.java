@@ -37,13 +37,13 @@ import org.intermine.util.TypeUtil;
 public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    protected static final String NULL_QUERY = "Invalid query. Query can not be null...";
+    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
+    protected static final String NULL_QUERY = "Invalid query. Query can not be null.";
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-        + "constraint, which is currently not supported. Remove the list constraint and try "
-        + "again...";
+        + "constraint, which is currently not supported.";
 
     protected static final String INDENT = "    ";
+    protected static final String INDENT2 = INDENT + INDENT;
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -54,6 +54,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @param wsCodeGenInfo a WebserviceCodeGenInfo object
      * @return web service source code in a string
      */
+    @Override
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
@@ -75,27 +76,17 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             if (query.getView() == null || query.getView().isEmpty()) {
                 return INVALID_QUERY;
             } else {
-                sb = generatePathQueryCode(query, serviceBaseURL, projectTitle, pac, impJava,
-                        impIM, sb);
+                sb = generatePathQueryCode(wsCodeGenInfo, pac, impJava, impIM, sb);
             }
         } else if ("TemplateQuery".equals(queryClassName)) {
-            // Only editable constraints will be generated
-            for (PathConstraint pc : ((TemplateQuery) query).getEditableConstraints()) {
-                String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                if ("PathConstraintBag".equals(className)) {
-                    return TEMPLATE_BAG_CONSTRAINT;
-                }
-            }
-
-            sb = generateTemplateQueryCode(query, serviceBaseURL, projectTitle, pac, impJava,
-                    impIM, sb);
+            sb = generateTemplateQueryCode(wsCodeGenInfo, pac, impJava, impIM, sb);
         }
 
-        if (!"".equals(sb.toString())) {
+        if (!TEMPLATE_BAG_CONSTRAINT.equals(sb.toString())) {
             return pac.toString() + impJava.toString() + ENDL
                     + impIM.toString() + ENDL + sb.toString();
         } else {
-            return TEST_STRING;
+            return sb.toString();
         }
     }
 
@@ -110,12 +101,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @param sb a StringBuffer to hold the rest of the source code strings
      * @return sb
      */
-    private StringBuffer generatePathQueryCode(PathQuery query,
-            String serviceBaseURL, String projectTitle, StringBuffer pac,
-            StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
+    private StringBuffer generatePathQueryCode(WebserviceCodeGenInfo info,
+            StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
         // Add package and import
         pac.append("package ")
-            .append(TypeUtil.javaisePackageName(projectTitle))
+            .append(TypeUtil.javaisePackageName(info.getProjectTitle()))
             .append(";" + ENDL + ENDL);
 
         impJava.append("import java.io.IOException;" + ENDL)
@@ -131,49 +121,68 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         sb.append("/**" + ENDL)
                 .append(SPACE + "*" + SPACE
                         + "This is an automatically generated Java program to run the "
-                        + projectTitle + " query." + ENDL)
+                        + info.getProjectTitle() + " query." + ENDL)
             .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@author " + projectTitle + ENDL)
+            .append(SPACE + "*" + SPACE + "@author " + info.getProjectTitle() + ENDL)
             .append(SPACE + "*" + ENDL)
             .append(SPACE + "*/" + ENDL);
 
         // Add class code
         sb.append("public class QueryClient" + ENDL)
-            .append("{" + ENDL + INDENT)
-            .append("private static String serviceRootUrl "
-                    + "= \"" + serviceBaseURL + "/service\";" + ENDL + ENDL);
+            .append(
+                "{" + ENDL
+                + INDENT + "private static final String ROOT "
+                    + "= \"" + info.getServiceBaseURL() + "/service\";" + ENDL
+                + ENDL);
+        if (!info.isPublic()) {
+            sb.append(
+                INDENT + "//Add your login details here by setting your password." + ENDL
+              + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
+              + INDENT + "private static final String PASSWORD = null;" + ENDL
+              + ENDL);
+        }
 
         // Add methods code
         // Add Main method
-        sb.append(INDENT + "/**" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL)
-            .append(INDENT + SPACE + "*/" + ENDL);
+        sb.append(
+              INDENT +         "/**" + ENDL
+            + INDENT + SPACE + "*" + SPACE + "Perform the query and print the rows of results." + ENDL
+            + INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL
+            + INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL
+            + INDENT + SPACE + "*/" + ENDL);
 
-        sb.append(INDENT + "public static void main(String[] args) {" + ENDL)
-            .append(INDENT + INDENT + "QueryService service =" + ENDL)
-                .append(INDENT + INDENT + INDENT + "new ServiceFactory(serviceRootUrl,"
-                        + " \"QueryService\").getQueryService();" + ENDL)
-            .append(INDENT + INDENT + "Model model = getModel();" + ENDL)
-            // In this case, path query will always have a model, no need to valid it
-            .append(INDENT + INDENT + "PathQuery query = new PathQuery(model);" + ENDL + ENDL);
+        sb.append(
+            INDENT + "public static void main(String[] args) {" + ENDL
+            + INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT);" + ENDL
+            + INDENT2 + "Model model = factory.getModelService().getModel();" + ENDL
+            + INDENT2 + "QueryService service = factory.getQueryService();" + ENDL
+            + INDENT2 + "PathQuery query = new PathQuery(model);" + ENDL
+            + ENDL);
 
+        // If we need to authenticate, do that now.
+        if (!info.isPublic()) {
+            sb.append(
+                 INDENT2 + "// Log in to access the private lists in this query" + ENDL
+               + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
+               + ENDL);
+        }
+
+        PathQuery query = info.getQuery();
         // Add views
-        sb.append(INDENT + INDENT + "// Add views" + ENDL);
+        sb.append(INDENT2 + "// Add views" + ENDL);
         if (query.getView().size() > 1) {
             int idx = 1;
             for (String pathString : query.getView()) {
                 if (idx == 1) {
-                    sb.append(INDENT + INDENT + "query.addViews(\"" + pathString + "\"," + ENDL);
+                    sb.append(INDENT2 + "query.addViews(\"" + pathString + "\"," + ENDL);
                     idx++;
                     continue;
                 }
                 if (idx == query.getView().size()) {
-                    sb.append(INDENT + INDENT + INDENT + INDENT + "\""
-                            + pathString + "\");" + ENDL);
+                    sb.append(INDENT2 + INDENT2 + "\"" + pathString + "\");" + ENDL);
                     break;
                 }
-                sb.append(INDENT + INDENT + INDENT + INDENT + "\"" + pathString + "\"," + ENDL);
+                sb.append(INDENT2 + INDENT2 + "\"" + pathString + "\"," + ENDL);
                 idx++;
             }
         } else {
@@ -223,11 +232,6 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                         sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
                     }
                 }
-                if ("PathConstraintBag".equals(className)) {
-                    sb.append(INDENT + INDENT
-                            + "// Only public lists are supported"
-                            + ENDL);
-                }
                 sb.append(INDENT + INDENT + "query.addConstraint("
                         + pathContraintUtil(pc) + ");"
                         + ENDL);
@@ -276,9 +280,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add join status
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
             impIM.append("import org.intermine.pathquery.OuterJoinStatus;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add join status" + ENDL);
+            sb.append(INDENT2 + "// Add join status" + ENDL);
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                sb.append(INDENT + INDENT + "query.setOuterJoinStatus(\""
+                sb.append(INDENT2 + "query.setOuterJoinStatus(\""
                         + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
                         + ENDL);
             }
@@ -289,27 +293,17 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         // Add description?
 
         // Add display results code
-        sb.append(INDENT + INDENT + "// Number of results are fetched" + ENDL)
-            .append(INDENT + INDENT + "int maxCount = 10000;" + ENDL)
-                .append(INDENT + INDENT
-                        + "List<List<String>> result = service.getResult(query, maxCount);"
-                        + ENDL)
-            // Change to "System.out .println" in order to fix checkstyle
-            .append(INDENT + INDENT + "System.out.print(\"Results: \\n\");" + ENDL)
-            .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
-            .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL)
-            .append(INDENT + INDENT  + "}" + ENDL)
-            .append(INDENT + "}" + ENDL + ENDL);
-
-        // Add getModel method
-        sb.append(INDENT + "private static Model getModel() {" + ENDL)
-            .append(INDENT + INDENT + "ModelService service = new ServiceFactory("
-                    + "serviceRootUrl, \"ModelService\").getModelService();" + ENDL)
-            .append(INDENT + INDENT + "return service.getModel();" + ENDL)
-            .append(INDENT + "}" + ENDL);
+        sb.append(INDENT2 + "List<List<String>> result = service.getAllResults(query);" + ENDL
+                + INDENT2 + "List<String> view = query.getView();" + ENDL
+                + INDENT2 + "System.out.println(\"Results:\");" + ENDL
+                + INDENT2 + "for (List<String> row : result) {" + ENDL
+                + INDENT2 + INDENT + "for (String cell : row) {" + ENDL
+                + INDENT2 + INDENT2 + "System.out.print(cell + \" \");" + ENDL
+                + INDENT2 + INDENT + "}" + ENDL
+                + INDENT2 + INDENT + "System.out.print(\"\\n\");" + ENDL
+                + INDENT2 + "}" + ENDL
+                + INDENT + "}" + ENDL
+                + ENDL);
 
         sb.append("}" + ENDL);
 
@@ -327,49 +321,54 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @param sb a StringBuffer to hold the rest of the source code strings
      * @return sb
     */
-    private StringBuffer generateTemplateQueryCode(PathQuery query,
-            String serviceBaseURL, String projectTitle, StringBuffer pac,
-            StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
+    private StringBuffer generateTemplateQueryCode(WebserviceCodeGenInfo info,
+            StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
 
-        String templateName = ((TemplateQuery) query).getName();
-        String description = ((TemplateQuery) query).getDescription();
-        String srcClassName = TypeUtil.javaiseClassName(templateName);
+        TemplateQuery template = (TemplateQuery) info.getQuery();
+        if (template.getBagNames().size() > 0) {
+            return new StringBuffer(TEMPLATE_BAG_CONSTRAINT);
+        }
+        String srcClassName = TypeUtil.javaiseClassName(template.getName());
 
         // Add package and import
-        pac.append("package ")
-            .append(TypeUtil.javaisePackageName(projectTitle))
-            .append(";" + ENDL + ENDL);
+        pac.append("package " + TypeUtil.javaisePackageName(info.getProjectTitle()) + ';'
+                + ENDL + ENDL);
 
-        impJava.append("import java.util.ArrayList;" + ENDL)
-            .append("import java.util.List;" + ENDL);
+        impJava.append(
+                "import java.util.ArrayList;" + ENDL
+             +  "import java.util.List;" + ENDL);
 
-        impIM.append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
-            .append("import org.intermine.webservice.client.services.TemplateService;" + ENDL)
-                .append("import org.intermine.webservice.client.template.TemplateParameter;"
-                        + ENDL);
+        impIM.append(
+              "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL
+            + "import org.intermine.webservice.client.services.TemplateService;" + ENDL
+            + "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL);
 
         // Add class comments
         sb.append("/**" + ENDL)
-            .append(SPACE + "*" + SPACE
-                    + "This is an automatically generated Java program to run the "
-                    + projectTitle + " template." + ENDL)
-            .append(SPACE + "*" + SPACE + "template name - " + templateName);
-        if (description == null || "".equals(description)) {
-            sb.append(ENDL);
-        } else {
-            sb.append(ENDL);
-            sb.append(SPACE + "*" + SPACE + "template description - " + description + ENDL);
+            .append(SPACE + "* This is an automatically generated Java program to run the "
+                + info.getProjectTitle() + " template, " + template.getName() +  ENDL);
+        if (!(template.getDescription() == null || "".equals(template.getDescription()))) {
+            sb.append(SPACE + "* Description:" + SPACE + template.getDescription() + ENDL);
         }
         sb.append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@author " + projectTitle + ENDL)
+            .append(SPACE + "*" + SPACE + "@author " + info.getProjectTitle() + ENDL)
             .append(SPACE + "*" + ENDL)
             .append(SPACE + "*/" + ENDL);
 
         // Add class code
-        sb.append("public class Template" + srcClassName + ENDL)
-            .append("{" + ENDL + INDENT)
-            .append("private static String serviceRootUrl "
-                    + "= \"" + serviceBaseURL + "/service\";" + ENDL + ENDL);
+        sb.append("public class Template" + srcClassName + ENDL
+            + "{" + ENDL
+            + INDENT + "private static final String ROOT = \"" + info.getServiceBaseURL()
+                     + "/service\";" + ENDL
+            + ENDL);
+
+        if (!info.isPublic()) {
+               sb.append(
+                   INDENT + "//Add your login details here by setting your password." + ENDL
+                + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
+                + INDENT + "private static final String PASSWORD = null;" + ENDL
+                + ENDL);
+        }
 
         // Add methods code
         // Add Main method
@@ -377,18 +376,26 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
             .append(INDENT + SPACE + "*/" + ENDL);
 
-        sb.append(INDENT + "public static void main(String[] args) {" + ENDL + ENDL)
-            .append(INDENT + INDENT
-                    + "TemplateService service = new ServiceFactory(serviceRootUrl,"
-                        + " \"TemplateService\").getTemplateService();" + ENDL + ENDL)
-            .append(INDENT + INDENT
-                    + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();"
-                    + ENDL + ENDL)
-            .append(INDENT + INDENT + "// You can edit the constraint values below" + ENDL);
+        sb.append(
+              INDENT + "public static void main(String[] args) {" + ENDL
+            + ENDL+ INDENT2
+            + "TemplateService service = new ServiceFactory(ROOT).getTemplateService();" + ENDL
+            + ENDL);
+
+        if (!info.isPublic()) {
+            sb.append(
+                    INDENT2 + "// Log in to access this template" + ENDL
+                 + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
+                 + ENDL);
+        }
+
+        sb.append(
+            INDENT2 + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL
+            + INDENT2 + "// You can edit the constraint values below" + ENDL);
 
         // Only editable constraints will be generated
-        for (PathConstraint pc : ((TemplateQuery) query).getEditableConstraints()) {
-            String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
+        for (PathConstraint pc : template.getEditableConstraints()) {
+            String constraintDes = template.getConstraintDescription(pc);
             if (constraintDes == null || "".equals(constraintDes)) {
             } else {
                 sb.append(INDENT + INDENT + "// Constraint description - "
@@ -400,27 +407,20 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         sb.append(ENDL);
 
         // Add display results code
-        sb.append(INDENT + INDENT
-                        + "// Name of a public template, "
-                        + "private templates are not supported at the moment"
-                        + ENDL)
-            .append(INDENT + INDENT + "String templateName = \"" + templateName + "\";" + ENDL)
-            .append(ENDL + INDENT + INDENT + "// Number of results are fetched" + ENDL)
-            .append(INDENT + INDENT + "int maxCount = 10000;" + ENDL)
-            .append(INDENT + INDENT
-                    + "List<List<String>> result = "
-                    + "service.getResult(templateName, parameters, maxCount);"
-                    + ENDL)
-            .append(INDENT + INDENT + "System.out.print(\"Results: \\n\");" + ENDL)
-            .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
-            .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL)
-            .append(INDENT + INDENT  + "}" + ENDL);
-
-        sb.append(INDENT + "}" + ENDL)
-            .append("}" + ENDL);
+        sb.append(
+              INDENT2 + "// Name of template" + ENDL
+            + INDENT2 + "String name = \"" + template.getName() + "\";" + ENDL
+            + ENDL
+            + INDENT2 + "List<List<String>> rows = " + "service.getAllResults(name, parameters);" + ENDL
+            + INDENT2 + "System.out.println(\"Results:\");" + ENDL
+            + INDENT2 + "for (List<String> row : rows) {" + ENDL
+            + INDENT2 + INDENT + "for (String cell : row) {" + ENDL
+            + INDENT2 + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL
+            + INDENT2 + INDENT + "}" + ENDL
+            + INDENT2 + INDENT + "System.out.print(\"\\n\");" + ENDL
+            + INDENT2 + "}" + ENDL
+            + INDENT + "}" + ENDL
+            + "}" + ENDL);
 
         return sb;
     }

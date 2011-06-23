@@ -26,7 +26,7 @@ public abstract class Formatter
      * @param attributes attributes contained in header
      * @return formatted header
      */
-    public abstract String formatHeader(Map<String, String> attributes);
+    public abstract String formatHeader(Map<String, Object> attributes);
 
     /**
      * Returns formatted result item.
@@ -39,6 +39,6 @@ public abstract class Formatter
      * Returns formatted footer.
      * @return formatted footer
      */
-    public abstract String formatFooter();
+    public abstract String formatFooter(String errorMessage, int errorCode);
 
 }

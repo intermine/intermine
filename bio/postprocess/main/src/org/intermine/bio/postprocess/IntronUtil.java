@@ -27,6 +27,8 @@ import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Intron;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
@@ -120,7 +122,7 @@ public class IntronUtil
         // to calculate intron locations.
 
         try {
-            String message = "Not performing create introns postprocess ";
+            final String message = "Not performing create introns postprocess ";
             PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
             PostProcessUtil.checkFieldExists(model, "Intron", "transcripts", message);
             PostProcessUtil.checkFieldExists(model, "Exon", null, message);
@@ -142,40 +144,37 @@ public class IntronUtil
         q.addFrom(qcTranLoc);
         q.addToSelect(qcTranLoc);
         QueryObjectReference qorTranLoc = new QueryObjectReference(qcTran, "chromosomeLocation");
-        ContainsConstraint ccTranLoc =
-            new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc);
-        cs.addConstraint(ccTranLoc);
+        cs.addConstraint(new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc));
 
         // restict to taxonIds if specified
         if (!taxonIds.isEmpty()) {
             QueryClass qcOrg = new QueryClass(Organism.class);
             q.addFrom(qcOrg);
             QueryObjectReference orgRef = new QueryObjectReference(qcTran, "organism");
-            ContainsConstraint ccTranOrg = new ContainsConstraint(orgRef,
-                                                                  ConstraintOp.CONTAINS,
-                                                                  qcOrg);
-            cs.addConstraint(ccTranOrg);
+            cs.addConstraint(new ContainsConstraint(orgRef, ConstraintOp.CONTAINS, qcOrg));
             QueryField qfTaxonId = new QueryField(qcOrg, "taxonId");
-            BagConstraint bc = new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIds);
-            cs.addConstraint(bc);
+            cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIds));
         }
 
         // Include the Exon class from the Transcript.exons collection
         QueryClass qcExon = new QueryClass(model.getClassDescriptorByName("Exon").getType());
         q.addFrom(qcExon);
         QueryCollectionReference qcrExons = new QueryCollectionReference(qcTran, "exons");
-        ContainsConstraint ccTranExons =
-            new ContainsConstraint(qcrExons, ConstraintOp.CONTAINS, qcExon);
-        cs.addConstraint(ccTranExons);
+        cs.addConstraint(new ContainsConstraint(qcrExons, ConstraintOp.CONTAINS, qcExon));
 
         // Include the referenced chromosomeLocation of each Exon
         QueryClass qcExonLoc = new QueryClass(Location.class);
         q.addFrom(qcExonLoc);
         q.addToSelect(qcExonLoc);
         QueryObjectReference qorExonLoc = new QueryObjectReference(qcExon, "chromosomeLocation");
-        ContainsConstraint ccExonLoc =
-            new ContainsConstraint(qorExonLoc, ConstraintOp.CONTAINS, qcExonLoc);
-        cs.addConstraint(ccExonLoc);
+        cs.addConstraint(new ContainsConstraint(qorExonLoc, ConstraintOp.CONTAINS, qcExonLoc));
+
+        // Include the referenced Gene of the Transcript
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        QueryObjectReference qorGene = new QueryObjectReference(qcTran, "gene");
+        cs.addConstraint(new ContainsConstraint(qorGene, ConstraintOp.CONTAINS, qcGene));
 
         // Set the constraint of the query
         q.setConstraint(cs);
@@ -195,10 +194,11 @@ public class IntronUtil
         Iterator<?> resultsIter = results.iterator();
 
         Set<Location> locationSet = new HashSet<Location>();
+        Set<Gene> geneSet = new HashSet<Gene>();
         SequenceFeature lastTran = null;
         Location lastTranLoc = null;
+        Gene lastGene = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
-
 
         osw.beginTransaction();
         while (resultsIter.hasNext()) {
@@ -211,11 +211,12 @@ public class IntronUtil
             if (lastTran == null) {
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
+                lastGene = (Gene) rr.get(3);
             }
 
             if (!thisTran.getId().equals(lastTran.getId())) {
                 tranCount++;
-                intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
+                intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc, lastGene);
                 exonCount += locationSet.size();
                 if ((tranCount % 1000) == 0) {
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
@@ -224,12 +225,14 @@ public class IntronUtil
                 locationSet = new HashSet<Location>();
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
+                lastGene = (Gene) rr.get(3);
             }
             locationSet.add((Location) rr.get(2));
+            geneSet.add((Gene) rr.get(3));
         }
 
         if (lastTran != null) {
-            intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
+            intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc, lastGene);
             tranCount++;
             exonCount += locationSet.size();
         }
@@ -263,14 +266,15 @@ public class IntronUtil
      * Return a set of Intron objects that don't overlap the Locations
      * in the locationSet argument.  The caller must call ObjectStoreWriter.store() on the
      * Intron, its chromosomeLocation and the synonym in the synonyms collection.
-     * @param locationSet a set of Locations for the exonss on a particular transcript
+     * @param locationSet a set of Locations for the exons on a particular transcript
      * @param transcript Transcript that the Locations refer to
      * @param tranLoc The Location of the Transcript
+     * @param gene gene for the transcript
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     protected int createIntronFeatures(Set<Location> locationSet, SequenceFeature transcript,
-            Location tranLoc)
+            Location tranLoc, Gene gene)
         throws ObjectStoreException {
         if (locationSet.size() == 1 || tranLoc == null || transcript == null
                 || transcript.getLength() == null) {
@@ -316,7 +320,7 @@ public class IntronUtil
 
             if (intronMap.get(identifier) == null) {
                 Class<?> intronCls = model.getClassDescriptorByName("Intron").getType();
-                SequenceFeature intron = (SequenceFeature)
+                Intron intron = (Intron)
                     DynamicUtil.createObject(Collections.singleton(intronCls));
                 Location location =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -325,6 +329,7 @@ public class IntronUtil
                 intron.setOrganism(chr.getOrganism());
                 intron.addDataSets(dataSet);
                 intron.setPrimaryIdentifier(identifier);
+                intron.setGenes(Collections.singleton(gene));
 
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
@@ -348,7 +353,7 @@ public class IntronUtil
         }
         return intronCount;
     }
-    
+
     private void addToIntronTranscripts(SequenceFeature intron, SequenceFeature transcript) {
         Set<SequenceFeature> transcripts = intronTranscripts.get(intron);
         if (transcripts == null) {

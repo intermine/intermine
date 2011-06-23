@@ -6,6 +6,8 @@ Webservice::InterMine::Path - functions for finding problems with paths
 
 =head1 SYNOPSIS
 
+For validation using functions/static methods:
+
     use Webservice::InterMine::Path qw(:validate);
 
     my @errors;
@@ -14,50 +16,138 @@ Webservice::InterMine::Path - functions for finding problems with paths
     push @errors, b_is_subclass_of_a($model, $path_stringA, $path_stringB);
     confess @errors if @errors;
 
-=head1 AUTHOR
+For queries for path based information from query services:
 
-FlyMine C<< <support@flymine.org> >>
+    use Webservice::InterMine;
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<support@flymine.org>.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Webservice::InterMine::Path
-
-You can also look for information at:
-
-=over 4
-
-=item * FlyMine
-
-L<http://www.flymine.org>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009,2010 FlyMine, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=head1 FUNCTIONS
+    my $service = Webservice::InterMine->get_testmine;
+    my $path = $service->new_path('Department.employees.name');
+    my $has_guessed_correctly = 0;
+    for my $name ($path->get_possible_values) {
+        last if $has_guessed_correctly;
+        print "Is your name $name?: y|N:";
+        chomp(my $resp = <STDIN>);
+        $has_guessed_correctly++ if ($resp =~ /y(es)?/i);
+    }
 
 =cut
 
 use Exporter 'import';
 
-my @validators = qw(validate_path end_is_class b_is_subclass_of_a root);
-our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class');
+my @validators = qw(validate_path end_is_class b_is_subclass_of_a a_is_subclass_of_b root);
+our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class', 'resolve');
 our %EXPORT_TAGS = ( validate => \@validators );
 
 use strict;
 use InterMine::Model::Attribute;
-use Carp qw/confess/;
+use Carp qw/confess croak/;
+
+=head1 METHODS
+
+=head2 new(Str path, Service service, [HashRef subtypes])
+
+Construct a new path object for use with path based 
+webservice. The path is immediately validated before use, 
+so any subclass constraints that affect this path need 
+to be included in the subtypes hash. 
+
+This constructor is not meant to be used directly; rather, obtain
+Webservice::InterMine:Path objects from their respective Service objects
+via their C<new_path> methods.
+
+=cut 
+
+sub new {
+    my $class = (ref $_[0]) ? ref shift : shift;
+    my ($path, $service, $subtypes) = @_;
+    $subtypes ||= {};
+    my $self = {path => $path, service => $service, subtypes => $subtypes};
+
+    _parse($service->model, $path, $subtypes);
+    return bless $self, $class;
+}
+
+=head2 get_results_iterator([$format])
+
+Return an object for iterating over rows of results. 
+The formats that are supported by the possible values service
+are jsonobjects (the default), and count formats. However, for accessing
+counts, and even values, it is probably easier to use the 
+convenience methods listed below.
+
+=cut
+
+sub get_results_iterator {
+    my $self = shift;
+    my $format = shift || 'jsonobjects';
+    my $service = $self->{service};
+    my $uri = $service->root . $service->POSSIBLE_VALUES_PATH; 
+    require JSON;
+    my $json = JSON->new;
+    my $params = {
+        path => $self->{path}, 
+        typeConstraints => $json->encode($self->{subtypes}),
+    };
+
+    my $iter = $service->get_results_iterator(
+        $uri, $params, [], $format, 'perl', []);
+    return $iter;
+}
+
+=head2 set_subtype($key => $value)
+
+Paths can be refined by adding subtype constraints after they have been
+constructed. EG:
+
+ my $path = $service->new_path("Department.employees.name")
+ # now the path represents that names of employees
+
+ $path->set_subtype("Department.employees" => "CEO");
+ # And now it represents the names of CEOs
+
+=cut
+
+sub set_subtype {
+    my $self = shift;
+    my ($k, $v) = @_;
+    return $self->{subtypes}{$k} = $v;
+}
+
+=head2 get_possible_values()
+
+Returns the values this path may potentially have. Be aware
+that in list context it returns, as expected, as list of values, whereas
+in scalar context it resturns an Array-Reference to that list of
+values. If you just want the number of items in the list, use 
+C<get_possible_values_count> instead, which is much more efficient.
+
+=cut
+
+sub get_possible_values {
+    my $self = shift;
+    my $iter = $self->get_results_iterator;
+    my @values = map {$_->{value}} $iter->get_all;
+    if (wantarray) {
+        return @values;
+    } else {
+        return [@values];
+    }
+}
+
+=head2 get_possible_values_count()
+
+Returns the number of different values this path may represent. 
+This is the most efficient way to retrieve this information from the server.
+
+=cut
+
+sub get_possible_values_count {
+    my $self = shift;
+    my $iter = $self->get_results_iterator('count');
+    return join('', $iter->get_all);
+}
+
+=head1 FUNCTIONS
 
 =head2 validate_path
 
@@ -100,9 +190,37 @@ sub validate_path {
 =cut
 
 sub last_bit {
-    my ( $model, $path_string ) = @_;
-    my @bits = _parse( $model, $path_string );
+    my ( $model, $path_string, $types) = @_;
+    my @bits = _parse( $model, $path_string, $types);
     return $bits[-1] || $bits[0];
+}
+
+sub last_bit_but_one {
+    my ( $model, $path_string, $types) = @_;
+    my @bits = _parse( $model, $path_string, $types);
+    return $bits[-2] || $bits[0];
+}
+
+sub last_class_type {
+    my ( $model, $path_string ) = @_;
+    my $end = last_bit_but_one( $model, $path_string );
+    if ( $end->isa('InterMine::Model::Reference') ) {
+        return $end->referenced_type_name;
+    } else {
+        return $end->name();    # because it's clearly a class
+    }
+}
+
+=head2 resolve
+
+Resolves a path to a class descriptor, or an attribute descriptor.
+
+=cut 
+
+sub resolve {
+    my ( $model, $string, $types) = @_;
+    my $bit = last_bit($model, $string, $types);
+    return class_of($bit) || $bit;
 }
 
 =head2 type_of
@@ -153,12 +271,22 @@ sub end_is_class {
     }
 }
 
-=head2 b_is_subclass_of_a
+=head2 a_is_subclass_of_b($model, $classA, $classB)
 
- Usage   : my $error = b_is_subclass_of_a($model, $pathA, $pathB);
- Function: Returns an error if B is not a subclass of A.
- Args    : $model - An InterMine::Model,
-           $pathA, $pathB - Path strings of the form "Path.string"
+Returns undef if $classA represents a subclass of $classB, or
+if they do not represent valid paths, otherwise returns a message.
+
+=cut 
+
+sub a_is_subclass_of_b {
+    my ( $model, $path_stringA, $path_stringB ) = @_;
+    return b_is_subclass_of_a($model, $path_stringB, $path_stringA);
+}
+
+=head2 b_is_subclass_of_a($model, $classA, $classB)
+
+Returns undef if $classA represents a subclass of $classB, or
+if they do not represent valid paths, otherwise returns a message.
 
 =cut
 
@@ -193,11 +321,19 @@ sub root {
 sub _parse {
     my ( $model, $path_string, $type_hashref ) = @_;
 
+    $type_hashref ||= {};
+
+    if ($ENV{DEBUG}) {
+        require Data::Dumper;
+        warn "SUBTYPES: " . Data::Dumper->Dump([$type_hashref]);
+    }
+
     # split Path.string into 'Path', 'string'
     my @bits = split /\./, $path_string;
     my @parts = ();    # <-- the classdescriptors will go here
 
     my $top_class_name = shift @bits;
+    my @processed_bits = ($top_class_name); # <-- to track what we have looked at
     confess "model is not defined" unless ( defined $model );
     push @parts, $model->get_classdescriptor_by_name($top_class_name);
 
@@ -218,7 +354,10 @@ sub _parse {
         else {
             $current_field = $current_class->get_field_by_name($bit);
             if ( !defined $current_field ) {
-                if ( my $type = $type_hashref->{ $current_class->name } ) {
+                my $subclass_key = join('.', @processed_bits);
+                warn "COULDN'T FIND $bit, CHECKING SUBCLASSES FOR $subclass_key" if $ENV{DEBUG};
+                if ( my $type = $type_hashref->{ $subclass_key } ) {
+                    warn "IT MAY BE IN $type" if $ENV{DEBUG};
                     my $type_class = $model->get_classdescriptor_by_name($type);
                     $current_field = $type_class->get_field_by_name($bit);
                 }
@@ -229,7 +368,11 @@ sub _parse {
                         $bit,
                         $current_class->name(),
                     );
-                    confess $message;
+                    if ($ENV{DEBUG}) {
+                        confess $message;
+                    } else {
+                        croak $message;
+                    }
                 }
             }
             push @parts, $current_field;
@@ -237,6 +380,7 @@ sub _parse {
             $current_class =
               next_class( $current_field, $model, $type );
         }
+        push @processed_bits, $bit;
     }
     return @parts;
 }
@@ -280,3 +424,37 @@ sub class_of {
     }
 }
 1;
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::Path
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009,2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+
+=cut

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+          "http://struts.apache.org/dtds/struts-config_1_3.dtd">
 <struts-config>
-  <data-sources>
-  </data-sources>
   <!-- ========== Form Bean Definitions =================================== -->
   <form-beans>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
@@ -30,7 +30,6 @@
     <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
     <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
-    <form-bean name="excelExportForm" type="org.intermine.web.struts.TableExportForm"/>
     <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
@@ -61,7 +60,7 @@
     </action>
     <action path="/help" forward="help.page">
     </action>
-    <action path="/objectDetails" forward="objectDetails.page">
+    <action path="/report" forward="report.page">
     </action>
     <action path="/classDescription" forward="classDescription.page">
     </action>
@@ -108,8 +107,6 @@
     </action>
     <action path="/exportQuery" type="org.intermine.web.struts.ExportQueryAction">
     </action>
-    <action path="/tips" forward="tips.page">
-    </action>
     <action path="/aspects" forward="aspects.page">
     </action>
     <action path="/dataCategories" forward="dataCategories.page">
@@ -121,8 +118,6 @@
     <action path="/showStatic" forward="showStatic.page">
     </action>
     <action path="/serviceLink" forward="serviceLink.page" >
-    </action>
-    <action path="/exportOptions" forward="exportOptions.page" >
     </action>
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>
@@ -148,6 +143,7 @@
     </action>
     <action path="/begin" type="org.intermine.web.struts.BeginAction">
       <forward name="begin" path="begin.page"/>
+      <forward name="blockingError" path="/blockingError.jsp"/>
     </action>
     <action path="/query" type="org.intermine.web.struts.CurrentQueryAction">
       <forward name="query" path="query.page"/>
@@ -169,7 +165,6 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/csvExportAction" name="csvExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
-    <action path="/excelExportAction" name="excelExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
@@ -179,10 +174,10 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/modifyDetails" type="org.intermine.web.struts.ModifyDetails" parameter="method">
-      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+      <forward name="report" redirect="true" path="/report.do"/>
       <forward name="results" path="/results.do" redirect="true"/>
-      <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
-      <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
+      <forward name="reportCollectionTable" path="/reportCollectionTable.jsp"/>
+      <forward name="reportTemplateTable" path="/reportTemplateTable.jsp"/>
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
     <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
@@ -196,7 +191,7 @@
       <forward name="success" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
-      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+      <forward name="report" redirect="true" path="/report.do"/>
     </action>
     <action path="/queryForGraphAction" type="org.intermine.web.struts.QueryForGraphAction">
       <forward name="results" redirect="true" path="/results.do"/>
@@ -345,21 +340,23 @@
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
     </action>
+    <action path="/columnSummary" type="org.intermine.web.struts.ColumnSummaryAction" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="results" redirect="true" path="/results.do"/>
+    </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/portal" type="org.intermine.web.struts.PortalQueryAction">
       <forward name="failure" path="error.page"/>
-      <forward name="objectDetails" path="/objectDetails.do"/>
+      <forward name="report" path="/report.do"/>
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="results" path="/results.do"/>
       <forward name="noResults" path="/noResults.do"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
-    </action>
-    <action path="/tip" type="org.intermine.web.struts.TipAction">
-      <forward name="display" path="tip.page"/>
     </action>
     <action path="/addColumn" type="org.intermine.web.struts.AddColumnAction" name="emptyForm" validate="false">
         <forward name="results" redirect="true" path="/results.do"/>
@@ -388,7 +385,7 @@
     </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>
-    <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
+    <action path="/initReportTemplateTable" type="org.intermine.web.struts.ReportTemplateController">
     </action>
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
     </action>
@@ -400,9 +397,9 @@
     </action>
     <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
     </action>
-    <action path="/initObjectDetails" type="org.intermine.web.struts.ObjectDetailsController">
+    <action path="/initReport" type="org.intermine.web.struts.ReportController">
     </action>
-    <action path="/initObjectDetailsAspect" type="org.intermine.web.struts.ObjectDetailsAspectController">
+    <action path="/initReportAspect" type="org.intermine.web.struts.ReportAspectController">
     </action>
     <action path="/initTree" type="org.intermine.web.struts.TreeController">
     </action>
@@ -430,8 +427,6 @@
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
     </action>
-    <action path="/initTip" type="org.intermine.web.struts.TipController">
-    </action>
     <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
     </action>
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
@@ -439,7 +434,7 @@
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
-    <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
+    <action path="/initReportInList" type="org.intermine.web.struts.ReportInListController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <!-- <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/> -->
@@ -463,6 +458,11 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
 
+    <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
+
+    <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
+
+    <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

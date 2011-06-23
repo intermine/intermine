@@ -123,8 +123,8 @@ public class SnpToGeneAction extends InterMineAction {
 
         query.addConstraint(Constraints.eq("SNP.overlappingFeatures.distance",
                 distance));
-        //query.addConstraint(Constraints.eq(
-        //        "SNP.overlappingFeatures.includeGene", "true"));
+        query.addConstraint(Constraints.eq(
+                "SNP.overlappingFeatures.includeGene", "true"));
 
         return query;
     }

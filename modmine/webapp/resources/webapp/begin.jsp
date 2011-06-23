@@ -166,22 +166,22 @@
      <img title="search" src="themes/purple/homepage/search-ico-right.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
      <div class="text">
-       <span style="width:71px; float:left;">&nbsp;</span>
+       <span style="width:76px; float:left;">&nbsp;</span>
         <p>Enter names, identifiers or keywords for genes, proteins, pathways, ontology terms, etc. (e.g.
         <a onclick="preFillInput('zen', 'input#dataSearch');return false;" title="Search for zen"
           href="#"><strong>zen</strong></a>,
         <a onclick="preFillInput('pha-4', 'input#dataSearch');return false;" title="Search for pha-4"
           href="#"><strong>pha-4</strong></a>,
-        <a onclick="preFillInput('DNA binding', 'input#dataSearch');return false;" title="Search for DNA binding"
-          href="#"><strong>DNA binding</strong></a>).
+        <a onclick="preFillInput('DNA-binding', 'input#dataSearch');return false;" title="Search for DNA-binding"
+          href="#"><strong>DNA-binding</strong></a>).
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
           <input id="dataSearch" class="input" type="text" name="searchTerm" value="e.g. zen, pha-4" />
           <input type="submit" value="Search" />
         </form>
 
         <br />Or search <strong>modENCODE experiments</strong> by type, lab name, antibody, etc. (e.g.
-        <a onclick="preFillInput('RNA seq', 'input#exptSearch');return false;" title="Search for RNA-seq"
-         href="#"><strong>RNA-seq</strong></a>,
+        <a onclick="preFillInput('ChIP-seq', 'input#exptSearch');return false;" title="Search for ChIP-seq"
+         href="#"><strong>ChIP-seq</strong></a>,
         <a onclick="preFillInput('Snyder', 'input#exptSearch');return false;" title="Search for Snyder"
           href="#"><strong>Snyder</strong></a>,
         <a onclick="preFillInput('CP190', 'input#exptSearch');return false;" title="Search for CP190"
@@ -190,7 +190,7 @@
         <!-- <p>[Supports AND, OR, NOT and wildcard*]</p> -->
         <br />
          <html:form action="/modMineSearchAction">
-            <input id="exptSearch" name="searchTerm" type="text" class="input" value="e.g. RNA-seq, CP190">
+            <input id="exptSearch" name="searchTerm" type="text" class="input" value="e.g. ChIP-seq, CP190">
             <html:submit>Experiment Search</html:submit>
         </html:form>
 
@@ -203,7 +203,7 @@
      <img title="lists" src="images/icons/genomic-search-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a></h3>
      <div class="text">
-       <span style="width:71px; height:20px; float:left;">&nbsp;</span>
+       <span style="width:76px; height:20px; float:left;">&nbsp;</span>
        <p>
          <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
          <img src="themes/modmine/genome_region.jpg" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
@@ -218,7 +218,57 @@
 
    <div style="clear:both;"></div>
 
+
    <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Gene Expression</h3>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="themes/modmine/fly_heatmap.jpg" alt="Fly expression heatmap"/></div></a></center>
+     <div class="text">
+       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
+       <p></p>
+     <p>To upload your own list of genes, use the form above or go to the 'Lists' tab and click on
+     <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">'Upload'</a> to create and name
+the new list. You can also use any of modMine's queries to create a list.
+     </p>
+     </div>
+
+   </div>
+   </div>
+
+   <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Chromatin states</h3>
+     <div class="text" >
+       <left>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.jpg" alt="flyscore"/><span>GBrowse Ideograms</span></a>
+       </left>
+       <br />
+<p></p>
+       <left>
+       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.jpg" alt="parklabviewer"/><span>Park Lab Viewer</span></a>
+       </left>
+       <p>Includes folded view and also data about DHS, TSS, replication, etc.</p>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14 last">
+   <div id="bochs">
+     <h3>Regulatory Network</h3>
+
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/wormRegulatoryNetwork.do">Worm <div class="heatmap"><img src="themes/modmine/worm-network-detail2.jpg" alt="Worm Regulatory Network"/></div></a></center>
+     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly <div class="heatmap"><img src="themes/modmine/fly-network-detail2.jpg" alt="Fly Regulatory Network"/></div></a></center>
+
+     <div class="text">
+       <p><strong>Explore</strong> an hierarchical view of the physical regulatory networks.
+       </p>
+     </div>
+   </div>
+   </div>
+
+   <div style="clear:both;"></div>
+
+      <div class="span-14">
    <div id="upload-bochs">
      <img title="lists" src="images/icons/upload-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do">Upload Lists</a></h3>
@@ -258,11 +308,11 @@
      <img title="templates" src="images/icons/templates-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
      <div class="text">
-        <span style="width: 72px; float: left;">&nbsp;</span>
+        <span style="width: 77px; float: left;">&nbsp;</span>
         <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
            designed around common tasks performed by our biologist community.</p>
         <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
-        <br /><br />
+        <br />
         <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">Templates</a>
      </div>
    </div>
@@ -287,52 +337,7 @@
 
    <div style="clear:both;"></div>
 
-   <div class="span-14">
-   <div id="bochs">
-     <h3>Fly Gene Expression</h3>
-     <center><a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="themes/modmine/fly_heatmap.jpg" alt="Fly expression heatmap"/></div></a></center>
-     <div class="text">
-       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
-       <p></p>
-     <p>To upload your own list of genes, use the form above or go to the 'Lists' tab and click on
-     <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">'Upload'</a> to create and name
-the new list. You can also use any of modMine's queries to create a list.
-     </p>
-     </div>
 
-   </div>
-   </div>
-
-   <div class="span-14">
-   <div id="bochs">
-     <h3>Fly Chromatin states</h3>
-     <div class="text" >
-       <left>
-       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.jpg" alt="flyscore"/><span>GBrowse Ideograms</span></a>
-       </left>
-       <br />
-<p></p>
-       <left>
-       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.jpg" alt="parklabviewer"/><span>Park Lab Viewer</span></a>
-       </left>
-       <p>Includes folded view and also data about DHS, TSS, replication, etc.</p>
-     </div>
-   </div>
-   </div>
-
-   <div class="span-14 last">
-   <div id="bochs">
-     <h3>Fly Regulatory Network</h3>
-     <center><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="themes/modmine/fly-network-detail.jpg" alt="Fly Regulatory Network"/></div></a></center>
-     <div class="text">
-       <p><strong>Explore</strong> an hierarchical view of the physical regulatory network.
-       </p>
-       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly Regulatory Network</a></div>
-     </div>
-   </div>
-   </div>
-
-   <div style="clear:both;"></div>
 
 </div>
 </div>
@@ -394,7 +399,7 @@ the new list. You can also use any of modMine's queries to create a list.
 
    // placeholder value for search boxes
    var dataPlaceholder = 'e.g. zen, pha-4';
-   var exptPlaceholder = 'e.g. RNA-seq, CP190';
+   var exptPlaceholder = 'e.g. ChIP-seq, CP190';
    var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
    // class used when toggling placeholder
    var inputToggleClass = 'eg';

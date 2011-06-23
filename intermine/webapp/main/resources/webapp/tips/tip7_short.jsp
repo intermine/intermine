@@ -1,1 +1,0 @@
-You can easily find the range of values stored under any attribute.

@@ -195,7 +195,6 @@ div#navtrail {
 }
 
 #pagecontent {
-    border: 0 !important;
     width: 1002px !important;
 }
 
@@ -208,8 +207,6 @@ html, body {
 /*body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') repeat-x top !important; }*/
 #content-wrap {
     padding: 25px 16px 16px 16px;
-    background: url('../themes/purple/homepage/content-grad-top.png') repeat-x top;
-    margin-top: 10px;
 }
 
 #content-wrap p {
@@ -639,7 +636,7 @@ html, body {
 
 #low #api, #low #rss {
     background: url("../themes/purple/homepage/bochs-bottom-grad.png") repeat-x bottom;
-    height: 140px;
+    height: 182px;
 }
 
 #low h4 {

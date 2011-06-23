@@ -41,7 +41,7 @@ public class UniprotEntry
     private String sequence, md5checksum;
     private Map<String, List<String>> collections = new HashMap<String, List<String>>();
     private Map<String, String> evidenceCodeToRef = new HashMap<String, String>();
-
+    private boolean isDuplicate = false;
     private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
     private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
 
@@ -536,6 +536,20 @@ public class UniprotEntry
     }
 
     /**
+     * @return the isDuplicate
+     */
+    public boolean isDuplicate() {
+        return isDuplicate;
+    }
+
+    /**
+     * @param isDuplicate the isDuplicate to set
+     */
+    public void setDuplicate(boolean isDuplicate) {
+        this.isDuplicate = isDuplicate;
+    }
+
+    /**
      * the name section in uniprot can contain several names, eg. recommendedName, alternateName,
      * etc.  all of these should be synonyms
      * @param proteinName name for the protein, eg. recommendedName, alternateName, etc
@@ -887,13 +901,6 @@ public class UniprotEntry
             dbrefMap.put(type, value);
             return dbrefMap;
         }
-
-        /**
-         * @return string representation of dbref
-         */
-        public String toString() {
-            return "type:" + type + " value:" + value;
-        }
     }
 
     /**
@@ -965,8 +972,9 @@ public class UniprotEntry
         Iterator<UniprotGene> iter = geneEntries.iterator();
         while (iter.hasNext()) {
             UniprotGene gene = iter.next();
-            UniprotEntry entry = new UniprotEntry();
+            UniprotEntry entry = new UniprotEntry(primaryAccession);
             entry.setDatasetRefId(datasetRefId);
+            entry.setTaxonId(taxonId);
 
             // since there are two genes, only return dbrefs that have the matching gene
             // designation
@@ -982,8 +990,6 @@ public class UniprotEntry
         }
         return dummyEntries;
     }
-
-
 
     /**
      * no:

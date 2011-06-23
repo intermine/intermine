@@ -29,6 +29,7 @@
 \#$
 \b\.#
 \.bak$
+\.swp$
 
 # Avoid Devel::Cover files.
 \bcover_db\b

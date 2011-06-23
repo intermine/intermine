@@ -1,7 +1,7 @@
-<!-- 
+<!--
 
-	Ant script to produce distribution zip with webservice client libraries and samples.
-	To build, run 'ant -f <path-to-this-file>'.
+  Ant script to produce distribution zip with webservice client libraries and samples.
+  To build, run 'ant -f <path-to-this-file>'.
     Generated distribution zip file is saved in directory that is set in this build file
     under dist.dir property.
 
@@ -12,33 +12,33 @@
   <property name="src.dir" value="src" />
   <property name="build.dir" value="client-build" />
   <property name="javadoc.author" value="InterMine team" />
-  <property name="version" value="1.1" />
-  
+  <property name="version" value="2.0" />
+
   <target name="clean">
     <delete dir="${dist.dir}" failonerror="false"/>
     <delete dir="${build.dir}" failonerror="false"/>
   </target>
-  
+
   <target name="compile">
     <!-- Calling standard InterMine build scripts -->
     <ant antfile="build.xml" target="library.jar" inheritall="false"></ant>
-    <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" inheritall="false"/> 
+    <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" inheritall="false"/>
     <ant antfile="../../objectstore/main/build.xml" target="library.jar" dir="../../../objectstore/main" inheritall="false"></ant>
   </target>
-  
+
   <target name="javadoc">
     <ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" inheritall="false"/>
     <copy todir="${build.dir}/doc/javadoc-pathquery">
       <fileset dir="../../../pathquery/main/build/javadoc"/>
     </copy>
-    <javadoc destdir="${build.dir}/doc/javadoc-client" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
-	     splitindex="false" author="${javadoc.author}" version="false" failonerror="false">
+    <javadoc destdir="${build.dir}/doc/javadoc-client" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false"
+       splitindex="false" author="${javadoc.author}" version="false" failonerror="false">
       <sourcepath>
-	<pathelement location="${src.dir}" />
+  <pathelement location="${src.dir}" />
       </sourcepath>
-    </javadoc> 
+    </javadoc>
   </target>
-  
+
   <target name="build" depends="clean, compile">
     <mkdir dir="${build.dir}"/>
     <copy todir="${build.dir}/src">
@@ -52,7 +52,7 @@
       <zipfileset src="dist/intermine-webservice-client.jar" />
       <fileset file="${src.dir}/log4j.properties" />
     </jar>
-    <copy file="../../../pathquery/main/dist/intermine-pathquery.jar" todir="${build.dir}/lib/"/> 
+    <copy file="../../../pathquery/main/dist/intermine-pathquery.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../objectstore/main/dist/intermine-objectstore.jar" todir="${build.dir}/lib/"/>
     <!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
     <copy file="../../../pathquery/main/lib/stax-api-1.0.jar" todir="${build.dir}/lib/"/>
@@ -77,9 +77,11 @@
 
   <target name="dist" depends="build, javadoc">
     <mkdir dir="${dist.dir}"/>
-    <zip destfile="${dist.dir}/intermine-client-${version}.zip" >
+    <zip destfile="${dist.dir}/java-intermine-webservice-client-${version}.zip" >
       <zipfileset dir="${build.dir}" excludes="samples/compile-run.sh" prefix="intermine-client-${version}" />
       <zipfileset dir="${build.dir}" includes="samples/compile-run.sh" filemode="755" prefix="intermine-client-${version}"/>
     </zip>
+    <copy tofile="${dist.dir}/java-intermine-webservice-client.zip"
+      file="${dist.dir}/java-intermine-webservice-client-${version}.zip" />
   </target>
 </project>

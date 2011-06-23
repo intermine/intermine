@@ -21,7 +21,7 @@
       onSuccess: function() {
         new Ajax.Updater('query-builder-summary', '<html:rewrite action="/queryBuilderChange"/>',
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-        	new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true, unloadOnHide: true})
+          new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true, unloadOnHide: true})
           }
         });
       }
@@ -45,19 +45,19 @@
   }
 
   function editSwitchableConstraint(path, code) {
-	    new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
-	      {parameters:'method=ajaxEditSwitchableConstraint&code='+code,
-	       asynchronous:true, evalScripts:true,
-	      onSuccess: function() {
-	        new Ajax.Updater('query-builder-summary', '<html:rewrite action="/queryBuilderChange"/>',
-	          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-	             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true});
-	          }
-	        });
-	      }
-	    });
-	    return false;
-	  }
+      new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
+        {parameters:'method=ajaxEditSwitchableConstraint&code='+code,
+         asynchronous:true, evalScripts:true,
+        onSuccess: function() {
+          new Ajax.Updater('query-builder-summary', '<html:rewrite action="/queryBuilderChange"/>',
+            {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
+               new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true});
+            }
+          });
+        }
+      });
+      return false;
+    }
 
   function editJoinStyle(path) {
     new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
@@ -103,10 +103,10 @@
                 <fmt:message var="changePath" key="query.changePath">
                     <fmt:param value="${path.type}"/>
                 </fmt:message>
-                <im:viewableSpan path="${path.pathString}" viewPaths="${viewPaths}" test="${empty path.fieldName}" idPrefix="query"> 
-                  <html:link action="/queryBuilderChange?method=changePath&amp;path=${path.pathString}" 
-                   title="${changePath}"><span class="type"><c:out value="${path.type}"/></span></html:link> 
-                </im:viewableSpan> 
+                <im:viewableSpan path="${path.pathString}" viewPaths="${viewPaths}" test="${empty path.fieldName}" idPrefix="query">
+                  <html:link action="/queryBuilderChange?method=changePath&amp;path=${path.pathString}"
+                   title="${changePath}"><span class="type"><c:out value="${path.type}"/></span></html:link>
+                </im:viewableSpan>
                 <c:if test="${path.collection}">
                   <fmt:message key="query.collection"/>
                 </c:if>
@@ -133,9 +133,9 @@
                   <html:link action="/queryBuilderChange?method=removeNode&amp;path=${path.pathString}"
                            title="${removeNodeTitle}">
                     <c:if test="${path.indentation != 0}">
-	                    <img border="0" src="images/cross.gif" width="13" height="13"
-	                       title="${removeNodeTitle}"/>
-	                </c:if>
+                      <img border="0" src="images/cross.gif" width="13" height="13"
+                         title="${removeNodeTitle}"/>
+                  </c:if>
                   </html:link>
                 </c:otherwise>
               </c:choose>
@@ -197,9 +197,7 @@
                            title="${removeConstraintTitle}">
                   <img border="0" src="images/cross.gif" width="13" height="13"
                        title="Remove this constraint"/>
-                </html:link>
-                <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
-                <html:link action="/queryBuilderChange?method=editConstraint&amp;code=${constraint.code}"
+                </html:link>&nbsp;<fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/><html:link action="/queryBuilderChange?method=editConstraint&amp;code=${constraint.code}"
                            onclick="return editConstraint('${path.pathString}', '${constraint.code}')"
                            title="${editConstraintTitle}">
                   <img border="0" src="images/edit.gif" width="13" height="13"
@@ -243,7 +241,7 @@
                     </c:choose>
                   </c:if>
                 </c:if>
-                
+
                 <c:if test="${!empty constraint.code}">
                   (<b>${constraint.code}</b>)
                 </c:if>

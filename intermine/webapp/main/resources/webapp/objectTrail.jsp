@@ -8,7 +8,7 @@
 
 <html:xhtml/>
 <link rel="stylesheet" type="text/css" href="css/objectTrail.css"/>
-<c:if test="${!empty trailElements && templateQuery.name != WEB_PROPERTIES['begin.browse.template']}">
+<c:if test="${!empty trailElements}">
   <div class="body objectTrail">
     Trail:
     <c:forEach items="${trailElements}" var="item" varStatus="status">
@@ -20,21 +20,21 @@
         <c:when test="${item.type == 'query'}">
           <c:choose>
           <c:when test="${!empty queryBuilder && queryBuilder=='true'}">
-	          <html:link action="/query.do?trail=${item.trail}"
-	                     styleClass="objectTrailLinkResults">Query</html:link>
+            <html:link action="/query.do?trail=${item.trail}"
+                       styleClass="objectTrailLinkResults">Query</html:link>
           </c:when>
           <c:otherwise>
-	          <html:link action="/query.do?showTemplate=true&amp;trail=${item.trail}"
-	                     styleClass="objectTrailLinkResults">Query</html:link>
+            <html:link action="/query.do?showTemplate=true&amp;trail=${item.trail}"
+                       styleClass="objectTrailLinkResults">Query</html:link>
           </c:otherwise>
           </c:choose>
         </c:when>
-  		<c:when test="${item.type == 'bag'}">
+      <c:when test="${item.type == 'bag'}">
           <html:link action="/bagDetails.do?bagName=${item.elementId}"
                      styleClass="objectTrailLinkResults">List</html:link>
         </c:when>
         <c:otherwise>
-          <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"
+          <html:link action="/report?id=${item.objectId}&amp;trail=${item.trail}"
                      styleClass="objectTrailLink" title="ID = ${item.objectId}">${item.label}</html:link>
         </c:otherwise>
       </c:choose>

@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,8 +10,11 @@ package org.modmine.web;
  *
  */
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -19,10 +22,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
+import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
+import org.intermine.metadata.Model;
+import org.intermine.web.logic.session.SessionMethods;
+import org.modmine.web.logic.RegulatoryNetworkDBUtil;
+import org.modmine.web.logic.RegulatoryNetworkDataFormatUtil;
 
 /**
- * Controller Action for wormRegulatoryNetwork.jsp
- * Prepare the regulatory network data and display in cytoscape web.
+ * Controller Action for wormRegulatoryNetwork.jsp to prepare the regulatory network data and
+ * display in cytoscape web.
  *
  * @author Fengyuan Hu
  *
@@ -43,9 +55,28 @@ public class WormRegulatoryNetworkController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
 
-        request.setAttribute("testString", "testing the worm regulatory network");
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Model model = im.getModel();
+        Profile profile = SessionMethods.getProfile(session);
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+
+        Set<CytoscapeNetworkNodeData> interactionNodeSet = RegulatoryNetworkDBUtil
+                .getWormRegulatoryNodes(model, executor);
+        Set<CytoscapeNetworkEdgeData> interactionEdgeSet = RegulatoryNetworkDBUtil
+                .getWormRegulatoryEdges(model, executor);
+
+        if (interactionNodeSet == null || interactionEdgeSet == null) {
+            request.setAttribute("classMissingMessage",
+                    "Interaction Class is missiong in the model...");
+            return null;
+        }
+
+        String wormRegulatoryNetwork = RegulatoryNetworkDataFormatUtil
+                .createWormRegulatoryNetworkInXGMML(interactionNodeSet, interactionEdgeSet);
+
+        request.setAttribute("wormRegulatoryNetwork", wormRegulatoryNetwork);
 
         return null;
-
     }
 }

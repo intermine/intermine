@@ -63,7 +63,7 @@ public abstract class LoginHandler extends InterMineAction
         Profile profile = setUpProfile(session, pm, username, password);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (!im.getBagManager().isUserBagsCurrent(profile)) {
-        	new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+            new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
         }
 
         // Merge in anonymous query history

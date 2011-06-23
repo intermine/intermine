@@ -1,0 +1,8 @@
+org.intermine.api.template
+org.intermine.metadata
+org.intermine.pathquery
+org.intermine.webservice.client.core
+org.intermine.webservice.client.exceptions
+org.intermine.webservice.client.services
+org.intermine.webservice.client.template
+org.intermine.webservice.client.util

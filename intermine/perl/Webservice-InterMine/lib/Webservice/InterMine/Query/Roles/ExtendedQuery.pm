@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Roles::ExtendedQuery;
 
 use Moose::Role;
-use InterMine::TypeLibrary qw(QueryType);
+use Webservice::InterMine::Types qw(QueryType);
 use MooseX::Types::Moose qw(HashRef);
 
 requires(qw/type to_DOM insertion head apply_attributes_to_element/);

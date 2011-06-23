@@ -13,10 +13,8 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,9 +45,10 @@ public class BDGPInsituConverter extends BioFileConverter
     private Item pub;
     private String[] stages;
     private String[] stageDescriptions;
-    private Set<String> badTerms;
+//    private Set<String> badTerms;
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
+    private Item ontology = null;
 
     /**
      * Construct a new instance of BDGPInsituConverter.
@@ -71,7 +70,11 @@ public class BDGPInsituConverter extends BioFileConverter
 
         stages = getStages();
         stageDescriptions = getStageDescriptions();
-        badTerms = getBadTerms();
+//        badTerms = getBadTerms();
+
+        ontology = createItem("Ontology");
+        ontology.setAttribute("name", "GO");
+        store(ontology);
 
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -85,7 +88,7 @@ public class BDGPInsituConverter extends BioFileConverter
     @Override
     public void process(Reader reader) throws Exception {
 
-        Iterator<String[]> it = FormattedTextParser.parseCsvDelimitedReader(reader);
+        Iterator<String[]> it = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (it.hasNext()) {
 
@@ -110,7 +113,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
-                if (image != null && !"".equals(image)) {
+                if (StringUtils.isNotEmpty(image)) {
                     setImage(result, URL + image);
                 }
             }
@@ -210,14 +213,14 @@ public class BDGPInsituConverter extends BioFileConverter
     }
 
     private Item getTerm(String name) throws ObjectStoreException {
-        if (StringUtils.isEmpty(name) || badTerms.contains(name)) {
+        if (StringUtils.isEmpty(name) /*|| badTerms.contains(name)*/) {
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("MRNAExpressionTerm");
+        Item termItem = createItem("GOTerm");
         termItem.setAttribute("name", name);
-        termItem.setAttribute("type", "ImaGO");
+        termItem.setReference("ontology", ontology);
         store(termItem);
         terms.put(name, termItem);
         return termItem;
@@ -269,15 +272,22 @@ public class BDGPInsituConverter extends BioFileConverter
 
     private String[] getStages() throws ObjectStoreException {
         String[] stageItems = new String[17];
+        Item item = createItem("Ontology");
+        item.setAttribute("name", "Fly Development");
+        store(item);
         for (int i = 1; i <= 16; i++) {
-            Item stage = createItem("Stage");
-            stage.setAttribute("name", "Stage " + i);
+            Item stage = createItem("DevelopmentTerm");
+            stage.setAttribute("name", "embryonic stage " + i);
+            stage.setReference("ontology", item);
             stageItems[i] = stage.getIdentifier();
             store(stage);
         }
         return stageItems;
     }
 
+
+
+/* These terms may not be in the updated file
     private Set<String> getBadTerms() {
         Set<String> forbiddenTerms = new HashSet<String>();
         forbiddenTerms.add("does_not_fit_array");
@@ -289,5 +299,6 @@ public class BDGPInsituConverter extends BioFileConverter
         forbiddenTerms.add("go_term");
         return forbiddenTerms;
     }
+    */
 }
 

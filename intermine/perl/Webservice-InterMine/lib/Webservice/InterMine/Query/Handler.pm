@@ -1,7 +1,7 @@
 package Webservice::InterMine::Query::Handler;
 
 use Moose;
-use InterMine::TypeLibrary qw(Query);
+use Webservice::InterMine::Types qw(Query);
 use MooseX::Types::Moose qw(HashRef ArrayRef Str);
 
 has query => (
@@ -85,10 +85,9 @@ sub start_element {
             and $nameattr
         # we can't test for equality due to the effect of coercion
             and length($query->name) != length($nameattr) );
-        $query->name($nameattr);
-        confess
-          if (
-            $query->model->model_name ne $args->{Attributes}{model} );
+        $query->name($nameattr) if $nameattr;
+        confess "Model name is not suitable for this service"
+          if ( $query->model->model_name ne $args->{Attributes}{model} );
         my $view = $args->{Attributes}{view};
         my @views = split( /[\s,]/, $view );
         confess 'No view in query' unless @views;
@@ -217,6 +216,7 @@ sub process_constraint_attr {
     $args{value}       = $attr->{value}
       if ( exists $attr->{value} and $attr->{value} ne 'null' );
     $args{type} = $attr->{type} if $attr->{type};
+    $args{loop_path} = $attr->{loopPath} if $attr->{loopPath};
 
     # Workarounds for legacy operators which may be present in old xml
     if ($args{op}) {
@@ -243,7 +243,7 @@ sub end_document {
         $self->query->clean_out_SCCs;
         $self->query->resume_validation;
     }
-    $self->query->logic( $self->logic_string ) if $self->logic_string;
+    $self->query->set_logic( $self->logic_string ) if $self->logic_string;
     $self->query->validate unless $self->query->is_dubious;
 }
 

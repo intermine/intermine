@@ -10,11 +10,14 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
@@ -34,10 +37,12 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -50,71 +55,210 @@ import com.browseengine.bobo.api.BrowseResult;
 import com.browseengine.bobo.api.FacetAccessible;
 
 /**
- * controller for keyword search
+ * Controller for keyword search.
+ *
  * @author nils
  */
 public class KeywordSearchResultsController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(KeywordSearchResultsController.class);
-    private static Logger logSearches = null;
+    private static Logger searchLog = null;
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         long time = System.currentTimeMillis();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-
         javax.servlet.ServletContext servletContext = request.getSession().getServletContext();
         String contextPath = servletContext.getRealPath("/");
-
-        synchronized (this) { // if this decreases performance too much we might
-            // have to change it
-            if (logSearches == null) {
-                logSearches =
-                        Logger.getLogger(KeywordSearchResultsController.class.getName()
-                                + ".searches");
-
-                String logFileName =
-                        SessionMethods.getWebProperties(servletContext).getProperty(
-                                "project.title", "unknown").toLowerCase()
-                                + "_searches.log";
-
-                Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");
-
-                RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
-                appender.setMaximumFileSize(102400); // 100kb
-                appender.setMaxBackupIndex(10);
-
-                logSearches.addAppender(appender);
-                LOG.info("Logging searches to: " + logFileName);
-            }
+        synchronized (this) {
+            // if this decreases performance too much we might have to change it
+            intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
+                    "project.title", "unknown").toLowerCase());
         }
-
         KeywordSearch.initKeywordSearch(im, contextPath);
-        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
-        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         int totalHits = 0;
-
-        WebConfig webconfig = SessionMethods.getWebConfig(request);
-        Model model = im.getModel();
-        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
 
         // term
         String searchTerm = request.getParameter("searchTerm");
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
 
+        //track the keyword search
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        im.getTrackerDelegate().trackKeywordSearch(searchTerm, profile,
+                request.getSession().getId());
+
         // search in bag (list)
-        List<Integer> ids = null;
         String searchBag = request.getParameter("searchBag");
         if (searchBag == null) {
             searchBag = "";
         }
+        List<Integer> ids = getBagIds(im, request, searchBag);
+        int offset = getOffset(request);
+        Map<String, String> facetValues = getFacetValues(request, facets);
+        LOG.debug("Initializing took " + (System.currentTimeMillis() - time) + " ms");
 
+        // show overview by default
+        if (StringUtils.isBlank(searchTerm)) {
+            searchTerm = "*:*";
+        }
+
+        //TODO remove - just  for performance testing
+        // KeywordSearch.runLuceneSearch(searchTerm);
+
+        long searchTime = System.currentTimeMillis();
+        BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues,
+                ids);
+        searchTime = System.currentTimeMillis() - searchTime;
+        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
+        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
+        if (result != null) {
+            totalHits = result.getNumHits();
+            LOG.debug("Browse found " + result.getNumHits() + " hits");
+            BrowseHit[] browseHits = result.getHits();
+            Set<Integer> objectIds = getObjectIds(browseHits);
+            Map<Integer, InterMineObject> objMap = getObjects(im, objectIds);
+            Vector<KeywordSearchHit> searchHits = getSearchHits(browseHits, objMap);
+            searchResultsParsed = parseResults(im, request, searchHits);
+            searchResultsFacets = parseFacets(result, facets, facetValues);
+        }
+        logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
+        LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
+
+        // don't display *:* in search box
+        if ("*:*".equals(searchTerm)) {
+            searchTerm = "";
+        }
+
+        // there are needed in the form too so we have to use request (i think...)
+        request.setAttribute("searchResults", searchResultsParsed);
+        request.setAttribute("searchTerm", searchTerm);
+        request.setAttribute("searchBag", searchBag);
+        request.setAttribute("searchFacetValues", facetValues);
+
+        context.putAttribute("searchResults", request.getAttribute("searchResults"));
+        context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
+        context.putAttribute("searchBag", request.getAttribute("searchBag"));
+        context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
+
+        // pagination
+        context.putAttribute("searchOffset", new Integer(offset));
+        context.putAttribute("searchPerPage", new Integer(KeywordSearch.PER_PAGE));
+        context.putAttribute("searchTotalHits", new Integer(totalHits));
+
+        // facet lists
+        context.putAttribute("searchFacets", searchResultsFacets);
+
+        // facet values
+        for (Entry<String, String> facetValue : facetValues.entrySet()) {
+            context.putAttribute("facet_" + facetValue.getKey(), facetValue.getValue());
+        }
+
+        // time for debugging
+        long totalTime = System.currentTimeMillis() - time;
+        context.putAttribute("searchTime", new Long(totalTime));
+        LOG.debug("--> TOTAL: " + (System.currentTimeMillis() - time) + " ms");
+        return null;
+    }
+
+    private Vector<KeywordSearchFacet> parseFacets(BrowseResult result,
+            Vector<KeywordSearchFacetData> facets, Map<String, String> facetValues) {
+        long time = System.currentTimeMillis();
+        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
+        for (KeywordSearchFacetData facet : facets) {
+            FacetAccessible boboFacet = result.getFacetMap().get(facet.getField());
+            if (boboFacet != null) {
+                searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
+                        .getName(), facetValues.get(facet.getField()), boboFacet
+                        .getFacets()));
+            }
+        }
+        LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "
+                + (System.currentTimeMillis() - time) + " ms");
+        return searchResultsFacets;
+    }
+
+    private Vector<KeywordSearchResult> parseResults(InterMineAPI im,
+            HttpServletRequest request, Vector<KeywordSearchHit> searchHits) {
+        long time = System.currentTimeMillis();
+        WebConfig webconfig = SessionMethods.getWebConfig(request);
+        Model model = im.getModel();
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
+        for (KeywordSearchHit keywordSearchHit : searchHits) {
+            Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
+                    .getClass());
+            ClassDescriptor classDescriptor =
+                model.getClassDescriptorByName(objectClass.getName());
+
+            KeywordSearchResult ksr =
+                new KeywordSearchResult(webconfig, keywordSearchHit.getObject(),
+                        classKeys, classDescriptor, keywordSearchHit.getScore(),
+                        // templatesForClass.get(classDescriptor)
+                        null);
+
+            searchResultsParsed.add(ksr);
+        }
+        LOG.debug("Parsing search hits took " + (System.currentTimeMillis() - time)  + " ms");
+        return searchResultsParsed;
+    }
+
+    private Map<Integer, InterMineObject> getObjects(InterMineAPI im, Set<Integer> objectIds)
+        throws ObjectStoreException {
+        long time = System.currentTimeMillis();
+        // fetch objects for the IDs returned by lucene search
+        Map<Integer, InterMineObject> objMap = new HashMap<Integer, InterMineObject>();
+        for (InterMineObject obj : im.getObjectStore().getObjectsByIds(objectIds)) {
+            objMap.put(obj.getId(), obj);
+        }
+        LOG.debug("Getting objects took " + (System.currentTimeMillis() - time) + " ms");
+        return objMap;
+    }
+
+    private Set<Integer> getObjectIds(BrowseHit[] browseHits) {
+        long time = System.currentTimeMillis();
+        Set<Integer> objectIds = new HashSet<Integer>();
+        for (BrowseHit browseHit : browseHits) {
+            try {
+                Document doc = browseHit.getStoredFields();
+                if (doc != null) {
+                    objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
+                } else {
+                    LOG.error("doc is null for browseHit " + browseHit);
+                }
+            } catch (NumberFormatException e) {
+                LOG.info("Invalid id '" + browseHit.getField("id") + "' for hit '"
+                        + browseHit + "'", e);
+            }
+        }
+        LOG.debug("Getting IDs took " + (System.currentTimeMillis() - time) + " ms");
+        return objectIds;
+    }
+
+    private int getOffset(HttpServletRequest request) {
+        // offset (-> paging)
+        Integer offset = new Integer(0);
+        try {
+            if (!StringUtils.isBlank(request.getParameter("searchOffset"))) {
+                offset = Integer.valueOf(request.getParameter("searchOffset"));
+            }
+        } catch (NumberFormatException e) {
+            LOG.info("invalid offset", e);
+        }
+        LOG.debug("SEARCH OFFSET: " + offset + "");
+        return offset.intValue();
+    }
+
+    private  List<Integer> getBagIds(InterMineAPI im, HttpServletRequest request,
+            String searchBag) {
+        List<Integer> ids = new ArrayList<Integer>();
         if (!StringUtils.isEmpty(searchBag)) {
             LOG.debug("SEARCH BAG: '" + searchBag + "'");
             InterMineBag bag = im.getBagManager().getUserOrGlobalBag(
@@ -124,20 +268,34 @@ public class KeywordSearchResultsController extends TilesAction
                 LOG.debug("SEARCH LIST: " + Arrays.toString(ids.toArray()) + "");
             }
         }
+        return ids;
+    }
 
-        // offset (-> paging)
-        int offset = 0;
-
-        try {
-            if (!StringUtils.isBlank(request.getParameter("searchOffset"))) {
-                offset = Integer.valueOf(request.getParameter("searchOffset"));
+    private Vector<KeywordSearchHit> getSearchHits(BrowseHit[] browseHits,
+            Map<Integer, InterMineObject> objMap) {
+        long time = System.currentTimeMillis();
+        Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
+        for (BrowseHit browseHit : browseHits) {
+            try {
+                Document doc = browseHit.getStoredFields();
+                if (doc != null) {
+                    InterMineObject obj = objMap.get(Integer.valueOf(doc.getFieldable("id")
+                            .stringValue()));
+                    searchHits.add(new KeywordSearchHit(browseHit.getScore(), doc, obj));
+                } else {
+                    LOG.error("doc is null for browseHit " + browseHit);
+                }
+            } catch (NumberFormatException e) {
+                // ignore
             }
-        } catch (NumberFormatException e) {
-            LOG.info("invalid offset", e);
         }
-        LOG.debug("SEARCH OFFSET: " + offset + "");
+        LOG.debug("Creating list of search hits took " + (System.currentTimeMillis() - time)
+                + " ms");
+        return searchHits;
+    }
 
-        // faceting
+    private Map<String, String> getFacetValues(HttpServletRequest request,
+            Vector<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
         // if this is a new search (searchSubmit set) only keep facets if
         // searchSubmitRestricted used
@@ -158,7 +316,6 @@ public class KeywordSearchResultsController extends TilesAction
                             break;
                         }
                     }
-
                     if (found) {
                         facetValues.put(facetField, requestParameter.getValue()[0]);
                     }
@@ -169,170 +326,40 @@ public class KeywordSearchResultsController extends TilesAction
                 LOG.debug("SEARCH FACET: " + facetValue.getKey() + " = " + facetValue.getValue());
             }
         }
+        return facetValues;
+    }
 
-        LOG.debug("Initializing took " + (System.currentTimeMillis() - time) + " ms");
-
-        // show overview by default
-        if (StringUtils.isBlank(searchTerm)) {
-            searchTerm = "*:*";
-        }
-
-        if (!StringUtils.isBlank(searchTerm)) {
-            // KeywordSearch.runLuceneSearch(searchTerm); //TODO remove - just
-            // for performance testing
-
-            Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
-            long timeSearch = System.currentTimeMillis();
-            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues,
-                    ids);
-            timeSearch = System.currentTimeMillis() - timeSearch;
-
-            long time2 = System.currentTimeMillis();
-            if (result != null) {
-                totalHits = result.getNumHits();
-                LOG.debug("Browse found " + result.getNumHits() + " hits");
-
-                BrowseHit[] browseHits = result.getHits();
-
-                HashSet<Integer> objectIds = new HashSet<Integer>();
-                for (BrowseHit browseHit : browseHits) {
-                    try {
-                        Document doc = browseHit.getStoredFields();
-                        if (doc != null) {
-                            objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
-                        } else {
-                            LOG.error("doc is null for browseHit " + browseHit);
-                        }
-                    } catch (NumberFormatException e) {
-                        LOG.info("Invalid id '" + browseHit.getField("id") + "' for hit '"
-                                + browseHit + "'", e);
-                    }
-                }
-
-                LOG.debug("Getting IDs took " + (System.currentTimeMillis() - time2) + " ms");
-                time2 = System.currentTimeMillis();
-
-                // fetch objects for the IDs returned by lucene search
-                Map<Integer, InterMineObject> objMap = new HashMap<Integer, InterMineObject>();
-                for (InterMineObject obj : im.getObjectStore().getObjectsByIds(objectIds)) {
-                    objMap.put(obj.getId(), obj);
-                }
-
-                LOG.debug("Getting objects took " + (System.currentTimeMillis() - time2) + " ms");
-                time2 = System.currentTimeMillis();
-
-                for (BrowseHit browseHit : browseHits) {
-                    try {
-                        Document doc = browseHit.getStoredFields();
-                        if (doc != null) {
-                            InterMineObject obj =
-                                    objMap.get(Integer
-                                            .valueOf(doc.getFieldable("id").stringValue()));
-
-                            searchHits.add(new KeywordSearchHit(browseHit.getScore(), doc, obj));
-                        } else {
-                            LOG.error("doc is null for browseHit " + browseHit);
-                        }
-                    } catch (NumberFormatException e) {
-                    }
-                }
-
-                LOG.debug("Creating list of search hits took "
-                        + (System.currentTimeMillis() - time2) + " ms");
-                time2 = System.currentTimeMillis();
-
-                for (KeywordSearchHit keywordSearchHit : searchHits) {
-                    Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
-                            .getClass());
-                    ClassDescriptor classDescriptor =
-                            model.getClassDescriptorByName(objectClass.getName());
-
-                    KeywordSearchResult ksr =
-                            new KeywordSearchResult(webconfig, keywordSearchHit.getObject(),
-                                    classKeys, classDescriptor, keywordSearchHit.getScore(),
-                                    // templatesForClass.get(classDescriptor)
-                                    null);
-
-                    searchResultsParsed.add(ksr);
-                }
-
-                LOG.debug("Parsing search hits took " + (System.currentTimeMillis() - time2)
-                        + " ms");
-                time2 = System.currentTimeMillis();
-
-                for (KeywordSearchFacetData facet : facets) {
-                    FacetAccessible boboFacet = result.getFacetMap().get(facet.getField());
-
-                    if (boboFacet != null) {
-                        searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
-                                .getName(), facetValues.get(facet.getField()), boboFacet
-                                .getFacets()));
-                    }
-                }
-
-                LOG.debug("Parsing " + searchResultsFacets.size() + " facets took "
-                        + (System.currentTimeMillis() - time2) + " ms");
-                time2 = System.currentTimeMillis();
-            }
-
-            // log this search to search log
-            StringBuilder searchLogLine = new StringBuilder();
-            searchLogLine.append("query=").append(searchTerm).append("; ");
-            searchLogLine.append("hits=").append(totalHits).append("; ");
-            searchLogLine.append("timeTotal=").append(System.currentTimeMillis() - time).append(
-                    "; ");
-            searchLogLine.append("timeSearch=").append(timeSearch).append("; ");
-            searchLogLine.append("offset=").append(offset).append("; ");
-
-            searchLogLine.append("restrictions=");
-            for (Entry<String, String> facetValue : facetValues.entrySet()) {
-                searchLogLine.append(facetValue.getKey()).append(":'")
-                        .append(facetValue.getValue()).append("', ");
-            }
-            searchLogLine.append("; ");
-
-            searchLogLine.append("bag=").append(searchBag).append(";");
-
-            logSearches.info(searchLogLine);
-        }
-
-        LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
-
-        // don't display *:* in search box
-        if ("*:*".equals(searchTerm)) {
-            searchTerm = "";
-        }
-
-        // there are needed in the form too so we have to use request (i
-        // think...)
-        request.setAttribute("searchResults", searchResultsParsed);
-        request.setAttribute("searchTerm", searchTerm);
-        request.setAttribute("searchBag", searchBag);
-        request.setAttribute("searchFacetValues", facetValues);
-
-        context.putAttribute("searchResults", request.getAttribute("searchResults"));
-        context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
-        context.putAttribute("searchBag", request.getAttribute("searchBag"));
-        context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
-
-        // pagination
-        context.putAttribute("searchOffset", offset);
-        context.putAttribute("searchPerPage", KeywordSearch.PER_PAGE);
-        context.putAttribute("searchTotalHits", totalHits);
-
-        // facet lists
-        context.putAttribute("searchFacets", searchResultsFacets);
-
-        // facet values
+    private void logSearch(String searchTerm, int totalHits, long time, int offset,
+            long timeSearch, Map<String, String> facetValues, String searchBag) {
+        // log this search to search log
+        StringBuilder searchLogLine = new StringBuilder();
+        searchLogLine.append("query=").append(searchTerm).append("; ");
+        searchLogLine.append("hits=").append(totalHits).append("; ");
+        searchLogLine.append("timeTotal=").append(System.currentTimeMillis() - time).append(
+                "; ");
+        searchLogLine.append("timeSearch=").append(timeSearch).append("; ");
+        searchLogLine.append("offset=").append(offset).append("; ");
+        searchLogLine.append("restrictions=");
         for (Entry<String, String> facetValue : facetValues.entrySet()) {
-            context.putAttribute("facet_" + facetValue.getKey(), facetValue.getValue());
+            searchLogLine.append(facetValue.getKey()).append(":'")
+                    .append(facetValue.getValue()).append("', ");
         }
+        searchLogLine.append("; ");
+        searchLogLine.append("bag=").append(searchBag).append(";");
+        searchLog.info(searchLogLine);
+    }
 
-        // time for debugging
-        context.putAttribute("searchTime", System.currentTimeMillis() - time);
-
-        LOG.debug("--> TOTAL: " + (System.currentTimeMillis() - time) + " ms");
-
-        return null;
+    private void intialiseLogging(String projectName) throws IOException {
+        if (searchLog == null) {
+            searchLog = Logger.getLogger(KeywordSearchResultsController.class.getName()
+                        + ".searches");
+            String logFileName = projectName + "_searches.log";
+            Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");
+            RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
+            appender.setMaximumFileSize(102400); // 100kb
+            appender.setMaxBackupIndex(10);
+            searchLog.addAppender(appender);
+            LOG.info("Logging searches to: " + logFileName);
+        }
     }
 }

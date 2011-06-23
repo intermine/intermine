@@ -10,11 +10,11 @@ package org.intermine.webservice.client.services;
  *
  */
 
-import org.intermine.webservice.client.core.TabTableResult;
+import org.intermine.webservice.client.core.XMLTableResult;
 
 /**
  * Provides a dummy-fied QueryService.
- * 
+ *
  * @author Matthew Wakeling
  **/
 public class DummyQueryService extends QueryService
@@ -47,11 +47,11 @@ public class DummyQueryService extends QueryService
         return fakeResponse;
     }
 
-    protected TabTableResult getResponseTable(QueryRequest request) {
+    protected XMLTableResult getResponseTable(QueryRequest request) {
         if (!request.getUrl(true).equals(expectedUrl)) {
             throw new IllegalArgumentException("Expected URL \"" + expectedUrl + "\" does not match got URL \"" + request.getUrl(true) + "\"");
         }
-        return new TabTableResult(fakeResponse);
+        return new XMLTableResult(fakeResponse);
     }
 }
 

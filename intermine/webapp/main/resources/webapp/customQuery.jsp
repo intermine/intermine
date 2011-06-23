@@ -20,8 +20,7 @@
             </html:link>
             <br/>
             <html:link action="/importQueries?query_builder=yes">
-              <fmt:message key="begin.import.query"/>
-              <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to import a query"/>
+              <fmt:message key="begin.import.query"/>&nbsp;<img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to import a query"/>
             </html:link>
             <br/>
             <%-- TODO this should be done elsewhere --%>

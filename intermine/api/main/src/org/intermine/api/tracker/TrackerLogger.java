@@ -10,10 +10,10 @@ package org.intermine.api.tracker;
  *
  */
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Queue;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.tracker.track.Track;
 
 /**
  * Runnable object providing insertion into the database. TrackerLogger is created
@@ -25,53 +25,29 @@ public class TrackerLogger implements Runnable
 {
     private static final Logger LOG = Logger.getLogger(TrackerLogger.class);
     private Connection connection;
-    private String tableName;
-    private String[] colNames;
-    private Object[] values;
+    private Queue<Track> trackQueue;
 
     /**
      * Construct a TrackerLogger for a specific connection and table
      * @param connection the connection to the database
-     * @param tableName the name of the table where the value will be saved
-     * @param colNames the names of the columns
-     * @param values the values to be saved
      */
-    public TrackerLogger(Connection connection, String tableName, String[] colNames,
-                         Object[] values) {
+    public TrackerLogger(Connection connection, Queue<Track> trackQueue) {
         this.connection = connection;
-        this.tableName = tableName;
-        this.colNames = colNames;
-        this.values = values;
+        this.trackQueue = trackQueue;
     }
 
     public void run() {
-        Statement stm = null;
-        StringBuffer colNamesBuffer = new StringBuffer();
-        StringBuffer valuesBuffer = new StringBuffer();
-        for (int index = 0; index < colNames.length; index++) {
-            colNamesBuffer = colNamesBuffer.append(colNames[index] + ",");
-            valuesBuffer = valuesBuffer.append("'" + values[index] + "',");
-        }
-        colNamesBuffer = colNamesBuffer.deleteCharAt(colNamesBuffer.length() - 1);
-        valuesBuffer = valuesBuffer.deleteCharAt(valuesBuffer.length() - 1);
-        String sql = "";
-        try {
-            stm = connection.createStatement();
-            sql = "INSERT INTO " + tableName
-                        + " (" + colNamesBuffer + ") "
-                        + " VALUES ( " + valuesBuffer + ")";
-            stm.executeUpdate(sql);
-        } catch (SQLException sqe) {
-            LOG.error("Problem executing the statement: " + sql, sqe);
-            LOG.error("The template execution has not been tracked.");
-            if (stm != null) {
+        for (;;) {
+            Track track = trackQueue.poll();
+            if (track != null) {
+                track.store(connection);
+            } else {
                 try {
-                    stm.close();
-                } catch (SQLException e) {
-                    LOG.error("Problem closing  resources in TrackerLogger()", e);
+                    Thread.sleep(3000);
+                } catch (InterruptedException ie) {
+                    return;
                 }
             }
         }
     }
-
 }

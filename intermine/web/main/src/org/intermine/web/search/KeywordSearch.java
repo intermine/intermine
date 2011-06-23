@@ -43,8 +43,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.StopAnalyzer;
-import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
@@ -345,6 +344,7 @@ class InterMineObjectFetcher extends Thread
     final Map<String, List<FieldDescriptor>> classKeys;
     final ObjectPipe<Document> indexingQueue;
     final Set<Class<? extends InterMineObject>> ignoredClasses;
+    final Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
     final Map<Class<? extends InterMineObject>, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
     final Vector<KeywordSearchFacetData> facets;
@@ -354,6 +354,7 @@ class InterMineObjectFetcher extends Thread
     private Set<String> normFields = new HashSet<String>();
     final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
+    private Map<String, String> attributePrefixes = null;
 
     Field idField = null;
     Field categoryField = null;
@@ -383,17 +384,21 @@ class InterMineObjectFetcher extends Thread
     public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             ObjectPipe<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
             Map<Class<? extends InterMineObject>, String[]> specialReferences,
-            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets) {
+            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
+            Map<String, String> attributePrefixes) {
         super();
 
         this.os = os;
         this.classKeys = classKeys;
         this.indexingQueue = indexingQueue;
         this.ignoredClasses = ignoredClasses;
+        this.ignoredFields = ignoredFields;
         this.specialReferences = specialReferences;
         this.classBoost = classBoost;
         this.facets = facets;
+        this.attributePrefixes = attributePrefixes;
     }
 
     /**
@@ -683,11 +688,15 @@ class InterMineObjectFetcher extends Thread
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
-
+        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getSimpleClass(obj));
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
-                    // only index strings
+                    // some fields are configured to ignore
+                    if (fieldsToIgnore != null && fieldsToIgnore.contains(att.getName())) {
+                        continue;
+                    }
+                    // only index strings and integers
                     if ("java.lang.String".equals(att.getType())
                             || "java.lang.Integer".equals(att.getType())) {
                         Object value = obj.getFieldValue(att.getName());
@@ -700,6 +709,14 @@ class InterMineObjectFetcher extends Thread
                                 values.add(new ObjectValueContainer(classAttributes.getClassName(),
                                         att.getName(), string));
                             }
+
+                            String prefix =
+                                getAttributePrefix(classAttributes.getClassName(), att.getName());
+                            if (prefix != null) {
+                                String unPrefixedValue = string.substring(prefix.length());
+                                values.add(new ObjectValueContainer(classAttributes.getClassName(),
+                                        att.getName(), unPrefixedValue));
+                            }
                         }
                     }
                 } catch (IllegalAccessException e) {
@@ -711,6 +728,27 @@ class InterMineObjectFetcher extends Thread
         return values;
     }
 
+    private String getAttributePrefix(String className, String attributeName) {
+        if (attributePrefixes == null) {
+            return null;
+        }
+        // for performance avoid joining strings in most cases
+        Set<String> classesWithPrefix = null;
+        if (classesWithPrefix == null) {
+            classesWithPrefix = new HashSet<String>();
+            for (String clsAndAtt : attributePrefixes.keySet()) {
+                String clsWithPrefix = clsAndAtt.substring(0, clsAndAtt.indexOf('.'));
+                classesWithPrefix.add(clsWithPrefix);
+            }
+        }
+        if (classesWithPrefix.contains(className)) {
+            StringBuilder clsAndAttribute = new StringBuilder();
+            clsAndAttribute.append(className).append('.').append(attributeName);
+            return attributePrefixes.get(clsAndAttribute.toString());
+        }
+        return null;
+    }
+
     private Field addToDocument(Document doc, String fieldName, String value, float boost,
             boolean raw) {
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
@@ -719,15 +757,14 @@ class InterMineObjectFetcher extends Thread
             if (!raw) {
                 f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
             } else {
-                f =
-                        new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
-                                Field.Index.NOT_ANALYZED);
+                f = new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
+                    Field.Index.NOT_ANALYZED);
             }
 
             f.setBoost(boost);
 
             // if we haven't set a boost and this is short field we can switch off norms
-            if (boost == 1F && value.indexOf(' ') == -1 ) {
+            if (boost == 1F && value.indexOf(' ') == -1) {
                 f.setOmitNorms(true);
                 f.setOmitTermFreqAndPositions(true);
                 if (!normFields.contains(f.name())) {
@@ -844,7 +881,7 @@ class InterMineObjectFetcher extends Thread
  * @author nils
  */
 
-public class KeywordSearch
+public final class KeywordSearch
 {
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
 
@@ -869,9 +906,15 @@ public class KeywordSearch
     private static String tempDirectory = null;
     private static Map<Class<? extends InterMineObject>, String[]> specialReferences;
     private static Set<Class<? extends InterMineObject>> ignoredClasses;
+    private static Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
     private static Map<ClassDescriptor, Float> classBoost;
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
+    private static Map<String, String> attributePrefixes = null;
+
+    private KeywordSearch() {
+        //don't
+    }
 
     @SuppressWarnings("unchecked")
     private static synchronized void parseProperties(ObjectStore os) {
@@ -882,8 +925,9 @@ public class KeywordSearch
         specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
         ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
         classBoost = new HashMap<ClassDescriptor, Float>();
+        ignoredFields = new HashMap<Class<? extends InterMineObject>, Set<String>>();
         facets = new Vector<KeywordSearchFacetData>();
-        debugOutput = false;
+        debugOutput = true;
 
         // load config file to figure out special classes
         String configFileName = "keyword_search.properties";
@@ -908,6 +952,34 @@ public class KeywordSearch
                                 LOG.error("Unknown class in config file: " + className);
                             } else {
                                 addCldToIgnored(ignoredClasses, cld);
+                            }
+                        }
+                    } else  if ("index.ignore.fields".equals(key) && !StringUtils.isBlank(value)) {
+                        String[] ignoredPaths = value.split("\\s+");
+
+                        for (String ignoredPath : ignoredPaths) {
+                            if (StringUtils.countMatches(ignoredPath, ".") != 1) {
+                                LOG.error("Fields to ignore specified by 'index.ignore.fields'"
+                                        + " should contain Class.field, e.g. Company.name");
+                            } else {
+                                String clsName = ignoredPath.split("\\.")[0];
+                                String fieldName = ignoredPath.split("\\.")[1];
+
+                                ClassDescriptor cld =
+                                    os.getModel().getClassDescriptorByName(clsName);
+                                if (cld != null) {
+                                    FieldDescriptor fld = cld.getFieldDescriptorByName(fieldName);
+                                    if (fld != null) {
+                                        addToIgnoredFields(ignoredFields, cld, fieldName);
+                                    } else {
+                                        LOG.error("Field name '" + fieldName + "' not found for"
+                                                + " class '" + clsName + "' specified in"
+                                                + "'index.ignore.fields'");
+                                    }
+                                } else {
+                                    LOG.error("Class name specified in 'index.ignore.fields'"
+                                            + " not found: " + clsName);
+                                }
                             }
                         }
                     } else if (key.startsWith("index.references.")) {
@@ -956,6 +1028,9 @@ public class KeywordSearch
                             LOG.error("keyword_search.properties: classDescriptor for '"
                                     + classToBoost + "' not found!");
                         }
+                    } else if (key.startsWith("index.prefix")) {
+                        String classAndAttribute = key.substring("index.prefix.".length());
+                        addAttributePrefix(classAndAttribute, value);
                     } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
                         debugOutput =
                                 "1".equals(value) || "true".equals(value.toLowerCase())
@@ -990,14 +1065,34 @@ public class KeywordSearch
                     + facet.getType().toString());
         }
 
+        LOG.info("Indexing with and without attribute prefixes:");
+        if (attributePrefixes != null) {
+            for (String clsAndAttribute : attributePrefixes.keySet()) {
+                LOG.info("- class and attribute: " + clsAndAttribute + " with prefix: "
+                        + attributePrefixes.get(clsAndAttribute));
+            }
+        }
+
         LOG.info("Search - Debug mode: " + debugOutput);
         LOG.info("Indexing - Temp Dir: " + tempDirectory);
     }
 
+    private static void addAttributePrefix(String classAndAttribute, String prefix) {
+        if (StringUtils.isBlank(classAndAttribute) || classAndAttribute.indexOf(".") == -1
+                || StringUtils.isBlank(prefix)) {
+            LOG.warn("Invalid search.prefix configuration: '" + classAndAttribute + "' = '"
+                    + prefix + "'. Should be className.attributeName = prefix.");
+        } else {
+            if (attributePrefixes == null) {
+                attributePrefixes = new HashMap<String, String>();
+            }
+            attributePrefixes.put(classAndAttribute, prefix);
+        }
+    }
+
     /**
      * loads or creates the lucene index
-     * @param im
-     *            API for accessing object store
+     * @param im API for accessing object store
      * @param path path to store the fsdirectory in
      */
     public static synchronized void initKeywordSearch(InterMineAPI im, String path) {
@@ -1072,12 +1167,10 @@ public class KeywordSearch
     }
 
     /**
-     * writes index and associated directory to the database using the
-     * metadatamanager
-     * @param os
-     *            intermine objectstore
-     * @param classKeys
-     *            map of classname to key field descriptors (from InterMineAPI)
+     * writes index and associated directory to the database using the metadatamanager.
+     *
+     * @param os intermine objectstore
+     * @param classKeys map of classname to key field descriptors (from InterMineAPI)
      */
     public static void saveIndexToDatabase(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys) {
@@ -1199,10 +1292,7 @@ public class KeywordSearch
         try {
             IndexSearcher searcher = new IndexSearcher(reader);
 
-            Analyzer analyzer =
-                    new SnowballAnalyzer(Version.LUCENE_30, "English",
-                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-
+            Analyzer analyzer = new WhitespaceAnalyzer();
             org.apache.lucene.search.Query query;
 
             // pass entire list of field names to the multi-field parser
@@ -1246,13 +1336,9 @@ public class KeywordSearch
 
     /**
      * perform a keyword search using bobo-browse for faceting and pagination
-     * @param searchString
-     *            string to search for
-     * @param offset
-     *            display offset
-     * @param facetValues
-     *            map of 'facet field name' to 'value to restrict field to'
-     *            (optional)
+     * @param searchString string to search for
+     * @param offset display offset
+     * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
      * @param ids ids to research the search to (for search in list)
      * @return bobo browse result or null if failed
      */
@@ -1263,15 +1349,10 @@ public class KeywordSearch
             return result;
         }
         long time = System.currentTimeMillis();
-
         String queryString = parseQueryString(searchString);
 
         try {
-            Analyzer analyzer =
-                    new SnowballAnalyzer(Version.LUCENE_30, "English",
-                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-
-            org.apache.lucene.search.Query query;
+            Analyzer analyzer = new WhitespaceAnalyzer();
 
             // pass entire list of field names to the multi-field parser
             // => search through all fields
@@ -1281,7 +1362,8 @@ public class KeywordSearch
             QueryParser queryParser =
                     new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer);
             queryParser.setDefaultOperator(Operator.AND);
-            query = queryParser.parse(queryString);
+            queryParser.setAllowLeadingWildcard(true);
+            org.apache.lucene.search.Query query = queryParser.parse(queryString);
 
             // required to expand search terms
             query = query.rewrite(reader);
@@ -1363,9 +1445,19 @@ public class KeywordSearch
 
     private static String parseQueryString(String qs) {
         String queryString = qs;
+        // keep strings separated by spaces together
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
+        // i don't know
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
-        return queryString;
+        // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
+        final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
+            "]", "^", "\"", "~", "?", ":", "\\"};
+        for (String s : specialCharacters) {
+            if (queryString.contains(s)) {
+                queryString = queryString.replace(s, "*");
+            }
+        }
+        return queryString.toLowerCase();
     }
 
     private static void loadIndexFromDatabase(ObjectStore os, String path) {
@@ -1508,7 +1600,7 @@ public class KeywordSearch
         LOG.info("Starting fetcher thread...");
         InterMineObjectFetcher fetchThread =
                 new InterMineObjectFetcher(os, classKeys, indexingQueue, ignoredClasses,
-                        specialReferences, classBoost, facets);
+                        ignoredFields, specialReferences, classBoost, facets, attributePrefixes);
         fetchThread.start();
 
         // index the docs queued by the fetchers
@@ -1544,12 +1636,8 @@ public class KeywordSearch
         LOG.info("Index directory: " + tempFile.getAbsolutePath());
 
         IndexWriter writer;
-        SnowballAnalyzer snowballAnalyzer =
-                new SnowballAnalyzer(Version.LUCENE_30, "English",
-                        StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-        writer =
-                new IndexWriter(index.getDirectory(), snowballAnalyzer, true,
-                        IndexWriter.MaxFieldLength.UNLIMITED); //autocommit = false?
+        writer = new IndexWriter(index.getDirectory(), new WhitespaceAnalyzer(), true,
+                 IndexWriter.MaxFieldLength.UNLIMITED); //autocommit = false?
         writer.setMergeFactor(10); //10 default, higher values = more parts
         writer.setRAMBufferSizeMB(64); //flush to disk when docs take up X MB
 
@@ -1580,11 +1668,8 @@ public class KeywordSearch
                 }
             }
         }
-
         index.getFieldNames().addAll(fetchThread.getFieldNames());
-
         LOG.info("Indexing done, optimizing index files...");
-
         try {
             writer.optimize();
             writer.close();
@@ -1594,12 +1679,9 @@ public class KeywordSearch
 
         time = System.currentTimeMillis() - time;
         int seconds = (int) Math.floor(time / 1000);
-        LOG.info("Indexing of "
-                + indexed
-                + " documents finished in "
+        LOG.info("Indexing of " + indexed + " documents finished in "
                 + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
                         time % 1000) + " minutes");
-
         return tempFile;
     }
 
@@ -1620,6 +1702,33 @@ public class KeywordSearch
 
             for (ClassDescriptor subCld : cld.getSubDescriptors()) {
                 addCldToIgnored(ignoredClasses, subCld);
+            }
+        } else {
+            LOG.error("cld " + cld + " is not IMO!");
+        }
+    }
+
+    private static void addToIgnoredFields(
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields, ClassDescriptor cld,
+            String fieldName) {
+        if (cld == null) {
+            LOG.error("ClassDesriptor was null when attempting to add an ignored field.");
+        } else if (InterMineObject.class.isAssignableFrom(cld.getType())) {
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+            clds.add(cld);
+            for (ClassDescriptor subCld : cld.getSubDescriptors()) {
+                clds.add(subCld);
+            }
+
+            for (ClassDescriptor ignoreCld : clds) {
+                Set<String> fields = ignoredFields.get(cld.getType());
+                Class<? extends InterMineObject> cls =
+                    (Class<? extends InterMineObject>) cld.getType();
+                if (fields == null) {
+                    fields = new HashSet<String>();
+                    ignoredFields.put(cls, fields);
+                }
+                fields.add(fieldName);
             }
         } else {
             LOG.error("cld " + cld + " is not IMO!");
@@ -1648,9 +1757,7 @@ public class KeywordSearch
                     LOG.info("Deleting index file: " + files[i]);
                     new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
-
                 tempFile.delete();
-
                 LOG.warn("Deleted index directory!");
             } else {
                 LOG.warn("Index directory does not exist!");

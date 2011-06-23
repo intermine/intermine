@@ -187,14 +187,14 @@ public class SequenceExporter implements Exporter
             // add the sequence location info at the second place in the header
             SequenceFeature feature = (SequenceFeature) object;
 
-            String chr = feature.getChromosome().getPrimaryIdentifier();
+            String chr = feature.getChromosomeLocation().getLocatedOn().getPrimaryIdentifier();
             Integer start = feature.getChromosomeLocation().getStart();
             Integer end = feature.getChromosomeLocation().getEnd();
             String locString = chr + ':' + start + '-' + end;
             headerBits.add(locString);
 
             for (ResultElement re : row) {
-                if (re.getObject().equals(object)) {
+                if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
                         headerBits.add("-");
@@ -214,7 +214,7 @@ public class SequenceExporter implements Exporter
         } else if (object instanceof Protein) {
 
             for (ResultElement re : row) {
-                if (re.getObject().equals(object)) {
+                if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
                         headerBits.add("-");

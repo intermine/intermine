@@ -186,7 +186,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Delete this bag from the userprofile database, bag should not be used after this method has
-     * been called.
+     * been called. Delete the ids from the production database too.
      * @throws ObjectStoreException if problem deleting bag
      */
     protected void delete() throws ObjectStoreException {
@@ -195,6 +195,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                     SavedBag.class);
             uosw.delete(savedBag);
             deleteBagValues();
+            removeIdsFromBag(getContentsAsIds());
             this.profileId = null;
             this.savedBagId = null;
         }
@@ -210,7 +211,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         q.addToSelect(osb);
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-        return (List<Integer>) ((List) res);
+        return ((List) res);
     }
 
     /**
@@ -364,7 +365,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Getter for size, just to make jsp happy.
+     * Getter for size, just to make JSP happy.
      *
      * @return the number of elements in the bag
      * @throws ObjectStoreException if something goes wrong
@@ -656,7 +657,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         // this method works with qualified and unqualified class names
         ClassDescriptor testCld = model.getClassDescriptorByName(testType);
         if (testCld == null) {
-            throw new IllegalArgumentException("Class not found in model: " + type);
+            throw new IllegalArgumentException("Class not found in model: " + testType);
         }
         Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(testCld
                 .getType());

@@ -20,9 +20,6 @@
 
 <action path="/chartRenderer" type="org.flymine.web.ChartRenderer" parameter="method" />
 
-<action path="/initAttributeLinkDisplayer"
-  type="org.intermine.bio.web.AttributeLinkDisplayerController" />
-
 <action path="/initTracksDisplayer"
    type="org.modmine.web.TrackDisplayerController" />
 
@@ -35,6 +32,9 @@
 <action path="/initProjectsSummary"
   type="org.modmine.web.ProjectsSummaryController" />
 
+<action path="/initCategorySummary"
+  type="org.modmine.web.CategorySummaryController" />
+
 <action path="/initModMineSearch"
   type="org.modmine.web.ModMineSearchController" />
 
@@ -43,9 +43,6 @@
 
 <action path="/initExperiment"
   type="org.modmine.web.ExperimentController" />
-
-<action path="/initModmineGBrowse"
-  type="org.modmine.web.ModmineGBrowseController" />
 
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
@@ -59,6 +56,7 @@
 
 <action path="/heatMap" forward="heatMap.page" />
 <action path="/projectsSummary" forward="projectsSummary.page" />
+<action path="/categorySummary" forward="categorySummary.page" />
 <action path="/chromatinStates" forward="chromatinStates.page" />
 
 <action path="/initSubmissions"
@@ -72,8 +70,8 @@
 <action path="/initSubmissionProtocolsDisplayer"
   type="org.modmine.web.SubmissionProtocolsController" />
 
-<action path="/submissionOverlapsAction" name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsAction" input="objectDetails">
-      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+<action path="/submissionOverlapsAction" name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsAction" input="report">
+      <forward name="report" redirect="true" path="/report.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
 </action>
 
@@ -102,26 +100,21 @@
 <!-- End of Cytoscape Web configuration -->
 
 <!-- Begining of Span Upload configuration -->
-<action path="/spanUploadOptions" forward="spanUploadOptions.page">
-</action>
+<action path="/spanUploadOptions" forward="spanUploadOptions.page" />
 
-<action path="/spanUploadResults" forward="spanUploadResults.page">
-</action>
+<action path="/spanUploadResults" forward="spanUploadResults.page" />
 
 <action path="/initSpanUploadOptions"
   type="org.modmine.web.SpanUploadOptionsController" />
 
-<action path="/initSpanUploadResults"
-  type="org.modmine.web.SpanUploadResultsController" />
-
 <action input="/spanUploadOptions.jsp" name="spanUploadForm" path="/spanUploadAction" scope="request" type="org.modmine.web.SpanUploadAction" >
+    <!-- Not use redirect="true". here it is doing a forward, not redirecting. Redirecting causes the browser to make a new request, and that's why the things I put in the request aren't there anymore. -->
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
     <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
 
-<action path="/spanDisplayAction" scope="request" type="org.modmine.web.SpanDisplayAction" >
-    <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
-</action>
+<action path="/spanUploadAjax"
+        type="org.modmine.web.SpanUploadAjaxAction"/>
 <!-- End of Span Upload configuration -->
 
 <!-- Begining of Fly Regulatory Network configuration -->
@@ -136,17 +129,6 @@
 <action path="/initWormRegulatoryNetwork"  type="org.modmine.web.WormRegulatoryNetworkController" />
 <!-- End of Worm Regulatory Network configuration -->
 
-<!-- links to other intermines -->
-<action path="/initOrthologueLinkDisplayer"
-        type="org.intermine.bio.web.OrthologueLinkController"/>
+<action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>
 
-<!--
-<action path="/initLatestSubs"
-  type="org.modmine.web.LatestSubsController" />
-
-<action path="/initLabs"
-  type="org.modmine.web.LabsController" />
-
-<action path="/labs" forward="labs.page"/>
--->
 

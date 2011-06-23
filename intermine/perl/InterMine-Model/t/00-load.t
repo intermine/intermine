@@ -7,4 +7,4 @@ BEGIN {
 ";
 }
 
-diag( "Testing InterMine::Model $InterMine::Model::VERSION, Perl $], $^X" );
+diag( "\nTesting InterMine::Model $InterMine::Model::VERSION, Perl $], $^X" );

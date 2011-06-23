@@ -13,15 +13,12 @@ package org.intermine.dwr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
@@ -48,11 +44,8 @@ import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.mines.HomologueMapping;
-import org.intermine.api.mines.Mine;
-import org.intermine.api.mines.OrthologueLinkManager;
+import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -85,8 +78,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PortalHelper;
-import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -104,12 +95,8 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import org.intermine.web.util.InterMineLinkGenerator;
+import org.json.JSONObject;
 
 
 /**
@@ -627,44 +614,80 @@ public class AjaxServices
     }
 
     /**
-     * For a given bag type, return links to friendly intermines.
+     * used on REPORT page
      *
-     * @param organismName the type of object
+     * For a gene, generate links to other intermines.  Include gene and orthologues.
+     *
+     * Returns NULL if no values found.  It's possible that the identifier in the local mine will
+     * match more than one entry in the remote mine but this will be handled by the portal of the
+     * remote mine.
+     *
+     * @param organismName gene.organism
      * @param primaryIdentifier identifier for gene
+     * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      */
-    public static String getInterMineLinks(String organismName, String primaryIdentifier) {
+    public static String getFriendlyMineReportLinks(String organismName,
+            String primaryIdentifier, String symbol) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        FriendlyMineManager olm = FriendlyMineManager.getInstance(im, webProperties);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
+        Constructor<?> constructor;
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            Properties webProperties = SessionMethods.getWebProperties(servletContext);
-            OrthologueLinkManager olm = OrthologueLinkManager.getInstance(im, webProperties);
-
-            // mines with orthologues
-            Map<Mine, Map<String, HomologueMapping>> minesWithOrthologues
-                = olm.getMines(Arrays.asList(organismName));
-            // mines with genes
-//            Set<Mine> minesWithGenes = olm.getMines(organismName);
-
-            if (minesWithOrthologues.isEmpty()) {
-                return null;
-            }
-            StringBuffer sb = new StringBuffer("Orthologues in other mines:<br/>");
-            for (Mine mine : minesWithOrthologues.keySet()) {
-                String href = mine.getUrl() + "/portal.do?class=Gene&externalid="
-                    + primaryIdentifier;
-                sb.append("<a href=\"" + href + "\">");
-                sb.append("<img src=\"model/images/" + mine.getLogo() + "\" target=\"_new\">");
-                sb.append("</a><br/>");
-
-            }
-            return sb.toString();
-        } catch (RuntimeException e) {
-            processException(e);
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
+        return linkGen.getLinks(olm, null, organismName, primaryIdentifier).toString();
     }
+
+    /**
+     * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
+     *
+     * @param mineName name of a friendly mine
+     * @param organisms list of organisms for genes in this list
+     * @param identifiers list of identifiers of genes in this list
+     * @return the links to friendly intermines or an error message
+     */
+    public static String getFriendlyMineListLinks(String mineName, String organisms,
+            String identifiers) {
+        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
+                || StringUtils.isEmpty(identifiers)) {
+            return null;
+        }
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+
+        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        InterMineLinkGenerator linkGen = null;
+        Class<?> clazz
+            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
+        Constructor<?> constructor;
+        Collection<JSONObject> results = null;
+        try {
+            constructor = clazz.getConstructor(new Class[] {});
+            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
+            // runs remote templates (possibly)
+            results = linkGen.getLinks(linkManager, mineName, organisms, identifiers);
+        } catch (Exception e) {
+            LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
+            return null;
+        }
+        if (results == null || results.isEmpty()) {
+            return null;
+        }
+        return results.toString();
+    }
+
 
     /**
      * Saves information, that some element was toggled - displayed or hidden.
@@ -791,10 +814,11 @@ public class AjaxServices
      * @param bagName the name of a bag
      * @return the list of queries
      */
-    private static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+    private static List<String> queriesThatMentionBag(Map<String, SavedQuery> savedQueries,
+            String bagName) {
         try {
             List<String> queries = new ArrayList<String>();
-            for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+            for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
                 String queryName = (String) i.next();
                 SavedQuery query = (SavedQuery) savedQueries.get(queryName);
                 if (query.getPathQuery().getBagNames().contains(bagName)) {
@@ -1107,120 +1131,10 @@ public class AjaxServices
         }
     }
 
-    /**
-     * Get the news
-     * @param rssURI the URI of the rss feed
-     * @return the news feed as html
-     * @deprecated use getNewsPreview() instead
-     */
-    public static String getNewsRead(String rssURI) {
-        try {
-            URL feedUrl = new URL(rssURI);
-            SyndFeedInput input = new SyndFeedInput();
-            XmlReader reader;
-            try {
-                reader = new XmlReader(feedUrl);
-            } catch (Throwable e) {
-                // xml document at this url doesn't exist or is invalid, so the news cannot be read
-                return "<i>No news</i>";
-            }
-            SyndFeed feed = input.build(reader);
-            List<SyndEntry> entries = feed.getEntries();
-            StringBuffer html = new StringBuffer("<ol id=\"news\">");
-            int counter = 0;
-            for (SyndEntry syndEntry : entries) {
-                if (counter > 4) {
-                    break;
-                }
-
-                // NB: apparently, the only accepted formats for getPublishedDate are
-                // Fri, 28 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 2008 11:02 GMT
-                // or
-                // Fri, 8 Jan 08 11:02 GMT
-                //
-                // an annoying error appears if the format is not followed, and news tile hangs.
-                //
-                // the following is used to display the date without timestamp.
-                // this should always work since the retrieved date has a fixed format,
-                // independent of the one used in the xml.
-                // longDate = Wed Aug 19 14:44:19 BST 2009
-                String longDate = syndEntry.getPublishedDate().toString();
-                String dayMonth = longDate.substring(0, 10);
-                String year = longDate.substring(24);
-
-                DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
-                Date date = df.parse(longDate);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-
-                // month starts at zero
-                int month = calendar.get(calendar.MONTH) + 1;
-                String monthString = String.valueOf(month);
-                if (monthString.length() == 1) {
-                    monthString = "0" + monthString;
-                }
-
-                //http://blog.flymine.org/2009/08/
-//                WebContext ctx = WebContextFactory.get();
-//                ServletContext servletContext = ctx.getServletContext();
-//                Properties properties = SessionMethods.getWebProperties(servletContext);
-
-                String url = syndEntry.getLink();
-//                properties.getProperty("project.news") + "/" + year + "/"   + monthString;
-
-                html.append("<li>");
-                html.append("<strong>");
-                html.append("<a href=\"" + url + "\">");
-                html.append(syndEntry.getTitle());
-                html.append("</a>");
-                html.append("</strong>");
-//                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
-                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
-                html.append(syndEntry.getDescription().getValue());
-                html.append("</li>");
-                counter++;
-            }
-            html.append("</ol>");
-            return html.toString();
-        } catch (MalformedURLException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (IllegalArgumentException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (FeedException e) {
-            return "<i>No news at specified URL</i>";
-        } catch (java.text.ParseException e) {
-            return "<i>No news at specified URL</i>";
-        }
-    }
-
     //*****************************************************************************
     // Tags AJAX Interface
     //*****************************************************************************
 
-    /**
-     * Returns all objects names tagged with specified tag type and tag name.
-     * @param type tag type
-     * @param tag tag name
-     * @return objects names
-     */
-    public static Set<String> filterByTag(String type, String tag) {
-        Profile profile = getProfile(getRequest());
-
-        SearchRepository searchRepository = profile.getSearchRepository();
-        Map<String, WebSearchable> map = (Map<String, WebSearchable>) searchRepository.
-            getWebSearchableMap(type);
-        if (map == null) {
-            return null;
-        }
-        Map<String, WebSearchable> filteredMap = new TreeMap<String, WebSearchable>();
-        List<String> tagList = new ArrayList<String>();
-        tagList.add(tag);
-        filteredMap.putAll(new SearchFilterEngine().filterByTags(map, tagList, type,
-                profile.getUsername(), getTagManager()));
-        return filteredMap.keySet();
-    }
     /**
      * Adds tag and assures that there is only one tag for this combination of tag name, tagged
      * Object and type.
@@ -1411,43 +1325,4 @@ public class AjaxServices
         return defaultList;
     }
 
-    /**
-     * Used on list analysis page to convert list contents to orthologues.  then forwarded to
-     * another intermine instance.
-     *
-     * @param bagType class of bag
-     * @param bagName name of bag
-     * @param param name of parameter value, eg. `orthologue`
-     * @param selectedValue orthologue organism
-     * @return converted list of orthologues
-     * @throws UnsupportedEncodingException bad encoding
-     */
-    public String convertObjects(String bagType, String bagName, String param,
-            String selectedValue) throws UnsupportedEncodingException {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpServletRequest request = getRequest();
-        HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-
-        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-
-        // Use custom converters
-        Map<String, String []> additionalConverters =
-            bagQueryConfig.getAdditionalConverters(bagType);
-        if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
-                String addparameter = PortalHelper.getAdditionalParameter(param,
-                        additionalConverters.get(converterClassName));
-                if (StringUtils.isNotEmpty(addparameter)) {
-                    BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
-                            converterClassName);
-                    return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
-                            selectedValue);
-                }
-            }
-        }
-        return null;
-    }
 }

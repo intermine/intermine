@@ -18,6 +18,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.tracker.track.TemplateTrack;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;

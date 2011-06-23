@@ -33,18 +33,23 @@ import org.intermine.web.bag.PkQueryIdUpgrader;
 
 public class InterMineBagHandlerTest extends StoreDataTestCase
 {
+    ObjectStoreWriter osw;
     private ObjectStore os;
     private int idCounter;
-    
+
     public InterMineBagHandlerTest (String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
         idCounter = 0;
+    }
+
+    public void tearDown() throws Exception {
+        osw.close();
     }
 
     public void executeTest(String type) {
@@ -52,15 +57,15 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
 
     public void testQueries() throws Throwable {
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
-    
+
     public static Test suite() {
         return buildSuite(InterMineBagHandlerTest.class);
     }
-    
+
     public void testNoNewObject() throws Exception {
         Company oldCompany = createCompanyWithId("Old company");
 
@@ -118,7 +123,7 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         assertEquals(2, newIds.size());
     }
 
-    
+
     private Company createCompanyWithId(String companyName) {
         Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -126,7 +131,7 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         company.setName(companyName);
         return company;
     }
-    
+
     private Address createAddressWithId(String streetAddress) {
         Address address =  (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         address.setId(new Integer(idCounter++));

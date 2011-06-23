@@ -23,6 +23,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.util.URLGenerator;
 
 /**
  * @author Fengyuan Hu
@@ -39,13 +40,14 @@ public class ApiJavaController extends TilesAction
             HttpServletResponse response) throws Exception {
 
         request.setAttribute("path", "WEB-INF/lib/");
-        request.setAttribute("fileName", "intermine-client-1.1.zip");
+        request.setAttribute("fileName", "java-intermine-webservice-client.zip");
         // for jar - application/java-archive or application/x-jar
         request.setAttribute("mimeType", "application/zip");
         // for jar - jar
         request.setAttribute("mimeExtension", "zip");
+        request.setAttribute("baseURL", new URLGenerator(request).getPermanentBaseURL());
 
-        // Find project title and make a javasie package name
+        // Find project title and make a Javanised package name
         Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
         String projectTitle = webProperties.getProperty("project.title");

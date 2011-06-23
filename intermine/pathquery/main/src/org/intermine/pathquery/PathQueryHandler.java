@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
-    private Map<String, PathQuery> queries;
+    private final Map<String, PathQuery> queries;
     private String queryName;
     protected PathQuery query;
     protected String constraintLogic = null;
@@ -89,6 +89,10 @@ public class PathQueryHandler extends DefaultHandler
                 throw new SAXException(e);
             }
             query = new PathQuery(model);
+
+            if (attrs.getValue("title") != null && !attrs.getValue("title").isEmpty()) {
+                query.setTitle(attrs.getValue("title"));
+            }
 
             if (attrs.getValue("longDescription") != null) {
                 query.setDescription(attrs.getValue("longDescription"));
@@ -198,12 +202,15 @@ public class PathQueryHandler extends DefaultHandler
             Map<String, String> attrs, Collection<String> values) throws SAXException {
 
         if (path == null) {
-            throw new SAXException("Path is null: " + q.toString());
+            throw new SAXException("Bad constraint: Path is null. " + q.toString());
         }
 
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
-            constraintOp = ConstraintOp.MATCHES;
+            constraintOp = ConstraintOp.CONTAINS;
+        }
+        if (ConstraintOp.DOES_NOT_CONTAIN.equals(constraintOp)) {
+            constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
         }
         if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = false;
@@ -308,8 +315,10 @@ public class PathQueryHandler extends DefaultHandler
             }
             constraintPath = null;
         } else if ("value".equals(qName)) {
-            if (valueBuffer == null) {
-                throw new NullPointerException("valueBuffer is null while closing value tag");
+            if (valueBuffer == null || valueBuffer.length() < 1) {
+                throw new NullPointerException("No value provided in value tag."
+                        + " Failed for template query: " + queryName + " on constraint: "
+                        + constraintPath);
             }
             constraintValues.add(valueBuffer.toString());
             valueBuffer = null;

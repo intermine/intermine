@@ -8,15 +8,6 @@
         type="org.flymine.web.ChartRenderer"
         parameter="method"/>
 
-<action path="/initGeneMicroArrayDisplayer"
-        type="org.flymine.web.GeneMicroArrayDisplayerController"/>
-
-<action path="/proteinInteractionRenderer"
-        type="org.intermine.bio.web.widget.ProteinInteractionImgRenderer"/>
-
-<action path="/initAttributeLinkDisplayer"
-        type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
-
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
@@ -32,15 +23,29 @@
 <action path="/galaxyExportAction" name="galaxyExportForm"
         type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
 
-<action path="/initOrthologueLinkDisplayer"
-        type="org.intermine.bio.web.OrthologueLinkController"/>
-
-<action path="/initCytoscapeNetworkDisplayer"
-        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
-
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
 
 <action path="/cytoscapeNetworkAjax"
         type="org.intermine.bio.web.struts.CytoscapeNetworkAjaxAction"/>
 
+<!-- Beginning of Genomic Region Search configuration -->
+
+<action path="/initGenomicRegionSearchOptions"
+        type="org.intermine.bio.web.struts.GenomicRegionSearchOptionsController"/>
+
+<action path="/genomicRegionSearch" forward="genomicRegionSearchOptions.page"/>
+
+<action path="/genomicRegionSearchResults" forward="genomicRegionSearchResults.page"/>
+
+<action input="/genomicRegionSearchOptionsBase.jsp" path="/genomicRegionSearchAction" name="genomicRegionSearchForm" scope="request" type="org.intermine.bio.web.struts.GenomicRegionSearchAction" >
+    <!-- Not use redirect="true". here it is doing a forward, not redirecting. Redirecting causes the browser to make a new request, and that's why the things I put in the request aren't there anymore. -->
+    <forward name="genomicRegionSearchResults" path="/genomicRegionSearchResults.do" redirect="false"/>
+    <forward name="genomicRegionSearchOptions" path="/genomicRegionSearch.do" redirect="true"/>
+</action>
+
+<action path="/genomicRegionSearchAjax" type="org.intermine.bio.web.struts.GenomicRegionSearchAjaxAction"/>
+
+<!-- End of Genomic Region Search configuration -->
+
+<action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>

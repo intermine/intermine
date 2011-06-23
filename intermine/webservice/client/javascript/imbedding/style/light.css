@@ -2,22 +2,31 @@ div.imbedded-table-tooltip {
     border-width:       2px;
     width:              500px;
     border-style:       solid;
-    border-color:       #365252;
+    border-color:       white;
     padding:            5px;
     color:              white;
     background:         #666;
     opacity:            0.90;
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     font-weight: bold;
+}
+
+.imbedded-count-displayer {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
     border-width: 2px;
-    width: 600px;
+    width: 80%;
     border-color: #365252;
     padding-bottom: 5px;
+}
+
+.imbedded-scroll-container {
+    overflow: auto;
 }
 
 .imbedded-table-titlebox {
@@ -28,27 +37,34 @@ div.imbedded-table-tooltip {
 }
 
 .imbedded-table-title {
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     color: #444;
 }
 
 .imbedded-column-header-row {
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     font-weight: bold;
     background: #666;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {
     border-collapse: collapse;
     width: 100%;
+    overflow: scroll;
 }
 
 .imbedded-cell {
     font-size: 14px;
-    font-family: "Neuton", "Times", "serif";
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     padding: 4px;
 }
+
+.imbedded-cell > a {
+    color: #444;
+}
+
 .imbedded-data-row {
     color: #444;
 }
@@ -66,8 +82,8 @@ div.imbedded-table-tooltip {
     background: white;
 }
 
-.imbedded-exportlink, .imbedded-pagelink, .imbedded-mineresultslink {
-    font-family: "Neuton", "Times", "serif";
+.imbedded-exportlink, .imbedded-pagelink {
+    font-family: "Droid Serif", "Neuton", "Georgia", "Times", "serif";
     text-decoration: none;
     color: black ! important;
     font-size: 12px;
@@ -75,14 +91,20 @@ div.imbedded-table-tooltip {
     padding-left: 5px;
 }
 
-.imbedded-exportlink {
-    float: right;
-}
-
-.imbedded-pagelink {
+.imbedded-addition-link, .imbedded-next {
     float: right;
 }
 
 .imbedded-table-container > a:hover {
     font-style: italic;
+}
+
+.imbedded-table-expand-help {
+    color: #666;
+    float: right;
+    font-size: 50%;
+}
+
+.imbedded-null {
+    opacity: 0.5;
 }
