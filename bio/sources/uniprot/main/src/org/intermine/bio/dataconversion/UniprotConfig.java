@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import sun.security.krb5.Config;
+
 /**
  *
  * @author julie sullivan
@@ -61,7 +63,7 @@ public class UniprotConfig
 
     /**
      * @param taxonId taxonid
-     * @return the unique identifier for this organism
+     * @return the unique identifier for genes of this organism, eg. primaryIdentifier
      */
     public String getUniqueIdentifier(String taxonId) {
         ConfigEntry entry = entries.get(taxonId);
@@ -127,6 +129,11 @@ public class UniprotConfig
                         + key + ".  This line has not been processed.");
             }
         }
+
+        System.out.println(geneDesignation);
+        ConfigEntry configEntry = getConfig("261594");
+        System.out.println(configEntry.uniqueIdentifier);
+        System.out.println(configEntry.getIdentifierMethod(configEntry.uniqueIdentifier));
     }
 
     private ConfigEntry getConfig(String taxonId) {
@@ -197,6 +204,7 @@ public class UniprotConfig
 
     /**
      * class representing an organism in the uniprot config file
+     *
      * @author julie sullivan
      */
     public class ConfigEntry
@@ -206,6 +214,7 @@ public class UniprotConfig
         private String strain = null;
 
         /**
+         * eg. primaryIdentifier
          * @return the uniqueIdentifier
          */
         protected String getUniqueIdentifier() {
