@@ -36,8 +36,7 @@
     </source>
 
     <source name="wormbase-identifiers" type="wormbase-identifiers">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/wormbase/current"/>
-      <property name="src.data.dir.includes" value="*.txt"/>
+      <property name="src.data.dir" location="/micklem/data/wormbase/current"/>
     </source>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
      <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-ids/current"/>
