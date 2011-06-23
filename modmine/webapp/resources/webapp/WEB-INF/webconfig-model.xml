@@ -647,7 +647,7 @@
 
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                          jspName="model/submissionDetailsDisplayer.jsp"
-                         replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount"
+                         replacesFields="title,experimentType,notice, DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount"
                          placement="top"
                          types="Submission"/>
 
