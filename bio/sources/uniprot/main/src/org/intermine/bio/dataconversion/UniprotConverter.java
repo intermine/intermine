@@ -812,6 +812,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 Set<String> geneFields = getOtherFields(taxId);
                 for (String geneField : geneFields) {
                     geneIdentifiers = getGeneIdentifiers(uniprotEntry, geneField);
+                    if (geneIdentifiers == null) {
+                        continue;
+                    }
                     for (String geneIdentifier : geneIdentifiers) {
                         if (StringUtils.isEmpty(geneIdentifier)) {
                             continue;
