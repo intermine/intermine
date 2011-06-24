@@ -10,6 +10,7 @@ package org.intermine.web.logic.results;
  *
  */
 
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Object field, used in header the summary of ReportObject
@@ -41,6 +42,8 @@ public class ReportObjectField
     /** @var shall we truncate the field value? */
     private boolean fieldDoNotTruncate;
 
+    private String label = null;
+
     /**
      * Constructor
      * @param objectType unqualified class name
@@ -56,6 +59,30 @@ public class ReportObjectField
         this.fieldDisplayerPage = fieldDisplayerPage;
         this.fieldDoNotTruncate = doNotTruncate;
         this.pathString = objectType + "." + fieldName;
+    }
+
+    public ReportObjectField(String objectType, String fieldName,
+            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, String label) {
+        this(objectType, fieldName, fieldValue, fieldDisplayerPage, doNotTruncate);
+        this.label = label;
+    }
+
+    /**
+     * Get the label to display in the webapp for this field. If there is
+     * no label, returns the name of the field instead.
+     * @return A human readable label.
+     */
+    public String getDisplayName() {
+        if (label != null) {
+            return label;
+        } else {
+            String[] parts = StringUtils.splitByCharacterTypeCamelCase(fieldName);
+            String[] ucFirstParts = new String[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                ucFirstParts[i] = StringUtils.capitalize(parts[i]);
+            }
+            return StringUtils.join(ucFirstParts, " ");
+        }
     }
 
     /**

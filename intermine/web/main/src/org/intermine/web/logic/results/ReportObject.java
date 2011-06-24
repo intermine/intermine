@@ -202,7 +202,8 @@ public class ReportObject
                             fieldName,
                             fieldValue,
                             fieldDisplayer,
-                            fc.getDoNotTruncate()
+                            fc.getDoNotTruncate(),
+                            fc.getLabel()
                     );
 
                     // summary fields should go first
@@ -278,6 +279,25 @@ public class ReportObject
             return types.get(qualifiedType).getFieldConfigs();
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Return a string to display as the name of a field.
+     * @param fieldExpression The name of the field as configured in webconfig-model.xml
+     * @return the field's label, or the field's name.
+     */
+    public String getFieldDisplayName(String fieldExpression) {
+        Collection<FieldConfig> configs = getFieldConfigs();
+        for (FieldConfig fc: configs) {
+            if (fc.getFieldExpr() != null && fc.getFieldExpr().equals(fieldExpression)) {
+                if (fc.getLabel() != null) {
+                    return fc.getLabel();
+                } else {
+                    return fieldExpression;
+                }
+            }
+        }
+        return fieldExpression;
     }
 
     /**
