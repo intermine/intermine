@@ -25,6 +25,7 @@ import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.util.TypeUtil;
 
 /**
  * Configuration object for displaying a class
@@ -51,6 +52,38 @@ public class Type
     /** @var header configuration having paths to titles to show */
     private HeaderConfigTitle headerConfigTitle;
     private HeaderConfigLink headerConfigLink;
+
+    private String label = null;
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getDisplayName() {
+        if (label != null) {
+            return label;
+        } else {
+            return getFormattedClassName();
+        }
+    }
+
+    public String getFormattedClassName() {
+        return Type.getFormattedClassName(className);
+    }
+
+    public static String getFormattedClassName(String nameOfClass) {
+        String unqualifiedName = TypeUtil.unqualifiedName(nameOfClass);
+        String[] parts = StringUtils.splitByCharacterTypeCamelCase(unqualifiedName);
+        String[] newParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            newParts[i] = StringUtils.capitalize(parts[i]);
+        }
+        return StringUtils.join(parts, " ");
+    }
 
     /**
      * Set the unqualified class name for this Type (from fully-qualified)
