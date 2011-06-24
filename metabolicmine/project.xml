@@ -29,7 +29,7 @@
      <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current"/>
     </source>
     <source name="ensembl-human" type="ensembl" dump="true">
-     <property name="src.data.dir" location="/shared/data/old_shared_data/ensembl/metabolic/human/current"/>
+     <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/metabolic/human/current"/>
     </source>
     <source name="ensembl-gwas-db-human" type="ensembl-gwas-db">
      <property name="source.db.name" value="ensembl.9606.variation"/>
@@ -37,7 +37,7 @@
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090"/>
       <property name="createinterpro" value="true"/>
-      <property name="src.data.dir" location="/shared/data/old_shared_data/uniprot/current/split/"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/uniprot/current/split/"/>
     </source>
 <!--    <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
@@ -45,21 +45,21 @@
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
       <property name="fasta.dataSourceName" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/old_shared_data/uniprot/2010_09/"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/uniprot/2010_09/"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>-->
     <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/shared/data/old_shared_data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/shared/data/old_shared_data/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/interpro/current"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/shared/data/old_shared_data/psi/ontology/current/psi-mi.obo"/>
+      <property name="src.data.file" location="/micklem/data/old_shared_data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="mgi-alleles" type="mgi-alleles">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/load"/>
@@ -68,11 +68,11 @@
       <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/mp-ontology/MPheno_OBO.obo"/>
     </source>
     <source name="go" type="go" dump="true">
-      <property name="src.data.file" location="/shared/data/old_shared_data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/old_shared_data/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/old_shared_data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/old_shared_data/go-annotation/metabolic/"/>
+      <property name="ontologyfile" location="/micklem/data/old_shared_data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/go-annotation/metabolic/"/>
       <property name="src.data.includes" value="**/gene_association*"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
@@ -87,7 +87,7 @@
       <property name="biopax.curated" value="false"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/old_shared_data/psi/intact/current"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/psi/intact/current"/>
       <property name="intact.organisms" value="9606 10090"/>
     </source>
     <source name="biogrid" type="biogrid">
@@ -96,16 +96,16 @@
       <property name="biogrid.organisms" value="9606 10090"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
-      <property name="src.data.dir" location="/shared/data/old_shared_data/pubmed/current"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/pubmed/current"/>
       <property name="pubmed.organisms" value="9606 10090"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
-      <property name="infoFile" location="/shared/data/old_shared_data/pubmed/current/gene_info"/>
+      <property name="infoFile" location="/micklem/data/old_shared_data/pubmed/current/gene_info"/>
     </source>
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/test"/>
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
-      <property name="src.data.dir" location="/shared/data/old_shared_data/ensembl/metabolic/mouse/current"/>     
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/metabolic/mouse/current"/>     
       <property name="src.data.dir.includes" value="10090.xml"/>
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
@@ -115,7 +115,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/shared/data/old_shared_data/ensembl/homo_sapiens/current_core/fasta"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/homo_sapiens/current_core/fasta"/>
     </source>
     <source name="ensembl-mouse-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="10090"/>
@@ -124,7 +124,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/shared/data/old_shared_data/ensembl/mus_musculus/current_core/fasta"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/mus_musculus/current_core/fasta"/>
     </source>
     <source name="ensembl-compara" type="ensembl-compara" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-compara"/>
