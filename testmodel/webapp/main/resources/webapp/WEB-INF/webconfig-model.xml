@@ -23,8 +23,8 @@
     </bagdisplayers>
   </class>
 
-  <!-- exists to test that long displayers for base classes (in this case
-       /model/managerName.jsp) show up in sub-classes and that longdisplayers
+  <!-- exists to test that displayers for base classes (in this case
+       /model/managerName.jsp) show up in sub-classes and that displayers
        can be overridden in base classes (Manager overrides Employee -->
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
