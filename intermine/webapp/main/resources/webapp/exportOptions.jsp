@@ -47,7 +47,7 @@
 <div style="clear:both;width:60%" class="body" align="left">
 
 <c:choose>
-  <c:when test="${type == 'galaxy' || type == 'bed'}">
+  <c:when test="${type == 'bed'}">
     <tiles:insert name="${type}ExportOptions.tile"/>
   </c:when>
   <c:otherwise>

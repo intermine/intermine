@@ -81,7 +81,7 @@ public class GalaxyExportOptionsController extends TilesAction
         PathQuery query = new PathQuery(model);
 
         // Build Span pathquery
-        if (request.getParameter("value") != null) {
+        if (request.getParameter("value") != null) { // TODO why did I write this???
             String value = request.getParameter("value");
 
             String path = "SequenceFeature";

@@ -1,6 +1,11 @@
 <definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
   controllerUrl="/initSequenceExportOptions.do" />
 
+<definition name="galaxyExportOptions.page" extends="layout.template">
+    <put name="body" value="galaxyExportOptions.tile"/>
+    <put name="pageName" value="galaxyExportOptions"/>
+</definition>
+
 <definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
   controllerUrl="/initGalaxyExportOptions.do" />
 
