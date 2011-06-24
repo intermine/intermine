@@ -436,7 +436,14 @@ input.submit {
                   <%-- print each field configured for this object --%>
                   <c:when
                     test="${!empty fieldConfig && !empty fieldConfig.displayer}">
-                    <td class="objectFieldName"><c:out value="${field}" />:</td>
+                    <c:when test="${! empty fieldConfig && !empty fieldConfig.label}">
+                        <c:set var="fieldLabel" value="${fieldConfig.label}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="fieldLabel" value="${field}"/>
+                    </c:otherwise>
+                        
+                    <td class="objectFieldName"><c:out value="${fieldLabel}" />:</td>
 
                     <c:set var="interMineObject" value="${searchResult.object}"
                       scope="request" />
