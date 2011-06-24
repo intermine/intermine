@@ -507,7 +507,6 @@
   <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="cellLine"/>
       <fieldconfig fieldExpr="publication.title"/>
     </fields>
   </class>
