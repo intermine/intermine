@@ -24,6 +24,8 @@ import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -57,6 +59,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
+    private static final String GENUS_LOOKUP = "Drosophila";
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
@@ -67,6 +70,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
     protected IdResolverFactory flyResolverFactory;
     private String datasourceRefId = null;
+    private OrganismRepository or;
 
     /**
      * Constructor
@@ -77,7 +81,10 @@ public class UniprotConverter extends BioDirectoryConverter
         super(writer, model, "UniProt", "Swiss-Prot data set");
         // only construct factory here so can be replaced by mock factory in tests
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        or = OrganismRepository.getOrganismRepository();
     }
+
+
 
     /**
      * {@inheritDoc}
@@ -828,13 +835,11 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private Item createGene(Item protein, UniprotEntry uniprotEntry, String geneIdentifier,
                 String taxId, String uniqueIdentifierField) {
-            String identifier = geneIdentifier;
-            if ("7227".equals(taxId)) {
-                identifier = resolveGene(taxId, identifier);
-                if (identifier == null) {
-                    return null;
-                }
+            String identifier = resolveGene(taxId, geneIdentifier);
+            if (identifier == null) {
+                return null;
             }
+
             String geneRefId = genes.get(identifier);
             if (geneRefId == null) {
                 Item gene = createItem("Gene");
@@ -957,7 +962,8 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private String resolveGene(String taxId, String identifier) {
-            if ("7227".equals(taxId)) {
+            OrganismData od = or.getOrganismDataByTaxon(new Integer(taxId));
+            if (od.getGenus().equals(GENUS_LOOKUP)) {
                 return resolveFlyGene(taxId, identifier);
             }
             return identifier;
