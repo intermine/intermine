@@ -174,6 +174,10 @@ li { margin-bottom:0.5em; }
 </style>
 
 <html:xhtml />
+<link rel="stylesheet" href="css/exportOptions.css" type="text/css" />
+
+<div align="center">
+  <div style="clear:both;width:60%" class="body" align="left">
 
     <div id="ajaxLoading" align="center" style="position:absolute;clear:both;width:60%;height:30%;">
             <img src="images/wait18.gif"/><br>Loading...
@@ -242,4 +246,6 @@ li { margin-bottom:0.5em; }
 
     </form>
 
+  </div>
+</div>
 <!-- /galaxyExportOptions.jsp -->

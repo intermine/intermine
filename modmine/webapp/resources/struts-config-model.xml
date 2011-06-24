@@ -15,6 +15,8 @@
 <action path="/bedExportAction" name="bedExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
+<action path="/galaxyExportOptions" forward="galaxyExportOptions.page"/>
+
 <action path="/initGalaxyExportOptions"
         type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
 
