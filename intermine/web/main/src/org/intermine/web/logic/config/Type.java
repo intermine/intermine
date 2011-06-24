@@ -10,11 +10,9 @@ package org.intermine.web.logic.config;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +21,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
@@ -39,7 +36,6 @@ public class Type
     private String className;
     private LinkedHashMap<String, FieldConfig> fieldConfigMap =
         new LinkedHashMap<String, FieldConfig>();
-    private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
     private Displayer tableDisplayer;
@@ -91,32 +87,6 @@ public class Type
      */
     public Map<String, FieldConfig> getFieldConfigMap() {
         return Collections.unmodifiableMap(fieldConfigMap);
-    }
-
-   /**
-     * Add a long displayer for this Type
-     * @param disp the Displayer to add
-     */
-    public void addLongDisplayer(Displayer disp) {
-        longDisplayers.add(disp);
-
-        // TODO we don't have displayers tied to aspects anymore.
-        // this should be removed
-        String[] aspects;
-        if (StringUtils.isEmpty(disp.getAspects())) {
-            aspects = new String[]{""};
-        } else {
-            aspects = StringUtils.split(disp.getAspects(), ',');
-        }
-        for (int i = 0; i < aspects.length; i++) {
-            String aspect = aspects[i].trim();
-            List displayers = (List) aspectDisplayers.get(aspect);
-            if (displayers == null) {
-                displayers = new ArrayList();
-                aspectDisplayers.put(aspect, displayers);
-            }
-            displayers.add(disp);
-        }
     }
 
     /**
@@ -198,14 +168,6 @@ public class Type
     }
 
     /**
-     * Get the List of long Displayers
-     * @return the List of long Displayers
-     */
-    public Set getLongDisplayers() {
-        return Collections.unmodifiableSet(this.longDisplayers);
-    }
-
-    /**
      *
      * @return inline lists
      */
@@ -238,12 +200,15 @@ public class Type
         if (!(obj instanceof Type)) {
             return false;
         }
-
         Type typeObj = (Type) obj;
-
         return fieldConfigMap.equals(typeObj.fieldConfigMap)
-            && longDisplayers.equals(typeObj.longDisplayers)
-            && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer);
+            && ObjectUtils.equals(bagDisplayers, typeObj.bagDisplayers)
+            && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer)
+            && ObjectUtils.equals(widgets, typeObj.widgets)
+            && ObjectUtils.equals(aspectDisplayers, typeObj.aspectDisplayers)
+            && ObjectUtils.equals(headerConfigTitle, typeObj.headerConfigTitle)
+            && ObjectUtils.equals(headerConfigLink, typeObj.headerConfigLink)
+            && ObjectUtils.equals(inlineLists, typeObj.inlineLists);
     }
 
     /**
@@ -251,10 +216,29 @@ public class Type
      * @return the hashCode for this Type object
      */
     public int hashCode() {
-        int hash = fieldConfigMap.hashCode() + 3 * longDisplayers.hashCode();
+        int hash = fieldConfigMap.hashCode();
+        if (inlineLists != null) {
+            hash += 3 * inlineLists.hashCode();
+        }
         if (tableDisplayer != null) {
             hash += 5 * tableDisplayer.hashCode();
         }
+        if (widgets != null) {
+            hash += 7 * widgets.hashCode();
+        }
+        if (aspectDisplayers != null) {
+            hash += 11 * aspectDisplayers.hashCode();
+        }
+        if (headerConfigTitle != null) {
+            hash += 13 * headerConfigTitle.hashCode();
+        }
+        if (headerConfigLink != null) {
+            hash += 17 * headerConfigLink.hashCode();
+        }
+        if (inlineLists != null) {
+            hash += 19 * inlineLists.hashCode();
+        }
+
         return hash;
     }
 
@@ -277,12 +261,6 @@ public class Type
         if (tableDisplayer != null) {
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
-        sb.append("<longdisplayers>");
-        Iterator iter = longDisplayers.iterator();
-        while (iter.hasNext()) {
-            sb.append(iter.next().toString());
-        }
-        sb.append("</longdisplayers>");
         sb.append("</class>");
 
         return sb.toString();
