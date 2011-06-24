@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,8 +35,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -78,7 +75,6 @@ import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -129,6 +125,11 @@ public class InitialiserPlugin implements PlugIn
         ObjectStore os = getProductionObjectStore(webProperties);
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+
+        if (!validateUserProfileDatabase(userprofileOSW)) {
+            blockingErrorKeys.add("errors.savedbagtable.runAnt");
+            return;
+        }
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
@@ -455,8 +456,12 @@ public class InitialiserPlugin implements PlugIn
      */
     public void destroy() {
         try {
-            profileManager.close();
-            trackerDelegate.close();
+            if (profileManager != null) {
+                profileManager.close();
+            }
+            if (trackerDelegate != null) {
+                trackerDelegate.close();
+            }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
@@ -552,5 +557,20 @@ public class InitialiserPlugin implements PlugIn
             return td;
         }
         return null;
+    }
+
+    private boolean validateUserProfileDatabase(ObjectStore uos) {
+        Connection con = null;
+        try {
+            con = ((ObjectStoreInterMineImpl) uos).getConnection();
+            if (DatabaseUtil.tableExists(con, "savedbag") && DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
+                return true;
+            }
+        } catch (SQLException sqle) {
+            LOG.error("Probelm retriving connection", sqle);
+        } finally {
+            ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
+        }
+        return false;
     }
 }
