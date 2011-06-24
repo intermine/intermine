@@ -29,9 +29,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.util.StringUtil;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
 
 /**
  * Utility methods for the web package.
@@ -158,5 +169,51 @@ public abstract class WebUtil
         // part of name, e.g. 'D. melanogaster'
         return original.replaceAll("&", "&amp;").replaceAll(" > ", "&nbsp;&gt; ")
             .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    public static String formatColumnName(String original, HttpServletRequest request) {
+        if (request == null) { 
+            throw new IllegalArgumentException("request cannot be null");
+        }
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request);
+        final Model model = im.getModel();
+        final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        return formatColumnName(original, model, webConfig);
+    }
+
+    public static String formatColumnName(String original, Model model, WebConfig webConfig) {
+        Path viewPath;
+        try {
+            viewPath = new Path(model, original);
+        } catch (PathException e) {
+            return original;
+        }
+        return formatColumnName(viewPath, webConfig);
+    }
+
+    public static String formatColumnName(Path viewColumn, WebConfig webConfig) {
+        List<Path> parts = viewColumn.decomposePath();
+        List<String> aliasedParts = new ArrayList<String>();
+        for (Path p: parts) {
+            if (p.isRootPath()) {
+                ClassDescriptor cld = p.getStartClassDescriptor();
+                Type type = webConfig.getTypes().get(cld.getName());
+                if (type != null) {
+                    aliasedParts.add(type.getDisplayName());
+                } else {
+                    aliasedParts.add(Type.getFormattedClassName(cld.getUnqualifiedName()));
+                }
+            } else {
+                FieldDescriptor fld = p.getEndFieldDescriptor();
+                ClassDescriptor cld = p.getLastClassDescriptor();
+                FieldConfig fcfg = FieldConfigHelper.getFieldConfig(webConfig, cld, fld);
+                if (fcfg != null) {
+                    aliasedParts.add(fcfg.getDisplayName());
+                } else {
+                    aliasedParts.add(FieldConfig.getFormattedName(fld.getName()));
+                }
+            }
+        }
+        return StringUtils.join(aliasedParts, " > ");
     }
 }
