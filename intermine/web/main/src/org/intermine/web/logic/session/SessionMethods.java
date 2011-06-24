@@ -142,6 +142,7 @@ public final class SessionMethods
         // a cancelling the running query
 
         RunQueryThread runnable = new RunQueryThread() {
+            @Override
             public void run () {
                 try {
 
@@ -497,6 +498,7 @@ public final class SessionMethods
             queries.put(qid, monitor);
 
             new Thread(new Runnable() {
+                @Override
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     final InterMineAPI im = getInterMineAPI(session);
@@ -504,11 +506,13 @@ public final class SessionMethods
                         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
                         final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
                         Action action = new Action() {
+                            @Override
                             public void process() {
                                 pr.getRows();
                             }
                         };
                         CompletionCallBack completionCallBack = new CompletionCallBack() {
+                            @Override
                             public void complete() {
                                 SessionMethods.setResultsTable(session, "results." + qid, pr);
                             }
@@ -570,12 +574,14 @@ public final class SessionMethods
             queries.put(qid, monitor);
 
             new Thread(new Runnable() {
+                @Override
                 public void run () {
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
 
                         class CountAction implements Action
                         {
+                            @Override
                             public void process() {
                                 monitor.getPagedTable().getExactSize();
                             }
@@ -644,10 +650,12 @@ public final class SessionMethods
             final ObjectStore os = im.getObjectStore();
 
             new Thread(new Runnable() {
+                @Override
                 public void run () {
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
                         Action action = new Action() {
+                            @Override
                             public void process() {
                                 try {
                                     monitor.setCount(os.count(query, ObjectStore.SEQUENCE_IGNORE));
@@ -990,6 +998,15 @@ public final class SessionMethods
      */
     public static InterMineAPI getInterMineAPI(HttpSession session) {
         return getInterMineAPI(session.getServletContext());
+    }
+
+    /**
+     * Get the InterMineAPI which provides the core features of an InterMine application.
+     * @param request A Http Request
+     * @return The API
+     */
+    public static InterMineAPI getInterMineAPI(HttpServletRequest request) {
+        return getInterMineAPI(request.getSession());
     }
 
     /**
