@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <html:xhtml/>
 
@@ -14,6 +15,8 @@
 <tiles:importAttribute name="inlineTable" ignore="true"/>
 <tiles:importAttribute name="highlightId" ignore="true"/>
 <tiles:importAttribute name="tableIdentifier" ignore="true"/>
+
+<im:debug message="START resultsTable.jsp"/>
 
 <script type="text/javascript">
   function changePageSize() {
@@ -76,7 +79,17 @@
             </c:if>
             <td>
             <!-- Display actual column name -->
-            <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
+            <c:choose>
+                <c:when test="${!empty WEBCONFIG}">
+                  <c:set var="colName" value="${imf:formatColumnName(column.path, WEBCONFIG)}"/>
+                </c:when>
+                <c:otherwise>
+                    <im:debug message="WEBCONFIG is empty"/>
+                    <c:set var="colName" value="${column.name}"/>
+                </c:otherwise>
+            </c:choose>
+
+            <c:set var="columnDisplayNameList" value="${fn:split(colName,'>')}"/>
             <c:set var="begin" value="0"/>
             <c:if test="${fn:length(columnDisplayNameList) > 3}">...
                 <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
@@ -305,3 +318,4 @@
    </div>
 </c:if>
 <%--</html:form>--%>
+<im:debug message="END resultsTable.jsp"/>
