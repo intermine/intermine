@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 
 /**
  * Helper methods for the FieldConfig class.
@@ -42,5 +43,24 @@ public class FieldConfigHelper
         }
 
         return Collections.EMPTY_LIST;
+    }
+
+    public static FieldConfig getFieldConfig(WebConfig webConfig, FieldDescriptor fd) {
+        ClassDescriptor cld = fd.getClassDescriptor();
+        return getFieldConfig(webConfig, cld, fd);
+    }
+
+    public static FieldConfig getFieldConfig(WebConfig webConfig, ClassDescriptor cld, FieldDescriptor fd) {
+        List<FieldConfig> fcs = getClassFieldConfigs(webConfig, cld);
+        for (FieldConfig fc: fcs) {
+            if (fc == null) {
+                continue;
+            }
+            String fieldExpr = fc.getFieldExpr();
+            if (fieldExpr != null && fieldExpr.equals(fd.getName())) {
+                return fc;
+            }
+        }
+        return null;
     }
 }

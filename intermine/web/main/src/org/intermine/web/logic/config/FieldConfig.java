@@ -42,14 +42,23 @@ public class FieldConfig
         if (label != null) {
             return label;
         } else {
-            String[] parts = StringUtils.splitByCharacterTypeCamelCase(fieldExpr);
-            String[] ucFirstParts = new String[parts.length];
-            for (int i = 0; i < parts.length; i++) {
-                ucFirstParts[i] = StringUtils.capitalize(parts[i]);
-            }
-            return StringUtils.join(ucFirstParts, " ");
+            return getFormattedName();
         }
     }
+
+    public String getFormattedName() {
+        return FieldConfig.getFormattedName(fieldExpr);
+    }
+
+    public static String getFormattedName(String name) {
+        String[] parts = StringUtils.splitByCharacterTypeCamelCase(name);
+        String[] ucFirstParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            ucFirstParts[i] = StringUtils.capitalize(parts[i]);
+        }
+        return StringUtils.join(ucFirstParts, " ");
+    }
+
 
     /**
      * The human readable label for this field. For example "DB id" instead of "primaryIdentifier".
