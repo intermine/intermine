@@ -1,0 +1,14 @@
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd" version="2.0">  
+
+<tlib-version>0.97</tlib-version>
+<short-name>IM Functions</short-name>
+<description>A set of functions to be used in InterMine applications</description>
+<uri>/WEB-INF/functions.tld</uri>
+
+<function>
+  <name>formatColumnName</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.lang.String formatColumnName( org.intermine.pathquery.Path, org.intermine.web.logic.config.WebConfig )</function-signature>
+</function> 
+
+</taglib>
