@@ -78,7 +78,7 @@
 
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
-              <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <td>${field.displayName}&nbsp;<im:typehelp type="${field.pathString}"/></td>
               <td><strong>
                 <!-- pass value to displayer -->
                 <c:set var="interMineObject" value="${object.object}" scope="request"/>
@@ -90,7 +90,7 @@
             </c:when>
             <c:otherwise>
               <c:if test="${!field.doNotTruncate}">
-                <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+                <td>${field.displayName}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong>${field.value}</strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>

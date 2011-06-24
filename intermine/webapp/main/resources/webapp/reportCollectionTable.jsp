@@ -22,7 +22,7 @@
           <tr>
             <c:if test="${inlineResultsTable.hasMoreThanOneType}"><td class="theme-5-background theme-3-border">Class</td></c:if>
             <c:forEach items="${inlineResultsTable.tableFieldConfigs}" var="fc">
-              <td class="theme-5-background theme-3-border">${fc.fieldExpr}</td>
+              <td class="theme-5-background theme-3-border">${fc.displayName}</td>
             </c:forEach>
           </tr>
         </thead>
