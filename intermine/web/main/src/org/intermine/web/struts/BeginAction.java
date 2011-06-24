@@ -71,7 +71,6 @@ public class BeginAction extends InterMineAction
         throws Exception {
 
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
         Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
         if (errorKeys != null && !errorKeys.isEmpty()) {
@@ -80,6 +79,8 @@ public class BeginAction extends InterMineAction
             }
             return mapping.findForward("blockingError");
         }
+
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = SessionMethods.getWebProperties(servletContext);
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
