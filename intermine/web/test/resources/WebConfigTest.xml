@@ -6,16 +6,9 @@
       <fieldconfig fieldExpr="department.name"
                    showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/employee.jsp"/>
-    </longdisplayers>
   </class>
-  <class className="org.intermine.model.testmodel.Thing">
-    <longdisplayers>
-      <displayer src="/model/page4.jsp"/>
-      <displayer src="tile2.tile"/>
-    </longdisplayers>
-  </class>
+  <class className="org.intermine.model.testmodel.Thing"/>
+
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true"
@@ -27,9 +20,6 @@
            display the whole field inline -->
       <fieldconfig fieldExpr="title" doNotTruncate="true"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/manager.jsp" aspects="Aspect1, Aspect2"/>
-    </longdisplayers>
     <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
 
