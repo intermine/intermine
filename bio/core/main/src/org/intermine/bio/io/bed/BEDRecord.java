@@ -91,13 +91,16 @@ public class BEDRecord
      * @param chromStart start position of feature
      * @param chromEnd end position of feature
      * @param name symbol/Id of feature
+     * @param score A score between 0 and 1000
      * @param strand direction on genome
      */
-    public BEDRecord (String chrom, int chromStart, int chromEnd, String name, String strand) {
+    public BEDRecord(String chrom, int chromStart, int chromEnd, String name,
+            int score, String strand) {
         this.chrom = chrom;
         this.chromStart = chromStart;
         this.chromEnd = chromEnd;
         this.name = name;
+        this.score = score;
         this.strand = strand;
     }
     /**
@@ -117,8 +120,7 @@ public class BEDRecord
      */
     public String toBED() {
         return chrom + "\t" + chromStart + "\t" + chromEnd + "\t"
-            + name.replaceAll(" ", "+")
-            + "\t" + score + "\t" + strand;
+            + name + "\t" + score + "\t" + strand;
     }
 
     /**

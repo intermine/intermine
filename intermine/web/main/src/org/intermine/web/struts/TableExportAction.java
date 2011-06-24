@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.WebTable;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStoreException;
@@ -131,8 +131,12 @@ public class TableExportAction extends InterMineAction
         newPathQuery = new PathQuery(pathQuery);
         newPathQuery.clearView();
         try {
-            newPathQuery.addViews(new ArrayList<String>(StringUtil
-                    .serializedSortOrderToMap(pathsString).keySet()));
+            if (!pathsString.contains("[]=")) { // BED format case
+                newPathQuery.addViews(Arrays.asList(pathsString.split(" ")));
+            } else {
+                newPathQuery.addViews(new ArrayList<String>(StringUtil
+                        .serializedSortOrderToMap(pathsString).keySet()));
+            }
         } catch (RuntimeException e) {
             throw new RuntimeException("Error while converting " + pathsString, e);
         }

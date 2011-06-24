@@ -47,9 +47,8 @@
 <div style="clear:both;width:60%" class="body" align="left">
 
 <c:choose>
-  <c:when test="${type == 'galaxy'}">
-    <c:set var="tileName" value="${type}ExportOptions.tile"/>
-    <tiles:insert name="${tileName}"/>
+  <c:when test="${type == 'galaxy' || type == 'bed'}">
+    <tiles:insert name="${type}ExportOptions.tile"/>
   </c:when>
   <c:otherwise>
     <html:form action="/${type}ExportAction" onsubmit="updatePathsString();">

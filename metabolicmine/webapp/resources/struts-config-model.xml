@@ -22,6 +22,9 @@
 <action path="/gff3ExportAction" name="gff3ExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
+<action path="/bedExportAction" name="bedExportForm"
+        type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+
 <action path="/initSnpToGeneFormDisplayer"
   type="org.metabolicmine.web.SnpToGeneFormDisplayerController" />
 
