@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletContext;
@@ -69,14 +68,15 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        Set<Integer> organisms = null;
+        String organisms = null;
         boolean makeUcscCompatible = false;
 
         String trackDescription = ((BEDExportForm) form).getTrackDescription();
 
         // try to find the organism from the form
         if (form != null && form instanceof BEDExportForm) {
-            organisms = ((BEDExportForm) form).getOrganisms();
+            organisms = ((BEDExportForm) form).getOrgansimString();
+
             if ("yes".equals(((BEDExportForm) form).getUcscCompatibleCheck())) {
                 makeUcscCompatible = true;
             }

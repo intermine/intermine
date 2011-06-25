@@ -26,23 +26,45 @@
     }
 
     jQuery(document).ready(function() {
-        jQuery('#makeUcscCompatibleCheckbox').click(function() {
+
+        jQuery('#makeUcscCompatibleCheckbox').change(function() {
             if ( jQuery('#makeUcscCompatibleCheckbox').attr('checked')) {
                 jQuery('#ucscCompatibleCheck').val('yes');
             } else {
                 jQuery('#ucscCompatibleCheck').val('no');
             }
         });
+
+        if (jQuery('input[name="orgSelection"]')) {
+            jQuery('input[name="orgSelection"]').change(function() {
+                var selectedOrg = jQuery("input[name='orgSelection']:checked").val();
+                jQuery('#organsimString').val(selectedOrg);
+            });
+        }
+
     });
 
 
 </script>
 
-    <html:form action="/${type}ExportAction">
+    <html:form styleId="exportForm" action="/${type}ExportAction">
         <fieldset>
             <legend>
                 <fmt:message key="exporter.bed.description"/>
             </legend>
+
+        <c:if test="${fn:length(orgSet) gt 1}">
+            <div>
+                <span style="padding-left:40px">Export sequence features from multiple organisms, or select one: </span>
+                <div style="padding:10px 0 10px 60px;">
+                    <c:forEach items="${orgSet}" var="org" varStatus="status">
+                      <input type="radio" name="orgSelection" value="${org}" /><i>${org}</i><br>
+                    </c:forEach>
+                    <input type="radio" name="orgSelection" value="${organismString}" checked="checked"/><b>All</b><br>
+                </div>
+            </div>
+        </c:if>
+
         <ol>
             <li class="columnHeaderOption">
                 <html:checkbox property="doGzip"/>
@@ -71,6 +93,7 @@
         <html:hidden property="table" value="${table}"/>
         <html:hidden property="type" value="${type}"/>
         <html:hidden styleId="ucscCompatibleCheck" property="ucscCompatibleCheck" value="yes"/>
+        <html:hidden styleId="organsimString" property="organsimString" value="${organismString}"/>
 
         <fieldset class="submit"><input name="submit" type="submit" value="Export" /></fieldset>
     </html:form>
