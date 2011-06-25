@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
@@ -24,6 +23,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -44,7 +44,7 @@ public class BEDExporter implements Exporter
     private boolean headerPrinted = false;
     private List<Integer> featureIndexes;
     private IntPresentSet exportedIds = new IntPresentSet();
-    private Set<Integer> organisms;
+    private String organismString;
 
      /* Header */
     private static final String FORMAT = "# UCSC BED format";
@@ -68,17 +68,17 @@ public class BEDExporter implements Exporter
      * @param out output stream
      * @param featureIndexes index of column with exported sequence
      * @param sourceName name of Mine to put in GFF source column
-     * @param organisms taxon id of the organisms
+     * @param organismString a comma separated string of organism short names
      * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
      * @param trackDescription track description in the header
      */
     public BEDExporter(PrintWriter out, List<Integer> featureIndexes, String sourceName,
-            Set<Integer> organisms, boolean makeUcscCompatible, String trackDescription) {
+            String organismString, boolean makeUcscCompatible, String trackDescription) {
 
         this.out = out;
         this.featureIndexes = featureIndexes;
         this.sourceName = sourceName;
-        this.organisms = organisms;
+        this.organismString = organismString;
         this.makeUcscCompatible = makeUcscCompatible;
         this.trackDescription = trackDescription;
 
@@ -140,22 +140,28 @@ public class BEDExporter implements Exporter
     private String getHeader() {
         StringBuffer header = new StringBuffer();
 
+        List<String> orgSet = StringUtil.tokenize(organismString, ",");
         Properties props = PropertiesUtil.getProperties();
         // TODO the way to store genome build information should be changed ...
-        if (organisms != null) {
-            for (Integer taxId : organisms) {
-                if (taxId == 7227) {
+        // TODO handle multipe orgs
+        if (orgSet != null) {
+            for (String org : orgSet) {
+//                Integer taxId = OrganismRepository.getOrganismRepository()
+//                        .getOrganismDataByAbbreviation(org).getTaxonId();
+                if ("D. melanogaster".equals(org)) {
                     String fV = props.getProperty("genomeVersion.fly");
                     if (fV != null && fV.length() > 0) {
                         genomeBuild = fV;
                     }
                 }
             }
-            for (Integer taxId : organisms) {
-                if (taxId == 6239) {
+            for (String org : orgSet) {
+//                Integer taxId = OrganismRepository.getOrganismRepository()
+//                        .getOrganismDataByAbbreviation(org).getTaxonId();
+                if ("C. elegans".equals(org)) {
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
-                        genomeBuild = wV;
+                        genomeBuild = genomeBuild + " | " + wV;
                     }
                 }
             }

@@ -8,8 +8,11 @@
         type="org.flymine.web.ChartRenderer"
         parameter="method"/>
 
-<action path="/initSequenceExportOptions"
-        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+<!-- <action path="/initSequenceExportOptions"
+        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/> -->
+
+<action path="/initLocatedSequenceFeatureExportOptions"
+        type="org.intermine.bio.web.struts.LocatedSequenceFeatureExportOptionsController"/>
 
 <action path="/galaxyExportOptions" forward="galaxyExportOptions.page"/>
 

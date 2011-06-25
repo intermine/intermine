@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.bio.web.logic.LocatedSequenceFeatureExportUtil;
 import org.intermine.bio.web.struts.SequenceExportForm;
-import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
@@ -93,7 +93,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         if (sequencePathString == null) {
             // fall back case: pick the first sequence object that occurs in the view
-            List<Path> sequencePaths = SequenceExportOptionsController.getExportClassPaths(pt);
+            List<Path> sequencePaths = LocatedSequenceFeatureExportUtil.getExportClassPaths(pt);
             sequencePathString = sequencePaths.iterator().next().toString();
         }
         sequencePathString = sequencePathString.replaceAll(" > ", ".");
@@ -145,7 +145,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
-        List<Path> sequencePaths = SequenceExportOptionsController.getExportClassPaths(pt);
+        List<Path> sequencePaths = LocatedSequenceFeatureExportUtil.getExportClassPaths(pt);
 
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
