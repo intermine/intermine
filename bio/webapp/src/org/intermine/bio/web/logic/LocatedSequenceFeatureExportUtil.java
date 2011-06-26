@@ -24,14 +24,13 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.WebTable;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.PagedTable;
@@ -47,7 +46,7 @@ public final class LocatedSequenceFeatureExportUtil
 {
     private static final Logger LOG = Logger.getLogger(LocatedSequenceFeatureExportUtil.class);
 
-    private static final Object ERROR_MSG = "Error happened during fetching organsim information"
+    private static final Object ERROR_MSG = "Error happened during fetching organism information"
         + " for LocatedSequenceFeature exporting.";
 
     private LocatedSequenceFeatureExportUtil() {
@@ -93,12 +92,11 @@ public final class LocatedSequenceFeatureExportUtil
      * @param pt pagedtable
      * @param session http session
      * @return set of organisms
-     * @throws ObjectStoreException ObjectStoreException
-     * @throws PathException PathException
+     * @throws Exception Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Set<String> getOrganisms(PagedTable pt, HttpSession session)
-        throws ObjectStoreException, PathException {
+        throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = SessionMethods.getProfile(session);
@@ -108,6 +106,28 @@ public final class LocatedSequenceFeatureExportUtil
             PathQuery pathQuery = webTable.getPathQuery();
 
             String summaryPath = pathQuery.getRootClass() + ".organism.shortName";
+
+            // BioEntity has organism as reference, SequenceFeature is subclass of BioEntity
+            Model model = pathQuery.getModel();
+            Set<String> superClassNames = model.getClassDescriptorByName(
+                    pathQuery.getRootClass()).getAllSuperclassNames();
+
+            int i = 0;
+            for (String n : superClassNames) {
+                i++;
+                if (model.getClassDescriptorByName(n)
+                        .getReferenceDescriptorByName("organism") != null) {
+                    pathQuery.addView(summaryPath);
+                    break;
+                }
+            }
+
+            if (i == superClassNames.size()) {
+                throw new Exception("Located sequence feature type "
+                        + pathQuery.getRootClass()
+                        + " does not have organism as reference.");
+            }
+
             List<ResultsRow> results = (List) webResultsExecutor.summariseQuery(pathQuery,
                     summaryPath);
 
