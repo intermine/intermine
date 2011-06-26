@@ -11,6 +11,7 @@ package org.intermine.bio.web.export;
  */
 
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -135,6 +136,10 @@ public class SequenceExporter implements Exporter
                 SeqIOTools.writeFasta(out, bioSequence);
                 writtenResultsCount++;
                 exportedIDs.add(objectId);
+            }
+
+            if (writtenResultsCount == 0) {
+                out.write("Nothing was found for export".getBytes(Charset.forName("UTF-8")));
             }
 
             out.flush();

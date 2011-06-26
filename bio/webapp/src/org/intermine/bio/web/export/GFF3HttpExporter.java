@@ -137,9 +137,9 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             throw new ExportException("Export failed", e);
         }
 
-        if (exporter.getWrittenResultsCount() == 0) {
-            throw new ExportException("Nothing was found for export");
-        }
+//        if (exporter.getWrittenResultsCount() == 0) {
+//            throw new ExportException("Nothing was found for export");
+//        }
     }
 
     private void removeFirstItemInPaths(List<String> paths) {
@@ -166,7 +166,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
      * @throws ServletException if the SO class names properties file cannot be found
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map<String, String> getSoClassNames(ServletContext servletContext)
         throws ServletException {
         final String soClassNames = "SO_CLASS_NAMES";
@@ -196,7 +196,12 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         return GFF3Exporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }
 
-    public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
+    /**
+     *
+     * @param pt PagedTable
+     * @return List<Path>
+     */
+    public List<Path> getExportClassPaths(PagedTable pt) {
         return new ArrayList<Path>();
     }
 }
