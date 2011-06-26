@@ -102,6 +102,11 @@ public class BEDExporter implements Exporter
                 exportRow(row);
             }
             finishLastRow();
+
+            if (writtenResultsCount == 0) {
+                out.println("Nothing was found for export");
+            }
+
             out.flush();
         } catch (Exception ex) {
             throw new ExportException("Export failed", ex);

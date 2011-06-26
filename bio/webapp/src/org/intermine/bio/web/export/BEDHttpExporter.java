@@ -132,9 +132,9 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
             throw new ExportException("Export failed", e);
         }
 
-        if (exporter.getWrittenResultsCount() == 0) {
-            throw new ExportException("Nothing was found for export");
-        }
+//        if (exporter.getWrittenResultsCount() == 0) {
+//            throw new ExportException("Nothing was found for export");
+//        }
     }
 
     private void setBEDHeader(HttpServletResponse response) {

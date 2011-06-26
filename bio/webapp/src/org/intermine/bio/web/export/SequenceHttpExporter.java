@@ -131,9 +131,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             }
         }
 
-        if (exporter.getWrittenResultsCount() == 0) {
-            throw new ExportException("Nothing was found for export.");
-        }
+//        if (exporter.getWrittenResultsCount() == 0) {
+//            throw new ExportException("Nothing was found for export.");
+//        }
     }
 
     /**
