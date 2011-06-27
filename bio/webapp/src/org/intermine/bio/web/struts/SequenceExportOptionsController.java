@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.bio.web.logic.LocatedSequenceFeatureExportUtil;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -48,7 +48,7 @@ public class SequenceExportOptionsController extends TilesAction
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
-        List<Path> exportClassPaths = LocatedSequenceFeatureExportUtil.getExportClassPaths(pt);
+        List<Path> exportClassPaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
 
         Map<String, String> pathMap = new LinkedHashMap<String, String>();
 
