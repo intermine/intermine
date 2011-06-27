@@ -167,6 +167,9 @@ public class EnsemblComparaConverter extends BioFileConverter
 
     private String parseGene(String taxonId, String identifier)
         throws ObjectStoreException {
+        if (StringUtils.isBlank(identifier)) {
+            return null;
+        }
         String newIdentifier = identifier;
         if ("7227".equals(taxonId)) {
             newIdentifier = resolveGene(taxonId, identifier);
