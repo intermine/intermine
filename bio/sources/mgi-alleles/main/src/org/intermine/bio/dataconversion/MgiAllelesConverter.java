@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -94,7 +93,7 @@ public class MgiAllelesConverter extends BioFileConverter
             String alleleStr = line[1];
             String background = line[2];
             String termId = line[3];
-
+            String geneStr = line[4];
 
             if (!genotypeName.equals(lastGenotypeName)) {
                 // store
@@ -104,13 +103,12 @@ public class MgiAllelesConverter extends BioFileConverter
 
                 String[] alleleSymbols = alleleStr.split("\\|");
 
-                // TODO set zygosity
-
                 currentGenotype = createItem("Genotype");
                 currentGenotype.setAttribute("name", genotypeName);
                 currentGenotype.setAttribute("geneticBackground", background);
-                if (alleleSymbols.length == 1) {
-                    currentGenotype.setAttribute("zygosity", "homozygote");
+                String zygosity = determineZygosity(alleleSymbols, geneStr);
+                if (zygosity != null) {
+                    currentGenotype.setAttribute("zygosity", zygosity);
                 }
                 for (String alleleSymbol : alleleSymbols) {
                     Item allele = getAlleleItem(alleleSymbol);
@@ -123,6 +121,18 @@ public class MgiAllelesConverter extends BioFileConverter
         if (currentGenotype != null) {
             store(currentGenotype);
         }
+    }
+
+    private String determineZygosity(String[] alleleSymbols, String geneStr) {
+        if (alleleSymbols.length == 1) {
+            return "homozygote";
+        } else if (!StringUtils.isBlank(geneStr) && geneStr.contains(",")) {
+            return "complex: > 1 genome feature";
+        } else if (alleleSymbols.length == 2 && !(alleleSymbols[0].equals(alleleSymbols[1]))) {
+            return "heterozygote";
+        }
+
+        return null;
     }
 
     private void processPhenotypicAlleles(Reader reader) throws ObjectStoreException, IOException {
