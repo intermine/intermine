@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.bio.web.logic.LocatedSequenceFeatureExportUtil;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.results.PagedTable;
@@ -37,11 +37,11 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Fengyuan Hu
  *
  */
-public class LocatedSequenceFeatureExportOptionsController extends TilesAction
+public class SequenceFeatureExportOptionsController extends TilesAction
 {
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger
-            .getLogger(LocatedSequenceFeatureExportOptionsController.class);
+            .getLogger(SequenceFeatureExportOptionsController.class);
 
     /**
      * {@inheritDoc}
@@ -59,7 +59,7 @@ public class LocatedSequenceFeatureExportOptionsController extends TilesAction
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
         if ("sequence".equals(type)) {
-            List<Path> exportClassPaths = LocatedSequenceFeatureExportUtil.getExportClassPaths(pt);
+            List<Path> exportClassPaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
 
             Map<String, String> pathMap = new LinkedHashMap<String, String>();
 
@@ -72,7 +72,7 @@ public class LocatedSequenceFeatureExportOptionsController extends TilesAction
             request.setAttribute("exportClassPaths", pathMap);
         }
 
-        Set<String> orgSet = LocatedSequenceFeatureExportUtil.getOrganisms(pt, session);
+        Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(pt, session);
         request.setAttribute("organismString", StringUtil.join(orgSet, ","));
         request.setAttribute("orgSet", orgSet);
 

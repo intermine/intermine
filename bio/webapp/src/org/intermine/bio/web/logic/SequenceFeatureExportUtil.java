@@ -42,14 +42,14 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Fengyuan Hu
  *
  */
-public final class LocatedSequenceFeatureExportUtil
+public final class SequenceFeatureExportUtil
 {
-    private static final Logger LOG = Logger.getLogger(LocatedSequenceFeatureExportUtil.class);
+    private static final Logger LOG = Logger.getLogger(SequenceFeatureExportUtil.class);
 
     private static final Object ERROR_MSG = "Error happened during fetching organism information"
         + " for LocatedSequenceFeature exporting.";
 
-    private LocatedSequenceFeatureExportUtil() {
+    private SequenceFeatureExportUtil() {
         super();
     }
 
