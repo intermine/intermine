@@ -78,9 +78,9 @@ public class ProteinAtlasDisplayer extends ReportDisplayer {
 
                 // attach to results
                 request.setAttribute("expressions", pae);
+                request.setAttribute("url", "http://www.proteinatlas.org/"+genePrimaryID+"/normal");
             }
 
-            //result.put("gene", geneComments2(values));
         } else if (object instanceof Protein) {
             //
         } else {

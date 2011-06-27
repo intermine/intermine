@@ -1,11 +1,13 @@
 package org.intermine.bio.web.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.intermine.api.results.ExportResultsIterator;
@@ -101,7 +103,7 @@ public class ProteinAtlasExpressions {
         // TODO add a clause correctly adding expressions to the appropriate organ list
 
         results = new TreeMap<String, ExpressionList>();
-        Comparator<Map<String, String>> byLevelComparator = new ByLevelComparator();
+        Comparator<String> byLevelComparator = new ByLevelComparator();
 
         // ResultElement -> Map of Lists
         while (values.hasNext()) {
@@ -120,7 +122,7 @@ public class ProteinAtlasExpressions {
             // add to the appropriate organ list
             String organSlug = resultRow.get("organ").toLowerCase().replaceAll("[^a-z0-9-]", "");
             if (!results.containsKey(organSlug)) {
-                ExpressionList q = new ExpressionList(15, byLevelComparator);
+                ExpressionList q = new ExpressionList(byLevelComparator);
 
                 // set the organ for this list
                 q.setOrganName(resultRow.get("organ"));
@@ -140,25 +142,43 @@ public class ProteinAtlasExpressions {
         }
     }
 
-    @SuppressWarnings("serial")
-    public class ExpressionList extends PriorityQueue<Map<String, String>> {
+    /**
+     * Represents a treemap structure of maps of expressions
+     * @author radek
+     *
+     */
+    public class ExpressionList {
 
         public ByLevelComparator comparator;
         public StainingLevel stainingLevel;
         private String organName;
+        private TreeMap<String, Map<String, String>> values;
 
-        public ExpressionList(int i, Comparator<Map<String, String>> comparator) {
-            super(i, comparator);
+        public ExpressionList(Comparator<String> comparator) {
             this.comparator = (ByLevelComparator) comparator;
+
+            values = new TreeMap<String, Map<String, String>>(this.comparator);
             stainingLevel = new StainingLevel(this.comparator);
+        }
+
+        /**
+         * Put/add to the map of expressions
+         * @param resultRow
+         */
+        public void add(Map<String, String> resultRow) {
+            values.put(resultRow.get("level"), resultRow);
+        }
+
+        /**
+         * Get the internal map of expressions
+         * @return
+         */
+        public Map<String, Map<String, String>> getValues() {
+            return values;
         }
 
         public void setOrganName(String string) {
             this.organName = string;
-        }
-
-        public Map<String, String> getItem() {
-            return (Map<String, String>) this.poll();
         }
 
         public String getOrganName() {
@@ -169,6 +189,11 @@ public class ProteinAtlasExpressions {
             return stainingLevel;
         }
 
+        /**
+         * Gives us 'stats' on the overall staining level of the Expressions
+         * @author radek
+         *
+         */
         public class StainingLevel {
 
             private Integer overall = 0;
@@ -184,10 +209,18 @@ public class ProteinAtlasExpressions {
                 this.count += 1;
             }
 
+            /**
+             * Get the float value representing the average Expression level
+             * @return
+             */
             public float getLevelValue() {
                 return overall.floatValue()/count;
             }
 
+            /**
+             * Convert the overall staining level of all Expressions into an average (ceiled/floored) value
+             * @return
+             */
             public String getLevelClass() {
                 double doubleValue = (double) getLevelValue();
                 if (doubleValue % 1 > 0.5) {
@@ -198,9 +231,13 @@ public class ProteinAtlasExpressions {
             }
 
         }
-
     }
 
+    /**
+     * Determines the "points" staining levels will get
+     * @author radek
+     *
+     */
     public class StainingLevelEvaluator {
 
         public static final int STRONG = 3;
@@ -209,6 +246,11 @@ public class ProteinAtlasExpressions {
         public static final int NEGATIVE = -1;
         public static final int OTHER = -2;
 
+        /**
+         * String representing the level to integer conversion
+         * @param level
+         * @return
+         */
         public Integer evaluate(String level) {
             level = level.toLowerCase();
 
@@ -224,6 +266,11 @@ public class ProteinAtlasExpressions {
             return OTHER;
         }
 
+        /**
+         * Integer value to string conversion
+         * @param levelValue
+         * @return
+         */
         public String reverseEvaluate(Integer levelValue) {
             switch (levelValue) {
                 case STRONG:
@@ -239,31 +286,41 @@ public class ProteinAtlasExpressions {
         }
     }
 
-    public class ByLevelComparator extends StainingLevelEvaluator implements Comparator<Map<String, String>> {
+    /**
+     * Comparator used on Expressions to order them by staining level
+     * @author radek
+     *
+     */
+    public class ByLevelComparator extends StainingLevelEvaluator implements Comparator<String> {
 
         @Override
-        public int compare(Map<String, String> a, Map<String, String> b) {
-            Integer aLevel = evaluate(a.get("level"));
-            Integer bLevel = evaluate(b.get("level"));
+        public int compare(String aK, String bK) {
+            Integer aLevel = evaluate(aK);
+            Integer bLevel = evaluate(bK);
 
             if (aLevel < bLevel) {
                 return 1;
             } else {
-                if (aLevel > bLevel) {
-                    return -1;
-                } else {
-                    return 0;
-                }
+                //if (aLevel > bLevel) {
+                return -1;
+                //} else {
+                //    return 1;
+                //}
             }
         }
     }
 
+    /**
+     * Reorder a TreeMap based on the number of cells contained in Expressions
+     * @author radek
+     *
+     */
     public class ByCellCountComparator implements Comparator<String> {
 
         @Override
         public int compare(String aK, String bK) {
-            Integer aSize = (Integer)results.get(aK).size();
-            Integer bSize = (Integer)results.get(bK).size();
+            Integer aSize = (Integer)results.get(aK).getValues().size();
+            Integer bSize = (Integer)results.get(bK).getValues().size();
 
             if (aSize < bSize) {
                 return 1;
@@ -277,6 +334,11 @@ public class ProteinAtlasExpressions {
         }
     }
 
+    /**
+     * Reorder a TreeMap based on the overall staining level of the Expressions
+     * @author radek
+     *
+     */
     public class ByOverallLevelComparator implements Comparator<String> {
 
         @Override
