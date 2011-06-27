@@ -1,7 +1,6 @@
 package org.intermine.bio.web.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,6 +66,26 @@ public class ProteinAtlasExpressions {
     }
 
     /**
+    *
+    * @return the map of lists sorted by Cell types count
+    */
+    public Map<String, ExpressionList> getByCells() {
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByCellCountComparator());
+        n.putAll(results);
+        return n;
+    }
+
+    /**
+    *
+    * @return the map of lists sorted by Overall level count
+    */
+    public Map<String, ExpressionList> getByLevel() {
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByOverallLevelComparator());
+        n.putAll(results);
+        return n;
+    }
+
+    /**
      *
      * @return the expressions reliability
      */
@@ -101,10 +120,18 @@ public class ProteinAtlasExpressions {
             // add to the appropriate organ list
             String organSlug = resultRow.get("organ").toLowerCase().replaceAll("[^a-z0-9-]", "");
             if (!results.containsKey(organSlug)) {
-                results.put(organSlug, new ExpressionList(15, byLevelComparator));
+                ExpressionList q = new ExpressionList(15, byLevelComparator);
+
+                // set the organ for this list
+                q.setOrganName(resultRow.get("organ"));
+
+                results.put(organSlug, q);
             }
-            PriorityQueue<Map<String, String>> q = results.get(organSlug);
+            ExpressionList q = results.get(organSlug);
             q.add(resultRow);
+
+            // update the overall level
+            q.stainingLevel.add(q.comparator.evaluate(resultRow.get("level")));
 
             // setup reliability for this set
             if (reliability == null) {
@@ -116,43 +143,154 @@ public class ProteinAtlasExpressions {
     @SuppressWarnings("serial")
     public class ExpressionList extends PriorityQueue<Map<String, String>> {
 
+        public ByLevelComparator comparator;
+        public StainingLevel stainingLevel;
+        private String organName;
+
         public ExpressionList(int i, Comparator<Map<String, String>> comparator) {
             super(i, comparator);
+            this.comparator = (ByLevelComparator) comparator;
+            stainingLevel = new StainingLevel(this.comparator);
+        }
+
+        public void setOrganName(String string) {
+            this.organName = string;
         }
 
         public Map<String, String> getItem() {
             return (Map<String, String>) this.poll();
         }
+
+        public String getOrganName() {
+            return organName;
+        }
+
+        public StainingLevel getStainingLevel() {
+            return stainingLevel;
+        }
+
+        public class StainingLevel {
+
+            private Integer overall = 0;
+            private Integer count = 0;
+            private ByLevelComparator comparator;
+
+            public StainingLevel(ByLevelComparator comparator) {
+                this.comparator = comparator;
+            }
+
+            public void add(Integer level) {
+                this.overall += level;
+                this.count += 1;
+            }
+
+            public float getLevelValue() {
+                return overall.floatValue()/count;
+            }
+
+            public String getLevelClass() {
+                double doubleValue = (double) getLevelValue();
+                if (doubleValue % 1 > 0.5) {
+                    return comparator.reverseEvaluate((int) Math.ceil(doubleValue));
+                } else {
+                    return comparator.reverseEvaluate((int) Math.floor(doubleValue));
+                }
+            }
+
+        }
+
     }
 
-    public class ByLevelComparator implements Comparator<Map<String, String>> {
+    public class StainingLevelEvaluator {
 
-        private Integer levelOrder(String level) {
+        public static final int STRONG = 3;
+        public static final int MODERATE = 2;
+        public static final int WEAK = 1;
+        public static final int NEGATIVE = -1;
+        public static final int OTHER = -2;
+
+        public Integer evaluate(String level) {
+            level = level.toLowerCase();
+
             if ("strong".equals(level)) {
-                return 1;
+                return STRONG;
             } else if ("moderate".equals(level)) {
-                return 2;
+                return MODERATE;
             } else if ("weak".equals(level)) {
-                return 3;
+                return WEAK;
             } else if ("negative".equals(level)) {
-                return 4;
-            } else {
-                return 5;
+                return NEGATIVE;
+            }
+            return OTHER;
+        }
+
+        public String reverseEvaluate(Integer levelValue) {
+            switch (levelValue) {
+                case STRONG:
+                    return "strong";
+                case MODERATE:
+                    return "moderate";
+                case WEAK:
+                    return "weak";
+                case NEGATIVE:
+                default:
+                    return "negative";
             }
         }
+    }
+
+    public class ByLevelComparator extends StainingLevelEvaluator implements Comparator<Map<String, String>> {
 
         @Override
         public int compare(Map<String, String> a, Map<String, String> b) {
-            Integer aLevel = levelOrder(a.get("level").toLowerCase());
-            Integer bLevel = levelOrder(b.get("level").toLowerCase());
+            Integer aLevel = evaluate(a.get("level"));
+            Integer bLevel = evaluate(b.get("level"));
 
             if (aLevel < bLevel) {
-                return -1;
+                return 1;
             } else {
                 if (aLevel > bLevel) {
-                    return 1;
+                    return -1;
                 } else {
                     return 0;
+                }
+            }
+        }
+    }
+
+    public class ByCellCountComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String aK, String bK) {
+            Integer aSize = (Integer)results.get(aK).size();
+            Integer bSize = (Integer)results.get(bK).size();
+
+            if (aSize < bSize) {
+                return 1;
+            } else {
+                if (aSize > bSize) {
+                    return -1;
+                } else {
+                    return aK.compareTo(bK);
+                }
+            }
+        }
+    }
+
+    public class ByOverallLevelComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String aK, String bK) {
+            Float aLevel = results.get(aK).stainingLevel.getLevelValue();
+            Float bLevel = results.get(bK).stainingLevel.getLevelValue();
+
+            if (aLevel < bLevel) {
+                return 1;
+            } else {
+                if (aLevel > bLevel) {
+                    return -1;
+                } else {
+                    return aK.compareTo(bK);
                 }
             }
         }

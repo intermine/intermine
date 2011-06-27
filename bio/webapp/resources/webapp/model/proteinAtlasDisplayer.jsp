@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div id="proteinAtlasDisplayer">
@@ -7,52 +8,72 @@
   <p>Reliability: <strong>${expressions.reliability}</strong></p>
 
   <style>
-    #proteinAtlasDisplayer div.graph { float:left; }
+    #proteinAtlasDisplayer table { float:left; border-spacing:0; border-collapse:collapse; }
+    #proteinAtlasDisplayer table td, #proteinAtlasDisplayer table th { padding:2px 10px 2px 4px; }
+    #proteinAtlasDisplayer table th { font-size:11px; }
+    #proteinAtlasDisplayer table th.sortable { background:url("images/icons/sort.gif") no-repeat left; padding-left:8px; cursor:pointer; }
+    #proteinAtlasDisplayer tr.alt td { background:#F6FCFE; border-top:1px solid #E6F7FE; border-bottom:1px solid #E6F7FE; }
 
-  #proteinAtlasDisplayer li.organ { padding-left:10px; }
-    #proteinAtlasDisplayer li.organ.alt { background:#F6FCFE; border-top:1px solid #E6F7FE; border-bottom:1px solid #E6F7FE; }
-    #proteinAtlasDisplayer li.organ span { margin-right:20px; line-height:20px; }
-    #proteinAtlasDisplayer li.organ span.count { float:left; width:20px; }
+    #proteinAtlasDisplayer table div.expressions { border:1px solid #000; display:inline-block; }
+    #proteinAtlasDisplayer table div.expression { display:inline-block; width:20px; height:15px; cursor:help; float:left; }
+    #proteinAtlasDisplayer table div.expression span.tissue { display:none; }
+    #proteinAtlasDisplayer table div.expression span.tooltip { z-index:5; background:#FFF; border:1px solid #CCC; whitespace:no-wrap; display:inline-block;
+      position:absolute; font-size:11px; padding:1px 2px; -moz-box-shadow:1px 1px 2px #DDD; -webkit-box-shadow:1px 1px 2px #DDD; box-shadow:1px 1px 2px #DDD;
+      line-height:15px; }
 
-    #proteinAtlasDisplayer div.expressions { float:right; width:300px; }
-    #proteinAtlasDisplayer div.expressions div.wrap { border:1px solid #000; display:inline-block; margin:2px 0; }
-    #proteinAtlasDisplayer div.expression { float:left; display:inline-block; width:20px; height:15px; cursor:help; }
-    #proteinAtlasDisplayer div.expression.strong { background:#CD3A32; }
-    #proteinAtlasDisplayer div.expression.moderate { background:#FD9B34; }
-    #proteinAtlasDisplayer div.expression.weak { background:#FFED8D; }
-    #proteinAtlasDisplayer div.expression.negative { background:#FFF; }
+    #proteinAtlasDisplayer .strong { background:#CD3A32; }
+    #proteinAtlasDisplayer .moderate { background:#FD9B34; }
+    #proteinAtlasDisplayer .weak { background:#FFED8D; }
+    #proteinAtlasDisplayer .negative { background:#FFF; }
 
-    #proteinAtlasDisplayer div.expression span.tissue { display:none; }
-    #proteinAtlasDisplayer div.expression span.tooltip { z-index:5; background:pink; border:2px solid red; whitespace:no-wrap; display:inline-block;
-      position:absolute; font-size:20px; }
+    #proteinAtlasDisplayer table span.level span.value { display:none; }
+
+    #proteinAtlasDisplayer div.sidebar { float:right; }
+    #proteinAtlasDisplayer div.legend ul li span, #proteinAtlasDisplayer table span.level { display:inline-block; width:20px; height:15px;
+      border:1px solid #000; }
+
+    #proteinAtlasDisplayer div.graph ul.header li { display:inline; font-size:11px; }
   </style>
 
-<div class="graph">
-  <ul class="organs">
-  <c:forEach var="organ" items="${expressions.byOrgan}" varStatus="status">
-    <li class="organ<c:if test='${status.count % 2 == 0}'> alt</c:if>" id="${organ.key}">
-      <div class="expressions">
-        <c:set var="expressionList" value="${organ.value}"/>
-        <c:set var="cellTypesCount" value="${fn:length(expressionList)}"/>
-        <span class="count">${cellTypesCount}</span>
-        <div class="wrap">
-          <c:forEach begin="${1}" end="${cellTypesCount}">
-            <c:set var="expression" value="${expressionList.item}"/>
-            <div class="expression ${fn:toLowerCase(expression.level)}"><span class="tissue">${expression.tissue}</span></div>
-          </c:forEach>
-        </div>
-      </div>
-      <span class="name">${expression.organ}</span>
-      <div style="clear:both;"></div>
-    </li>
-  </c:forEach>
-  </ul>
+<div class="sidebar">
+  <div class="legend">
+    <strong>Level of antibody staining</strong>
+    <ul class="level">
+      <li><span class="strong"></span> Strong</li>
+      <li><span class="moderate"></span> Moderate</li>
+      <li><span class="weak"></span> Weak</li>
+      <li><span class="negative"></span> Negative</li>
+    </ul>
+  </div>
 </div>
+
+<h3>By Organ Name</h3>
+<c:set var="tableRows" value="${expressions.byOrgan}" />
+<tiles:insert page="proteinAtlasDisplayerTable.jsp">
+  <tiles:put name="rows" beanName="tableRows" />
+</tiles:insert>
+
+<div style="clear:both;"></div>
+
+<h3>By Cell Count</h3>
+<c:set var="tableRows" value="${expressions.byCells}" />
+<tiles:insert page="proteinAtlasDisplayerTable.jsp">
+  <tiles:put name="rows" beanName="tableRows" />
+</tiles:insert>
+
+<div style="clear:both;"></div>
+
+<h3>By Level</h3>
+<c:set var="tableRows" value="${expressions.byLevel}" />
+<tiles:insert page="proteinAtlasDisplayerTable.jsp">
+  <tiles:put name="rows" beanName="tableRows" />
+</tiles:insert>
+
 <div style="clear:both;"></div>
 
 <script type="text/javascript">
-<%-- hovering on an organ tissue level will merge the contained tissue expressions of the same level and show a tooltip --%>
 (function() {
+  <%-- hovering on an organ tissue level will merge the contained tissue expressions of the same level and show a tooltip --%>
   jQuery("#proteinAtlasDisplayer div.expression").each(function() {
     var level = jQuery(this).attr('class').replace('expression', '').trim();
     var that = this;
@@ -74,5 +95,12 @@
           }
     );
   });
+
+  <%-- table sorting --%>
+  jQuery("#proteinAtlasDisplayer table th.sortable").click(function() {
+    var order = jQuery(this).attr('title');
+  });
 })();
 </script>
+
+</div>
