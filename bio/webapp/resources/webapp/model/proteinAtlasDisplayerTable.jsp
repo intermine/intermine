@@ -8,9 +8,9 @@
 <table class="graph">
   <thead>
     <tr>
-      <th class="sortable" title="level">Overall</th>
-      <th class="sortable" title="organ">Organ</th>
-      <th class="sortable" title="cells">Cells</th>
+      <th class="sortable" title="byLevel">Overall</th>
+      <th class="sortable" title="byOrgan">Organ</th>
+      <th class="sortable" title="byCells">Cells</th>
       <th>Antibody staining</th>
     </tr>
   </thead>
@@ -23,15 +23,16 @@
           <span class="level ${stainingLevel.levelClass}"><span class="value">${stainingLevel.levelValue}</span></span>
         </td>
         <td><span class="name">${expressionList.organName}</span></td>
-        <c:set var="cellTypesCount" value="${fn:length(expressionList)}"/>
-        <td>${cellTypesCount}</td>
+        <c:set var="expressions" value="${expressionList.values}"/>
+        <td>${fn:length(expressions)}</td>
         <td>
-          <div class="expressions">
-            <c:forEach begin="${1}" end="${cellTypesCount}">
-              <c:set var="expression" value="${expressionList.item}"/>
-              <div class="expression ${fn:toLowerCase(expression.level)}"><span class="tissue">${expression.tissue}</span></div>
-            </c:forEach>
-          </div>
+          <a target="new" href="${url}">
+            <div class="expressions">
+              <c:forEach var="expression" items="${expressions}">
+                <div class="expression ${fn:toLowerCase(expression.value.level)}"><span class="tissue">${expression.value.tissue}</span></div>
+              </c:forEach>
+            </div>
+          </a>
         </td>
       </tr>
     </c:forEach>
