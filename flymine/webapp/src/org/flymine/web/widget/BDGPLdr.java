@@ -67,42 +67,53 @@ public class BDGPLdr extends EnrichmentWidgetLdr
      */
     public Query getQuery(String action, List<String> keys) {
 
+        // tables in the FROM clause
         QueryClass qcMrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcDataset = new QueryClass(DataSet.class);
         QueryClass qcTerm = new QueryClass(MRNAExpressionTerm.class);
 
+        // fields in the SELECT clause
         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
         QueryField qfGene = new QueryField(qcGene, "id");
         QueryField qfTerm = new QueryField(qcTerm, "name");
 
+        // count(*)
         QueryFunction qfCount = new QueryFunction();
 
+        // all constraints will be ANDed together
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        // keys come from the widget form, if a user selects a specific expression term, eg.
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfTerm, ConstraintOp.IN, keys));
         }
 
+        // contrain to user's list of genes (or not)
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGene, ConstraintOp.IN, bag.getOsb()));
         }
 
+        // JOIN gene.mRNAExpressionResults --> expression result
         QueryCollectionReference r1 = new QueryCollectionReference(qcGene, "mRNAExpressionResults");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMrnaResult));
 
+        // expression result.expressed = true
         QueryField qfExpressed = new QueryField(qcMrnaResult, "expressed");
         SimpleConstraint scExpressed = new SimpleConstraint(qfExpressed, ConstraintOp.EQUALS,
                                                             new QueryValue(Boolean.TRUE));
         cs.addConstraint(scExpressed);
 
+        // JOIN ExpressionResult.expressionTerm = expression term object
         QueryCollectionReference r2 = new QueryCollectionReference(qcMrnaResult,
                                                                    "mRNAExpressionTerms");
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, qcTerm));
 
+        // MRNAExpressionResult.dataset = dataset object
         QueryObjectReference qcr = new QueryObjectReference(qcMrnaResult, "dataSet");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
 
+        // dataset.name = BDGP (to filter out flyfish)
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                                                   new QueryField(qcDataset, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
