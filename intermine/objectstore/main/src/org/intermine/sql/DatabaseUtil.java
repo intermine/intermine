@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,8 +35,6 @@ import org.intermine.sql.writebatch.FlushJob;
 import org.intermine.sql.writebatch.TableBatch;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-
-import sun.net.ConnectionResetException;
 
 /**
  * Collection of commonly used Database utilities
@@ -482,15 +479,17 @@ public final class DatabaseUtil
     }
 
     /**
-     * Tests if a table exists in the database
+     * Tests if a column exists in the database
      *
      * @param con a connection to a database
-     * @param tableName the name of a table to test for
-     * @return true if the table exists, false otherwise
+     * @param tableName the name of a table containing the column
+     * @param columnName the name of the column to test for
+     * @return true if the column exists, false otherwise
      * @throws SQLException if an error occurs in the underlying database
      * @throws NullPointerException if tableName is null
      */
-    public static boolean columnExists(Connection con, String tableName, String columnName) throws SQLException {
+    public static boolean columnExists(Connection con, String tableName, String columnName)
+        throws SQLException {
         if (tableName == null) {
             throw new NullPointerException("tableName cannot be null");
         }
@@ -884,15 +883,20 @@ public final class DatabaseUtil
 
     /**
      * Add the column intermine_current (type boolean) in the savedbag table and set it to true
-     * @param con the connection to use
+     * @param database the database to use
+     * @param tableName the table where update the column
+     * @param columnName the column to Update
+     * @param newValue the value to update
      * @throws SQLException if there is a database problem
      */
-    public static void updateColumn(Database database, String tableName, String columnName, String newValue)
+    public static void updateColumnValue(Database database, String tableName, String columnName,
+                                         String newValue)
         throws SQLException {
         Connection connection = database.getConnection();
         if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
             try {
-                String sqlUpdateColumnValue = "UPDATE " + tableName + " SET " + columnName + "=" + newValue;
+                String sqlUpdateColumnValue = "UPDATE " + tableName + " SET " + columnName
+                    + "=" + newValue;
                 connection.createStatement().execute(sqlUpdateColumnValue);
             } finally {
                 connection.close();

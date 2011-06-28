@@ -656,7 +656,7 @@ public class ProfileManager
                     try {
                         conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
                         if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                            DatabaseUtil.updateColumn(
+                            DatabaseUtil.updateColumnValue(
                                          ((ObjectStoreInterMineImpl) uosw).getDatabase(),
                                          "savedbag", "intermine_current", "false");
                         }

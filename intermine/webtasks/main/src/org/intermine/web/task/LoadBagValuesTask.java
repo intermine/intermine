@@ -88,7 +88,7 @@ public class LoadBagValuesTask extends Task
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
                     DatabaseUtil.addColumn(db, "savedbag", "intermine_current", "boolean");
-                    DatabaseUtil.updateColumn(db, "savedbag", "intermine_current", "true");
+                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current", "true");
                 }
             } catch (SQLException sqle) {
                 throw new BuildException("Problems connecting bagvalues table", sqle);
