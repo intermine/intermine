@@ -185,17 +185,20 @@ public class ClobAccess implements CharSequence, Lazy
     public String toString() {
         init();
         StringBuilder retval = new StringBuilder();
-        int lowestPage = offset / CLOB_PAGE_SIZE;
-        int highestPage = (offset + length - 1) / CLOB_PAGE_SIZE;
-        for (int page = lowestPage; page <= highestPage; page++) {
-            String pageText = (String) results.get(page);
-            if (page == highestPage) {
-                pageText = pageText.substring(0, offset + length - page * CLOB_PAGE_SIZE);
+
+        if (length > 0) {
+            int lowestPage = offset / CLOB_PAGE_SIZE;
+            int highestPage = (offset + length - 1) / CLOB_PAGE_SIZE;
+            for (int page = lowestPage; page <= highestPage; page++) {
+                String pageText = (String) results.get(page);
+                if (page == highestPage) {
+                    pageText = pageText.substring(0, offset + length - page * CLOB_PAGE_SIZE);
+                }
+                if (page == lowestPage) {
+                    pageText = pageText.substring(offset - page * CLOB_PAGE_SIZE, pageText.length());
+                }
+                retval.append(pageText);
             }
-            if (page == lowestPage) {
-                pageText = pageText.substring(offset - page * CLOB_PAGE_SIZE, pageText.length());
-            }
-            retval.append(pageText);
         }
         return retval.toString();
     }
