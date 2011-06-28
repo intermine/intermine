@@ -178,6 +178,7 @@ public class BuildBagAction extends InterMineAction
             bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
+        request.setAttribute("bagExtraFilter", buildBagForm.getExtraFieldValue());
         return mapping.findForward("bagUploadConfirm");
     }
 }
