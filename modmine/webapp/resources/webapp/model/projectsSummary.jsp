@@ -64,9 +64,14 @@ An individual 'submission' is a single instance of an experiment which tests var
   --%>
 <td><h4>  
   <c:choose>
+<%--
   <c:when test="${fn:startsWith(exp.name, 'Stranded Cell Line Transcriptional Profiling Using Illumina')}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
+Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+--%>
+<c:when test="${fn:contains(exp.name, '%')}">
   <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
-  Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+${exp.name}
   </html:link></h4>
   </c:when>
   <c:otherwise>
