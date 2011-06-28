@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -64,6 +65,7 @@ public abstract class LoginHandler extends InterMineAction
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (!im.getBagManager().isUserBagsCurrent(profile)) {
             new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+            recordMessage(new ActionMessage("login.upgradeListStarted"), request);
         }
 
         // Merge in anonymous query history
