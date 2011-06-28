@@ -192,11 +192,18 @@ public class SequenceExporter implements Exporter
             // add the sequence location info at the second place in the header
             SequenceFeature feature = (SequenceFeature) object;
 
-            String chr = feature.getChromosomeLocation().getLocatedOn().getPrimaryIdentifier();
-            Integer start = feature.getChromosomeLocation().getStart();
-            Integer end = feature.getChromosomeLocation().getEnd();
-            String locString = chr + ':' + start + '-' + end;
-            headerBits.add(locString);
+            Location loc = feature.getChromosomeLocation();
+            if (loc == null) {
+                headerBits.add("-");
+            } else {
+                // Assume if loc exits, the following information should be available
+                String chr = loc.getLocatedOn().getPrimaryIdentifier();
+                Integer start = loc.getStart();
+                Integer end = loc.getEnd();
+
+                String locString = chr + ':' + start + '-' + end;
+                headerBits.add(locString);
+            }
 
             for (ResultElement re : row) {
                 if (object.equals(re.getObject())) {
