@@ -110,12 +110,55 @@
 </script>
 <div id="tool_bar_div">
 <ul id="button_bar">
-    <li id="tool_bar_li_createlist" class="tb_button"><img src="images/icons/lists-16.png" width="16" height="16" alt="Create"><html:link linkName="#">Create List</html:link></li>
+    <li id="tool_bar_li_createlist" class="tb_button">
+      <img src="images/icons/lists-16.png" width="16" height="16" alt="Create">
+      <html:link linkName="#">Create List</html:link>
+
+      <div id="createListForm" style="display:none;width:350px" class="tool_bar_item">
+        <em>(with selected items)</em>
+        <fmt:message key="bag.new"/><br/>
+        <input type="text" name="newBagName" id="newBagName"/>
+        <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag"/>
+        <hr>
+        <a href="#"><fmt:message key="confirm.cancel"/></a>
+      </div>
+    </li>
+    <style>
+      li#tool_bar_li_createlist { position:relative; }
+      #createListForm { position:absolute; top:30px; left:0; }
+    </style>
+    <script type="text/javascript">
+      (function() {
+        function moveToReal() {
+            jQuery("#tool_bar_item_createlist_real #newBagName").val(jQuery("#createListForm #newBagName").val());
+            jQuery("#tool_bar_item_createlist_real #saveNewBag").click();
+        }
+
+        jQuery("li#tool_bar_li_createlist").click(function() {
+            jQuery(this).addClass('tb_button_active');
+            jQuery("#createListForm").show();
+        });
+
+        jQuery('#createListForm #newBagName').bind('keyup', function(e) {
+          if ((e.keyCode ? e.keyCode : e.which) == 13) moveToReal();
+        });
+        jQuery('#createListForm #saveNewBag').click(function() {
+          moveToReal();
+        });
+
+        jQuery("#createListForm a").click(function() {
+            jQuery("#tool_bar_li_createlist").removeClass("tb_button_active");
+            jQuery("div#createListForm").hide();
+            return false;
+        });
+      })();
+    </script>
+
     <li id="tool_bar_li_addtolist" class="tb_button"><img src="images/add.png" width="15" height="13" alt="Add"><html:link linkName="#">Add to List</html:link></li>
     <li id="tool_bar_li_addcolumn" class="tb_button"><img src="images/addcol.png" width="9" height="13" alt="Addcol"><html:link linkName="#">Add Column</html:link></li>
     <li id="tool_bar_li_export" class="tb_button"><img src="images/export.png" width="12" height="13" alt="Export"><html:link linkName="#">Export</html:link></li>
-
     <li class="tool_bar_link" style="padding:2px">
+
 <html:form action="/changeTableSize">
 
   <%-- Page size controls --%>
@@ -147,7 +190,7 @@
 <html:form action="/saveBag" >
 <input type="hidden" name="operationButton"/>
 
-<div id="tool_bar_item_createlist" style="display:none;width:350px" class="tool_bar_item" >
+<div id="tool_bar_item_createlist_real" style="display:none;width:350px" class="tool_bar_item" >
       <em>(with selected items)</em>
 <%-- FIXME: selectedIds has gone, we need a new plan:   $ { pagedResults.selectedIds.length} --%>
       <fmt:message key="bag.new"/><br/>
