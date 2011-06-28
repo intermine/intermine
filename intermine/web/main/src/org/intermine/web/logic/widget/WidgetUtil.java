@@ -72,7 +72,7 @@ public final class WidgetUtil
         Map<String, BigDecimal> sortedMap = new LinkedHashMap<String, BigDecimal>();
 
         // if the model has changed, the query might not be valid
-        if (q != null) {
+        if (q != null && populationTotal > 0) {
             r = os.execute(q, 20000, true, true, true);
 
             Iterator iter = r.iterator();
