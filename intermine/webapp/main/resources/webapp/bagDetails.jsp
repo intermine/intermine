@@ -306,8 +306,7 @@
 <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
+   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>
   </div>
 
 
