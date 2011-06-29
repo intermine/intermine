@@ -96,11 +96,6 @@
   <put name="pageName" value="searchresults"/>
 </definition>
 
-<!-- Begining of Cytoscape Web configuration -->
-<definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
-        controllerUrl="/initCytoscapeNetworkDisplayer.do"/>
-<!-- End of Cytoscape Web configuration -->
-
 <!-- Begining of Span Upload configuration -->
 <definition name="spanUploadOptions.page" extends="layout.template">
   <put name="body" value="spanUploadOptions.tile"/>
