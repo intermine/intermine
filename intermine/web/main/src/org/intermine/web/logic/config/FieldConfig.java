@@ -31,7 +31,7 @@ public class FieldConfig
     private String fieldExporter;
     private String displayer;
     private String label = null;
-
+    private Type parent = null;
 
     /**
      * Get the label to display in the webapp for this field. If there is
@@ -59,6 +59,13 @@ public class FieldConfig
         return StringUtils.join(ucFirstParts, " ");
     }
 
+    public void setClassConfig(Type ccf) {
+        this.parent = ccf;
+    }
+
+    public Type getClassConfig() {
+        return this.parent;
+    }
 
     /**
      * The human readable label for this field. For example "DB id" instead of "primaryIdentifier".
@@ -90,6 +97,10 @@ public class FieldConfig
      */
     public String getFieldExpr() {
         return fieldExpr;
+    }
+
+    public boolean getIsDottedPath() {
+        return (fieldExpr.lastIndexOf(".") >= 0);
     }
 
     /**
@@ -216,10 +227,12 @@ public class FieldConfig
      */
     public String toString() {
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
-               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary
-               + "\" showInInlineCollection=\"" + showInInlineCollection + "\" showInResults=\""
-               + showInResults + "\""
-               + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
+               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
+               + " showInInlineCollection=\"" + showInInlineCollection + "\""
+               + " showInResults=\"" + showInResults + "\""
+               + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"") 
+               + (label== null ? "" : " label=\"" + label + "\"") 
+               + "/>";
     }
 
     /**

@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- template.jsp -->
 
@@ -73,10 +74,23 @@
                     <c:set var="constraintHeadingClass" value="constraintHeadingDisabled"/>
                 </c:if>
 
-                <td><div class="constraint_${index} ${constraintHeadingClass}"><span class="templateConstraintPath"> <c:out value="${dec.title}" />
-                </span> <c:if test="${not empty dec.description}">
-                  <span class="templateConstraintDescription"><c:out value=" - ${dec.description}" /></span>
-                </c:if></div></td>
+                <td>
+                    <div class="constraint_${index} ${constraintHeadingClass}">
+                        <span class="templateConstraintPath"> 
+                            <c:out value="${imf:formatPath(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
+                            <c:set var="fieldDisplay" value="${imf:formatField(dec.path.path, WEBCONFIG)}" />
+                            <c:if test="${!empty fieldDisplay}">
+                                &gt;&nbsp;${fieldDisplay}
+                            </c:if>
+                        </span> 
+                        <c:if test="${not empty dec.description}">
+                            <span class="templateConstraintDescription">
+                                <c:out value=" - ${dec.description}" />
+                            </span>
+                        </c:if>
+                    </div>
+                </td>
+
               </tr>
             </table>
             <c:set var="valignExternalTd" value="top"/>

@@ -350,20 +350,20 @@ public class WebConfig
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
 
-        for (Iterator<String> modelIter = classes.iterator(); modelIter.hasNext();) {
+        for (Iterator<ClassDescriptor> modelIter = model.getLevelOrderTraversal().iterator(); modelIter.hasNext();) {
 
-            String className = modelIter.next();
-            Type thisClassType = types.get(className);
+            ClassDescriptor cld = modelIter.next();
+            Type thisClassType = types.get(cld.getName());
 
             if (thisClassType == null) {
                 thisClassType = new Type();
-                thisClassType.setClassName(className);
-                types.put(className, thisClassType);
+                thisClassType.setClassName(cld.getName());
+                types.put(cld.getName(), thisClassType);
             }
 
-            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(className));
+            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(cld.getName()));
             for (ClassDescriptor cd : cds) {
-                if (className.equals(cd.getName())) {
+                if (cld.getName().equals(cd.getName())) {
                     continue;
                 }
 
@@ -371,7 +371,7 @@ public class WebConfig
 
                 if (superClassType != null) {
                     // set title config, the setter itself only adds configs that have not been set
-                    //  before, see setTitles() in HeaderConfig
+                    // before, see setTitles() in HeaderConfig
                     HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
 
@@ -410,6 +410,17 @@ public class WebConfig
                         // copy any FieldConfigs from the super class
                         for (FieldConfig fc : superClassType.getFieldConfigs()) {
                             thisClassType.addFieldConfig(fc);
+                        }
+                    } else {
+                        // Set labels on overridden field-configs without labels
+                        for (FieldConfig superfc : superClassType.getFieldConfigs()) {
+                            for (FieldConfig thisfc : thisClassType.getFieldConfigs()) {
+                                if (thisfc.getFieldExpr().equals(superfc.getFieldExpr())) {
+                                    if (superfc.getLabel() != null && thisfc.getLabel() == null) {
+                                        thisfc.setLabel(superfc.getLabel());
+                                    }
+                                }
+                            }
                         }
                     }
 

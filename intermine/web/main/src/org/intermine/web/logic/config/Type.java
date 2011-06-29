@@ -55,10 +55,18 @@ public class Type
 
     private String label = null;
 
+    /**
+     * Get the label property's value.
+     * @return The value of this property.
+     */
     public String getLabel() {
         return this.label;
     }
 
+    /**
+     * Set the label property.
+     * @param label the new value for this property.
+     */
     public void setLabel(String label) {
         this.label = label;
     }
@@ -102,12 +110,17 @@ public class Type
         return this.className;
     }
 
+    public String getUnqualifiedClassName() {
+        return TypeUtil.unqualifiedName(this.className);
+    }
+
     /**
      * Add a FieldConfig for this Type
      * @param df the FieldConfig to add
      */
     public void addFieldConfig(FieldConfig df) {
         fieldConfigMap.put(df.getFieldExpr(), df);
+        df.setClassConfig(this);
     }
 
     /**

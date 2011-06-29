@@ -11,6 +11,7 @@ package org.intermine.web.logic.querybuilder;
  */
 
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.pathquery.Path;
 
 /**
@@ -59,6 +60,15 @@ public class DisplayPath
         } else {
             return path.getLastElement();
         }
+    }
+
+    /**
+     * Return the last field descriptor (the last element) of the path. If the 
+     * path represents the root class, return null.
+     * @return A field descriptor.
+     */
+    public FieldDescriptor getFieldDescriptor() {
+        return path.getEndFieldDescriptor();
     }
 
     /**

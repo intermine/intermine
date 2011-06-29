@@ -61,6 +61,13 @@ public class FieldConfigHelper
                 return fc;
             }
         }
+        // Now search the parents...
+        for (ClassDescriptor parent: cld.getSuperDescriptors()) {
+            FieldConfig fc = getFieldConfig(webConfig, parent, fd);
+            if (fc != null) {
+                return fc;
+            }
+        }
         return null;
     }
 }

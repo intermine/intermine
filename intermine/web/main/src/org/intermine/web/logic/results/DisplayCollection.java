@@ -46,6 +46,14 @@ public class DisplayCollection extends DisplayField
         this.desc = desc;
     }
 
+    public DisplayCollection(Collection<?> collection, CollectionDescriptor desc,
+                             WebConfig webConfig, Properties webProperties, Map<String,
+                             List<FieldDescriptor>> classKeys, List<Class<?>> listOfTypes, String objectType)
+        throws Exception {
+        super(collection, desc, webConfig, webProperties, classKeys, listOfTypes, objectType);
+        this.desc = desc;
+    }
+
     /**
      * Get ReferenceDescriptor for this reference.
      * @return ReferenceDescriptor
