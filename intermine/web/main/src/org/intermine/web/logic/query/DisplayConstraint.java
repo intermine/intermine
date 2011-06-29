@@ -329,6 +329,10 @@ public class DisplayConstraint
         return endCls + (fieldName == null ? "" : " " + fieldName);
     }
 
+    public String getEndClassName() {
+        return endCls;
+    }
+
     /**
      * Return the label associated with a constraint if editing a template query constraint.
      * @return the constraint label

@@ -89,27 +89,10 @@
                 </c:otherwise>
             </c:choose>
 
-            <c:set var="columnDisplayNameList" value="${fn:split(colName,'>')}"/>
-            <c:set var="begin" value="0"/>
-            <c:if test="${fn:length(columnDisplayNameList) > 3}">...
-                <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
-            </c:if>
-            <span id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}" style="cursor:default;">
-            <em style="font-size:9px;">
-            <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
-              <c:choose>
-                <c:when test="${status2.last}">
-                    </em><br/>${columnNameItem}
-                    <c:set var="fieldName" value="${columnNameItem}"/>
-                </c:when>
-                <c:otherwise>
-                    ${columnNameItem} &gt;
-              </c:otherwise>
-              </c:choose>
-            </c:forEach>
-            <!-- ${fn:length(columnDisplayNameList)}:${columnDisplayName} -->
+            <im:columnName columnName="${colName}" tableId="${pagedResults.tableid}" colNo="${status.count}"/>
+            <im:debug message="${fieldName}"/>
+
             <im:typehelp type="${column.path}" fullPath="true"/>
-            </span>
             </td></tr></table>
         <!-- </div> -->
       </th>

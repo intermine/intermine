@@ -205,7 +205,7 @@ public abstract class WebUtil
                 }
             } else {
                 FieldDescriptor fld = p.getEndFieldDescriptor();
-                ClassDescriptor cld = p.getLastClassDescriptor();
+                ClassDescriptor cld = p.endIsReference() ? p.getSecondLastClassDescriptor() : p.getLastClassDescriptor();
                 FieldConfig fcfg = FieldConfigHelper.getFieldConfig(webConfig, cld, fld);
                 if (fcfg != null) {
                     aliasedParts.add(fcfg.getDisplayName());
@@ -216,4 +216,58 @@ public abstract class WebUtil
         }
         return StringUtils.join(aliasedParts, " > ");
     }
+
+    public static String formatPathString(String pathString, InterMineAPI api, WebConfig webConfig) {
+        Path viewPath;
+        try {
+            viewPath = new Path(api.getModel(), pathString);
+        } catch (PathException e) {
+            return pathString;
+        }
+        return formatColumnName(viewPath, webConfig);
+    }
+
+    public static String formatField(String s, InterMineAPI api, WebConfig webConfig) {
+        if (StringUtils.isEmpty(s)) {
+            return "";
+        }
+        Path viewPath;
+        try {
+            viewPath = new Path(api.getModel(), s);
+        } catch (PathException e) {
+            return s;
+        }
+        return formatField(viewPath, webConfig);
+    }
+
+    public static String formatField(Path p, WebConfig webConfig) {
+        if (p == null) {
+            return "";
+        }
+        FieldDescriptor fd = p.getEndFieldDescriptor();
+        if (fd == null) {
+            return "";
+        }
+        ClassDescriptor cld = p.getLastClassDescriptor();
+        FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
+        if (fc != null) {
+            return fc.getDisplayName();
+        } else {
+            return FieldConfig.getFormattedName(fd.getName());
+        }
+    }
+
+    public static String formatFieldChain(String s, InterMineAPI api, WebConfig webConfig) {
+        String fullPath = formatColumnName(s, api.getModel(), webConfig);
+        if (StringUtils.isEmpty(fullPath)) {
+            return fullPath;
+        } else {
+            int idx = fullPath.indexOf(">");
+            if (idx != -1) {
+                return fullPath.substring(idx + 1);
+            }
+        }
+        return fullPath;
+    }
+
 }

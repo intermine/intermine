@@ -596,7 +596,7 @@ public class ReportObject
             }
             DisplayReference newReference = null;
             try {
-                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
+                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys(), objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -634,7 +634,7 @@ public class ReportObject
             try {
                 newCollection = new DisplayCollection((Collection<?>) fieldValue,
                         (CollectionDescriptor) fd, webConfig, webProperties, im.getClassKeys(),
-                        listOfTypes);
+                        listOfTypes, objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }

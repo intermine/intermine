@@ -11,4 +11,28 @@
   <function-signature>java.lang.String formatColumnName( org.intermine.pathquery.Path, org.intermine.web.logic.config.WebConfig )</function-signature>
 </function> 
 
+<function>
+  <name>formatPath</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.lang.String formatPathString( java.lang.String, org.intermine.api.InterMineAPI, org.intermine.web.logic.config.WebConfig )</function-signature>
+</function> 
+
+<function>
+  <name>formatField</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.lang.String formatField( org.intermine.pathquery.Path, org.intermine.web.logic.config.WebConfig )</function-signature>
+</function> 
+
+<function>
+  <name>formatFieldStr</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.lang.String formatField( java.lang.String, org.intermine.api.InterMineAPI, org.intermine.web.logic.config.WebConfig )</function-signature>
+</function> 
+
+<function>
+  <name>formatFieldChain</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.lang.String formatFieldChain( java.lang.String, org.intermine.api.InterMineAPI, org.intermine.web.logic.config.WebConfig )</function-signature>
+</function> 
+
 </taglib>
