@@ -4,6 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
   <style>
+    #proteinAtlasDisplayer h3 { background-image:url("images/icons/protein-atlas.gif"); background-repeat:no-repeat; background-position:6px 2px; padding-left:28px; }
+
     #proteinAtlasDisplayer table { float:left; border-spacing:0; border-collapse:collapse; }
     #proteinAtlasDisplayer table td, #proteinAtlasDisplayer table th { padding:2px 10px 2px 4px; }
     #proteinAtlasDisplayer table th { font-size:11px; }
@@ -29,8 +31,11 @@
     #proteinAtlasDisplayer table span.level span.value { display:none; }
 
     #proteinAtlasDisplayer div.sidebar { float:right; width:40%; }
-    #proteinAtlasDisplayer div.sidebar p strong.uncertain { background:#FFD92C; border:1px solid #DDD; }
-    #proteinAtlasDisplayer div.sidebar p strong.supportive { background:#A9CC30; border:1px solid #DDD; }
+    #proteinAtlasDisplayer div.sidebar p strong.uncertain,
+    #proteinAtlasDisplayer div.sidebar p strong.low { background:#FFD92C; border:1px solid #DDD; }
+    #proteinAtlasDisplayer div.sidebar p strong.supportive,
+    #proteinAtlasDisplayer div.sidebar p strong.high,
+    #proteinAtlasDisplayer div.sidebar p strong.medium { background:#A9CC30; border:1px solid #DDD; }
     #proteinAtlasDisplayer div.sidebar p.small { font-size:11px; }
 
     #proteinAtlasDisplayer div.legend { margin-top:10px; }
@@ -45,6 +50,8 @@
 
 <div id="proteinAtlasDisplayer">
 
+<c:choose>
+<c:when test="${expressions.reliability != null}">
 <h3>Protein Atlas Tissue Expression</h3>
 
 <div class="sidebar">
@@ -122,5 +129,9 @@
     });
   })();
   </script>
-
+</c:when>
+<c:otherwise>
+<h3 class="gray">Protein Atlas Tissue Expression</h3>
+</c:otherwise>
+</c:choose>
 </div>

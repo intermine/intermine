@@ -103,6 +103,7 @@ public class ProteinAtlasDisplayer extends ReportDisplayer {
                 "Gene.proteinAtlasExpression.level",
                 "Gene.proteinAtlasExpression.reliability",
                 "Gene.proteinAtlasExpression.tissue.name",
+                "Gene.proteinAtlasExpression.tissue.tissueGroup.name",
                 "Gene.primaryIdentifier");
         // TODO order by organ name
         query.addOrderBy("Gene.proteinAtlasExpression.expressionType", OrderDirection.ASC);

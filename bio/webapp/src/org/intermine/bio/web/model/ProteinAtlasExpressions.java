@@ -1,13 +1,10 @@
 package org.intermine.bio.web.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.intermine.api.results.ExportResultsIterator;
@@ -41,22 +38,7 @@ public class ProteinAtlasExpressions {
         add("level");
         add("reliability");
         add("tissue");
-    }};
-
-    // XXX remove
-    private ArrayList<String> organs =  new ArrayList<String>() {{
-        add("Central nervous system (Brain)");
-        add("Blood and immune system (Hematopoietic)");
-        add("Liver and pancreas");
-        add("Digestive tract (GI-tract)");
-        add("Respiratory system (Lung)");
-        add("Cardiovascular system (Heart and blood vessels)");
-        add("Breast and female reproductive system (Female tissues)");
-        add("Placenta");
-        add("Male reproductive system (Male tissues)");
-        add("Urinary tract (Kidney and bladder)");
-        add("Skin and soft tissues");
-        add("Endocrine glands");
+        add("organ");
     }};
 
     /**
@@ -100,8 +82,6 @@ public class ProteinAtlasExpressions {
      * @param values
      */
     public ProteinAtlasExpressions(ExportResultsIterator values) {
-        // TODO add a clause correctly adding expressions to the appropriate organ list
-
         results = new TreeMap<String, ExpressionList>();
         Comparator<String> byLevelComparator = new ByLevelComparator();
 
@@ -114,10 +94,6 @@ public class ProteinAtlasExpressions {
             for (int i=0; i < expressionColumns.size(); i++)  {
                 resultRow.put(expressionColumns.get(i), valuesRow.get(i).getField().toString());
             }
-
-            // XXX remove
-            Double which = Math.random() * 10;
-            resultRow.put("organ", organs.get((int) (which - (which % 1))));
 
             // add to the appropriate organ list
             String organSlug = resultRow.get("organ").toLowerCase().replaceAll("[^a-z0-9-]", "");
