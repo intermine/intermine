@@ -31,6 +31,9 @@ public class ProteinAtlasExpressions {
     /** @var reliability of expressions */
     private String reliability;
 
+    /** @var expression type for these expressions */
+    private ExpressionType type;
+
     /** @var column keys we have in the results table */
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
         add("cellType");
@@ -78,6 +81,14 @@ public class ProteinAtlasExpressions {
     }
 
     /**
+    *
+    * @return the expressions type (Staining vs APE)
+    */
+   public ExpressionType getType() {
+       return type;
+   }
+
+    /**
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
      * @param values
      */
@@ -111,10 +122,40 @@ public class ProteinAtlasExpressions {
             // update the overall level
             q.stainingLevel.add(q.comparator.evaluate(resultRow.get("level")));
 
-            // setup reliability for this set
+            // setup reliability, type for this set
             if (reliability == null) {
                 reliability = resultRow.get("reliability");
+                this.type = new ExpressionType(resultRow.get("expressionType"));
             }
+        }
+
+    }
+
+    /**
+     * Represents the type (APE/Staining)
+     * @author radek
+     *
+     */
+    public class ExpressionType {
+
+        private String text;
+        private String clazz;
+
+        public ExpressionType(String dbString) {
+            this.text = dbString;
+            this.clazz = (this.text.toLowerCase().indexOf("ape") >= 0) ? "ape" : "staining";
+        }
+
+        public Boolean getIsApe() {
+            return ("ape".equals(this.clazz));
+        }
+
+        public String getText() {
+            return this.text;
+        }
+
+        public String getClazz() {
+            return this.clazz;
         }
     }
 
@@ -217,9 +258,13 @@ public class ProteinAtlasExpressions {
     public class StainingLevelEvaluator {
 
         public static final int STRONG = 3;
+        public static final int HIGH = 3;
         public static final int MODERATE = 2;
+        public static final int MEDIUM = 2;
         public static final int WEAK = 1;
+        public static final int LOW = 1;
         public static final int NEGATIVE = -1;
+        public static final int NONE = -1;
         public static final int OTHER = -2;
 
         /**
@@ -230,13 +275,13 @@ public class ProteinAtlasExpressions {
         public Integer evaluate(String level) {
             level = level.toLowerCase();
 
-            if ("strong".equals(level)) {
+            if ("strong".equals(level) || "high".equals(level)) {
                 return STRONG;
-            } else if ("moderate".equals(level)) {
+            } else if ("moderate".equals(level) || "medium".equals(level)) {
                 return MODERATE;
-            } else if ("weak".equals(level)) {
+            } else if ("weak".equals(level) || "low".equals(level)) {
                 return WEAK;
-            } else if ("negative".equals(level)) {
+            } else if ("negative".equals(level) || "none".equals(level)) {
                 return NEGATIVE;
             }
             return OTHER;
