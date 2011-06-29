@@ -64,7 +64,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
 
         if (sq == null) {
-            recordMessage(new ActionMessage("noSuchQuery.message", queryName), request);
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
             return mapping.findForward("mymine");
         }
 
@@ -108,7 +108,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 //            LOG.error("No such query " + queryName + " type=" + request.getParameter("type"));
 //            throw new NullPointerException("No such query " + queryName + " type="
 //                    + request.getParameter("type"));
-            recordMessage(new ActionMessage("noSuchQuery.message", queryName), request);
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
             return mapping.findForward("mymine");
         }
 
@@ -147,7 +147,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         SavedQuery sq = profile.getHistory().get(queryName);
 
         if (sq == null) {
-            recordMessage(new ActionMessage("noSuchQuery.message", queryName), request);
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
             return mapping.findForward("mymine");
         }
 
