@@ -18,7 +18,7 @@
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
 
 <html:xhtml/>
-<form action="/widgetAction" id="widgetaction${widget.id}">
+<form action="widgetAction.do" id="widgetaction${widget.id}">
 <html:hidden property="link" value="${widget.link}"/>
 <html:hidden property="bagType" value="${bag.type}"/>
 <html:hidden property="bagName" value="${bag.name}" />
