@@ -29,7 +29,7 @@
           <a target="new" href="${url}">
             <div class="expressions">
               <c:forEach var="expression" items="${expressions}">
-                <div class="expression ${fn:toLowerCase(expression.value.level)}"><span class="tissue">${expression.value.tissue}</span></div>
+                <div class="expression ${fn:toLowerCase(expression.value.level)}"><span class="tissue">${expression.value.tissue} (${expression.value.cellType})</span></div>
               </c:forEach>
             </div>
           </a>
