@@ -19,8 +19,10 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
@@ -50,8 +52,8 @@ public class ExportQueryAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -62,12 +64,19 @@ public class ExportQueryAction extends InterMineAction
 
         PathQuery query = null;
 
+        SavedQuery sq = profile.getSavedQueries().get(name);
+
+        if (sq == null) {
+            recordError(new ActionMessage("errors.query.missing", name), request);
+            return mapping.findForward("mymine");
+        }
+
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
             query = SessionMethods.getQuery(session);
         } else if ("history".equals(type)) {
-            query = (profile.getHistory().get(name)).getPathQuery();
+            query = sq.getPathQuery();
         } else if ("saved".equals(type)) {
-            query = (profile.getSavedQueries().get(name)).getPathQuery();
+            query = sq.getPathQuery();
         } else {
             LOG.error("Bad type parameter: " + type);
             return null;
