@@ -64,18 +64,25 @@ public class ExportQueryAction extends InterMineAction
 
         PathQuery query = null;
 
-        SavedQuery sq = profile.getSavedQueries().get(name);
-
-        if (sq == null) {
-            recordError(new ActionMessage("errors.query.missing", name), request);
-            return mapping.findForward("mymine");
-        }
-
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
             query = SessionMethods.getQuery(session);
         } else if ("history".equals(type)) {
+            SavedQuery sq = profile.getSavedQueries().get(name);
+
+            if (sq == null) {
+                recordError(new ActionMessage("errors.query.missing", name), request);
+                return mapping.findForward("mymine");
+            }
+
             query = sq.getPathQuery();
         } else if ("saved".equals(type)) {
+            SavedQuery sq = profile.getSavedQueries().get(name);
+
+            if (sq == null) {
+                recordError(new ActionMessage("errors.query.missing", name), request);
+                return mapping.findForward("mymine");
+            }
+
             query = sq.getPathQuery();
         } else {
             LOG.error("Bad type parameter: " + type);
