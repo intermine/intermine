@@ -24,9 +24,13 @@
       line-height:15px; color:#000; }
 
     #proteinAtlasDisplayer .strong { background:#CD3A32; }
+    #proteinAtlasDisplayer .ape .strong, #proteinAtlasDisplayer .high { background:#2B4A7B; }
     #proteinAtlasDisplayer .moderate { background:#FD9B34; }
+    #proteinAtlasDisplayer .ape .moderate, #proteinAtlasDisplayer .medium { background:#4B97CE; }
     #proteinAtlasDisplayer .weak { background:#FFED8D; }
-    #proteinAtlasDisplayer .negative { background:#FFF; }
+    #proteinAtlasDisplayer .ape .low, #proteinAtlasDisplayer .low { background:#BFF1FF; }
+    #proteinAtlasDisplayer .negative,
+    #proteinAtlasDisplayer .none { background:#FFF; }
 
     #proteinAtlasDisplayer table span.level span.value { display:none; }
 
@@ -56,35 +60,46 @@
 
 <div class="sidebar">
 
-    <p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong></p>
+  <c:set var="expressionType" value="${expressions.type}" />
+    <p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
     <p class="small">A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
 
     <div class="legend">
       <strong>Level of antibody staining</strong>
       <ul class="level">
-        <li><span class="strong"></span> Strong</li>
-        <li><span class="moderate"></span> Moderate</li>
-        <li><span class="weak"></span> Weak</li>
-        <li><span class="negative"></span> Negative</li>
+        <c:choose>
+          <c:when test="${expressionType.isApe}">
+            <li><span class="high"></span> High</li>
+            <li><span class="medium"></span> Medium</li>
+            <li><span class="low"></span> Low</li>
+            <li><span class="none"></span> None</li>
+          </c:when>
+          <c:otherwise>
+            <li><span class="strong"></span> Strong</li>
+            <li><span class="moderate"></span> Moderate</li>
+            <li><span class="weak"></span> Weak</li>
+            <li><span class="negative"></span> Negative</li>
+          </c:otherwise>
+        </c:choose>
       </ul>
     </div>
   </div>
 
-  <div class="table byOrgan active">
+  <div class="table byOrgan active ${expressionType.clazz}">
     <c:set var="tableRows" value="${expressions.byOrgan}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
     </tiles:insert>
   </div>
 
-  <div class="table byCells inactive">
+  <div class="table byCells inactive ${expressionType.clazz}">
     <c:set var="tableRows" value="${expressions.byCells}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
     </tiles:insert>
   </div>
 
-  <div class="table byLevel inactive">
+  <div class="table byLevel inactive ${expressionType.clazz}">
     <c:set var="tableRows" value="${expressions.byLevel}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
