@@ -40,11 +40,18 @@ IMBedding = (function() {
     }
 
     var decamelise = function(str) {
+        if (str == null) {
+            return "";
+        }
         var chrs = str.split("");
         var newStr = "";
         var lastChrWasLower = false;
-        for (var i in chrs) {
+        var noOfChrs = chrs.length;
+        for (var i = 0; i < noOfChrs; i++) {
             var ch = chrs[i];
+            if (ch == null) {
+                continue;
+            }
             var thisIsUpper = (ch.match(/[A-Z]/) != null);
             if (lastChrWasLower && thisIsUpper) {
                 newStr += " ";
@@ -62,21 +69,27 @@ IMBedding = (function() {
 
     var mungeHeader = function(header) {
         var parts = header.split(" > ");
-        if (parts.length == 1) {
-            return decamelise(parts[0]);
-        } else {
-            var retParts;
-            if (uglyAttributes.test(parts[parts.length - 1])) {
-                retParts = parts.slice(parts.length - 2, parts.length - 1);
+        var partsLen = parts.length;
+        var retParts = [];
+        if (partsLen == 1) {
+            return retParts = parts;
+        } else if (partsLen == 2) {
+            var lastPart = parts.pop();
+            if (uglyAttributes.test(lastPart)) {
+                retParts.push(parts[0]);
             } else {
-                retParts = parts.slice(parts.length - 2, parts.length);
+                retParts.push(lastPart);
             }
-            for (var i in retParts) {
-                retParts[i] = decamelise(retParts[i]);
+        } else {
+            if (uglyAttributes.test(parts[partsLen - 1])) {
+                retParts = parts.slice(partsLen - 2, partsLen - 1);
+            } else {
+                retParts = parts.slice(partsLen - 2, partsLen);
             }
-            var ret = retParts.join(" ");
-            return ret;
         }
+
+        var ret = jQuery.map(retParts, function(elem) {return decamelise(elem)}).join(" ");
+        return ret;
     };
 
     var cellCreater = function(cell, localiser) {
@@ -608,8 +621,9 @@ IMBedding = (function() {
                         errorHandler(data.error, data.statusCode);
                     }
                 } else {
-                    errorHandler = options.errorHandler || defaultOptions.errorHandler;
-                    errorHandler("Incorrect data format returned from server", 500);
+                  buildTable(data, target, options);
+                  //  errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                  //  errorHandler("Incorrect data format returned from server", 500);
                 }
             }
         }
@@ -636,6 +650,10 @@ IMBedding = (function() {
             data.size = defaultTableSize;
         }
         if (!target instanceof Function) {
+            if (!jQuery(target).length) {
+                console.log("Aborting query - target '" + target + "'not found in DOM");
+                return;
+            }
             var throbber = document.createElement("img");
             throbber.src = defaultOptions.throbberSrc;
             jQuery(target).empty().append(throbber);
@@ -659,17 +677,20 @@ IMBedding = (function() {
     };
 
     var makeConstraint = function(whereClause) {
-        var i = 0, len = 0, whereString = "<constraint ", attr = null;
+        var i = 0, len = 0, whereString = "<constraint ", attr = null, values = null;
+        console.log(whereClause);
         for (attr in whereClause) {
-            if (attr != "values") {
+            if (attr === "values") {
+                values = whereClause[attr];
+            } else {
                 whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
             }
         }
-        if (whereClause.values) {
+        if (values) {
             whereString += ">";
-            len = whereString.values.length;
-            while(i++ < len) {
-                whereString += "<value>" + whereString.values[i] + "</value>";
+            len = values.length;
+            for (i = 0;i < len;i++) {
+                whereString += "<value>" + values[i] + "</value>";
             }
             whereString += "</constraint>";
         } else {
@@ -681,7 +702,8 @@ IMBedding = (function() {
 
     var getConstraints = function(constraints) {
         var constraintsString = "", cl = constraints.length, i = 0;
-        while (i++ < cl) {
+        console.log(constraints);
+        for (i = 0; i < cl; i++) {
             constraintsString += makeConstraint(constraints[i]);
         }
         return constraintsString;
