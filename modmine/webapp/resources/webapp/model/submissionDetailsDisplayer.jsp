@@ -49,6 +49,12 @@
         <td><span style="border: 2px solid red;"><strong>${embargoDate}<strong></span></td>
       </tr>
   </c:if>
+  <c:if test="${empty embargoDate}">
+  <tr>
+    <td>Embargo Date:</td>
+    <td><span style="border: 2px solid green;">This dataset is no longer embargoed</span></td>
+  </tr>
+  </c:if>  
   <c:if test="${not empty qualityControl}">
       <tr>
         <td>Quality Control:</td>
