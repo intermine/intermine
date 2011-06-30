@@ -861,19 +861,21 @@ public final class DatabaseUtil
 
     /**
      * Add a column in the table specified in input
-     * @param con the connection to use
+     * @param database the database to use
      * @param tableName the table where to add the column
      * @param columnName the column to add
      * @param type the type
      * @throws SQLException if there is a database problem
      */
-    public static void addColumn(Database database, String tableName, String columnName, String type)
+    public static void addColumn(Database database, String tableName, String columnName,
+                                String type)
         throws SQLException {
         Connection connection = database.getConnection();
         if (DatabaseUtil.tableExists(connection, tableName)
             && !DatabaseUtil.columnExists(connection, tableName, columnName)) {
             try {
-                String sqlAddColumn = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + type;
+                String sqlAddColumn = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName
+                                    + " " + type;
                 connection.createStatement().execute(sqlAddColumn);
             } finally {
                 connection.close();
