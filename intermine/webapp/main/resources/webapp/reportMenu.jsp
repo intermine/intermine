@@ -7,6 +7,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 
+<tiles:importAttribute name="summary" ignore="true" />
+
 <%-- jQuery.scrollTo relies on inlinetemplate.js! --%>
 
 <div class="wrap">
@@ -15,6 +17,7 @@
     <div class="links">
       <html:link action="/report.do?id=${object.id}#summary"
       onclick="jQuery('a[name=summary]').scrollTo('slow', 'swing', 0);return false;"
+      styleClass="${summary}"
       >Summary</html:link>
 
       <c:forEach items="${categories}" var="aspect">

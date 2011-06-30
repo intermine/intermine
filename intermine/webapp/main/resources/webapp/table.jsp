@@ -107,7 +107,9 @@
             if (jQuery(this).attr('id') == 'tool_bar_li_addtolist' && isClear()) {
               return;
             }
-            toggleToolBarMenu(this);
+            if (!jQuery(this).hasClass('inactive')) {
+              toggleToolBarMenu(this);
+            }
         });
     })
 </script>

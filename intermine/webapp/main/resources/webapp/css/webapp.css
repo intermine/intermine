@@ -1074,6 +1074,7 @@ div.heading.results #tool_bar_div ul#button_bar li {
 
 #funding-footer img {
     padding-left: 6px;
+    vertical-align: middle;
 }
 
 /* template input h2 */
@@ -1444,6 +1445,10 @@ div.floatRight { float:right; }
   width:20px; display:inline-block; height:32px; float:left; }
 #bigGreen.button div.right { background:url('../images/progress/green-btn-right.png') no-repeat left;
   width:20px; display:inline-block; height:32px; float:left; }
+
+#bigGreen.button:hover input { background-image:url('../images/progress/green-btn-center-hover.png'); }
+#bigGreen.button:hover div.left { background-image:url('../images/progress/green-btn-left-hover.png'); }
+#bigGreen.button:hover div.right { background-image:url('../images/progress/green-btn-right-hover.png'); }
 
 #bigGreen.button.inactive input { background:url('../images/progress/gray-btn-center.png') repeat-x left; }
 #bigGreen.button.inactive div.left { background:url('../images/progress/gray-btn-left.png') no-repeat left; }
