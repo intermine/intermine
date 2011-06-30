@@ -74,7 +74,7 @@ public class MgiAllelesConverter extends BioFileConverter
         } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile.getName())) {
             processGenotypes(reader);
         } else {
-            throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
+            System.out.println("Ignoring file: " + currentFile.getName());
         }
     }
     private void processGenotypes(Reader reader) throws ObjectStoreException, IOException {
