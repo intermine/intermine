@@ -119,6 +119,9 @@ public class ProteinAtlasConverter extends BioFileConverter
             String expressionType = line[4];
             String reliability = line[5];
 
+            level = alterLevel(level, expressionType);
+            reliability = alterReliability(reliability, expressionType);
+            
             Item expression = createItem("ProteinAtlasExpression");
             expression.setAttribute("cellType", cellType);
             expression.setAttribute("level", level);
@@ -131,7 +134,6 @@ public class ProteinAtlasConverter extends BioFileConverter
     }
 
     // store tells us we have been called with the upper case name from the tissue_to_organ file
-    // 
     private Item getTissue(String tissueName) throws ObjectStoreException {
         Item tissue = tissues.get(tissueName);
         if (tissue == null) {
@@ -154,19 +156,40 @@ public class ProteinAtlasConverter extends BioFileConverter
         return geneId;
     }
 
-    private String alterScore(String score) {
-        if ("very low".equalsIgnoreCase(score) || "none".equalsIgnoreCase(score)) {
-            return "0 - " + score;
-        } else if ("low".equalsIgnoreCase(score) || "not supportive".equalsIgnoreCase(score)) {
-            return "1 - " + score;
-        } else if ("medium".equalsIgnoreCase(score) || "unsupportive".equalsIgnoreCase(score)) {
-            return "2 - " + score;
-        } else if ("high".equalsIgnoreCase(score) || "supportive".equalsIgnoreCase(score)) {
-            return "3 - " + score;
-        } else {
-            throw new RuntimeException("Score '" + score + "' could not be assigned to category" +
-                    " update the code to handle a new score type");
+    private String alterLevel(String level, String type) {
+        if ("staining".equalsIgnoreCase(type)) {
+            if ("strong".equalsIgnoreCase(level)) {
+                return "High";
+            } else if ("moderate".equalsIgnoreCase(level)) {
+                return "Medium";
+            } else if ("weak".equalsIgnoreCase(level)) {
+                return "Low";
+            } else if ("negative".equalsIgnoreCase(level)) {
+                return "None";
+            }
         }
+        return level;
+    }
+    
+    private String alterReliability(String reliability, String type) {
+        if ("staining".equalsIgnoreCase(type)) {
+            if ("supportive".equalsIgnoreCase(reliability)) {
+                return "High";
+            } else if ("uncertain".equalsIgnoreCase(reliability)) {
+                return "Low";
+            }
+        }else if ("ape".equalsIgnoreCase(type)) {
+            if ("hi".equalsIgnoreCase(reliability)) {
+                return "High";
+            } else if ("medium".equalsIgnoreCase(reliability)) {
+                return "High";
+            }  else if ("low".equalsIgnoreCase(reliability)) {
+                return "Low";
+            }  else if ("very low".equalsIgnoreCase(reliability)) {
+                return "Low";
+            }
+        }
+        return reliability;
     }
     
     private String alterExpressionType(String expressionType) {
@@ -178,4 +201,6 @@ public class ProteinAtlasConverter extends BioFileConverter
             return expressionType;
         }
     }
+    
+    
 }
