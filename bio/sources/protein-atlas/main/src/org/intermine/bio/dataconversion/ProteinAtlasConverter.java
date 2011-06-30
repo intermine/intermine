@@ -178,7 +178,7 @@ public class ProteinAtlasConverter extends BioFileConverter
             } else if ("uncertain".equalsIgnoreCase(reliability)) {
                 return "Low";
             }
-        }else if ("ape".equalsIgnoreCase(type)) {
+        } else if ("ape".equalsIgnoreCase(type)) {
             if ("hi".equalsIgnoreCase(reliability)) {
                 return "High";
             } else if ("medium".equalsIgnoreCase(reliability)) {
