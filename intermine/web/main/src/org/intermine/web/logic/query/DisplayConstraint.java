@@ -602,7 +602,7 @@ public class DisplayConstraint
     }
 
     /**
-     * Get a list of public and user bag names available for this path.  If none available return
+     * Get a list of public and user bag names available and currentfor this path.  If none available return
      * null.
      * @return a list of available bag names or null
      */
@@ -610,7 +610,7 @@ public class DisplayConstraint
         if (ClassKeyHelper.hasKeyFields(classKeys, endCls)
             && !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)) {
             Map<String, InterMineBag> bags =
-                bagManager.getUserOrGlobalBagsOfType(profile, endCls);
+                bagManager.getCurrentUserOrGlobalBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
                 List<String> bagList = new ArrayList<String>(bags.keySet());
                 Collections.sort(bagList);

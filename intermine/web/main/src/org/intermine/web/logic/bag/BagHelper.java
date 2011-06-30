@@ -94,7 +94,7 @@ public final class BagHelper
         Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null,
                 im.getBagQueryRunner(), null);
 
-        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os,
+        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), true, os,
                 profile.getUserId(), profile.getProfileManager().getProfileObjectStoreWriter());
         osw.addToBagFromQuery(bag.getOsb(), q);
         profile.saveBag(bag.getName(), bag);

@@ -2,6 +2,8 @@ package org.intermine.webservice.server.lists;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +12,7 @@ import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -33,12 +36,14 @@ class ListServiceUtils {
      * @param type The type common to all bags
      * @param nameAccumulator A set of strings to hold the names of temporary lists.
      * @param profile A profile to use to create temporary bags
+     * @param classKeys A classKeys to use to create bags
      * @return A set of bags of the given type.
      * @throws ObjectStoreException if there is a problem storing or creating bags.
      */
     public static Collection<InterMineBag> castBagsToCommonType(
             Collection<InterMineBag> bags, String type,
-            Set<String> nameAccumulator, Profile profile)
+            Set<String> nameAccumulator, Profile profile,
+            Map<String, List<FieldDescriptor>> classKeys)
         throws ObjectStoreException {
         Set<InterMineBag> castBags = new HashSet<InterMineBag>();
         for (InterMineBag bag: bags) {
@@ -47,7 +52,7 @@ class ListServiceUtils {
             } else {
                 String castName = bag.getName() + CAST + type;
                 InterMineBag castBag
-                    = profile.createBag(castName, type, "");
+                    = profile.createBag(castName, type, "", classKeys);
                 Query q = new Query();
                 q.addToSelect(bag.getOsb());
                 castBag.addToBagFromQuery(q);

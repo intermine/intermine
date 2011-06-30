@@ -129,7 +129,7 @@ public class ListUploadService extends ListMakerService {
         Set<String> unmatchedIds = new HashSet<String>();
 
         InterMineBag tempBag = profile.createBag(
-                input.getTemporaryListName(), type, input.getDescription());
+                input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         String line;
         while ((line = r.readLine()) != null) {
             StrTokenizer st = new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());

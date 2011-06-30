@@ -14,7 +14,10 @@
     <typedef
         name="write-userprofile-xml"
         classname="org.intermine.web.task.ProfileWriteTask"/>
-        <typedef
+    <typedef
+        name="load-bagvalues-table"
+        classname="org.intermine.web.task.LoadBagValuesTask"/>
+    <typedef
         name="read-templatetrack-xml"
         classname="org.intermine.web.task.TemplateTrackReadTask"/>
     <typedef

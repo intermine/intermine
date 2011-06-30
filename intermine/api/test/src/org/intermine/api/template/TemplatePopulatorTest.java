@@ -17,12 +17,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
@@ -55,6 +58,7 @@ public class TemplatePopulatorTest extends TestCase
     private TemplateQuery threeConstraints;
     private Map<String, List<TemplateValue>> values = new HashMap<String, List<TemplateValue>>();
     private ObjectStoreWriter uosw;
+    Map<String, List<FieldDescriptor>>  classKeys;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -95,6 +99,10 @@ public class TemplatePopulatorTest extends TestCase
         threeConstraints.setSwitchOffAbility(depCon, SwitchOffAbility.ON);
         threeConstraints.addConstraint(nameCon);
         threeConstraints.setEditable(nameCon, true);
+
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
 
@@ -203,7 +211,7 @@ public class TemplatePopulatorTest extends TestCase
 
     public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
         Profile profile = setUpProfile();
-        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        InterMineBag bag = profile.createBag("bag1", "Company", "", classKeys);
         try {
             TemplatePopulator.populateTemplateWithBag(twoConstraints, bag);
             fail("Expected a TemplatePopulatorException.");
@@ -216,7 +224,7 @@ public class TemplatePopulatorTest extends TestCase
 
     public void testPopulateTemplateWithBagWrongType() throws Exception {
         Profile profile = setUpProfile();
-        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        InterMineBag bag = profile.createBag("bag1", "Company", "", classKeys);
         try {
             TemplatePopulator.populateTemplateWithBag(simple, bag);
             fail("Expected a TemplatePopulatorException.");
@@ -229,7 +237,7 @@ public class TemplatePopulatorTest extends TestCase
 
     public void testPopulateTemplateWithBag() throws Exception {
         Profile profile = setUpProfile();
-        InterMineBag bag = profile.createBag("bag1", "Employee", "");
+        InterMineBag bag = profile.createBag("bag1", "Employee", "", classKeys);
         TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simple, bag);
         assertEquals(1, res.getEditableConstraints().size());
         // constraint should now be on parent node

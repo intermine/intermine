@@ -10,16 +10,21 @@ package org.intermine.api.xml;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.IdUpgrader;
+import org.apache.tools.ant.BuildException;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.xml.sax.Attributes;
@@ -46,10 +51,10 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagType;
     private String bagDescription;
     private InterMineBag bag;
-    private Map<Integer, InterMineObject> idToObjectMap;
-    private IdUpgrader idUpgrader;
     private int elementsInOldBag;
-    private Set<Integer> bagContents;
+    private Set<String> bagValues;
+    private Map<String, Set<String>> bagContents;
+    private Map<String, List<FieldDescriptor>>  classKeys;
 
     /**
      * Create a new InterMineBagHandler object.
@@ -58,20 +63,26 @@ public class InterMineBagHandler extends DefaultHandler
      * @param osw ObjectStoreWriter used to resolve object ids and write to the objectstore bag
      * @param bags Map from bag name to InterMineIdBag - results are added to this Map
      * @param userId the id of the user
-     * @param idUpgrader bag object id upgrader
      * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
      * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
      */
     public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
-            Map<String, InterMineBag> bags, Integer userId,
-            Map<Integer, InterMineObject> idToObjectMap, IdUpgrader idUpgrader) {
+            Map<String, InterMineBag> bags, Map<String, Set<String>> bagsValues, Integer userId) {
         this.uosw = uosw;
         this.osw = osw;
         this.bags = bags;
+        this.bagContents = bagsValues;
         this.userId = userId;
-        this.idUpgrader = idUpgrader;
-        this.idToObjectMap = idToObjectMap;
         this.model = osw.getModel();
+        Properties classKeyProps = new Properties();
+        try {
+            InputStream inputStream = this.getClass().getClassLoader()
+                                      .getResourceAsStream("class_keys.properties");
+            classKeyProps.load(inputStream);
+        } catch (IOException ioe) {
+            new BuildException("class_keys.properties not found", ioe);
+        }
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
     /**
@@ -83,7 +94,7 @@ public class InterMineBagHandler extends DefaultHandler
             Attributes attrs) throws SAXException {
         try {
             if ("bag".equals(qName)) {
-                bagContents = new HashSet<Integer>();
+                bagValues = new HashSet<String>();
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
@@ -93,34 +104,23 @@ public class InterMineBagHandler extends DefaultHandler
                 } catch (NumberFormatException e) {
                     dateCreated = null;
                 }
+
                 // only upgrade bags whose type is still in the model
                 String bagClsName = model.getPackageName() + "." + bagType;
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
-                            dateCreated, osw.getObjectStore(), userId, uosw);
+                            dateCreated, false, osw.getObjectStore(), userId, uosw,
+                            ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
                 } else {
                     LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
                             + " - " + bagType + " no longer in model.");
                 }
             }
 
-            if ("bagElement".equals(qName) && bag != null) {
+            if ("bagValue".equals(qName) && bag != null) {
                 elementsInOldBag++;
-                Integer id = new Integer(attrs.getValue("id"));
-
-                if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
-                    // try to find an equivalent object in the new database
-
-                    InterMineObject oldObject = idToObjectMap.get(id);
-
-                    Set<Integer> newIds = idUpgrader.getNewIds(oldObject, osw);
-                    bagContents.addAll(newIds);
-                } else {
-                    // we aren't upgrading so just find the object by id
-                    if (osw.getObjectById(id) != null) {
-                        bagContents.add(id);
-                    }
-                }
+                String value = attrs.getValue("value");
+                bagValues.add(value);
             }
         } catch (ObjectStoreException e) {
             throw new SAXException(e);
@@ -136,9 +136,9 @@ public class InterMineBagHandler extends DefaultHandler
             String qName) throws SAXException {
         try {
             if ("bag".equals(qName)) {
-                if (bag != null && !bagContents.isEmpty()) {
-                    osw.addAllToBag(bag.getOsb(), bagContents);
+                if (bag != null && !bagValues.isEmpty()) {
                     bags.put(bagName, bag);
+                    bagContents.put(bagName, bagValues);
                 }
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
                         + " elements, created bag with " + (bag == null ? "null"

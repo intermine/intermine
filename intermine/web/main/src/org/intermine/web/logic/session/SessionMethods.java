@@ -1063,7 +1063,7 @@ public final class SessionMethods
     }
 
     /**
-     * Gets the error codes from the servlet context.
+     * Gets the blocking error codes from the servlet context.
      *
      * @param servletContext the ServletContext
      * @return a Set of blocking error codes
@@ -1071,5 +1071,18 @@ public final class SessionMethods
     public static Set<String> getErrorOnInitialiser(ServletContext servletContext) {
         return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null)
                ? (Set<String>) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
+    }
+
+    /**
+     * Return true if exists blocking errors
+     * @param servletContext the ServletContext
+     * @return
+     */
+    public static boolean isErrorOnInitialiser(ServletContext servletContext) {
+        Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
+        if (errorKeys != null && !errorKeys.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 }

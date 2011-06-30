@@ -90,11 +90,13 @@ public class ListSubtractionService extends ListOperationService
         Set<String> temporaryBagNamesAccumulator) throws Exception {
 
         final Collection<InterMineBag> leftBags
-            = castBagsToCommonType(input.getReferenceLists(), type, temporaryBagNamesAccumulator, profile);
+            = castBagsToCommonType(input.getReferenceLists(), type, temporaryBagNamesAccumulator, profile,
+                                  im.getClassKeys());
         final Collection<InterMineBag> rightBags
-            = castBagsToCommonType(input.getLists(), type, temporaryBagNamesAccumulator, profile);
-        final int leftSize = union(leftBags, input.getListName() + LEFT, profile);
-        final int rightSize = union(rightBags, input.getListName() + RIGHT, profile);
+            = castBagsToCommonType(input.getLists(), type, temporaryBagNamesAccumulator, profile,
+                                  im.getClassKeys());
+        final int leftSize = union(leftBags, input.getListName() + LEFT, profile, im.getClassKeys());
+        final int rightSize = union(rightBags, input.getListName() + RIGHT, profile, im.getClassKeys());
 
         int finalBagSize = 0;
 
@@ -102,13 +104,15 @@ public class ListSubtractionService extends ListOperationService
             final InterMineBag leftList = profile.getSavedBags().get(input.getListName() + LEFT);
             final InterMineBag rightList = profile.getSavedBags().get(input.getListName() + RIGHT);
             final int sizeOfSymDiff
-                = subtract(asList(leftList, rightList), input.getListName() + SYMETRIC_DIFF, profile);
+                = subtract(asList(leftList, rightList), input.getListName() + SYMETRIC_DIFF, profile,
+                           im.getClassKeys());
 
             if (sizeOfSymDiff != 0) {
                 final InterMineBag diffBag = profile.getSavedBags().get(input.getListName() + SYMETRIC_DIFF);
 
                 finalBagSize
-                    = intersect(asList(diffBag, leftList), input.getTemporaryListName(), profile);
+                    = intersect(asList(diffBag, leftList), input.getTemporaryListName(), profile,
+                                       im.getClassKeys());
             }
         }
         return finalBagSize;

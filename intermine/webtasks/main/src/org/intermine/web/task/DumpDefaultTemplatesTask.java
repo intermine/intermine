@@ -143,7 +143,7 @@ public class DumpDefaultTemplatesTask extends Task
 
         log("Writing tags and templates...");
         ProfileBinding.marshal(superProfile, os, writer, false, false, true, false, true, true,
-                PathQuery.USERPROFILE_VERSION);
+                PathQuery.USERPROFILE_VERSION, null);
         log("Done.");
     }
 }

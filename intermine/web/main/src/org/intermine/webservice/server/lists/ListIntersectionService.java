@@ -31,10 +31,10 @@ public class ListIntersectionService extends CommutativeOperationService {
     protected int doOperation(ListInput input, String type, Profile profile,
         Set<String> temporaryBagNamesAccumulator) throws Exception {
         Collection<InterMineBag> intersectBags = ListServiceUtils.castBagsToCommonType(
-                input.getLists(), type, temporaryBagNamesAccumulator, profile);
+                input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
 
         int sizeOfIntersection = BagOperations.intersect(
-                intersectBags, input.getTemporaryListName(), profile);
+                intersectBags, input.getTemporaryListName(), profile, im.getClassKeys());
         return sizeOfIntersection;
 
     }

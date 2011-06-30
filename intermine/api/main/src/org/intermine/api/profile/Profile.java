@@ -12,6 +12,7 @@ package org.intermine.api.profile;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,13 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
@@ -314,6 +317,21 @@ public class Profile
     }
 
     /**
+     * Get the value of savedBags current
+     * @return the value of savedBags
+     */
+    public Map<String, InterMineBag> getCurrentSavedBags() {
+        Map<String, InterMineBag> clone = new HashMap<String, InterMineBag>();
+        clone.putAll(savedBags);
+        for (InterMineBag bag : savedBags.values()) {
+            if (!bag.isCurrent()) {
+                clone.remove(bag.getName());
+            }
+        }
+        return clone;
+    }
+
+    /**
      * Stores a new bag in the profile. Note that bags are always present in the user profile
      * database, so this just adds the bag to the in-memory list of this profile.
      *
@@ -334,14 +352,18 @@ public class Profile
      * @param name the bag name
      * @param type the bag type
      * @param description the bag description
+     * @param classKeys the classKeys used to obtain  the primary identifier field
      * @return the new bag
      * @throws ObjectStoreException if something goes wrong
      */
-    public InterMineBag createBag(String name, String type,
-            String description) throws ObjectStoreException {
+    public InterMineBag createBag(String name, String type, String description,
+        Map<String, List<FieldDescriptor>> classKeys) throws ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
-        InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw);
+        List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+                                    classKeys, type);
+        InterMineBag bag = new InterMineBag(name, type, description, new Date(), true, os, userId,
+                                           uosw, keyFielNames);
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
         return bag;
@@ -412,7 +434,6 @@ public class Profile
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
     }
-
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
         TagManager tagManager = getTagManager();

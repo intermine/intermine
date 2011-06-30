@@ -131,7 +131,7 @@ public class QueryToListService extends AbstractQueryService {
         String type = viewPath.getLastClassDescriptor().getUnqualifiedName();
 
         try {
-            InterMineBag newList = profile.createBag(tempName, type, description);
+            InterMineBag newList = profile.createBag(tempName, type, description, im.getClassKeys());
             newList.addToBagFromQuery(q);
             im.getBagManager().addTagsToBag(tags, newList, profile);
             profile.renameBag(tempName, name);
