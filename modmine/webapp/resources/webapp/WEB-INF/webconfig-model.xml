@@ -558,15 +558,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
-    </longdisplayers>
-  </class>
-
-  <class className="org.intermine.model.bio.TFmodule">
-    <longdisplayers>
-      <displayer src="/model/redflyDisplayer.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Transcript">
@@ -613,11 +604,10 @@
     </fields>
   </class>
 
-  <tableExportConfig id="sequence"
-                     className="org.intermine.bio.web.export.SequenceHttpExporter"/>
-
-  <tableExportConfig id="gff3"
-                     className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+<!-- exporters -->
+  <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+  <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+  <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
   <reportdisplayers>
 
@@ -647,7 +637,7 @@
 
       <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                          jspName="model/submissionDetailsDisplayer.jsp"
-                         replacesFields="title,experimentType,DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount"
+                         replacesFields="title,experimentType,notice, DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount"
                          placement="top"
                          types="Submission"/>
 

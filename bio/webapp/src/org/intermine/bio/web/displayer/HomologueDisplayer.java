@@ -33,6 +33,7 @@ import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.Util;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -97,11 +98,11 @@ public class HomologueDisplayer extends ReportDisplayer
                 if (homologueObject.getFieldValue("symbol") != null) {
                     ResultElement re = new ResultElement(homologueObject,
                             symbolPath, true);
-                    addToMap(homologues, organism.getShortName(), re);
+                    Util.addToSetMap(homologues, organism.getShortName(), re);
                 } else {
                     ResultElement re = new ResultElement(homologueObject,
                             primaryIdentifierPath, true);
-                    addToMap(homologues, organism.getShortName(), re);
+                    Util.addToSetMap(homologues, organism.getShortName(), re);
                 }
             } catch (IllegalAccessException e) {
                 LOG.error("Failed to resolve path: " + symbolPath + " for gene: " + gene);
@@ -121,18 +122,6 @@ public class HomologueDisplayer extends ReportDisplayer
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
         q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         return q;
-    }
-
-    private void addToMap(Map<String, Set<ResultElement>> homologues, String species,
-            ResultElement re) {
-        Set<ResultElement> speciesHomologues = homologues.get(species);
-        if (speciesHomologues == null) {
-            speciesHomologues = new HashSet<ResultElement>();
-            homologues.put(species, speciesHomologues);
-        }
-        if (re != null) {
-            speciesHomologues.add(re);
-        }
     }
 }
 

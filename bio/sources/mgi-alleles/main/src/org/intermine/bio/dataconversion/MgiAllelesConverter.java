@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +38,8 @@ public class MgiAllelesConverter extends BioFileConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, Item> alleles = new HashMap<String, Item>();
+
     private Item ontology;
 
     /**
@@ -48,12 +52,90 @@ public class MgiAllelesConverter extends BioFileConverter
 
     }
 
+
+    @Override
+    public void close() throws Exception {
+        for (Item allele : alleles.values()) {
+            store(allele);
+        }
+        super.close();
+    }
+
+
     /**
      *
      *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+        File currentFile = getCurrentFile();
+        if ("MGI_PhenotypicAllele.rpt".equals(currentFile.getName())) {
+            processPhenotypicAlleles(reader);
+        } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile.getName())) {
+            processGenotypes(reader);
+        } else {
+            throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
+        }
+    }
+    private void processGenotypes(Reader reader) throws ObjectStoreException, IOException {
+        if (ontology == null) {
+            ontology = createItem("Ontology");
+            ontology.setAttribute("name", "Mammalian Phenotype Ontology");
+            store(ontology);
+        }
+
+        String lastGenotypeName = null;
+        Item currentGenotype = null;
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+            String genotypeName = line[0];
+            String alleleStr = line[1];
+            String background = line[2];
+            String termId = line[3];
+            String geneStr = line[4];
+
+            if (!genotypeName.equals(lastGenotypeName)) {
+                // store
+                if (currentGenotype != null) {
+                    store(currentGenotype);
+                }
+
+                String[] alleleSymbols = alleleStr.split("\\|");
+
+                currentGenotype = createItem("Genotype");
+                currentGenotype.setAttribute("name", genotypeName);
+                currentGenotype.setAttribute("geneticBackground", background);
+                String zygosity = determineZygosity(alleleSymbols, geneStr);
+                if (zygosity != null) {
+                    currentGenotype.setAttribute("zygosity", zygosity);
+                }
+                for (String alleleSymbol : alleleSymbols) {
+                    Item allele = getAlleleItem(alleleSymbol);
+                    currentGenotype.addToCollection("alleles", allele);
+                }
+            }
+            currentGenotype.addToCollection("phenotypeTerms", getTermItemId(termId));
+            lastGenotypeName = genotypeName;
+        }
+        if (currentGenotype != null) {
+            store(currentGenotype);
+        }
+    }
+
+    private String determineZygosity(String[] alleleSymbols, String geneStr) {
+        if (alleleSymbols.length == 1) {
+            return "homozygote";
+        } else if (!StringUtils.isBlank(geneStr) && geneStr.contains(",")) {
+            return "complex: > 1 genome feature";
+        } else if (alleleSymbols.length == 2 && !(alleleSymbols[0].equals(alleleSymbols[1]))) {
+            return "heterozygote";
+        }
+
+        return null;
+    }
+
+    private void processPhenotypicAlleles(Reader reader) throws ObjectStoreException, IOException {
         if (ontology == null) {
             ontology = createItem("Ontology");
             ontology.setAttribute("name", "Mammalian Phenotype Ontology");
@@ -78,9 +160,8 @@ public class MgiAllelesConverter extends BioFileConverter
 
             // TODO synonyms for alleles?
 
-            Item allele = createItem("Allele");
+            Item allele = getAlleleItem(alleleSymbol);
             allele.setAttribute("primaryIdentifier", alleleIdentifier);
-            allele.setAttribute("symbol", alleleSymbol);
             allele.setAttribute("name", alleleName);
             allele.setAttribute("type", alleleType);
 
@@ -100,8 +181,17 @@ public class MgiAllelesConverter extends BioFileConverter
                     allele.addToCollection("highLevelPhenotypeTerms", getTermItemId(termId));
                 }
             }
-            store(allele);
         }
+    }
+
+    private Item getAlleleItem(String alleleSymbol) throws ObjectStoreException {
+        Item allele = alleles.get(alleleSymbol);
+        if (allele == null) {
+            allele = createItem("Allele");
+            allele.setAttribute("symbol", alleleSymbol);
+            alleles.put(alleleSymbol, allele);
+        }
+        return allele;
     }
 
     private String getPubItemId(String pubmed) throws ObjectStoreException {

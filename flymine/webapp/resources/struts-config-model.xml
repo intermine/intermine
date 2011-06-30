@@ -8,8 +8,13 @@
         type="org.flymine.web.ChartRenderer"
         parameter="method"/>
 
-<action path="/initSequenceExportOptions"
-        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+<!-- <action path="/initSequenceExportOptions"
+        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/> -->
+
+<action path="/initSequenceFeatureExportOptions"
+        type="org.intermine.bio.web.struts.SequenceFeatureExportOptionsController"/>
+
+<action path="/galaxyExportOptions" forward="galaxyExportOptions.page"/>
 
 <action path="/initGalaxyExportOptions"
         type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
@@ -18,6 +23,9 @@
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
 <action path="/gff3ExportAction" name="gff3ExportForm"
+        type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+
+<action path="/bedExportAction" name="bedExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
 <action path="/galaxyExportAction" name="galaxyExportForm"

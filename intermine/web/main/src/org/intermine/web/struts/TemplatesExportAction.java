@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
@@ -76,8 +77,10 @@ public class TemplatesExportAction extends TemplateAction
             if (template != null) {
                 xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
-                throw new IllegalArgumentException("Cannot find template " + name + " in context "
-                        + scope);
+//                throw new IllegalArgumentException("Cannot find template " + name + " in context "
+//                        + scope);
+                recordError(new ActionMessage("errors.template.missing", name), request);
+                return mapping.findForward("mymine");
             }
         }
         xml = XmlUtil.indentXmlSimple(xml);

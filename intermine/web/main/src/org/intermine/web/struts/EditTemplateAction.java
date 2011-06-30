@@ -52,7 +52,7 @@ public class EditTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
@@ -63,6 +63,11 @@ public class EditTemplateAction extends InterMineAction
 
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
+
+        if (template == null) {
+            recordError(new ActionMessage("errors.template.missing", queryName), request);
+            return mapping.findForward("mymine");
+        }
 
         SessionMethods.loadQuery(template, session, response);
         session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);

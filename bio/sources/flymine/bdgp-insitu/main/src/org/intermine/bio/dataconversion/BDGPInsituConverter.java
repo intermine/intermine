@@ -73,7 +73,7 @@ public class BDGPInsituConverter extends BioFileConverter
 //        badTerms = getBadTerms();
 
         ontology = createItem("Ontology");
-        ontology.setAttribute("name", "GO");
+        ontology.setAttribute("name", "ImaGO");
         store(ontology);
 
         resolverFactory = new FlyBaseIdResolverFactory("gene");
@@ -218,7 +218,7 @@ public class BDGPInsituConverter extends BioFileConverter
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("GOTerm");
+        Item termItem = createItem("OntologyTerm");
         termItem.setAttribute("name", name);
         termItem.setReference("ontology", ontology);
         store(termItem);

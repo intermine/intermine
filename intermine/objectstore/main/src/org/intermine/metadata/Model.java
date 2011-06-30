@@ -283,6 +283,10 @@ public class Model
         return sb.toString();
     }
 
+    /**
+     * Returns the JSON serialisation of the model.
+     * @return A JSON formatted string.
+     */
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
         sb.append("\"name\":\"" + modelName + "\",\"classes\":{");

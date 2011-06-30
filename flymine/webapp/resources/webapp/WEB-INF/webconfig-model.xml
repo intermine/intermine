@@ -113,9 +113,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/dataSourceLong.jsp"/>
-    </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
@@ -173,9 +170,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="geneMicroArrayDisplayer.tile"/>
-    </longdisplayers>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
    </bagdisplayers>
@@ -300,9 +294,6 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/tiffinMotifDisplayer.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.MRNAExpressionResult">
@@ -310,9 +301,6 @@
       <fieldconfig fieldExpr="stageRange"/>
       <fieldconfig fieldExpr="expressed"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/BDGPLinkOut.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.MRNAExpressionTerm">
@@ -334,7 +322,6 @@
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
-    <!-- inherits longdisplayers -->
   </class>
 
   <class className="org.intermine.model.bio.Ontology">
@@ -402,9 +389,6 @@
       <fieldconfig fieldExpr="identifier" />
       <fieldconfig fieldExpr="name" />
     </fields>
-    <longdisplayers>
-      <displayer src="pathwayLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.PhenotypeAnnotation">
@@ -523,7 +507,6 @@
   <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="cellLine"/>
       <fieldconfig fieldExpr="publication.title"/>
     </fields>
   </class>
@@ -592,15 +575,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <longdisplayers>
-      <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
-    </longdisplayers>
-  </class>
-
-  <class className="org.intermine.model.bio.TFmodule">
-    <longdisplayers>
-      <displayer src="/model/redflyDisplayer.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Transcript">
@@ -627,7 +601,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <!-- inherits longdisplayers -->
   </class>
 
   <class className="org.intermine.model.bio.TransposableElementInsertionSite">
@@ -641,7 +614,6 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
     </fields>
-    <!-- inherits longdisplayers -->
   </class>
 
   <class className="org.intermine.model.bio.TreatmentParameter">
@@ -667,8 +639,10 @@
     </fields>
   </class>
 
+<!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+  <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
   <reportdisplayers>
 

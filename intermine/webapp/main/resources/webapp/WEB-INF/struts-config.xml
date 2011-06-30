@@ -104,8 +104,10 @@
     <action path="/getAttributeAsFile" type="org.intermine.web.struts.GetAttributeAsFileAction">
     </action>
     <action path="/exportTemplates" type="org.intermine.web.struts.TemplatesExportAction">
+        <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/exportQuery" type="org.intermine.web.struts.ExportQueryAction">
+        <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/aspects" forward="aspects.page">
     </action>
@@ -182,6 +184,7 @@
     </action>
     <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/collapseElement" type="org.intermine.web.struts.CollapseAction">
     </action>
@@ -476,7 +479,7 @@
   <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
   <plug-in className="org.intermine.web.struts.InitialiserPlugin"/>
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+    <set-property property="pathnames" value="/org/apache/struts/validator/validator-rules.xml,/WEB-INF/validation.xml"/>
   </plug-in>
   <plug-in className="org.apache.struts.tiles.TilesPlugin">
     <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
