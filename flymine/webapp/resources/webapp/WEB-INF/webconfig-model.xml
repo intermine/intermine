@@ -33,7 +33,7 @@
       </titles>
     </headerconfig>
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier" label="DB identifier"/>
     </fields>
   </class>
 
@@ -104,7 +104,7 @@
   <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true" label="URL"/>
     </fields>
   </class>
 
@@ -142,13 +142,13 @@
     <fields>
       <fieldconfig fieldExpr="affyCall"/>
       <fieldconfig fieldExpr="enrichment"/>
-      <fieldconfig fieldExpr="mRNASignal"/>
-      <fieldconfig fieldExpr="mRNASignalSEM"/>
+      <fieldconfig fieldExpr="mRNASignal" label="mRNA Signal"/>
+      <fieldconfig fieldExpr="mRNASignalSEM" label="mRNA Signal SEM"/>
       <fieldconfig fieldExpr="presentCall"/>
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Gene">
+  <class className="org.intermine.model.bio.Gene" label="Geney Thingy">
     <headerconfig>
       <customlinks>
         <customlink
@@ -164,7 +164,7 @@
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier" label="Computed id"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -254,7 +254,7 @@
 
   <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
@@ -305,7 +305,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.MRNAExpressionResult">
+  <class className="org.intermine.model.bio.MRNAExpressionResult" label="mRNA Expression Result">
     <fields>
       <fieldconfig fieldExpr="stageRange"/>
       <fieldconfig fieldExpr="expressed"/>
@@ -315,7 +315,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.MRNAExpressionTerm">
+  <class className="org.intermine.model.bio.MRNAExpressionTerm" label="mRNA Expression Term">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
@@ -490,7 +490,7 @@
       <fieldconfig fieldExpr="journal"/>
       <fieldconfig fieldExpr="volume"/>
       <fieldconfig fieldExpr="pages"/>
-      <fieldconfig fieldExpr="pubMedId"/>
+      <fieldconfig fieldExpr="pubMedId" label="PubMed ID"/>
     </fields>
   </class>
 
@@ -520,7 +520,7 @@
   </class>
 
 
-  <class className="org.intermine.model.bio.RNAiScreen">
+  <class className="org.intermine.model.bio.RNAiScreen" label="RNAi Screen">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="cellLine"/>
@@ -528,12 +528,14 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiScreenHit">
+  <class className="org.intermine.model.bio.RNAiScreenHit" label="RNAi Screen Hit">
     <fields>
       <fieldconfig fieldExpr="result"/>
-      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier"/>
+      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier" label="PCR Product"/>
+      <fieldconfig fieldExpr="rnaiScreen" showInInlineCollection="false" showInSummary="false" showInResults="false" label="RNAi Screen"/>
+      <fieldconfig fieldExpr="pcrProduct" showInInlineCollection="false" showInSummary="false" showInResults="false" label="PCR Product"/>
       <fieldconfig fieldExpr="rnaiScreen.name"/>
-      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId"/>
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" />
     </fields>
   </class>
 
@@ -658,7 +660,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.UniProtFeature">
+  <class className="org.intermine.model.bio.UniProtFeature" label="Uniprot Feature">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="description"/>
