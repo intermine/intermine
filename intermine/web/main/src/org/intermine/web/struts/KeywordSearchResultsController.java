@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -355,10 +356,15 @@ public class KeywordSearchResultsController extends TilesAction
                         + ".searches");
             String logFileName = projectName + "_searches.log";
             Layout layout = new PatternLayout("%d{ISO8601}\t%m%n");
-            RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
-            appender.setMaximumFileSize(102400); // 100kb
-            appender.setMaxBackupIndex(10);
-            searchLog.addAppender(appender);
+            try {
+                RollingFileAppender appender = new RollingFileAppender(layout, logFileName, true);
+                appender.setMaximumFileSize(102400); // 100kb
+                appender.setMaxBackupIndex(10);
+                searchLog.addAppender(appender);
+            } catch (FileNotFoundException e) {
+                LOG.error("Could not open searches log", e);
+                return;
+            }
             LOG.info("Logging searches to: " + logFileName);
         }
     }
