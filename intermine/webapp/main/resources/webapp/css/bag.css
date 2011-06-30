@@ -19,3 +19,5 @@ textarea#pasteInput {
 
 textarea:disabled {
   background: #EBEBE4; }
+
+#filter_tool_bar a.boxy.inactive { color:gray; }

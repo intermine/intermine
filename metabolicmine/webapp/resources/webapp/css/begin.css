@@ -261,7 +261,7 @@ html, body {
 
 #boxes div.inner {
     background: #FFF url("../themes/purple/homepage/bochs-bottom-grad.png") repeat-x 0 200px;
-    min-height: 275px;
+    min-height: 280px;
     border-bottom: 1px solid #dfdfdf;
     margin-bottom: 2px;
     padding-bottom: 14px;
@@ -272,6 +272,10 @@ html, body {
     bottom: 14px;
     left: 5px;
     width: 100%;
+}
+
+#boxes #lists-bochs div.inner div.bottom.arrowtip {
+  background:url('../themes/metabolic/img/arrowtip-try-list.png') no-repeat 230px 16px;
 }
 
 #boxes div.inner h3 {

@@ -13,7 +13,7 @@ function toggleToolBarMenu(button) {
     return;
   }
   if(jQuery(button).attr('id').indexOf('widget') < 0) {
-        jQuery(button).addClass('tb_button_active');
+      jQuery(button).addClass('tb_button_active');
   }
   var posArray = findPosition(button);
     jQuery(item_name).css('left', posArray[0] +"px");

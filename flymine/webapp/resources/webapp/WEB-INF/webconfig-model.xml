@@ -834,7 +834,8 @@
                          displayFields="name"
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
-                         columnTitle="Orthologues"/>
+                         columnTitle="Orthologues"
+                         style="height:435px;"/>
 
       <bagtabledisplayer id="interactions" title="Interactions"
                          pathStrings="Gene.interactions.interactingGenes"
@@ -843,7 +844,8 @@
                          displayFields="primaryIdentifier"
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
-                         columnTitle="Interactions"/>
+                         columnTitle="Interactions"
+                         style="height:431px;"/>
 
     </widgets>
 </webconfig>

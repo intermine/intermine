@@ -20,7 +20,7 @@
   <c:when test="${!empty resultElement.linkRedirect}">
     <c:set var="detailsLink" value="${resultElement.linkRedirect}"
       scope="request" />
-    <c:set var="extlink" value=" class=\"value extlink\"" />
+    <c:set var="extlink" value="extlink" />
   </c:when>
   <c:otherwise>
     <c:set var="detailsLink"
@@ -52,14 +52,14 @@
 
           <%-- LINK --%>
           <c:otherwise>
-            <a href="${object}" class="value extlink theme-1-color">${object}</a>
+            <a href="${object}" class="extlink theme-1-color">${object}</a>
           </c:otherwise>
         </c:choose>
       </c:when>
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
         <%-- key field, truncate --%>
-        <a class="theme-1-color" href="${detailsLink}"${extlink}><im:abbreviate
+        <a class="theme-1-color ${extlink}" href="${detailsLink}"><im:abbreviate
           value="${object}" length="${maxLength}" /></a>
       </c:when>
       <c:when
@@ -70,7 +70,7 @@
       </c:when>
       <c:when test="${resultElement.keyField}">
         <%-- key field --%>
-        <a class="theme-1-color" href="${detailsLink}"${extlink}><c:out value="${object}"
+        <a class="theme-1-color ${extlink}" href="${detailsLink}"><c:out value="${object}"
           default="${nullFieldText}" /></a>
         <c:if
           test="${(!empty columnType) && (resultElement.type != columnType)}">
@@ -87,7 +87,7 @@
   <c:otherwise>
     <span style="white-space: nowrap"> <c:forEach var="cld" items="${leafClds}">
       <span class="type"><c:out value="${cld.unqualifiedName}" /></span>
-    </c:forEach> [<a class="theme-1-color" href="${detailsLink}"${extlink}><fmt:message
+    </c:forEach> [<a class="theme-1-color ${extlink}" href="${detailsLink}"><fmt:message
       key="results.details" /></a>] </span>
     <br />
     <div style="margin-left: 8px"><c:set var="reportObject"

@@ -8,6 +8,13 @@
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
 
+<div style="display:none">
+<%-- cache --%>
+<img src="images/progress/green-btn-center-hover.png" />
+<img src="images/progress/green-btn-left-hover.png" />
+<img src="images/progress/green-btn-right-hover.png" />
+</div>
+
 <html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data">
 
 <div id="sidebar">

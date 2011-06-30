@@ -163,7 +163,9 @@
 <c:if test="${categories != null}">
   <div id="menu-target">&nbsp;</div>
   <div id="toc-menu-wrap">
-    <tiles:insert name="reportMenu.jsp" />
+    <tiles:insert name="reportMenu.jsp">
+      <tiles:put name="summary" value="current" />
+    </tiles:insert>
   </div>
   <div id="fixed-menu">
     <tiles:insert name="reportMenu.jsp" />
