@@ -126,6 +126,21 @@ public class BagManager
     }
 
     /**
+     * Return true if the bags for the given profile are current.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public boolean isUserBagsCurrent(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (!bag.isCurrent()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Fetch all global bags and user bags combined in the same map.  If user has a bag with the
      * same name as a global bag the user's bag takes precedence.
      * @param profile the user to fetch bags for
@@ -180,21 +195,44 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type) {
-        return filterBagsByType(getUserAndGlobalBags(profile), type);
+        return getUserOrGlobalBagsOfType(profile, type, false);
     }
 
     /**
-     * Fetch user bags of the specified type or a subclass of the specified type.
+     * Fetch global and user bags current of the specified type or a subclass of the specified type.
      * @param profile the user to fetch bags for
      * @param type an unqualified class name
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getUserBagsOfType(Profile profile, String type) {
-        return filterBagsByType(getUserBags(profile), type);
+    public Map<String, InterMineBag> getCurrentUserOrGlobalBagsOfType(Profile profile,
+                                                                      String type) {
+        return getUserOrGlobalBagsOfType(profile, type, true);
+    }
+
+    /**
+     * Fetch global and user bags of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @param onlyCurrent if true return only the current bags
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type,
+                                                               boolean onlyCurrent) {
+        return filterBagsByType(getUserAndGlobalBags(profile), type, onlyCurrent);
+    }
+
+    /**
+     * Fetch user bags curent of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getCurrentUserBagsOfType(Profile profile, String type) {
+        return filterBagsByType(getUserBags(profile), type, true);
     }
 
     private Map<String, InterMineBag> filterBagsByType(Map<String, InterMineBag> bags,
-            String type) {
+            String type, boolean onlyCurrent) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
@@ -210,7 +248,9 @@ public class BagManager
         for (Map.Entry<String, InterMineBag> entry : bags.entrySet()) {
             InterMineBag bag = entry.getValue();
             if (classAndSubs.contains(bag.getType())) {
-                bagsOfType.put(entry.getKey(), bag);
+                if ((onlyCurrent && bag.isCurrent()) || !onlyCurrent) {
+                    bagsOfType.put(entry.getKey(), bag);
+                }
             }
         }
         return bagsOfType;
@@ -236,16 +276,22 @@ public class BagManager
     }
 
     /**
-     * Fetch user or global bags that contain the given id.  If user has a bag with the same name
-     * as a global bag the user's bag takes precedence.
+     * Fetch the current user or global bags that contain the given id.  If user has a bag
+     * with the same name as a global bag the user's bag takes precedence.
      * @param id the id to search bags for
      * @param profile the user to fetch bags from
      * @return bags containing the given id
      */
-    public Collection<InterMineBag> getUserOrGlobalBagsContainingId(Profile profile, Integer id) {
+    public Collection<InterMineBag> getCurrentUserOrGlobalBagsContainingId(Profile profile,
+                                                                           Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         bagsContainingId.addAll(getGlobalBagsContainingId(id));
         bagsContainingId.addAll(getUserBagsContainingId(profile, id));
+        for (InterMineBag bag: bagsContainingId) {
+            if (!bag.isCurrent()) {
+                bagsContainingId.remove(bag);
+            }
+        }
         return bagsContainingId;
     }
 

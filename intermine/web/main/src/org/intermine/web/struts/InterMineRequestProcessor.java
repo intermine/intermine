@@ -71,6 +71,9 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+        if (SessionMethods.isErrorOnInitialiser(request.getSession().getServletContext())) {
+            return true;
+        }
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         try {
             String processPath = processPath(request, response);

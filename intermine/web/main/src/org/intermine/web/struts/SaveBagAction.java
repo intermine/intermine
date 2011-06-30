@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -108,12 +109,12 @@ public class SaveBagAction extends InterMineAction
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
-
+        
         try {
             if (bag == null) {
-                bag = profile.createBag(bagName, pt.getSelectedClass(), "");
+            	InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                bag = profile.createBag(bagName, pt.getSelectedClass(), "", im.getClassKeys());
             }
-
             pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);

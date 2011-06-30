@@ -52,7 +52,7 @@ public class ReportInListController extends TilesAction
         BagManager bagManager = im.getBagManager();
 
         Collection<InterMineBag> bagsWithId =
-            bagManager.getUserOrGlobalBagsContainingId(profile, object.getId());
+            bagManager.getCurrentUserOrGlobalBagsContainingId(profile, object.getId());
         // wrap around
         ReportInList odil = new ReportInList(bagsWithId);
 
@@ -60,7 +60,7 @@ public class ReportInListController extends TilesAction
 
         List<InterMineBag> bagsToAddTo = new ArrayList<InterMineBag>();
         Map<String, InterMineBag> userBags =
-            bagManager.getUserBagsOfType(profile, object.getType());
+            bagManager.getCurrentUserBagsOfType(profile, object.getType());
         for (String bagName : userBags.keySet()) {
             if (!bagsWithId.contains(userBags.get(bagName))) {
                 bagsToAddTo.add(userBags.get(bagName));

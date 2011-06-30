@@ -32,9 +32,9 @@ public class ListDifferenceService extends CommutativeOperationService {
         Set<String> temporaryBagNamesAccumulator) throws Exception {
         String tempName = input.getTemporaryListName();
         Collection<InterMineBag> diffBags = ListServiceUtils.castBagsToCommonType(
-                input.getLists(), type, temporaryBagNamesAccumulator, profile);
+                input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
 
-        int sizeOfDifference = BagOperations.subtract(diffBags, tempName, profile);
+        int sizeOfDifference = BagOperations.subtract(diffBags, tempName, profile, im.getClassKeys());
         return sizeOfDifference;
     }
 

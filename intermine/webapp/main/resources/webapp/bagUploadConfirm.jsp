@@ -12,11 +12,23 @@
 
 <div id="sidebar">
   <div class="wrap">
+  <c:choose>
+  <c:when test="${empty bagName}">
     <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
           value='Save a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
           onclick="javascript:jQuery('#bigGreen').addClass('clicked');validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
     </div>
+    </c:when>
+    <c:otherwise>
+    <input type="hidden" name="upgradeBagName" value="${bagName}"/>
+    <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
+      <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
+          value='Upgrade a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
+          onclick="submit();"/><div class="right"></div>
+    </div>
+    </c:otherwise>
+   </c:choose>
     <div style="clear:both;"></div>
     <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
       <p id="furtherMatches" class="hl">There are further matches provided below.</p>
@@ -210,7 +222,7 @@
 
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
-
+  initForm("${bagName}");
   checkIfAlreadyInTheBag();
 </script>
 

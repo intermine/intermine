@@ -25,7 +25,7 @@ public abstract class ListOperationService extends ListMakerService {
         if (size == 0) {
             output.addResultItem(Arrays.asList("0"));
             newList = profile.createBag(
-                input.getTemporaryListName(), type, input.getDescription());
+                input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         } else {
             newList = profile.getSavedBags().get(input.getTemporaryListName());
             if (input.getDescription() != null) {

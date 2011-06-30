@@ -57,7 +57,7 @@ var strutsMsgSize = <%=size%>;
 <!-- ERRORS II -->
 <c:if test="${!empty ERRORS}">
     <c:forEach items="${ERRORS}" var="error">
-      jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString><br />');
+      jQuery('#error_msg').append('<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString><br/>');
       haserrors=1;
     </c:forEach>
   <c:remove var="ERRORS" scope="session"/>
@@ -66,7 +66,7 @@ var strutsMsgSize = <%=size%>;
 <!-- MESSAGES -->
 <logic:messagesPresent message="true">
     <html:messages id="message" message="true">
-      jQuery('#msg').append('<imutil:treatString><c:out value="${message}" escapeXml="false"/></imutil:treatString>');
+      jQuery('#msg').append('<imutil:treatString><c:out value="${message}" escapeXml="false"/></imutil:treatString><br/>');
       hasmessages=1;
     </html:messages>
 </logic:messagesPresent>
