@@ -90,6 +90,7 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
     TrackerDelegate trackerDelegate;
+    ObjectStore os;
     Set<String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
@@ -122,7 +123,7 @@ public class InitialiserPlugin implements PlugIn
         LinkRedirectManager redirect = getLinkRedirector(webProperties);
 
         // set up core InterMine application
-        ObjectStore os = getProductionObjectStore(webProperties);
+        os = getProductionObjectStore(webProperties);
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
@@ -462,6 +463,7 @@ public class InitialiserPlugin implements PlugIn
             if (trackerDelegate != null) {
                 trackerDelegate.close();
             }
+            ((ObjectStoreInterMineImpl) os).close();
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

@@ -110,9 +110,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/dataSourceLong.jsp"/>
-    </longdisplayers>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
@@ -279,9 +276,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
     </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Protein">

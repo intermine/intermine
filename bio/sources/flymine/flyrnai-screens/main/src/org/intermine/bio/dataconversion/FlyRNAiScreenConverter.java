@@ -207,8 +207,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         while (tsvIter.hasNext()) {
             String [] line = (String[]) tsvIter.next();
 
-            if (line.length != 5) {
-                throw new RuntimeException("Did not find five elements in line, found "
+            if (line.length != 3) {
+                throw new RuntimeException("Did not find three elements in line, found "
                           + line.length + ": " + Arrays.asList(line));
             }
             String pubmedId = line[0].trim();
@@ -225,11 +225,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             }
             Item screen = createItem("RNAiScreen");
             screen.setAttribute("name", screenName);
-            screen.setAttribute("cellLine", line[3].trim());
-            String analysisDescr = line[4].trim();
-            if (StringUtils.isNotEmpty(analysisDescr)) {
-                screen.setAttribute("analysisDescription", analysisDescr);
-            }
             screen.setReference("organism", organism);
             screen.setReference("publication", publicationRefId);
             store(screen);

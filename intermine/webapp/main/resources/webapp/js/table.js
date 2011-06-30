@@ -32,6 +32,20 @@ function selectAll(columnIndex, columnClass, tableid) {
     if (isClear()) {
         enableAll();
     }
+    toggleToolbarButtons();
+}
+
+/**
+ * Will toggle the status of toolbar buttons for creating/adding to the list based on if we have selected something
+ */
+function toggleToolbarButtons() {
+  if (!isClear()) {
+    jQuery("li#tool_bar_li_createlist").removeClass('inactive');
+    jQuery("li#tool_bar_li_addtolist").removeClass('inactive');
+  } else {
+    jQuery("li#tool_bar_li_createlist").addClass('inactive');
+    jQuery("li#tool_bar_li_addtolist").addClass('inactive');
+  }
 }
 
 /**
@@ -39,7 +53,7 @@ function selectAll(columnIndex, columnClass, tableid) {
  */
 function enableAll() {
     $$('input.selectable').each(function(item) {
-    	item.disabled = false;
+      item.disabled = false;
     });
 }
 
@@ -74,9 +88,9 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     var objectId;
     var objectClass;
     $w(checkbox.className).each(function(className){
-      	if(className.startsWith('id_')) {
-      		objectId = className.sub('id_','');
-      	}
+        if(className.startsWith('id_')) {
+          objectId = className.sub('id_','');
+        }
         if(className.startsWith('class_')) {
             objectClass = className;
         }
@@ -127,13 +141,14 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     if (nothingSelected) {
         unselectColumnCheckbox(checkedColumn);
     }
+    toggleToolbarButtons();
 }
 
 /**
  * de-selects a whole column of a given number
  **/
 function unselectColumnCheckbox(column) {
-	var enabled = true;
+  var enabled = true;
     $('selectedObjects_' + column).checked = false;
         $$('.selectable').each(function (item) {
         if ((item.id.split('_')[1] == column) && (item.checked)) {
@@ -142,16 +157,16 @@ function unselectColumnCheckbox(column) {
            return;
         }
     });
-	setToolbarAvailability(enabled);
+  setToolbarAvailability(enabled);
 }
 
 function setToolbarAvailability(status) {
-	if ($('newBagName')) {
-		$('newBagName').disabled = status;
-	}
-	if ($('saveNewBag')) {
-    	$('saveNewBag').disabled = status;
-	}
+  if ($('newBagName')) {
+    $('newBagName').disabled = status;
+  }
+  if ($('saveNewBag')) {
+      $('saveNewBag').disabled = status;
+  }
     if($('addToBag')){
             with($('addToBag')) {
                 $('addToBag').disabled = status;
@@ -165,6 +180,6 @@ function setToolbarAvailability(status) {
 }
 
 function onSaveBagEnter(formName) {
-	var frm = document.forms[formName];
-	frm.operationButton.value = 'saveNewBag';
+  var frm = document.forms[formName];
+  frm.operationButton.value = 'saveNewBag';
 }

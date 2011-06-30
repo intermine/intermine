@@ -33,7 +33,7 @@ public abstract class TrackerAbstract implements Tracker
 
     /**
      * Construct a Tracker setting the tracks queue and the table name
-     * @param trackQueue the queue of track to record
+     * @param trackQueue the queue where the tracks are temporary stored
      * @param trackTableName the table where store the tracks
      */
     protected TrackerAbstract(Queue<Track> trackQueue, String trackTableName) {

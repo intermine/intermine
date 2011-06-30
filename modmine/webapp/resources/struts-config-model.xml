@@ -3,14 +3,22 @@
 <action path="/sequenceExporter"
   type="org.intermine.bio.web.struts.SequenceExportAction" />
 
-<action path="/initSequenceExportOptions"
-        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+<!-- <action path="/initSequenceExportOptions"
+        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/> -->
+
+<action path="/initSequenceFeatureExportOptions"
+        type="org.intermine.bio.web.struts.SequenceFeatureExportOptionsController"/>
 
 <action path="/sequenceExportAction" name="sequenceExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
 <action path="/gff3ExportAction" name="gff3ExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+
+<action path="/bedExportAction" name="bedExportForm"
+        type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+
+<action path="/galaxyExportOptions" forward="galaxyExportOptions.page"/>
 
 <action path="/initGalaxyExportOptions"
         type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
@@ -89,8 +97,6 @@
 </action>
 
 <!-- Begining of Cytoscape Web configuration -->
-<action path="/initCytoscapeNetworkDisplayer"
-        type="org.intermine.bio.web.struts.CytoscapeNetworkController"/>
 
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>

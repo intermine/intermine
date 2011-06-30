@@ -1270,8 +1270,10 @@ public final class KeywordSearch
             }
         } catch (IOException e) {
             LOG.error(null, e);
+            throw new RuntimeException("Index creation failed: ", e);
         } catch (SQLException e) {
             LOG.error(null, e);
+            throw new RuntimeException("Index creation failed: ", e);
         }
     }
 
@@ -1626,9 +1628,6 @@ public final class KeywordSearch
                 tempFile.mkdir();
             }
         } catch (IOException e) {
-//            LOG.error("Could not create index directory, using RAM!", e);
-//            index.setDirectory(new RAMDirectory());
-//            index.setDirectoryType("RAMDirectory");
             LOG.error("Creating temp directory failed", e);
             throw e;
         }

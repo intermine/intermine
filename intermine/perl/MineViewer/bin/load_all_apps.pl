@@ -23,7 +23,7 @@ sub make_app {
         load_app "MineViewer";
         Dancer::Config->load;
         Dancer::Handler->init_request_headers($env);
-        my $request = Dancer::Request->new($env);
+        my $request = Dancer::Request->new(env => $env);
         Dancer->dance($request);
     };
 }

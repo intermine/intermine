@@ -19,7 +19,13 @@
 </c:choose>
 
 <table id="submissionDetails" style="width:50%;">
-  <tr>
+<c:if test="${not empty notice}">
+<tr>
+  <td>NOTICE:</td>
+  <td><span style="border: 2px solid red;"><strong>${notice}<strong></span></td>
+</tr>
+</c:if>
+ <tr>
     <td style="width:20%;">Design:</td>
     <td><strong>${design}<strong></td>
   </tr>
