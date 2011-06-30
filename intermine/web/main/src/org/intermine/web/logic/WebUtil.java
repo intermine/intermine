@@ -35,6 +35,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
@@ -179,6 +180,24 @@ public abstract class WebUtil
         final Model model = im.getModel();
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
         return formatColumnName(original, model, webConfig);
+    }
+
+    public static List<String> formatPathQueryView(PathQuery pq, HttpServletRequest request) {
+        if (request == null) { 
+            throw new IllegalArgumentException("request cannot be null");
+        }
+        final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        List<String> formattedViews = new ArrayList<String>();
+        for (String view : pq.getView()) {
+            Path p;
+            try {
+                p = pq.makePath(view);
+            } catch (PathException e) {
+                throw new RuntimeException(e);
+            }
+            formattedViews.add(formatColumnName(p, webConfig));
+        }
+        return formattedViews;
     }
 
     public static String formatColumnName(String original, Model model, WebConfig webConfig) {
