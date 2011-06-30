@@ -64,7 +64,7 @@ public class BioLinkRedirectManager extends LinkRedirectManager
 
         try {
             organismReference = (Organism) imo.getFieldValue("organism");
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             // no organism field
         }
 
