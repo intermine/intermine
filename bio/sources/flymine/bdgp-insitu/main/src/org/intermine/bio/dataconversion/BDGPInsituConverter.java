@@ -213,7 +213,7 @@ public class BDGPInsituConverter extends BioFileConverter
     }
 
     private Item getTerm(String name) throws ObjectStoreException {
-        if (StringUtils.isEmpty(name) /*|| badTerms.contains(name)*/) {
+        if (!isValidTerm(name)) {
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);
@@ -285,7 +285,15 @@ public class BDGPInsituConverter extends BioFileConverter
         return stageItems;
     }
 
-
+    private boolean isValidTerm(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        if (name.contains("_")) {
+            return false;
+        }
+        return true;
+    }
 
 /* These terms may not be in the updated file
     private Set<String> getBadTerms() {
