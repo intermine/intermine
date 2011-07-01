@@ -64,7 +64,7 @@ public class GenomicRegionSearchAction extends InterMineAction
         }
 
         // Span validation
-        Map<String, List<ChromosomeInfo>> chrInfoMap = grsService.getChrInfoMap();
+        Map<String, Map<String, ChromosomeInfo>> chrInfoMap = grsService.getChrInfoMap();
         Map<String, List<GenomicRegion>> resultMap = grsService.validateGenomicRegions();
 
         if (chrInfoMap != null && chrInfoMap.size() > 0 && resultMap != null) {

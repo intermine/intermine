@@ -18,9 +18,12 @@
 
 <html:xhtml />
 
+<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.13.custom.css"/>
+
 <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
 <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
 <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.13.custom.min.js'/>"></script>
 <script type="text/javascript">
 
     // webData must be defined in base jsp first, and customized page can make use of it.
@@ -28,6 +31,25 @@
 
     // genomic region examples read from web.properties
     var exampleSpans = "${WEB_PROPERTIES['genomicRegionSearch.defaultSpans']}";
+
+    jQuery(function() {
+        jQuery( "#extendSlider" ).slider({
+            range: "min",
+            value: 500,
+            min: 0,
+            max: 10000,
+            slide: function( event, ui ) {
+                var valToDisplay = ui.value + " bp";
+                if (ui.value >= 1000) {
+                    valToDisplay = ui.value/1000 + " kbp";
+                }
+
+                jQuery( "#extendLength" ).html( valToDisplay );
+                jQuery( "#extendedRegionSize" ).val( ui.value );
+            }
+        });
+        jQuery( "#extendLength" ).html( jQuery( "#extendSlider" ).slider( "value" ) + " bp");
+    });
 
 </script>
 
@@ -63,6 +85,14 @@
            <br>
            <html:file styleId="fileInput" property="fileInput" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
            <html:hidden styleId="whichInput" property="whichInput" />
+        </li>
+        <br>
+
+        <li id="genomicRegionFlanking">
+           <span>Extend your regions at both sides: <i><b id="extendLength"></b></i></span>
+           <div id="extendSlider" style="width:70%;margin-top:5px">
+           </div>
+           <html:hidden styleId="extendedRegionSize" property="extendedRegionSize" value="500" />
         </li>
 
       </ol>
