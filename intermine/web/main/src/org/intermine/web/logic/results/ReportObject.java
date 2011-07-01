@@ -197,6 +197,12 @@ public class ReportObject
                     Object fieldValue = getFieldValue(fieldName);
                     String fieldDisplayer = fc.getDisplayer();
 
+                    if (!isAttribute(fieldName)
+                            && fieldDisplayer == null
+                            && !fc.getShowInSummary()) {
+                        continue; // This is just configured for its label
+                    }
+
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
                             fieldName,
@@ -314,6 +320,27 @@ public class ReportObject
         return fieldValues.get(fieldExpression);
     }
 
+    private boolean isAttribute(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsAttribute();
+    }
+
+    private boolean isCollection(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsCollection();
+    }
+
+    private Path getPathForField(String fieldName) {
+        String pathString = objectType + "." + fieldName;
+        Path p;
+        try {
+            p = new Path(im.getModel(), pathString);
+        } catch (PathException e) {
+            throw new Error(e);
+        }
+        return p;
+    }
+
     /**
      * Setup fieldValues HashMap
      */
@@ -323,12 +350,14 @@ public class ReportObject
 
         // fetch field configs
         for (FieldConfig fc : getFieldConfigs()) {
-            // crete a path string
-            String pathString = objectType + "." + fc.getFieldExpr();
-            try {
-                fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
-            } catch (PathException e) {
-                throw new Error("There must be a bug", e);
+            // create a path string
+            if (!isCollection(fc.getFieldExpr())) {
+                String pathString = objectType + "." + fc.getFieldExpr();
+                try {
+                    fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
+                } catch (PathException e) {
+                    throw new Error("There must be a bug", e);
+                }
             }
         }
     }
@@ -444,12 +473,11 @@ public class ReportObject
 
                 if (linkUrl != null) {
                     // patternz
-                    Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
-
-                    Matcher m = linkPattern.matcher(linkUrl);
+                    final Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
+                    final Matcher m = linkPattern.matcher(linkUrl);
                     while (m.find()) {
                         // get the field name and do some filtering just in case
-                        String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
+                        final String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
                         // resolve the field value
                         Object stuff = getFieldValue(path);
                         if (stuff != null) {
