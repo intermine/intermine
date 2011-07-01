@@ -11,19 +11,28 @@ package org.intermine.web.logic.config;
  */
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -32,6 +41,7 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.SAXException;
 
 /**
@@ -42,7 +52,7 @@ import org.xml.sax.SAXException;
 public class WebConfig
 {
     private static final Logger LOG = Logger.getLogger(WebConfig.class);
-    private Map<String, Type> types = new HashMap<String, Type>();
+    private Map<String, Type> types = new TreeMap<String, Type>();
     private Map<String, TableExportConfig> tableExportConfigs =
         new HashMap<String, TableExportConfig>();
     private Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
@@ -60,12 +70,14 @@ public class WebConfig
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class is mentioned in the XML that isn't in the model
      */
-    public static WebConfig parse(InputStream is, Model model)
-        throws IOException, SAXException, ClassNotFoundException {
+    public static WebConfig parse(ServletContext context, Model model)
+        throws IOException, SAXException, ClassNotFoundException, FileNotFoundException {
 
-        if (is == null) {
-            throw new NullPointerException("Parameter 'is' cannot be null");
-        }
+    	BasicConfigurator.configure();
+
+        InputStream webconfXML = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        if (webconfXML == null)
+            throw new FileNotFoundException("Could not find webconfig-model.xml");
 
         Digester digester = new Digester();
         digester.setValidating(false);
@@ -111,6 +123,14 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "displayer", "displayer");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
+
+        digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
+        digester.addSetProperties("webconfig/class/longdisplayers/displayer");
+        digester.addSetNext("webconfig/class/longdisplayers/displayer", "addLongDisplayer");
+
+        digester.addCallMethod("webconfig/class/longdisplayers/displayer/param", "addParam", 2);
+        digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
+        digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
         /* display inline tables as inline lists instead */
         digester.addObjectCreate("webconfig/class/inlinelist/table", InlineList.class);
@@ -162,13 +182,189 @@ public class WebConfig
         digester.addSetProperties("webconfig/reportdisplayers/reportdisplayer");
         digester.addSetNext("webconfig/reportdisplayers/reportdisplayer", "addReportDisplayer");
 
-        WebConfig webConfig = (WebConfig) digester.parse(is);
+        WebConfig webConfig = (WebConfig) digester.parse(webconfXML);
 
         webConfig.validate(model);
 
         webConfig.setSubClassConfig(model);
 
+        webConfig.loadLabelsFromMappingsFile(context, model);
+
         return webConfig;
+    }
+
+    /**
+     * Get all the file names of properties files that configure class name mappings.
+     * @param props the main configuration to look in.
+     */
+    private static List<String> getClassMappingFileNames(Properties props) {
+        return getMappingFileNames(props, "web.config.classname.mappings");
+    }
+
+    /**
+     * Get all the file names of properties files that configure field name mappings.
+     * @param props the main configuration to look in.
+     */
+    private static List<String> getFieldMappingFileNames(Properties props) {
+        return getMappingFileNames(props, "web.config.fieldname.mappings");
+    }
+
+    /**
+     * Get all the files configured in a properties file with a certain prefix.
+     * @param prefix The prefix to use to get the list of values.
+     */
+    private static List<String> getMappingFileNames(Properties props, String prefix) {
+        List<String> returnVal = new ArrayList<String>();
+        for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+            String key = (String) e.nextElement();
+            if (key.startsWith(prefix)) {
+                returnVal.add(props.getProperty(key));
+            }
+        }
+        return returnVal;
+    }
+
+    /**
+     * Load a set of files into a single merged properties file. These files should all be
+     * located in the WEB-INF directory of the webapp war.
+     *
+     * @param fileNames The file names to load.
+     * @throws FileNotFoundException If a file is listed but does not exist in WEB-INF.
+     * @throws IllegalStateException If two files configure the same key.
+     * @throws IOException if the properties cannot be loaded.
+     */
+    private static Properties loadMergedProperties(List<String> fileNames,
+        final ServletContext context)
+        throws IllegalStateException, FileNotFoundException, IOException {
+        Properties props = new Properties();
+        for ( String fileName : fileNames ) {
+            LOG.info("Loading properties from " + fileName);
+            Properties theseProps = new Properties();
+            InputStream is = context.getResourceAsStream("/WEB-INF/" + fileName);
+            if (is == null)
+                throw new FileNotFoundException("Could not find mappings file: " + fileName);
+            try {
+	            theseProps.load(is);
+            } catch (IOException e) {
+            	throw new Error("Problem reading from " + fileName, e);
+            }
+            if (!props.isEmpty()) {
+                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                    String key = (String) e.nextElement();
+                    if (theseProps.containsKey(key)) {
+                        throw new IllegalStateException(
+                                "Duplicate label found for " + key + " in " + fileName);
+                    }
+                }
+            }
+            if (theseProps.isEmpty()) {
+            	LOG.info("No properties loaded from " + fileName);
+            } else {
+            	LOG.info("Merging in " + theseProps.size() + " mappings from " + fileName);
+	            props.putAll(theseProps);
+            }
+        }
+        return props;
+    }
+
+
+    /**
+     * Load labels specified in any configured mapping files, and apply them to the
+     * configuration for the appropriate classes and fields.
+     * @param context The servlet context to use to find configuration with.
+     * @param model The data model which lists our classes and fields.
+     */
+    private void loadLabelsFromMappingsFile(
+        final ServletContext context,
+        final Model model)
+        throws FileNotFoundException, IOException, IllegalStateException {
+
+        Properties webProperties = SessionMethods.getWebProperties(context);
+
+        List<String> classFileNames = getClassMappingFileNames(webProperties);
+        List<String> fieldFileNames = getFieldMappingFileNames(webProperties);
+
+        Properties fieldNameProperties = loadMergedProperties(fieldFileNames, context);
+        Properties classNameProperties = loadMergedProperties(classFileNames, context);
+
+        for (ClassDescriptor cd : model.getClassDescriptors()) {
+            labelClass(cd, classNameProperties, fieldNameProperties);
+        }
+    }
+
+    /**
+     * Apply any labels configured in the property files to the class. This means
+     * a label for the class itself, and labels for any of its fields.
+     * @param cd a class descriptor specifying the class.
+     * @param classNameProperties The mapping from our class names to a readable version
+     * @param fieldNameProperties The mapping from our field names to a readable version
+     */
+    private void labelClass(
+    		final ClassDescriptor cd,
+    		final Properties classNameProperties,
+            final Properties fieldNameProperties) {
+        String originalName = cd.getUnqualifiedName();
+        if ("InterMineObject".equals(originalName)) {
+        	return;
+        }
+        Type classConfig = getTypes().get(cd.getName());
+        if (classConfig == null) {
+            classConfig = new Type();
+            classConfig.setClassName(cd.getName());
+            addType(classConfig);
+        }
+
+        if (classNameProperties.containsKey(originalName)) {
+            String classNameLabel = classNameProperties.getProperty(originalName);
+            String label = deSlashify(classNameLabel);
+            if (classConfig.getLabel() == null) {
+                LOG.info("Setting label as " + label + " on " + originalName);
+                classConfig.setLabel(label);
+            }
+        }
+        for (FieldDescriptor fd : cd.getAllFieldDescriptors()) {
+            if (fieldNameProperties.containsKey(fd.getName())) {
+                String fieldNameLabel = fieldNameProperties.getProperty(fd.getName());
+                String label = deSlashify(fieldNameLabel);
+                FieldConfig fc = classConfig.getFieldConfigMap().get(fd.getName());
+                if (fc == null) {
+                    fc = new FieldConfig();
+                    fc.setFieldExpr(fd.getName());
+                    fc.setShowInSummary(false);
+                    fc.setShowInInlineCollection(false);
+                    fc.setShowInResults(false);
+                    classConfig.addFieldConfig(fc);
+                }
+                if (fc.getLabel() == null) {
+                    LOG.info("Setting label as " + label + " on " + fd.getName()
+                        + " in " + originalName);
+                    fc.setLabel(label);
+                }
+            }
+        }
+    }
+
+    /**
+     * Format strings in a SO format to be more human readable. For example,
+     * transcription_factor becomes "Transcription Factor", and "U11_snRNA" becomes
+     * "U11 snRNA".
+     * @param input the string to format
+     * @return A reformatted version of the string.
+     */
+    private static String deSlashify(String input) {
+        String output = "";
+        String[] parts = StringUtils.split(input, "_");
+        String[] outputParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            if (part.equals(StringUtils.lowerCase(part))) {
+                outputParts[i] = StringUtils.capitalize(part);
+            } else {
+                outputParts[i] = part;
+            }
+        }
+
+        return StringUtils.join(outputParts, " ");
     }
 
     /**
@@ -342,20 +538,20 @@ public class WebConfig
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
 
-        for (Iterator<String> modelIter = classes.iterator(); modelIter.hasNext();) {
+        for (Iterator<ClassDescriptor> modelIter = model.getLevelOrderTraversal().iterator(); modelIter.hasNext();) {
 
-            String className = modelIter.next();
-            Type thisClassType = types.get(className);
+            ClassDescriptor cld = modelIter.next();
+            Type thisClassType = types.get(cld.getName());
 
             if (thisClassType == null) {
                 thisClassType = new Type();
-                thisClassType.setClassName(className);
-                types.put(className, thisClassType);
+                thisClassType.setClassName(cld.getName());
+                types.put(cld.getName(), thisClassType);
             }
 
-            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(className));
+            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(cld.getName()));
             for (ClassDescriptor cd : cds) {
-                if (className.equals(cd.getName())) {
+                if (cld.getName().equals(cd.getName())) {
                     continue;
                 }
 
@@ -363,7 +559,7 @@ public class WebConfig
 
                 if (superClassType != null) {
                     // set title config, the setter itself only adds configs that have not been set
-                    //  before, see setTitles() in HeaderConfig
+                    // before, see setTitles() in HeaderConfig
                     HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
 
@@ -403,6 +599,26 @@ public class WebConfig
                         for (FieldConfig fc : superClassType.getFieldConfigs()) {
                             thisClassType.addFieldConfig(fc);
                         }
+                    } else {
+                        // Set labels on overridden field-configs without labels
+                        for (FieldConfig superfc : superClassType.getFieldConfigs()) {
+                            for (FieldConfig thisfc : thisClassType.getFieldConfigs()) {
+                                if (thisfc.getFieldExpr().equals(superfc.getFieldExpr())) {
+                                    if (superfc.getLabel() != null && thisfc.getLabel() == null) {
+                                        thisfc.setLabel(superfc.getLabel());
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (thisClassType.getLongDisplayers().size() == 0) {
+                        Iterator longDisplayerIter = superClassType.getLongDisplayers().iterator();
+
+                        while (longDisplayerIter.hasNext()) {
+                            Displayer ld = (Displayer) longDisplayerIter.next();
+                            thisClassType.addLongDisplayer(ld);
+                        }
                     }
 
                     if (thisClassType.getTableDisplayer() == null) {
@@ -435,7 +651,7 @@ public class WebConfig
         sb.append("<webconfig>");
         Iterator<Type> typesIter = types.values().iterator();
         while (typesIter.hasNext()) {
-            sb.append(typesIter.next().toString());
+            sb.append(typesIter.next().toString() + "\n");
         }
         Iterator<TableExportConfig> tableExportConfigIter = tableExportConfigs.values().iterator();
         while (tableExportConfigIter.hasNext()) {

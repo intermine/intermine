@@ -7,6 +7,7 @@
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
   prefix="str"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <link rel="stylesheet" href="model/css/keywordSearch.css"
   type="text/css" media="screen" title="no title" charset="utf-8">
@@ -142,7 +143,7 @@ input.submit {
                                    <c:param name="facet_${facet.field}" value="${facetItem.value}" />
                             </c:url>"
                 title="Click to show '<c:out value="${facetItem.value}" />'">
-              <c:out value="${facetItem.value}" /> (<c:out
+              <c:out value="${imf:formatPath(facetItem.value, INTERMINE_API, WEBCONFIG)}" /> (<c:out
                 value="${facetItem.facetValueHitCount}"></c:out>) </a></li>
             </c:forEach>
           </ul>
@@ -367,8 +368,9 @@ input.submit {
           <tr>
 
             <c:if test="${!empty searchFacetValues['Category']}">
-              <th><input type="checkbox" id="allItems"
-                onclick="checkAll()" /></th>
+                <th style="width:1px">
+                    <input type="checkbox" id="allItems" onclick="checkAll()" />
+                </th>
             </c:if>
 
             <th class="type">Type</th>
@@ -388,12 +390,13 @@ input.submit {
                   value="${searchResult.id}"
                   onclick="updateCheckStatus(this.checked)" /></td>
               </c:if>
-              <td><c:out value="${searchResult.type}"></c:out></td>
+              <td><c:out value="${imf:formatPath(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out></td>
               <td>
-              <div class="objectKeys"><html:link
+                  <div class="objectKeys">
+                      <html:link
                 href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
                 <c:if test="${empty searchResult.keyFields}">
-                  <c:out value="${searchResult.type}"></c:out>
+                  <c:out value="${imf:formatPath(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out>
                 </c:if>
                 <c:forEach items="${searchResult.keyFields}" var="field"
                   varStatus="status">
@@ -424,7 +427,10 @@ input.submit {
                           -
                         </c:otherwise>
                   </c:choose> </span>
-                  <c:if test="${! status.last }"><span class="divider">|</span></c:if></c:forEach></html:link></div>
+                  <c:if test="${! status.last }"><span class="divider">|</span></c:if>
+                  </c:forEach>
+                    </html:link>
+                </div>
 
               <%-- print each field configured for this object --%>
               <table class="inner">
@@ -432,11 +438,14 @@ input.submit {
                 items="${searchResult.additionalFields}" var="field">
                 <c:set var="fieldConfig"
                   value="${searchResult.fieldConfigs[field]}" />
-                <tr class="objectField"><c:choose>
+                  <tr class="objectField">
+                <c:choose>
                   <%-- print each field configured for this object --%>
-                  <c:when
-                    test="${!empty fieldConfig && !empty fieldConfig.displayer}">
-                    <td class="objectFieldName"><c:out value="${field}" />:</td>
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.displayer}">
+                    <c:set var="fieldPathString" value="${searchResult.type}.${fieldConfig.fieldExpr}"/>
+                    <c:set var="fieldLabel" value="${imf:formatFieldStr(fieldPathString, INTERMINE_API, WEBCONFIG)}"/>
+                        
+                    <td class="objectFieldName"><c:out value="${fieldLabel}" />:</td>
 
                     <c:set var="interMineObject" value="${searchResult.object}"
                       scope="request" />
@@ -446,12 +455,13 @@ input.submit {
                     </tiles:insert> </td>
                   </c:when>
 
-                  <c:when
-                    test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
+                    <c:set var="fieldPathString" value="${searchResult.type}.${fieldConfig.fieldExpr}"/>
+                    <c:set var="fieldLabel" value="${imf:formatFieldStr(fieldPathString, INTERMINE_API, WEBCONFIG)}"/>
                     <c:set var="outVal"
                       value="${searchResult.fieldValues[fieldConfig.fieldExpr]}" />
                     <c:if test="${!empty outVal}">
-                      <td class="objectFieldName"><c:out value="${field}" />:</td>
+                      <td class="objectFieldName"><c:out value="${fieldLabel}" />:</td>
                     </c:if>
 
                     <td class="value" style="font-weight: bold;">${outVal}</td>

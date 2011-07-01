@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- begin.jsp -->
 <html:xhtml/>
@@ -39,7 +40,7 @@
                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                     <select name="type">
                       <c:forEach var="bag" items="${preferredBags}">
-                        <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                        <option value="<c:out value="${bag}" />"><c:out value="${imf:formatPath(bag, INTERMINE_API, WEBCONFIG)}" /></option>
                       </c:forEach>
                     </select>
 

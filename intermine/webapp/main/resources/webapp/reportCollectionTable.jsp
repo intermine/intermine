@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 
 <!-- reportCollectionTable -->
@@ -20,9 +21,27 @@
       <table border="0" cellspacing="0" class="refSummary" align="left">
         <thead style="text-align: center">
           <tr>
-            <c:if test="${inlineResultsTable.hasMoreThanOneType}"><td class="theme-5-background theme-3-border">Class</td></c:if>
-            <c:forEach items="${inlineResultsTable.tableFieldConfigs}" var="fc">
-              <td class="theme-5-background theme-3-border">${fc.fieldExpr}</td>
+            <c:if test="${inlineResultsTable.hasMoreThanOneType}">
+                <td class="theme-5-background theme-3-border">Class</td>
+            </c:if>
+
+            <c:forEach items="${inlineResultsTable.tableFieldConfigs}" var="fc" varStatus="status">
+              <td class="theme-5-background theme-3-border">
+              <c:choose>
+                <c:when test="${!empty fc.label}">
+                    <c:set var="columnDisplayName" value="${fc.displayName}"/>
+                </c:when>
+                <c:when test="${fc.isDottedPath && !empty WEBCONFIG && !empty INTERMINE_API}">
+                    <c:set var="pathString" value="${fc.classConfig.unqualifiedClassName}.${fc.fieldExpr}"/>
+                    <c:set var="columnDisplayName" value="${imf:formatPath(pathString, INTERMINE_API, WEBCONFIG)}"/>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="columnDisplayName" value="${fc.displayName}"/>
+                </c:otherwise>
+              </c:choose>
+              <im:columnName columnName="${columnDisplayName}" noHead="true"/>
+              </td>
+
             </c:forEach>
           </tr>
         </thead>
@@ -88,7 +107,7 @@
         </tbody>
       </table>
     </c:when>
-    <c:otherwise>InlineResultsTable.java is failing you</c:otherwise>
-    </c:choose>
+    <c:otherwise><im:debug message="InlineResultsTable.java is failing you"/></c:otherwise>
+</c:choose>
 
 <!-- /reportCollectionTable -->

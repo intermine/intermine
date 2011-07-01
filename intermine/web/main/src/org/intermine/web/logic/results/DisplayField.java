@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.query.Results;
@@ -45,6 +46,7 @@ public class DisplayField
 
     /** @var webProperties so we can resolve # of rows to show in Collections */
     private Properties webProperties;
+    private String parentClass = null;
 
     /**
      * Create a new DisplayField object.
@@ -68,6 +70,14 @@ public class DisplayField
         this.webConfig = webConfig;
         this.webProperties = webProperties;
         this.classKeys = classKeys;
+    }
+
+    public DisplayField(Collection<?> collection, FieldDescriptor fd,
+                        WebConfig webConfig, Properties webProperties,
+                        Map<String, List<FieldDescriptor>> classKeys,
+                        List<Class<?>> listOfTypes, String objectType) throws Exception {
+        this(collection, fd, webConfig, webProperties, classKeys, listOfTypes);
+        this.parentClass = objectType;
     }
 
     /**
@@ -103,9 +113,8 @@ public class DisplayField
                 tableSize = collection.size();
             }
 
-
             table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
-                                           webConfig, classKeys, tableSize, false, listOfTypes);
+                                        webConfig, classKeys, tableSize, false, listOfTypes, parentClass, fd);
         }
         return table;
     }

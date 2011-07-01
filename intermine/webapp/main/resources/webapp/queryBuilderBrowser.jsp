@@ -31,16 +31,17 @@
     return false;
   }
 
-  function addConstraint(path) {
+  function addConstraint(path, displayPath) {
     /*if (isExplorer()) {
       return true;
     }*/
+    displayPath = displayPath || path;
     new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
       {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true,
       onSuccess: function() {
         new Ajax.Updater('query-build-summary', '<html:rewrite action="/queryBuilderChange"/>',
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal:true, unloadOnHide: true})
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + displayPath, modal:true, unloadOnHide: true})
           }
         });
       }

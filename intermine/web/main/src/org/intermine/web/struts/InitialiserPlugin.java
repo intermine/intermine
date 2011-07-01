@@ -10,7 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -19,7 +21,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +32,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -247,17 +253,13 @@ public class InitialiserPlugin implements PlugIn
      */
     private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        InputStream is = servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        if (is == null) {
-            throw new ServletException("Unable to find webconfig-model.xml");
-        }
         try {
-            WebConfig retval = WebConfig.parse(is, os.getModel());
+            WebConfig retval = WebConfig.parse(servletContext, os.getModel());
             SessionMethods.setWebConfig(servletContext, retval);
             return retval;
         } catch (Exception e) {
-            LOG.error("Unable to parse webconfig-model.xml", e);
-            throw new ServletException("Unable to parse webconfig-model.xml", e);
+            LOG.error("Problem generating WebConfig", e);
+            throw new ServletException(e);
         }
     }
 
@@ -324,6 +326,25 @@ public class InitialiserPlugin implements PlugIn
         } catch (Exception e) {
             throw new ServletException("Unable to find global.web.properties", e);
         }
+
+        LOG.info("Looking for extra property files");
+        Pattern pattern = Pattern.compile(
+            "/WEB-INF/(?!global)\\w+\\.web\\.properties$");
+        ResourceFinder finder = new ResourceFinder(servletContext);
+        
+        Collection<String> otherResources = finder.findResourcesMatching(pattern);
+        for (String resource : otherResources) {
+            LOG.info("Loading extra resources from " + resource);
+            InputStream otherResourceStream =
+                servletContext.getResourceAsStream(resource);
+            try {
+                webProperties.load(otherResourceStream);
+            } catch (Exception e) {
+                throw new ServletException("Unable to load " + resource, e);
+            }
+        }
+            
+        // Load these last, as they always take precedence.
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
         if (modelPropertiesStream == null) {
@@ -335,8 +356,10 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to find web.properties", e);
             }
         }
+            
         return webProperties;
     }
+
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";
