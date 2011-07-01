@@ -191,7 +191,7 @@ public class Type
 
     /**
     *
-    * @return HeaderConfigTitle
+    * @return HeaderConfigLink
     */
     public HeaderConfigLink getHeaderConfigLink() {
         return this.headerConfigLink;
@@ -314,21 +314,24 @@ public class Type
         if (fieldName != null) {
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
-        sb.append(">");
-        sb.append("<fieldconfigs>");
-        for (FieldConfig fc : getFieldConfigs()) {
-            sb.append(fc.toString());
+        if (label != null) {
+        	sb.append(" label=\"" + label + "\"");
         }
-        sb.append("</fieldconfigs>");
+        sb.append(">\n");
+        sb.append("\t<fieldconfigs>\n");
+        for (FieldConfig fc : getFieldConfigs()) {
+            sb.append("\t\t" + fc.toString() + "\n");
+        }
+        sb.append("\t</fieldconfigs>\n");
         if (tableDisplayer != null) {
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
-        sb.append("<longdisplayers>");
+        sb.append("\t<longdisplayers>\n");
         Iterator iter = longDisplayers.iterator();
         while (iter.hasNext()) {
-            sb.append(iter.next().toString());
+            sb.append("\t\t" + iter.next().toString() + "\n");
         }
-        sb.append("</longdisplayers>");
+        sb.append("\t</longdisplayers>\n");
         sb.append("</class>");
 
         return sb.toString();
