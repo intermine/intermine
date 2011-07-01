@@ -173,8 +173,8 @@
     </source>
 -->
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/micklem/data/old_shared_data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/go-annotation/current"/>
+      <property name="ontologyfile" location="/micklem/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/micklem/data/go-annotation/current"/>
     </source>
 
     <source name="flyreg" type="flyreg" dump="true">
