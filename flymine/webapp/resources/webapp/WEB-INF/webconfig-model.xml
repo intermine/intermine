@@ -1,5 +1,7 @@
 <webconfig>
 
+  <class className="org.intermine.model.bio.AGambiaeLifeCycle" label="A. Gambiae Life-Cycle"/>
+
   <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -148,7 +150,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Gene" label="Geney Thingy">
+  <class className="org.intermine.model.bio.Gene">
     <headerconfig>
       <customlinks>
         <customlink
@@ -520,7 +522,7 @@
   </class>
 
 
-  <class className="org.intermine.model.bio.RNAiScreen" label="RNAi Screen">
+  <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="cellLine"/>
@@ -528,7 +530,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiScreenHit" label="RNAi Screen Hit">
+  <class className="org.intermine.model.bio.RNAiScreenHit">
     <fields>
       <fieldconfig fieldExpr="result"/>
       <fieldconfig fieldExpr="pcrProduct.primaryIdentifier" label="PCR Product"/>
