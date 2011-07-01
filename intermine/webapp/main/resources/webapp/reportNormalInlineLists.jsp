@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <tiles:importAttribute name="mapOfInlineLists" ignore="false" />
 <tiles:importAttribute name="placement" />
@@ -13,6 +14,9 @@
 <c:forEach items="${mapOfInlineLists}" var="lists">
   <c:if test="${lists.key == placement}">
     <c:forEach items="${lists.value}" var="list" varStatus="status">
+      <c:set var="pathString" value="${reportObject.classDescriptor.unqualifiedName}.${list.prefix}"/>
+      <c:set var="listDisplayName" value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
+
       <div class='box <c:if test="${list.size == 0}">gray</c:if>'>
         <h3 class="theme-5-background theme-1-border">
           <c:if test="${IS_SUPERUSER}">
@@ -24,7 +28,7 @@
               </tiles:insert>
             </span>
           </c:if>
-          ${list.size}&nbsp;${list.prefix}
+          ${list.size}&nbsp;${listDisplayName}
         </h3>
         <c:if test="${list.size > 0}">
           <c:choose>

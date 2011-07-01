@@ -77,7 +77,8 @@
             </c:choose>
           </c:if>
 
-          <c:set var="fieldDisplayText" value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
+          <c:set var="fieldDisplayText" 
+            value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
               <td>
