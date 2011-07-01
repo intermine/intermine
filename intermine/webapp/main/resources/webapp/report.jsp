@@ -49,7 +49,7 @@
             </a>
         </div>
     </c:if>
-    <a name="summary"></a>
+    <a name="summary">
     <h1 class="title">
         ${object.type}:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
@@ -59,6 +59,7 @@
           <c:if test="${status.count > 0}"> </c:if>${title.value}
         </c:forEach>
     </h1>
+    </a>
 
     <%-- summary short fields --%>
     <table class="fields">
