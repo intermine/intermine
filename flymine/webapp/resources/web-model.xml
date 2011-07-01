@@ -41,3 +41,17 @@
   <servlet-name>fasta-query</servlet-name>
   <url-pattern>/service/query/results/fasta</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>bed-query</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.BEDQueryServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>bed-query</servlet-name>
+  <url-pattern>/service/query/results/bed</url-pattern>
+</servlet-mapping>

@@ -22,16 +22,17 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * A servlet to hand off to the GFF3-query-service.
- * @author Alex Kalderimis.
+ * A servlet to hand off to the UCSC BED query service.
+ *
+ * @author Fengyuan Hu
  *
  */
-public class GFF3QueryServlet extends HttpServlet
+public class BEDQueryServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GFF3QueryServlet.class);
+    private static final Logger LOG = Logger.getLogger(BEDQueryServlet.class);
 
     /**
      * {@inheritDoc}}
@@ -58,6 +59,6 @@ public class GFF3QueryServlet extends HttpServlet
         // according new data
         // and not remember fields initialized according previous request data
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new GFFQueryService(im).service(request, response);
+        new BEDQueryService(im).service(request, response);
     }
 }
