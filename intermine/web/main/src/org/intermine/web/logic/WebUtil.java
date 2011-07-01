@@ -29,9 +29,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.util.StringUtil;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
 
 /**
  * Utility methods for the web package.
@@ -159,4 +171,118 @@ public abstract class WebUtil
         return original.replaceAll("&", "&amp;").replaceAll(" > ", "&nbsp;&gt; ")
             .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
+
+    public static String formatColumnName(String original, HttpServletRequest request) {
+        if (request == null) { 
+            throw new IllegalArgumentException("request cannot be null");
+        }
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request);
+        final Model model = im.getModel();
+        final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        return formatColumnName(original, model, webConfig);
+    }
+
+    public static List<String> formatPathQueryView(PathQuery pq, HttpServletRequest request) {
+        if (request == null) { 
+            throw new IllegalArgumentException("request cannot be null");
+        }
+        final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        List<String> formattedViews = new ArrayList<String>();
+        for (String view : pq.getView()) {
+            Path p;
+            try {
+                p = pq.makePath(view);
+            } catch (PathException e) {
+                throw new RuntimeException(e);
+            }
+            formattedViews.add(formatColumnName(p, webConfig));
+        }
+        return formattedViews;
+    }
+
+    public static String formatColumnName(String original, Model model, WebConfig webConfig) {
+        Path viewPath;
+        try {
+            viewPath = new Path(model, original);
+        } catch (PathException e) {
+            return original;
+        }
+        return formatColumnName(viewPath, webConfig);
+    }
+
+    public static String formatColumnName(Path viewColumn, WebConfig webConfig) {
+        List<Path> parts = viewColumn.decomposePath();
+        List<String> aliasedParts = new ArrayList<String>();
+        for (Path p: parts) {
+            if (p.isRootPath()) {
+                ClassDescriptor cld = p.getStartClassDescriptor();
+                Type type = webConfig.getTypes().get(cld.getName());
+                if (type != null) {
+                    aliasedParts.add(type.getDisplayName());
+                } else {
+                    aliasedParts.add(Type.getFormattedClassName(cld.getUnqualifiedName()));
+                }
+            } else {
+                aliasedParts.add(formatField(p, webConfig));
+            }
+        }
+        return StringUtils.join(aliasedParts, " > ");
+    }
+
+    public static String formatPathString(String pathString, InterMineAPI api, WebConfig webConfig) {
+        Path viewPath;
+        try {
+            viewPath = new Path(api.getModel(), pathString);
+        } catch (PathException e) {
+            return pathString;
+        }
+        return formatColumnName(viewPath, webConfig);
+    }
+
+    public static String formatField(String s, InterMineAPI api, WebConfig webConfig) {
+        if (StringUtils.isEmpty(s)) {
+            return "";
+        }
+        Path viewPath;
+        try {
+            viewPath = new Path(api.getModel(), s);
+        } catch (PathException e) {
+            return s;
+        }
+        return formatField(viewPath, webConfig);
+    }
+
+    public static String formatField(Path p, WebConfig webConfig) {
+        if (p == null) {
+            return "";
+        }
+        FieldDescriptor fd = p.getEndFieldDescriptor();
+        if (fd == null) {
+            return "";
+        }
+        ClassDescriptor cld = (fd.isAttribute())
+                              ? p.getLastClassDescriptor()
+                              : p.getSecondLastClassDescriptor();
+
+        FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
+        if (fc != null) {
+            return fc.getDisplayName();
+        } else {
+            return FieldConfig.getFormattedName(fd.getName());
+        }
+    }
+
+    public static String formatFieldChain(String s, InterMineAPI api, WebConfig webConfig) {
+        String fullPath = formatColumnName(s, api.getModel(), webConfig);
+        if (StringUtils.isEmpty(fullPath)) {
+            return fullPath;
+        } else {
+            int idx = fullPath.indexOf(">");
+            if (idx != -1) {
+                return fullPath.substring(idx + 1);
+            }
+        }
+        return fullPath;
+    }
+
 }

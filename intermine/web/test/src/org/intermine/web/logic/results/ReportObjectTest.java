@@ -198,7 +198,7 @@ public class ReportObjectTest extends InterMineAPITestCase
             // Reference
             if (fd.isReference()) {
                 ReferenceDescriptor ref = (ReferenceDescriptor) fd;
-                DisplayReference dr = new DisplayReference(null, ref, webConfig, im.getClassKeys());
+                DisplayReference dr = new DisplayReference(null, ref, webConfig, im.getClassKeys(), null);
                 m.put(fd.getName(), dr);
             }
             // Collection

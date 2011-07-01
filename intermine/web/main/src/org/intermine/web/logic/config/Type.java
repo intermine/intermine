@@ -10,9 +10,11 @@ package org.intermine.web.logic.config;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +23,9 @@ import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.util.TypeUtil;
 
 /**
  * Configuration object for displaying a class
@@ -36,6 +40,7 @@ public class Type
     private String className;
     private LinkedHashMap<String, FieldConfig> fieldConfigMap =
         new LinkedHashMap<String, FieldConfig>();
+    private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
     private Displayer tableDisplayer;
@@ -47,6 +52,46 @@ public class Type
     /** @var header configuration having paths to titles to show */
     private HeaderConfigTitle headerConfigTitle;
     private HeaderConfigLink headerConfigLink;
+
+    private String label = null;
+
+    /**
+     * Get the label property's value.
+     * @return The value of this property.
+     */
+    public String getLabel() {
+        return this.label;
+    }
+
+    /**
+     * Set the label property.
+     * @param label the new value for this property.
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getDisplayName() {
+        if (label != null) {
+            return label;
+        } else {
+            return getFormattedClassName();
+        }
+    }
+
+    public String getFormattedClassName() {
+        return Type.getFormattedClassName(className);
+    }
+
+    public static String getFormattedClassName(String nameOfClass) {
+        String unqualifiedName = TypeUtil.unqualifiedName(nameOfClass);
+        String[] parts = StringUtils.splitByCharacterTypeCamelCase(unqualifiedName);
+        String[] newParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            newParts[i] = StringUtils.capitalize(parts[i]);
+        }
+        return StringUtils.join(parts, " ");
+    }
 
     /**
      * Set the unqualified class name for this Type (from fully-qualified)
@@ -65,12 +110,17 @@ public class Type
         return this.className;
     }
 
+    public String getUnqualifiedClassName() {
+        return TypeUtil.unqualifiedName(this.className);
+    }
+
     /**
      * Add a FieldConfig for this Type
      * @param df the FieldConfig to add
      */
     public void addFieldConfig(FieldConfig df) {
         fieldConfigMap.put(df.getFieldExpr(), df);
+        df.setClassConfig(this);
     }
 
     /**
@@ -87,6 +137,32 @@ public class Type
      */
     public Map<String, FieldConfig> getFieldConfigMap() {
         return Collections.unmodifiableMap(fieldConfigMap);
+    }
+
+   /**
+     * Add a long displayer for this Type
+     * @param disp the Displayer to add
+     */
+    public void addLongDisplayer(Displayer disp) {
+        longDisplayers.add(disp);
+
+        // TODO we don't have displayers tied to aspects anymore.
+        // this should be removed
+        String[] aspects;
+        if (StringUtils.isEmpty(disp.getAspects())) {
+            aspects = new String[]{""};
+        } else {
+            aspects = StringUtils.split(disp.getAspects(), ',');
+        }
+        for (int i = 0; i < aspects.length; i++) {
+            String aspect = aspects[i].trim();
+            List displayers = (List) aspectDisplayers.get(aspect);
+            if (displayers == null) {
+                displayers = new ArrayList();
+                aspectDisplayers.put(aspect, displayers);
+            }
+            displayers.add(disp);
+        }
     }
 
     /**
@@ -115,7 +191,7 @@ public class Type
 
     /**
     *
-    * @return HeaderConfigTitle
+    * @return HeaderConfigLink
     */
     public HeaderConfigLink getHeaderConfigLink() {
         return this.headerConfigLink;
@@ -168,6 +244,14 @@ public class Type
     }
 
     /**
+     * Get the List of long Displayers
+     * @return the List of long Displayers
+     */
+    public Set getLongDisplayers() {
+        return Collections.unmodifiableSet(this.longDisplayers);
+    }
+
+    /**
      *
      * @return inline lists
      */
@@ -200,15 +284,12 @@ public class Type
         if (!(obj instanceof Type)) {
             return false;
         }
+
         Type typeObj = (Type) obj;
+
         return fieldConfigMap.equals(typeObj.fieldConfigMap)
-            && ObjectUtils.equals(bagDisplayers, typeObj.bagDisplayers)
-            && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer)
-            && ObjectUtils.equals(widgets, typeObj.widgets)
-            && ObjectUtils.equals(aspectDisplayers, typeObj.aspectDisplayers)
-            && ObjectUtils.equals(headerConfigTitle, typeObj.headerConfigTitle)
-            && ObjectUtils.equals(headerConfigLink, typeObj.headerConfigLink)
-            && ObjectUtils.equals(inlineLists, typeObj.inlineLists);
+            && longDisplayers.equals(typeObj.longDisplayers)
+            && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer);
     }
 
     /**
@@ -216,29 +297,10 @@ public class Type
      * @return the hashCode for this Type object
      */
     public int hashCode() {
-        int hash = fieldConfigMap.hashCode();
-        if (inlineLists != null) {
-            hash += 3 * inlineLists.hashCode();
-        }
+        int hash = fieldConfigMap.hashCode() + 3 * longDisplayers.hashCode();
         if (tableDisplayer != null) {
             hash += 5 * tableDisplayer.hashCode();
         }
-        if (widgets != null) {
-            hash += 7 * widgets.hashCode();
-        }
-        if (aspectDisplayers != null) {
-            hash += 11 * aspectDisplayers.hashCode();
-        }
-        if (headerConfigTitle != null) {
-            hash += 13 * headerConfigTitle.hashCode();
-        }
-        if (headerConfigLink != null) {
-            hash += 17 * headerConfigLink.hashCode();
-        }
-        if (inlineLists != null) {
-            hash += 19 * inlineLists.hashCode();
-        }
-
         return hash;
     }
 
@@ -252,15 +314,24 @@ public class Type
         if (fieldName != null) {
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
-        sb.append(">");
-        sb.append("<fieldconfigs>");
-        for (FieldConfig fc : getFieldConfigs()) {
-            sb.append(fc.toString());
+        if (label != null) {
+        	sb.append(" label=\"" + label + "\"");
         }
-        sb.append("</fieldconfigs>");
+        sb.append(">\n");
+        sb.append("\t<fieldconfigs>\n");
+        for (FieldConfig fc : getFieldConfigs()) {
+            sb.append("\t\t" + fc.toString() + "\n");
+        }
+        sb.append("\t</fieldconfigs>\n");
         if (tableDisplayer != null) {
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
+        sb.append("\t<longdisplayers>\n");
+        Iterator iter = longDisplayers.iterator();
+        while (iter.hasNext()) {
+            sb.append("\t\t" + iter.next().toString() + "\n");
+        }
+        sb.append("\t</longdisplayers>\n");
         sb.append("</class>");
 
         return sb.toString();

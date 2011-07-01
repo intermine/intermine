@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- queryBuilderBrowserLine.jsp -->
 
@@ -166,7 +167,7 @@
             <c:set var="fieldNameClass" value="${fieldNameClass} nullReferenceField"/>
           </c:if>
           <span class="${fieldNameClass}" id="drag_${node.pathString}">
-            <c:out value="${node.fieldName}"/>
+            <c:out value="${imf:formatField(node.minimalPath, WEBCONFIG)}"/>
           </span>
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
         </c:if>
@@ -182,26 +183,26 @@
           <c:if test="${node.type != 'String'}">
             <c:choose>
               <c:when test="${node.reverseReference && node.reference}">
-                <span class="reverseReference"><c:out value="${node.type}"/></span>
+                <span class="reverseReference"><c:out value="${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}"/></span>
               </c:when>
               <c:when test="${node.origType != null}">
-                <span class="${type}"><c:out value="${node.origType}"/></span>
+                <span class="${type}"><c:out value="${imf:formatPath(node.origType, INTERMINE_API, WEBCONFIG)}"/></span>
                 <fmt:message key="query.usingSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.origType}"/>
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/usingSubclasses.png" title="${tooltipSubclasses}"/>
-                <span class="subclass"><c:out value="${node.type}"/></span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+                <span class="subclass"><c:out value="${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}"/></span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:when>
               <c:when test="${node.hasSubclasses}">
-                <span class="${type}"">${node.type}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}">${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
                 <fmt:message key="query.hasSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/hasSubclasses.png" title="${tooltipSubclasses}"/>
               </c:when>
               <c:otherwise>
-                <span class="${type}"">${node.type}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+              <span class="${type}"">${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:otherwise>
             </c:choose>
           </c:if>
@@ -248,7 +249,7 @@
           </c:when>
           <c:otherwise>
             <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
-              onclick="return addConstraint('${node.pathString}');" >
+                onclick="return addConstraint('${node.pathString}', '${imf:formatPath(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
               <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
             </html:link>
           </c:otherwise>

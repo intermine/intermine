@@ -39,7 +39,7 @@
       <td>Identifier</td>
       <c:if test="${table.hasMoreThanOneType}"><td>Class</td></c:if>
       <c:forEach items="${table.tableFieldConfigs}" var="fc">
-        <td>${fc.fieldExpr}</td>
+        <td>${fc.displayName}</td>
       </c:forEach>
       <td>&nbsp;</td>
     </tr>

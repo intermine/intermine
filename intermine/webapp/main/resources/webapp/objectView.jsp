@@ -8,6 +8,8 @@
 
 <tiles:importAttribute />
 
+<im:debug message="START: objectView.jsp"/>
+
 <html:xhtml />
 <c:set var="object" value="${resultElement.field}" />
 <c:set var="doNotTruncate" value="${doNotTruncate}" />
@@ -59,8 +61,9 @@
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
         <%-- key field, truncate --%>
-        <a class="theme-1-color ${extlink}" href="${detailsLink}"><im:abbreviate
-          value="${object}" length="${maxLength}" /></a>
+        <a class="theme-1-color ${extlink}" href="${detailsLink}"${extlink}>
+            <im:abbreviate value="${object}" length="${maxLength}" />
+        </a>
       </c:when>
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
@@ -122,3 +125,5 @@
     </c:forEach></div>
   </c:otherwise>
 </c:choose>
+
+<im:debug message="END: objectView.jsp"/>

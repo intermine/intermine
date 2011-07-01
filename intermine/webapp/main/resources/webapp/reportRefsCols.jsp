@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <%--in order to filter out chars from strings --%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 
 <!-- reportRefsCols.jsp -->
@@ -23,6 +24,9 @@
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
+    <c:set var="pathString" value="${object.classDescriptor.unqualifiedName}.${fieldName}"/>
+    <c:set var="fieldDisplayName" 
+        value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
 
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
 
@@ -44,9 +48,9 @@
           onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
           action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
           <span class="collectionField theme-1-color">
-            ${collection.size}&nbsp;${fieldName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
+            ${collection.size}&nbsp;${fieldDisplayName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
           </span>
-          <im:typehelp type="${object.classDescriptor.unqualifiedName}.${fieldName}" />
+          <im:typehelp type="${pathString}" />
         </html:link></h3>
         <div class="clear"></div>
         <%-- ############# --%>

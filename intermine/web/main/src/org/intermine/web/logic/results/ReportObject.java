@@ -197,12 +197,19 @@ public class ReportObject
                     Object fieldValue = getFieldValue(fieldName);
                     String fieldDisplayer = fc.getDisplayer();
 
+                    if (!isAttribute(fieldName)
+                            && fieldDisplayer == null
+                            && !fc.getShowInSummary()) {
+                        continue; // This is just configured for its label
+                    }
+
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
                             fieldName,
                             fieldValue,
                             fieldDisplayer,
-                            fc.getDoNotTruncate()
+                            fc.getDoNotTruncate(),
+                            fc.getLabel()
                     );
 
                     // summary fields should go first
@@ -281,6 +288,25 @@ public class ReportObject
     }
 
     /**
+     * Return a string to display as the name of a field.
+     * @param fieldExpression The name of the field as configured in webconfig-model.xml
+     * @return the field's label, or the field's name.
+     */
+    public String getFieldDisplayName(String fieldExpression) {
+        Collection<FieldConfig> configs = getFieldConfigs();
+        for (FieldConfig fc: configs) {
+            if (fc.getFieldExpr() != null && fc.getFieldExpr().equals(fieldExpression)) {
+                if (fc.getLabel() != null) {
+                    return fc.getLabel();
+                } else {
+                    return fieldExpression;
+                }
+            }
+        }
+        return fieldExpression;
+    }
+
+    /**
      * Get field value for a field name (expression)
      * @param fieldExpression String
      * @return Object
@@ -294,6 +320,27 @@ public class ReportObject
         return fieldValues.get(fieldExpression);
     }
 
+    private boolean isAttribute(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsAttribute();
+    }
+
+    private boolean isCollection(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsCollection();
+    }
+
+    private Path getPathForField(String fieldName) {
+        String pathString = objectType + "." + fieldName;
+        Path p;
+        try {
+            p = new Path(im.getModel(), pathString);
+        } catch (PathException e) {
+            throw new Error(e);
+        }
+        return p;
+    }
+
     /**
      * Setup fieldValues HashMap
      */
@@ -303,12 +350,14 @@ public class ReportObject
 
         // fetch field configs
         for (FieldConfig fc : getFieldConfigs()) {
-            // crete a path string
-            String pathString = objectType + "." + fc.getFieldExpr();
-            try {
-                fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
-            } catch (PathException e) {
-                throw new Error("There must be a bug", e);
+            // create a path string
+            if (!isCollection(fc.getFieldExpr())) {
+                String pathString = objectType + "." + fc.getFieldExpr();
+                try {
+                    fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
+                } catch (PathException e) {
+                    throw new Error("There must be a bug", e);
+                }
             }
         }
     }
@@ -424,12 +473,11 @@ public class ReportObject
 
                 if (linkUrl != null) {
                     // patternz
-                    Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
-
-                    Matcher m = linkPattern.matcher(linkUrl);
+                    final Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
+                    final Matcher m = linkPattern.matcher(linkUrl);
                     while (m.find()) {
                         // get the field name and do some filtering just in case
-                        String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
+                        final String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
                         // resolve the field value
                         Object stuff = getFieldValue(path);
                         if (stuff != null) {
@@ -576,7 +624,7 @@ public class ReportObject
             }
             DisplayReference newReference = null;
             try {
-                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
+                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys(), objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -614,7 +662,7 @@ public class ReportObject
             try {
                 newCollection = new DisplayCollection((Collection<?>) fieldValue,
                         (CollectionDescriptor) fd, webConfig, webProperties, im.getClassKeys(),
-                        listOfTypes);
+                        listOfTypes, objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
