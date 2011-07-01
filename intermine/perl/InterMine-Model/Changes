@@ -39,3 +39,6 @@ Revision history for InterMine-Model
           "foo" and "foos". 
 0.9607  Thu Mar  3 18:17:20 GMT 2011
         * Provided POD for constants, as some versions of Pod::Coverage demand it
+0.9700  This package is now responsible for all its own type definitions.
+0.9701  Bug fix
+0.9702  Declared required version of MooseX::Role::WithOverloading
