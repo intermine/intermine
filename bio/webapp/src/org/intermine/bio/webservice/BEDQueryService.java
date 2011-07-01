@@ -10,19 +10,15 @@ package org.intermine.bio.webservice;
  *
  */
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.bio.web.export.GFF3Exporter;
+import org.intermine.bio.web.export.BEDExporter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -52,37 +48,40 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
 import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 /**
- * A service for exporting query results as gff3.
- * @author Alexis Kalderimis.
+ * A service for exporting query results in UCSC BED format.
+ *
+ * @author Fengyuan Hu
  *
  */
-public class GFFQueryService extends AbstractQueryService
+public class BEDQueryService extends AbstractQueryService
 {
-
     private static final String XML_PARAM = "query";
+    private static final String TRACK_DESCRIPTION = "trackDescription";
+//    private static final String ORGANISM = "organism";
+    private static final String UCSC_COMPATIBLE = "ucscCompatible";
 
     /**
      * Constructor.
+     *
      * @param im A reference to an InterMine API settings bundle.
      */
-    public GFFQueryService(InterMineAPI im) {
+    public BEDQueryService(InterMineAPI im) {
         super(im);
     }
 
     @Override
     protected String getDefaultFileName() {
-        return "results" + StringUtil.uniqueString() + ".gff3";
+        return "results" + StringUtil.uniqueString() + ".bed";
     }
 
     protected PrintWriter pw;
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
-        this.pw = out;
-        output = new StreamedOutput(out, new TabFormatter());
+    protected Output getDefaultOutput(PrintWriter pw, OutputStream os) {
+        this.pw = pw;
+        output = new StreamedOutput(pw, new TabFormatter());
         if (isUncompressed()) {
-            ResponseUtil.setPlainTextHeader(response,
-                    getDefaultFileName());
+            ResponseUtil.setPlainTextHeader(response, getDefaultFileName());
         }
         return output;
     }
@@ -97,11 +96,24 @@ public class GFFQueryService extends AbstractQueryService
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        // get the project title to be written in GFF3 records
+        // get the project title to be written in BED records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String sourceName = props.getProperty("project.title");
+        String sourceReleaseVersion = props.getProperty("project.releaseVersion");
 
-        Set<Integer> organisms = null;
+        String trackDescription = request.getParameter(TRACK_DESCRIPTION);
+        if ("".equals(trackDescription) || trackDescription == null) {
+            trackDescription = sourceName + " " + sourceReleaseVersion + " Custom Track";
+        }
+
+//        String organisms = request.getParameter(ORGANISM);
+        String organisms = null;
+        boolean makeUcscCompatible = true;
+
+        String ucscCompatible = request.getParameter(UCSC_COMPATIBLE);
+        if ("no".equals(ucscCompatible)) {
+            makeUcscCompatible = false;
+        }
 
         PathQuery pathQuery = getQuery();
 
@@ -113,10 +125,8 @@ public class GFFQueryService extends AbstractQueryService
                 indexes.add(Integer.valueOf(i));
             }
 
-            removeFirstItemInPaths(viewColumns);
-            exporter = new GFF3Exporter(pw, indexes,
-                    getSoClassNames(servletContext), viewColumns,
-                    sourceName, organisms, false);
+            exporter = new BEDExporter(pw, indexes, sourceName, organisms,
+                    makeUcscCompatible, trackDescription);
             ExportResultsIterator iter = null;
             try {
                 Profile profile = SessionMethods.getProfile(session);
@@ -136,52 +146,9 @@ public class GFFQueryService extends AbstractQueryService
     }
 
     /**
-     * Read the SO term name to class name mapping file and return it as a Map from class name to
-     * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
-     *
-     * @throws ServletException if the SO class names properties file cannot be found
-     * @param servletContext the ServletContext
-     * @return a map
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected Map<String, String> getSoClassNames(ServletContext servletContext)
-        throws ServletException {
-        final String soClassNames = "SO_CLASS_NAMES";
-        Properties soNameProperties;
-        if (servletContext.getAttribute(soClassNames) == null) {
-            soNameProperties = new Properties();
-            try {
-                InputStream is =
-                    servletContext.getResourceAsStream("/WEB-INF/soClassName.properties");
-                soNameProperties.load(is);
-            } catch (Exception e) {
-                throw new ServletException("Error loading so class name mapping file", e);
-            }
-
-            servletContext.setAttribute(soClassNames, soNameProperties);
-        } else {
-            soNameProperties = (Properties) servletContext.getAttribute(soClassNames);
-        }
-
-        return new HashMap<String, String>((Map) soNameProperties);
-    }
-
-    /**
-     *
-     * @param paths list of path views
-     */
-    protected void removeFirstItemInPaths(List<String> paths) {
-        for (int i = 0; i < paths.size(); i++) {
-            String path = paths.get(i);
-            paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
-        }
-    }
-
-    /**
      * Return the query specified in the request, shorn of all duplicate
      * classes in the view. Note, it is the users responsibility to ensure
      * that there are only SequenceFeatures in the view.
-     *
      * @return A suitable pathquery for getting GFF3 data from.
      */
     protected PathQuery getQuery() {
@@ -217,5 +184,4 @@ public class GFFQueryService extends AbstractQueryService
 
         return pq;
     }
-
 }

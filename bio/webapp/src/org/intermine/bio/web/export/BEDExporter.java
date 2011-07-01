@@ -51,7 +51,7 @@ public class BEDExporter implements Exporter
     private static final String SOURCE_PRE = "\n# Source: ";
     private String sourceName;
     private static final String GENOME_BUILD_PRE = "\n# Genome Build: ";
-    private String genomeBuild = "";
+    private String genomeBuild = "not available";
     private static final String TRACK_NAME_PRE = "\ntrack name=";
     private String trackName;
     private static final String TRACK_DESCRIPTION_PRE = " description=\"";
@@ -145,35 +145,39 @@ public class BEDExporter implements Exporter
     private String getHeader() {
         StringBuffer header = new StringBuffer();
 
-        List<String> orgSet = StringUtil.tokenize(organismString, ",");
-        Properties props = PropertiesUtil.getProperties();
-        // TODO the way to store genome build information should be changed ...
-        // TODO handle multipe orgs
-        if (orgSet != null) {
-            for (String org : orgSet) {
-//                Integer taxId = OrganismRepository.getOrganismRepository()
-//                        .getOrganismDataByAbbreviation(org).getTaxonId();
-                if ("D. melanogaster".equals(org)) {
-                    String fV = props.getProperty("genomeVersion.fly");
-                    if (fV != null && fV.length() > 0) {
-                        genomeBuild = fV;
+        if (!"".equals(organismString) && organismString != null) {
+            LOG.info("organismString >>>>> " + organismString);
+            List<String> orgSet = StringUtil.tokenize(organismString, ",");
+            Properties props = PropertiesUtil.getProperties();
+            // TODO the way to store genome build information should be changed ...
+            // TODO handle multipe orgs
+            if (orgSet != null) {
+                List<String> genomeBuildList = new ArrayList<String>();
+                for (String org : orgSet) {
+//                    Integer taxId = OrganismRepository.getOrganismRepository()
+//                            .getOrganismDataByAbbreviation(org).getTaxonId();
+                    if ("D. melanogaster".equals(org)) {
+                        String fV = props.getProperty("genomeVersion.fly");
+                        if (fV != null && fV.length() > 0) {
+                            genomeBuildList.add(fV);
+                        }
                     }
                 }
-            }
-            for (String org : orgSet) {
-//                Integer taxId = OrganismRepository.getOrganismRepository()
-//                        .getOrganismDataByAbbreviation(org).getTaxonId();
-                if ("C. elegans".equals(org)) {
-                    String wV = props.getProperty("genomeVersion.worm");
-                    if (wV != null && wV.length() > 0) {
-                        genomeBuild = genomeBuild + " | " + wV;
+                for (String org : orgSet) {
+//                    Integer taxId = OrganismRepository.getOrganismRepository()
+//                            .getOrganismDataByAbbreviation(org).getTaxonId();
+                    if ("C. elegans".equals(org)) {
+                        String wV = props.getProperty("genomeVersion.worm");
+                        if (wV != null && wV.length() > 0) {
+                            genomeBuildList.add(wV);
+                        }
                     }
                 }
-            }
-        }
 
-        if ("".equals(genomeBuild)) {
-            genomeBuild = "not available";
+                if (genomeBuildList.size() > 1) {
+                    genomeBuild = StringUtil.join(genomeBuildList, " | ");
+                }
+            }
         }
 
         header.append(FORMAT);
