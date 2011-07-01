@@ -42,13 +42,13 @@ public class Path
     private ClassDescriptor startCld;
     private List<String> elements;
     private FieldDescriptor endFld;
-    private Model model;
+    private final Model model;
     private String path;
     private boolean containsCollections = false;
     private boolean containsReferences = false;
-    private Map<String, String> subClassConstraintPaths;
+    private final Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
-    private List<Boolean> outers;
+    private final List<Boolean> outers;
 
     /**
      * Create a new Path object. The Path must start with a class name.
@@ -260,28 +260,28 @@ public class Path
             }
         }
     }
-    
+
     /**
-     * Returns a list of paths, each corresponding to one step further along the path. Starts with 
+     * Returns a list of paths, each corresponding to one step further along the path. Starts with
      * the root path, and ends in the current path, ie:
-     * 
-     * Company.departments.manager.name 
-     * 		decomposes to:
+     *
+     * Company.departments.manager.name
+     *         decomposes to:
      * Company, Company.departments, Company.departments.manager, Company.departments.manager.name
-     * 
+     *
      *  @return the list of composing paths.
      */
     public List<Path> decomposePath() {
-    	List<Path> pathList = new ArrayList<Path>();
-    	pathList.add(this);
-    	Path currentPath = this;
-    	while (! currentPath.isRootPath()) {
-    		Path nextPath = currentPath.getPrefix();
-    		pathList.add(nextPath);
-    		currentPath = nextPath;
-    	}
-    	Collections.reverse(pathList);
-    	return pathList;
+        List<Path> pathList = new ArrayList<Path>();
+        pathList.add(this);
+        Path currentPath = this;
+        while (!currentPath.isRootPath()) {
+            Path nextPath = currentPath.getPrefix();
+            pathList.add(nextPath);
+            currentPath = nextPath;
+        }
+        Collections.reverse(pathList);
+        return pathList;
     }
 
     /**
