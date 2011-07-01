@@ -223,14 +223,7 @@ public abstract class WebUtil
                     aliasedParts.add(Type.getFormattedClassName(cld.getUnqualifiedName()));
                 }
             } else {
-                FieldDescriptor fld = p.getEndFieldDescriptor();
-                ClassDescriptor cld = p.endIsReference() ? p.getSecondLastClassDescriptor() : p.getLastClassDescriptor();
-                FieldConfig fcfg = FieldConfigHelper.getFieldConfig(webConfig, cld, fld);
-                if (fcfg != null) {
-                    aliasedParts.add(fcfg.getDisplayName());
-                } else {
-                    aliasedParts.add(FieldConfig.getFormattedName(fld.getName()));
-                }
+                aliasedParts.add(formatField(p, webConfig));
             }
         }
         return StringUtils.join(aliasedParts, " > ");
@@ -267,7 +260,10 @@ public abstract class WebUtil
         if (fd == null) {
             return "";
         }
-        ClassDescriptor cld = p.getLastClassDescriptor();
+        ClassDescriptor cld = (fd.isAttribute())
+                              ? p.getLastClassDescriptor()
+                              : p.getSecondLastClassDescriptor();
+
         FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
         if (fc != null) {
             return fc.getDisplayName();
