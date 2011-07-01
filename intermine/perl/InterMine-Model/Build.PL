@@ -10,17 +10,17 @@ my $build = Module::Build->new(
     requires             => {
         'perl'                          => '5.8.3',
         'Carp'                          => 0,
-        'Moose::Util::TypeConstraints'  => 0,
-        'MooseX::Role::WithOverloading' => 0,
+        'Moose::Util::TypeConstraints'  => 2.0,
+        'MooseX::Role::WithOverloading' => 0.9,
         'MooseX::Types'                 => 0,
-        'Moose'                         => 0.95,
+        'Moose'                         => 2.0,
         'Scalar::Util'                  => 0,
         'XML::Parser::PerlSAX'          => 0.08,
         'Time::HiRes'                   => 0,
     },
     build_requires => {
         'Test::Exception' => 0,
-        'Test::More'      => '>= 0.95, < 2.0',
+        'Test::More'      => 0.95,
     },
 );
 $build->add_build_element('xml');
