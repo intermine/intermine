@@ -230,8 +230,8 @@ public class FieldConfig
                + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
                + " showInInlineCollection=\"" + showInInlineCollection + "\""
                + " showInResults=\"" + showInResults + "\""
-               + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"") 
-               + (label== null ? "" : " label=\"" + label + "\"") 
+               + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"")
+               + (label == null ? "" : " label=\"" + label + "\"")
                + "/>";
     }
 
