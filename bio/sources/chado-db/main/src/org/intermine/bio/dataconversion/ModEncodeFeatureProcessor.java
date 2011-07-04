@@ -73,7 +73,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
-            , "full_transcript"
+            , "full_transcript", "polypeptide_region"
     );
 
     // the FB name for the mitochondrial genome
