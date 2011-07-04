@@ -224,16 +224,28 @@ public class TreefamConverter extends BioFileConverter
 
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
-            // one of the genes has to be from an organism of interest
-            if (holder1 != null && holder2 != null) {
-                if (holder1.validGene() && (holder2.validGene() || holder2.validHomologue())) {
-                    processHomologues(holder1, holder2, bootstrap);
-                }
-                if (holder2.validGene() && (holder1.validGene() || holder1.validHomologue())) {
-                    processHomologues(holder2, holder1, bootstrap);
-                }
+
+            // at least one of the genes has to be from an organism of interest
+            if (isValidPair(holder1, holder2)) {
+                processHomologues(holder1, holder2, bootstrap);
+                processHomologues(holder2, holder1, bootstrap);
             }
         }
+    }
+
+    // the gene is from an organism we want
+    // the homologue is from an organism we want
+    private boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
+        if (holder1 == null || holder2 == null) {
+            return false;
+        }
+        if (holder1.validGene()  && (holder2.validGene() || holder2.validHomologue())) {
+            return true;
+        }
+        if (holder2.validGene()  && (holder1.validGene() || holder1.validHomologue())) {
+            return true;
+        }
+        return false;
     }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
