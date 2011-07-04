@@ -89,7 +89,7 @@
   </tr>
 
   <tr>
-    <td rowspan="2"  class="leftcol"><p><h2>Proteins</h2></p></td>
+    <td rowspan="3"  class="leftcol"><p><h2>Proteins</h2></p></td>
     <td>
         <p><i>D. melanogaster</i></p>
         <p><i>A. gambiae</i></p>
@@ -112,17 +112,6 @@
     <td> Protein family and domain assignments to proteins</td>
     <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2011_06)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new" class="extlink">PubMed: 17202162</a></td>
-    <td> &nbsp;</td>
-  </tr>
-  <tr>
-    <td rowspan="2"  class="leftcol"><p><h2>Protein Structure</h2></p></td>
-    <td>
-        <p><i>D. melanogaster</i></p>
-        <p><i>A. gambiae</i></p>
-     </td>
-    <td> 3-D structure predictions for protein domains</td>
-    <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm" target="_new" class="extlink">Kenji Mizuguchi</a> - 8 February 2007</td>
-    <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
   <tr>
