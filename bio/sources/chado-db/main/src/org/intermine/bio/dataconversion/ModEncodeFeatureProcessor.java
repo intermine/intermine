@@ -73,6 +73,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
+            , "full_transcript"
     );
 
     // the FB name for the mitochondrial genome
@@ -481,7 +482,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         if ("chromosome_arm".equals(chadoFeatureType)
                 || "ultra_scaffold".equals(chadoFeatureType)) {
             realInterMineType = "Chromosome";
-
             if (uniqueName.startsWith("chr")) {
                 // this is to fix some data problem with sub 146 in modmine
                 // where there are duplicated chromosome_arm features, with

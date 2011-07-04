@@ -532,6 +532,9 @@ public class SequenceProcessor extends ChadoProcessor
         if ("three_prime_untranslated_region".equals(type)) {
             return "three_prime_UTR";
         }
+        if ("full_transcript".equals(type)) {
+            return "mature_transcript";
+        }
         return type;
     }
 
