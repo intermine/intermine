@@ -80,11 +80,14 @@ public final class TemplateTrackBinding
             }
             writer.writeCharacters("\n");
             writer.writeEndElement();
+        } catch (SQLException sqle) {
+            LOG.error("The templatetrack table does't exist!", sqle);
+            try {
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+            }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling template tracks", e);
-        } catch (SQLException sqle) {
-            throw new RuntimeException("exception while reading template tracks from user profile"
-                                       + " database", sqle);
         } finally {
             if (rs != null) {
                 try {

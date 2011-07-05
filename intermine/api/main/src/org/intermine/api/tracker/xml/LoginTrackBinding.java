@@ -63,11 +63,14 @@ public class LoginTrackBinding
             }
             writer.writeCharacters("\n");
             writer.writeEndElement();
+        } catch (SQLException sqle) {
+            LOG.error("The logintrack table does't exist!", sqle);
+            try {
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+            }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling login tracks", e);
-        } catch (SQLException sqle) {
-            throw new RuntimeException("exception while reading login tracks from user profile"
-                                       + " database", sqle);
         } finally {
             if (rs != null) {
                 try {
