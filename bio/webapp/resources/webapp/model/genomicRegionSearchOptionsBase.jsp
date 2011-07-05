@@ -23,7 +23,7 @@
 <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
 <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
 <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.13.custom.min.js'/>"></script>
+<script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
 <script type="text/javascript">
 
     // webData must be defined in base jsp first, and customized page can make use of it.
