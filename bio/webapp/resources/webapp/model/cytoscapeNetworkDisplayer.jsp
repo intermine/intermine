@@ -32,6 +32,8 @@
     #cwtabsbyside ul li a.active { font-weight:bold; }
     #cwtabsbyside ul li.last { border:none; }
     #cwtabsbyside fieldset, #cwtabsbyside #legend { border:none; border-bottom-width:1px; border-bottom-style:solid; padding:8px; }
+
+    #cwtabsbyside #formats ul li { display:block; font-size:12px; margin-bottom:4px; }
 </style>
 
 <script type="text/javascript">
@@ -89,23 +91,23 @@
     <div id="tabs-data"></div>
     <div id="tabs-help">
       <div id="legend" class="theme-3-border">
-        <p>Interaction Type</p>
+        <h4>Interaction Type</h4>
         <div id="legendall"></div>
       </div>
-      <div id="formats">
-        <p>export format: </p>
-        <ul>
-            <li><a target="_blank" href="http://www.cs.rpi.edu/research/groups/pb/punin/public_html/XGMML/index.html">XGMML</a>: the eXtensible Graph Markup and Modeling Language
+      <div id="formats" class="theme-3-border theme-6-background">
+        <h4>Export formats</h4>
+        <ul class="formats">
+            <li class="external"><a target="_blank" href="http://www.cs.rpi.edu/research/groups/pb/punin/public_html/XGMML/index.html">XGMML</a>: the eXtensible Graph Markup and Modeling Language
                 is an XML format which is used for graph description. Cytoscape desktop loads and saves networks and node/edge attributes in XGMML as well.
             </li>
-            <li><a target="_blank" href="http://cytoscape.wodaklab.org/wiki/Cytoscape_User_Manual/Network_Formats/">SIF</a>: A simpler text format
+            <li class="external"><a target="_blank" href="http://cytoscape.wodaklab.org/wiki/Cytoscape_User_Manual/Network_Formats/">SIF</a>: A simpler text format
                  that can be very useful if you do not need to set custom nodes/edges attributes.
             </li>
-            <li><a target="_blank" href="http://www.w3.org/Graphics/SVG/">SVG</a>: Scalable Vector Graphics defines the graphics in XML format and does not lose any quality if they are zoomed or resized.
+            <li class="external"><a target="_blank" href="http://www.w3.org/Graphics/SVG/">SVG</a>: Scalable Vector Graphics defines the graphics in XML format and does not lose any quality if they are zoomed or resized.
             </li>
-            <li><a target="_blank" href="http://www.w3.org/Graphics/SVG/">PNG</a>: Portable Network Graphics, a popular graphics format over the web.
+            <li class="external"><a target="_blank" href="http://www.w3.org/Graphics/SVG/">PNG</a>: Portable Network Graphics, a popular graphics format over the web.
             </li>
-            <li>CSV/TSB: comma or tab separated values, suitable for import into Excel.
+            <li class="external">CSV/TSB: comma or tab separated values, suitable for import into Excel.
             </li>
         </ul>
       </div>

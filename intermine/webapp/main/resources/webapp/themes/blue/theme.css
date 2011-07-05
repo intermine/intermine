@@ -381,11 +381,16 @@ ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
 #object_header h1.title span { color:#5c0075; }
 #object_header div.box h3 { background:#F0E3F7; }
 #object_header div.list.box span { color:#002575; }
-#fixed-menu { background:#38687F; }
-#toc-menu-wrap { background:#38687F; }
+
+#toc-menu-wrap { background:#EEF0F7; }
+#fixed-menu { background:#3B8F60; }
+#fixed-menu div.wrap, #toc-menu-wrap div.wrap { background:#3B8F60; border-color:#3B8F60; }
 #fixed-menu span, #toc-menu-wrap span { color:#E2F5FE; }
+
 #menu-target { background:#EEF0F7; }
-#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#002575; background:#EEF0F7; }
+
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#FFF; }
+
 div.box h2 { color:#000; }
 div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#EEF0F7; color:#002575; border-top-color:#002575; }
 div.box a { color:#002575; }
@@ -400,8 +405,10 @@ div.feature table td.border-left { border-left-color:#E2F5FE !important; }
 div.box div.inner { border-color:#FCFAFD; }
 div.box div.inner h4 { background-color:#FCFAFD; }
 
+#toc-menu-wrap div.links a.current, #fixed-menu div.links a.current { background:#FFF; color:#3B8F60; border-color:#3B8F60; }
+
 #object_header #headerLink a { color:#002575; }
-#fixed-menu div.links a.current { background:#002575; color:#FFF; }
+
 div.table.template p.in_table a span { background-color:#FFF; color:#002575; }
 div.table.gray h3 { color:#ABABAB; border-top-color:#6E6E6E; background:#F6F5F7 !important; }
 #object_header p.share a { color:#002575; }

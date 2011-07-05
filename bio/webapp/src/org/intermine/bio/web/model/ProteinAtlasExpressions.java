@@ -276,13 +276,13 @@ public class ProteinAtlasExpressions {
             level = level.toLowerCase();
 
             if ("strong".equals(level) || "high".equals(level)) {
-                return STRONG;
+                return HIGH;
             } else if ("moderate".equals(level) || "medium".equals(level)) {
-                return MODERATE;
+                return MEDIUM;
             } else if ("weak".equals(level) || "low".equals(level)) {
-                return WEAK;
+                return LOW;
             } else if ("negative".equals(level) || "none".equals(level)) {
-                return NEGATIVE;
+                return NONE;
             }
             return OTHER;
         }
@@ -294,13 +294,13 @@ public class ProteinAtlasExpressions {
          */
         public String reverseEvaluate(Integer levelValue) {
             switch (levelValue) {
-                case STRONG:
+                case HIGH:
                     return "strong";
-                case MODERATE:
+                case MEDIUM:
                     return "moderate";
-                case WEAK:
+                case LOW:
                     return "weak";
-                case NEGATIVE:
+                case NONE:
                 default:
                     return "negative";
             }

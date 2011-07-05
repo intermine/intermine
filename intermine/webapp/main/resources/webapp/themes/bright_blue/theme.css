@@ -270,11 +270,13 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 #object_header h1.title span { color:#5c0075; }
 #object_header div.box h3 { background:#F0E3F7; }
 #object_header div.list.box span { color:#002575; }
+
+#toc-menu-wrap { background:#049; }
 #fixed-menu { background:#7EE6FF; }
-#toc-menu-wrap { background:#7EE6FF; }
 #fixed-menu span, #toc-menu-wrap span { color:#353B40; }
 #menu-target { background:#E6F0E4; }
 #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#002575; background:#E6F0E4; }
+
 div.box h2 { color:#000; }
 div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#E6F0E4; color:#002575; border-top-color:#002575; }
 div.box a { color:#002575; }

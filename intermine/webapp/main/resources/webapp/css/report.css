@@ -72,9 +72,11 @@ background-attachment:scroll; padding-top:10px; }
 #headercontainer { background:inherit; display:inline-block; }
 #fixed-menu { position:fixed; top:0; width:100%; z-index:1; box-shadow: 0px 1px 4px #A9A9A9;
     -moz-box-shadow: 0px 1px 4px #A9A9A9; -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
+#fixed-menu div.wrap, #toc-menu-wrap div.wrap { border-bottom-width:1px; border-bottom-style:solid; }
 #content { z-index:0; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:94%; vertical-align:bottom; }
-#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; line-height:20px; }
+#fixed-menu div.links a.current, #toc-menu-wrap div.links a.current { border-width:1px; border-style:solid; border-bottom:0; }
+#fixed-menu span, #toc-menu-wrap span { float:left; font-size:13px; line-height:20px; padding-left:6px; }
 #menu-target { display:inline-block; height:20px; width:100%; }
 
 /* menu of menues menu */
@@ -97,7 +99,7 @@ div.menu-wrap div.links a { height:20px; display:inline-block; }
 div.container_12 { padding-top:30px; }
 
 /* generic box */
-div.box { font-size:12px; }
+div.box { font-size:13px; }
 div.box div.inner { padding:0 6px 6px 6px; margin-bottom:20px; }
 div.box h2 { margin: 0 0 10px; }
 div.box h3 { border-top-style:solid; border-top-width:1px; font-size:14px; margin-bottom:10px; padding:2px 6px; }

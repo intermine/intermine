@@ -23,14 +23,16 @@
       position:absolute; font-size:11px; padding:1px 2px; -moz-box-shadow:1px 1px 2px #DDD; -webkit-box-shadow:1px 1px 2px #DDD; box-shadow:1px 1px 2px #DDD;
       line-height:15px; color:#000; }
 
-    #proteinAtlasDisplayer .strong { background:#CD3A32; }
-    #proteinAtlasDisplayer .ape .strong, #proteinAtlasDisplayer .high { background:#2B4A7B; }
-    #proteinAtlasDisplayer .moderate { background:#FD9B34; }
-    #proteinAtlasDisplayer .ape .moderate, #proteinAtlasDisplayer .medium { background:#4B97CE; }
-    #proteinAtlasDisplayer .weak { background:#FFED8D; }
-    #proteinAtlasDisplayer .ape .low, #proteinAtlasDisplayer .low { background:#BFF1FF; }
-    #proteinAtlasDisplayer .negative,
-    #proteinAtlasDisplayer .none { background:#FFF; }
+    #proteinAtlasDisplayer.staining .high, #proteinAtlasDisplayer.staining .strong { background:#CD3A32; }
+    #proteinAtlasDisplayer.ape .high, #proteinAtlasDisplayer.ape .strong { background:#2B4A7B; }
+
+    #proteinAtlasDisplayer.staining .medium, #proteinAtlasDisplayer.staining .moderate { background:#FD9B34; }
+    #proteinAtlasDisplayer.ape .medium, #proteinAtlasDisplayer.ape .moderate { background:#4B97CE; }
+
+    #proteinAtlasDisplayer.staining .weak, #proteinAtlasDisplayer.staining .low { background:#FFED8D; }
+    #proteinAtlasDisplayer.ape .weak, #proteinAtlasDisplayer.ape .low { background:#BFF1FF; }
+
+    #proteinAtlasDisplayer .none, #proteinAtlasDisplayer .negative { background:#FFF; }
 
     #proteinAtlasDisplayer table span.level span.value { display:none; }
 
@@ -40,7 +42,8 @@
     #proteinAtlasDisplayer div.sidebar p strong.supportive,
     #proteinAtlasDisplayer div.sidebar p strong.high,
     #proteinAtlasDisplayer div.sidebar p strong.medium { background:#A9CC30; border:1px solid #DDD; }
-    #proteinAtlasDisplayer div.sidebar p.small { font-size:11px; }
+    #proteinAtlasDisplayer div.sidebar p.small { font-size:11px; margin-bottom:16px; }
+    #proteinAtlasDisplayer div.sidebar p.small a { background:url('images/icons/external_link.png') no-repeat top right; padding-right:10px; }
 
     #proteinAtlasDisplayer div.legend { margin-top:10px; }
     #proteinAtlasDisplayer div.legend ul { margin:4px 0 0 0; }
@@ -52,40 +55,34 @@
     #proteinAtlasDisplayer div.inactive { display:none; }
   </style>
 
-<div id="proteinAtlasDisplayer">
+<c:set var="expressionType" value="${expressions.type}" />
+<div id="proteinAtlasDisplayer" class="${expressionType.clazz}">
 
 <c:choose>
 <c:when test="${expressions.reliability != null}">
 <h3>Protein Atlas Tissue Expression</h3>
 
-<div class="sidebar">
-
-  <c:set var="expressionType" value="${expressions.type}" />
+  <div class="sidebar">
     <p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
-    <p class="small">A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
-
     <div class="legend">
-      <strong>Level of antibody staining</strong>
+      <strong>Level of antibody staining</strong>*
       <ul class="level">
-        <c:choose>
-          <c:when test="${expressionType.isApe}">
-            <li><span class="high"></span> High</li>
-            <li><span class="medium"></span> Medium</li>
-            <li><span class="low"></span> Low</li>
-            <li><span class="none"></span> None</li>
-          </c:when>
-          <c:otherwise>
-            <li><span class="strong"></span> Strong</li>
-            <li><span class="moderate"></span> Moderate</li>
-            <li><span class="weak"></span> Weak</li>
-            <li><span class="negative"></span> Negative</li>
-          </c:otherwise>
-        </c:choose>
+        <li><span class="high"></span> High</li>
+        <li><span class="medium"></span> Medium</li>
+        <li><span class="low"></span> Low</li>
+        <li><span class="none"></span> None</li>
       </ul>
+
+      <p class="small">* A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
+
+      <strong>Source</strong>
+      <p class="small">This chart represents a normal tissue &amp; organ summary of the antibody staining or the protein expression in a number of
+      human tissues and organs. A description of the assay and annotation can be found <a target="new" href="http://www.proteinatlas.org/about/assays+annotation#ih">here</a>.</p>
+      <a target="new" href="http://www.proteinatlas.org/"><img src="model/images/protein-atlas.gif" alt="Human Protein Atlas" /></a>
     </div>
   </div>
 
-  <div class="table byOrgan active ${expressionType.clazz}">
+  <div class="table byOrgan active">
     <c:set var="tableRows" value="${expressions.byOrgan}" />
     <tiles:insert page="proteinAtlasDisplayerTable.jsp">
       <tiles:put name="rows" beanName="tableRows" />
