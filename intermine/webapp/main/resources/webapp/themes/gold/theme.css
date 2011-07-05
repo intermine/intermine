@@ -346,11 +346,13 @@ div.heading.results #tool_bar_div ul#button_bar li a { background:none !importan
 #object_header h1.title span { color:#5c0075; }
 #object_header div.box h3 { background:#F0E3F7; }
 #object_header div.list.box span { color:#662F2E; }
-#fixed-menu { background:#94854B; }
-#toc-menu-wrap { background:#94854B; }
+#fixed-menu { background:#A32220; }
+#toc-menu-wrap { background:#F7F1EE; }
+#toc-menu-wrap div.wrap, #fixed-menu div.wrap { background:#A32220; border-color:#A32220; }
 #fixed-menu span, #toc-menu-wrap span { color:#FFF; }
 #menu-target { background:#F7F1EE; }
-#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#A32220; background:#F7F1EE; }
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#FFF; }
+#toc-menu-wrap div.wrap a.current, #fixed-menu div.wrap a.current { color:#A32220; border-color:#A32220; background:#FFF; }
 div.box h2 { color:#000; }
 div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#F7F1EE; color:#662F2E; border-top-color:#662F2E; }
 div.box a { color:#662F2E; }

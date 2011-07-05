@@ -421,7 +421,7 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAtlasDisplayer"
                      jspName="model/proteinAtlasDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="proteinAtlasExpression"
                      placement="summary"
                      types="Gene"/>
 </reportdisplayers>

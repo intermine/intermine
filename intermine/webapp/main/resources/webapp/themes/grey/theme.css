@@ -306,11 +306,15 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 #object_header h1.title span { color:#5c0075; }
 #object_header div.box h3 { background:#F0E3F7; }
 #object_header div.list.box span { color:#004499; }
-#fixed-menu { background:#AFAFAF; }
-#toc-menu-wrap { background:#AFAFAF; }
+
+#toc-menu-wrap { background:#F5F5F5; }
+#fixed-menu { background:#049; }
 #fixed-menu span, #toc-menu-wrap span { color:#FFF; }
 #menu-target { background:#F5F5F5; }
-#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#4B3F4B; background:#F5F5F5; }
+#toc-menu-wrap div.wrap, #fixed-menu div.wrap { color:#FFF; background:#049; border-color:#049; }
+#toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#FFF; }
+#toc-menu-wrap div.wrap a.current, #fixed-menu div.wrap a.current { background:#FFF; color:#049; border-color:#049; }
+
 div.box h2 { color:#000; }
 div.box h3 { text-shadow: 1px 1px 1px #FFF; background:#EBEBEB; color:#004499; border-top-color:#004499; }
 div.box a { color:#004499; }

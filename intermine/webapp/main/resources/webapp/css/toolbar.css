@@ -31,7 +31,7 @@ ul#button_bar li img {
 .tb_button:hover {
   margin-right:0;
 }
-.tb_button.inactive { border:0 !important; cursor:pointer; }
+.tb_button.inactive { cursor:pointer; }
 .tb_button_active {
 }
 .tool_bar_item {
