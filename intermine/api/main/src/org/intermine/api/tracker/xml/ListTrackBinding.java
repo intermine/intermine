@@ -68,11 +68,14 @@ public class ListTrackBinding
             }
             writer.writeCharacters("\n");
             writer.writeEndElement();
+        } catch (SQLException sqle) {
+            LOG.error("The listtrack table does't exist!", sqle);
+            try {
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+            }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling list tracks", e);
-        } catch (SQLException sqle) {
-            throw new RuntimeException("exception while reading list tracks from user profile"
-                                       + " database", sqle);
         } finally {
             if (rs != null) {
                 try {
