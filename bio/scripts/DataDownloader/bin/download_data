@@ -101,12 +101,12 @@ The config file must supply a value for both log_dir and data_dir.
 Usage: download_data -e flymine Uniprot
 USAGE
 
-    my $LOGDIR = (($settings->{log_dir} =~ m{^/}) 
+    my $LOGDIR = ($settings->{log_dir} =~ m{^/}) 
         ? $settings->{log_dir}
-        : $ENV{HOME}) . '/' . $settings->{log_dir};
-    my $DATA_DIR = (($settings->{log_dir} =~ m{^/})
+        : $ENV{HOME} . '/' . $settings->{log_dir};
+    my $DATA_DIR = ($settings->{log_dir} =~ m{^/})
         ? $settings->{data_dir}
-        : $ENV{HOME}) . '/' . $settings->{data_dir};
+        : $ENV{HOME} . '/' . $settings->{data_dir};
 
     my $DEFAULT_SOURCES = $settings->{default_sources} || [];
 
