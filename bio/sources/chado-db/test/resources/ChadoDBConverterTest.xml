@@ -522,7 +522,6 @@
 <collection name="transcripts"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
 </item>
 <item id="1_1" class="Gene">
-<attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
 <attribute name="length" value="1001"/>
 <attribute name="name" value="FBgn0000001_fullname_synonym"/>
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
