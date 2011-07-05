@@ -30,10 +30,13 @@ sub BUILD {
     }} NON_XML_FILES;
     my $organisms = $self->get_options->{organisms} || [];
 
+    my $excluded_organisms = $self->get_options->{excluded_organisms} || [];
+    my $excluded_str = join(' ', map { "NOT $_" } @$excluded_organisms);
+
     for my $org (@$organisms) {
         my $sp_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %sp_params = (
-            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes',
+            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes ' . $excluded_organisms,
             compress => 'yes', 
             format => 'xml',
         );
@@ -48,7 +51,7 @@ sub BUILD {
 
         my $tr_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %tr_params = (
-            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no',
+            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no' . $excluded_organisms,
             compress => 'yes', 
             format => 'xml',
         );

@@ -33,5 +33,6 @@ Uniprot:
         - 7217 
         - 7227 
         - 7955 
-        - 9606
         - 559292
+    excluded_organisms:
+        - 63221
