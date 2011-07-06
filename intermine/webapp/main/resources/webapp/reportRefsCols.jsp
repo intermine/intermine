@@ -25,36 +25,27 @@
     <c:set var="collection" value="${entry.value}" />
     <c:set var="fieldName" value="${entry.key}" />
     <c:set var="pathString" value="${object.classDescriptor.unqualifiedName}.${fieldName}"/>
-    <c:set var="fieldDisplayName" 
+    <c:set var="fieldDisplayName"
         value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
 
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
-
         <%-- ############# --%>
-        <div class="table loadOnScroll" id="${fn:replace(placement, ":", "_")}${fieldName}_table">
-        <h3 class="theme-1-border theme-5-background">
+        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
+        <h3>
           <c:if test="${IS_SUPERUSER}">
-            <span class="tag-editor">
+            <div class="right">
               <c:set var="descriptor" value="${collection.descriptor}" />
               <tiles:insert name="inlineTagEditor.tile">
                 <tiles:put name="taggable" beanName="descriptor" />
                 <tiles:put name="show" value="true" />
               </tiles:insert>
-            </span>
+            </div>
           </c:if>
-        <html:link
-          styleClass="getTable"
-          linkName="${placement}_${fieldName}"
-          onclick="return toggleCollectionVisibilityJQuery('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"
-          action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-          <span class="collectionField theme-1-color">
-            ${collection.size}&nbsp;${fieldDisplayName}<!-- of type ${collection.descriptor.referencedClassDescriptor.unqualifiedName}-->
-          </span>
+          ${collection.size}&nbsp;${fieldDisplayName}
           <im:typehelp type="${pathString}" />
-        </html:link></h3>
+        </h3>
         <div class="clear"></div>
         <%-- ############# --%>
-
     <c:choose>
       <c:when test="${collection.size > 0}">
           <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
@@ -70,28 +61,20 @@
             <script type="text/javascript">trimTable('#coll_${fn:replace(placement, ":", "_")}${fieldName}_inner');</script>
           </div>
 
-          <p class="in_table" style="display:none;">
-            <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+          <div class="show-in-table" style="display:none;">
+            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
               Show all in a table »
             </html:link>
-          </p>
+          </div>
 
           </div>
           <div class="clear"></div>
         <%-- ############# --%>
       </c:when>
       <c:otherwise>
-        <script type="text/javascript">
-          jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').addClass('gray');
-          var h3 = jQuery('#${fn:replace(placement, ":", "_")}${fieldName}_table').find('h3');
-          if (h3.find('span.tag-editor').length > 0) {
-            var tags = h3.find('span.tag-editor');
-            h3.html(h3.find('a.getTable').text());
-            tags.appendTo(h3);
-          } else {
-            h3.html(h3.find('a.getTable').text());
-          }
-        </script>
+      	<script type="text/javascript">
+      		jQuery("#${fn:replace(placement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
+      	</script>
       </c:otherwise>
     </c:choose>
     </div>

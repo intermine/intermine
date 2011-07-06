@@ -8,8 +8,6 @@
 
 <tiles:importAttribute />
 
-<im:debug message="START: objectView.jsp"/>
-
 <html:xhtml />
 <c:set var="object" value="${resultElement.field}" />
 <c:set var="doNotTruncate" value="${doNotTruncate}" />
@@ -54,16 +52,15 @@
 
           <%-- LINK --%>
           <c:otherwise>
-            <a href="${object}" class="extlink theme-1-color">${object}</a>
+            <a href="${object}" class="value extlink">${object}</a>
           </c:otherwise>
         </c:choose>
       </c:when>
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
         <%-- key field, truncate --%>
-        <a class="theme-1-color ${extlink}" href="${detailsLink}"${extlink}>
-            <im:abbreviate value="${object}" length="${maxLength}" />
-        </a>
+        <a href="${detailsLink}"${extlink}><im:abbreviate
+          value="${object}" length="${maxLength}" /></a>
       </c:when>
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
@@ -73,7 +70,7 @@
       </c:when>
       <c:when test="${resultElement.keyField}">
         <%-- key field --%>
-        <a class="theme-1-color ${extlink}" href="${detailsLink}"><c:out value="${object}"
+        <a href="${detailsLink}"${extlink}><c:out value="${object}"
           default="${nullFieldText}" /></a>
         <c:if
           test="${(!empty columnType) && (resultElement.type != columnType)}">
@@ -90,7 +87,7 @@
   <c:otherwise>
     <span style="white-space: nowrap"> <c:forEach var="cld" items="${leafClds}">
       <span class="type"><c:out value="${cld.unqualifiedName}" /></span>
-    </c:forEach> [<a class="theme-1-color ${extlink}" href="${detailsLink}"><fmt:message
+    </c:forEach> [<a href="${detailsLink}"${extlink}><fmt:message
       key="results.details" /></a>] </span>
     <br />
     <div style="margin-left: 8px"><c:set var="reportObject"
@@ -125,5 +122,3 @@
     </c:forEach></div>
   </c:otherwise>
 </c:choose>
-
-<im:debug message="END: objectView.jsp"/>

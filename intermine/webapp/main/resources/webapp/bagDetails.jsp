@@ -144,8 +144,7 @@
 <TR>
 
 <TD valign="top" class="tableleftcol">
-<div>
-
+<div class="results collection-table nowrap nomargin">
 <%-- Table displaying bag elements --%>
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="pagedResults" />
@@ -232,10 +231,8 @@
 <!-- closing toolbar div -->
 
 <div id="convertList" class="listtoolbox" align="left">
-<h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
+<h3 class="goog"><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
 <p>
-
-
 <tiles:insert name="convertBag.tile">
      <tiles:put name="bag" beanName="bag" />
      <tiles:put name="idname" value="cp" />

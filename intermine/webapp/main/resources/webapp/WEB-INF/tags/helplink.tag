@@ -2,6 +2,7 @@
 <%@ attribute name="text" required="false" rtexprvalue="true"%>
 <%@ attribute name="type" required="false" %>
 <%@ attribute name="key" required="false" %>
+<%@ attribute name="big" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
@@ -14,7 +15,7 @@
 
 <c:if test="${!empty text}">
   <c:choose>
-    <c:when test="${!empty type}">
+    <c:when test="${!empty big}">
       <im:help text="${text}">
         <img src="images/icons/information.png" alt="?">
       </im:help>

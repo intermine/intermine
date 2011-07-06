@@ -14,7 +14,7 @@
     Lists
   </div>
 
-<div class="body" style="padding:10px;border:1px #CCC solid">
+<div class="body">
 
 <div>
   <c:choose>
@@ -37,7 +37,7 @@
 
 <%-- Add to list --%>
 <c:if test="${!empty bagsToAddTo}">
-  <div style="margin-top:10px">
+  <div>
     <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
       Add this ${object.type} to one of your lists:<br/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>

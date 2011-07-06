@@ -7,22 +7,23 @@
 
 <!-- regulatoryRegionsDisplayer.jsp -->
 
-<div class="report-displayer" id="regulatory-regions">
-  <h3>Regulatory Regions</h3>
-  <p class="desc theme-5-background">
-    <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
-    View regulatory regions associated with this gene by type.
-  </p>
-  <p class="switchers theme-5-background">
-    <c:forEach items="${regionCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
-    <%-- TODO: potential fail if key has spaces --%>
-    <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}</c:forEach>
-  </p>
-
+<div class="collection-of-collections" id="regulatory-regions">
+  <div class="header">
+	  <h3>Regulatory Regions</h3>
+	  <p>
+	    <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+	    Something that is relevant and descriptive should go here, this ain't it
+	  </p>
+	  <div class="switchers">
+	    <c:forEach items="${regionCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
+	    <%-- TODO: potential fail if key has spaces --%>
+	    <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}</c:forEach>
+	  </div>
+  </div>
   <c:if test="${!empty regionTables}">
     <c:forEach items="${regionTables}" var="entry">
-      <div class="table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3 class="theme-1-border theme-5-background">${entry.key}</h3>
+      <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
+        <h3 class="">${entry.key}</h3>
         <div class="clear"></div>
 
         <c:set var="inlineResultsTable" value="${entry.value}" />
@@ -31,49 +32,43 @@
            <tiles:put name="object" beanName="reportObject.object" />
            <tiles:put name="fieldName" value="${entry.key}" />
         </tiles:insert>
-        <p class="toggle">
-          <a href="#" style="float:right;" class="collapser"><span>Hide</span></a>
-        </p>
-        <p class="in_table">
-          <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+        <div class="toggle">
+          <a style="float:right;" class="less"><span>Hide</span></a>
+        </div>
+        <div class="show-in-table">
+          <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
             Show all in a table »
           </html:link>
-        </p>
+        </div>
       <br/>
       </div>
       <div class="clear"></div>
     </c:forEach>
-    <p class="in_table outer">
-      <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+    <div class="show-in-table outer">
+      <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
         Show all in a table »
       </html:link>
-    </p>
+    </div>
   </c:if>
 
   <script type="text/javascript">
-    // apply different class to h3 so tables are not so separate
-    jQuery("#regulatory-regions.report-displayer div.table h3").each(function(i) {
-        jQuery(this).toggleClass('theme-2-border');
-        jQuery(this).toggleClass('theme-3-border');
-    });
-
     // switcher between tables this displayer haz
-    jQuery("#regulatory-regions.report-displayer a.switcher").each(function(i) {
+    jQuery("#regulatory-regions.collection-of-collections a.switcher").each(function(i) {
       jQuery(this).bind(
         "click",
         function(e) {
             // hide anyone (!) that is shown
-            jQuery("#regulatory-regions.report-displayer div.table:visible").each(function(j) {
+            jQuery("#regulatory-regions.collection-of-collections div.collection-table:visible").each(function(j) {
               jQuery(this).hide();
-              // hide more toggler
-              jQuery(this).parent().find('p.toggle a.toggler').remove();
+              // remove more toggler
+              jQuery(this).parent().find('div.toggle a.more').remove();
             });
 
             // show the one we want
-            jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table").show();
+            jQuery("#regulatory-regions.collection-of-collections #" + jQuery(this).attr('id') + ".collection-table").show();
 
             // show only 10 rows
-            var rows = jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr");
+            var rows = jQuery("#regulatory-regions.collection-of-collections #" + jQuery(this).attr('id') + ".collection-table tbody tr");
             var count = 10;
             rows.each(function(index) {
                 count--;
@@ -81,36 +76,39 @@
                     jQuery(this).hide();
                 }
             });
-            // add a show next link
+            // add a show more link
             if (count < 0) {
-                var a = "<a href='#' style='float:right;margin-right:20px;' class='toggler'><span>Show more rows</span></a>";
-                jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle").append(a);
-                jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").bind(
-                    "click",
-                    function(f) {
-                        // show another 10 rows
-                        count = 10;
-                        rows = jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden");
-                        rows.each(function(index) {
-                            count--;
-                            if (count > 0) {
-                                jQuery(this).show();
-                            }
-                        });
+                var that = this;
+                jQuery('<a/>', {
+                    className: 'more',
+                    title: 'Show more rows',
+                    style: 'float:right; margin-right:20px;',
+                    html: jQuery('<span/>', {
+                        text: 'Show more rows'
+                    }),
+                    click: function(f) {
+	                    // show another 10 rows
+	                    var limit = 10;
+	                    jQuery("#regulatory-regions.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").each(function(i, val) {
+	                          if (i <= limit) {
+		                          jQuery(this).show();
+	                          }
+	                    });
 
-                        // we have no more rows to show
-                        if (jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table tbody tr:hidden").length == 0) {
-                            // hide the link to more
-                            jQuery("#regulatory-regions.report-displayer #" + jQuery(this).attr('id') + ".table p.toggle a.toggler").remove();
-                        }
+	                    // we have no more rows to show
+	                    if (jQuery("#regulatory-regions.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").length == 0) {
+	                        // hide the link to more
+	                        jQuery("#regulatory-regions.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table div.toggle a.more").remove();
+	                    }
 
-                        // no linking on my turf
-                        f.preventDefault();
-                    });
+	                    // no linking on my turf
+	                    f.preventDefault();
+                    }
+                }).appendTo("#regulatory-regions.collection-of-collections #" + jQuery(this).attr('id') + ".collection-table div.toggle");
             }
 
             // switchers all off
-            jQuery("#regulatory-regions.report-displayer a.switcher.active").each(function(j) {
+            jQuery("#regulatory-regions.collection-of-collections a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
@@ -118,7 +116,7 @@
             jQuery(this).toggleClass('active');
 
             // hide the global show all in a table
-            jQuery(this).parent().parent().find('p.in_table.outer').hide();
+            jQuery(this).parent().parent().parent().find('div.show-in-table.outer').hide();
 
             // no linking on my turf
             e.preventDefault();
@@ -127,27 +125,27 @@
     });
 
     // table hider
-    jQuery("#regulatory-regions.report-displayer p.toggle a").each(function(i) {
+    jQuery("#regulatory-regions.collection-of-collections div.toggle a.less").each(function(i) {
       jQuery(this).bind(
         "click",
         function(e) {
             // hide anyone (!) that is shown
-            jQuery("#regulatory-regions.report-displayer div.table:visible").each(function(j) {
+            jQuery("#regulatory-regions.collection-of-collections div.collection-table:visible").each(function(j) {
               jQuery(this).hide();
               // hide more toggler
-              jQuery(this).parent().find('p.toggle a.toggler').remove();
+              jQuery(this).parent().find('div.toggle a.more').remove();
             });
 
             // switchers all off
-            jQuery("#regulatory-regions.report-displayer a.switcher.active").each(function(j) {
+            jQuery("#regulatory-regions.collection-of-collections a.switcher.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
 
             // show the global show all in a table
-            jQuery(this).parent().parent().parent().find('p.in_table').show();
+            jQuery(this).parent().parent().parent().find('div.show-in-table').show();
 
             // scroll to the top of the displayer (inlinetemplate.js)
-            jQuery("#regulatory-regions.report-displayer").scrollTo('fast', 'swing', -30);
+            jQuery("#regulatory-regions.collection-of-collections").scrollTo('fast', 'swing', -30);
 
             // no linking on my turf
             e.preventDefault();

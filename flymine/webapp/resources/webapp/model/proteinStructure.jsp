@@ -17,7 +17,7 @@
   </tr>
   <tr>
     <td valign="top">
-      <div class="body" style="height:1%">
+      <div class="body">
 
 
       <li>

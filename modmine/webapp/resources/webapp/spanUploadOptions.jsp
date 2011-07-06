@@ -15,9 +15,6 @@
 
 <!--  spanUploadOptions.jsp -->
 
-
-<html:xhtml />
-
 <link type="text/css" rel="stylesheet" href="model/jsTree/_docs/syntax/!style.css"/>
 
 <%--

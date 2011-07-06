@@ -7,7 +7,7 @@
 
 <!-- sequenceFeatureDisplayer.jsp -->
 
-<div class="feature">
+<div class="collection-table column-border-by-2">
 
 <c:set var="feature" value="${reportObject.object}"/>
 
@@ -24,8 +24,8 @@
   <tr>
     <c:choose>
       <c:when test="${!empty feature.sequenceOntologyTerm}">
-        <td class="theme-3-border theme-6-background">Sequence ontology type:</td>
-        <td class="theme-3-border theme-6-background">
+        <td>Sequence ontology type:</td>
+        <td>
           <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
           <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
         </td>
@@ -36,8 +36,8 @@
     </c:choose>
     <c:choose>
       <c:when test="${!empty feature.length}">
-        <td class="theme-3-border theme-6-background border-left">Length:</td>
-        <td class="theme-3-border theme-6-background">
+        <td class="border-left">Length:</td>
+        <td>
           <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
           <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
             <tiles:put name="expr" value="length" />
@@ -48,10 +48,10 @@
     </c:choose>
   </tr>
   <tr class="even">
-    <td class="theme-3-border theme-6-background">Location:</td>
+    <td>Location:</td>
       <c:choose>
         <c:when test="${!empty feature.chromosomeLocation}">
-          <td class="theme-3-border theme-6-background">
+          <td>
             <strong>
               <c:set var="loc" value="${feature.chromosomeLocation}"/>
               <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
@@ -70,7 +70,7 @@
             </c:if>
         </c:when>
         <c:when test="${locationsCollection != null}">
-          <td class="theme-3-border theme-6-background">
+          <td>
             <div id="locations-collection">
               <table class="noborder" cellspacing="0" border="0"><tbody><tr>
                 <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
@@ -100,37 +100,37 @@
                 </c:forEach>
                 </tr></tbody></table>
                 <c:if test="${locationsCollectionSize >= 9}">
-                    <p class="toggle"><a class="theme-1-color" href="#"
+                    <p class="toggle"><a href="#"
                     onclick="return showMoreRows('#locations-collection', 1, 3);">Show more rows</a></p>
                 </c:if>
               </div>
               <p style="display:none;" class="in_table">
-                <html:link styleClass="theme-1-color" action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
+                <html:link action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
                   Show all in a table
                 </html:link>
               </p>
         </c:when>
         <c:otherwise>
-          <td class="theme-3-border theme-6-background" colspan="3">
+          <td colspan="3">
             No location information in ${WEB_PROPERTIES['project.title']}
         </c:otherwise>
       </c:choose>
     </td>
     <c:choose>
       <c:when test="${!empty cytoLocation}">
-        <td class="theme-3-border theme-6-background border-left">Cyto location:</td>
-        <td class="theme-3-border theme-6-background">
+        <td class="border-left">Cyto location:</td>
+        <td>
           <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
       <c:when test="${!empty mapLocation}">
-        <td class="theme-3-border theme-6-background border-left">Map location:</td>
-        <td class="theme-3-border theme-6-background">
+        <td class="border-left">Map location:</td>
+        <td>
           <strong><c:out value="${mapLocation}"/></strong>
         </td>
       </c:when>
       <c:otherwise>
-        <td class="theme-3-border theme-6-background border-left" colspan="2"></td>
+        <td class="border-left" colspan="2"></td>
       </c:otherwise>
     </c:choose>
   </tr>

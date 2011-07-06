@@ -5,36 +5,36 @@
 
 <!-- homologueDisplayer.jsp -->
 
-<div>
-
+<div class="basic-table">
 <h3>Homologues</h3>
-<table>
+<table class="tiny-font">
+  <thead>
   <tr>
     <c:forEach items="${homologues}" var="entry">
-      <td style="font-size: 0.9em;"><strong><c:out value="${entry.key}"/></strong></td>
+      <th><c:out value="${entry.key}"/></th>
     </c:forEach>
   </tr>
-
-  <tr>
-  <c:forEach items="${homologues}" var="entry">
-    <c:set var="genes" value="${entry.value}"/>
-    <c:choose>
-      <c:when test="${empty genes}">
-        <td style="background-color: orange;"></td>
-      </c:when>
-      <c:otherwise>
-        <td style="font-size: 0.9em">
-          <c:forEach items="${genes}" var="resultElement">
-            <a class="theme-1-color" href="report.do?id=${resultElement.id}">${resultElement.field}</a><br/>
-          </c:forEach>
-        </td>
-      </c:otherwise>
-    </c:choose>
-  </c:forEach>
-  </tr>
-
+  </thead>
+  <tbody>
+	  <tr>
+	  <c:forEach items="${homologues}" var="entry">
+	    <c:set var="genes" value="${entry.value}"/>
+	    <c:choose>
+	      <c:when test="${empty genes}">
+	        <td></td>
+	      </c:when>
+	      <c:otherwise>
+	        <td class="one-line">
+	          <c:forEach items="${genes}" var="resultElement">
+	            <a href="report.do?id=${resultElement.id}">${resultElement.field}</a>
+	          </c:forEach>
+	        </td>
+	      </c:otherwise>
+	    </c:choose>
+	  </c:forEach>
+	  </tr>
+  </tbody>
 </table>
-
 </div>
 
 <!-- /homologueDisplayer.jsp -->

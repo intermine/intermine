@@ -16,7 +16,7 @@
 
 <div class="table">
 <form id="fly-atlas-options">
-  <table border="0" cellspacing="0" class="refSummary">
+  <table cellspacing="0">
     <tbody>
     <tr>
       <td><input type="radio" name="scale" value="log" checked="checked"/></td><td>Logarithmic Scale</td>
@@ -24,12 +24,12 @@
       <td class="border-left"><input type="radio" name="dataPoint" value="enrichment" checked="checked" /></td><td>Show enrichment</td>
     </tr>
     <tr class="even">
-      <td class="theme-3-border theme-6-background"><input type="radio" name="scale" value="linear"/></td>
-      <td class="theme-3-border theme-6-background">Linear Scale</td>
-      <td class="theme-3-border theme-6-background border-left"><input type="radio" name="orderExpr" value="signal"/></td>
-      <td class="theme-3-border theme-6-background">Order by Signal</td>
-      <td class="theme-3-border theme-6-background border-left"><input type="radio" name="dataPoint" value="signal" /></td>
-      <td class="theme-3-border theme-6-background">Show signal strength</td>
+      <td><input type="radio" name="scale" value="linear"/></td>
+      <td>Linear Scale</td>
+      <td class="border-left"><input type="radio" name="orderExpr" value="signal"/></td>
+      <td>Order by Signal</td>
+      <td class="border-left"><input type="radio" name="dataPoint" value="signal" /></td>
+      <td>Show signal strength</td>
     </tr>
     </tbody>
   </table>

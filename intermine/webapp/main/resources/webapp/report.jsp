@@ -78,7 +78,7 @@
             </c:choose>
           </c:if>
 
-          <c:set var="fieldDisplayText" 
+          <c:set var="fieldDisplayText"
             value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
@@ -120,11 +120,9 @@
 
     <%-- header Inline Lists --%>
     <c:if test="${object.hasHeaderInlineLists}">
-      <div class="box">
-        <tiles:insert page="/reportHeaderInlineLists.jsp">
-          <tiles:put name="object" beanName="object" />
-        </tiles:insert>
-      </div>
+      <tiles:insert page="/reportHeaderInlineLists.jsp">
+        <tiles:put name="object" beanName="object" />
+      </tiles:insert>
     </c:if>
 
   <%-- shown @ top displayers --%>
@@ -138,7 +136,7 @@
     <%-- permalink --%>
     <%-- <p class="share">Share this page: <a href="${stableLink}">${stableLink}</a></p> --%>
     <div id="share">
-      <a class="share" href="#"></a>
+      <a></a>
       <div class="popup">
         <span class="close"></span>
         Paste the following link
@@ -150,14 +148,10 @@
           jQuery("#object_header #share div.popup").show();
           // select
           jQuery("#object_header #share div.popup").find('input').select();
-
-          return false;
         });
         jQuery('#object_header #share div.popup span.close').click(function() {
           // hide
           jQuery("#object_header #share div.popup").hide();
-
-          return false;
         });
       </script>
   </div>
@@ -178,70 +172,72 @@
     <tiles:insert name="reportMenu.jsp" />
   </div>
   <script type="text/javascript">
-    jQuery('#fixed-menu').hide(); // hide for IE7
-    jQuery(window).scroll(function() {
-      // transition fix
-      if (jQuery('#menu-target').isInView('partial')) {
-        jQuery('#fixed-menu').hide();
-      } else {
-        jQuery('#fixed-menu').show();
-      }
+  	(function() {
+	    jQuery('#fixed-menu').hide(); // hide for IE7
+	    jQuery(window).scroll(function() {
+	      // transition fix
+	      if (jQuery('#menu-target').isInView('partial')) {
+	        jQuery('#fixed-menu').hide();
+	      } else {
+	        jQuery('#fixed-menu').show();
+	      }
 
-      // where are we
-      var currentAspect = null;
-      var currentAspectDistance = 9999;
+	      // where are we
+	      var currentAspect = null;
+	      var currentAspectDistance = 9999;
 
-      // distance from top (screen)
-      var screenTop = jQuery(window).scrollTop();
-      // distance from bottom (screen)
-      var screenBottom = screenTop + jQuery(window).height();
-      // center of the screen
-      var screenMiddle = ((screenBottom - screenTop) / 2) + screenTop;
+	      // distance from top (screen)
+	      var screenTop = jQuery(window).scrollTop();
+	      // distance from bottom (screen)
+	      var screenBottom = screenTop + jQuery(window).height();
+	      // center of the screen
+	      var screenMiddle = ((screenBottom - screenTop) / 2) + screenTop;
 
-      // traverse aspect blocks
-      jQuery('div.aspectBlock').each(function(i) {
-        // is this aspect in view?
-        if (jQuery(this).isInView('partial')) {
-            // top & bottom distance for the element, increase the top one as divs align
-            var elementTop = jQuery(this).offset().top + 1;
-            var elementBottom = elementTop + jQuery(this).height() - 1;
+	      // traverse aspect blocks
+	      jQuery('div.aspectBlock').each(function(i) {
+	        // is this aspect in view?
+	        if (jQuery(this).isInView('partial')) {
+	            // top & bottom distance for the element, increase the top one as divs align
+	            var elementTop = jQuery(this).offset().top + 1;
+	            var elementBottom = elementTop + jQuery(this).height() - 1;
 
-            // absolute distance from the middle of the screen is...
-            var elementTopDistance = Math.abs(elementTop - screenMiddle);
-            var elementBottomDistance = Math.abs(elementBottom - screenMiddle);
+	            // absolute distance from the middle of the screen is...
+	            var elementTopDistance = Math.abs(elementTop - screenMiddle);
+	            var elementBottomDistance = Math.abs(elementBottom - screenMiddle);
 
-            // save the one that is closer to the middle
-            if (elementTopDistance < currentAspectDistance) {
-              currentAspectDistance = elementTopDistance;
-              currentAspect = jQuery(this).attr('id');
-            }
-            if (elementBottomDistance < currentAspectDistance) {
-              currentAspectDistance = elementBottomDistance;
-              currentAspect = jQuery(this).attr('id');
-            }
-        }
-      });
+	            // save the one that is closer to the middle
+	            if (elementTopDistance < currentAspectDistance) {
+	              currentAspectDistance = elementTopDistance;
+	              currentAspect = jQuery(this).attr('id');
+	            }
+	            if (elementBottomDistance < currentAspectDistance) {
+	              currentAspectDistance = elementBottomDistance;
+	              currentAspect = jQuery(this).attr('id');
+	            }
+	        }
+	      });
 
-      if (currentAspect != null) {
-        // strip the 'Category' suffix
-        currentAspect = currentAspect.substring(0, currentAspect.length - 8);
-        // find the one link in the top menu that corresponds to where we are
-        jQuery('#fixed-menu div.links a').each(function(i) {
-            if (jQuery(this).text() == currentAspect) {
-                jQuery(this).addClass('current');
-            } else {
-                jQuery(this).removeClass('current');
-            }
-        });
-      }
+	      if (currentAspect != null) {
+	        // strip the 'Category' suffix
+	        currentAspect = currentAspect.substring(0, currentAspect.length - 8);
+	        // find the one link in the top menu that corresponds to where we are
+	        jQuery('#fixed-menu div.links a').each(function(i) {
+	            if (jQuery(this).text() == currentAspect) {
+	                jQuery(this).addClass('current');
+	            } else {
+	                jQuery(this).removeClass('current');
+	            }
+	        });
+	      }
 
-    });
+	    });
 
-    if (jQuery(window).width() < '900') {
-      jQuery('div.wrap').each(function(index) {
-          jQuery(this).addClass('smallscreen');
-      });
-    }
+	    if (jQuery(window).width() < '900') {
+	      jQuery('div.wrap').each(function(index) {
+	          jQuery(this).addClass('smallscreen');
+	      });
+	    }
+  	})();
   </script>
 </c:if>
 
@@ -259,7 +255,7 @@
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
-<div style="float:right;" class="box grid_2 sidebar">
+<div style="float:right;" class="grid_2 sidebar">
   <div id="in-lists">
     <tiles:insert name="reportInList.tile">
       <tiles:put name="object" beanName="object"/>
@@ -268,8 +264,10 @@
 
   <c:set var="object_bk" value="${object}"/>
   <c:set var="object" value="${reportObject.object}" scope="request"/>
-  <tiles:insert name="otherMinesLink.tile" />
-  <tiles:insert name="attributeLinks.tile" />
+  <div id="external-links">
+	  <tiles:insert name="otherMinesLink.tile" />
+	  <tiles:insert name="attributeLinks.tile" />
+  </div>
   <c:set var="object" value="${object_bk}"/>
 
   <%-- shown in a sidebar displayers --%>
@@ -281,7 +279,7 @@
   </div>
 </div>
 
-<div class="box grid_10">
+<div class="grid_10">
   <tiles:insert page="/reportDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />

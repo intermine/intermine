@@ -14,7 +14,7 @@
 
 <div>
 
-<h3>Drosophila 12 genomes homology</h3>
+<h3 class="goog">Drosophila 12 genomes homology</h3>
 <c:if test="${isRecentred}">
 The 12 genomes homology only records homologues of <i>D. melanogaster</i> genes. So this tree
 displays the homologues of the D. melanogaster homologue of ${origSymbol}
