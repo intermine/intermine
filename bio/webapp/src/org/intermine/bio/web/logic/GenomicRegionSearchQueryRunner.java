@@ -193,7 +193,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
 
         // a Map contains orgName and its chrInfo accordingly
-        // e.g. <D.Melanogaster, (D.Melanogaster, X, 5000)...>
+        // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
         Map<String, Map<String, ChromosomeInfo>> chrInfoMap =
             new HashMap<String, Map<String, ChromosomeInfo>>();
 
@@ -262,7 +262,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                 for (ChromosomeInfo chrInfo : chrInfoList) {
                     if (o.equals(chrInfo.getOrgName())) {
-                        chrInfoSubMap.put(chrInfo.getChrPID(), chrInfo);
+                        chrInfoSubMap.put(chrInfo.getChrPIDLowerCase(), chrInfo);
                         chrInfoMap.put(o, chrInfoSubMap);
                     }
                 }
