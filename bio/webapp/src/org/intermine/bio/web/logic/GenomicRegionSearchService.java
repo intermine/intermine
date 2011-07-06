@@ -847,8 +847,13 @@ public class GenomicRegionSearchService
             ft.add(mft);
 
             mgb.put("organism", e.getKey());
-            mgb.put("genomeBuild", OrganismGenomeBuildLookup
-                    .getGenomeBuildbyOrgansimAbbreviation(e.getKey()));
+            mgb.put("genomeBuild",
+                    (OrganismGenomeBuildLookup
+                            .getGenomeBuildbyOrgansimAbbreviation(e.getKey()) == null)
+                            ? "not available"
+                            : OrganismGenomeBuildLookup
+                                    .getGenomeBuildbyOrgansimAbbreviation(e
+                                            .getKey()));
 
             gb.add(mgb);
         }
