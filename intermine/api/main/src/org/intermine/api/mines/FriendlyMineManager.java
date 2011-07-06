@@ -148,7 +148,7 @@ public class FriendlyMineManager
 
             if (mineName.equals(localMineName)) {
                 if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo);
+                    parseLocalConfig(url, logo, defaultValue);
                 }
             } else {
                 Mine mine = mines.get(mineId);
@@ -160,10 +160,11 @@ public class FriendlyMineManager
         return mines;
     }
 
-    private void parseLocalConfig(String url, String logo) {
+    private void parseLocalConfig(String url, String logo, String defaultValue) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
             localMine.setLogo(logo);
+            localMine.setDefaultValue(defaultValue);
             setLocalValues(im);
         }
     }
@@ -174,7 +175,6 @@ public class FriendlyMineManager
         mine.setUrl(url);
         mine.setLogo(logo);
         mine.setDefaultValue(defaultValue);
-        mine.setDefaultMapping(mapping);
         mines.put(mineId, mine);
     }
 

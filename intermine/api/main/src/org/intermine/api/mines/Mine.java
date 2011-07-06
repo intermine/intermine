@@ -129,23 +129,6 @@ public class Mine
     }
 
     /**
-     * Which mapping to use, either remote or local
-     *
-     * @return the defaultMapping
-     */
-    public String getDefaultMapping() {
-        return defaultMapping;
-    }
-
-    /**
-     * remote/local
-     * @param defaultMapping the defaultMapping to set
-     */
-    public void setDefaultMapping(String defaultMapping) {
-        this.defaultMapping = defaultMapping;
-    }
-
-    /**
      * @return the defaultValue
      */
     public String getDefaultValue() {
@@ -190,7 +173,13 @@ public class Mine
         return Collections.emptySet();
     }
 
-    // finds Dmel (organism in list) --> D. rerio (organism for remote mine)
+    /**
+     * finds Dmel (organism in list) --> D. rerio (organism for remote mine)
+     *
+     * @param remoteKeys keys for remote mine
+     * @param values values to test for
+     * @return list of values (organisms)
+     */
     public Set<String> getMatchingMapValues(Set<String> remoteKeys, List<String> values) {
         if (mineMap != null && !mineMap.isEmpty()) {
             Set<String> results = new HashSet<String>();
