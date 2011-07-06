@@ -22,7 +22,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.Column;
-import org.intermine.api.results.WebTable;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -85,25 +84,22 @@ public final class SequenceFeatureExportUtil
         return retPaths;
     }
 
-
     /**
-     * Get organism info from PagedTable
+     * Get organism info from PathQuery
      *
-     * @param pt pagedtable
+     * @param pathQuery PathQuery
      * @param session http session
      * @return set of organisms
      * @throws Exception Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static Set<String> getOrganisms(PagedTable pt, HttpSession session)
+    public static Set<String> getOrganisms(PathQuery pathQuery, HttpSession session)
         throws Exception {
+
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = SessionMethods.getProfile(session);
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
-
-            WebTable webTable = pt.getWebTable();
-            PathQuery pathQuery = webTable.getPathQuery();
 
             String summaryPath = pathQuery.getRootClass() + ".organism.shortName";
 
@@ -137,6 +133,7 @@ public final class SequenceFeatureExportUtil
                 orgSet.add((String) row.get(0));
             }
 
+            pathQuery.removeView(summaryPath);
             return orgSet;
 
         } catch (RuntimeException e) {
