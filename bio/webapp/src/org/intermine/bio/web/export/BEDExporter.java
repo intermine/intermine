@@ -14,15 +14,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.bed.BEDRecord;
+import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -96,7 +95,6 @@ public class BEDExporter implements Exporter
             throw new ExportException("No columns with sequence");
         }
         try {
-            // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
@@ -146,35 +144,19 @@ public class BEDExporter implements Exporter
         StringBuffer header = new StringBuffer();
 
         if (!"".equals(organismString) && organismString != null) {
-            LOG.info("organismString >>>>> " + organismString);
             List<String> orgSet = StringUtil.tokenize(organismString, ",");
-            Properties props = PropertiesUtil.getProperties();
             // TODO the way to store genome build information should be changed ...
             // TODO handle multipe orgs
             if (orgSet != null) {
                 List<String> genomeBuildList = new ArrayList<String>();
                 for (String org : orgSet) {
-//                    Integer taxId = OrganismRepository.getOrganismRepository()
-//                            .getOrganismDataByAbbreviation(org).getTaxonId();
-                    if ("D. melanogaster".equals(org)) {
-                        String fV = props.getProperty("genomeVersion.fly");
-                        if (fV != null && fV.length() > 0) {
-                            genomeBuildList.add(fV);
-                        }
-                    }
-                }
-                for (String org : orgSet) {
-//                    Integer taxId = OrganismRepository.getOrganismRepository()
-//                            .getOrganismDataByAbbreviation(org).getTaxonId();
-                    if ("C. elegans".equals(org)) {
-                        String wV = props.getProperty("genomeVersion.worm");
-                        if (wV != null && wV.length() > 0) {
-                            genomeBuildList.add(wV);
-                        }
+                    String gb = OrganismGenomeBuildLookup.getGenomeBuildbyOrgansimAbbreviation(org);
+                    if (gb != null && gb.length() > 0) {
+                        genomeBuildList.add(gb);
                     }
                 }
 
-                if (genomeBuildList.size() > 1) {
+                if (genomeBuildList.size() > 0) {
                     genomeBuild = StringUtil.join(genomeBuildList, " | ");
                 }
             }

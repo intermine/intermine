@@ -29,6 +29,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.export.BEDExporter;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -57,7 +58,6 @@ public class BEDQueryService extends AbstractQueryService
 {
     private static final String XML_PARAM = "query";
     private static final String TRACK_DESCRIPTION = "trackDescription";
-//    private static final String ORGANISM = "organism";
     private static final String UCSC_COMPATIBLE = "ucscCompatible";
 
     /**
@@ -94,6 +94,8 @@ public class BEDQueryService extends AbstractQueryService
     @Override
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        PathQuery pathQuery = getQuery();
+
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         // get the project title to be written in BED records
@@ -106,16 +108,20 @@ public class BEDQueryService extends AbstractQueryService
             trackDescription = sourceName + " " + sourceReleaseVersion + " Custom Track";
         }
 
-//        String organisms = request.getParameter(ORGANISM);
         String organisms = null;
+        try {
+            Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(pathQuery, session);
+            organisms = StringUtil.join(orgSet, ",");
+        } catch (Exception e) {
+            throw new RuntimeException("Get organism failed", e);
+        }
+
         boolean makeUcscCompatible = true;
 
         String ucscCompatible = request.getParameter(UCSC_COMPATIBLE);
         if ("no".equals(ucscCompatible)) {
             makeUcscCompatible = false;
         }
-
-        PathQuery pathQuery = getQuery();
 
         Exporter exporter;
         try {
