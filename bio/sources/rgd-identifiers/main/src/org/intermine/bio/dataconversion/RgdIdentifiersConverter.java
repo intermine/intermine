@@ -83,7 +83,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
 
             Item gene = createItem("Gene");
             gene.setReference("organism", getOrganism(RAT_TAXON));
-            gene.setAttribute("secondaryIdentifier", rgdId);
+            gene.setAttribute("secondaryIdentifier", "RGD:" + rgdId);
             gene.setAttribute("symbol", symbol);
 
             Set<String> ensemblIds = parseEnsemblIds(ensembl);
