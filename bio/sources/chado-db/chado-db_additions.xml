@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <classes>
   <class name="Gene" is-interface="true">
-    <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
     <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene"/>
   </class>

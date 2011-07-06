@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagOperations;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
@@ -109,12 +109,12 @@ public class SaveBagAction extends InterMineAction
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
-
+        
         try {
             if (bag == null) {
-                bag = profile.createBag(bagName, pt.getSelectedClass(), "");
+            	InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                bag = profile.createBag(bagName, pt.getSelectedClass(), "", im.getClassKeys());
             }
-
             pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
@@ -132,7 +132,7 @@ public class SaveBagAction extends InterMineAction
 
         if ("saveNewBag".equals(operation)) {
             ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bag"));
-            forwardParameters.addParameter("bagName",bag.getName());
+            forwardParameters.addParameter("bagName", bag.getName());
             forwardParameters.addParameter("trackExecution", "false");
             return forwardParameters.forward();
         }

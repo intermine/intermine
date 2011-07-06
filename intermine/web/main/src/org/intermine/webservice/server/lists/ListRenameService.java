@@ -1,19 +1,15 @@
 package org.intermine.webservice.server.lists;
 
-import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.exceptions.BadRequestException;
 
-public class ListRenameService extends ListUploadService {
+public class ListRenameService extends AuthenticatedListService
+{
 
     /**
      * Usage information to help users who provide incorrect input.
@@ -34,25 +30,17 @@ public class ListRenameService extends ListUploadService {
     @Override
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        if (!this.isAuthenticated()) {
-            throw new BadRequestException("Not authenticated.\n" + USAGE);
-        }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
+        Profile profile = SessionMethods.getProfile(request.getSession());
 
-        String oldName = request.getParameter("oldname");
-        String newName = request.getParameter("newname");
+        ListRenameInput input = new ListRenameInput(request, bagManager);
 
-        setHeaderAttributes(Arrays.asList(oldName, newName));
+        output.setHeaderAttributes(getHeaderAttributes());
 
-        if (!profile.getSavedBags().containsKey(oldName)) {
-            throw new BadRequestException(oldName + " is not a list you have access to");
-        }
-        profile.renameBag(oldName, newName);
-        InterMineBag list = profile.getSavedBags().get(newName);
+        profile.renameBag(input.getOldName(), input.getNewName());
+        InterMineBag list = profile.getSavedBags().get(input.getNewName());
 
-        setListName(newName);
-        setListSize(list.size());
+        addOutputInfo(LIST_NAME_KEY, list.getName());
+        addOutputInfo(LIST_SIZE_KEY, "" + list.size());
 
     }
 }

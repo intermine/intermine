@@ -33,6 +33,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ModifyQueryChangeAction extends InterMineDispatchAction
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(ModifyQueryChangeAction.class);
 
     /**
@@ -46,7 +47,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward load(ActionMapping mapping,
-                              @SuppressWarnings("unused") ActionForm form,
+                              ActionForm form,
                               HttpServletRequest request,
                               HttpServletResponse response)
         throws Exception {
@@ -62,8 +63,12 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
             sq = profile.getSavedQueries().get(queryName);
         }
 
-        SessionMethods.loadQuery(sq.getPathQuery(), session, response);
+        if (sq == null) {
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
+            return mapping.findForward("mymine");
+        }
 
+        SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         if (sq.getPathQuery() instanceof TemplateQuery) {
             return new ForwardParameters(mapping.findForward("template"))
                         .addParameter("loadModifiedTemplate", "true")
@@ -83,7 +88,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward run(ActionMapping mapping,
-                             @SuppressWarnings("unused") ActionForm form,
+                             ActionForm form,
                              HttpServletRequest request,
                              HttpServletResponse response)
         throws Exception {
@@ -100,9 +105,11 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
 
         if (sq == null) {
-            LOG.error("No such query " + queryName + " type=" + request.getParameter("type"));
-            throw new NullPointerException("No such query " + queryName + " type="
-                    + request.getParameter("type"));
+//            LOG.error("No such query " + queryName + " type=" + request.getParameter("type"));
+//            throw new NullPointerException("No such query " + queryName + " type="
+//                    + request.getParameter("type"));
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
+            return mapping.findForward("mymine");
         }
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
@@ -130,14 +137,20 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward save(ActionMapping mapping,
-                              @SuppressWarnings("unused") ActionForm form,
+                              ActionForm form,
                               HttpServletRequest request,
-                              @SuppressWarnings("unused") HttpServletResponse response)
+                              HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         String queryName = request.getParameter("name");
         SavedQuery sq = profile.getHistory().get(queryName);
+
+        if (sq == null) {
+            recordError(new ActionMessage("errors.query.missing", queryName), request);
+            return mapping.findForward("mymine");
+        }
+
         sq = SessionMethods.saveQuery(session,
                 NameUtil.findNewQueryName(profile.getSavedQueries().keySet(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());

@@ -2,6 +2,8 @@ package org.intermine.webservice.server.lists;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,10 +12,12 @@ import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 class ListServiceUtils {
 
@@ -32,12 +36,14 @@ class ListServiceUtils {
      * @param type The type common to all bags
      * @param nameAccumulator A set of strings to hold the names of temporary lists.
      * @param profile A profile to use to create temporary bags
+     * @param classKeys A classKeys to use to create bags
      * @return A set of bags of the given type.
      * @throws ObjectStoreException if there is a problem storing or creating bags.
      */
     public static Collection<InterMineBag> castBagsToCommonType(
             Collection<InterMineBag> bags, String type,
-            Set<String> nameAccumulator, Profile profile)
+            Set<String> nameAccumulator, Profile profile,
+            Map<String, List<FieldDescriptor>> classKeys)
         throws ObjectStoreException {
         Set<InterMineBag> castBags = new HashSet<InterMineBag>();
         for (InterMineBag bag: bags) {
@@ -46,7 +52,7 @@ class ListServiceUtils {
             } else {
                 String castName = bag.getName() + CAST + type;
                 InterMineBag castBag
-                    = profile.createBag(castName, type, "");
+                    = profile.createBag(castName, type, "", classKeys);
                 Query q = new Query();
                 q.addToSelect(bag.getOsb());
                 castBag.addToBagFromQuery(q);
@@ -75,7 +81,7 @@ class ListServiceUtils {
         for (String listName: listNames) {
             InterMineBag bag = manager.getUserOrGlobalBag(profile, listName);
             if (bag == null) {
-                throw new BadRequestException(listName + " is not a list you have access to");
+                throw new ServiceForbiddenException(listName + " is not a list you have access to");
             }
 
             classes.add(model.getClassDescriptorByName(bag.getType()));
@@ -92,6 +98,13 @@ class ListServiceUtils {
         }
     }
 
+    /**
+     * Finds the common class for a set of classes. So for a set with the members
+     * Employee, Manager and CEO, Employee will be returned. For a set with the members
+     * Employee, Company, and CEO, an exception will be thrown.
+     * @param classes The classes that should have a common type.
+     * @return A class name.
+     */
     public static String findCommonSuperTypeOf(Set<ClassDescriptor> classes) {
         if (classes == null) {
             throw new IllegalArgumentException("classes is null");
@@ -111,24 +124,15 @@ class ListServiceUtils {
         String nameString = StringUtils.join(classNames, ", ");
         for (ClassDescriptor cd: classes) {
             String thisType = cd.getName();
-            if (currentClass == null || ListServiceUtils.getAllSuperclassNames(currentClass).contains(thisType)) {
-                currentClass = cd;
-                continue;
-            }
-            if (!getAllSuperclassNames(cd).contains(currentClass.getName())) {
-                throw new RuntimeException("Incompatible types: " + nameString);
-            }
+//            if (currentClass == null || currentClass.getAllSuperclassNames().contains(thisType)) {
+//                currentClass = cd;
+//                continue;
+//            }
+//            if (!cd.getAllSuperclassNames().contains(currentClass.getName())) {
+//                throw new BadRequestException("Incompatible types: " + nameString);
+//            }
         }
         return currentClass.getUnqualifiedName();
-    }
-
-    private static Set<String> getAllSuperclassNames(ClassDescriptor cd) {
-        Set<String> classNames = new HashSet<String>();
-        classNames.addAll(cd.getSuperclassNames());
-        for (ClassDescriptor superCd: cd.getSuperDescriptors()) {
-            classNames.addAll(getAllSuperclassNames(superCd));
-        }
-        return classNames;
     }
 
 }

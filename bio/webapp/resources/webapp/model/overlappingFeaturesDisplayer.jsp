@@ -10,7 +10,7 @@
 <div class="collection-of-collections" id="overlapping-features">
 	<div class="header">
 	  	<h3>Overlapping Features</h3>
-	  	<p class="desc">
+	  	<p>
 	    	<img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
 	    	Genome features that overlap coordinates of this ${reportObject.type}
 	  	</p>
@@ -53,12 +53,6 @@
   </c:if>
 
   <script type="text/javascript">
-    // apply different class to h3 so tables are not so separate
-    jQuery("#overlapping-features.collection-of-collections div.collection-table h3").each(function(i) {
-        jQuery(this).toggleClass('someclass');
-        jQuery(this).toggleClass('someclass');
-    });
-
     // switcher between tables this displayer haz
     jQuery("#overlapping-features.collection-of-collections a.switcher").each(function(i) {
       jQuery(this).bind(

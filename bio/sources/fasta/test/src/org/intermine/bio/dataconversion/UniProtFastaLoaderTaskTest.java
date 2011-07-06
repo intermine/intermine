@@ -45,6 +45,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
     private ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(UniProtFastaLoaderTaskTest.class);
     private String dataSetTitle = "uniprot fasta test title";
+    private final String dataSourceName = "test-source";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -61,8 +62,8 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
+        flt.setDataSourceName(dataSourceName);
         flt.setClassAttribute("primaryAccession");
-        flt.setDataSourceName("test-source");
 
         File[] files = new File[1];
         files[0] = File.createTempFile("UniProtFastaLoaderTaskTest", "tmp");
@@ -109,6 +110,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
 
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getName());
+        assertEquals(dataSourceName, dataSet.getDataSource().getName());
 
         /*
         >sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila melanogaster GN=cora

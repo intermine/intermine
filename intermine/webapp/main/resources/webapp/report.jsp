@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- report.jsp -->
 <html:xhtml/>
@@ -49,7 +50,7 @@
             </a>
         </div>
     </c:if>
-    <a name="summary"></a>
+    <a name="summary">
     <h1 class="title">
         ${object.type}:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
@@ -59,6 +60,7 @@
           <c:if test="${status.count > 0}"> </c:if>${title.value}
         </c:forEach>
     </h1>
+    </a>
 
     <%-- summary short fields --%>
     <table class="fields">
@@ -76,9 +78,14 @@
             </c:choose>
           </c:if>
 
+          <c:set var="fieldDisplayText"
+            value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
-              <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <td>
+                  ${fieldDisplayText}&nbsp;
+                  <im:typehelp type="${field.pathString}"/>
+              </td>
               <td><strong>
                 <!-- pass value to displayer -->
                 <c:set var="interMineObject" value="${object.object}" scope="request"/>
@@ -90,7 +97,7 @@
             </c:when>
             <c:otherwise>
               <c:if test="${!field.doNotTruncate}">
-                <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+                <td>${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong>${field.value}</strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>
@@ -120,7 +127,7 @@
 
   <%-- shown @ top displayers --%>
   <div id="displayers" class="table">
-    <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="top" />
       <tiles:put name="reportObject" beanName="object" />
     </tiles:insert>
@@ -157,7 +164,9 @@
 <c:if test="${categories != null}">
   <div id="menu-target">&nbsp;</div>
   <div id="toc-menu-wrap">
-    <tiles:insert name="reportMenu.jsp" />
+    <tiles:insert name="reportMenu.jsp">
+      <tiles:put name="summary" value="current" />
+    </tiles:insert>
   </div>
   <div id="fixed-menu">
     <tiles:insert name="reportMenu.jsp" />
@@ -263,7 +272,7 @@
 
   <%-- shown in a sidebar displayers --%>
   <div id="displayers" class="table">
-    <tiles:insert page="/reportCustomDisplayers.jsp">
+    <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="sidebar" />
       <tiles:put name="reportObject" beanName="object" />
     </tiles:insert>
@@ -271,7 +280,7 @@
 </div>
 
 <div class="grid_10">
-  <tiles:insert page="/reportCustomDisplayers.jsp">
+  <tiles:insert page="/reportDisplayers.jsp">
     <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
   </tiles:insert>

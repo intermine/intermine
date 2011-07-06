@@ -18,21 +18,14 @@ use constant {
 
 sub fetch_all_data {
     my $self = shift;
-    my $query = Webservice::InterMine->new_query( [SERVICE_URL] );
-    $query->add_view(qw/
-          Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.ncbiGeneNumber
-    /);
-    $query->add_constraint(
-        path  => 'Gene.source',
-        op    => '=',
-        value => 'WormBase'
-    );
 
-    my $dest_dir = $self->get_destination_dir;
-    mkpath("$dest_dir") unless ( -d $dest_dir );
-    my $dest = $dest_dir->file("wormbase-identifers.tsv");
+    my $query = Webservice::InterMine->new_query( class => "Gene", from => [SERVICE_URL] );
+    $query->add_view(qw/primaryIdentifier secondaryIdentifier symbol ncbiGeneNumber/);
+    $query->add_constraint(path => 'source', op => '=', value => 'WormBase');
 
+    my $dest = $self->get_destination_dir->file("wormbase-identifers.tsv");
     $self->debug("Downloading wormbase identifiers from modMine to $dest");
+
     $query->print_results( to => "$dest" );
 }
 

@@ -27,6 +27,9 @@ public class Node
     private Node parent;
     private String fieldName, type;
     private boolean attribute = false, reference = false, collection = false, outer = false;
+    private Path minimalPath = null;
+    private FieldDescriptor fd = null;
+    private Model model = null;
 
     /**
      * Constructor for a root node
@@ -58,20 +61,15 @@ public class Node
      * @throws IllegalArgumentException if class or field are not found in the model
      */
     public void setModel(Model model) {
-        // Following line commented out and replaced because it requires that class
-        // is searched in classpath, but the code is used by webservice client as well
-        // and there isn't.
-        // ClassDescriptor cld = model.getClassDescriptorByName(TypeUtil.getClass(getParentType(),
-        // model).getName());
         ClassDescriptor cld = model.getClassDescriptorByName(getParentType());
         if (cld == null) {
-            throw new IllegalArgumentException("No class '" + getParentType() + "' found in model"
-                                       + " '" + model.getName() + "'");
+            throw new IllegalArgumentException("No class '" + getParentType() 
+                + "' found in model '" + model.getName() + "'.");
         }
-        FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+        fd = cld.getFieldDescriptorByName(fieldName);
         if (fd == null) {
-            throw new IllegalArgumentException("Class '" + cld.getName() + "' does not have field"
-                                        + " '" + fieldName + "'.");
+            throw new IllegalArgumentException("Class '" + cld.getName()
+                + "' does not have field '" + fieldName + "'.");
         }
         type = TypeUtil.unqualifiedName(fd.isAttribute()
                                         ? ((AttributeDescriptor) fd).getType()
@@ -80,6 +78,7 @@ public class Node
         attribute = fd.isAttribute();
         reference = fd.isReference();
         collection = fd.isCollection();
+        this.model = model;
     }
 
     /**
@@ -94,6 +93,22 @@ public class Node
         } else {
             return parent.getType();
         }
+    }
+
+    public Path getMinimalPath() {
+        if (minimalPath == null) {
+            String minimalPathString = getParentType() + "." + fd.getName();
+            try {
+                minimalPath = new Path( model, minimalPathString );
+            } catch (PathException e) {
+                throw new IllegalStateException(minimalPathString + " is not a valid path", e);
+            }
+        }
+        return minimalPath;
+    }
+
+    public FieldDescriptor getFieldDescriptor() {
+        return fd;
     }
 
     /**

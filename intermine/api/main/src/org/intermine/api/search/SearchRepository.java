@@ -21,8 +21,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
@@ -276,7 +277,9 @@ public class SearchRepository
         RAMDirectory ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            writer = new IndexWriter(ram, new WhitespaceAnalyzer(), true,
+            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            writer = new IndexWriter(ram, snowballAnalyzer, true,
                     IndexWriter.MaxFieldLength.UNLIMITED);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
@@ -437,7 +440,8 @@ public class SearchRepository
         }
         MultiSearcher searcher = new MultiSearcher(searchables);
 
-        Analyzer analyzer = new WhitespaceAnalyzer();
+        Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         org.apache.lucene.search.Query query;
         QueryParser queryParser = new QueryParser(Version.LUCENE_30, "content", analyzer);

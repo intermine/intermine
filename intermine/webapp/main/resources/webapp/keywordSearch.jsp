@@ -4,11 +4,11 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-<%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
+<%@ taglib uri="/WEB-INF/imutil.tld" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
     prefix="str"%>
 
-<!-- keywordSearch.jsp -->
+<im:debug message="START keywordSearch.jsp"/>
 
 <link rel="stylesheet" href="css/keywordSearch.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -50,8 +50,7 @@
                     genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>, <i>zen</i>, <i>allele</i>)
                 </li>
                 <li>
-                    Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)
-                    or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>) or to escape special characters.
+                    Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>) or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>).
                 </li>
                 <li>
                     <strong>Boolean search syntax</strong> is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
@@ -66,4 +65,4 @@
     <div style="clear:both;"></div>
 </div>
 
-<!-- /keywordSearch.jsp -->
+<im:debug message="END keywordSearch.jsp"/>

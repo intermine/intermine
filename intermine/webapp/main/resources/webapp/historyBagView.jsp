@@ -48,6 +48,7 @@
             <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
             <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
             <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
+            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.currentcolumnheader"/></th>
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
             <tr>
@@ -99,6 +100,12 @@
                 </c:choose>
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
+              <td class="sorting" align="right">
+                <c:choose>
+                <c:when test="${savedBag.value.current}">Current</c:when>
+                <c:otherwise><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}">Upgrade</html:link></c:otherwise>
+                </c:choose>
+              </td>
             </tr>
           </c:forEach>
         </table>
@@ -116,7 +123,8 @@
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
       </html:form>
-      </td></tr></table>
+      </td>
+      </tr></table>
       <br/>
 
     </c:otherwise>

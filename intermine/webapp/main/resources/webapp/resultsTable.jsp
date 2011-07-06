@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <html:xhtml/>
 
@@ -18,8 +19,8 @@
 <script type="text/javascript">
   function changePageSize() {
     var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
-    var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
-    var page = ${pagedResults.startRow}/pagesize;
+    var pagesize = jQuery("form#changeTableSizeForm select[name='pageSize'] option:selected").text();
+    var page = parseInt(${pagedResults.startRow})/pagesize;
     url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
     if ('${param.trail}' != '') {
         url += '&trail=${param.trail}';
@@ -54,9 +55,11 @@
       <th id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}">
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
-       		<fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-          	<div class="right"><a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-          	title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a></div>
+          <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+          <div class="right">
+          <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
+               title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+		  </div>
         </c:if>
         <c:if test="${column.selectable && empty inlineTable}">
 			<c:set var="disabled" value="false"/>
@@ -69,28 +72,19 @@
             </html:multibox>
         </c:if>
 
-		<%-- column name --%>
-        <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
-        <c:set var="begin" value="0"/>
-        <span class="path">
-        	<em>
-	        <c:if test="${fn:length(columnDisplayNameList) > 3}">&hellip;
-	        	<c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
-	        </c:if>
-       		<c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
-            	<c:choose>
-                	<c:when test="${status2.last}">
-                    	</em><br /> ${columnNameItem}
-                    	<c:set var="fieldName" value="${columnNameItem}"/>
-               		</c:when>
-                	<c:otherwise>
-                    	${columnNameItem} &gt;
-              		</c:otherwise>
-              	</c:choose>
-            </c:forEach>
-            <im:typehelp type="${column.path}" fullPath="true"/>
-        </span>
-      	</th>
+        <c:choose>
+        	<c:when test="${!empty WEBCONFIG}">
+            	<c:set var="colName" value="${imf:formatColumnName(column.path, WEBCONFIG)}"/>
+            </c:when>
+            <c:otherwise>
+                <im:debug message="WEBCONFIG is empty"/>
+                <c:set var="colName" value="${column.name}"/>
+            </c:otherwise>
+        </c:choose>
+
+        <im:columnName columnName="${colName}" tableId="${pagedResults.tableid}" colNo="${status.count}"/>
+
+      </th>
     </c:forEach>
   </tr>
   </thead>
@@ -103,8 +97,15 @@
   <tbody>
     <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
 
+      <c:set var="rowClass">
+        <c:choose>
+          <c:when test="${status.count % 2 == 1}">even</c:when>
+          <c:otherwise>odd</c:otherwise>
+        </c:choose>
+      </c:set>
+
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
-        <tr>
+        <tr class="<c:out value="${rowClass}"/>">
 
         <%-- If a whole column is selected, find the ResultElement.id from the selected column, other columns with the same ResultElement.id may also need to be highlighted --%>
         <c:if test="${pagedResults.allSelected != -1}">
@@ -179,7 +180,7 @@
               </c:when>
               <c:otherwise>
                 <%-- add a space so that IE renders the borders --%>
-                <td class="<c:if test="${status.count % 2 == 0}">alt</c:if>">&nbsp;</td>
+                <td>&nbsp;</td>
               </c:otherwise>
             </c:choose>
           </c:forEach>
@@ -271,11 +272,20 @@
 
 </table>
 
+<c:if test="${empty bagName && empty inlineTable}">
+   <div style="margin-top:10px;">
+   <tiles:insert name="paging.tile">
+     <tiles:put name="resultsTable" beanName="pagedResults" />
+     <tiles:put name="currentPage" value="results" />
+   </tiles:insert>
+   </div>
+</c:if>
+
   <div class="selected-fields">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
   <c:choose>
     <c:when test="${empty inlineTable}">
-      <b>Selected:</b><span id="selectedIdFields">
+      <b>Selected:</b>&nbsp;<span id="selectedIdFields">
       <c:choose>
        <c:when test="${pagedResults.allSelected != -1}">All selected on all pages</c:when>
        <c:otherwise>
@@ -294,14 +304,3 @@
     </c:otherwise>
   </c:choose>
   </div>
-
-<c:if test="${empty bagName && empty inlineTable}">
-   <div>
-   <tiles:insert name="paging.tile">
-     <tiles:put name="resultsTable" beanName="pagedResults" />
-     <tiles:put name="currentPage" value="results" />
-   </tiles:insert>
-   </div>
-</c:if>
-
-<%--</html:form>--%>

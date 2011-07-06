@@ -10,12 +10,13 @@ function initConstraint(selectedConstraint) {
         //attribute5 operator
         //attribute8 attribute value
         //attribute7 options
-        //LIKE or NOT LIKE or LOOKUP
+        //LIKE or NOT LIKE or CONTAINS or LOOKUP
         if(document.getElementById("multiValueAttribute"))
             document.getElementById("multiValueAttribute").value = "";
         if (document.getElementById("attribute5")) {
             var constraintOpIndex = document.getElementById("attribute5").value;
-            if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
+            if (constraintOpIndex == '6' || constraintOpIndex == '7'
+                || constraintOpIndex == '10' || constraintOpIndex == '18') {
                 document.getElementById("attribute8").style.display = 'inline';
                 document.getElementById("attribute8").value = '';
                 if (document.getElementById("attribute7"))

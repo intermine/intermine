@@ -6,6 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- queryBuilderConstraint.jsp -->
 
@@ -13,7 +14,7 @@
   var addedConstraint = 0;
 </script>
 <div id="constraint" style="display:none">
-    <html:form action="/queryBuilderConstraintAction" styleId="queryBuilderConstraintForm">
+    <html:form action="/queryBuilderConstraintAction">
     <c:choose>
       <c:when test="${!empty dec.path.pathString}">
         <html:hidden property="path" value="${dec.path.pathString}"/>
@@ -63,10 +64,10 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
       <!-- field name -->
       <c:choose>
         <c:when test="${empty dec.path.fieldName}">
-          <span class="type"> <c:out value="${dec.path.pathString}" /> </span>
+          <span class="type"> <c:out value="${imf:formatColumnName(dec.path.path, WEBCONFIG)}" /> </span>
         </c:when>
         <c:otherwise>
-          <span class="attributeField">&nbsp;<c:out value="${dec.path.fieldName}" />&nbsp;</span>
+          <span class="attributeField">&nbsp;<c:out value="${imf:formatColumnName(dec.path.path, WEBCONFIG)}" />&nbsp;</span>
         </c:otherwise>
       </c:choose>
       <c:choose>
@@ -91,7 +92,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
             <!--  constraint op -->
             <c:choose>
               <c:when test="${dec.boolean}">
-                <!--  boolean doesn't have a separate op dropdown -->
+                <!--  boolean does not have a separate op dropdown -->
                 <html:hidden property="attributeOp" styleId="attribute1"
                   value="0" disabled="false" />
                   <input type="radio" name="attributeValue" id="attribute2" value="true"
@@ -282,7 +283,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
       <html:select property="subclassValue" styleId="subclass1" disabled="true">
           <c:forEach items="${SUBCLASSES[dec.path.type]}" var="subclass">
               <html:option value="${subclass}">
-                  <c:out value="${subclass}"/>
+                  <c:out value="${imf:formatPath(subclass, INTERMINE_API, WEBCONFIG)}"/>
               </html:option>
           </c:forEach>
       </html:select>
@@ -314,7 +315,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
     <html:select property="loopQueryValue" styleId="loopQuery2" disabled="true">
         <c:forEach items="${dec.candidateLoops}" var="loopPath">
             <html:option value="${loopPath}">
-                <c:out value="${fn:replace(loopPath, '.', ' > ')}"/>
+                <c:out value="${imf:formatPath(loopPath, INTERMINE_API, WEBCONFIG)}"/>
             </html:option>
         </c:forEach>
     </html:select>
@@ -367,8 +368,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <input type="radio" name="joinType" value="inner" id="inner" <c:if test="${joinType == 'inner'}">checked</c:if>/>
           <label for="inner">&nbsp;
             <fmt:message key="query.innerJoin">
-              <fmt:param value="${dec.path.path.secondLastClassDescriptor.unqualifiedName}"/>
-              <fmt:param value="${dec.path.path.lastClassDescriptor.unqualifiedName}"/>
+              <fmt:param value="${imf:formatPath(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPath(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
             </fmt:message>
             <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
           </label>
@@ -377,8 +378,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <input type="radio"  name="joinType" value="outer" id="outer" <c:if test="${joinType == 'outer'}">checked</c:if>/>
           <label for="outer">&nbsp;
             <fmt:message key="query.outerJoin">
-              <fmt:param value="${dec.path.path.secondLastClassDescriptor.unqualifiedName}"/>
-              <fmt:param value="${dec.path.path.lastClassDescriptor.unqualifiedName}"/>
+              <fmt:param value="${imf:formatPath(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPath(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
             </fmt:message>
             <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
           </label>

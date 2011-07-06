@@ -1,7 +1,7 @@
 availableTemplates = null;
 var model = {};
 var baseUrl = "http://squirrel.flymine.org/intermine-test";
-var flyMineBase = "http://squirrel.flymine.org/report-page";
+var flyMineBase = "http://squirrel.flymine.org/flymine";
 $(function() {
     IMBedding.setBaseUrl(baseUrl);
     Syntax.root = "http://squirrel.flymine.org/imbedding/lib/jquery-syntax/";

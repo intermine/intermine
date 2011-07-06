@@ -42,13 +42,13 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
-import org.intermine.webservice.server.output.HTMLOutput;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
+import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -159,6 +159,11 @@ public abstract class WebService
         return formatIsJSON() && (getFormat() % 2 == 1);
     }
 
+    protected boolean formatIsJsonObj() {
+        int format = getFormat();
+        return (format == JSON_OBJ_FORMAT || format == JSONP_OBJ_FORMAT);
+    }
+
     protected boolean formatIsFlatFile() {
         int format = getFormat();
         return (format == TSV_FORMAT || format == CSV_FORMAT);
@@ -224,6 +229,8 @@ public abstract class WebService
             }
 
             authenticate(request);
+            initState();
+            validateState();
 
             execute(request, response);
         } catch (Throwable t) {
@@ -238,17 +245,34 @@ public abstract class WebService
     }
 
     /**
+     * Subclasses can put initialisation.
+     */
+    protected void initState() {
+        // No-op stub
+    }
+
+    /**
+     * Subclasses can put initialisation checks here. The main use case is for confirming
+     * authentication.
+     */
+    protected void validateState() {
+        // No-op stub
+    }
+
+    /**
      * If user name and password is specified in request, then it setups user
      * profile in session. User was authenticated. It is using Http basis access
      * authentication.
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
+     *
+     * THIS IS NOT BASIC AUTHENTICATION - WE NEED TO FIX THIS!!
      *
      * @param request
      *            request
      */
     private void authenticate(HttpServletRequest request) {
         String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-        if (authString == null || authString.length() == 0) {
+        if (authString == null || authString.length() == 0 || formatIsJSONP() ) {
             return;
         }
 
@@ -409,6 +433,15 @@ public abstract class WebService
     }
 
     private void initOutput(HttpServletResponse response) {
+        int format = getFormat();
+
+        // HTML is a special case
+        if (format == HTML_FORMAT) {
+            output = new MemoryOutput();
+            ResponseUtil.setHTMLContentType(response);
+            return;
+        }
+
         PrintWriter out;
         OutputStream os;
         try {
@@ -424,7 +457,7 @@ public abstract class WebService
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-        int format = getFormat();
+
         String filename = getDefaultFileName();
         switch (format) {
             case XML_FORMAT:
@@ -529,13 +562,6 @@ public abstract class WebService
                 filename = "resultcount.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case HTML_FORMAT:
-                output = new HTMLOutput(out);
-                filename = "results.html";
-                if (isUncompressed()) {
-                    ResponseUtil.setHTMLContentType(response);
                 }
                 break;
             default:

@@ -17,6 +17,7 @@ jQuery(document).ready(function(){
 
     jQuery('#editconstraintlogic').click(function() {
       setConstraintLogic(jQuery('#expr').val());
+      jQuery('#permalink div.popup').hide();
   });
 
     jQuery('#constraintLogic').text(jQuery('#expr').val());

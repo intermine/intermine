@@ -15,7 +15,7 @@
 
 <link href="model/jquery_contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="model/jquery_superfish/css/superfish.css" media="screen">
-<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/cupertino/jquery-ui-1.8.11.custom.css"/>
+<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.13.custom.css"/>
 <link type="text/css" rel="stylesheet" href="model/genomic_region_search/css/${resultsCss}.css"/>
 
 <script type="text/javascript" src="model/jquery_contextMenu/jquery.contextMenu.js"></script>
@@ -26,7 +26,7 @@
 <script type="text/javascript" src="model/jquery_superfish/js/superfish.js"></script>
 <script type="text/javascript" src="model/jquery_superfish/js/hoverIntent.js"></script>
 <script type="text/javascript" src="model/jquery_download/jquery.download.js"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.13.custom.min.js'/>"></script>
 <script type="text/javascript" class="source">
     var is_all_queries_finished = false;
     var spanQueryTotalCount = parseInt(${spanQueryTotalCount});

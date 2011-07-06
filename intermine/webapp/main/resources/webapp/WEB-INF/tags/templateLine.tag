@@ -10,13 +10,14 @@
 
 <%@ include file="/shared/taglibs.jsp" %>
 
-<c:if test="${!templateQuery.valid}">
+<c:choose>
+<c:when test="${!templateQuery.valid}">
   <html:link action="/templateProblems?name=${templateQuery.name}&amp;scope=${scope}" styleClass="brokenTmplLink">
     <strike><span class="templateTitle"><c:out value="${templateQuery.title}"/></span></strike>
     <img border="0" class="arrow" src="images/icons/templates-16.png" title="This is an invalid template."/>
   </html:link>
-</c:if>
-<c:if test="${templateQuery.valid}">
+</c:when>
+<c:otherwise>
 
 <c:choose>
   <c:when test="${! empty bagName}">
@@ -66,4 +67,5 @@
   <c:if test="${! empty descr}">
     ${descr}
   </c:if>
-</c:if>
+</c:otherwise>
+</c:choose>

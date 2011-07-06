@@ -57,7 +57,7 @@
     <!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
     <copy file="../../../pathquery/main/lib/stax-api-1.0.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../pathquery/main/lib/stax-ri-1.0.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../objectstore/main/lib/commons-lang-2.3.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../objectstore/main/lib/commons-lang-2.6.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../objectstore/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../web/main/lib/json20110106.jar" todir="${build.dir}/lib/"/>
     <copy file="compile-run.sh" todir="${build.dir}"/>

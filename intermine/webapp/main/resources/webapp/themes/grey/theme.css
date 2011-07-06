@@ -282,15 +282,20 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 #pagecontentcontainer.report-page #object_header h1.title span { color:#004499; }
 #pagecontentcontainer.report-page #object_header div.box h3 { background:#F0E3F7; }
 #pagecontentcontainer.report-page #object_header div.list.box span { color:#004499; }
-#pagecontentcontainer.report-page #fixed-menu { background:#AFAFAF; }
-#pagecontentcontainer.report-page #toc-menu-wrap { background:#AFAFAF; }
-#pagecontentcontainer.report-page #fixed-menu span, #toc-menu-wrap span { color:#EBEBEB; }
+#pagecontentcontainer.report-page #fixed-menu { background:#049; }
+#pagecontentcontainer.report-page #toc-menu-wrap { background:#F5F5F5; }
+#pagecontentcontainer.report-page #fixed-menu span,
+#pagecontentcontainer.report-page #toc-menu-wrap span { color:#FFF; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap,
+#pagecontentcontainer.report-page #fixed-menu div.wrap { color:#FFF; background:#049; border-color:#049; }
 #pagecontentcontainer.report-page #menu-target { background:#EBEBEB; }
-#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#004499; background:#EBEBEB; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a,
+#pagecontentcontainer.report-page #fixed-menu div.wrap a { color:#FFF; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a.current,
+#pagecontentcontainer.report-page #fixed-menu div.wrap a.current { background:#FFF; color:#049; border-color:#049; }
 #pagecontentcontainer.report-page #in-lists div.heading { background:#EBEBEB !important; border-color:#004499; color:#004499 !important; text-shadow:1px 1px 1px #FFF; }
 #pagecontentcontainer.report-page .container_12 .highlight { background-color: #FFF3D3; }
 #pagecontentcontainer.report-page #object_header #headerLink a { color:#004499; }
-#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#004499; color:#FFF; }
 #pagecontentcontainer.report-page #object_header p.share a { color:#004499; }
 #pagecontentcontainer.report-page h2 { color:#000; }
 #pagecontentcontainer.report-page #cwtabsbyside a { color:#004499; }

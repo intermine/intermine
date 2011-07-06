@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -74,7 +73,8 @@ public class BDGPInsituConverter extends BioFileConverter
 //        badTerms = getBadTerms();
 
         ontology = createItem("Ontology");
-        ontology.setAttribute("name", "GO");
+        ontology.setAttribute("name", "ImaGO");
+        store(ontology);
 
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -213,12 +213,12 @@ public class BDGPInsituConverter extends BioFileConverter
     }
 
     private Item getTerm(String name) throws ObjectStoreException {
-        if (StringUtils.isEmpty(name) /*|| badTerms.contains(name)*/) {
+        if (!isValidTerm(name)) {
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("GOTerm");
+        Item termItem = createItem("OntologyTerm");
         termItem.setAttribute("name", name);
         termItem.setReference("ontology", ontology);
         store(termItem);
@@ -285,7 +285,15 @@ public class BDGPInsituConverter extends BioFileConverter
         return stageItems;
     }
 
-
+    private boolean isValidTerm(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        if (name.contains("_")) {
+            return false;
+        }
+        return true;
+    }
 
 /* These terms may not be in the updated file
     private Set<String> getBadTerms() {

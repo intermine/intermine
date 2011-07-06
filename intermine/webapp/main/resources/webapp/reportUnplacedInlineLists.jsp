@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- reportUnplacedInlineLists.jsp -->
 
@@ -13,8 +14,12 @@
 
 <c:if test="${!empty listOfUnplacedInlineLists}">
   <c:forEach items="${listOfUnplacedInlineLists}" var="list" varStatus="status">
+    <c:set var="pathString" 
+        value="${reportObject.classDescriptor.unqualifiedName}.${list.prefix}"/>
+    <c:set var="listDisplayName" 
+        value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
       <div class="inline-list<c:if test="${list.size == 0}"> gray</c:if>">
-        <h3>
+      <h3>
         <c:if test="${IS_SUPERUSER}">
           <div class="right">
             <c:set var="descriptor" value="${list.descriptor}" />
@@ -24,7 +29,7 @@
             </tiles:insert>
           </div>
         </c:if>
-        ${list.size}&nbsp;${list.prefix}
+          ${list.size}&nbsp;${listDisplayName}
       </h3>
       <c:if test="${list.size > 0}">
       	<ul>

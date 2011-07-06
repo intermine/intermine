@@ -12,7 +12,6 @@ package org.intermine.api.xml;
 
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.api.bag.IdUpgrader;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -61,6 +59,7 @@ public class InterMineBagBinding
      */
     public static void marshal(InterMineBag bag, XMLStreamWriter writer) {
         try {
+            writer.writeCharacters("\n");
             writer.writeStartElement("bag");
             writer.writeAttribute("name", bag.getName());
             writer.writeAttribute("type", bag.getType());
@@ -70,11 +69,11 @@ public class InterMineBagBinding
             if (bag.getDescription() != null) {
                 writer.writeAttribute("description", bag.getDescription());
             }
-
-            List<Integer> ids = (List<Integer>) bag.getContentsAsIds();
-            for (Integer id : ids) {
-                writer.writeEmptyElement("bagElement");
-                writer.writeAttribute("id", id.toString());
+            writer.writeAttribute("current", (bag.isCurrent()) ? "true" : "false");
+            List<String> keyFieldValues = bag.getContentsASKeyFieldValues();
+            for (String keyFieldValue : keyFieldValues) {
+                writer.writeEmptyElement("bagValue");
+                writer.writeAttribute("value", keyFieldValue);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -87,16 +86,15 @@ public class InterMineBagBinding
      * @param reader the saved bags
      * @param uosw UserProfile ObjectStoreWriter
      * @param osw ObjectStoreWriter used to resolve object ids and write to ObjectStoreBags
-     * @param idUpgrader bag object id upgrader
      * @param userId an Integer
-     * @return a Map from bag name to InterMineIdBag
      */
     public static Map unmarshal(final Reader reader, final ObjectStoreWriter uosw,
-            final ObjectStoreWriter osw, IdUpgrader idUpgrader, Integer userId) {
+            final ObjectStoreWriter osw, Integer userId) {
         final Map bags = new LinkedHashMap();
+        final Map bagsValues = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), new InterMineBagHandler(uosw, osw, bags,
-                        userId, new HashMap(), IdUpgrader.ERROR_UPGRADER));
+                        bagsValues, userId));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

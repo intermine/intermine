@@ -10,6 +10,10 @@ package org.intermine.bio.io.gff3;
  *
  */
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,11 +23,6 @@ import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -452,6 +451,8 @@ public class GFF3Record
                 String newValue;
                 try {
                     newValue = URLEncoder.encode("" + oldValue, "UTF-8");
+                    // decode white space from "+"
+                    newValue = newValue.replaceAll("\\+", " ");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + oldValue, e);
                 }

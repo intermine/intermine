@@ -23,6 +23,7 @@ public class GenomicRegionSearchConstraint
     @SuppressWarnings("rawtypes")
     private List<Class> ftList = null;
     private List<GenomicRegion> spanList = null;
+    private int extendedRegionSize = 0;
 
     /**
      * @return the orgName
@@ -64,6 +65,18 @@ public class GenomicRegionSearchConstraint
         this.spanList = spanList;
     }
 
+    /**
+     * @return the extendedRegionSize
+     */
+    public int getExtendedRegionSize() {
+        return extendedRegionSize;
+    }
+    /**
+     * @param extededRegionSize the extendedRegionSize to set
+     */
+    public void setExtededRegionSize(int extededRegionSize) {
+        this.extendedRegionSize = extededRegionSize;
+    }
 
     /**
      * @param obj a GenomicRegionSearchConstraint object
@@ -73,7 +86,8 @@ public class GenomicRegionSearchConstraint
     public boolean equals(Object obj) {
         if (obj instanceof GenomicRegionSearchConstraint) {
             GenomicRegionSearchConstraint c = (GenomicRegionSearchConstraint) obj;
-            return (spanList.equals(c.getSpanList())
+            return (extendedRegionSize == c.getExtendedRegionSize()
+                    && spanList.equals(c.getSpanList())
                     && ftList.equals(c.getFtList())
                     && orgName.equals(c.getOrgName()));
         }
@@ -85,7 +99,7 @@ public class GenomicRegionSearchConstraint
      */
     @Override
     public int hashCode() {
-        return spanList.hashCode() + ftList.hashCode() + orgName.hashCode();
+        return extendedRegionSize + spanList.hashCode() + ftList.hashCode() + orgName.hashCode();
     }
 
 }

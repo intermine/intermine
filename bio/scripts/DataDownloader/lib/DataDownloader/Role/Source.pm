@@ -7,6 +7,7 @@ use MooseX::FileAttribute;
 use DataDownloader::Util qw(make_logger get_ymd make_link files_are_identical);
 use Ouch qw(:traditional);
 use Scalar::Util qw(blessed);
+use File::Path qw(mkpath);
 
 requires 'fetch_all_data';
 
@@ -51,7 +52,6 @@ sub _build_logger {
     my $self = shift;
     return make_logger();
 }
-
 
 sub log_start {
     my $self = shift;
@@ -137,7 +137,9 @@ has_directory destination_dir => (lazy_build => 1, builder => 'build_destination
 
 sub build_destination_dir {
     my $self = shift;
-    return $self->get_source_dir->subdir($self->get_version);
+    my $dir = $self->get_source_dir->subdir($self->get_version);
+    mkpath("$dir") unless ( -d $dir );
+    return $dir;
 }
 
 =head2 data_is_up_to_date

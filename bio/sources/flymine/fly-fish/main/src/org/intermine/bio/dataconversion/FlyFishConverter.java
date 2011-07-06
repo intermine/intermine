@@ -38,7 +38,7 @@ public class FlyFishConverter extends BioFileConverter
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    private Item pub;
+    private Item pub, ontology;
     private String[] stages;
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
@@ -62,7 +62,12 @@ public class FlyFishConverter extends BioFileConverter
         pub.setAttribute("pubMedId", "17923096");
         store(pub);
 
+        ontology = createItem("Ontology");
+        ontology.setAttribute("name", "ImaGO");
+        store(ontology);
+
         stages = getStages();
+
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
@@ -192,14 +197,15 @@ public class FlyFishConverter extends BioFileConverter
      * @throws ObjectStoreException
      */
     private Item getMRNAExpressionTerm(String expression) throws ObjectStoreException {
-        if (termItems.containsKey(expression)) {
-            return termItems.get(expression);
+        String name = expression.toLowerCase();
+        if (termItems.containsKey(name)) {
+            return termItems.get(name);
         }
         Item term = createItem("MRNAExpressionTerm");
-        term.setAttribute("name", expression);
-        term.setAttribute("type", "fly-FISH");
+        term.setAttribute("name", name);
+        term.setReference("ontology", ontology);
         store(term);
-        termItems.put(expression, term);
+        termItems.put(name, term);
         return term;
 
     }

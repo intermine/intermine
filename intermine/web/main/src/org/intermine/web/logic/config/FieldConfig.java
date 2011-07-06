@@ -10,6 +10,8 @@ package org.intermine.web.logic.config;
  *
  */
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The webapp configuration for one field of a class.
  *
@@ -28,7 +30,58 @@ public class FieldConfig
     private boolean openByDefault;
     private String fieldExporter;
     private String displayer;
+    private String label = null;
+    private Type parent = null;
 
+    /**
+     * Get the label to display in the webapp for this field. If there is
+     * no label, returns the name of the field instead.
+     * @return A human readable label.
+     */
+    public String getDisplayName() {
+        if (label != null) {
+            return label;
+        } else {
+            return getFormattedName();
+        }
+    }
+
+    public String getFormattedName() {
+        return FieldConfig.getFormattedName(fieldExpr);
+    }
+
+    public static String getFormattedName(String name) {
+        String[] parts = StringUtils.splitByCharacterTypeCamelCase(name);
+        String[] ucFirstParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            ucFirstParts[i] = StringUtils.capitalize(parts[i]);
+        }
+        return StringUtils.join(ucFirstParts, " ");
+    }
+
+    public void setClassConfig(Type ccf) {
+        this.parent = ccf;
+    }
+
+    public Type getClassConfig() {
+        return this.parent;
+    }
+
+    /**
+     * The human readable label for this field. For example "DB id" instead of "primaryIdentifier".
+     * @return A human readable label.
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Set the label for this field-configuration.
+     * @param label A human readable label.
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
     /**
      * Set the JSTL expression for this field which will be evaluated in the request context when
      * the JSP is viewed.
@@ -44,6 +97,10 @@ public class FieldConfig
      */
     public String getFieldExpr() {
         return fieldExpr;
+    }
+
+    public boolean getIsDottedPath() {
+        return (fieldExpr.lastIndexOf(".") >= 0);
     }
 
     /**
@@ -170,10 +227,12 @@ public class FieldConfig
      */
     public String toString() {
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
-               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary
-               + "\" showInInlineCollection=\"" + showInInlineCollection + "\" showInResults=\""
-               + showInResults + "\""
-               + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
+               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
+               + " showInInlineCollection=\"" + showInInlineCollection + "\""
+               + " showInResults=\"" + showInResults + "\""
+               + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"")
+               + (label == null ? "" : " label=\"" + label + "\"")
+               + "/>";
     }
 
     /**

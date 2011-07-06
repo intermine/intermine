@@ -11,7 +11,6 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.stripAll;
-import static org.apache.commons.lang.StringUtils.strip;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.model.InterMineObject;
@@ -245,6 +242,7 @@ public final class TemplatePopulator
 
         PathConstraint originalConstraint = templateValue.getConstraint();
         Path constraintPath = template.makePath(templateValue.getConstraint().getPath());
+        String pathString = constraintPath.getNoConstraintsString();
 
         if (templateValue.isBagConstraint()) {
             if (constraintPath.endIsAttribute()) {
@@ -252,7 +250,7 @@ public final class TemplatePopulator
             }
             PathConstraint newConstraint =
                 new PathConstraintBag(constraintPath.getNoConstraintsString(),
-                        templateValue.getOperation(), templateValue.getValue());
+                    templateValue.getOperation(), templateValue.getValue());
             template.replaceConstraint(originalConstraint, newConstraint);
             template.setSwitchOffAbility(newConstraint, templateValue.getSwitchOffAbility());
         } else if (templateValue.isObjectConstraint()) {
@@ -271,35 +269,26 @@ public final class TemplatePopulator
             if (originalConstraint instanceof PathConstraintAttribute) {
                 // if the op has been changed to IN or NOT_IN this becomes a multi value constraint
                 if (PathConstraintMultiValue.VALID_OPS.contains(templateValue.getOperation())) {
-                    newConstraint =
-                        new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
-                                templateValue.getOperation(),
-                                Arrays.asList(stripAll(strip(templateValue.getValue().trim(), ",").split(","))));
+                    newConstraint = new PathConstraintMultiValue(pathString,
+                            templateValue.getOperation(), templateValue.getValues());
                 } else {
-                    newConstraint =
-                        new PathConstraintAttribute(constraintPath.getNoConstraintsString(),
-                                templateValue.getOperation(), templateValue.getValue());
+                    newConstraint = new PathConstraintAttribute(pathString,
+                            templateValue.getOperation(), templateValue.getValue());
                 }
             } else if (originalConstraint instanceof PathConstraintLookup) {
-                newConstraint =
-                    new PathConstraintLookup(constraintPath.getNoConstraintsString(),
+                newConstraint = new PathConstraintLookup(pathString,
                             templateValue.getValue(), templateValue.getExtraValue());
             } else if (originalConstraint instanceof PathConstraintNull) {
-                newConstraint =
-                    new PathConstraintNull(constraintPath.getNoConstraintsString(),
-                            templateValue.getOperation());
+                newConstraint = new PathConstraintNull(pathString, templateValue.getOperation());
             } else if (originalConstraint instanceof PathConstraintMultiValue) {
                 // if op has been changed to something other than IN or NOT_IN make this becomes
                 // a regular attribute constraint
                 if (!PathConstraintMultiValue.VALID_OPS.contains(templateValue.getOperation())) {
-                    newConstraint =
-                        new PathConstraintAttribute(constraintPath.getNoConstraintsString(),
-                                templateValue.getOperation(), templateValue.getValue());
+                    newConstraint = new PathConstraintAttribute(pathString,
+                        templateValue.getOperation(), templateValue.getValue());
                 } else {
-                    newConstraint =
-                        new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
-                                templateValue.getOperation(),
-                                Arrays.asList(stripAll(strip(templateValue.getValue().trim(), ",").split(","))));
+                    newConstraint = new PathConstraintMultiValue(pathString,
+                        templateValue.getOperation(), templateValue.getValues());
                 }
             }
             template.replaceConstraint(originalConstraint, newConstraint);

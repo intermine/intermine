@@ -1,5 +1,7 @@
 Revision history for Webservice-InterMine-Bio
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.97    Thu Jun 16 11:53:38 BST 2011
+        Initial version, with GFF3 and Fasta functionality
+0.9701  Sat Jun 18 08:58:03 BST 2011
+        Bug-fix: tests failed due to url on use.
 

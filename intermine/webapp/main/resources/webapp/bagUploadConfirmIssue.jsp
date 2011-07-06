@@ -19,8 +19,6 @@
       <span id="${issueType}removeAllLink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
   </div>
 
-  <img alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
-
   <span>
     <c:choose>
       <c:when test="${messageParam != null}">
@@ -41,7 +39,7 @@
       <td>Identifier</td>
       <c:if test="${table.hasMoreThanOneType}"><td>Class</td></c:if>
       <c:forEach items="${table.tableFieldConfigs}" var="fc">
-        <td>${fc.fieldExpr}</td>
+        <td>${fc.displayName}</td>
       </c:forEach>
       <td>&nbsp;</td>
     </tr>

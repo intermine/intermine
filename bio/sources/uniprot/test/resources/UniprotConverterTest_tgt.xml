@@ -233,7 +233,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="13_3" class="GOTerm">
-<attribute name="identifier" value="GO:0000003"/>
+<attribute name="identifier" value="GO:0000002"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_4" class="Comment">
@@ -254,7 +254,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="13_2" class="GOTerm">
-<attribute name="identifier" value="GO:0000002"/>
+<attribute name="identifier" value="GO:0000003"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 </items>

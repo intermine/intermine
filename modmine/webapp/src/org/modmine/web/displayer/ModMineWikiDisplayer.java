@@ -13,7 +13,7 @@ package org.modmine.web.displayer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -22,7 +22,7 @@ import org.intermine.web.logic.results.ReportObject;
  *
  * @author Fengyuan Hu
  */
-public class ModMineWikiDisplayer extends CustomDisplayer
+public class ModMineWikiDisplayer extends ReportDisplayer
 {
     /**
      * Construct with config and the InterMineAPI.

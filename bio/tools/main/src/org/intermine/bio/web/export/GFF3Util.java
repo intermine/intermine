@@ -24,8 +24,6 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
-import com.sun.org.apache.xerces.internal.impl.io.UCSReader;
-
 /**
  * Utility methods for GFF3.
  * @author Kim Rutherford

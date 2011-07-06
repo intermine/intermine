@@ -64,9 +64,14 @@ An individual 'submission' is a single instance of an experiment which tests var
   --%>
 <td><h4>  
   <c:choose>
+<%--
   <c:when test="${fn:startsWith(exp.name, 'Stranded Cell Line Transcriptional Profiling Using Illumina')}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
+Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+--%>
+<c:when test="${fn:contains(exp.name, '%')}">
   <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
-  Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+${exp.name}
   </html:link></h4>
   </c:when>
   <c:otherwise>
@@ -114,10 +119,10 @@ Labs:
      <c:if test="${fn:length(exp.factorTypes) > 0 }">
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
-           <c:out value="The experimental factor is"/>
+           <c:out value="The experimental factor is "/>
          </c:when>
          <c:otherwise>
-           <c:out value="The experimental factors are"/>
+           <c:out value="The experimental factors are "/>
          </c:otherwise>
        </c:choose>
        <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.

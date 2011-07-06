@@ -41,7 +41,7 @@ public class ListManager
 
 
     /**
-     * Returns public lists that contain object with specified id.
+     * Returns public current lists that contain object with specified id.
      * @param objectId object id
      * @return A list of list names
      */
@@ -49,7 +49,7 @@ public class ListManager
         List<String> ret = new ArrayList<String>();
 
         Collection<InterMineBag> bags
-            = bagManager.getUserOrGlobalBagsContainingId(profile, objectId);
+            = bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
 
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
@@ -66,11 +66,11 @@ public class ListManager
     }
 
     /**
-     * Returns the lists available to the current user which contain the
+     * Returns the current lists available to the current user which contain the
      * specified object.
      * @return A collection of lists.
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
-        return bagManager.getUserOrGlobalBagsContainingId(profile, objectId);
+        return bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
     }
 }

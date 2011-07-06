@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <!-- sequenceFeatureDisplayer.jsp -->
 
@@ -26,9 +27,7 @@
         <td>Sequence ontology type:</td>
         <td>
           <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
-          <img alt="?" title="${feature.sequenceOntologyTerm.description}"
-          src="images/icons/information-small-blue.png" style="padding-bottom: 4px;"
-          class="tinyQuestionMark" />
+          <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
         </td>
       </c:when>
       <c:otherwise>

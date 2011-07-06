@@ -51,12 +51,12 @@ while (my ($release, $service) = each %services) {
         printf "Querying %s for results for %s\n",
             $service->release,
             $_->name;
-        my $results = eval{ $_->results(as => 'strings') };
-        if ($@) {
-            $failure_from{$_->name}{$release} = $@;
+        my $count = eval{ $_->get_count };
+        if (my $e = $@) {
+            $failure_from{$_->name}{$release} = $e;
         }
-        if ($results) {
-            $rows_from{$_->name}{$release} = scalar(@$results);
+        if (defined $count) {
+            $rows_from{$_->name}{$release} = $count;
         }
     }
 }

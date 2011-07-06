@@ -3,7 +3,7 @@
 # all the settings in this file will be loaded at Dancer's startup.
 
 # Your application's name
-appname: "AlzheimersMine"
+appname: "FlyView"
 
 project:
     title: "FlyMine-View"
@@ -19,7 +19,7 @@ layout: "main"
 charset: "UTF-8"
 
 logger: "console"
-log: "core"
+log: "debug"
 
 show_errors: 1
 warnings: 1
@@ -39,7 +39,8 @@ engines:
 
 list_column_width: 4
 
-update_interval: 600
+# Always refresh lists
+update_interval: 0
 
 cache_file: './data/memoize_cache.db'
 cache_lifetime: 3600

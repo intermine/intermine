@@ -1,9 +1,18 @@
-Build.PL
 Changes
-MANIFEST
-README
+ignore.txt
 lib/Webservice/InterMine/Bio.pm
+lib/Webservice/InterMine/Bio/FastaQuery.pm
+lib/Webservice/InterMine/Bio/GFFQuery.pm
+lib/Webservice/InterMine/Bio/SequenceFeatureQuery.pm
+MANIFEST			This list of files
+MANIFEST.SKIP
+README
 t/00-load.t
+t/boilerplate.t
+t/live_test.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
+Makefile.PL
+META.yml
+META.json

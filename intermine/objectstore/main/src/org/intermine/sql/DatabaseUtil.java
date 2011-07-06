@@ -479,6 +479,36 @@ public final class DatabaseUtil
     }
 
     /**
+     * Tests if a column exists in the database
+     *
+     * @param con a connection to a database
+     * @param tableName the name of a table containing the column
+     * @param columnName the name of the column to test for
+     * @return true if the column exists, false otherwise
+     * @throws SQLException if an error occurs in the underlying database
+     * @throws NullPointerException if tableName is null
+     */
+    public static boolean columnExists(Connection con, String tableName, String columnName)
+        throws SQLException {
+        if (tableName == null) {
+            throw new NullPointerException("tableName cannot be null");
+        }
+        if (columnName == null) {
+            throw new NullPointerException("columnName cannot be null");
+        }
+
+        ResultSet res = con.getMetaData().getColumns(null, null, tableName, columnName);
+
+        while (res.next()) {
+            if (res.getString(3).equals(tableName)
+                && res.getString(4).equals(columnName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Removes every single table from the database given.
      *
      * @param con the Connection to the database
@@ -813,6 +843,67 @@ public final class DatabaseUtil
         s.execute(indexCreateSql);
 
         s.execute("ANALYSE " + tableName);
+    }
+
+    /**
+     * Create the table 'bagvalues' containing the values of the key field objects
+     * contained in a bag
+     * @param con the Connection to use
+     * @throws SQLException if there is a database problem
+     */
+    public static void createBagValuesTables(Connection con)
+        throws SQLException {
+        String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text)";
+        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value)";
+        con.createStatement().execute(sqlTable);
+        con.createStatement().execute(sqlIndex);
+    }
+
+    /**
+     * Add a column in the table specified in input
+     * @param database the database to use
+     * @param tableName the table where to add the column
+     * @param columnName the column to add
+     * @param type the type
+     * @throws SQLException if there is a database problem
+     */
+    public static void addColumn(Database database, String tableName, String columnName,
+                                String type)
+        throws SQLException {
+        Connection connection = database.getConnection();
+        if (DatabaseUtil.tableExists(connection, tableName)
+            && !DatabaseUtil.columnExists(connection, tableName, columnName)) {
+            try {
+                String sqlAddColumn = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName
+                                    + " " + type;
+                connection.createStatement().execute(sqlAddColumn);
+            } finally {
+                connection.close();
+            }
+        }
+    }
+
+    /**
+     * Add the column intermine_current (type boolean) in the savedbag table and set it to true
+     * @param database the database to use
+     * @param tableName the table where update the column
+     * @param columnName the column to Update
+     * @param newValue the value to update
+     * @throws SQLException if there is a database problem
+     */
+    public static void updateColumnValue(Database database, String tableName, String columnName,
+                                         String newValue)
+        throws SQLException {
+        Connection connection = database.getConnection();
+        if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
+            try {
+                String sqlUpdateColumnValue = "UPDATE " + tableName + " SET " + columnName
+                    + "=" + newValue;
+                connection.createStatement().execute(sqlUpdateColumnValue);
+            } finally {
+                connection.close();
+            }
+        }
     }
 }
 

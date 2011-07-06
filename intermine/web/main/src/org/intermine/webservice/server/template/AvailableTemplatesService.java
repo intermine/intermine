@@ -92,11 +92,9 @@ public class AvailableTemplatesService extends WebService
             if (formatIsJSONP()) {
                 attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
             }
-            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":{");
-            attributes.put(JSONFormatter.KEY_OUTRO, "}");
+            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
             output.setHeaderAttributes(attributes);
-            output.addResultItem(Arrays.asList("\"templates\":"
-                    + TemplateHelper.templateMapToJson(templates)));
+            output.addResultItem(Arrays.asList(TemplateHelper.templateMapToJson(templates)));
         } else {
             ResponseUtil.setPlainTextHeader(response, FILE_BASE_NAME + ".txt");
             Set<String> templateNames = new TreeSet<String>(templates.keySet());

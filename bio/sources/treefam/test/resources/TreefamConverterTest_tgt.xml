@@ -22,12 +22,61 @@
 <attribute name="taxonId" value="9606"/>
 </item>
 <item id="6_2" class="Homologue">
-<attribute name="bootstrapScore" value="100"/>
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="homologue" ref_id="3_3"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
+
+  <attribute name="bootstrapScore" value="100"/>
+
+  <attribute name="type" value="orthologue"/>
+
+  <reference name="gene" ref_id="3_2"/>
+
+  <reference name="homologue" ref_id="3_1"/>
+
+  <collection name="dataSets">
+    <reference ref_id="2_1"/>
+  </collection>
+
+  <collection name="evidence">
+    <reference ref_id="8_1"/>
+  </collection>
+
+</item>
+, <item id="6_3" class="Homologue">
+
+  <attribute name="bootstrapScore" value="100"/>
+
+  <attribute name="type" value="orthologue"/>
+
+  <reference name="gene" ref_id="3_1"/>
+
+  <reference name="homologue" ref_id="3_3"/>
+
+  <collection name="dataSets">
+    <reference ref_id="2_1"/>
+  </collection>
+
+  <collection name="evidence">
+    <reference ref_id="8_1"/>
+  </collection>
+
+</item>
+, <item id="6_4" class="Homologue">
+
+  <attribute name="bootstrapScore" value="100"/>
+
+  <attribute name="type" value="orthologue"/>
+
+  <reference name="gene" ref_id="3_3"/>
+
+  <reference name="homologue" ref_id="3_1"/>
+
+  <collection name="dataSets">
+    <reference ref_id="2_1"/>
+  </collection>
+
+  <collection name="evidence">
+    <reference ref_id="8_1"/>
+  </collection>
+
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="TreeFam"/>

@@ -13,7 +13,7 @@ use constant {
     DESCRIPTION => "Mapping of Affymetrix Probesets to Genomic location",
     SOURCE_LINK => "http://www.ensembl.org",
     SOURCE_DIR => "affy-probes",
-    DB => 'fly',
+    DB => 'drosophila_melanogaster',
 };
 
 sub fetch_all_data {
@@ -27,11 +27,12 @@ sub fetch_all_data {
     Bio::EnsEMBL::Registry->load_registry_from_db(
         -host => 'ensembldb.ensembl.org',
         -user => 'anonymous',
+        -port => 5306,
     );
     my $sa  = Bio::EnsEMBL::Registry->get_adaptor( DB, 'core', 'Slice' )
         or throw "DownloadError" => "No slice adaptor found for " . DB;
 
-    my $ofa = Bio::EnsEMBL::Registry->get_adaptor( DB, 'core', 'OligoFeature' )
+    my $ofa = Bio::EnsEMBL::Registry->get_adaptor( DB, 'funcgen', 'OligoFeature' )
         or throw "DownloadError" => "No oligo-feature adaptor found for " . DB;
 
     my @slices = @{ $sa->fetch_all('toplevel') };

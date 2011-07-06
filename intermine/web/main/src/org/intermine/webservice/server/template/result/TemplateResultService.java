@@ -33,7 +33,6 @@ import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateResultInput;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
@@ -78,7 +77,7 @@ public class TemplateResultService extends QueryResultService
         }
         if (template == null) {
             throw new ResourceNotFoundException(
-            	"There is no public template called '" + input.getName() + "' in this mine.");
+                    "There is no public template called '" + input.getName() + "' in this mine.");
         }
 
         Map<String, List<TemplateValue>> templateValues = TemplateHelper.getValuesFromInput(
@@ -93,7 +92,7 @@ public class TemplateResultService extends QueryResultService
             throw new BadRequestException("Error in applying constraint values to template: "
                     + template.getName(), e);
         }
-        if (getFormat() == WebService.JSON_OBJ_FORMAT) {
+        if (formatIsJsonObj()) {
             List<String> newView = PathQueryBuilderForJSONObj.getAlteredViews(populatedTemplate);
             populatedTemplate.clearView();
             populatedTemplate.addViews(newView);

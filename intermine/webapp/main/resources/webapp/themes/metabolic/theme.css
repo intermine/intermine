@@ -35,7 +35,7 @@ h1 a:hover,h1 a:visited:hover{color:#333;text-decoration:underline;}
 html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;}
 ul#nav{font-size:13px;margin-left:-5px;margin-top:10px;}
 ul#nav a{color:#4B3F4B;font-weight:700;text-decoration:none;}
-ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 8px;}
+ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 2px;}
 ul#nav li#mymine{background:url(img/menu-gray-hover-left.png) repeat-x top;}
 ul#nav li#mymine a,ul#nav a:hover,#submenu.submenu_mymine form{color:#FFF;}
 ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
@@ -206,15 +206,20 @@ h3.interactions { color:#4896B2; font-size:13px; margin:10px 0 10px; }
 #pagecontentcontainer.report-page #object_header h1.title span { color:#1F7492; }
 #pagecontentcontainer.report-page #object_header div.box h3 { background:#F0E3F7; }
 #pagecontentcontainer.report-page #object_header div.list.box span { color:#1F7492; }
-#pagecontentcontainer.report-page #fixed-menu { background:#AFAFAF; }
-#pagecontentcontainer.report-page #toc-menu-wrap { background:#AFAFAF; }
-#pagecontentcontainer.report-page #fixed-menu span, #toc-menu-wrap span { color:#F5F5F5; }
+#pagecontentcontainer.report-page #fixed-menu { background:#1F7492; }
+#pagecontentcontainer.report-page #fixed-menu div.wrap,
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap { background:#1F7492; border-color:#1F7492; }
+#pagecontentcontainer.report-page #toc-menu-wrap { background:#F5F5F5; }
+#pagecontentcontainer.report-page #fixed-menu span,
+#pagecontentcontainer.report-page #toc-menu-wrap span { color:#FFF; }
 #pagecontentcontainer.report-page #menu-target { background:#F5F5F5; }
-#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#1F7492; background:#F5F5F5; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a,
+#pagecontentcontainer.report-page #fixed-menu div.wrap a { color:#FFF; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.links a.current,
+#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#FFF; color:#1F7492; border-color:#1F7492; }
 #pagecontentcontainer.report-page #in-lists div.heading { background:#F5F5F5 !important; border-color:#1F7492; color:#1F7492 !important; text-shadow:1px 1px 1px #FFF; }
 #pagecontentcontainer.report-page .container_12 .highlight { background-color: #FFF3D3; }
 #pagecontentcontainer.report-page #object_header #headerLink a { color:#1F7492; }
-#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#1F7492; color:#FFF; }
 #pagecontentcontainer.report-page #object_header p.share a { color:#1F7492; }
 #pagecontentcontainer.report-page h2 { color:#000; }
 #pagecontentcontainer.report-page #cwtabsbyside a { color:#1F7492; }

@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -152,7 +152,7 @@ public class TemplateAction extends InterMineAction
         String url = new URLGenerator(request).getPermanentBaseURL();
 
         if (!populatedTemplate.isValid()) {
-            recordError(new ActionError("errors.template.badtemplate",
+            recordError(new ActionMessage("errors.template.badtemplate",
                     StringUtil.prettyList(populatedTemplate.verifyQuery())), request);
             return mapping.findForward("template");
         }
@@ -231,7 +231,7 @@ public class TemplateAction extends InterMineAction
             }
             SessionMethods.loadQuery(template, request.getSession(), response);
             if (!template.isValid()) {
-                recordError(new ActionError("errors.template.badtemplate",
+                recordError(new ActionMessage("errors.template.badtemplate",
                         StringUtil.prettyList(template.verifyQuery())),
                         request);
             }
@@ -376,12 +376,18 @@ public class TemplateAction extends InterMineAction
                             String multiValueAttribute = tf.getMultiValueAttribute(key);
                             if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {
                                 constraintValue = tf.getMultiValueAttribute(key);
+                                List<String> multiValues = new ArrayList<String>();
+                                multiValues.addAll(Arrays.asList(constraintValue.split(",")));
+                                value = new TemplateValue(c, constraintOp,
+                                        TemplateValue.ValueType.SIMPLE_VALUE, multiValues,
+                                        switchOffAbility);
                             } else {
                                 constraintValue = (String) tf.getAttributeValues(key);
+                                String extraValue = (String) tf.getExtraValues(key);
+                                value = new TemplateValue(c, constraintOp, constraintValue,
+                                        TemplateValue.ValueType.SIMPLE_VALUE, extraValue,
+                                        switchOffAbility);
                             }
-                            String extraValue = (String) tf.getExtraValues(key);
-                            value = new TemplateValue(c, constraintOp, constraintValue,
-                                TemplateValue.ValueType.SIMPLE_VALUE, extraValue, switchOffAbility);
                         }
                     }
                 }

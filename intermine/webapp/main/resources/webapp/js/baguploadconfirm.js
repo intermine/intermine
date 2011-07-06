@@ -2,6 +2,12 @@ var duplicateArray = new Array();
 var tdColorArray = new Array();
 var highlightColor = '#FFF3D3';
 
+function initForm(bagName) {
+    if (bagName != null && bagName != "") {
+        jQuery("#newBagName").attr('disabled', 'disabled');
+    }
+}
+
 /**
  * Run a function checking if we already have items in the bag
  */
@@ -396,4 +402,3 @@ function setLinkState(link, state) {
     }
   }
 }
-

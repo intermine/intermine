@@ -31,4 +31,9 @@ public class UtilTest extends TestCase
         assertTrue(org.intermine.util.Util.hashCode(new Integer(10)) != 0);
     }
 
+    public void testMD5checksum() {
+        assertEquals(org.intermine.util.Util.getMd5checksum("ABC"), "902fbdd2b1df0c4f70b4a5d23525e932");
+        assertEquals(org.intermine.util.Util.getMd5checksum("MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSR"), "c4edf616cb85a80fd3939358b3f47235");
+    }
+
 }

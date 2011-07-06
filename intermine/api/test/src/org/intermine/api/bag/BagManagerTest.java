@@ -4,11 +4,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -16,6 +19,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.userprofile.UserProfile;
@@ -70,9 +74,12 @@ public class BagManagerTest extends TestCase
     }
 
     private void setUpBagsAndTags() throws Exception {
-        globalCompanyBag = superUser.createBag("companyBag", "Company", "");
-        globalAddressBag = superUser.createBag("globalAddressBag", "Address", "");
-        superPrivateBag = superUser.createBag("superPrivateBag", "Company", "");
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        Map<String, List<FieldDescriptor>>  classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+        globalCompanyBag = superUser.createBag("companyBag", "Company", "", classKeys);
+        globalAddressBag = superUser.createBag("globalAddressBag", "Address", "", classKeys);
+        superPrivateBag = superUser.createBag("superPrivateBag", "Company", "", classKeys);
 
         tagManager.addTag(TagNames.IM_PUBLIC, "companyBag", TagTypes.BAG, "superUser");
         tagManager.addTag(TagNames.IM_PUBLIC, "globalAddressBag", TagTypes.BAG, "superUser");
@@ -80,8 +87,8 @@ public class BagManagerTest extends TestCase
         tagManager.addTag(TagNames.IM_FAVOURITE, "companyBag", TagTypes.BAG, "superUser");
         tagManager.addTag(TagNames.IM_FAVOURITE, "superPrivateBag", TagTypes.BAG, "superUser");
 
-        userCompanyBag = testUser.createBag("companyBag", "Company", "");
-        userAddressBag = testUser.createBag("userAddressBag", "Address", "");
+        userCompanyBag = testUser.createBag("companyBag", "Company", "", classKeys);
+        userAddressBag = testUser.createBag("userAddressBag", "Address", "", classKeys);
     }
 
 
@@ -185,6 +192,14 @@ public class BagManagerTest extends TestCase
         assertEquals(userCompanyBag, bagManager.getUserOrGlobalBag(testUser, bagName));
     }
 
+    public void testGetCurrentUserOrGlobalBagsOfType() throws Exception {
+        Map<String, InterMineBag> expected = createExpected(globalAddressBag, userAddressBag);
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
+        globalAddressBag.setCurrent(false);
+        expected = createExpectedCurrent(globalAddressBag, userAddressBag);
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
+    }
+
     public void testGetUserOrGlobalBagsOfType() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalAddressBag, userAddressBag);
         assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(testUser, "Address"));
@@ -192,12 +207,12 @@ public class BagManagerTest extends TestCase
 
     public void testGetUserBagsOfType() throws Exception {
         Map<String, InterMineBag> expected = createExpected(userAddressBag);
-        assertEquals(expected, bagManager.getUserBagsOfType(testUser, "Address"));
+        assertEquals(expected, bagManager.getCurrentUserBagsOfType(testUser, "Address"));
     }
 
     public void testGetUserOrGlobalBagsOfTypeNoUserBags() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalCompanyBag);
-        assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(emptyUser, "Company"));
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(emptyUser, "Company"));
     }
 
     // user bags with same name as global bag take precedence
@@ -211,14 +226,15 @@ public class BagManagerTest extends TestCase
         assertEquals(expected, bagManager.getUserOrGlobalBagsOfType(testUser, "Employee"));
     }
 
-    public void testGetUserOrGlobalBagsContainingId() throws Exception {
+    public void testGetCurrentUserOrGlobalBagsContainingId() throws Exception {
         storeAddress();
         globalAddressBag.addIdToBag(ADDRESS_ID, "Address");
         userAddressBag.addIdToBag(ADDRESS_ID, "Address");
+        userAddressBag.setCurrent(false);
 
-        Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpected(globalAddressBag, userAddressBag).values());
+        Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpectedCurrent(globalAddressBag, userAddressBag).values());
         try {
-            assertEquals(expected, bagManager.getUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
+            assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
         } finally {
             deleteAddress();
         }
@@ -226,13 +242,23 @@ public class BagManagerTest extends TestCase
 
     public void testGetUserOrGlobalBagsContainingIdNoBagsWithId() throws Exception {
         Set<InterMineBag> expected = Collections.EMPTY_SET;
-        assertEquals(expected, bagManager.getUserOrGlobalBagsContainingId(testUser, DUMMY_ID));
+        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, DUMMY_ID));
     }
 
     private Map<String, InterMineBag> createExpected(InterMineBag... bags) {
         Map<String, InterMineBag> expected = new HashMap<String, InterMineBag>();
         for(InterMineBag bag : bags) {
             expected.put(bag.getName(), bag);
+        }
+        return expected;
+    }
+    
+    private Map<String, InterMineBag> createExpectedCurrent(InterMineBag... bags) {
+        Map<String, InterMineBag> expected = new HashMap<String, InterMineBag>();
+        for(InterMineBag bag : bags) {
+            if (bag.isCurrent()) {
+                expected.put(bag.getName(), bag);
+            }
         }
         return expected;
     }

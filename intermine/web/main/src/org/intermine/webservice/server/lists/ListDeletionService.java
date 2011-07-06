@@ -1,18 +1,14 @@
 package org.intermine.webservice.server.lists;
 
-import java.util.Arrays;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.exceptions.BadRequestException;
 
-public class ListDeletionService extends ListUploadService {
+public class ListDeletionService extends AuthenticatedListService
+{
 
     /**
      * Usage information to help users who provide incorrect input.
@@ -32,20 +28,9 @@ public class ListDeletionService extends ListUploadService {
     @Override
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        if (!this.isAuthenticated()) {
-            throw new BadRequestException("Not authenticated.\n" + USAGE);
-        }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
-
-        String name = request.getParameter("name");
-
-        setListName(name);
-        setHeaderAttributes(Arrays.asList(name));
-
-        if (!profile.getSavedBags().containsKey(name)) {
-            throw new BadRequestException(name + " is not a list you have access to");
-        }
-        ListServiceUtils.ensureBagIsDeleted(profile, name);
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        ListInput input = getInput(request);
+        addOutputInfo(LIST_NAME_KEY, input.getListName());
+        ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
     }
 }

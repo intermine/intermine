@@ -10,7 +10,7 @@
 <div class="collection-of-collections" id="regulatory-regions">
   <div class="header">
 	  <h3>Regulatory Regions</h3>
-	  <p class="desc">
+	  <p>
 	    <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
 	    Something that is relevant and descriptive should go here, this ain't it
 	  </p>
@@ -52,12 +52,6 @@
   </c:if>
 
   <script type="text/javascript">
-    // apply different class to h3 so tables are not so separate
-    jQuery("#regulatory-regions.collection-of-collections div.collection-table h3").each(function(i) {
-        jQuery(this).toggleClass('someclass');
-        jQuery(this).toggleClass('someclass');
-    });
-
     // switcher between tables this displayer haz
     jQuery("#regulatory-regions.collection-of-collections a.switcher").each(function(i) {
       jQuery(this).bind(

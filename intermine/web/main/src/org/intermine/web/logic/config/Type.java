@@ -25,6 +25,7 @@ import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.util.TypeUtil;
 
 /**
  * Configuration object for displaying a class
@@ -52,6 +53,46 @@ public class Type
     private HeaderConfigTitle headerConfigTitle;
     private HeaderConfigLink headerConfigLink;
 
+    private String label = null;
+
+    /**
+     * Get the label property's value.
+     * @return The value of this property.
+     */
+    public String getLabel() {
+        return this.label;
+    }
+
+    /**
+     * Set the label property.
+     * @param label the new value for this property.
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getDisplayName() {
+        if (label != null) {
+            return label;
+        } else {
+            return getFormattedClassName();
+        }
+    }
+
+    public String getFormattedClassName() {
+        return Type.getFormattedClassName(className);
+    }
+
+    public static String getFormattedClassName(String nameOfClass) {
+        String unqualifiedName = TypeUtil.unqualifiedName(nameOfClass);
+        String[] parts = StringUtils.splitByCharacterTypeCamelCase(unqualifiedName);
+        String[] newParts = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            newParts[i] = StringUtils.capitalize(parts[i]);
+        }
+        return StringUtils.join(parts, " ");
+    }
+
     /**
      * Set the unqualified class name for this Type (from fully-qualified)
      * @param className the name of the Type
@@ -69,12 +110,17 @@ public class Type
         return this.className;
     }
 
+    public String getUnqualifiedClassName() {
+        return TypeUtil.unqualifiedName(this.className);
+    }
+
     /**
      * Add a FieldConfig for this Type
      * @param df the FieldConfig to add
      */
     public void addFieldConfig(FieldConfig df) {
         fieldConfigMap.put(df.getFieldExpr(), df);
+        df.setClassConfig(this);
     }
 
     /**
@@ -145,7 +191,7 @@ public class Type
 
     /**
     *
-    * @return HeaderConfigTitle
+    * @return HeaderConfigLink
     */
     public HeaderConfigLink getHeaderConfigLink() {
         return this.headerConfigLink;
@@ -268,21 +314,24 @@ public class Type
         if (fieldName != null) {
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
-        sb.append(">");
-        sb.append("<fieldconfigs>");
-        for (FieldConfig fc : getFieldConfigs()) {
-            sb.append(fc.toString());
+        if (label != null) {
+        	sb.append(" label=\"" + label + "\"");
         }
-        sb.append("</fieldconfigs>");
+        sb.append(">\n");
+        sb.append("\t<fieldconfigs>\n");
+        for (FieldConfig fc : getFieldConfigs()) {
+            sb.append("\t\t" + fc.toString() + "\n");
+        }
+        sb.append("\t</fieldconfigs>\n");
         if (tableDisplayer != null) {
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
-        sb.append("<longdisplayers>");
+        sb.append("\t<longdisplayers>\n");
         Iterator iter = longDisplayers.iterator();
         while (iter.hasNext()) {
-            sb.append(iter.next().toString());
+            sb.append("\t\t" + iter.next().toString() + "\n");
         }
-        sb.append("</longdisplayers>");
+        sb.append("\t</longdisplayers>\n");
         sb.append("</class>");
 
         return sb.toString();

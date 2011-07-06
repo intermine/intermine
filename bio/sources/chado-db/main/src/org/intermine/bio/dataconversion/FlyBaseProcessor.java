@@ -534,9 +534,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
-                    Arrays.asList(new SetFieldConfigAction("GLEANRsymbol", GLEANR_PATTERN),
-                                  CREATE_SYNONYM_ACTION));
+
 
             // dbxref table configuration example: for features of class "Gene", where the
             // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the

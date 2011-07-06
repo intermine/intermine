@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 <%@ page import="java.lang.String" %>
 
 <html:xhtml/>
@@ -15,8 +16,7 @@
   var helpMap = {${helpMap}};
 
   function showClassSelectHelp() {
-      var i = document.queryClassSelectForm.className.selectedIndex;
-      var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
+      var fullSelectedClassName = jQuery("#queryClassSelector").val();
       var selectedClassName =
           fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
       if (selectedClassName.length > 0) {
@@ -32,8 +32,7 @@
   }
 
   function handleClassClick(e) {
-    var i = document.queryClassSelectForm.className.selectedIndex;
-      if (e.detail == 2 &&  document.queryClassSelectForm.className[i].value != '') {
+      if (e.detail == 2 &&  jQuery("#queryClassSelector").val() != '') {
           jQuery('#queryClassForm').submit();
       }
   }
@@ -55,14 +54,14 @@
   <table border=0>
     <tr>
       <td>
-        <html:form styleId="queryClassForm" action="/queryClassSelect">
+        <html:form action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
           <c:forEach items="${preferredTypeList}" var="type">
-            <html:option value="${type}" style="font-weight:bold">${type}</html:option>
-        </c:forEach>
+            <html:option value="${type}" style="font-weight:bold">${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}</html:option>
+          </c:forEach>
            <html:option value="" style="text-align:center">----------------</html:option>
           <c:forEach items="${typeList}" var="type">
-            <html:option value="${type}">${type}</html:option>
+            <html:option value="${type}">${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}</html:option>
           </c:forEach>
           </html:select>
           <br/>
@@ -80,7 +79,11 @@
                 <td valign="top" width="99%">
                   <span id="queryClassSelect"></span>
                 </td>
-                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" title="Click here to close the help text."/></a></td>
+                <td align="right" valign="top">
+                    <a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false">
+                        <img border="0" src="images/cross.gif" title="Click here to close the help text."/>
+                    </a>
+                </td>
               </tr>
             </table>
           </div>

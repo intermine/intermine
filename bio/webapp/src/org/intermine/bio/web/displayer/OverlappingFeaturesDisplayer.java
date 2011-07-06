@@ -29,7 +29,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.results.InlineResultsTable;
@@ -44,7 +44,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Richard Smith
  *
  */
-public class OverlappingFeaturesDisplayer extends CustomDisplayer
+public class OverlappingFeaturesDisplayer extends ReportDisplayer
 {
     /** @var maximum amount of rows to show per table */
     private Integer maxCount = 30;
@@ -65,6 +65,7 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
         // TODO check if type is a gene model type
 
+        long startTime = System.currentTimeMillis();
         // group other overlapping features by type, to display types and counts
         Map<String, Integer> featureCounts = new TreeMap<String, Integer>();
         Map<String, InlineResultsTable> featureTables = new TreeMap<String, InlineResultsTable>();
@@ -85,6 +86,10 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                     + startFeature.getPrimaryIdentifier() + ", " + startFeature.getId());
         }
         request.setAttribute("featureCounts", featureCounts);
+
+        long stepTime = System.currentTimeMillis();
+        LOG.info("TIME counted feature types: " + (stepTime - startTime) + "ms");
+        startTime = stepTime;
 
         // resolve Collection from FieldDescriptor
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
@@ -115,9 +120,14 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                     }
                 }
 
+
+
             // separate objects into their types
             looptyloop:
                 for (Class<?> c : lt) {
+
+                    long loopStartTime = System.currentTimeMillis();
+
                     Iterator<?> resultsIter = collectionList.iterator();
 
                     // new collection of objects of only type "c"
@@ -162,9 +172,17 @@ public class OverlappingFeaturesDisplayer extends CustomDisplayer
                         // name the table based on the first element contained
                         featureTables.put(type, t);
                     }
+                    long loopTime = System.currentTimeMillis();
+                    LOG.info("TIME created inline table for type: " + c.getSimpleName() + " took: "
+                            + (loopTime - loopStartTime) + "ms");
+
                 }
             }
         }
+
+        stepTime = System.currentTimeMillis();
+        LOG.info("TIME created collections: " + (stepTime - startTime) + "ms");
+        startTime = stepTime;
 
         request.setAttribute("featureTables", featureTables);
     }

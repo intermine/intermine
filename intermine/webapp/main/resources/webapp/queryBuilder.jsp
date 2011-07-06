@@ -11,6 +11,13 @@
 
 <html:xhtml/>
 
+<div style="display:none">
+<%-- cache --%>
+<img src="images/progress/green-btn-center-hover.png" />
+<img src="images/progress/green-btn-left-hover.png" />
+<img src="images/progress/green-btn-right-hover.png" />
+</div>
+
 <script type="text/javascript" src="js/queryBuilder.js" ></script>
 <%-- Javascript files must be included there because they are not processed when queryBuilderConstraint
  tile is added by Ajax.Updater --%>
@@ -63,7 +70,7 @@
 <div id="sidebar">
    <div id="bigGreen" class='button inactive'>
       <div class="left"></div>
-          <html:form action="/queryBuilderViewAction" styleId="submitform">
+          <html:form action="/queryBuilderViewAction">
           <input id="showResult" type="submit" name="showResult"
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>

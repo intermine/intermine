@@ -29,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.WebService;
@@ -161,7 +162,8 @@ public class QueryResultService extends AbstractQueryService
             attributes.put("size", String.valueOf(size));
             attributes.put("pagePath", pageUrl);
             attributes.put("mineResultsLink", mineResLink);
-            attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, pq.getColumnHeaders());
+            attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, 
+                    WebUtil.formatPathQueryView(pq, request));
             attributes.put(JSONTableFormatter.KEY_CURRENT_PAGE, pageUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_CSV_URL, csvUrl);
             attributes.put(JSONTableFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
@@ -179,7 +181,8 @@ public class QueryResultService extends AbstractQueryService
         if (formatIsFlatFile()) {
             if (wantsColumnHeaders()) {
                 if (ColumnHeaderStyle.FRIENDLY == getColumnHeaderStyle()) {
-                    attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getColumnHeaders());
+                    attributes.put(FlatFileFormatter.COLUMN_HEADERS, 
+                            WebUtil.formatPathQueryView(pq, request));
                 } else {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getView());
                 }

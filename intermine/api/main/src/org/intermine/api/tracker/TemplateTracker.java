@@ -44,8 +44,7 @@ public class TemplateTracker extends TrackerAbstract
     private static TemplatesExecutionMap templatesExecutionCache;
 
     /**
-     * Build a template tracker
-     * @param conn connection to the database
+     * {@inheritDoc}
      */
     protected TemplateTracker(Queue<Track> trackQueue) {
         super(trackQueue, TrackerUtil.TEMPLATE_TRACKER_TABLE);
