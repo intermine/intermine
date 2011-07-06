@@ -10,9 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -44,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.apache.tools.ant.BuildException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
@@ -133,10 +130,14 @@ public class InitialiserPlugin implements PlugIn
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
+        //verify if intermine_current exists in the savedbag table
         if (!validateUserProfileDatabase(userprofileOSW)) {
             blockingErrorKeys.add("errors.savedbagtable.runAnt");
             return;
         }
+        //verify if we the webapp needs to upgrade the lists
+        verifyListUpgrade(userprofileOSW);
+
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
@@ -597,5 +598,56 @@ public class InitialiserPlugin implements PlugIn
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
         return false;
+    }
+
+    /**
+     * Verify if we need to upgrade the list
+     */
+    private void verifyListUpgrade(ObjectStore uosw) {
+        try {
+            boolean listUpgrade = false;
+            String productionSerialNumber = MetadataManager.retrieve(((ObjectStoreInterMineImpl) os)
+                .getDatabase(), MetadataManager.SERIAL_NUMBER);
+            String userprofileSerialNumber = MetadataManager.retrieve(
+                ((ObjectStoreInterMineImpl) uosw).getDatabase(), MetadataManager.SERIAL_NUMBER);
+            LOG.info("Production database has serialNumber \"" + productionSerialNumber + "\"");
+            LOG.info("Userprofile database has serialNumber \"" + userprofileSerialNumber + "\"");
+            if (productionSerialNumber != null) {
+                if (userprofileSerialNumber == null
+                    || !userprofileSerialNumber.equals(productionSerialNumber)) {
+                    listUpgrade = true;
+                }
+            }
+            if (productionSerialNumber == null && userprofileSerialNumber != null) {
+                listUpgrade = true;
+            }
+            if (listUpgrade) {
+                    LOG.warn("Serial numbers not equal: list upgrate needed");
+                    //set current attribute to false
+                    Connection conn = null;
+                    try {
+                        conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
+                        if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                            DatabaseUtil.updateColumnValue(
+                                         ((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                                         "savedbag", "intermine_current", "false");
+                        }
+                    } catch (SQLException sqle) {
+                        throw new BuildException("Problems connecting bagvalues table", sqle);
+                    } finally {
+                        try {
+                            if (conn != null) {
+                                conn.close();
+                            }
+                        } catch (SQLException sqle) {
+                        }
+                    }
+                    // update the userprofileSerialNumber
+                    MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                            MetadataManager.SERIAL_NUMBER, productionSerialNumber);
+            }
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Error verifying list upgrading", sqle);
+        }
     }
 }
