@@ -411,8 +411,7 @@ public class GenomicRegionSearchService
             e.printStackTrace();
         }
 
-        // Parse uploaded spans to an arraylist; handle empty content and
-        // non-integer spans
+        // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
         // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
         List<GenomicRegion> spanList = new ArrayList<GenomicRegion>();
         for (String spanStr : spanStringSet) {
@@ -992,122 +991,54 @@ public class GenomicRegionSearchService
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                 // hack - feature name is null, use id
+                sb.append("<tr><td valign='top' rowspan='" + length + "'><b>" + span + "</b><br>");
+
+                if (s.isRegionExtended()) {
+                    String os = s.getOriginalRegion();
+                    sb.append("<i>Original input: " + os + "</i><br>");
+                }
+
+                sb.append("<div style='align:center; padding-bottom:12px'>"
+                        + "<span class='fakelink exportDiv'> Export data </span>"
+                        + "<img class='exportDiv' style='position:relative; top:3px;' "
+                        + "border='0' src='model/images/download.png' title='export data' "
+                        + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
+                        + "<a href='#javascript: exportFeatures(\""
+                        + span + "\", "
+                        + "\"SequenceFeature\", \"tab\");' class='ext_link'>TAB</a></li>"
+                        + "<li class='csv'><a href='#javascript: exportFeatures(\""
+                        + span
+                        + "\", \"SequenceFeature\", \"csv\");' class='ext_link'>CSV</a></li>"
+                        + "<li class='gff'><a href='#javascript: exportFeatures(\""
+                        + span
+                        + "\", \"SequenceFeature\", \"gff3\");' class='ext_link'>GFF3</a>"
+                        + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
+                        + span
+                        + "\", \"SequenceFeature\", \"sequence\");' class='ext_link'>SEQ</a>"
+                        + "</li></ul></div><div style='align:center'>"
+                        + "<a href='javascript: exportToGalaxy(\"" + span + "\");' "
+                        + "class='ext_link'> Export to Galaxy <img border='0' "
+                        + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
+                        + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
+                        + "<a target='_blank' title='' href='" + baseURL + "/" + path
+                        + "/report.do?id=" + firstFeature.get(0) + "'>");
+
                 if (firstFeature.get(0) == null
                         || "".equals(firstFeature.get(0))) {
-                    sb.append("<tr><td valign='top' rowspan='"
-                            + length
-                            + "'><b>"
-                            + span
-                            + "</b><br>");
-
-                    if (s.isRegionExtended()) {
-                        String os = s.getOriginalRegion();
-                        sb.append("<i>Original input: " + os + "</i><br>");
-                    }
-
-                    sb.append("<div style='align:center; padding-bottom:12px'>"
-                            + "<span class='fakelink exportDiv'> Export data </span>"
-                            + "<img class='exportDiv' style='position:relative; top:3px;' "
-                            + "border='0' src='model/images/download.png' title='export data' "
-                            + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
-                            + "<a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", "
-                            + "\"SequenceFeature\", \"tab\");' class='ext_link'>TAB</a></li>"
-                            + "<li class='csv'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"csv\");' class='ext_link'>CSV</a></li>"
-                            + "<li class='gff'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"gff3\");' class='ext_link'>GFF3</a>"
-                            + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"sequence\");' class='ext_link'>SEQ</a>"
-                            + "</li></ul></div><div style='align:center'>"
-                            + "<a href='javascript: exportToGalaxy(\""
-                            + span
-                            + "\");' "
-                            + "class='ext_link'> Export to Galaxy <img border='0' "
-                            + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
-                            + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
-                            + "<a target='_blank' title='' href='"
-                            + baseURL
-                            + "/"
-                            + path
-                            + "/report.do?id="
-                            + firstFeature.get(0)
-                            + "'><i>PrimaryIdentifier not avaliable</i></a></td><td>"
-                            + firstSoTerm
-                            + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm
-                            + ": "
-                            + firstSoTermDes
-                            + "';document.getElementById('ctxHelpDiv').style.display='';"
-                            + "window.scrollTo(0, 0);return false\" title=\""
-                            + firstSoTermDes
-                            + "\"><img class=\"tinyQuestionMark\" "
-                            + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                            + "</td><td>" + loc + "</td></tr>");
+                    sb.append("<i>PrimaryIdentifier not avaliable</i>");
                 } else {
-                    sb.append("<tr><td valign='top' rowspan='"
-                            + length
-                            + "'><b>"
-                            + span
-                            + "</b><br>");
-
-                    if (s.isRegionExtended()) {
-                        String os = s.getOriginalRegion();
-                        sb.append("<i>Original input: " + os + "</i><br>");
-                    }
-
-                    sb.append("<div style='align:center; padding-bottom:12px'>"
-                            + "<span class='fakelink exportDiv'> Export data </span>"
-                            + "<img class='exportDiv' style='position:relative; top:3px;' "
-                            + "border='0' src='model/images/download.png' title='export data' "
-                            + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
-                            + "<a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", "
-                            + "\"SequenceFeature\", \"tab\");' class='ext_link'>TAB</a></li>"
-                            + "<li class='csv'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"csv\");' class='ext_link'>CSV</a></li>"
-                            + "<li class='gff'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"gff3\");' class='ext_link'>GFF3</a>"
-                            + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
-                            + span
-                            + "\", \"SequenceFeature\", \"sequence\");' class='ext_link'>SEQ</a>"
-                            + "</li></ul></div><div style='align:center'>"
-                            + "<a href='javascript: exportToGalaxy(\""
-                            + span
-                            + "\");' "
-                            + "class='ext_link'> Export to Galaxy <img border='0' "
-                            + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
-                            + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
-                            + "<a target='_blank' title='"
-                            + firstFeature.get(1)
-                            + "' href='"
-                            + baseURL
-                            + "/"
-                            + path
-                            + "/report.do?id="
-                            + firstFeature.get(0)
-                            + "'>"
-                            + firstFeature.get(1)
-                            + "</a></td><td>"
-                            + firstSoTerm
-                            + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm
-                            + ": "
-                            + firstSoTermDes
-                            + "';document.getElementById('ctxHelpDiv').style.display='';"
-                            + "window.scrollTo(0, 0);return false\" title=\""
-                            + firstSoTermDes
-                            + "\"><img class=\"tinyQuestionMark\" "
-                            + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                            + "</td><td>" + loc + "</td></tr>");
+                    sb.append(firstFeature.get(1));
                 }
+
+                sb.append("</a></td><td>" + firstSoTerm
+                        + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                        + firstSoTerm + ": " + firstSoTermDes
+                        + "';document.getElementById('ctxHelpDiv').style.display='';"
+                        + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
+                        + "\"><img class=\"tinyQuestionMark\" "
+                        + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                        + "</td><td>" + loc + "</td></tr>");
+
 
                 for (int i = 1; i < length; i++) {
                     String soTerm = featureTypeToSOTermMap.get(
@@ -1120,51 +1051,25 @@ public class GenomicRegionSearchService
                             + features.get(i).get(4) + ".."
                             + features.get(i).get(5);
 
-                    if (features.get(i).get(1) == null
-                            || "".equals(features.get(i).get(3))) {
-                        sb.append("<tr><td><a target='_blank' title='' href='"
-                                + baseURL
-                                + "/"
-                                + path
-                                + "/report.do?id="
-                                + features.get(i).get(0)
-                                + "'><i>PrimaryIdentifier not avaliable</i></a></td><td>"
-                                + soTerm
-                                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm
-                                + ": "
-                                + soTermDes
-                                + "';document.getElementById('ctxHelpDiv').style.display='';"
-                                + "window.scrollTo(0, 0);return false\" title=\""
-                                + soTermDes
-                                + "\"><img class=\"tinyQuestionMark\" "
-                                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                                + "</td><td>" + location + "</td></tr>");
+                    sb.append("<tr><td><a target='_blank' title='" + features.get(i).get(1)
+                            + "' href='" + baseURL + "/" + path + "/report.do?id="
+                            + features.get(i).get(0) + "'>");
+
+                    if (features.get(i).get(1) == null || "".equals(features.get(i).get(3))) {
+                        sb.append("<i>PrimaryIdentifier not avaliable</i>");
                     } else {
-                        sb.append("<tr><td><a target='_blank' title='"
-                                + features.get(i).get(1)
-                                + "' href='"
-                                + baseURL
-                                + "/"
-                                + path
-                                + "/report.do?id="
-                                + features.get(i).get(0)
-                                + "'>"
-                                + features.get(i).get(1)
-                                + "</a></td><td>"
-                                + soTerm
-                                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm
-                                + ": "
-                                + soTermDes
-                                + "';document.getElementById('ctxHelpDiv').style.display='';"
-                                + "window.scrollTo(0, 0);return false\" title=\""
-                                + soTermDes
-                                + "\"><img class=\"tinyQuestionMark\" "
-                                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                                + "</td><td>" + location + "</td></tr>");
+                        sb.append(features.get(i).get(1));
                     }
 
+                    sb.append("</a></td><td>"
+                            + soTerm
+                            + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                            + soTerm + ": " + soTermDes
+                            + "';document.getElementById('ctxHelpDiv').style.display='';"
+                            + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
+                            + "\"><img class=\"tinyQuestionMark\" "
+                            + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                            + "</td><td>" + location + "</td></tr>");
                 }
             } else {
                 sb.append("<tr><td><b>"

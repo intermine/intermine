@@ -12,7 +12,7 @@
             htmlToInsert += '<option value="'+this+'">'+this+'</option>';
         });
 
-        htmlToInsert += '</select>' +
+        htmlToInsert += '</select>' + '<span id="genomeBuild" style="padding:10px;"></span>'
                         '</li><br>';
 
         htmlToInsert += '<li>' +
@@ -31,7 +31,8 @@
             resetInputs();
 
             jQuery("#organisms option:selected").each(function () {
-                addFeatureTypesToHTML(jQuery(this).text());
+                appendGenomeBuild(jQuery(this).text());
+                appendFeatureTypes(jQuery(this).text());
             });
         })
         .trigger('change');
@@ -76,7 +77,16 @@
 
     });
 
-   function addFeatureTypesToHTML(org) {
+   function appendGenomeBuild(org) {
+       for(i in webDataJSON.genomeBuilds){
+           if (webDataJSON.genomeBuilds[i].organism == org) {
+               jQuery("#genomeBuild").html("<i>genome build: " + webDataJSON.genomeBuilds[i].genomeBuild + "</i>");
+           }
+       }
+
+   }
+
+   function appendFeatureTypes(org) {
 
          var ftHTMLArray = [];
          for(i in webDataJSON.featureTypes){
@@ -85,7 +95,6 @@
                    //    ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
                    //             + this + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + this + "<br/>");
                    //});
-
 
                      var feature_size = webDataJSON.featureTypes[i].features.length;
                      var columns = 3;
