@@ -320,9 +320,9 @@
   <tr>
     <td rowspan="1" class="leftcol"><p><h2>Diseases</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Human disease to Drosophila gene data set</td>
-    <td> <a href="http://superfly.ucsd.edu/homophila/" target="_new" class="extlink">Homophila</a> - Version 2.1</td>
-    <td> Reiter et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/11381037" target="_new" class="extlink">PubMed: 11381037</a></td>
+    <td> Human disease data set</td>
+    <td> OMIM</td>
+    <td> </td>
     <td> &nbsp;</td>
   </tr>
 
