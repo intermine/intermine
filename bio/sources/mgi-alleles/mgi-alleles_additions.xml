@@ -13,6 +13,7 @@
   <attribute name="name" type="java.lang.String"/>
   <attribute name="zygosity" type="java.lang.String"/>
   <attribute name="geneticBackground" type="java.lang.String"/>
+  <reference name="organism" referenced-type="Organism"/>
   <collection name="alleles" referenced-type="Allele" reverse-reference="genotypes"/>
   <collection name="phenotypeTerms" referenced-type="MammalianPhenotypeTerm"/>
 </class>

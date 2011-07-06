@@ -26,14 +26,15 @@ import org.intermine.xml.full.Item;
 
 
 /**
- *
- * @author
+ * Read Alleles and Genotypes with associated Mammalian Phenotype ontology terms from MGI files.
+ * @author Richard Smith
  */
 public class MgiAllelesConverter extends BioFileConverter
 {
     //
     private static final String DATASET_TITLE = "MGI Alleles";
     private static final String DATA_SOURCE_NAME = "MGI Mouse Genome Database";
+    private static final String MOUSE_TAXON = "10090";
 
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
@@ -41,6 +42,7 @@ public class MgiAllelesConverter extends BioFileConverter
     private Map<String, Item> alleles = new HashMap<String, Item>();
 
     private Item ontology;
+    private String organismIdentifier;
 
     /**
      * Constructor
@@ -63,18 +65,19 @@ public class MgiAllelesConverter extends BioFileConverter
 
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        File currentFile = getCurrentFile();
-        if ("MGI_PhenotypicAllele.rpt".equals(currentFile.getName())) {
+
+        organismIdentifier = getOrganism(MOUSE_TAXON);
+        String currentFile = getCurrentFile().getName();
+        if ("MGI_PhenotypicAllele.rpt".equals(currentFile)
+                || "MGI_QTLAllele.rpt".equals(currentFile)) {
             processPhenotypicAlleles(reader);
-        } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile.getName())) {
+        } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile)) {
             processGenotypes(reader);
         } else {
-            System.out.println("Ignoring file: " + currentFile.getName());
+            System.out .println("Ignoring file: " + currentFile);
         }
     }
     private void processGenotypes(Reader reader) throws ObjectStoreException, IOException {
@@ -106,13 +109,17 @@ public class MgiAllelesConverter extends BioFileConverter
                 currentGenotype = createItem("Genotype");
                 currentGenotype.setAttribute("name", genotypeName);
                 currentGenotype.setAttribute("geneticBackground", background);
+                currentGenotype.setReference("organism", organismIdentifier);
+
                 String zygosity = determineZygosity(alleleSymbols, geneStr);
                 if (zygosity != null) {
                     currentGenotype.setAttribute("zygosity", zygosity);
                 }
                 for (String alleleSymbol : alleleSymbols) {
-                    Item allele = getAlleleItem(alleleSymbol);
-                    currentGenotype.addToCollection("alleles", allele);
+                    if (!isWildTypeSymbol(alleleSymbol)) {
+                        Item allele = getAlleleItem(alleleSymbol);
+                        currentGenotype.addToCollection("alleles", allele);
+                    }
                 }
             }
             currentGenotype.addToCollection("phenotypeTerms", getTermItemId(termId));
@@ -121,6 +128,10 @@ public class MgiAllelesConverter extends BioFileConverter
         if (currentGenotype != null) {
             store(currentGenotype);
         }
+    }
+
+    private boolean isWildTypeSymbol(String symbol) {
+        return symbol.contains("<+>");
     }
 
     private String determineZygosity(String[] alleleSymbols, String geneStr) {
@@ -189,6 +200,7 @@ public class MgiAllelesConverter extends BioFileConverter
         if (allele == null) {
             allele = createItem("Allele");
             allele.setAttribute("symbol", alleleSymbol);
+            allele.setReference("organism", organismIdentifier);
             alleles.put(alleleSymbol, allele);
         }
         return allele;
@@ -211,6 +223,7 @@ public class MgiAllelesConverter extends BioFileConverter
         if (geneItemId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute("secondaryIdentifier", geneIdentifier);
+            gene.setReference("organism", organismIdentifier);
             store(gene);
             geneItemId = gene.getIdentifier();
             genes.put(geneIdentifier, geneItemId);
