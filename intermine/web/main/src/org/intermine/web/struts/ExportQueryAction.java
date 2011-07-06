@@ -67,7 +67,7 @@ public class ExportQueryAction extends InterMineAction
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
             query = SessionMethods.getQuery(session);
         } else if ("history".equals(type)) {
-            SavedQuery sq = profile.getSavedQueries().get(name);
+            SavedQuery sq = profile.getHistory().get(name);
 
             if (sq == null) {
                 recordError(new ActionMessage("errors.query.missing", name), request);
