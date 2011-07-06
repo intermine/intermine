@@ -465,7 +465,6 @@ class InterMineObjectFetcher extends Thread
 
                         // create base doc for object
                         Document doc = createDocument(object, classDescriptor);
-
                         HashSet<String> references = new HashSet<String>();
                         HashMap<String, KeywordSearchFacetData> referenceFacetFields =
                                 new HashMap<String, KeywordSearchFacetData>();
@@ -755,7 +754,7 @@ class InterMineObjectFetcher extends Thread
             Field f;
 
             if (!raw) {
-                f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
+                f = new Field(fieldName, value.toLowerCase(), Field.Store.NO, Field.Index.ANALYZED);
             } else {
                 f = new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
                     Field.Index.NOT_ANALYZED);
@@ -1609,27 +1608,17 @@ public final class KeywordSearch
         LOG.info("Preparing indexer...");
         index = new LuceneIndexContainer();
         try {
-            tempFile = File.createTempFile("search_index", "", new File(tempDirectory));
-            if (!tempFile.delete()) {
-                throw new IOException("Could not delete temp file");
-            }
-
-            index.setDirectory(FSDirectory.open(tempFile));
-            index.setDirectoryType("FSDirectory");
-
-            // make sure we start with a new index
-            if (tempFile.exists()) {
-                String[] files = tempFile.list();
-                for (int i = 0; i < files.length; i++) {
-                    LOG.info("Deleting old file: " + files[i]);
-                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
-                }
-            } else {
-                tempFile.mkdir();
-            }
+            tempFile = makeTempFile(tempDirectory);
         } catch (IOException e) {
-            LOG.error("Creating temp directory failed", e);
-            throw e;
+            String tmpDir = System.getProperty("java.io.tmpdir");
+            LOG.warn("Failed to create temp directory " + tempDirectory + " trying " + tmpDir
+                    + " instead", e);
+            try {
+                tempFile = makeTempFile(tmpDir);
+            } catch (IOException ee) {
+                LOG.warn("Failed to create temp directory in " + tmpDir, ee);
+                throw ee;
+            }
         }
 
         LOG.info("Index directory: " + tempFile.getAbsolutePath());
@@ -1681,6 +1670,30 @@ public final class KeywordSearch
         LOG.info("Indexing of " + indexed + " documents finished in "
                 + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
                         time % 1000) + " minutes");
+        return tempFile;
+    }
+
+
+    private static File makeTempFile(String tempDir) throws IOException {
+        LOG.info("Creating search index tmp dir: " + tempDir);
+        File tempFile = File.createTempFile("search_index", "", new File(tempDir));
+        if (!tempFile.delete()) {
+            throw new IOException("Could not delete temp file");
+        }
+
+        index.setDirectory(FSDirectory.open(tempFile));
+        index.setDirectoryType("FSDirectory");
+
+        // make sure we start with a new index
+        if (tempFile.exists()) {
+            String[] files = tempFile.list();
+            for (int i = 0; i < files.length; i++) {
+                LOG.info("Deleting old file: " + files[i]);
+                new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
+            }
+        } else {
+            tempFile.mkdir();
+        }
         return tempFile;
     }
 
