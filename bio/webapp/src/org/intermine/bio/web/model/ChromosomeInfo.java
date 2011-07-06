@@ -20,6 +20,7 @@ public class ChromosomeInfo
 {
     private String orgName;
     private String chrPID;
+    private String chrPIDLowerCase;
     private Integer chrLength;
 
     /**
@@ -45,6 +46,7 @@ public class ChromosomeInfo
      */
     public void setChrPID(String chrPID) {
         this.chrPID = chrPID;
+        this.chrPIDLowerCase = chrPID.toLowerCase();
     }
     /**
      * @return the chrLength
@@ -59,5 +61,11 @@ public class ChromosomeInfo
         this.chrLength = chrLength;
     }
 
+    /**
+     * @return the chrPIDLowerCase
+     */
+    public String getChrPIDLowerCase() {
+        return chrPIDLowerCase;
+    }
 }
 

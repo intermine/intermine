@@ -125,6 +125,8 @@ public class EnsemblComparaConverter extends BioFileConverter
             return;
         }
 
+        String lastGene1 = "";
+        String lastGene2 = "";
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
@@ -141,6 +143,11 @@ public class EnsemblComparaConverter extends BioFileConverter
                 continue;
             }
 
+            if (gene1.equals(lastGene1) && gene2.equals(lastGene2)) {
+                // file isn't unique
+                continue;
+            }
+
             String refId1 = parseGene(bits[0], gene1);
             String refId2 = parseGene(bits[1], gene2);
 
@@ -151,6 +158,8 @@ public class EnsemblComparaConverter extends BioFileConverter
             // store homologues
             processHomologue(refId1, refId2);
             processHomologue(refId2, refId1);
+            lastGene1 = gene1;
+            lastGene2 = gene2;
         }
     }
 
