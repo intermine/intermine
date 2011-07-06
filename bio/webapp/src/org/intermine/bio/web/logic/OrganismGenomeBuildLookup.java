@@ -40,6 +40,8 @@ public final class OrganismGenomeBuildLookup
             Properties props = PropertiesUtil.getProperties();
             String flyGB = props.getProperty("genomeVersion.fly");
             String wormGB = props.getProperty("genomeVersion.worm");
+            String humanGB = props.getProperty("genomeVersion.human");
+            String mouseGB = props.getProperty("genomeVersion.mouse");
 
             if (flyGB != null) {
                 taxonMap.put(7227, flyGB);
@@ -51,6 +53,18 @@ public final class OrganismGenomeBuildLookup
                 taxonMap.put(6239, wormGB);
                 abbreviationMap.put("C. elegans", wormGB);
                 fullnameMap.put("Caenorhabditis elegans", wormGB);
+            }
+
+            if (humanGB != null) {
+                taxonMap.put(9606, humanGB);
+                abbreviationMap.put("H. sapiens", humanGB);
+                fullnameMap.put("Homo sapiens", humanGB);
+            }
+
+            if (mouseGB != null) {
+                taxonMap.put(10090, mouseGB);
+                abbreviationMap.put("M. musculus", mouseGB);
+                fullnameMap.put("Mus musculus", mouseGB);
             }
         }
     }
