@@ -137,9 +137,11 @@ public final class MetadataManager
             connection.setAutoCommit(true);
             connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
                                                  + key + "'");
-            connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
+            if (value != null) {
+                connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
                                                  + "VALUES('" + key + "', '"
                                                  + StringUtil.duplicateQuotes(value) + "')");
+            }
         } finally {
             connection.setAutoCommit(autoCommit);
             connection.close();
