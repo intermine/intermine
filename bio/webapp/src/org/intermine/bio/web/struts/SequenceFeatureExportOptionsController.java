@@ -72,7 +72,8 @@ public class SequenceFeatureExportOptionsController extends TilesAction
             request.setAttribute("exportClassPaths", pathMap);
         }
 
-        Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(pt, session);
+        Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(pt
+                .getWebTable().getPathQuery(), session);
         request.setAttribute("organismString", StringUtil.join(orgSet, ","));
         request.setAttribute("orgSet", orgSet);
 
