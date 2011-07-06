@@ -1091,10 +1091,8 @@ public class GenomicRegionSearchService
                             + baseURL
                             + "/"
                             + path
-                            + "/portal.do?externalid="
-                            + firstFeature.get(1)
-                            + "&class="
-                            + firstFeature.get(2)
+                            + "/report.do?id="
+                            + firstFeature.get(0)
                             + "'>"
                             + firstFeature.get(1)
                             + "</a></td><td>"
@@ -1149,10 +1147,8 @@ public class GenomicRegionSearchService
                                 + baseURL
                                 + "/"
                                 + path
-                                + "/portal.do?externalid="
-                                + features.get(i).get(1)
-                                + "&class="
-                                + features.get(i).get(2)
+                                + "/report.do?id="
+                                + features.get(i).get(0)
                                 + "'>"
                                 + features.get(i).get(1)
                                 + "</a></td><td>"
