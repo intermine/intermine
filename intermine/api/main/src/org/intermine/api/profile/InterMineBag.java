@@ -10,6 +10,11 @@ package org.intermine.api.profile;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -28,10 +33,21 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.DatabaseUtil;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.TypeUtil;
 
 
@@ -45,13 +61,15 @@ import org.intermine.util.TypeUtil;
 public class InterMineBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
-
+    public static final String BAG_VALUES = "bagvalues";
     private Integer profileId;
     private Integer savedBagId;
     private String name;
     protected final String type;
     private String description;
     private Date dateCreated;
+    private List<String> keyFieldNames;
+    private boolean isCurrent;
     private ObjectStoreBag osb;
     private ObjectStore os;
     private ObjectStoreWriter uosw;
@@ -65,17 +83,47 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
+     * @param isCurrent the status of this bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-            ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
-        checkAndSetName(name);
+            boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+        throws ObjectStoreException {
         this.type = type;
+        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
+    }
+
+    /**
+     * Constructs a new InterMineIdBag, and saves it in the UserProfile database.
+     *
+     * @param name the name of the bag
+     * @param type the class of objects stored in the bag
+     * @param description the description of the bag
+     * @param dateCreated the Date when this bag was created
+     * @param isCurrent the current state of the bag
+     * @param os the production ObjectStore
+     * @param profileId the ID of the user in the userprofile database
+     * @param uosw the ObjectStoreWriter of the userprofile database
+     * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public InterMineBag(String name, String type, String description, Date dateCreated,
+        boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
+        List<String> keyFieldNames) throws ObjectStoreException {
+        this.type = type;
+        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
+        this.keyFieldNames = keyFieldNames;
+    }
+
+    private void init(String name, String description, Date dateCreated, boolean isCurrent,
+        ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
+        checkAndSetName(name);
         this.description = description;
         this.dateCreated = dateCreated;
+        this.isCurrent = isCurrent;
         this.os = os;
         this.profileId = profileId;
         this.osb = os.createObjectStoreBag();
@@ -106,6 +154,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.description = savedBag.getDescription();
         this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
+        this.isCurrent = savedBag.getCurrent();
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
         setClassDescriptors();
     }
@@ -129,6 +178,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             savedBag.setDateCreated(dateCreated);
             savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
             savedBag.setOsbId(osb.getBagId());
+            savedBag.setCurrent(isCurrent);
             uosw.store(savedBag);
         }
         return savedBag;
@@ -164,6 +214,143 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
+     * Returns a List of key field values of the objects contained by this bag.
+     * @return the list of key field values
+     */
+    public List<String> getContentsASKeyFieldValues() {
+        List<String> keyFieldValueList = new ArrayList<String>();
+        if (isCurrent) {
+            Query q = new Query();
+            q.setDistinct(false);
+            try {
+                QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
+                q.addFrom(qc);
+                if (keyFieldNames.isEmpty()) {
+                    throw new RuntimeException("set the keyFieldNames before calling "
+                                              + "getContentsASKeyFieldValues method");
+                }
+                for (String keyFieldName : keyFieldNames) {
+                    q.addToSelect(new QueryField(qc, keyFieldName));
+                }
+                QueryField idField = new QueryField(qc, "id");
+                BagConstraint c = new BagConstraint(idField, ConstraintOp.IN, osb);
+                q.setConstraint(c);
+                Results res = os.execute(q);
+                for (Object rowObj : res) {
+                    ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                    String value;
+                    for (int index = 0; index < keyFieldNames.size(); index++) {
+                        value = (String) row.get(index);
+                        if (value != null && !"".equals(value)) {
+                            keyFieldValueList.add(value);
+                            break;
+                        }
+                    }
+                }
+                return keyFieldValueList;
+            } catch (ClassNotFoundException cne) {
+                return new ArrayList<String>();
+            }
+        } else {
+            //we are upgrading bags, the osbag_int is empty, we need to use bagvalues table
+            Connection conn = null;
+            Statement stm = null;
+            ResultSet rs = null;
+            List<String> primaryIdentifiersList = new ArrayList<String>();
+            ObjectStoreInterMineImpl uos = null;
+            try {
+                uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
+                conn = uos.getConnection();
+                stm = conn.createStatement();
+                String sql = "SELECT value FROM " + BAG_VALUES + " WHERE savedbagid = "
+                             + savedBagId;
+                rs = stm.executeQuery(sql);
+                while (rs.next()) {
+                    primaryIdentifiersList.add(rs.getString(1));
+                }
+            } catch (SQLException sqe) {
+                LOG.error("Connection problems during loadings primary identifiers fields for"
+                          + "the bag " + name, sqe);
+            } finally {
+                if (rs != null) {
+                    try {
+                        rs.close();
+                        if (stm != null) {
+                            stm.close();
+                        }
+                    } catch (SQLException sqle) {
+                        LOG.error("Problems closing resources in the method "
+                            + "getContentsASPrimaryIdentifierValues for the bag " + name, sqle);
+                    }
+                }
+                uos.releaseConnection(conn);
+            }
+            return primaryIdentifiersList;
+        }
+    }
+
+    /**
+     * Returns the values of the key field objects with id specified in input and contained in
+     * the bag
+     * @param ids the collection of id
+     * @return the list of values
+     */
+    public List<String> getKeyFieldValues(Collection<Integer> ids) {
+        List<String> keyFieldValueList = new ArrayList<String>();
+        Query q = new Query();
+        q.setDistinct(false);
+        try {
+            QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
+            q.addFrom(qc);
+            for (String keyFieldName : keyFieldNames) {
+                q.addToSelect(new QueryField(qc, keyFieldName));
+            }
+            QueryField idField = new QueryField(qc, "id");
+            BagConstraint idsConstraints = new BagConstraint(idField, ConstraintOp.IN, ids);
+            q.setConstraint(idsConstraints);
+            Results res = os.execute(q, 1000, false, true, true);
+            for (Object rowObj : res) {
+                ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                String value;
+                for (int index = 0; index < keyFieldNames.size(); index++) {
+                    value = (String) row.get(index);
+                    if (value != null && !"".equals(value)) {
+                        keyFieldValueList.add(value);
+                        break;
+                    }
+                }
+            }
+            return keyFieldValueList;
+        } catch (ClassNotFoundException cne) {
+            return new ArrayList<String>();
+        }
+    }
+
+    /**
+     * Upgrades the ObjectStoreBag with a new ObjectStoreBag containing the collection of elements
+     * given in input
+     * @param values the collection of elements to add
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public void upgradeOsb(Collection<Integer> values) throws ObjectStoreException {
+        ObjectStoreWriter oswProduction = null;
+        SavedBag savedBag = (SavedBag) uosw.getObjectById(savedBagId, SavedBag.class);
+        try {
+            oswProduction = os.getNewWriter();
+            osb = oswProduction.createObjectStoreBag();
+            oswProduction.addAllToBag(osb, values);
+            savedBag.setOsbId(osb.getBagId());
+            savedBag.setCurrent(true);
+            isCurrent = true;
+            uosw.store(savedBag);
+        } finally {
+            if (oswProduction != null) {
+                oswProduction.close();
+            }
+        }
+    }
+
+    /**
      * Returns the size of the bag.
      *
      * @return the number of elements in the bag
@@ -196,6 +383,15 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
+     * Sets the ObjectStoreBag.
+     *
+     * @param osb the ObjectStoreBag
+     */
+    public void setOsb(ObjectStoreBag osb) {
+        this.osb = osb;
+    }
+
+    /**
      * Sets the profileId - moves this bag from one profile to another.
      *
      * @param profileId the ID of the new userprofile
@@ -206,6 +402,24 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.profileId = profileId;
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
+        isCurrent = savedBag.getCurrent();
+        addBagValues();
+    }
+
+    /**
+     * Save the bag into the userprofile database
+     *
+     * @param profileId the ID of the userprofile
+     * @param bagValues the list of the key field values of the objects contained by the bag
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void saveWithBagValues(Integer profileId, Collection<String> bagValues)
+        throws ObjectStoreException {
+        this.profileId = profileId;
+        SavedBag savedBag = store();
+        this.savedBagId = savedBag.getId();
+        isCurrent = savedBag.getCurrent();
+        addBagValues(bagValues);
     }
 
     /**
@@ -292,6 +506,47 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
+     * Return the savedbagId of this bag
+     * @return savedbagId
+     */
+    public Integer getSavedBagId() {
+        return savedBagId;
+    }
+
+
+    /**
+     * Set the keyFieldNames
+     * @param keyFieldNames the list of keyField names
+     */
+    public void setKeyFieldNames(List<String> keyFieldNames) {
+        this.keyFieldNames = keyFieldNames;
+    }
+
+    /**
+     * Return a list containing the keyFieldNames for the bag
+     * @return keyFieldNames
+     */
+    public List<String> getKeyFieldNames() {
+        return keyFieldNames;
+    }
+
+    /**
+     * Return true if the bag isCurrent
+     * @return isCurrent
+     */
+    public boolean isCurrent() {
+        return isCurrent;
+    }
+
+    /**
+     * Set if the bag is current
+     * @param isCurrent the value to set
+     */
+    public void setCurrent(boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
+    /**
      * Create copy of bag. Bag is saved to objectstore.
      * @return create bag
      */
@@ -334,6 +589,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             copy.savedBagId = null;
             SavedBag savedBag = copy.store();
             copy.savedBagId = savedBag.getId();
+            copy.keyFieldNames = keyFieldNames;
         } catch (ObjectStoreException ex) {
             throw new RuntimeException("Clone failed.", ex);
         } catch (CloneNotSupportedException ex) {
@@ -384,6 +640,9 @@ public class InterMineBag implements WebSearchable, Cloneable
                 oswProduction.close();
             }
         }
+        if (profileId != null) {
+            addBagValuesFromIds(ids);
+        }
     }
 
     /**
@@ -428,6 +687,9 @@ public class InterMineBag implements WebSearchable, Cloneable
                 oswProduction.close();
             }
         }
+        if (profileId != null) {
+            addBagValues();
+        }
     }
 
     /**
@@ -452,6 +714,123 @@ public class InterMineBag implements WebSearchable, Cloneable
         } finally {
             if (oswProduction != null) {
                 oswProduction.close();
+            }
+        }
+        if (profileId != null) {
+            deleteBagValues(ids);
+        }
+    }
+
+    /**
+     * Save the key field values associated to the bag into bagvalues table
+     */
+    public void addBagValues() {
+        if (profileId != null) {
+            List<String> values = getContentsASKeyFieldValues();
+            addBagValues(values);
+        }
+    }
+
+    /**
+     * Save the key field values identified by the ids given in input into bagvalues table
+     */
+    private void addBagValuesFromIds(Collection<Integer> ids) {
+        if (profileId != null) {
+            List<String> values = getKeyFieldValues(ids);
+            addBagValues(values);
+        }
+    }
+
+    /**
+     * Save the values given in input into bagvalues table
+     * @param bagValues the values to save
+     */
+    public void addBagValues(Collection<String> bagValues) {
+        Connection conn = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
+                DatabaseUtil.createBagValuesTables(conn);
+            }
+            if (conn.getAutoCommit()) {
+                conn.setAutoCommit(false);
+                Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
+                String[] colNames = new String[] {"savedbagid", "value"};
+                for (String value : bagValues) {
+                    batch.addRow(conn, BAG_VALUES, null, colNames,
+                                new Object[] {savedBagId, value});
+                }
+                batch.flush(conn);
+                conn.commit();
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException sqle) {
+            try {
+                conn.rollback();
+                conn.setAutoCommit(true);
+            } catch (SQLException sqlex) {
+                throw new RuntimeException("Error aborting transaction", sqlex);
+            }
+        } finally {
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+    }
+
+    /**
+     *
+     */
+    private void deleteBagValues() {
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            stm = conn.createStatement();
+            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "'";
+            stm.executeUpdate(sql);
+        } catch (SQLException sqle) {
+            throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Problem closing  resources in deleteBagValues()",
+                                               e);
+                }
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+    }
+
+    private void deleteBagValues(Collection<Integer> ids) {
+        Connection conn = null;
+        Statement stm = null;
+        List<String> values = getKeyFieldValues(ids);
+        if (values.size() > 0) {
+            try {
+                conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+                stm = conn.createStatement();
+                String sql;
+                String valuesList = "";
+                for (String value : values) {
+                    valuesList = valuesList + "'" + value + "',";
+                }
+                valuesList = valuesList.substring(0, valuesList.length() - 1);
+                sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "' "
+                    + " AND value IN (" + valuesList + ")";
+                stm.executeUpdate(sql);
+            } catch (SQLException sqle) {
+                throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
+            } finally {
+                if (stm != null) {
+                    try {
+                        stm.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Problem closing  resources in"
+                                                   + " deleteBagValues()", e);
+                    }
+                }
+                ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
             }
         }
     }

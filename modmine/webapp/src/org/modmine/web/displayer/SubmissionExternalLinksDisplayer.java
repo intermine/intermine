@@ -27,7 +27,7 @@ import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -41,7 +41,7 @@ import org.modmine.web.MetadataCache;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionExternalLinksDisplayer extends CustomDisplayer
+public class SubmissionExternalLinksDisplayer extends ReportDisplayer
 {
     /**
      *

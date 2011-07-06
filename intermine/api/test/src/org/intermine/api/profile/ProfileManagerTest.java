@@ -19,6 +19,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -28,7 +31,9 @@ import javax.xml.stream.XMLStreamWriter;
 import junit.framework.Test;
 
 import org.custommonkey.xmlunit.XMLUnit;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.CEO;
@@ -52,7 +57,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
-import org.intermine.web.bag.PkQueryIdUpgrader;
 
 /**
  * Tests for the Profile class.
@@ -68,6 +72,7 @@ public class ProfileManagerTest extends StoreDataTestCase
     private Integer sallyId = new Integer(102);
     private String bobPass = "bob_pass";
     private String sallyPass = "sally_pass";
+    private Map<String, List<FieldDescriptor>>  classKeys;
 
     public ProfileManagerTest(String arg) {
         super(arg);
@@ -80,6 +85,10 @@ public class ProfileManagerTest extends StoreDataTestCase
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         uos = uosw.getObjectStore();
         pm = new ProfileManager(os, uosw);
+
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
     }
 
     public void executeTest(String type) {
@@ -104,9 +113,10 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         // bob's details
         String bobName = "bob";
-
+        List<String> keyFieldNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+                classKeys, "Department");
         InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
-                new Date(), os, bobId, uosw);
+                new Date(), true, os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
@@ -149,7 +159,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
-                new Date(), os, sallyId, uosw);
+                new Date(), true, os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
         template = new TemplateQuery("template", "ttitle", "tcomment",
@@ -248,8 +258,8 @@ public class ProfileManagerTest extends StoreDataTestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, os, writer, PathQuery.USERPROFILE_VERSION);
-            ProfileBinding.marshal(sallyProfile, os, writer, PathQuery.USERPROFILE_VERSION);
+            ProfileBinding.marshal(bobProfile, os, writer, PathQuery.USERPROFILE_VERSION, classKeys);
+            ProfileBinding.marshal(sallyProfile, os, writer, PathQuery.USERPROFILE_VERSION, classKeys);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -283,7 +293,7 @@ public class ProfileManagerTest extends StoreDataTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
+        ProfileManagerBinding.unmarshal(reader, pm, osw);
 
         // only profiles from file, not from setUpUserprofiles()
         assertEquals(2, pm.getProfileUserNames().size());

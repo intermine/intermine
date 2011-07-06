@@ -13,7 +13,7 @@ package org.intermine.bio.web.displayer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
@@ -21,7 +21,7 @@ import org.intermine.web.logic.results.ReportObject;
  * Displayer for JBrowse
  * @author rns
  */
-public class JBrowseDisplayer extends CustomDisplayer
+public class JBrowseDisplayer extends ReportDisplayer
 {
 
     /**

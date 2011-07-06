@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <tiles:importAttribute/>
 
@@ -17,7 +18,7 @@
 
   <%-- class name --%>
   <div>
-    <c:out value="${fn:replace(pathString, '.', ' > ')}" />
+    <c:out value="${imf:formatPath(pathString, INTERMINE_API, WEBCONFIG)}" />
 
     <%-- (x) img --%>
     <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">

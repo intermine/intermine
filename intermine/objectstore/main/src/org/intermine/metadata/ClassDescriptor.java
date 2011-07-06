@@ -806,31 +806,37 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 sb.append(",");
             }
         }
-        sb.append("],\"isInterface\":" + isInterface + ",\"attributes\":[");
+        sb.append("],\"isInterface\":" + isInterface + ",\"attributes\":{");
         Iterator<AttributeDescriptor> attrIter = getAllAttributeDescriptors().iterator();
         while (attrIter.hasNext()) {
-            sb.append(attrIter.next().toJSONString());
+            AttributeDescriptor ad = attrIter.next();
+            sb.append("\"" + ad.getName() + "\":");
+            sb.append(ad.toJSONString());
             if (attrIter.hasNext()) {
                 sb.append(",");
             }
         }
-        sb.append("],\"references\":[");
+        sb.append("},\"references\":{");
         Iterator<ReferenceDescriptor> refIter = getAllReferenceDescriptors().iterator();
         while (refIter.hasNext()) {
-            sb.append(refIter.next().toJSONString());
+            ReferenceDescriptor rd = refIter.next();
+            sb.append("\"" + rd.getName() + "\":");
+            sb.append(rd.toJSONString());
             if (refIter.hasNext()) {
                 sb.append(",");
             }
         }
-        sb.append("],\"collections\":[");
+        sb.append("},\"collections\":{");
         Iterator<CollectionDescriptor> colIter = getAllCollectionDescriptors().iterator();
         while (colIter.hasNext()) {
-            sb.append(colIter.next().toJSONString());
+            CollectionDescriptor cd = colIter.next();
+            sb.append("\"" + cd.getName() + "\":");
+            sb.append(cd.toJSONString());
             if (colIter.hasNext()) {
                 sb.append(",");
             }
         }
-        sb.append("]}");
+        sb.append("}}");
         return sb.toString();
     }
 
@@ -899,5 +905,21 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             retList.add(terseClass(name));
         }
         return retList;
+    }
+
+    /**
+     * Get the full inheritance list for this class. This set includes not just
+     * this classes' immediate ancestors, but all their ancestors as well, as well as this class'
+     * name.
+     * @return A set of class names.
+     */
+    public Set<String> getAllSuperclassNames() {
+        Set<String> classNames = new LinkedHashSet<String>();
+        classNames.add(this.getName());
+        classNames.addAll(this.getSuperclassNames());
+        for (ClassDescriptor superCd: this.getSuperDescriptors()) {
+            classNames.addAll(superCd.getAllSuperclassNames());
+        }
+        return classNames;
     }
 }

@@ -19,7 +19,7 @@ sub BUILD {
     $self->set_sources([
         {
             SERVER  => 'http://redfly.ccr.buffalo.edu/datadumps',
-            FILE    => "tfb_dump.gff",
+            FILE    => "tfbs_dump.gff",
             SUB_DIR => ["tfbs"],
         },
         {

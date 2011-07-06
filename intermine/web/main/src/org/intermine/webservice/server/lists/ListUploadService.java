@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -17,31 +16,27 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.exceptions.BadRequestException;
-import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 
-public class ListUploadService extends WebService {
+public class ListUploadService extends ListMakerService {
 
     /**
      * A usage string to return for bad requests.
@@ -65,12 +60,7 @@ public class ListUploadService extends WebService {
     public static final int BAG_QUERY_MAX_BATCH_SIZE = 10000;
 
     private final BagQueryRunner runner;
-    protected static final String TEMP_SUFFIX = "_temp";
     protected static final String PLAIN_TEXT = "text/plain";
-    protected static final String LIST_NAME_KEY = "listName";
-    protected static final String LIST_SIZE_KEY = "listSize";
-
-    protected Map<String, String> kvPairs = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -85,33 +75,15 @@ public class ListUploadService extends WebService {
      * Sets the header attributes on the output object.
      * @param requiredParams The list of parameters which are required by this service.
      */
-    protected void setHeaderAttributes(List<String> requiredParams) {
-        Map<String, Object> attributes = new HashMap<String, Object>();
+    @Override
+    protected Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> attributes = super.getHeaderAttributes();
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"unmatchedIdentifiers\":[");
             attributes.put(JSONFormatter.KEY_OUTRO, "]");
             attributes.put(JSONFormatter.KEY_QUOTE, Boolean.TRUE);
         }
-        if (formatIsJSONP()) {
-            attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
-        }
-        attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
-        output.setHeaderAttributes(attributes);
-
-        for (String param: requiredParams) {
-            if (StringUtils.isEmpty(param)) {
-                kvPairs.put(LIST_NAME_KEY, "unknown");
-                throw new BadRequestException(USAGE);
-            }
-        }
-    }
-
-    /**
-     * Sets the name of the list on the header attributes.
-     * @param name The name of the newly created list.
-     */
-    protected void setListName(String name) {
-        kvPairs.put(LIST_NAME_KEY, name);
+        return attributes;
     }
 
     /**
@@ -119,7 +91,7 @@ public class ListUploadService extends WebService {
      * @param size The size of the newly created list.
      */
     protected void setListSize(Integer size) {
-        kvPairs.put(LIST_SIZE_KEY, size.toString());
+        addOutputInfo(LIST_SIZE_KEY, size + "");
     }
 
     /**
@@ -138,76 +110,59 @@ public class ListUploadService extends WebService {
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected String getNewListType(ListInput input) {
+        return input.getType();
+    }
 
-        if (!this.isAuthenticated()) {
-            throw new BadRequestException("Not authenticated." + USAGE);
-        }
+    protected ListInput getInput(HttpServletRequest request, BagManager bagManager) {
+        return new ListCreationInput(request, bagManager);
+    }
+
+    @Override
+    protected void makeList(ListInput input, String type, Profile profile,
+        Set<String> temporaryBagNamesAccumulator) throws Exception {
+
         StrMatcher matcher = getMatcher();
-        Profile profile = SessionMethods.getProfile(request.getSession());
-
-        String type = request.getParameter("type");
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        String extraFieldValue = request.getParameter("extraValue");
-        String[] tags = StringUtils.split(request.getParameter("tags"), ';');
-        boolean replace = Boolean.parseBoolean("replaceExisting");
-
-        setListName(name);
-        setHeaderAttributes(Arrays.asList(type, name));
-
-        String tempName = name + TEMP_SUFFIX;
 
         BufferedReader r = getReader(request);
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
-        try {
-            InterMineBag tempBag = profile.createBag(tempName, type, description);
-            String line;
-            while ((line = r.readLine()) != null) {
-                StrTokenizer st = new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
-                while (st.hasNext()) {
-                    String token = st.nextToken();
-                    ids.add(token);
-                }
-                if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
-                    addIdsToList(ids, tempBag, type, extraFieldValue, unmatchedIds);
-                    ids.clear();
-                }
+        InterMineBag tempBag = profile.createBag(
+                input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
+        String line;
+        while ((line = r.readLine()) != null) {
+            StrTokenizer st = new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
+            while (st.hasNext()) {
+                String token = st.nextToken();
+                ids.add(token);
             }
-            if (ids.size() > 0) {
-                addIdsToList(ids, tempBag, type, extraFieldValue, unmatchedIds);
-            }
-
-            setListSize(tempBag.size());
-
-            for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
-                List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
-                if (i.hasNext()) {
-                    row.add("");
-                }
-                output.addResultItem(row);
-            }
-            if (replace) {
-                try {
-                    profile.deleteBag(name);
-                } catch(BagDoesNotExistException e) {
-                    // Ignore
-                }
-            }
-            if (tags != null) {
-	            im.getBagManager().addTagsToBag(Arrays.asList(tags), tempBag, profile);
-            }
-            profile.renameBag(tempName, name);
-        } finally {
-            try {
-                profile.deleteBag(tempName);
-            } catch(BagDoesNotExistException e) {
-                // Ignore
+            if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
+                addIdsToList(ids, tempBag, type, input.getExtraValue(),
+                        unmatchedIds);
+                ids.clear();
             }
         }
+        if (ids.size() > 0) {
+            addIdsToList(ids, tempBag, type, input.getExtraValue(), unmatchedIds);
+        }
+
+        setListSize(tempBag.size());
+
+        for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
+            List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
+            if (i.hasNext()) {
+                row.add("");
+            }
+            output.addResultItem(row);
+        }
+        if (input.doReplace()) {
+            ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
+        }
+        if (!input.getTags().isEmpty()) {
+            im.getBagManager().addTagsToBag(input.getTags(), tempBag, profile);
+        }
+        profile.renameBag(input.getTemporaryListName(), input.getListName());
     }
 
     protected BufferedReader getReader(HttpServletRequest request)

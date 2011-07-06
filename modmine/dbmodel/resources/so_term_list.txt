@@ -32,6 +32,7 @@ insulator_binding_site
 intergenic_region
 intron
 junction
+mature_transcript
 miRNA
 mRNA
 natural_transposable_element
@@ -43,6 +44,7 @@ point_mutation
 polyA_sequence
 polyA_signal_sequence
 polyA_site
+polypeptide_region
 processed_transcript
 protein_binding_site
 reagent

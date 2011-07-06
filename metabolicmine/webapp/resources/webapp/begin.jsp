@@ -346,11 +346,11 @@
                         </center>
                     </div>
                </form>
-			   <script type="text/javascript">
-					jQuery('#mainSearchForm a').click(function() {
-			  			document.getElementById("mainSearchForm").submit();
-					});
-			   </script>
+         <script type="text/javascript">
+          jQuery('#mainSearchForm a').click(function() {
+              document.getElementById("mainSearchForm").submit();
+          });
+         </script>
 
                 <div style="clear:both;"></div>
             </div>
@@ -380,19 +380,23 @@
                         <option value="R. norvegicus">R. norvegicus</option>
                       </select>
                       <div class="textarea">
-                        <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+                        <textarea autocomplete="off" id="listInput" name="text">e.g. <c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                       </div>
                   </form>
                 </div>
                 <div style="clear:both;"></div>
 
-                <div class="bottom">
+                <div class="bottom arrowtip">
                   <a class="advanced" class="adv" href="bag.do?subtab=upload">file upload</a>
                   <a class="button green">
                     <div><span>Analyse list</span></div>
                   </a>
                   <script type="text/javascript">
+                    jQuery("#lists-bochs textarea").click(function() {
+                      jQuery("#lists-bochs div.bottom").removeClass('arrowtip');
+                    });
                     jQuery('#lists-bochs a.button').click(function() {
+                      jQuery("textarea#listInput").val(jQuery("textarea#listInput").val().replace("e.g.", "").replace(/^\s+|\s+$/g, ""));
                       document.buildBagForm.submit();
                     });
                   </script>
@@ -443,7 +447,7 @@
                               <c:set var="aspectTitle" value="${row.value}"/>
                             </c:when>
                             <c:when test="${row.key == 'description'}">
-                              <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
+                              <p><c:out value="${row.value}" />&nbsp;<a href="dataCategories.do">Read more</a></p><br/>
                             </c:when>
                             <c:when test="${row.key == 'name'}">
                               <p>Search for <c:out value="${row.value}" />:</p>

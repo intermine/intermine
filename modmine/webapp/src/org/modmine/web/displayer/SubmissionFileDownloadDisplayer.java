@@ -18,7 +18,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -29,7 +29,7 @@ import org.modmine.web.MetadataCache;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionFileDownloadDisplayer extends CustomDisplayer
+public class SubmissionFileDownloadDisplayer extends ReportDisplayer
 {
     /**
     *

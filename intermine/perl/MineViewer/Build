@@ -11,7 +11,7 @@ sub magic_number_matches {
   open FH, '_build/magicnum' or return 0;
   my $filenum = <FH>;
   close FH;
-  return $filenum == 761400;
+  return $filenum == 841440;
 }
 
 my $progname;
@@ -31,10 +31,7 @@ BEGIN {
   }
   unshift @INC,
     (
-     '/home/alex/ensembl/ensembl/modules',
-     '/home/alex/ensembl/ensembl-compara/modules',
-     '/home/alex/ensembl/ensembl-variation/modules',
-     '/home/alex/ensembl/ensembl-functgenomics/modules'
+
     );
 }
 

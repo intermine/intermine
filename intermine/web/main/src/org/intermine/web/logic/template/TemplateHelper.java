@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLOutputFactory;
@@ -34,6 +35,8 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.webservice.server.CodeTranslator;
 
 /**
@@ -131,7 +134,13 @@ public final class TemplateHelper
             ConstraintOp op = getConstraintOp(opParameter, opString);
 
             String valueParameter = VALUE_PARAMETER + i;
-            String value = request.getParameter(valueParameter);
+            String[] values = request.getParameterValues(valueParameter);
+            String value = null;
+            List<String> multivalues = null;
+            if (values != null) {
+                value = values[0];
+                multivalues = Arrays.asList(values);
+            }
 
             String extraParameter = EXTRA_PARAMETER + i;
             String extraValue = request.getParameter(extraParameter);
@@ -140,29 +149,48 @@ public final class TemplateHelper
             String code = request.getParameter(codeParameter);
 
             if (opString != null && opString.length() > 0 && op == null) {
-                throw new IllegalArgumentException("invalid parameter: " + opParameter
-                        + " with value "
-                        + opString + " It must be valid operation code. Special characters "
-                        + "must be encoded in request. See help for 'url encoding'.");
+                throw new IllegalArgumentException("invalid parameter: '" 
+                    + opParameter + "' with value '" + opString + "': "
+                    + "This must be valid operation code. "
+                    + "Special characters must be encoded in request. "
+                    + " See help for 'url encoding'.");
             }
 
-            if (isPresent(op) || isPresent(value) || isPresent(id) || isPresent(extraValue)
-                    || isPresent(code)) {
+            if (isPresent(op) || isPresent(value) || isPresent(id) 
+                    || isPresent(extraValue) || isPresent(code)
+                    || multivalues != null) {
+                String problemIntro = 
+                    "parameters were provided for constraint " + i;
                 if (!isPresent(id)) {
-                    throw new IllegalArgumentException("There is no path provided for constraint "
-                            + i
-                            + ".Missing parameter " + idParameter + ".");
+                    throw new IllegalArgumentException(problemIntro
+                        + " but no path was provided to identify the "
+                        + "constraint. Missing parameter: '" 
+                        + idParameter + "'.");
                 }
                 if (!isPresent(op)) {
-                    throw new IllegalArgumentException("There is no operation provided for"
-                            + " constraint " + i  + ".Missing parameter " + opParameter + ".");
+                    throw new IllegalArgumentException(problemIntro
+                        + " but the operation was not specified."
+                        + " Missing parameter '" + opParameter + "'.");
                 }
-                if (!isPresent(value)) {
-                    throw new IllegalArgumentException("There is no value provided for constraint "
-                            + i + ".Missing parameter " + valueParameter + ".");
+                if (!PathConstraintNull.VALID_OPS.contains(op)
+                    && (request.getParameterValues(valueParameter) == null)) {
+                    throw new IllegalArgumentException(problemIntro
+                        + " but no values were provided, and " + op 
+                        + " requires at least one value. Missing"
+                        + " parameter '" + valueParameter + "'.");
                 }
-                ConstraintInput load = new ConstraintInput(idParameter, id, code, op, value,
-                        extraValue);
+                if (!PathConstraintMultiValue.VALID_OPS.contains(op)
+                    && multivalues != null && multivalues.size() > 1) {
+                    throw new IllegalArgumentException(
+                        " An operation was provided ('" + op + "') "
+                        + " that expected at most one value, but " 
+                        + multivalues.size()
+                        + " values were provided using the parameter '"
+                        + valueParameter + "'.");
+                }
+
+                ConstraintInput load = new ConstraintInput(idParameter, 
+                        id, code, op, value, multivalues, extraValue);
                 if (ret.get(id) == null) {
                     ret.put(id, new ArrayList<ConstraintInput>());
                 }
@@ -292,8 +320,17 @@ public final class TemplateHelper
             value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
                     TemplateValue.ValueType.BAG_VALUE, switchOffAbility);
         } else {
-            value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
+            if (PathConstraintMultiValue.VALID_OPS.contains(input.getConstraintOp())) {
+                value = new TemplateValue(con, input.getConstraintOp(), 
+                        TemplateValue.ValueType.SIMPLE_VALUE, input.getMultivalues(), switchOffAbility);
+            } else if (input.getValue() != null) {
+                value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
                     TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+            } else {
+                // For unary (null) constraints.
+                value = new TemplateValue(con, input.getConstraintOp(),
+                    TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+            }
         }
         return value;
     }

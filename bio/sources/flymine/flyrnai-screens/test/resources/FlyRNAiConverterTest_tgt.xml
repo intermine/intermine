@@ -30,8 +30,6 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_2" class="RNAiScreen">
-<attribute name="analysisDescription" value="Drosophila C Virus infection assay"/>
-<attribute name="cellLine" value="S2 cells"/>
 <attribute name="name" value="DCV Screen"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="publication" ref_id="4_2"/>
@@ -56,8 +54,6 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="5_1" class="RNAiScreen">
-<attribute name="analysisDescription" value="ATP viability assay"/>
-<attribute name="cellLine" value="S2R+ cells and Kc167 cells"/>
 <attribute name="name" value="Cell Growth and Viability"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="publication" ref_id="4_1"/>

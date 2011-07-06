@@ -10,6 +10,8 @@ package org.intermine.api.query.codegen;
  *
  */
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -47,9 +49,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                                                               + "at the moment...";
     protected static final String SCRIPT_IMPORTS          =
           "<!-- You need to import the IMBedding client library - this is hosted at intermine.org for your convenience: -->" + ENDL
-          + "<script src=\"http://www.intermine.org/lib/imbedding/0.1/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
+          + "<script src=\"http://www.intermine.org/lib/imbedding/0.2/imbedding.js\" type=\"text/javascript\"></script>" + ENDL + ENDL
           + "<!-- We also need to import a stylesheet - you can choose from light, dark or bold-->" + ENDL
-          + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.1/style/light.css\">" + ENDL
+          + "<link rel=\"stylesheet\" type=\"text/css\" title=\"light\" href=\"http://intermine.org/lib/imbedding/0.2/style/light.css\">" + ENDL
           + ENDL;
 
     protected static final String PRELUDE =
@@ -145,7 +147,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                 while (entryIter.hasNext()) {
                     Entry<String, String> pair = entryIter.next();
                     sb.append(INDENT + INDENT + getFormattedObjKey(pair.getKey() + ":"));
-                    sb.append("\"" + pair.getValue() + "\"");
+                    sb.append(quote(pair.getValue()));
                     if (entryIter.hasNext() || conIter.hasNext()) {
                         sb.append(",");
                     }
@@ -165,6 +167,19 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString();
     }
 
+    private String quote(String str) {
+        if (str == null) {
+            return "";
+        } else if (str.startsWith("{") && str.endsWith("}")) {
+            return str;
+        } else if (str.startsWith("[") && str.endsWith("]")) {
+            return str;
+        } else {
+            return "\"" + escapeJavaScript(str) + "\"";
+        }
+    }
+
+
     private static String getFormattedObjKey(String key) {
         StringBuffer sb = new StringBuffer(key);
         while (sb.length() < 15) {
@@ -173,14 +188,19 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString();
     }
 
+    /**
+     * Format a list of strings as a nice javascript array.
+     */
     private static void listFormatUtil(StringBuffer sb, Collection<String> coll) {
         Iterator<String> it = coll.iterator();
+        sb.append("[ ");
         while (it.hasNext()) {
-            sb.append(it.next());
+            sb.append("\"" + escapeJavaScript(it.next()) + "\"");
             if (it.hasNext()) {
-                sb.append(",");
+                sb.append(", ");
             }
         }
+        sb.append(" ]");
     }
 
     /*

@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,7 +41,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.config.InlineList;
 import org.intermine.web.logic.results.DisplayCollection;
@@ -58,6 +59,7 @@ import org.jfree.util.Log;
  */
 public class ReportController extends InterMineAction
 {
+    private static final Logger LOG = Logger.getLogger(ReportController.class);
 
     /**
      * {@inheritDoc}
@@ -67,15 +69,27 @@ public class ReportController extends InterMineAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
+
+        long startTime = System.currentTimeMillis();
+
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         // fetch & set requested object
         InterMineObject requestedObject = getRequestedObject(im, request);
+
+        long stepTime = System.currentTimeMillis();
+        LOG.info("TIME fetched requested object: " + (stepTime - startTime) + "ms");
+        startTime = stepTime;
+
         if (requestedObject != null) {
             ReportObjectFactory reportObjectFactory = SessionMethods.getReportObjects(session);
             ReportObject reportObject = reportObjectFactory.get(requestedObject);
-            //request.setAttribute("reportObject", reportObject);
+
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME created report object: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
+
             request.setAttribute("object", reportObject);
             request.setAttribute("reportObject", reportObject);
 
@@ -116,6 +130,10 @@ public class ReportController extends InterMineAction
                 new ArrayList<InlineList>(reportObject.getNormalInlineLists());
             unplacedInlineLists.removeAll(placedInlineLists.values());
 
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME placed inline lists: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
+
             request.setAttribute("mapOfInlineLists", placedInlineLists);
             request.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
@@ -151,8 +169,12 @@ public class ReportController extends InterMineAction
                 }
             }
 
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME placed refs and cols: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
+
             // remove any fields overridden by displayers
-            removeFieldsReplacedByCustomDisplayers(reportObject, placementRefsAndCollections);
+            removeFieldsReplacedByReportDisplayers(reportObject, placementRefsAndCollections);
 
             request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
@@ -165,13 +187,21 @@ public class ReportController extends InterMineAction
                 request.setAttribute("stableLink", stableLink);
             }
 
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME made stable link: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
+
             // attach only non empty categories
             Set<String> allClasses = new HashSet<String>();
             for (ClassDescriptor cld : cds) {
                 allClasses.add(cld.getUnqualifiedName());
             }
             TemplateManager templateManager = im.getTemplateManager();
-            Map<String, List<CustomDisplayer>> displayerMap = reportObject.getReportDisplayers();
+            Map<String, List<ReportDisplayer>> displayerMap = reportObject.getReportDisplayers();
+
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME fetched report displayers: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
 
             List<String> categories = new LinkedList<String>();
             for (String aspect : aspects) {
@@ -193,10 +223,11 @@ public class ReportController extends InterMineAction
                                 && placementRefsAndCollections.get("im:aspect:" + aspect) != null) {
                             for (DisplayField df : placementRefsAndCollections.get(
                                     "im:aspect:" + aspect).values()) {
-                                if (df.getSize() > 0) {
+                                //if (df.getSize() > 0) {
+                                //if (!df.isEmpty()) {
                                     categories.add(aspect);
                                     break;
-                                }
+                                //}
                             }
                         }
                     }
@@ -205,6 +236,9 @@ public class ReportController extends InterMineAction
             if (!categories.isEmpty()) {
                 request.setAttribute("categories", categories);
             }
+            stepTime = System.currentTimeMillis();
+            LOG.info("TIME made list of categories: " + (stepTime - startTime) + "ms");
+            startTime = stepTime;
         }
 
         return null;
@@ -276,7 +310,7 @@ public class ReportController extends InterMineAction
         }
     }
 
-    private void removeFieldsReplacedByCustomDisplayers(ReportObject reportObject,
+    private void removeFieldsReplacedByReportDisplayers(ReportObject reportObject,
             Map<String, Map<String, DisplayField>> placementRefsAndCollections) {
         for (String fieldName : reportObject.getReplacedFieldExprs()) {
             removeField(fieldName, placementRefsAndCollections);

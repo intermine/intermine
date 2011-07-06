@@ -19,7 +19,13 @@
 </c:choose>
 
 <table id="submissionDetails" style="width:50%;">
-  <tr>
+<c:if test="${not empty notice}">
+<tr>
+  <td>NOTICE:</td>
+  <td><span style="border: 2px solid red;"><strong>${notice}<strong></span></td>
+</tr>
+</c:if>
+ <tr>
     <td style="width:20%;">Design:</td>
     <td><strong>${design}<strong></td>
   </tr>
@@ -43,6 +49,12 @@
         <td><span style="border: 2px solid red;"><strong>${embargoDate}<strong></span></td>
       </tr>
   </c:if>
+  <c:if test="${empty embargoDate}">
+  <tr>
+    <td>Embargo Date:</td>
+    <td><span style="border: 2px solid green;">This dataset is no longer embargoed</span></td>
+  </tr>
+  </c:if>  
   <c:if test="${not empty qualityControl}">
       <tr>
         <td>Quality Control:</td>

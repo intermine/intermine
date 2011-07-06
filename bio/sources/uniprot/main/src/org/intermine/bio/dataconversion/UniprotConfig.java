@@ -61,7 +61,7 @@ public class UniprotConfig
 
     /**
      * @param taxonId taxonid
-     * @return the unique identifier for this organism
+     * @return the unique identifier for genes of this organism, eg. primaryIdentifier
      */
     public String getUniqueIdentifier(String taxonId) {
         ConfigEntry entry = entries.get(taxonId);
@@ -197,6 +197,7 @@ public class UniprotConfig
 
     /**
      * class representing an organism in the uniprot config file
+     *
      * @author julie sullivan
      */
     public class ConfigEntry
@@ -206,6 +207,7 @@ public class UniprotConfig
         private String strain = null;
 
         /**
+         * eg. primaryIdentifier
          * @return the uniqueIdentifier
          */
         protected String getUniqueIdentifier() {

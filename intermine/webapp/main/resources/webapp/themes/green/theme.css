@@ -260,15 +260,20 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 #pagecontentcontainer.report-page #object_header h1.title span { color:#5E665C; }
 #pagecontentcontainer.report-page #object_header div.box h3 { background:#E3F2DF; }
 #pagecontentcontainer.report-page #object_header div.list.box span { color:#5E665C; }
-#pagecontentcontainer.report-page #fixed-menu { background:#89C978; }
-#pagecontentcontainer.report-page #toc-menu-wrap { background:#89C978; }
-#pagecontentcontainer.report-page #fixed-menu span, #toc-menu-wrap span { color:#F0FCEC; }
+#pagecontentcontainer.report-page #fixed-menu { background:#952C39; }
+#pagecontentcontainer.report-page #toc-menu-wrap { background:#F0FCEC; }
+#pagecontentcontainer.report-page #fixed-menu span,
+#pagecontentcontainer.report-page #toc-menu-wrap span { color:#FFF; }
 #pagecontentcontainer.report-page #menu-target { background:#F0FCEC; }
-#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a, #fixed-menu div.wrap a { color:#5E665C; background:#F0FCEC; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap,
+#pagecontentcontainer.report-page #fixed-menu div.wrap { background:#952C39; border-color:#952C39; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a,
+#pagecontentcontainer.report-page #fixed-menu div.wrap a { color:#FFF; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.links a.current,
+#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#FFF; color:#952C39; border-color:#952C39; }
 #pagecontentcontainer.report-page #in-lists div.heading { background:#F0FCEC !important; border-color:#5E665C; color:#5E665C !important; text-shadow:1px 1px 1px #FFF; }
 #pagecontentcontainer.report-page .container_12 .highlight { background-color: #FFF3D3; }
 #pagecontentcontainer.report-page #object_header #headerLink a { color:#5E665C; }
-#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#5E665C; color:#FFF; }
 #pagecontentcontainer.report-page #object_header p.share a { color:#5E665C; }
 #pagecontentcontainer.report-page h2 { color:#000; }
 #pagecontentcontainer.report-page #cwtabsbyside a { color:#5E665C; }

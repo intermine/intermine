@@ -45,7 +45,7 @@
             <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
       </c:if>
       </ul>
-    <html:form styleId="findInListForm" action="/findInList">
+    <html:form action="/findInList">
         <input type="text" name="textToFind" id="textToFind"/>
           <input type="hidden" name="bagName" value="${bag.name}"/>
           <html:submit>
@@ -85,7 +85,7 @@
     });
 </script>
 
-<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+<html:form action="/modifyBagDetailsAction">
 <html:hidden property="bagName" value="${bag.name}"/>
 
 <div id="tool_bar_item_display" style="display:none;width:100px" class="tool_bar_item">
@@ -303,8 +303,7 @@
 <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
+   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>
   </div>
 
 

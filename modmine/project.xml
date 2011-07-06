@@ -1,3 +1,18 @@
+<!--
+FILE TO BE USED BY automine.sh INSTEAD OF THE USUAL ONE
+
+modmine/project.xml
+
+THIS FILE CONTAINS ALL THE TYPE OF SOURCES
+(E.G. ALSO A GENERIC modencode-metadata)
+
+TO BE USED FOR VALIDATION AND DEVELOPMENT, WHERE SOURCES ARE FED IN
+THE BUILD SCRIPT.
+
+NOT TO BE USED FOR A BUILD
+		
+-->
+
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
@@ -432,8 +447,8 @@
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.includes" value="*dna*.fa"/>
-      <property name="fasta.dataSetTitle" value="WormBase C. elegans data set"/>
+      <property name="fasta.includes" value="*dna*.fasta"/>
+      <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
       <property name="fasta.dataSourceName" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws220/fasta"/>
     </source>
@@ -654,6 +669,10 @@
                      items DB, then into the final objectstore dump="true"-->
             <property name="src.data.file" location="build/publications.xml"/>
         </source>
+		
+		<source name="fly-development-ontology" type="fly-development-ontology">
+			<property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+		</source>
 
   </sources>
   <post-processing>

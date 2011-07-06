@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -32,7 +32,7 @@ import org.modmine.web.MetadataCache;
  * @author Fengyuan Hu
  *
  */
-public class SubmissionGeneratedFeaturesDisplayer extends CustomDisplayer
+public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
 {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(SubmissionGeneratedFeaturesDisplayer.class);

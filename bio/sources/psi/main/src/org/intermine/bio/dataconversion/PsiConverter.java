@@ -71,7 +71,7 @@ public class PsiConverter extends BioFileConverter
      * @param model the Model
      */
     public PsiConverter(ItemWriter writer, Model model) {
-        super(writer, model, "IntAct", "IntAct data set");
+        super(writer, model, "IntAct", "IntAct interactions data set");
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");

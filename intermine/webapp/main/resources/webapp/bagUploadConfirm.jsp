@@ -8,15 +8,34 @@
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
 
-<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data" styleId="bagUploadConfirmForm">
+<div style="display:none">
+<%-- cache --%>
+<img src="images/progress/green-btn-center-hover.png" />
+<img src="images/progress/green-btn-left-hover.png" />
+<img src="images/progress/green-btn-right-hover.png" />
+</div>
+
+<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data">
 
 <div id="sidebar">
   <div class="wrap">
+  <c:choose>
+  <c:when test="${empty bagName}">
     <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
           value='Save a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
-          onclick="javascript:validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
+          onclick="javascript:jQuery('#bigGreen').addClass('clicked');validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
     </div>
+    </c:when>
+    <c:otherwise>
+    <input type="hidden" name="upgradeBagName" value="${bagName}"/>
+    <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
+      <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
+          value='Upgrade a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
+          onclick="submit();"/><div class="right"></div>
+    </div>
+    </c:otherwise>
+   </c:choose>
     <div style="clear:both;"></div>
     <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
       <p id="furtherMatches" class="hl">There are further matches provided below.</p>
@@ -82,21 +101,24 @@
       <div class="formik">
       <input id="newBagName" type="text" name="newBagName" value="${bagName}">
       <script type="text/javascript">
-        // on keypress
-        jQuery('input#newBagName').keypress(function(e) {
-          var code = (e.keyCode ? e.keyCode : e.which);
-          if (code == 13) { // Enter
-            validateBagName('bagUploadConfirmForm');
-            e.preventDefault();
-          }
-        });
+      (function() {
+          var extraFilter = ("${bagExtraFilter}") ? "${bagExtraFilter}" : "all ${bagUploadConfirmForm.extraFieldValue}s".toLowerCase();
 
-        if (jQuery('input#newBagName').val().length == 0) {
-          // if we do not have a name of the list generate one from user's time
-          var t = new Date();
-          var m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-          jQuery('input#newBagName').val("${bagUploadConfirmForm.bagType} list " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
-        }
+          <%-- on keypress --%>
+          jQuery('input#newBagName').keypress(function(e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) { <%-- Enter --%>
+              validateBagName('bagUploadConfirmForm');
+              e.preventDefault();
+            }
+          });
+          if (jQuery('input#newBagName').val().length == 0) {
+            <%-- if we do not have a name of the list generate one from user's time --%>
+            var t = new Date();
+            var m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            jQuery('input#newBagName').val("${bagUploadConfirmForm.bagType} list for " + extraFilter + " " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
+          }
+      })();
       </script>
         <span>(e.g. Smith 2009)</span>
       </div>
@@ -207,7 +229,7 @@
 
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
-
+  initForm("${bagName}");
   checkIfAlreadyInTheBag();
 </script>
 

@@ -5,10 +5,24 @@
 <reference name="sequenceOntologyTerm" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+
 <item id="9_1" class="MRNAExpressionTerm">
-<attribute name="name" value="Non-expressed"/>
-<attribute name="type" value="fly-FISH"/>
+
+  <attribute name="name" value="non-expressed"/>
+
+  <reference name="ontology" ref_id="0_2"/>
+
+  <collection name="dataSets">
+    <reference ref_id="2_1"/>
+  </collection>
+
 </item>
+, <item id="0_2" class="Ontology">
+
+  <attribute name="name" value="ImaGO"/>
+
+</item>
+
 <item id="8_2" class="MRNAExpressionResult">
 <attribute name="expressed" value="false"/>
 <attribute name="stageRange" value="stage 4-5 (fly-FISH)"/>

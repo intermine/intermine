@@ -62,7 +62,7 @@ public class ExportOptionsController extends TilesAction
         String type = request.getParameter("type");
         String table = request.getParameter("table");
         PagedTable pt = SessionMethods.getResultsTable(session, table);
-        if (pt == null  && !"galaxy".equals(type)) {
+        if (pt == null) {
             LOG.error("PagedTable for " + table + " is null");
             return null;
         }
@@ -71,21 +71,19 @@ public class ExportOptionsController extends TilesAction
         TableExporterFactory factory = new TableExporterFactory(webConfig);
 
         try {
-            if (!"galaxy".equals(type)) {
-                TableHttpExporter exporter = factory.getExporter(type);
-                List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-                Map<String, String> pathsMap = new LinkedHashMap<String, String>();
-                PathQuery query = pt.getWebTable().getPathQuery();
-                for (Path path : initialPaths) {
-                    String pathString = path.toStringNoConstraints();
-                    String title = query.getGeneratedPathDescription(pathString);
-                    title = WebUtil.formatColumnName(title);
-                    pathsMap.put(pathString, title);
-                }
-                request.setAttribute("pathsMap", pathsMap);
-                String pathStrings = StringUtil.join(initialPaths, " ");
-                request.setAttribute("pathsString", pathStrings);
+            TableHttpExporter exporter = factory.getExporter(type);
+            List<Path> initialPaths = exporter.getInitialExportPaths(pt);
+            Map<String, String> pathsMap = new LinkedHashMap<String, String>();
+            PathQuery query = pt.getWebTable().getPathQuery();
+            for (Path path : initialPaths) {
+                String pathString = path.toStringNoConstraints();
+                String title = query.getGeneratedPathDescription(pathString);
+                title = WebUtil.formatColumnName(title);
+                pathsMap.put(pathString, title);
             }
+            request.setAttribute("pathsMap", pathsMap);
+            String pathStrings = StringUtil.join(initialPaths, " ");
+            request.setAttribute("pathsString", pathStrings);
         } catch (Exception e) {
             LOG.error("Exception", e);
             SessionMethods.recordError("An internal error has occured while creating the "

@@ -10,11 +10,11 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
-public class SequenceFeatureDisplayer extends CustomDisplayer {
+public class SequenceFeatureDisplayer extends ReportDisplayer {
 
     /** @var sets the max number of locations to show in a table, TODO: match with DisplayObj*/
     private Integer maximumNumberOfLocations = 27;

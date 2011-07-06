@@ -135,7 +135,14 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                     ret += "&" + codeToString(code, index);
                 }
                 ret += "&" + operationToString(con.getOp(), index , highlighted);
-                ret += "&" + valueToString(getConstraintValue(con), index, highlighted);
+
+                if (con instanceof PathConstraintMultiValue) {
+                    for (String value: ((PathConstraintMultiValue) con).getValues()) {
+                        ret += "&" + valueToString(value, index, highlighted);
+                    }
+                } else {
+                    ret += "&" + valueToString(getConstraintValue(con), index, highlighted);
+                }
                 if (con instanceof PathConstraintLookup) {
                     PathConstraintLookup conLookup = (PathConstraintLookup) con;
                     ret += "&" + extraToString(conLookup.getExtraValue(), index, highlighted);

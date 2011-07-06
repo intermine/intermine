@@ -25,6 +25,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
@@ -46,7 +47,7 @@ public class QueryToListService extends AbstractQueryService {
 
     /**
      * Constructor.
-     * @param im
+     * @param im The intermine settings bundle
      */
     public QueryToListService(InterMineAPI im) {
         super(im);
@@ -81,6 +82,11 @@ public class QueryToListService extends AbstractQueryService {
 
     }
 
+    /**
+     * Get the pathquery to use for this request.
+     * @param request The http request.
+     * @return A pathquery
+     */
     protected PathQuery getQuery(HttpServletRequest request) {
         String xml = request.getParameter(XML_PARAM);
 
@@ -102,15 +108,21 @@ public class QueryToListService extends AbstractQueryService {
         return pq;
     }
 
+    /**
+     * Generate a list from a pathquery.
+     * @param pq The pathquery
+     * @param name The name of the list
+     * @param description The description of the list
+     * @param tags A list of tags to add to the list
+     * @param profile The profile the list should belong to
+     * @throws ObjectStoreException If there is an issue running the queries that generate the list.
+     * @throws PathException If the paths supplied are illegal.
+     */
     protected void generateListFromQuery(PathQuery pq,
             String name, String description, List<String> tags,
             Profile profile) throws ObjectStoreException, PathException {
-        Query q = MainHelper.makeQuery(
-                pq,
-                bagManager.getUserAndGlobalBags(profile),
-                new HashMap<String, QuerySelectable>(),
-                im.getBagQueryRunner(),
-                new HashMap<String, BagQueryResult>());
+
+        Query q = getQuery(pq, profile);
 
         String tempName = name + TEMP;
 
@@ -119,7 +131,7 @@ public class QueryToListService extends AbstractQueryService {
         String type = viewPath.getLastClassDescriptor().getUnqualifiedName();
 
         try {
-            InterMineBag newList = profile.createBag(tempName, type, description);
+            InterMineBag newList = profile.createBag(tempName, type, description, im.getClassKeys());
             newList.addToBagFromQuery(q);
             im.getBagManager().addTagsToBag(tags, newList, profile);
             profile.renameBag(tempName, name);
@@ -136,6 +148,30 @@ public class QueryToListService extends AbstractQueryService {
         }
     }
 
+    /**
+     * Get the Objectstore Query to run to generate the list.
+     * @param pq The pathquery to generate the query from.
+     * @param profile The profile to search for bags.
+     * @return A query.
+     */
+    protected Query getQuery(PathQuery pq, Profile profile) {
+        Query ret;
+        try {
+            ret = MainHelper.makeQuery(pq,
+                bagManager.getUserAndGlobalBags(profile),
+                new HashMap<String, QuerySelectable>(),
+                im.getBagQueryRunner(),
+                new HashMap<String, BagQueryResult>());
+        } catch (ObjectStoreException e) {
+            throw new InternalErrorException(e);
+        }
+       return ret;
+    }
+
+    /**
+     * Sets the header attributes map on the current output object.
+     * @param name The name of the list.
+     */
     protected void setHeaderAttributes(String name) {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSONP()) {

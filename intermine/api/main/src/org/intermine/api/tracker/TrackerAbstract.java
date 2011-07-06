@@ -31,6 +31,11 @@ public abstract class TrackerAbstract implements Tracker
     protected String trackTableName;
     protected TrackerLogger trackerLogger = null;
 
+    /**
+     * Construct a Tracker setting the tracks queue and the table name
+     * @param trackQueue the queue where the tracks are temporary stored
+     * @param trackTableName the table where store the tracks
+     */
     protected TrackerAbstract(Queue<Track> trackQueue, String trackTableName) {
         this.trackQueue = trackQueue;
         this.trackTableName = trackTableName;
@@ -47,6 +52,7 @@ public abstract class TrackerAbstract implements Tracker
     /**
      * Create the table where the tracker saves data
      * @throws Exception when a database error access is verified
+     * @param connection the userprofile connection
      */
     public void createTrackerTable(Connection connection) throws Exception {
         try {
@@ -89,6 +95,10 @@ public abstract class TrackerAbstract implements Tracker
      */
     public abstract String getName();
 
+    /**
+     * Set the queue of tracks
+     * @param trackQueue the queue to set
+     */
     public void setTrackQueue(Queue<Track> trackQueue) {
         this.trackQueue = trackQueue;
     }
@@ -98,8 +108,6 @@ public abstract class TrackerAbstract implements Tracker
      * @return String sql statement
      */
     public abstract String getStatementCreatingTable();
-    
-    
 
     /**
      * Close the result set and statement objects specified in input

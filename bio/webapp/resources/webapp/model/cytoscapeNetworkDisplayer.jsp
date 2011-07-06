@@ -32,6 +32,8 @@
     #cwtabsbyside ul li a.active { font-weight:bold; }
     #cwtabsbyside ul li.last { border:none; }
     #cwtabsbyside fieldset, #cwtabsbyside #legend { border:none; border-bottom-width:1px; border-bottom-style:solid; padding:8px; }
+
+    #cwtabsbyside #formats ul li { display:block; font-size:12px; margin-bottom:4px; }
 </style>
 
 <div id="cwhead">
@@ -59,6 +61,7 @@
               <select id="exportoptions">
                   <option value="xgmml" selected>XGMML</option>
                   <option value="sif">SIF</option>
+                  <option value="png">PNG</option>
                   <option value="svg">SVG</option>
                   <option value="tab">TSV</option>
                   <option value="csv">CSV</option>
@@ -79,8 +82,25 @@
     <div id="tabs-data"></div>
     <div id="tabs-help">
       <div id="legend">
-        <p>Interaction Type</p>
+        <h4>Interaction Type</h4>
         <div id="legendall"></div>
+      </div>
+      <div id="formats" class="theme-3-border theme-6-background">
+        <h4>Export formats</h4>
+        <ul class="formats">
+            <li class="external"><a target="_blank" href="http://www.cs.rpi.edu/research/groups/pb/punin/public_html/XGMML/index.html">XGMML</a>: the eXtensible Graph Markup and Modeling Language
+                is an XML format which is used for graph description. Cytoscape desktop loads and saves networks and node/edge attributes in XGMML as well.
+            </li>
+            <li class="external"><a target="_blank" href="http://cytoscape.wodaklab.org/wiki/Cytoscape_User_Manual/Network_Formats/">SIF</a>: A simpler text format
+                 that can be very useful if you do not need to set custom nodes/edges attributes.
+            </li>
+            <li class="external"><a target="_blank" href="http://www.w3.org/Graphics/SVG/">SVG</a>: Scalable Vector Graphics defines the graphics in XML format and does not lose any quality if they are zoomed or resized.
+            </li>
+            <li class="external"><a target="_blank" href="http://www.w3.org/Graphics/SVG/">PNG</a>: Portable Network Graphics, a popular graphics format over the web.
+            </li>
+            <li class="external">CSV/TSB: comma or tab separated values, suitable for import into Excel.
+            </li>
+        </ul>
       </div>
       <div id="powerby">
           <a onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
@@ -148,7 +168,7 @@
   </div>
   <div class="show-in-table">
     <html:link action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
-      Show all in a table »
+      Show all in a table &raquo;
     </html:link>
   </div>
 </div>

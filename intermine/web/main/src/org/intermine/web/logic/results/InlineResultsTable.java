@@ -66,6 +66,9 @@ public class InlineResultsTable
 
     protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
 
+    private String parentType = null;
+    private FieldDescriptor fieldDescriptor = null;
+
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -118,6 +121,23 @@ public class InlineResultsTable
             rowObjects.add(o);
         }
     }
+
+    public InlineResultsTable(Collection<?> results, Model model,
+                              WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
+                              int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes, String parentType, FieldDescriptor fd) {
+        this(results, model, webConfig, classKeys, size, ignoreDisplayers, listOfTypes);
+        this.parentType = parentType;
+        this.fieldDescriptor = fd;
+    }
+
+    public String getParentType() {
+        return fieldDescriptor.getClassDescriptor().getUnqualifiedName();
+    }
+
+    public FieldDescriptor getFieldDescriptor() {
+        return fieldDescriptor;
+    }
+
     /**
     * @see the reason for retrieving types for Reference here is that
     *  PathQueryResultHelper.queryForTypesInCollection() does not work

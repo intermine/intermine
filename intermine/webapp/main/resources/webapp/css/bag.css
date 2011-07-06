@@ -16,4 +16,8 @@ ol#buildbaglist select, ol#buildbaglist textarea{
 
 textarea#pasteInput {
   width: 345px;}
- 
+
+textarea:disabled {
+  background: #EBEBE4; }
+
+#filter_tool_bar a.boxy.inactive { color:gray; }

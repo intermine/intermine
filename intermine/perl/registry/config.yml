@@ -31,6 +31,7 @@ mines_file: "data/mines.yml"
 secrets_file: "data/secrets.yml"
 mine_logs: "data/logged_data.yml"
 administrators: "data/admins.yml"
+error_log: "data/error_log.yml"
 
 creation_message: "%1$s created: Your token for future updates is '%2$s' - Please remember it: you will not be able to update this registry without passing it back as authToken. Thank you for registering your mine"
 

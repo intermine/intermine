@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
@@ -52,7 +52,7 @@ public class EditTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
@@ -64,11 +64,16 @@ public class EditTemplateAction extends InterMineAction
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
 
+        if (template == null) {
+            recordError(new ActionMessage("errors.template.missing", queryName), request);
+            return mapping.findForward("mymine");
+        }
+
         SessionMethods.loadQuery(template, session, response);
         session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
         PathQuery sessionQuery = SessionMethods.getQuery(session);
         if (!sessionQuery.isValid()) {
-            recordError(new ActionError("errors.template.badtemplate",
+            recordError(new ActionMessage("errors.template.badtemplate",
                     StringUtil.prettyList(sessionQuery.verifyQuery())), request);
         }
 

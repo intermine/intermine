@@ -21,5 +21,4 @@
     <attribute name="url" type="java.lang.String"/>
   </class>
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true"/>
-  <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>

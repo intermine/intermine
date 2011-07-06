@@ -22,12 +22,14 @@
   <c:set target="${linkParams}" property="ctxHelpTxt" value="${text}" />
 </jsp:useBean>
 
+<c:set var="origText" value="${text}"/>
+
 <%-- crazy escaping follows --%>
 <c:set var="text" value="${fn:replace(text,'\\\'','&amp;#039;')}"/>
 <c:set var="text" value="${fn:replace(text,'\"','&amp;quot;')}"/>
 
 <html:link action="/contextHelp" name="linkParams"
    onclick="document.getElementById('ctxHelpTxt').innerHTML='${text}';document.getElementById('ctxHelpDiv').style.display='';window.scrollTo(0, 0);return false"
-   title="${text}">
+   title="${origText}">
   <jsp:doBody/>
 </html:link>

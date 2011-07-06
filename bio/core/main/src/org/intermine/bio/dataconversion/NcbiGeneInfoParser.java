@@ -58,8 +58,10 @@ public class NcbiGeneInfoParser
                     defaultSymbol, officialName, defaultName, mapLocation);
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
 
-            for (String synonym : synonyms.split("\\|")) {
-                record.synonyms.add(synonym);
+            if (!"-".equals(synonyms)) {
+                for (String synonym : synonyms.split("\\|")) {
+                    record.synonyms.add(synonym);
+                }
             }
 
             Set<GeneInfoRecord> taxonRecords = recordMap.get(taxonId);

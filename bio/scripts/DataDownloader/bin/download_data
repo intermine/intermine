@@ -1,0 +1,114 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use File::Basename qw/dirname/;
+use lib dirname(__FILE__) . '/../lib';
+use DataDownloader::Util qw(make_logger);
+use MooseX::FollowPBP;
+use Getopt::Long;
+use YAML;
+use Carp;
+use Module::Find qw/findsubmod/;
+
+my @available_sources = grep {$_ !~ /ABC$/} findsubmod( 'DataDownloader::Source' );
+
+my $config = "testing";
+my $verbose = 0;
+my $show_sources = 0;
+my $show_help = 0;
+
+my $script = __FILE__;
+
+my $result = GetOptions(
+    "environment=s" => \$config,
+    "verbose"       => \$verbose,
+    "sources"       => \$show_sources,
+    "help"          => \$show_help,
+);
+
+if ($show_help) {
+    warn <<"HELP";
+$script
+Download data from specific sources
+
+Usage: perl $script -e environment Source1 Source2...
+
+Options:
+  -e --environment  The set of configuration options to load
+  -s --sources      Show the list of available sources
+  -h --help         Show this help
+
+If no sources are selected, then then the default list from the 
+configuration file will be loaded and run.
+HELP
+    exit;
+}
+
+if ($show_sources) {
+    warn "Available sources:\n";
+    for my $src (sort @available_sources) {
+        $src =~ s/.*:://;
+        warn "\t- $src\n";
+    }
+    exit;
+}
+
+my $config_file = dirname(__FILE__) . '/../config/' . $config . '.yml';
+
+my ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES, $OPTS) = read_config($config_file);
+
+my $logger =  make_logger($LOGDIR);
+my %args   = (data_dir => $DATA_DIR, logger => $logger);
+my @sources_to_get = (@ARGV) ? @ARGV : @$DEFAULT_SOURCES;
+
+for my $source (@sources_to_get) {
+    my $package = "DataDownloader::Source::$source";
+    eval "require $package";
+    if (my $e = $@) {
+        $logger->error("Failed to load source $source:", $e);
+        next;
+    }
+    my $source_options = $OPTS->{$source} || {};
+    eval {
+        my $downloader = $package->new(%args, options => $source_options);
+        $downloader->get_data();
+    };
+    if (my $e = $@) {
+        $logger->error("Failed to download source $source:", $e);
+    }
+} 
+
+exit;
+
+##### FUNCTIONS ####
+
+sub read_config {
+    my $config_file = shift;
+    unless (-e $config_file) {
+        croak <<"USAGE";
+Cannot use setting from $config_file as it does not exist.
+
+Usage: download_data -e flymine Uniprot
+USAGE
+    }
+
+    my $settings = YAML::LoadFile($config_file);
+
+    @{[ @{$settings}{qw/log_dir data_dir/} ]} == 2 or croak <<"USAGE";
+The config file must supply a value for both log_dir and data_dir.
+
+Usage: download_data -e flymine Uniprot
+USAGE
+
+    my $LOGDIR = ($settings->{log_dir} =~ m{^/}) 
+        ? $settings->{log_dir}
+        : $ENV{HOME} . '/' . $settings->{log_dir};
+    my $DATA_DIR = ($settings->{log_dir} =~ m{^/})
+        ? $settings->{data_dir}
+        : $ENV{HOME} . '/' . $settings->{data_dir};
+
+    my $DEFAULT_SOURCES = $settings->{default_sources} || [];
+
+    return ($LOGDIR, $DATA_DIR, $DEFAULT_SOURCES, $settings);
+}

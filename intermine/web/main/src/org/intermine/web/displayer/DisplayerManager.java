@@ -26,7 +26,7 @@ import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
- * Read in and provide access to report page custom displayers.  Displayers are constructed based
+ * Read in and provide access to report page displayers.  Displayers are constructed based
  * on entries in webconfig-model.xml and cached.  On creation config is copied to subclasses.
  * @author Richard Smith
  *
@@ -34,8 +34,8 @@ import org.intermine.web.logic.config.WebConfig;
 public final class DisplayerManager
 {
     private static DisplayerManager instance = null;
-    private Map<String, Map<String, List<CustomDisplayer>>> displayers =
-        new HashMap<String, Map<String, List<CustomDisplayer>>>();
+    private Map<String, Map<String, List<ReportDisplayer>>> displayers =
+        new HashMap<String, Map<String, List<ReportDisplayer>>>();
     private static final String DEFAULT_PLACEMENT = "summary";
 
     protected static final Logger LOG = Logger.getLogger(DisplayerManager.class);
@@ -56,14 +56,14 @@ public final class DisplayerManager
     private DisplayerManager(WebConfig webConfig, InterMineAPI im) {
         for (ReportDisplayerConfig config : webConfig.getReportDisplayerConfigs()) {
 
-            CustomDisplayer displayer = null;
+            ReportDisplayer displayer = null;
             try {
-                String customDisplayerName = config.getJavaClass();
+                String reportDisplayerName = config.getJavaClass();
 
-                Class<?> clazz = TypeUtil.instantiate(customDisplayerName);
+                Class<?> clazz = TypeUtil.instantiate(reportDisplayerName);
                 Constructor<?> m = clazz.getConstructor(
                         new Class[] {ReportDisplayerConfig.class, InterMineAPI.class});
-                displayer = (CustomDisplayer) m.newInstance(new Object[] {config, im});
+                displayer = (ReportDisplayer) m.newInstance(new Object[] {config, im});
             } catch (Exception e) {
                 LOG.error("Failed to instantiate displayer for class: " + config.getJavaClass()
                         + " because: " + e);
@@ -85,14 +85,14 @@ public final class DisplayerManager
                 }
             }
             for (String type : allTypes) {
-                Map<String, List<CustomDisplayer>> typeDisplayers = displayers.get(type);
+                Map<String, List<ReportDisplayer>> typeDisplayers = displayers.get(type);
                 if (typeDisplayers == null) {
-                    typeDisplayers = new HashMap<String, List<CustomDisplayer>>();
+                    typeDisplayers = new HashMap<String, List<ReportDisplayer>>();
                     displayers.put(type, typeDisplayers);
                 }
-                List<CustomDisplayer> placementDisplayers = typeDisplayers.get(placement);
+                List<ReportDisplayer> placementDisplayers = typeDisplayers.get(placement);
                 if (placementDisplayers == null) {
-                    placementDisplayers = new ArrayList<CustomDisplayer>();
+                    placementDisplayers = new ArrayList<ReportDisplayer>();
                     typeDisplayers.put(placement, placementDisplayers);
                 }
                 placementDisplayers.add(displayer);
@@ -105,10 +105,10 @@ public final class DisplayerManager
      * @param type an unqualified class name to look up
      * @return a set of displayers or an empty set if there are none
      */
-    public Set<CustomDisplayer> getAllReportDisplayersForType(String type) {
-        Set<CustomDisplayer> displayersForType = new HashSet<CustomDisplayer>();
+    public Set<ReportDisplayer> getAllReportDisplayersForType(String type) {
+        Set<ReportDisplayer> displayersForType = new HashSet<ReportDisplayer>();
         if (displayers.containsKey(type)) {
-            for (List<CustomDisplayer> disps : displayers.get(type).values()) {
+            for (List<ReportDisplayer> disps : displayers.get(type).values()) {
                 displayersForType.addAll(disps);
             }
         }
@@ -121,7 +121,7 @@ public final class DisplayerManager
      * @param type an unqualified class name
      * @return a map from placement to displayers or null
      */
-    public Map<String, List<CustomDisplayer>> getReportDisplayersForType(String type) {
+    public Map<String, List<ReportDisplayer>> getReportDisplayersForType(String type) {
         return displayers.get(type);
     }
 

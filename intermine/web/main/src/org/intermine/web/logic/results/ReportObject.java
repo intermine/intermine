@@ -39,8 +39,8 @@ import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.displayer.CustomDisplayer;
 import org.intermine.web.displayer.DisplayerManager;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
@@ -101,11 +101,11 @@ public class ReportObject
      * @param object InterMineObject
      * @param webConfig WebConfig
      * @param im InterMineAPI
-     * @param webProperties
+     * @param webProperties web properties config
      * @throws Exception Exception
      */
-    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im, Properties webProperties)
-        throws Exception {
+    public ReportObject(InterMineObject object, WebConfig webConfig, InterMineAPI im,
+            Properties webProperties) throws Exception {
         this.object = object;
         this.webConfig = webConfig;
         this.im = im;
@@ -120,7 +120,7 @@ public class ReportObject
      * that placement.
      * @return map from placement to displayers
      */
-    public Map<String, List<CustomDisplayer>> getReportDisplayers() {
+    public Map<String, List<ReportDisplayer>> getReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         return displayerManager.getReportDisplayersForType(objectType);
     }
@@ -197,12 +197,19 @@ public class ReportObject
                     Object fieldValue = getFieldValue(fieldName);
                     String fieldDisplayer = fc.getDisplayer();
 
+                    if (!isAttribute(fieldName)
+                            && fieldDisplayer == null
+                            && !fc.getShowInSummary()) {
+                        continue; // This is just configured for its label
+                    }
+
                     ReportObjectField rof = new ReportObjectField(
                             objectType,
                             fieldName,
                             fieldValue,
                             fieldDisplayer,
-                            fc.getDoNotTruncate()
+                            fc.getDoNotTruncate(),
+                            fc.getLabel()
                     );
 
                     // summary fields should go first
@@ -219,16 +226,18 @@ public class ReportObject
             objectSummaryFields.addAll(objectOtherSummaryFields);
 
             // 3. any attributes not configured at all are shown last
-            for (String attName : attributes.keySet()) {
-                if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
-                    ReportObjectField rof = new ReportObjectField(
-                            objectType,
-                            attName,
-                            attributes.get(attName),
-                            null,
-                            false
-                    );
-                    objectSummaryFields.add(rof);
+            if (attributes != null) {
+                for (String attName : attributes.keySet()) {
+                    if (!fieldConfigPaths.contains(attName) && !replacedFields.contains(attName)) {
+                        ReportObjectField rof = new ReportObjectField(
+                                objectType,
+                                attName,
+                                attributes.get(attName),
+                                null,
+                                false
+                        );
+                        objectSummaryFields.add(rof);
+                    }
                 }
             }
 
@@ -279,6 +288,25 @@ public class ReportObject
     }
 
     /**
+     * Return a string to display as the name of a field.
+     * @param fieldExpression The name of the field as configured in webconfig-model.xml
+     * @return the field's label, or the field's name.
+     */
+    public String getFieldDisplayName(String fieldExpression) {
+        Collection<FieldConfig> configs = getFieldConfigs();
+        for (FieldConfig fc: configs) {
+            if (fc.getFieldExpr() != null && fc.getFieldExpr().equals(fieldExpression)) {
+                if (fc.getLabel() != null) {
+                    return fc.getLabel();
+                } else {
+                    return fieldExpression;
+                }
+            }
+        }
+        return fieldExpression;
+    }
+
+    /**
      * Get field value for a field name (expression)
      * @param fieldExpression String
      * @return Object
@@ -292,6 +320,27 @@ public class ReportObject
         return fieldValues.get(fieldExpression);
     }
 
+    private boolean isAttribute(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsAttribute();
+    }
+
+    private boolean isCollection(String fieldName) {
+        Path p = getPathForField(fieldName);
+        return p.endIsCollection();
+    }
+
+    private Path getPathForField(String fieldName) {
+        String pathString = objectType + "." + fieldName;
+        Path p;
+        try {
+            p = new Path(im.getModel(), pathString);
+        } catch (PathException e) {
+            throw new Error(e);
+        }
+        return p;
+    }
+
     /**
      * Setup fieldValues HashMap
      */
@@ -301,12 +350,14 @@ public class ReportObject
 
         // fetch field configs
         for (FieldConfig fc : getFieldConfigs()) {
-            // crete a path string
-            String pathString = objectType + "." + fc.getFieldExpr();
-            try {
-                fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
-            } catch (PathException e) {
-                throw new Error("There must be a bug", e);
+            // create a path string
+            if (!isCollection(fc.getFieldExpr())) {
+                String pathString = objectType + "." + fc.getFieldExpr();
+                try {
+                    fieldValues.put(fc.getFieldExpr(), resolvePath(pathString));
+                } catch (PathException e) {
+                    throw new Error("There must be a bug", e);
+                }
             }
         }
     }
@@ -422,12 +473,11 @@ public class ReportObject
 
                 if (linkUrl != null) {
                     // patternz
-                    Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
-
-                    Matcher m = linkPattern.matcher(linkUrl);
+                    final Pattern linkPattern = Pattern.compile("\\{(.*?)\\}");
+                    final Matcher m = linkPattern.matcher(linkUrl);
                     while (m.find()) {
                         // get the field name and do some filtering just in case
-                        String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
+                        final String path = m.group(1).replaceAll("[^a-zA-Z.]", "");
                         // resolve the field value
                         Object stuff = getFieldValue(path);
                         if (stuff != null) {
@@ -574,7 +624,7 @@ public class ReportObject
             }
             DisplayReference newReference = null;
             try {
-                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys());
+                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys(), objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -612,7 +662,7 @@ public class ReportObject
             try {
                 newCollection = new DisplayCollection((Collection<?>) fieldValue,
                         (CollectionDescriptor) fd, webConfig, webProperties, im.getClassKeys(),
-                        listOfTypes);
+                        listOfTypes, objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -648,7 +698,8 @@ public class ReportObject
 
         /** Attributes, References, Collections through FieldDescriptors **/
         nullRefsCols =
-            im.getObjectStoreSummary().getNullReferencesAndCollections(getClassDescriptor().getName());
+            im.getObjectStoreSummary()
+                .getNullReferencesAndCollections(getClassDescriptor().getName());
         for (FieldDescriptor fd : getClassDescriptor().getAllFieldDescriptors()) {
             // only continue if we have not included this object in an inline list
             if (bagOfInlineListNames.get(fd.getName()) == null) {
@@ -696,13 +747,13 @@ public class ReportObject
      */
     public Set<String> getReplacedFieldExprs() {
         Set<String> replacedFieldExprs = new HashSet<String>();
-        for (CustomDisplayer reportDisplayer : getAllReportDisplayers()) {
+        for (ReportDisplayer reportDisplayer : getAllReportDisplayers()) {
             replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
         }
         return replacedFieldExprs;
     }
 
-    private Set<CustomDisplayer> getAllReportDisplayers() {
+    private Set<ReportDisplayer> getAllReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDisplayersForType(clsName);

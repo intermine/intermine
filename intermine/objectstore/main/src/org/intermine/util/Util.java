@@ -18,13 +18,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 
 /**
@@ -140,6 +137,7 @@ public final class Util
      * wildcardUserToSql method for more information.
      * @param exp  the wildcard expression
      * @return     the SQL LIKE parameter
+     * @deprecated I don't think this is used anymore?
      */
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
@@ -223,6 +221,8 @@ public final class Util
         return sb.toString();
     }
 
+
+
     /**
      * @param sequence sequence to be encoded
      * @return encoded sequence, set to lowercase
@@ -236,10 +236,12 @@ public final class Util
         }
         byte[] buffer = sequence.getBytes();
         md5.update(buffer);
-        byte[] array = md5.digest();
-        String checksum = HexBin.encode(array);
-        // perl checksum returns lowercase, uniprot has to match
-        return checksum.toLowerCase();
+        byte[] bits = md5.digest();
+        StringBuilder checksum = new StringBuilder();
+        for (int i = 0; i < bits.length; i++) {
+            checksum.append(Integer.toHexString((0x000000ff & bits[i]) | 0xffffff00).substring(6));
+        }
+        return checksum.toString().toLowerCase();
     }
 
     /**

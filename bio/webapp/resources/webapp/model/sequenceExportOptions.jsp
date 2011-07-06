@@ -8,14 +8,14 @@
 <legend>Sequence to export:</legend>
 <ol>
 <c:forEach items="${exportClassPaths}" var="entry" varStatus="status">
-	<c:set var="path" value="${entry.key}" />
-	<c:choose>
-		<c:when test="${fn:length(exportClassPaths) == 1}">
-			<li><html:hidden property="sequencePath" value="${path}" />
+  <c:set var="path" value="${entry.key}" />
+  <c:choose>
+    <c:when test="${fn:length(exportClassPaths) == 1}">
+      <li><html:hidden property="sequencePath" value="${path}" />
             <label>${entry.value}</label></li>
-		</c:when>
-		<c:otherwise>
-		   <c:choose>
+    </c:when>
+    <c:otherwise>
+       <c:choose>
                 <c:when test="${status.first}">
                     <li><input type="radio" name="sequencePath" value="${path}" checked="checked" /><label>${entry.value}</label></li>
                 </c:when>
@@ -23,8 +23,8 @@
                      <li><input type="radio" name="sequencePath" value="${path}" /><label>${entry.value}</label></li>
                 </c:otherwise>
             </c:choose>
-		</c:otherwise>
-	</c:choose>
+    </c:otherwise>
+  </c:choose>
 </c:forEach>
 </ol>
 

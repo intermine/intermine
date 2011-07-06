@@ -20,7 +20,7 @@
   <c:when test="${!empty resultElement.linkRedirect}">
     <c:set var="detailsLink" value="${resultElement.linkRedirect}"
       scope="request" />
-    <c:set var="extlink" value=" class=\"value extlink\"" />
+    <c:set var="extlink" value="extlink" />
   </c:when>
   <c:otherwise>
     <c:set var="detailsLink"

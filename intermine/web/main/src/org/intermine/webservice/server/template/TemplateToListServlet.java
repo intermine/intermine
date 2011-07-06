@@ -25,7 +25,8 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Alex Kalderimis
  *
  */
-public class TemplateToListServlet extends HttpServlet {
+public class TemplateToListServlet extends HttpServlet
+{
 
     /**
      * Eclipse made me do it!!
@@ -63,6 +64,4 @@ public class TemplateToListServlet extends HttpServlet {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         new TemplateToListService(im).service(request, response);
     }
-
-
 }

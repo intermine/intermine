@@ -31,7 +31,7 @@ import org.intermine.model.bio.Protein;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -41,7 +41,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author radek
  *
  */
-public class UniProtCommentsDisplayer extends CustomDisplayer
+public class UniProtCommentsDisplayer extends ReportDisplayer
 {
 
     protected static final Logger LOG = Logger.getLogger(UniProtCommentsDisplayer.class);

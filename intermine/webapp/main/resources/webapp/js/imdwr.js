@@ -742,13 +742,19 @@ function validateBagName(formName) {
                   || Event.keyCode ==  40)) {
         return;
     }
+
     var frm = document.forms[formName];
 
     var bagName = frm.newBagName.value;
     AjaxServices.validateBagName(bagName, function(errMsg) {
         if (errMsg != '') {
-            new Insertion.Bottom('error_msg',errMsg + '<br/>');
-            jQuery('#error_msg').fadeIn(2000);
+            jQuery('#bigGreen').removeClass('clicked');
+            var newError = jQuery('<div class="error-message">' + errMsg + "</div>");
+            var errorContainer = jQuery('#error_msg');
+            errorContainer.fadeOut('fast', function() {
+                errorContainer.find('.error-message').remove();
+                errorContainer.append(newError).fadeIn('fast');
+            });
         } else {
             if (frm.operationButton) {
                 frm.operationButton.value="saveNewBag";

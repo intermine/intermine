@@ -1,0 +1,63 @@
+log_dir: "/micklem/data/download_logs"
+data_dir: "/micklem/data"
+
+default_sources:
+  - "AffyProbes"
+  - "Biogrid"
+  - "EnsemblCompara"
+  - "FlyAnatomyOntology"
+  - "FlyAtlas"
+  - "FlyBaseFasta"
+  - "FlyBaseOrthologs"
+  - "FlyOntologies"
+  - "GoAnnotation"
+  - "Intact"
+  - "IntactVocabulary"
+  - "Interpro"
+  - "InterproGo"
+  - "Kegg"
+  - "PDB"
+  - "PsiOntology"
+  - "PubMed"
+  - "Reactome"
+  - "RedFly"
+  - "Uniprot"
+  - "WormbaseRNAi"
+  - "WormIdentifiers"
+
+Uniprot:
+    organisms:
+        - 10090 
+        - 6239 
+        - 7165 
+        - 7217 
+        - 7227 
+        - 7955 
+        - 559292
+        - 9606
+        - 10116
+        - 46245
+        - 7230
+        - 7240
+        - 7244
+        - 7245
+        - 7217
+        - 7220
+        - 7222
+        - 7234
+        - 7260
+        - 7238
+    excluded_organisms:
+        - 63221
+        - 10091
+        - 57486
+        - 35531
+        - 10092
+        - 39442
+        - 116058
+        - 180454
+        - 377271
+        - 377270
+        - 46244
+
+

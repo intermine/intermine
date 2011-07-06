@@ -136,7 +136,7 @@ public class CytoscapeNetworkExportAction extends Action
         //=== Create and run a query ===
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.symbol",
-        		"Gene.primaryIdentifier",
+                "Gene.primaryIdentifier",
                 "Gene.interactions.interactionType",
                 "Gene.interactions.interactingGenes.symbol",
                 "Gene.interactions.interactingGenes.primaryIdentifier",

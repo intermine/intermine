@@ -17,10 +17,10 @@
 </html:link>
 <br/>
 
-    <html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
-      <fmt:message key="exporter.galaxy.description"/>
-    </html:link>
-    <br/>
+<html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
+  <fmt:message key="exporter.galaxy.description"/>
+</html:link>
+<br/>
 <%--
   <c:choose>
     <c:when test="${exportAsBED}">

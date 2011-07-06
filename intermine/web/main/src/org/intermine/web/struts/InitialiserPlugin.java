@@ -10,17 +10,20 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,6 +32,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,8 +41,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -78,7 +81,6 @@ import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -94,6 +96,7 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
     TrackerDelegate trackerDelegate;
+    ObjectStore os;
     Set<String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
@@ -126,9 +129,14 @@ public class InitialiserPlugin implements PlugIn
         LinkRedirectManager redirect = getLinkRedirector(webProperties);
 
         // set up core InterMine application
-        ObjectStore os = getProductionObjectStore(webProperties);
+        os = getProductionObjectStore(webProperties);
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+
+        if (!validateUserProfileDatabase(userprofileOSW)) {
+            blockingErrorKeys.add("errors.savedbagtable.runAnt");
+            return;
+        }
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
@@ -245,17 +253,13 @@ public class InitialiserPlugin implements PlugIn
      */
     private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        InputStream is = servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        if (is == null) {
-            throw new ServletException("Unable to find webconfig-model.xml");
-        }
         try {
-            WebConfig retval = WebConfig.parse(is, os.getModel());
+            WebConfig retval = WebConfig.parse(servletContext, os.getModel());
             SessionMethods.setWebConfig(servletContext, retval);
             return retval;
         } catch (Exception e) {
-            LOG.error("Unable to parse webconfig-model.xml", e);
-            throw new ServletException("Unable to parse webconfig-model.xml", e);
+            LOG.error("Problem generating WebConfig", e);
+            throw new ServletException(e);
         }
     }
 
@@ -322,6 +326,25 @@ public class InitialiserPlugin implements PlugIn
         } catch (Exception e) {
             throw new ServletException("Unable to find global.web.properties", e);
         }
+
+        LOG.info("Looking for extra property files");
+        Pattern pattern = Pattern.compile(
+            "/WEB-INF/(?!global)\\w+\\.web\\.properties$");
+        ResourceFinder finder = new ResourceFinder(servletContext);
+        
+        Collection<String> otherResources = finder.findResourcesMatching(pattern);
+        for (String resource : otherResources) {
+            LOG.info("Loading extra resources from " + resource);
+            InputStream otherResourceStream =
+                servletContext.getResourceAsStream(resource);
+            try {
+                webProperties.load(otherResourceStream);
+            } catch (Exception e) {
+                throw new ServletException("Unable to load " + resource, e);
+            }
+        }
+            
+        // Load these last, as they always take precedence.
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
         if (modelPropertiesStream == null) {
@@ -333,8 +356,10 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to find web.properties", e);
             }
         }
+            
         return webProperties;
     }
+
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";
@@ -455,8 +480,13 @@ public class InitialiserPlugin implements PlugIn
      */
     public void destroy() {
         try {
-            profileManager.close();
-            trackerDelegate.close();
+            if (profileManager != null) {
+                profileManager.close();
+            }
+            if (trackerDelegate != null) {
+                trackerDelegate.close();
+            }
+            ((ObjectStoreInterMineImpl) os).close();
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
@@ -552,5 +582,20 @@ public class InitialiserPlugin implements PlugIn
             return td;
         }
         return null;
+    }
+
+    private boolean validateUserProfileDatabase(ObjectStore uos) {
+        Connection con = null;
+        try {
+            con = ((ObjectStoreInterMineImpl) uos).getConnection();
+            if (DatabaseUtil.tableExists(con, "savedbag") && DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
+                return true;
+            }
+        } catch (SQLException sqle) {
+            LOG.error("Probelm retriving connection", sqle);
+        } finally {
+            ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
+        }
+        return false;
     }
 }

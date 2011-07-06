@@ -207,7 +207,10 @@ public class PathQueryHandler extends DefaultHandler
 
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
-            constraintOp = ConstraintOp.MATCHES;
+            constraintOp = ConstraintOp.CONTAINS;
+        }
+        if (ConstraintOp.DOES_NOT_CONTAIN.equals(constraintOp)) {
+            constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
         }
         if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = false;

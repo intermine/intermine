@@ -9,7 +9,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- blockingError.jsp -->
-<html:html locale="true" xhtml="true">
+<html:html lang="true" xhtml="true">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />

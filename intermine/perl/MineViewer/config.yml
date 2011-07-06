@@ -2,12 +2,7 @@
 # env-related settings should go to environments/$env.yml
 # all the settings in this file will be loaded at Dancer's startup.
 
-# Your application's name
-appname: "AlzheimersMine"
-
-project:
-    title: "NeuroGenes"
-    subtitle: "A view on neurological degenerative disease data from MetabolicMine"
+appname: "FlyView"
 
 # The default layout to use for your application (located in
 # views/layouts/main.tt)
@@ -32,6 +27,8 @@ engines:
     allow_blessed: '1'
     convert_blessed: '1'
 
+error_template: "error"
+
 plugins:
     DBIC:
         usercomments: 
@@ -46,10 +43,3 @@ update_interval: 600
 cache_file: './data/memoize_cache.db'
 cache_lifetime: 3600
 
-class_keys:
-    Default: 
-        - "primaryIdentifier"
-    Gene:
-        - "symbol"
-        - "primaryIdentifier"
-        - "secondaryIdentifier"

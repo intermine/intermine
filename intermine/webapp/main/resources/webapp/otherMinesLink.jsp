@@ -35,7 +35,7 @@
           if (entry['organisms'] != undefined) {
               // details dict
               var minePortalDetails = minePortals[entry['mineName'].toLowerCase()];
-              var identifier;
+
               var organismAttribute = '';   // only used for orthologue links
 
               // mine
@@ -83,29 +83,34 @@
                       })
                       .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
 
-                      identifier = organismEntry['genes']['orthologues']['primaryIdentifier'];
+                      //identifier = organismEntry['genes']['orthologues']['primaryIdentifier'];
                   }
                   // orthologues list
                   if (organismEntry['orthologues'] != undefined) {
                       jQuery.each(organismEntry['orthologues'], function(orthoKey, orthoEntry) {
+                            var identifier = orthoEntry['displayIdentifier'];
+                            if (identifier == '""') {
+                                identifier = orthoEntry['primaryIdentifier'];
+                            }
+
                           jQuery('<li/>', {
-                              text: orthoEntry['displayIdentifier']
+                              text: identifier
                           })
                           .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
 
-                          identifier = orthoEntry['primaryIdentifier'];
+                          //identifier = orthoEntry['primaryIdentifier'];
                       });
                   }
                   // add separators & linkify
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
                         // sometimes we do not have a symbol and have a string of bunny ears...
-                        if (jQuery(this).text() != '""') {
+                        //if (jQuery(this).text() != '""') {
                           var linkText = jQuery(this).text();
-                        } else {
-                          var linkText = identifier;
-                        }
-                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + identifier + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
+                        //} else {
+                        //  var linkText = identifier;
+                        //}
+                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + linkText + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());

@@ -1,6 +1,38 @@
 <userprofile>
-  <items/>
-  <bags/>
+  <items>
+        <item id="1" class="Employee">
+            <attribute name="name" value="David Brent"/>
+        </item>
+        <item id="2" class="Employee">
+            <attribute name="name" value="Bernd Stromberg"/>
+        </item>
+        <item id="3" class="Employee">
+            <attribute name="name" value="Timo Becker"/>
+        </item>
+        <item id="4" class="Employee">
+            <attribute name="name" value="Neil Godwin"/>
+        </item>
+        <item id="5" class="Employee">
+            <attribute name="name" value="Brenda"/>
+        </item>
+        <item id="6" class="Employee">
+            <attribute name="name" value="Devon White"/>
+        </item>
+        <item id="7" class="Employee">
+            <attribute name="name" value="Hans Schmelzer"/>
+        </item>
+  </items>
+  <bags>
+        <bag name="Global-List" type="Employee">
+            <bagElement id="1"/>
+            <bagElement id="2"/>
+            <bagElement id="3"/>
+            <bagElement id="4"/>
+            <bagElement id="5"/>
+            <bagElement id="6"/>
+            <bagElement id="7"/>
+        </bag>
+  </bags>
   <queries>
   </queries>
 
@@ -152,12 +184,23 @@
           <constraint path="Company" op="LOOKUP" value="CompanyA" editable="true" code="A"/>
       </query>
   </template>
+  <template name="Company_Contractors" title="Company --&gt; Contractors" longDescription="Contractors who have a relationship with the given company">
+      <query name="Company_Contractors" model="testmodel" view="Company.contractors.name Company.contractors.seniority Company.contractors.businessAddress.address Company.contractors.personalAddress.address">
+          <constraint path="Company" op="LOOKUP" value="CompanyA" editable="true" code="A"/>
+      </query>
+  </template>
   <template name="CEO_Rivals" title="CEO --&gt; Rivals" longDescription="Rivals of this CEO">
       <query name="CEO_Rivals" model="testmodel" view="CEO.name CEO.salary CEO.seniority CEO.company.name">
           <constraint path="CEO.name" op="!=" value="EmployeeB1" editable="true" code="A"/>
       </query>
   </template>
+  <template name="BrokenGlobal" title="This template should not validate">
+      <query name="BrokenGlobal" model="testmodel" view="Employee.name Employee.age Employee.favouriteColour">
+          <constraint path="Employee.childhoodPet" type="Dog"/>
+      </query>
+  </template>
   </template-queries>
+
 
   <tags>
     <tag name="im:aspect:People" objectIdentifier="org.intermine.model.testmodel.Employee" type="class">
@@ -195,6 +238,8 @@
     <tag name="im:public" objectIdentifier="Department_Employees" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Departments" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Employees" type="template"/>
+    <tag name="im:public" objectIdentifier="Company_Contractors" type="template"/>
     <tag name="im:public" objectIdentifier="CEO_Rivals" type="template"/>
+    <tag name="im:public" objectIdentifier="Global-List" type="bag"/>
   </tags>
 </userprofile>

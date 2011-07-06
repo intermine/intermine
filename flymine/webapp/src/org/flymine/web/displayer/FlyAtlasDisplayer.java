@@ -21,7 +21,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * Displayer for flyatlas expression data.
  * @author Alex
  */
-public class FlyAtlasDisplayer extends CustomDisplayer
+public class FlyAtlasDisplayer extends ReportDisplayer
 {
 
     /**

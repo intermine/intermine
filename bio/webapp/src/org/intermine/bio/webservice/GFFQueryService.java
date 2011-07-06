@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -128,9 +138,12 @@ public class GFFQueryService extends AbstractQueryService
     /**
      * Read the SO term name to class name mapping file and return it as a Map from class name to
      * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
+     *
      * @throws ServletException if the SO class names properties file cannot be found
+     * @param servletContext the ServletContext
+     * @return a map
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Map<String, String> getSoClassNames(ServletContext servletContext)
         throws ServletException {
         final String soClassNames = "SO_CLASS_NAMES";
@@ -153,6 +166,10 @@ public class GFFQueryService extends AbstractQueryService
         return new HashMap<String, String>((Map) soNameProperties);
     }
 
+    /**
+     *
+     * @param paths list of path views
+     */
     protected void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
             String path = paths.get(i);
@@ -164,7 +181,7 @@ public class GFFQueryService extends AbstractQueryService
      * Return the query specified in the request, shorn of all duplicate
      * classes in the view. Note, it is the users responsibility to ensure
      * that there are only SequenceFeatures in the view.
-     * @param request The HTTP request
+     *
      * @return A suitable pathquery for getting GFF3 data from.
      */
     protected PathQuery getQuery() {

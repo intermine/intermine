@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = '0.9700';
+    our $VERSION = '0.9701';
 
 =head1 NAME
 
@@ -62,16 +62,11 @@ under the same terms as Perl itself.
     use MooseX::Types::Moose qw/Str ArrayRef HashRef Undef Maybe Int Value Object/;
     use Scalar::Util qw(blessed);
 
-    subtype NotAllLowerCase, as Str, where { $_ !~ /^[a-z]+$/ };
-
     subtype DirName, as Str, where {-d $_}, 
         message {"'$_' should be the name of an existing directory"};
     class_type PathClassDir, { class => 'Path::Class::Dir'};
 
-
-
     # Type coercions
-
 
     coerce DirName, from PathClassDir, via {$_->stringify};
 }

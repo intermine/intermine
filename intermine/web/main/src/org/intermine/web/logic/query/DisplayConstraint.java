@@ -329,6 +329,10 @@ public class DisplayConstraint
         return endCls + (fieldName == null ? "" : " " + fieldName);
     }
 
+    public String getEndClassName() {
+        return endCls;
+    }
+
     /**
      * Return the label associated with a constraint if editing a template query constraint.
      * @return the constraint label
@@ -426,7 +430,12 @@ public class DisplayConstraint
             boolean existPossibleValues =
                 (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
             for (ConstraintOp op : allOps) {
-                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+                if (existPossibleValues
+                    || (!op.getIndex().equals(ConstraintOp.MATCHES.getIndex())
+                        && !op.getIndex().equals(ConstraintOp.DOES_NOT_MATCH.getIndex()))
+                ) {
+                    validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+                }
             }
             if (existPossibleValues) {
                 for (ConstraintOp op : PathConstraintMultiValue.VALID_OPS) {
@@ -597,7 +606,7 @@ public class DisplayConstraint
     }
 
     /**
-     * Get a list of public and user bag names available for this path.  If none available return
+     * Get a list of public and user bag names available and currentfor this path.  If none available return
      * null.
      * @return a list of available bag names or null
      */
@@ -605,7 +614,7 @@ public class DisplayConstraint
         if (ClassKeyHelper.hasKeyFields(classKeys, endCls)
             && !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)) {
             Map<String, InterMineBag> bags =
-                bagManager.getUserOrGlobalBagsOfType(profile, endCls);
+                bagManager.getCurrentUserOrGlobalBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
                 List<String> bagList = new ArrayList<String>(bags.keySet());
                 Collections.sort(bagList);
@@ -744,7 +753,9 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
-                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()) {
+                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()) {
                 return true;
             }
             if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
@@ -778,6 +789,8 @@ public class DisplayConstraint
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
+                    || selectedOperator == ConstraintOp.CONTAINS.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_CONTAIN.getIndex()
                     || selectedOperator == ConstraintOp.LOOKUP.getIndex()
                     || selectedOperator == ConstraintOp.ONE_OF.getIndex()
                     || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {

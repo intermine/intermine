@@ -20,7 +20,7 @@ div.imbedded-table-tooltip {
     margin: 20px;
     border-style: solid;
     border-width: 2px;
-    width: 90%;
+    width: 80%;
     border-color: #365252;
     padding-bottom: 5px;
 }
@@ -46,6 +46,7 @@ div.imbedded-table-tooltip {
     font-weight: bold;
     background: #666;
     color: white;
+    vertical-align: top;
 }
 
 .imbedded-table {

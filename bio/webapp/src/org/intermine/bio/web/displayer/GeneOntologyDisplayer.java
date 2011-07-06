@@ -32,7 +32,7 @@ import org.intermine.model.bio.Organism;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.displayer.CustomDisplayer;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -41,7 +41,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * Builds datastructure from go parent id to go term id.  Includes evidence codes.
  * @author julie
  */
-public class GeneOntologyDisplayer extends CustomDisplayer
+public class GeneOntologyDisplayer extends ReportDisplayer
 {
 
     private static final Set<String> ONTOLOGIES = new HashSet<String>();

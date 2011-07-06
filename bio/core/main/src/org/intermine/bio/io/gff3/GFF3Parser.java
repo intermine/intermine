@@ -34,7 +34,7 @@ public final class GFF3Parser
      * @return an Iterator over the GFF3Record objects from the reader
      * @throws IOException if there is an error during reading or parsing
      */
-    public static Iterator parse(final BufferedReader reader) throws IOException {
+    public static Iterator<?> parse(final BufferedReader reader) throws IOException {
         String line = null;
 
         while ((line = reader.readLine()) != null) {
@@ -52,7 +52,7 @@ public final class GFF3Parser
 
         final String firstGFFLine = line;
 
-        return new Iterator() {
+        return new Iterator<Object>() {
             String currentLine = firstGFFLine;
 
             public boolean hasNext() {

@@ -190,12 +190,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param im - the InterMineAPI
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, List<ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
 
         // a Map contains orgName and its chrInfo accordingly
         // e.g. <D.Melanogaster, (D.Melanogaster, X, 5000)...>
-        Map<String, List<ChromosomeInfo>> chrInfoMap =
-            new HashMap<String, List<ChromosomeInfo>>();
+        Map<String, Map<String, ChromosomeInfo>> chrInfoMap =
+            new HashMap<String, Map<String, ChromosomeInfo>>();
 
         try {
             Query q = new Query();
@@ -257,14 +257,13 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             // orgName and value as a ArrayList containing a list of chrInfo which has the same
             // orgName
             for (String o : orgSet) {
-
-                // a List to store chrInfo for the same organism
-                List<ChromosomeInfo> chrInfoSubList = new ArrayList<ChromosomeInfo>();
+                // a map to store chrInfo for the same organism
+                Map<String, ChromosomeInfo> chrInfoSubMap = new HashMap<String, ChromosomeInfo>();
 
                 for (ChromosomeInfo chrInfo : chrInfoList) {
                     if (o.equals(chrInfo.getOrgName())) {
-                        chrInfoSubList.add(chrInfo);
-                        chrInfoMap.put(o, chrInfoSubList);
+                        chrInfoSubMap.put(chrInfo.getChrPID(), chrInfo);
+                        chrInfoMap.put(o, chrInfoSubMap);
                     }
                 }
             }

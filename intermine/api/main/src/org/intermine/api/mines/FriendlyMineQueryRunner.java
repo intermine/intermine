@@ -280,7 +280,7 @@ public final class FriendlyMineQueryRunner
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             return reader;
         } catch (Exception e) {
-            LOG.info("Unable to access " + urlString);
+            LOG.info("Unable to access " + urlString + " exception: " + e.getMessage());
             return null;
         }
     }

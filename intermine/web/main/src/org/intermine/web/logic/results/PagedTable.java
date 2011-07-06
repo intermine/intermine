@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ResultElement;
@@ -57,7 +56,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.struts.ReportTemplateController;
 
 /**
  * A pageable and configurable table of data.
@@ -88,8 +86,6 @@ public class PagedTable
 
     private String selectedClass;
     private int selectedColumn;
-
-    private static final Logger LOG = Logger.getLogger(PagedTable.class);
 
     /**
      * Construct a PagedTable with a list of column names
@@ -1091,23 +1087,27 @@ public class PagedTable
         if (bag.size() == selectionIds.size()) {
             return removedCount;
         }
-
-        if (allSelected == -1) {
-            Set<Integer> idsToRemove = selectionIds.keySet();
-            bag.removeIdsFromBag(idsToRemove);
-            removedCount = idsToRemove.size();
-        } else {
-            // selection is reversed, so selectionIds.keySet() are the ids to keep
-            Set<Integer> idsToRemove = new HashSet<Integer>();
-            for (Integer id : bag.getContentsAsIds()) {
-                if (!selectionIds.keySet().contains(id)) {
-                    idsToRemove.add(id);
-                }
-            }
-            bag.removeIdsFromBag(idsToRemove);
-            removedCount = idsToRemove.size();
-        }
+        Set<Integer> idsToRemove = getIdsToRemove(bag);
+        bag.removeIdsFromBag(idsToRemove);
+        removedCount = idsToRemove.size();
+        
         SessionMethods.invalidateBagTable(session, bag.getName());
         return removedCount;
+    }
+    
+    public Set<Integer> getIdsToRemove(InterMineBag bag) {
+    	Set<Integer> idsToRemove = new HashSet<Integer>();
+    	if (allSelected == -1) {
+            idsToRemove = selectionIds.keySet();
+    	} else {
+    		// selection is reversed, so selectionIds.keySet() are the ids to keep
+    		 idsToRemove = new HashSet<Integer>();
+             for (Integer id : bag.getContentsAsIds()) {
+                 if (!selectionIds.keySet().contains(id)) {
+                     idsToRemove.add(id);
+                 }
+             }
+    	}
+    	return idsToRemove;
     }
 }

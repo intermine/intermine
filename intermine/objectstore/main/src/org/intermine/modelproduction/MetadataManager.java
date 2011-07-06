@@ -117,6 +117,11 @@ public final class MetadataManager
      * The name of the key used to store the modMine MetaData cache
      */
     public static final String MODMINE_METADATA_CACHE = "modMine_metadata_cache";
+    
+    /**
+     * The name of the key used to store the serial number identifying the production db
+     */
+    public static final String SERIAL_NUMBER = "serialNumber";
 
     /**
      * Store a (key, value) pair in the metadata table of the database

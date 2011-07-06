@@ -11,6 +11,7 @@ package org.intermine.bio.web.export;
  */
 
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -137,6 +138,10 @@ public class SequenceExporter implements Exporter
                 exportedIDs.add(objectId);
             }
 
+            if (writtenResultsCount == 0) {
+                out.write("Nothing was found for export".getBytes(Charset.forName("UTF-8")));
+            }
+
             out.flush();
         } catch (Exception e) {
             throw new ExportException("Export failed.", e);
@@ -187,11 +192,18 @@ public class SequenceExporter implements Exporter
             // add the sequence location info at the second place in the header
             SequenceFeature feature = (SequenceFeature) object;
 
-            String chr = feature.getChromosomeLocation().getLocatedOn().getPrimaryIdentifier();
-            Integer start = feature.getChromosomeLocation().getStart();
-            Integer end = feature.getChromosomeLocation().getEnd();
-            String locString = chr + ':' + start + '-' + end;
-            headerBits.add(locString);
+            Location loc = feature.getChromosomeLocation();
+            if (loc == null) {
+                headerBits.add("-");
+            } else {
+                // Assume if loc exits, the following information should be available
+                String chr = loc.getLocatedOn().getPrimaryIdentifier();
+                Integer start = loc.getStart();
+                Integer end = loc.getEnd();
+
+                String locString = chr + ':' + start + '-' + end;
+                headerBits.add(locString);
+            }
 
             for (ResultElement re : row) {
                 if (object.equals(re.getObject())) {

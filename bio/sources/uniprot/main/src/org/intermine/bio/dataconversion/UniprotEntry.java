@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,15 +34,15 @@ public class UniprotEntry
     private String length, molecularWeight;
     private Set<Item> features = new HashSet<Item>();
     private Map<Integer, List<String>> commentEvidence = new HashMap<Integer, List<String>>();
-    private boolean isIsoform = false;
-    private String taxonId, name, isFragment;
+    private boolean isIsoform = false, isFragment = false;
+    private String taxonId, name;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String sequence, md5checksum;
     private Map<String, List<String>> collections = new HashMap<String, List<String>>();
     private Map<String, String> evidenceCodeToRef = new HashMap<String, String>();
     private boolean isDuplicate = false;
-    private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
-    private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
+    private Map<String, Set<String>> dbrefs = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> geneNames = new HashMap<String, Set<String>>();
 
     // map of gene designation (normally the primary name) to dbref (eg. FlyBase, FBgn001)
     // this map is used when there is more than one gene but the dbref is needed to set an
@@ -54,7 +53,6 @@ public class UniprotEntry
     // usually on the next line of XML
     private String temp = null;
     private Item feature = null;
-    private UniprotGene geneEntry = null; // <gene><name> ... being processed
     private Dbref dbref = null;
     private Comment comment = null; //<comment><text> ... being processed
 
@@ -118,7 +116,6 @@ public class UniprotEntry
     public void reset() {
         temp = null;
         feature = null;
-        geneEntry = null;
         dbref = null;
     }
 
@@ -363,7 +360,7 @@ public class UniprotEntry
     /**
      * @return the isFragmant
      */
-    public String isFragment() {
+    public boolean isFragment() {
         return isFragment;
     }
 
@@ -371,6 +368,12 @@ public class UniprotEntry
      * @param isFragment the isFragmant to set
      */
     public void setFragment(String isFragment) {
+        if ("true".equals(isFragment)) {
+            this.isFragment = true;
+        }
+    }
+
+    private void setFragment(boolean isFragment) {
         this.isFragment = isFragment;
     }
 
@@ -580,7 +583,7 @@ public class UniprotEntry
     /**
      * @param dbrefs the dbrefs to set
      */
-    public void setDbrefs(Map<String, List<String>> dbrefs) {
+    public void setDbrefs(Map<String, Set<String>> dbrefs) {
         this.dbrefs = dbrefs;
     }
 
@@ -589,14 +592,6 @@ public class UniprotEntry
      */
     public void setGeneDesignations(Map<String, Dbref> geneDesignationToDbref) {
         this.geneDesignationToDbref = geneDesignationToDbref;
-    }
-
-
-    /**
-     * @param geneEntries the geneEntries to set
-     */
-    public void setGeneEntries(List<UniprotGene> geneEntries) {
-        this.geneEntries = geneEntries;
     }
 
     /**
@@ -699,22 +694,32 @@ public class UniprotEntry
     // ============== genes =========================
 
     /**
+     * From <genes>
+     *
      * @param type type of variable, eg. ORF, primary
      * @param value value of variable, eg FBgn, CG
      */
-    public void addGene(String type, String value) {
-        // geneEntry is a temp var that gets reset every <gene> tag found
-        if (geneEntry == null) {
-            geneEntry = new UniprotGene();
-            geneEntries.add(geneEntry);
+    public void addGeneName(String type, String value) {
+        // See #1199 - remove organism prefixes ("AgaP_" or "Dmel_")
+        String geneName = value.replaceAll("^[A-Z][a-z][a-z][A-Za-z]_", "");
+        Util.addToSetMap(geneNames, type, geneName);
+        testForMultipleGenes(type);
+    }
+
+    // type is ORF, if there are multiple names saved as this type, we have multiple genes
+    // assigned to this protein
+    private boolean testForMultipleGenes(String type) {
+        Set<String> values = geneNames.get(type);
+        if (values.size() > 1) {
+            return true;
         }
-        geneEntry.addGene(type, value);
+        return false;
     }
 
     /**
      * @return the dbrefs
      */
-    public Map<String, List<String>> getDbrefs() {
+    public Map<String, Set<String>> getDbrefs() {
         return dbrefs;
     }
 
@@ -737,7 +742,7 @@ public class UniprotEntry
          * pair */
         dbref = new Dbref(type, id);
         if (dbrefs.get(type) == null) {
-            dbrefs.put(type, new ArrayList<String>());
+            dbrefs.put(type, new HashSet<String>());
         }
         dbrefs.get(type).add(id);
     }
@@ -777,63 +782,17 @@ public class UniprotEntry
     }
 
     /**
-     * @return true if this uniprot entry has more than 1 gene
+     * @return true if entry has gene names
      */
-    public boolean hasMultipleGenes() {
-        return geneEntries.size() > 1;
+    public Map<String, Set<String>> getGeneNames() {
+        return geneNames;
     }
 
     /**
-     * @return list of name types, eg ORF and name values, eg FBgn001
+     * @param map original map of gene names
      */
-    public Map<String, String> getGeneNames() {
-        if (geneEntries.size() == 0) {
-            return null;
-        }
-        return geneEntries.get(0).getGeneNames();
-    }
-
-    /**
-     * method to set the gene names for dummy uniprot entry.  used when there are multiple genes
-     * @param geneNames list of names
-     */
-    public void setGeneNames(Map<String, String> geneNames) {
-        UniprotGene gene = new UniprotGene();
-        geneEntries.add(gene);
-        gene.setGeneNames(geneNames);
-    }
-
-    /**
-     * @return list of genes that need to be processed for this uniprot entry.
-     */
-    public List<Map<String, String>> getGeneEntries() {
-        Iterator<UniprotEntry.UniprotGene> it = geneEntries.iterator();
-        List<Map<String, String>> identifiers = new ArrayList<Map<String, String>>();
-        while (it.hasNext()) {
-            UniprotGene uniprotGene = it.next();
-            identifiers.add(uniprotGene.getGeneNames());
-        }
-        return identifiers;
-    }
-
-    // using all identifiers, find dbrefs with valid "gene designation" values
-    private Map<String, List<String>> getValidDbrefs(List<String> identifiers) {
-        Map<String, List<String>> validDbrefs = new HashMap<String, List<String>>();
-
-        // get all gene designation entries
-        for (Map.Entry<String, Dbref> refs : geneDesignationToDbref.entrySet()) {
-            String geneDesignation = refs.getKey();
-            Dbref geneDesignationDbref = refs.getValue();
-            String dbname = geneDesignationDbref.getType();        // eg. flybase
-            String identifier = geneDesignationDbref.getValue();   // eg. FBgn001
-            if (identifiers.contains(geneDesignation)) {
-                if (validDbrefs.get(dbname) == null) {
-                    validDbrefs.put(dbname, new ArrayList<String>());
-                }
-                validDbrefs.get(dbname).add(identifier);
-            }
-        }
-        return validDbrefs;
+    private void setGeneNames(Map<String, Set<String>> map) {
+        geneNames = new HashMap<String, Set<String>>(map);
     }
 
     /**
@@ -903,93 +862,6 @@ public class UniprotEntry
         }
     }
 
-    /**
-     * class representing a gene in a uniprot entry
-     * used for holding multiple identifiers for a single gene.  only used
-     * when there are multiple genes, otherwise the identifiers are held in
-     * the converter
-     * @author julie
-     */
-    public class UniprotGene
-    {
-        // map of name type to name value, eg ORF --> CG1234
-        protected Map<String, String> geneIdentifiers = new HashMap<String, String>();
-        protected List<String> geneGOTerms = new ArrayList<String>();
-
-        /**
-         * @param type type of variable, eg. ORF, primary
-         * @param value value of variable, eg FBgn, CG
-         */
-        protected void addGene(String type, String value) {
-            geneIdentifiers.put(type, value);
-        }
-
-        /**
-         * @return map of name types (eg. ORF) to name values (eg. CG1234)
-         */
-        protected Map<String, String> getGeneNames() {
-            return geneIdentifiers;
-        }
-
-        /**
-         * @param geneNames map of name type to name value, eg ORF --> CG1234
-         */
-        protected void setGeneNames(Map<String, String> geneNames) {
-            this.geneIdentifiers = geneNames;
-        }
-
-
-        /**
-         * @return list of refIds representing go term objects
-         */
-        protected List<String> getGOTerms() {
-            return geneGOTerms;
-        }
-
-        /**
-         * @param terms list of refIds representing go terms
-         */
-        protected void setGOTerms(List<String> terms) {
-            this.geneGOTerms = terms;
-        }
-
-        /**
-         * @return list of gene names
-         */
-        protected List<String> getGenes() {
-            List<String> genes = new ArrayList<String>();
-            genes.addAll(geneIdentifiers.values());
-            return genes;
-        }
-    }
-
-    /**
-     * @return cloned uniprot entry, an isoform of original entry
-     */
-    public List<UniprotEntry> cloneGenes() {
-        List<UniprotEntry> dummyEntries = new ArrayList<UniprotEntry>();
-
-        Iterator<UniprotGene> iter = geneEntries.iterator();
-        while (iter.hasNext()) {
-            UniprotGene gene = iter.next();
-            UniprotEntry entry = new UniprotEntry(primaryAccession);
-            entry.setDatasetRefId(datasetRefId);
-            entry.setTaxonId(taxonId);
-
-            // since there are two genes, only return dbrefs that have the matching gene
-            // designation
-            entry.setDbrefs(getValidDbrefs(gene.getGenes()));
-
-            // set gene names
-            entry.setGeneNames(gene.getGeneNames());
-
-            entry.setGOTerms(collections.get("goTerms"));
-
-            // add to list
-            dummyEntries.add(entry);
-        }
-        return dummyEntries;
-    }
 
     /**
      * no:
@@ -1019,7 +891,7 @@ public class UniprotEntry
         entry.setPubs(collections.get("pubs"));
         entry.setKeywords(collections.get("keywords"));
         entry.setProteinNames(collections.get("proteinNames"));
-        entry.setGeneEntries(geneEntries);
+        entry.setGeneNames(geneNames);
         entry.setGeneDesignations(geneDesignationToDbref);
         entry.setGOTerms(collections.get("goTerms"));
         return entry;

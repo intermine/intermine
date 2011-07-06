@@ -67,6 +67,7 @@ public class GenomicRegionSearchAjaxAction extends Action
         .getGenomicRegionSearchService(request);
 
         @SuppressWarnings("unchecked")
+        //key - UUID
         Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap =
              (Map<String, Map<GenomicRegion, List<List<String>>>>) request
                             .getSession().getAttribute("spanOverlapFullResultMap");

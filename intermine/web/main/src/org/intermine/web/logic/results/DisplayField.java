@@ -18,12 +18,12 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -35,7 +35,7 @@ public class DisplayField
     FieldDescriptor fd;
     int size = -1;
     InlineResultsTable table = null;
-    Collection collection = null;
+    Collection<?> collection = null;
     WebConfig webConfig = null;
 
     protected static final Logger LOG = Logger.getLogger(DisplayField.class);
@@ -46,18 +46,19 @@ public class DisplayField
 
     /** @var webProperties so we can resolve # of rows to show in Collections */
     private Properties webProperties;
+    private String parentClass = null;
 
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
      * @param fd metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
-     * @param webProperties, telling us how many Collection rows to show
+     * @param webProperties telling us how many Collection rows to show
      * @param classKeys Map of class name to set of keys
      * @param listOfTypes as determined using PathQueryResultHelper on a Collection
      * @throws Exception if an error occurs
      */
-    public DisplayField(Collection collection, FieldDescriptor fd,
+    public DisplayField(Collection<?> collection, FieldDescriptor fd,
                         WebConfig webConfig, Properties webProperties,
                         Map<String, List<FieldDescriptor>> classKeys,
                         List<Class<?>> listOfTypes) throws Exception {
@@ -69,6 +70,14 @@ public class DisplayField
         this.webConfig = webConfig;
         this.webProperties = webProperties;
         this.classKeys = classKeys;
+    }
+
+    public DisplayField(Collection<?> collection, FieldDescriptor fd,
+                        WebConfig webConfig, Properties webProperties,
+                        Map<String, List<FieldDescriptor>> classKeys,
+                        List<Class<?>> listOfTypes, String objectType) throws Exception {
+        this(collection, fd, webConfig, webProperties, classKeys, listOfTypes);
+        this.parentClass = objectType;
     }
 
     /**
@@ -104,9 +113,8 @@ public class DisplayField
                 tableSize = collection.size();
             }
 
-
             table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
-                                           webConfig, classKeys, tableSize, false, listOfTypes);
+                                        webConfig, classKeys, tableSize, false, listOfTypes, parentClass, fd);
         }
         return table;
     }

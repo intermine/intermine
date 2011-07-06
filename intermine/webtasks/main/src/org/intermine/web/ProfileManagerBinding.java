@@ -10,31 +10,37 @@ package org.intermine.web;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.IdUpgrader;
+import org.apache.tools.ant.BuildException;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.api.tracker.xml.TrackManagerBinding;
 import org.intermine.api.tracker.xml.TrackManagerHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.SAXParser;
-import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -67,15 +73,14 @@ public class ProfileManagerBinding
             writer.writeAttribute(MetadataManager.PROFILE_FORMAT_VERSION, profileVersion);
             List usernames = profileManager.getProfileUserNames();
 
-            Iterator iter = usernames.iterator();
-
-            while (iter.hasNext()) {
-                Profile profile = profileManager.getProfile((String) iter.next());
+            for (Object userName : usernames) {
+                Profile profile = profileManager.getProfile((String) userName);
                 LOG.info("Writing profile: " + profile.getUsername());
                 long startTime = System.currentTimeMillis();
 
                 ProfileBinding.marshal(profile, profileManager.getProductionObjectStore(), writer,
-                        profileManager.getVersion());
+                                       profileManager.getVersion(),
+                                       getClassKeys(profileManager.getProductionObjectStore()));
 
                 long totalTime = System.currentTimeMillis() - startTime;
                 LOG.info("Finished writing profile: " + profile.getUsername()
@@ -109,22 +114,32 @@ public class ProfileManagerBinding
         }
     }
 
+    private static Map<String, List<FieldDescriptor>> getClassKeys(ObjectStore os) {
+        Properties classKeyProps = new Properties();
+        try {
+            InputStream inputStream = ProfileManagerBinding.class.getClassLoader()
+                                      .getResourceAsStream("class_keys.properties");
+            classKeyProps.load(inputStream);
+        } catch (IOException ioe) {
+            new BuildException("class_keys.properties not found", ioe);
+        }
+        return ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+    }
+
     /**
      * Read a ProfileManager from an XML stream Reader
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
-                                 boolean abortOnError) {
+                                 ObjectStoreWriter osw, boolean abortOnError) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, osw, abortOnError);
+                new ProfileManagerHandler(profileManager, osw, abortOnError);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,12 +153,11 @@ public class ProfileManagerBinding
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader) {
-        unmarshal(reader, profileManager, osw, idUpgrader, true);
+                                 ObjectStoreWriter osw) {
+        unmarshal(reader, profileManager, osw, true);
     }
 }
 
@@ -156,7 +170,6 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private TrackManagerHandler trackHandler = null;
     private ProfileManager profileManager = null;
-    private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
     private boolean abortOnError;
     private long startTime = 0;
@@ -166,17 +179,15 @@ class ProfileManagerHandler extends DefaultHandler
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
-    public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                                 ObjectStoreWriter osw, boolean abortOnError) {
+    public ProfileManagerHandler(ProfileManager profileManager, ObjectStoreWriter osw,
+                                 boolean abortOnError) {
         super();
         this.profileManager = profileManager;
-        this.idUpgrader = idUpgrader;
         this.osw = osw;
         this.abortOnError = abortOnError;
     }
@@ -197,11 +208,9 @@ class ProfileManagerHandler extends DefaultHandler
             //templateTrackHandler = new TemplateTrackHandler(
               //                     profileManager.getProfileObjectStoreWriter());
         }
-
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError,
-                    version);
+            profileHandler = new ProfileHandler(profileManager, osw, version);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
@@ -224,7 +233,15 @@ class ProfileManagerHandler extends DefaultHandler
         super.endElement(uri, localName, qName);
         if ("userprofile".equals(qName)) {
             Profile profile = profileHandler.getProfile();
-            profileManager.createProfile(profile);
+            profileManager.createProfileWithoutBags(profile);
+            try {
+                Map<String, Set<String>> bagValues = profileHandler.getBagsValues();
+                for (InterMineBag bag : profile.getSavedBags().values()) {
+                    bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
+                }
+            } catch (ObjectStoreException ose) {
+                throw new RuntimeException(ose);
+            }
             Set<Tag> tags = profileHandler.getTags();
             TagManager tagManager =
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();

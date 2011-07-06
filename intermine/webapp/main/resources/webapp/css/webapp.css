@@ -157,6 +157,10 @@ p#version {
     margin: 5px;
 }
 
+tbody#summary_table td {
+	padding-right:4px;
+}
+
 /* =MENU
  --------------------------*/
 div#menucontainer {
@@ -1074,6 +1078,7 @@ div.heading.results #tool_bar_div ul#button_bar li {
 
 #funding-footer img {
     padding-left: 6px;
+    vertical-align: middle;
 }
 
 /* template input h2 */
@@ -1448,6 +1453,10 @@ div.floatRight { float:right; }
 #bigGreen.button div.right { background:url('../images/progress/green-btn-right.png') no-repeat left;
   width:20px; display:inline-block; height:32px; float:left; }
 
+#bigGreen.button:hover input { background-image:url('../images/progress/green-btn-center-hover.png'); }
+#bigGreen.button:hover div.left { background-image:url('../images/progress/green-btn-left-hover.png'); }
+#bigGreen.button:hover div.right { background-image:url('../images/progress/green-btn-right-hover.png'); }
+
 #bigGreen.button.inactive input { background:url('../images/progress/gray-btn-center.png') repeat-x left; }
 #bigGreen.button.inactive div.left { background:url('../images/progress/gray-btn-left.png') no-repeat left; }
 #bigGreen.button.inactive div.right { background:url('../images/progress/gray-btn-right.png') no-repeat left; }
@@ -1486,7 +1495,7 @@ div.collection-table { margin-bottom:30px; }
 div.collection-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.collection-table div.right { display:inline; float:right; font-size:13px; }
 div.collection-table table { width:100%; border-spacing:0; border-collapse:collapse; }
-div.collection-table table th { padding:6px; font-size:12px; }
+div.collection-table table th { padding:6px; font-size:12px; vertical-align:bottom; }
 div.collection-table table td { padding:3px 6px; font-size:12px; }
 div.collection-table table thead th,
 div.collection-table table thead td { font-weight:normal; border-bottom-width:1px; border-bottom-style:solid; font-size:13px; padding:2px 6px; }
@@ -1500,14 +1509,17 @@ div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { bord
 /* collection table on results pages */
 div.collection-table.nowrap table tbody td { white-space:nowrap; }
 div.collection-table.nomargin { margin-bottom:0; }
+div.collection-table table thead th div.column-name { display:inline-block; } /* columnName.tag */
+div.collection-table table thead th div.column-name em { font-size:9px; display:block; } /* columnName.tag */
 div.collection-table table thead th img { margin-left:2px; } /* column description info image */
-div.collection-table table thead th input { display:block; float:left; margin-right:8px; } /* select box on results table */
+div.collection-table table thead th input { display:inline-block; margin-right:8px; } /* select box on results table */
 div.collection-table table thead th span.path { white-space:nowrap; } /* path to column key */
 div.collection-table table thead th span.path em { font-size:9px; }
 div.collection-table tbody td.highlightCell { background:#FFF3D3 !important; border-top-color:#E3D19F !important; border-bottom:1px solid #E3D19F !important; }
 div.collection-table.results div.selected-fields { padding:8px 0; }
 div.collection-table.results table { border-top-width:1px; border-top-style:solid; }
 div.collection-table.results table thead th { padding-top:6px; }
+div.collection-table.results table th:not(:last-child) { border-right-width:1px; border-right-style:solid; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.basic-table div.right { display:inline; float:right; font-size:13px; }

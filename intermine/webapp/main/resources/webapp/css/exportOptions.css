@@ -12,13 +12,12 @@ fieldset {
     clear:both;
     width:100%;
     margin: 1.5em 0 0 0;
-    padding: 0;
+    padding: 4px 7px 9px 7px;
     border-style: 1px solid #9F67AD;
     background: url('../theme/blue_grad.png') repeat-x;
 }
 
 legend {
-    padding-left: 1em;
     color: #000000;
     font-weight: bold;
 }

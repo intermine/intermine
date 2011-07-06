@@ -107,7 +107,7 @@ function clearBagName(element) {
             <c:forEach items="${ASPECTS}" var="entry">
               <c:set var="set" value="${entry.value}"/>
               <option value="${set.name}"
-                <c:if test="${aspect.name == set.name}">
+                <c:if test="${aspect.name == set.name || initialFilterText == set.name}">
                   selected
                 </c:if>
               >${set.name}</option>
@@ -139,11 +139,11 @@ function clearBagName(element) {
             <html:hidden property="templateButton" value="export"/>
         </c:when>
     <c:otherwise>
-        <a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union');return false;" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
-        <a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect');return false;" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
-        <a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract');return false;" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
-        <a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy');return false;" class="boxy"><img src="images/icons/copy.png" width="16" height="16" alt="Copy">Copy</a>
-        <a href="#" title="Delete" onclick="deleteBag();return false;" class="boxy"><img src="images/icons/delete.png" width="16" height="16" alt="Delete">Delete</a>
+        <a href="#operations" title="Union" class="boxy inactive"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Intersect" class="boxy inactive"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Subtract" class="boxy inactive"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Copy" class="boxy inactive"><img src="images/icons/copy.png" width="16" height="16" alt="Copy">Copy</a>
+        <a href="#" title="Delete" class="boxy inactive"><img src="images/icons/delete.png" width="16" height="16" alt="Delete">Delete</a>
     </c:otherwise>
     </c:choose>
     <strong class="pad">Options:</strong>
@@ -162,6 +162,44 @@ function clearBagName(element) {
     <html:submit property="save" value="Save" onclick="submitBagOperation()"/>
 </div>
 <script type="text/javascript" charset="utf-8">
+    (function() {
+      jQuery(document).ready(function() {
+        jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {
+          var selected = jQuery("#all_bag_bag_container input[name='selectedBags']:checked").length;
+          if (selected > 0) {
+            jQuery("#filter_tool_bar a.boxy[title='Copy']").removeClass('inactive');
+            jQuery("#filter_tool_bar a.boxy[title='Delete']").removeClass('inactive');
+
+            jQuery("#filter_tool_bar a.boxy[title='Union']").addClass('inactive');
+            jQuery("#filter_tool_bar a.boxy[title='Intersect']").addClass('inactive');
+            jQuery("#filter_tool_bar a.boxy[title='Subtract']").addClass('inactive');
+            if (selected > 1) {
+              jQuery("#filter_tool_bar a.boxy[title='Union']").removeClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Intersect']").removeClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Subtract']").removeClass('inactive');
+            }
+          } else {
+              jQuery("#filter_tool_bar a.boxy[title='Copy']").addClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Delete']").addClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Union']").addClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Intersect']").addClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='Subtract']").addClass('inactive');
+          }
+        });
+
+        jQuery("#filter_tool_bar a.boxy").click(function(e) {
+            if (!jQuery(this).hasClass('inactive')) {
+                if (jQuery(this).attr('title').toLowerCase() == "delete") {
+                  deleteBag();
+                } else {
+                  jQuery("#listsButton").val(jQuery(this).attr('title').toLowerCase());
+                }
+            }
+            e.preventDefault();
+        });
+      });
+    })();
+
     jQuery(document).ready(function(){
         jQuery(".boxy").boxy();
     });
@@ -182,7 +220,7 @@ function clearBagName(element) {
   <!--
       jQuery('#${wsListId}_${type}_filter_text').attr('autocomplete','off');
     -->
-</script>
+--</script>
 
 <tiles:insert name="webSearchableList.tile">
   <tiles:put name="type" value="${type}"/>
@@ -208,7 +246,7 @@ function clearBagName(element) {
  <script type="text/javascript">
 <%-- enable filter only after the list is populated --%>
     jQuery('#filterText').attr('disabled','');
-    if (document.getElementById('${ws_input_aspect}') !=null 
+    if (document.getElementById('${ws_input_aspect}') !=null
             && document.getElementById('${ws_input_aspect}').value != '') {
      filterAspect('${type}', '${wsListId}');
     } else if (document.getElementById('filterText').value != '') {
