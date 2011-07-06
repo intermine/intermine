@@ -321,8 +321,8 @@
     <td rowspan="1" class="leftcol"><p><h2>Diseases</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Human disease data set</td>
-    <td> OMIM</td>
-    <td> </td>
+    <td> <a href="http://omim.org" target="_new" class="extlink">OMIM</a></td>
+    <td> Amberger et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/18842627" target="_new" class="extlink">PubMed: 18842627</a></td>
     <td> &nbsp;</td>
   </tr>
 
