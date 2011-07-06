@@ -245,8 +245,8 @@
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
 </div>
-
-<div class="resultsPage">
+<div style="clear:both"></div>
+<div class="results collection-table nowrap nomargin">
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="resultsTable" />
      <tiles:put name="currentPage" value="results" />

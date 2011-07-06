@@ -3,7 +3,7 @@
 
 <!-- attributeLinkDisplayer.jsp -->
 
-  <h3>External Links</h3>
+  <h3 class="goog">External Links</h3>
   <c:choose>
   <c:when test="${!empty attributeLinkConfiguration}">
   <ul>

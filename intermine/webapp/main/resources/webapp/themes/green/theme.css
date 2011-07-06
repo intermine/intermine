@@ -208,30 +208,6 @@ table.dbsources td {
 table.dbsources td.leftcol {
   border-left: 1px solid #000;}
 
-/* =RESULTS TABLES
------------------------*/
-table.results tr th {
-    background-color: #000;font-size: 12px;color:#FFF;
-}
-table.results tr td.highlightCell, table.results tr.even td.highlightCell {
-   border-right:1px solid #FFF;background-color: #888;}
-
-table.results tfoot tr td {
-  color:#FFF;
-  background-color: #000;
-}
-
-table.results tr.even TD{
-  background-color: #d3e6cf;}
-
-table.results tr.odd TD{
-  border-right:1px solid #d3e6cf;
-  border-bottom:1px solid #d3e6cf;}
-
-table.results tr td.highlightObject {
-  background-color: #888;
-}
-
 /*    .columnHeader {
       background: #353B40;
     }*/
@@ -278,3 +254,99 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
   left center transparent; }
 
 #templates #tab-content #ribbon { background: url("../../themes/purple/homepage/ribbon-duke.png") no-repeat scroll right top transparent; }
+
+/* report page */
+#pagecontentcontainer.report-page #header_wrap { background-color:#F0FCEC; background-image:url("report/header-bg.png"); }
+#pagecontentcontainer.report-page #object_header h1.title span { color:#5E665C; }
+#pagecontentcontainer.report-page #object_header div.box h3 { background:#E3F2DF; }
+#pagecontentcontainer.report-page #object_header div.list.box span { color:#5E665C; }
+#pagecontentcontainer.report-page #fixed-menu { background:#952C39; }
+#pagecontentcontainer.report-page #toc-menu-wrap { background:#F0FCEC; }
+#pagecontentcontainer.report-page #fixed-menu span,
+#pagecontentcontainer.report-page #toc-menu-wrap span { color:#FFF; }
+#pagecontentcontainer.report-page #menu-target { background:#F0FCEC; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap,
+#pagecontentcontainer.report-page #fixed-menu div.wrap { background:#952C39; border-color:#952C39; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.wrap a,
+#pagecontentcontainer.report-page #fixed-menu div.wrap a { color:#FFF; }
+#pagecontentcontainer.report-page #toc-menu-wrap div.links a.current,
+#pagecontentcontainer.report-page #fixed-menu div.links a.current { background:#FFF; color:#952C39; border-color:#952C39; }
+#pagecontentcontainer.report-page #in-lists div.heading { background:#F0FCEC !important; border-color:#5E665C; color:#5E665C !important; text-shadow:1px 1px 1px #FFF; }
+#pagecontentcontainer.report-page .container_12 .highlight { background-color: #FFF3D3; }
+#pagecontentcontainer.report-page #object_header #headerLink a { color:#5E665C; }
+#pagecontentcontainer.report-page #object_header p.share a { color:#5E665C; }
+#pagecontentcontainer.report-page h2 { color:#000; }
+#pagecontentcontainer.report-page #cwtabsbyside a { color:#5E665C; }
+#pagecontentcontainer.report-page #cwtabsbyside fieldset,
+#pagecontentcontainer.report-page #cwtabsbyside ul li { border-color:#DBEED6; }
+#pagecontentcontainer.report-page #cwtabsbyside ul,
+#pagecontentcontainer.report-page #cwtabsbyside fieldset.alt { background:#F9FFF7; border-color:#DBEED6; }
+#pagecontentcontainer.report-page form#fly-atlas-options table tr td { border-color:#DBEED6; }
+#pagecontentcontainer.report-page form#fly-atlas-options table tr.even td { background:#F9FFF7; }
+
+/* ############ tables, lists & misc configuration ############ */
+/* inline lists */
+div.inline-list ul .name { color:#5E665C; }
+div.inline-list a,
+div.inline-list a:hover,
+div.inline-list a:visited { color:#5E665C; }
+div.inline-list h3 { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }
+div.inline-list.gray h3,
+div.inline-list.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+div.inline-list div.right a,
+div.inline-list div.right a:hover,
+div.inline-list div.right a:visited { color:#5E665C; }
+/* collection tables */
+div.collection-table h3 { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }
+div.collection-table div.right a,
+div.collection-table div.right a:hover,
+div.collection-table div.right a:visited { color:#5E665C; }
+div.collection-table thead th,
+div.collection-table thead td { background:#F0FCEC; border-color:#DBEED6; }
+div.collection-table table tr.odd td { background:#F9FFF7; border-top-color:#DBEED6; border-bottom-color:#DBEED6; }
+div.collection-table table tbody tr:nth-child(2n) td { background:#F9FFF7; border-top-color:#DBEED6; border-bottom-color:#DBEED6; }
+div.collection-table table td.class { color:#886644; }
+div.collection-table table a,
+div.collection-table table a:hover,
+div.collection-table table a:visited { color:#5E665C; }
+div.collection-table.gray h3,
+div.collection-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+div.collection-table.column-border table tbody tr td.left-column-border { border-left-color:#DBEED6; }
+div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#DBEED6; }
+div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#DBEED6; }
+div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#DBEED6; }
+/* collection table on results pages */
+div.collection-table.results table { border-top-color:#5E665C; }
+/* basic tables (on displayers etc.) */
+div.basic-table h3 { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }
+div.basic-table table a,
+div.basic-table table a:hover,
+div.basic-table table a:visited { color:#5E665C; }
+div.basic-table.gray h3,
+div.basic-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+/* collection of collection tables */
+div.collection-of-collections div.header { background:#F0FCEC; border-top-color:#5E665C; }
+div.collection-of-collections div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
+div.collection-of-collections div.header a,
+div.collection-of-collections div.header a:hover,
+div.collection-of-collections div.header a:visited { color:#5E665C; }
+div.collection-of-collections div.collection-table h3 { border-top-color:#DBEED6; }
+/* templates */
+div.template h3 { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }
+div.template.gray h3,
+div.template.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
+/* togglers */
+div.collection-table div.toggle a,
+div.collection-table div.toggle a:hover,
+div.collection-table div.toggle a:visited,
+div.collection-of-collections div.toggle a,
+div.collection-of-collections div.toggle a:hover,
+div.collection-of-collections div.toggle a:visited,
+div.collection-table div.show-in-table a,
+div.collection-table div.show-in-table a:hover,
+div.collection-table div.show-in-table a:visited,
+div.collection-of-collections div.show-in-table a,
+div.collection-of-collections div.show-in-table a:hover,
+div.collection-of-collections div.show-in-table a:visited { color:#5E665C; }
+/* header, the same as table header */
+h3.goog { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }

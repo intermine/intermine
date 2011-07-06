@@ -3,68 +3,73 @@
 
 <html:xhtml/>
 
-  <div class="report-displayer">
-    <h3 class="overlapping">SNPs to overlapping Genes within 10.0kb</h3>
+  <div id="snp-to-gene-displayer" class="collection-table">
+    <h3>SNPs to overlapping Genes within 10.0kb</h3>
 
-    <table cellspacing="0" class="snpToGenes displayer">
-      <tr>
-        <th class="theme-5-background theme-3-border">Gene Primary Identifier</th>
-        <th class="theme-5-background theme-3-border">Gene name</th>
-        <th class="theme-5-background theme-3-border">Gene Symbol</th>
-        <th class="theme-5-background theme-3-border" colspan="2">Relative to Gene</th>
-      </tr>
-      <c:forEach var="row" items="${list}" varStatus="status">
-        <tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
-          <c:forEach var="column" items="${row}" varStatus="columnStatus">
-            <c:set var="tdStyle" value="${status.count mod 2 == 0 ? 'theme-3-border theme-6-background' : ''}" />
-            <c:choose>
-              <%-- primaryIdentifier & internalID --%>
-              <c:when test="${columnStatus.count == 1}">
-                <td class="${tdStyle}"><a title="Go to Gene page" href="report.do?id=${column}">
-              </c:when>
-              <%-- primaryIdentifier & internalID (cont...) --%>
-              <c:when test="${columnStatus.count == 2}">
-                ${column}</a></td>
-              </c:when>
+    <table>
+      <thead>
+	      <tr>
+	        <th>Gene Primary Identifier</th>
+	        <th>Gene name</th>
+	        <th>Gene Symbol</th>
+	        <th colspan="2">Relative to Gene</th>
+	      </tr>
+      </thead>
+      <tbody>
+	      <c:forEach var="row" items="${list}">
+	        <tr>
+	          <c:forEach var="column" items="${row}" varStatus="columnStatus">
+	            <c:choose>
+	              <%-- primaryIdentifier & internalID --%>
+	              <c:when test="${columnStatus.count == 1}">
+	                <td><a title="Go to Gene page" href="report.do?id=${column}">
+	              </c:when>
+	              <%-- primaryIdentifier & internalID (cont...) --%>
+	              <c:when test="${columnStatus.count == 2}">
+	                ${column}</a></td>
+	              </c:when>
 
-              <%-- distance --%>
-              <c:when test="${columnStatus.count == 5}">
-                <td class="distance ${tdStyle}">${column}</td>
-              </c:when>
-              <%-- direction --%>
-              <c:when test="${columnStatus.count == 6}">
-                <td class="direction ${tdStyle}">${column}</td>
-              </c:when>
-              <c:otherwise>
-                <td class="${tdStyle}">${column}</td>
-              </c:otherwise>
-            </c:choose>
-          </c:forEach>
-        </tr>
-      </c:forEach>
+	              <%-- distance --%>
+	              <c:when test="${columnStatus.count == 5}">
+	                <td class="distance">${column}</td>
+	              </c:when>
+	              <%-- direction --%>
+	              <c:when test="${columnStatus.count == 6}">
+	                <td class="direction}">${column}</td>
+	              </c:when>
+	              <c:otherwise>
+	                <td>${column}</td>
+	              </c:otherwise>
+	            </c:choose>
+	          </c:forEach>
+	        </tr>
+	      </c:forEach>
+      </tbody>
     </table>
   </div>
 
 <script type="text/javascript">
-    // no value...
-    jQuery("div.report-displayer table.displayer.snpToGenes td").each(function() {
-      if (jQuery(this).text() == "[no value]") jQuery(this).text("");
-    });
+	(function() {
+	    <%-- no value... --%>
+	    jQuery("#snp-to-gene-displayer.collection-table table td").each(function() {
+	      if (jQuery(this).text() == "[no value]") jQuery(this).text("");
+	    });
 
-    // distance formatting
-    jQuery("div.report-displayer table.displayer.snpToGenes td.distance").each(function() {
-        var distance = parseInt(jQuery(this).text());
-        // under 1kb
-        if (distance < 1000) {
-          if (distance == 0) {
-            jQuery(this).text("genic");
-          } else {
-            jQuery(this).text(distance + "b");
-          }
-        } else {
-          jQuery(this).text(distance/1000 + "kb");
-        }
-    });
+	    <%-- distance formatting --%>
+	    jQuery("#snp-to-gene-displayer.collection-table table td.distance").each(function() {
+	        var distance = parseInt(jQuery(this).text());
+	        <%-- under 1kb --%>
+	        if (distance < 1000) {
+	          if (distance == 0) {
+	            jQuery(this).text("genic");
+	          } else {
+	            jQuery(this).text(distance + "b");
+	          }
+	        } else {
+	          jQuery(this).text(distance/1000 + "kb");
+	        }
+	    });
+	})();
 </script>
 
 <style> div.geneInformation table td.distance { border-right:none; } </style>

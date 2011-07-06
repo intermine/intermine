@@ -126,7 +126,7 @@ table.results td { border-right:none; }
 #results.box div.selected span.desc { font-weight:bold; }
 
 #results.box div.pagination { margin-bottom:3px; float:left; line-height:38px; vertical-align:bottom; }
-    #results.box div.pagination td.resBar { color:#FFF; }
+    #results.box div.pagination { color:#FFF; }
         #results.box div.pagination td.resBar a { height:12px; display:inline-block; }
         #results.box div.pagination td.resBar span a { height:auto; display:inline; }
 #results.box div.toolbox { margin-bottom:3px; float:right; }
@@ -136,7 +136,7 @@ table.results td { border-right:none; }
 /* widgets */
 #WidgetsCategory ol.widgetList li { float:left; margin:5px 15px 5px 0; }
 #WidgetsCategory ol.widgetList li a { background: url("../images/icons/toggle-expand-16.png") no-repeat left;
-    border:none; color: #1F7492; padding: 2px 2px 2px 16px; }
+    border:none; color: #1F7492; padding: 2px 2px 2px 16px; cursor:pointer; }
 #WidgetsCategory ol.widgetList li a.active { background: url("../images/icons/toggle-collapse-16.png") no-repeat left;
     font-weight: bold; }
 
@@ -146,6 +146,8 @@ div.widgetcontainer span.widgetcloser a { padding-left:16px; text-decoration:non
     background:url("../images/icons/toggle-collapse-16.png") no-repeat scroll left center transparent; }
 div.widgetcontainer fieldset li { float:right; margin-bottom:6px; margin-left:10px; }
 div.widgetcontainer ul li { margin-left: 10px; }
+
+span.tablePageLinks a, span.tablePageLinks span { margin-right:6px; }
 
 /* table */
 div.table { margin-bottom:30px; }

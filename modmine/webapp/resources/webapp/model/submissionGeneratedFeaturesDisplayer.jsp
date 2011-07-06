@@ -81,10 +81,10 @@ img.tinyQuestionMark {
 <div class="generated-features">
   <table cellpadding="0" cellspacing="0" border="0" class="table" width="100%">
       <tr>
-        <th colspan="" style="padding-left: 6px;" class="theme-5-background">Feature type</th>
-        <th colspan="" style="padding-left: 6px;" class="theme-5-background" align="middle">View data</th>
-        <th colspan="4" style="padding-left: 6px;" class="theme-5-background" align="left">Export</th>
-        <th colspan="" style="padding-left: 6px;" class="theme-5-background" align="left">Action</th>
+        <th colspan="" style="padding-left: 6px;">Feature type</th>
+        <th colspan="" style="padding-left: 6px;" align="middle">View data</th>
+        <th colspan="4" style="padding-left: 6px;" align="left">Export</th>
+        <th colspan="" style="padding-left: 6px;" align="left">Action</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>

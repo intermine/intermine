@@ -11,18 +11,18 @@
 
 <script type="text/javascript">
   function showMoreInlineList(listDiv) {
-    jQuery(listDiv + ' ul.items li').each(function(index) {
+    jQuery(listDiv + ' ul li').each(function(index) {
       if (!jQuery(this).is(":visible")) {
         jQuery(this).show();
       }
     });
-    jQuery(listDiv + ' ul.items li.show-more').hide();
+    jQuery(listDiv + ' ul li.show-more').hide();
   }
 
   <%-- give some leeway of 20 chars as "Show more" takes up some space too --%>
   function applyShowMoreInlineList(listDiv, listLength) {
     <%-- traverse all elements for this list --%>
-    jQuery(listDiv + ' ul.items li').each(function(index) {
+    jQuery(listDiv + ' ul li').each(function(index) {
       <%-- substract elements length --%>
       listLength -= jQuery(this).text().length;
       <%-- hide the further elements if we broke through the limit --%>
@@ -43,16 +43,16 @@
                 e.preventDefault();
               }
           })
-      }).appendTo(listDiv + ' ul.items');
+      }).appendTo(listDiv + ' ul');
     }
   }
 </script>
 
 <c:forEach items="${object.headerInlineLists}" var="list" varStatus="outerStatus">
   <c:if test="${list.size > 0}">
-    <div class="box grid_12 list" id="header-inline-list-${outerStatus.count}">
-      <ul class="items">
-        <li><span>${list.prefix}</span>:</li>
+    <div class="inline-list" id="header-inline-list-${outerStatus.count}">
+      <ul>
+        <li><span class="name">${list.prefix}</span>:</li>
         <c:choose>
           <c:when test="${list.showLinksToObjects}">
             <c:forEach items="${list.items}" var="item" varStatus="status">
@@ -70,7 +70,6 @@
         </c:choose>
       </ul>
     </div>
-    <div style="clear:both;">&nbsp;</div>
 
     <%-- give some leeway of 20 chars as "Show more" takes up some space too --%>
     <c:if test="${list.lineLength > 0 && list.length - 20 > list.lineLength}">

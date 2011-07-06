@@ -22,7 +22,7 @@
     <%--<span style="${wrapStyle}">--%>
   </c:otherwise>
 </c:choose>
-  <td style="white-space: nowrap;" class='theme-3-border <c:if test="${alternate != null}">theme-6-background</c:if>'>
+  <td style="white-space: nowrap;" class='<c:if test="${alternate != null}">alt</c:if>'>
     <c:if test="${!empty feature.symbol}">
       <a href="${detailsLink}${feature.id}"><c:out value="${feature.symbol}"/></a>
     </c:if>
@@ -30,7 +30,7 @@
   <c:choose>
     <c:when test="${singleLine != null}">
       </td>
-      <td style="text-align:right; ${wrapStyle}" class='theme-3-border <c:if test="${alternate != null}">theme-6-background</c:if>'>
+      <td style="text-align:right; ${wrapStyle}" class='<c:if test="${alternate != null}">alt</c:if>'>
     </c:when>
     <c:otherwise>
       <br />

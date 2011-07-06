@@ -36,36 +36,27 @@
     #cwtabsbyside #formats ul li { display:block; font-size:12px; margin-bottom:4px; }
 </style>
 
-<script type="text/javascript">
-
-    var project_title = "${WEB_PROPERTIES['project.title']}";
-    var project_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
-    var project_path = "${WEB_PROPERTIES['webapp.path']}";
-
-</script>
-
 <div id="cwhead">
-    <h3>Interaction Network</h3>
+    <h3 class="goog">Interaction Network</h3>
 </div>
 
 <div id="interactions-wrap">
   <div class="inside">
   <div id="cwtabsbyside">
-    <ul class="theme-3-border theme-6-background">
-      <li class="theme-3-border"><a class="active" href="#tabs-controls">Controls</a></li>
-      <%--<li class="theme-3-border"><a href="#tabs-data">Data</a></li>--%>
-      <li class="theme-3-border last"><a href="#tabs-help">Help</a></li>
+    <ul>
+      <li><a class="active" href="#tabs-controls">Controls</a></li>
+      <li class="last"><a href="#tabs-help">Help</a></li>
     </ul>
     <div id="tabs-controls">
       <div>
-        <fieldset class="theme-3-border">
+        <fieldset>
               <label>Show:</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color; });" checked><label>All Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color >= '#FF0000'; });"><label>Physical Interactions</label><br>
               <input type="radio" name="showInteractions" onclick="vis.filter('edges', function(edge) { return edge.color <= '#FF0000'; });"><label>Genetic Interactions</label>
         </fieldset>
 
-        <fieldset class="theme-3-border theme-6-background">
+        <fieldset class="alt">
               <label>Export network as:</label>
               <select id="exportoptions">
                   <option value="xgmml" selected>XGMML</option>
@@ -78,11 +69,11 @@
               <input type="button" id="exportbutton" value="Export">
         </fieldset>
 
-        <fieldset class="theme-3-border">
+        <fieldset>
           <label class="fakelink" onclick="window.open(project_baseurl+ '/' + project_path + '/saveFromIdsToBag.do?type=Gene&ids=' + fullInteractingGeneSet + '&source=objectDetails&newBagName=interacting_gene_list');">Create a gene list...</label>
         </fieldset>
 
-        <fieldset class="theme-3-border theme-6-background">
+        <fieldset class="alt">
           <label>View interaction data in a table</lable>
           <input type="button" id="toggleTable" value="Toggle">
         </fieldset>
@@ -90,7 +81,7 @@
     </div>
     <div id="tabs-data"></div>
     <div id="tabs-help">
-      <div id="legend" class="theme-3-border">
+      <div id="legend">
         <h4>Interaction Type</h4>
         <div id="legendall"></div>
       </div>
@@ -119,48 +110,50 @@
       </div>
   </div>
   <script type="text/javascript">
-    <%-- sidebar toolbar bar --%>
-    var sidebarPages = new Array();
-    jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
-      <%-- push targets --%>
-      sidebarPages.push(jQuery(this).attr('href'));
-      <%-- attachï¿½ onclick behavior --%>
-      jQuery(this).click(function(e) {
-        var that = this;
-        jQuery.each(sidebarPages, function(index, target) {
-          if (target == jQuery(that).attr('href')) {
-            jQuery("#cwtabsbyside "+target).show();
-          } else {
-            jQuery("#cwtabsbyside "+target).hide();
-          }
-        });
-        jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
-            jQuery(this).removeClass('active');
-        });
-        jQuery(that).addClass('active');
-        e.preventDefault();
-      });
-    });
-    <%-- show only first tab --%>
-    jQuery.each(sidebarPages, function(index, target) {
-      if (index > 0) {
-        jQuery("#cwtabsbyside "+target).hide();
-      }
-    });
-    <%-- toggle table btn --%>
-    jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
-      if (jQuery('#cwinlinetable').is(":hidden")) {
-        jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
-      } else {
-        jQuery('#cwinlinetable').hide();
-      }
-    });
+  	(function() {
+	    <%-- sidebar toolbar bar --%>
+	    var sidebarPages = new Array();
+	    jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+	      <%-- push targets --%>
+	      sidebarPages.push(jQuery(this).attr('href'));
+	      <%-- attaché onclick behavior --%>
+	      jQuery(this).click(function(e) {
+	        var that = this;
+	        jQuery.each(sidebarPages, function(index, target) {
+	          if (target == jQuery(that).attr('href')) {
+	            jQuery("#cwtabsbyside "+target).show();
+	          } else {
+	            jQuery("#cwtabsbyside "+target).hide();
+	          }
+	        });
+	        jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+	            jQuery(this).removeClass('active');
+	        });
+	        jQuery(that).addClass('active');
+	        e.preventDefault();
+	      });
+	    });
+	    <%-- show only first tab --%>
+	    jQuery.each(sidebarPages, function(index, target) {
+	      if (index > 0) {
+	        jQuery("#cwtabsbyside "+target).hide();
+	      }
+	    });
+	    <%-- toggle table btn --%>
+	    jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
+	      if (jQuery('#cwinlinetable').is(":hidden")) {
+	        jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
+	      } else {
+	        jQuery('#cwinlinetable').hide();
+	      }
+	    });
+  	})();
   </script>
   <div id="cwcontent"></div>
   </div>
 </div>
 <br />
-<div id="cwinlinetable" class="table">
+<div id="cwinlinetable" class="collection-table nowrap nomargin">
   <h3>Interactions</h3>
   <div style="overflow-x:auto;">
     <tiles:insert name="resultsTable.tile">
@@ -169,57 +162,54 @@
          <tiles:put name="inlineTable" value="true" />
     </tiles:insert>
   </div>
-  <p class="toggle" style="display:none;">
-    <a class="collapser" style="float:right; display:none; margin-left:20px;" href="#"><span>Collapse</span></a>
-    <a class="toggler" style="float:right;" href="#"><span>Show more rows</span></a>
-  </p>
-  <p class="in_table">
-    <html:link styleClass="theme-1-color" action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
-      Show all in a table ï¿½
+  <div class="toggle" style="display:none;">
+    <a class="less" style="float:right; display:none; margin-left:20px;"><span>Collapse</span></a>
+    <a class="more" style="float:right;"><span>Show more rows</span></a>
+  </div>
+  <div class="show-in-table">
+    <html:link action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
+      Show all in a table &raquo;
     </html:link>
-  </p>
+  </div>
 </div>
 <script type="text/javascript">
-  <%-- hide more than 10 rows --%>
-  var interactionsTableLength = jQuery("#cwinlinetable table.results tr.bodyRow").length;
-  if (interactionsTableLength > 10) {
-    jQuery("#cwinlinetable table.results tr.bodyRow").each(function(i) {
-      if (i > 9) {
-        jQuery(this).hide();
-      }
-    });
-    <%-- 'provide' toggler --%>
-    jQuery("#cwinlinetable p.toggle").show();
-    <%-- attach toggler event --%>
-    jQuery('#cwinlinetable p.toggle a.toggler').click(function(e) {
-      jQuery("#cwinlinetable table.results tr.bodyRow:hidden").each(function(i) {
-        if (i < 10) {
-          jQuery(this).show();
-        }
-      });
-      jQuery("#cwinlinetable p.toggle a.collapser").show();
-      if (jQuery("#cwinlinetable table.results tr.bodyRow:hidden").length == 0) {
-        jQuery('#cwinlinetable p.toggle a.toggler').hide();
-      }
-
-      e.preventDefault();
-    });
-    <%-- attach collapser event --%>
-    jQuery('#cwinlinetable p.toggle a.collapser').click(function(e) {
-      var that = this;
-      jQuery("#cwinlinetable table.results tr.bodyRow").each(function(i) {
-        if (i > 9) {
-          jQuery(this).hide();
-          jQuery(that).hide();
-        }
-      });
-      jQuery('#cwinlinetable p.toggle a.toggler').show();
-
-      jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
-
-      e.preventDefault();
-    });
-  }
+	(function() {
+		  <%-- hide more than 10 rows --%>
+		  var bodyRows = jQuery("#cwinlinetable table tbody tr");
+		  if (bodyRows.length > 10) {
+		    bodyRows.each(function(i) {
+		      if (i > 9) {
+		        jQuery(this).hide();
+		      }
+		    });
+		    <%-- 'provide' toggler --%>
+		    jQuery("#cwinlinetable div.toggle").show();
+		    <%-- attach toggler event --%>
+		    jQuery('#cwinlinetable div.toggle a.more').click(function(e) {
+		      jQuery("#cwinlinetable table tbody tr:hidden").each(function(i) {
+		        if (i < 10) {
+		          jQuery(this).show();
+		        }
+		      });
+		      jQuery("#cwinlinetable div.toggle a.less").show();
+		      if (jQuery("#cwinlinetable table tbody tr:hidden").length == 0) {
+		        jQuery('#cwinlinetable div.toggle a.more').hide();
+		      }
+		    });
+		    <%-- attach collapser event --%>
+		    jQuery('#cwinlinetable div.toggle a.less').click(function(e) {
+		      var that = this;
+		      bodyRows.each(function(i) {
+		        if (i > 9) {
+		          jQuery(this).hide();
+		          jQuery(that).hide();
+		        }
+		      });
+		      jQuery('#cwinlinetable div.toggle a.more').show();
+		      jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
+		    });
+		  }
+	})();
 </script>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
@@ -235,6 +225,11 @@
 <script type="text/javascript" src="<html:rewrite page='/model/jquery_svg/jquery.svg.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
+(function() {
+    var project_title = "${WEB_PROPERTIES['project.title']}";
+    var project_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+    var project_path = "${WEB_PROPERTIES['webapp.path']}";
+
     // from controller
     var fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
@@ -285,12 +280,14 @@
 
     jQuery('#legendall').svg();
     var legendall = jQuery('#legendall').svg('get');
-    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
-    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
-    legendall.text(70, 15, "Physical");
-    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
-    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
-    legendall.text(210, 15, "Genetic");
+    if (legendall) {
+	    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
+	    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
+	    legendall.text(70, 15, "Physical");
+	    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
+	    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
+	    legendall.text(210, 15, "Genetic");
+    }
 
     jQuery("svg").height("100%").width("100%");
 
@@ -310,6 +307,7 @@
     jQuery("#exportbutton").click(function () {
         exportNet(jQuery("#exportoptions option:selected").val());
     });
+})();
 </script>
 
 <!-- /cytoscapeNetworkDisplayer.jsp -->

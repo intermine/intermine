@@ -16,85 +16,55 @@
 
 <c:choose>
 <c:when test="${(reportObject != null || interMineIdBag !=null) && resultsTable != null}">
-<div style="overflow-x: auto;">
 
-    <%-- Results table --%>
-  <tiles:insert name="resultsTable.tile">
-     <tiles:put name="pagedResults" beanName="resultsTable" />
-     <tiles:put name="inlineTable" value="true" />
-     <tiles:put name="currentPage" value="report" />
-     <tiles:put name="tableIdentifier" value="table_${fn:replace(placement, ':', '_')}_${templateQuery.name}" />
-  </tiles:insert>
-
+<div style="overflow-x:auto; display:none;">
+	<%-- results table --%>
+  	<tiles:insert name="resultsTable.tile">
+    	<tiles:put name="pagedResults" beanName="resultsTable" />
+     	<tiles:put name="inlineTable" value="true" />
+     	<tiles:put name="currentPage" value="report" />
+     	<tiles:put name="tableIdentifier" value="${fn:replace(placement, ':', '_')}_${templateQuery.name}" />
+  	</tiles:insert>
 </div>
 
-<%-- Produce show in table link --%>
-
+<%-- is? --%>
 <c:set var="extra" value=""/>
-  <c:choose>
-  <c:when test="${! empty interMineIdBag}">
+<c:choose>
+  <c:when test="${!empty interMineIdBag}">
     <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}"/>
   </c:when>
   <c:otherwise>
-     <c:set var="extra" value="${extra}&amp;idForLookup=${reportObject.object.id}" />
+    <c:set var="extra" value="${extra}&amp;idForLookup=${reportObject.object.id}" />
   </c:otherwise>
-  </c:choose>
-<p class="in_table">
+</c:choose>
+
+<%-- show in table --%>
+<div class="show-in-table" style="display:none;">
 <c:choose>
   <c:when test="${resultsTable.exactSize == 0}">
+    <%-- postdict the fact that we have nothing to show --%>
     <script type="text/javascript">
-        var h = jQuery('#table_${fn:replace(placement, ':', '_')}_${templateQuery.name}').parent().find("h3.templateTitle div.right");
         if ('${reportObject.type}'.length > 0) {
-          h.html('No results for this ${reportObject.type}');
+          var text = 'No results for this ${reportObject.type}';
         } else {
-          h.html('No results for this type');
+          var text = 'No results for this type';
         }
-        // apply gray style
-        h.parent().parent().parent().parent().parent().addClass('gray');
+
+	    jQuery('#${fn:replace(placement, ':', '_')}_${templateQuery.name} h3').find('div.right').text(text).parent().parent().addClass('gray');
     </script>
   </c:when>
   <c:otherwise>
-    <html:link styleClass="theme-1-color showAll" action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
+    <html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
       Show all in a table »
     </html:link>
   </c:otherwise>
 </c:choose>
-</p>
-
-<%-- Update ui given results of this template --%>
-
-<c:choose>
-  <c:when test="${resultsTable == null}">
-    <script type="text/javascript">
-      <%-- Please don't CDATA this script element. See [762] --%>
-      $('img_${fn:replace(placement, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
-    </script>
-  </c:when>
-  <c:otherwise>
-    <script type="text/javascript">
-      <%-- Please don't CDATA this script element. See [762] --%>
-      id = '${fn:replace(placement, ' ', '_')}_${templateQuery.name}';
-      if (${resultsTable.exactSize} == 0) {
-        $('img_'+id).src='images/plus-disabled.gif';
-        $('label_'+id).className='nullStrike';
-        $('count_'+id).innerHTML='no results';
-        $('img_'+id).parentNode.href='#';
-        $('img_'+id).parentNode.onclick = function(){return false;};
-      } //else {
-        //$('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}\" title=\"View results of this template in a table\">${resultsTable.exactSize} results</a>';
-      //}
-    </script>
-  </c:otherwise>
-</c:choose>
+</div>
 
 </c:when>
 <c:otherwise>
-  <%-- a fail happened here... --%>
   <script type="text/javascript">
-    var h = jQuery('span#label_${fn:replace(placement, ':', '_')}_${templateQuery.name}').find("h3.templateTitle div.right");
-    h.html('No results for this ${reportObject.type}');
-    // apply gray style
-    h.parent().parent().parent().parent().parent().addClass('gray');
+    throw new Error('${templateQuery.name} has failed to load, resultsTable || imIDBag || reportObject are null');
   </script>
 </c:otherwise>
 </c:choose>
