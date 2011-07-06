@@ -595,7 +595,8 @@ public class GenomicRegionSearchService
         int extendedRegionSize = grsc.getExtendedRegionSize();
         gr.setExtendedRegionSize(extendedRegionSize);
 
-        int max = getChrInfoMap().get(grsc.getOrgName()).get(gr.getChr()).getChrLength();
+        int max = getChrInfoMap().get(grsc.getOrgName())
+                .get(gr.getChr().toLowerCase()).getChrLength();
         int min = 1;
 
         int start = gr.getStart();
@@ -707,20 +708,22 @@ public class GenomicRegionSearchService
             return null;
         }
 
-        // make passedSpanList
+        // Create passedSpanList
         for (GenomicRegion aSpan : grsc.getSpanList()) {
-            ChromosomeInfo ci = chrInfo.get(aSpan.getChr());
+            // User input could be x instead of X for human chromosome, converted to lowercase
+            ChromosomeInfo ci = chrInfo.get(aSpan.getChr().toLowerCase());
             if ((aSpan.getStart() >= 1 && aSpan.getStart() <= ci
                     .getChrLength())
                     && (aSpan.getEnd() >= 1 && aSpan.getEnd() <= ci
                             .getChrLength())) {
                 if (aSpan.getStart() > aSpan.getEnd()) { // Start must be smaller than End
                     GenomicRegion newSpan = new GenomicRegion();
-                    newSpan.setChr(aSpan.getChr());
+                    newSpan.setChr(ci.getChrPID()); // converted to the right case
                     newSpan.setStart(aSpan.getEnd());
                     newSpan.setEnd(aSpan.getStart());
                     passedSpanList.add(newSpan);
                 } else {
+                    aSpan.setChr(ci.getChrPID());
                     passedSpanList.add(aSpan);
                 }
             }
@@ -830,20 +833,29 @@ public class GenomicRegionSearchService
         getOrgTaxonIdMap();
 
         // Parse data to JSON string
-        List<Object> l = new ArrayList<Object>();
+        List<Object> ft = new ArrayList<Object>();
+        List<Object> gb = new ArrayList<Object>();
         Map<String, Object> ma = new LinkedHashMap<String, Object>();
 
         for (Entry<String, Set<String>> e : resultsMap.entrySet()) {
-            Map<String, Object> m = new LinkedHashMap<String, Object>();
+            Map<String, Object> mft = new LinkedHashMap<String, Object>();
+            Map<String, Object> mgb = new LinkedHashMap<String, Object>();
 
-            m.put("organism", e.getKey());
-            m.put("features", new ArrayList<String>(e.getValue()));
+            mft.put("organism", e.getKey());
+            mft.put("features", new ArrayList<String>(e.getValue()));
 
-            l.add(m);
+            ft.add(mft);
+
+            mgb.put("organism", e.getKey());
+            mgb.put("genomeBuild", OrganismGenomeBuildLookup
+                    .getGenomeBuildbyOrgansimAbbreviation(e.getKey()));
+
+            gb.add(mgb);
         }
 
         ma.put("organisms", orgList);
-        ma.put("featureTypes", l);
+        ma.put("genomeBuilds", gb);
+        ma.put("featureTypes", ft);
         JSONObject jo = new JSONObject(ma);
 
         return jo.toString();

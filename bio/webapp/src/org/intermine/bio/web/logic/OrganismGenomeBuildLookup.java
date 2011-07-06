@@ -1,0 +1,105 @@
+package org.intermine.bio.web.logic;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+
+import org.intermine.util.PropertiesUtil;
+
+/**
+ * An util class to help looking up genome build by a given organism id.
+ *
+ * @author Fengyuan Hu
+ *
+ */
+public final class OrganismGenomeBuildLookup
+{
+    private static Map<Integer, String> taxonMap = new HashMap<Integer, String>();
+    private static Map<String, String> abbreviationMap = new HashMap<String, String>();
+    private static Map<String, String> fullnameMap = new HashMap<String, String>();
+
+    // TODO how genome build can be integrated to database rather than written in a file?
+
+    private OrganismGenomeBuildLookup() {
+        //disable external instantiation
+    }
+
+    private static void prepareData() {
+        if (taxonMap.size() == 0 || abbreviationMap.size() == 0 || fullnameMap.size() == 0) {
+            Properties props = PropertiesUtil.getProperties();
+            String flyGB = props.getProperty("genomeVersion.fly");
+            String wormGB = props.getProperty("genomeVersion.worm");
+
+            if (flyGB != null) {
+                taxonMap.put(7227, flyGB);
+                abbreviationMap.put("D. melanogaster", flyGB);
+                fullnameMap.put("Drosophila melanogaster", flyGB);
+            }
+
+            if (wormGB != null) {
+                taxonMap.put(6239, wormGB);
+                abbreviationMap.put("C. elegans", wormGB);
+                fullnameMap.put("Caenorhabditis elegans", wormGB);
+            }
+        }
+    }
+    /**
+     * Get genome build by organism full name such as "Drosophila melanogaster"
+     * @param fn full name of an organism
+     * @return genome build
+     */
+    public static String getGenomeBuildbyOrgansimFullName(String fn) {
+        prepareData();
+        return fullnameMap.get(fn);
+    }
+
+    /**
+     * Get genome build by organism short name such as "D. melanogaster"
+     * @param abbr short name of an organism
+     * @return genome build
+     */
+    public static String getGenomeBuildbyOrgansimAbbreviation(String abbr) {
+        prepareData();
+        return abbreviationMap.get(abbr);
+    }
+
+    /**
+     * Get genome build by organism taxon such as 7227
+     * @param taxon taxon of an organism
+     * @return genome build
+     */
+    public static String getGenomeBuildbyOrgansimTaxon(Integer taxon) {
+        prepareData();
+        return taxonMap.get(taxon);
+    }
+
+    /**
+     * Get genome build by any id
+     * @param id id of an organism
+     * @return genome build
+     */
+    public static String getGenomeBuildbyOrgansimId(String id) {
+        prepareData();
+
+        if (id.contains(". ")) {
+            return abbreviationMap.get(id);
+        }
+
+        if (Pattern.matches("^[0-9]*$", id)) {
+            return taxonMap.get(id);
+        }
+
+        return fullnameMap.get(id);
+    }
+}
