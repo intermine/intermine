@@ -38,6 +38,8 @@ public final class OrganismGenomeBuildLookup
     private static void prepareData() {
         if (taxonMap.size() == 0 || abbreviationMap.size() == 0 || fullnameMap.size() == 0) {
             Properties props = PropertiesUtil.getProperties();
+
+            // Manual work...
             String flyGB = props.getProperty("genomeVersion.fly");
             String wormGB = props.getProperty("genomeVersion.worm");
             String humanGB = props.getProperty("genomeVersion.human");
