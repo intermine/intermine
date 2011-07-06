@@ -24,12 +24,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.mines.FriendlyMineManager;
+import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -167,9 +170,15 @@ public class BeginAction extends InterMineAction
         request.setAttribute("preferredBags", preferredBags);
 
         // organism dropdown on list upload
+        // only implemented in metabolicMine right now
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         if (extraClassName != null) {
+            final String extraClassDefaultValue = getDefaultValue(request, im);
+            if (!StringUtils.isEmpty(extraClassDefaultValue)) {
+                request.setAttribute("extraClassDefaultValue", extraClassDefaultValue);
+            }
+
             request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
 
             List extraClassFieldValues = BagBuildController.getFieldValues(im.getObjectStore(),
@@ -220,5 +229,16 @@ public class BeginAction extends InterMineAction
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
         return response;
+    }
+
+    private String getDefaultValue(HttpServletRequest request, InterMineAPI im) {
+        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+                .getServletContext());
+        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        Mine mine = linkManager.getLocalMine();
+        if (mine != null) {
+            return mine.getDefaultValue();
+        }
+        return null;
     }
 }
