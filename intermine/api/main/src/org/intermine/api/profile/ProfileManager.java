@@ -853,7 +853,7 @@ public class ProfileManager
         }
     }
 
-    private static class AuthenticationException extends RuntimeException {
+    public static class AuthenticationException extends RuntimeException {
 
     	/**
 		 * Default serial UID

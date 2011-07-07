@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
+import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
@@ -282,26 +283,30 @@ public abstract class WebService
         final String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
         final ProfileManager pm = im.getProfileManager();
 
-        if (StringUtils.isEmpty(authToken)) {
-            final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-            if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
-                return;
-            }
+        try {
+	        if (StringUtils.isEmpty(authToken)) {
+	            final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
+	            if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
+	                return;
+	            }
 
-            final String decoded = new String(Base64.decodeBase64(authString.getBytes()));
-            final String[] parts = decoded.split(":", 2);
-            if (parts.length != 2) {
-                throw new BadRequestException(
-                    "Invalid request authentication. "
-                    + "Authorization field contains invalid value. "
-                    + "Decoded authorization value: " + parts[0]);
-            }
-            final String username = parts[0];
-            final String password = parts[1];
+	            final String decoded = new String(Base64.decodeBase64(authString.getBytes()));
+	            final String[] parts = decoded.split(":", 2);
+	            if (parts.length != 2) {
+	                throw new BadRequestException(
+	                    "Invalid request authentication. "
+	                    + "Authorization field contains invalid value. "
+	                    + "Decoded authorization value: " + parts[0]);
+	            }
+	            final String username = parts[0];
+	            final String password = parts[1];
 
-            permission = pm.getPermission(username, password);
-        } else {
-            permission = pm.getPermission(authToken);
+	            permission = pm.getPermission(username, password);
+	        } else {
+	            permission = pm.getPermission(authToken);
+	        }
+        } catch (AuthenticationException e) {
+        	throw new ServiceForbiddenException(e.getMessage(), e);
         }
 
         final HttpSession session = request.getSession();
