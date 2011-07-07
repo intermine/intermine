@@ -42,7 +42,7 @@
     <c:set var="wouldBePos" value="${colNameStat.index + begin}"/>
     <c:choose>
         <c:when test="${colNameStat.last}">
-            </em><br/>${columnNameItem}
+            </em><c:if test="${fn:length(columnDisplayNameList) > 1}"><br/></c:if>${columnNameItem}
             <c:set var="fieldName" value="${columnNameItem}"/>
         </c:when>
         <c:otherwise>
