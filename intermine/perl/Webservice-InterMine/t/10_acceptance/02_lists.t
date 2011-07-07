@@ -314,7 +314,7 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $list->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > age\tEmployee > end\tEmployee > fullTime\tEmployee > name
+    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time\tEmployee > Name
 30\t6\tfalse\tKarim
 33\t1\tfalse\tJennifer Schirrmann
 58\t6\ttrue\tJean-Marc

@@ -51,7 +51,7 @@ throws_ok(
     "Throws an error at bad urls",
 );
 
-is($module->get_service->version, 4, "Service version is correct");
+is($module->get_service->version, 6, "Service version is correct");
 isa_ok($module->get_service->model, 'InterMine::Model', "The model the service makes");
 my $q;
 lives_ok(sub {$q = $module->new_query}, "Makes a new query ok");
@@ -227,7 +227,7 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $q->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > name\tEmployee > age\tEmployee > fullTime\tEmployee > address > address\tEmployee > department > name\tEmployee > department > company > name\tEmployee > department > manager > name
+    my $expected = qq|Employee > Name\tEmployee > Years Alive\tEmployee > Works Full Time\tEmployee > Address > Address\tEmployee > Department > Name\tEmployee > Department > Company > Name\tEmployee > Department > Manager > Name
 EmployeeA1\t10\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
 EmployeeA2\t20\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
 EmployeeA3\t30\tfalse\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
@@ -360,7 +360,7 @@ PRINTING_TEMPLATES: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $t->print_results_with(valueA => 'companyB', to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee.>.name\tEmployee.>.age
+    my $expected = qq|Employee.>.Name\tEmployee.>.Years Alive
 EmployeeB1\t40
 EmployeeB2\t50
 EmployeeB3\t60
