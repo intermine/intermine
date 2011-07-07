@@ -219,8 +219,15 @@ public class GalaxyExportOptionsController extends TilesAction
             Set<String> genomeBuildSet = (Set<String>) OrganismGenomeBuildLookup
                     .getGenomeBuildByOrgansimCollection(orgSet);
 
-            request.setAttribute("org", StringUtil.join(orgSet, ","));
-            request.setAttribute("dbkey", StringUtil.join(genomeBuildSet, ","));
+            String org = (orgSet == null || orgSet.size() < 1)
+                    ? "Organism information not available"
+                    : StringUtil.join(orgSet, ",");
+            String dbkey = (genomeBuildSet == null || genomeBuildSet.size() < 1)
+                    ? "Genome Build information not available"
+                    : StringUtil.join(genomeBuildSet, ",");
+
+            request.setAttribute("org", org);
+            request.setAttribute("dbkey", dbkey);
         }
 
         return null;
