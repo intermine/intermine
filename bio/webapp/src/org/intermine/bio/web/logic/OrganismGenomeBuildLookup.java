@@ -10,7 +10,9 @@ package org.intermine.bio.web.logic;
  *
  */
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -110,12 +112,35 @@ public final class OrganismGenomeBuildLookup
 
         if (id.contains(". ")) {
             return abbreviationMap.get(id);
-        }
-
-        if (Pattern.matches("^[0-9]*$", id)) {
+        } else if (Pattern.matches("^\\d+$", id)) {
             return taxonMap.get(id);
+        } else {
+            return fullnameMap.get(id);
         }
 
-        return fullnameMap.get(id);
+    }
+
+    /**
+     * Get genome build by a collection of ids
+     * @param c a collection of organism ids
+     * @return a collection genome builds
+     */
+    public static Collection<String> getGenomeBuildByOrgansimCollection(Collection<String> c) {
+        prepareData();
+
+        Collection<String> gbc = new LinkedHashSet<String>();
+
+        for (String id : c) {
+
+            if (id.contains(". ")) {
+                gbc.add(abbreviationMap.get(id));
+            } else if (Pattern.matches("^\\d+$", id)) {
+                gbc.add(taxonMap.get(id));
+            } else {
+                gbc.add(fullnameMap.get(id));
+            }
+        }
+
+        return gbc;
     }
 }
