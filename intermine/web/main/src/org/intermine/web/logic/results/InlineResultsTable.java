@@ -124,18 +124,41 @@ public class InlineResultsTable
         }
     }
 
+    /**
+     * Construct with parent type and a field descriptor.
+     * @param results the List to display object
+     * @param model the current Model
+     * @param webConfig the WebConfig object for this webapp
+     * @param classKeys Map of class name to set of keys
+     * @param size the maximum number of rows to list from the collection, or -1 if we should
+     * @param ignoreDisplayers if true don't include any columns that have jsp displayers defined
+     * @param listOfTypes resolved using PathQueryResultHelper.queryForTypesInCollection on a
+     *  Collection, a Reference object will have null instead and its Type will be resolved
+     *  using getListOfTypes()
+     * @param parentType The type of the parent for this list
+     * @param fd The field descriptor this list represents.
+     */
     public InlineResultsTable(Collection<?> results, Model model,
                               WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
-                              int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes, String parentType, FieldDescriptor fd) {
+                              int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes,
+                              String parentType, FieldDescriptor fd) {
         this(results, model, webConfig, classKeys, size, ignoreDisplayers, listOfTypes);
         this.parentType = parentType;
         this.fieldDescriptor = fd;
     }
 
+    /**
+     * Get the parent's type
+     * @return the type of the parent
+     */
     public String getParentType() {
         return fieldDescriptor.getClassDescriptor().getUnqualifiedName();
     }
 
+    /**
+     * Get the fields descriptor this list represents.
+     * @return a field descriptor.
+     */
     public FieldDescriptor getFieldDescriptor() {
         return fieldDescriptor;
     }
