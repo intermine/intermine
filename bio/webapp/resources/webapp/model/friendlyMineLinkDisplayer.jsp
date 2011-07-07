@@ -3,8 +3,12 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
-
 <!-- friendlyMineLinkDisplayer.jsp -->
+
+<style>
+#friendlyMines b { display:block; clear:both; }
+#friendlyMines div.feature ul li:nth-child(2n) { border-left:1px solid #AFAFAF; }
+</style>
 
 <c:set var="interMineObject" value="${object}"/>
 
@@ -54,11 +58,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 
 <tiles:importAttribute />
 <div id="friendlyMines">
-<c:forEach items="${mines}"  var="entry">
-    <b>${entry.key}</b><div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
-      <script type="text/javascript" charset="utf-8">
-        getFriendlyMineLinks('${entry.key}', '${entry.value}', '${organisms}', '${identifierList}');
-      </script>
-</c:forEach>
+  <c:forEach items="${mines}" var="entry">
+    <b>${entry.key}</b>
+    <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
+    <script type="text/javascript" charset="utf-8">
+      getFriendlyMineLinks('${entry.key}', '${entry.value}', '${organisms}', '${identifierList}');
+    </script>
+  </c:forEach>
 </div>
 <!-- /friendlyMineLinkDisplayer.jsp -->
