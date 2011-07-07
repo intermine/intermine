@@ -1,22 +1,26 @@
 div.apikey {
-	font-size: 24px;
-	font-weight: bold;
-	padding: 25px;
-	border: 1px solid grey;
-	border-radius: 10px;
-	-moz-border-radius: 10px;
-	margin: 25px;
-	max-width: 750px;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 25px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  margin: 25px;
+  max-width: 750px;
 }
 
 p.apikey {
-	max-width: 750px;
+  max-width: 750px;
 }
 
 span.apikey {
-	font-family: "Droid Sans Mono", "Consolas", monospace;
+  font-family: "Droid Sans Mono", "Consolas", monospace;
 }
 
 span.apikey.nokey {
-	font-family: Verdana, Arial, sans-serif;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+select {
+  margin: 10px;
 }
