@@ -454,23 +454,23 @@ public final class DatabaseUtil
         "ZONE"));
 
     public enum Type {
-    	text("TEXT"),
-    	integer("integer"),
-    	bigint("bigint"),
-    	real("real"),
-    	double_precision("double precision"),
-    	timestamp("timestamp"),
-    	boolean_type("boolean");
+        text("TEXT"),
+        integer("integer"),
+        bigint("bigint"),
+        real("real"),
+        double_precision("double precision"),
+        timestamp("timestamp"),
+        boolean_type("boolean");
 
-    	private final String sqlType;
+        private final String sqlType;
 
-    	Type(String sqlType) {
-    		this.sqlType = sqlType;
-    	}
+        Type(String sqlType) {
+            this.sqlType = sqlType;
+        }
 
-    	String getSQLType() {
-    		return sqlType;
-    	}
+        String getSQLType() {
+            return sqlType;
+        }
     }
 
     private DatabaseUtil() {
@@ -897,7 +897,7 @@ public final class DatabaseUtil
         Connection connection = database.getConnection();
         if (DatabaseUtil.tableExists(connection, tableName)) {
             try {
-            	addColumn(connection, tableName, columnName, type);
+                addColumn(connection, tableName, columnName, type);
             } finally {
                 connection.close();
             }
@@ -914,33 +914,40 @@ public final class DatabaseUtil
      * @throws SQLException
      */
     public static void addColumn(Connection con, String tableName, String columnName, Type type)
-    	throws SQLException {
-    	if (!DatabaseUtil.tableExists(con, tableName)) {
-    		throw new IllegalArgumentException("there is no table named " + tableName + "in this"
-    				+ " database to add a new column to");
-    	}
-    	if (DatabaseUtil.columnExists(con, tableName, columnName)) {
-    		return;
-    	}
-    	if (!DatabaseUtil.isLegalColumnName(columnName)) {
-    		throw new IllegalArgumentException("This is not a legal column name: " + columnName);
-    	}
-    	String sql = "ALTER TABLE " + tableName +" ADD COLUMN " + columnName + " " + type.getSQLType();
-    	PreparedStatement stmt = con.prepareStatement(sql);
-    	LOG.info(stmt.toString());
-    	stmt.executeUpdate();
+        throws SQLException {
+        if (!DatabaseUtil.tableExists(con, tableName)) {
+            throw new IllegalArgumentException("there is no table named " + tableName + "in this"
+                    + " database to add a new column to");
+        }
+        if (DatabaseUtil.columnExists(con, tableName, columnName)) {
+            return;
+        }
+        if (!DatabaseUtil.isLegalColumnName(columnName)) {
+            throw new IllegalArgumentException("This is not a legal column name: " + columnName);
+        }
+        String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName
+                      + " " + type.getSQLType();
+        PreparedStatement stmt = con.prepareStatement(sql);
+        LOG.info(stmt.toString());
+        stmt.executeUpdate();
     }
 
-    private static boolean isLegalColumnName(String name) {
-    	if (StringUtils.isEmpty(name)) {
-    		return false;
-    	}
-    	boolean isValid = true;
-    	for (int i = 0; i < name.length(); i++) {
-    		char c = name.charAt(i);
-    		isValid = isValid && (CharUtils.isAsciiAlphaLower(c) || c == '_');
-    	}
-    	return isValid;
+    /**
+     * Check that a column name provided to us is a legal column name, to prevent SQL injection.
+     * @param name The desired column name.
+     * @return Whether or not we should accept it.
+     */
+    protected static boolean isLegalColumnName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        boolean isValid = true;
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            isValid = isValid && (CharUtils.isAsciiAlphaLower(c) || CharUtils.isAsciiNumeric(c)
+                    || c == '_');
+        }
+        return isValid;
     }
 
     /**
@@ -957,11 +964,11 @@ public final class DatabaseUtil
         Connection connection = database.getConnection();
         if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
             try {
-            	String sql = "UPDATE " + tableName + " SET " + columnName + " = ?";
-            	PreparedStatement stmt = connection.prepareStatement(sql);
-            	stmt.setObject(1, newValue);
-            	LOG.info(stmt.toString());
-            	stmt.executeUpdate();
+                String sql = "UPDATE " + tableName + " SET " + columnName + " = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setObject(1, newValue);
+                LOG.info(stmt.toString());
+                stmt.executeUpdate();
             } finally {
                 connection.close();
             }
