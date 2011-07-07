@@ -461,6 +461,10 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
 
+	<action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
+
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
 
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
