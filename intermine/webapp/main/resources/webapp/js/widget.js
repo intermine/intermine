@@ -147,16 +147,19 @@ function checkSelected(formName) {
      return true;
     }
   }
-  alert("Please select some items")
   return false;
 }
 
 function submitWidgetForm(widgetId,type,extra) {
-  if(type == 'displayAll' || checkSelected('widgetaction'+widgetId)) {
+    var formName = 'widgetaction'+widgetId;
+    if(!checkSelected(formName)) {
+        document.getElementById('selected_all' + widgetId).checked = true;
+        toggleAllChecks(formName, widgetId);
+    }
     $('action'+widgetId).value=type;
     $('export' + widgetId).value=extra;
     $('widgetaction' + widgetId).submit();
-  }
+
 }
 
 function displayNotAnalysed(widgetId,type,extra) {
