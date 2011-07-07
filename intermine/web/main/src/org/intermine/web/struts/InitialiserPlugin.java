@@ -331,7 +331,7 @@ public class InitialiserPlugin implements PlugIn
         Pattern pattern = Pattern.compile(
             "/WEB-INF/(?!global)\\w+\\.web\\.properties$");
         ResourceFinder finder = new ResourceFinder(servletContext);
-        
+
         Collection<String> otherResources = finder.findResourcesMatching(pattern);
         for (String resource : otherResources) {
             LOG.info("Loading extra resources from " + resource);
@@ -343,7 +343,7 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to load " + resource, e);
             }
         }
-            
+
         // Load these last, as they always take precedence.
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
@@ -356,7 +356,7 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to find web.properties", e);
             }
         }
-            
+
         return webProperties;
     }
 
@@ -471,9 +471,23 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to create profile manager - please check that "
                     + "the userprofile database is available", e);
         }
+
+        applyUserProfileUpgrades(userprofileOSW);
         return userprofileOSW;
     }
 
+    private void applyUserProfileUpgrades(ObjectStoreWriter osw) throws ServletException {
+    	Connection con = null;
+        try {
+            con = ((ObjectStoreInterMineImpl) osw).getConnection();
+            DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
+        } catch (SQLException sqle) {
+            LOG.error("Problem retrieving connection", sqle);
+        	throw new ServletException("Unable to upgrade UserProfile DB");
+        } finally {
+            ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
+        }
+    }
 
     /**
      * Destroy method called at Servlet destroy
@@ -588,11 +602,12 @@ public class InitialiserPlugin implements PlugIn
         Connection con = null;
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
-            if (DatabaseUtil.tableExists(con, "savedbag") && DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
+            if (DatabaseUtil.tableExists(con, "savedbag")
+            		&& DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
                 return true;
             }
         } catch (SQLException sqle) {
-            LOG.error("Probelm retriving connection", sqle);
+            LOG.error("Probelm retrieving connection", sqle);
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
