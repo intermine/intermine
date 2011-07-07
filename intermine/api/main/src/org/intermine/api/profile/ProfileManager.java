@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -72,7 +71,8 @@ public class ProfileManager
     /** Number determining format of queries in the database */
     protected int version;
 
-    private Map<String, SingleAccessToken> singleUseTokens = new HashMap<String, SingleAccessToken>();
+    private final Map<String, SingleAccessToken> singleUseTokens
+        = new HashMap<String, SingleAccessToken>();
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -284,7 +284,7 @@ public class ProfileManager
                 } else {
                     try {
                         InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                        bag.setKeyFieldNames((List<String>) ClassKeyHelper.getKeyFieldNames(
+                        bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
                                              classKeys, bag.getType()));
                         savedBags.put(bag.getName(), bag);
                     } catch (UnknownBagTypeException e) {
@@ -454,11 +454,16 @@ public class ProfileManager
      */
     public synchronized String generateApiKey(Profile profile) {
         String newApiKey = generateApiKey();
-    	profile.setApiKey(newApiKey);
+        profile.setApiKey(newApiKey);
 
-    	return newApiKey;
+        return newApiKey;
     }
 
+    /**
+     * Generate a single use API key and store it in memory, before returning it.
+     * @param profile
+     * @return
+     */
     public synchronized String generateSingleUseKey(Profile profile) {
         String key = generateApiKey();
         SingleAccessToken token = new SingleAccessToken(profile.getUsername());
@@ -467,29 +472,29 @@ public class ProfileManager
     }
 
     private static String generateApiKey() {
-    	String timePrefix = Long.toHexString(new Date().getTime());
-    	String randomSuffix = RandomStringUtils.randomAlphanumeric(16);
+        String timePrefix = Long.toHexString(new Date().getTime());
+        String randomSuffix = RandomStringUtils.randomAlphanumeric(16);
 
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-    	// Interleave the random and predictable portions so that
-    	// the time string isn't so obvious.
-    	int tpl = timePrefix.length();
-    	int rsl = randomSuffix.length();
-    	for (int i = 0; i < tpl || i < rsl; i++) {
-    		if (i < randomSuffix.length()) {
-    		    sb.append(randomSuffix.charAt(i));
-    		}
-    		if (i < timePrefix.length()) {
-    		    sb.append(timePrefix.charAt(i));
-    		}
-    	}
+        // Interleave the random and predictable portions so that
+        // the time string isn't so obvious.
+        int tpl = timePrefix.length();
+        int rsl = randomSuffix.length();
+        for (int i = 0; i < tpl || i < rsl; i++) {
+            if (i < randomSuffix.length()) {
+                sb.append(randomSuffix.charAt(i));
+            }
+            if (i < timePrefix.length()) {
+                sb.append(timePrefix.charAt(i));
+            }
+        }
 
         return sb.toString();
     }
 
     public String generateReadOnlyAccessToken(Profile profile) {
-    	return null;
+        return null;
     }
 
     /**
@@ -591,7 +596,7 @@ public class ProfileManager
         return getProfile(superuser);
     }
 
-    private Map<String, PasswordChangeToken> passwordChangeTokens
+    private final Map<String, PasswordChangeToken> passwordChangeTokens
         = new HashMap<String, PasswordChangeToken>();
 
     /**
@@ -659,8 +664,8 @@ public class ProfileManager
      */
     private static class PasswordChangeToken
     {
-        private String username;
-        private Date expiry;
+        private final String username;
+        private final Date expiry;
 
         public PasswordChangeToken(String username, Date expiry) {
             this.username = username;
@@ -683,57 +688,57 @@ public class ProfileManager
      */
     private static class SingleAccessToken
     {
-    	private String username;
-    	private final int maxUses = 1;
-    	private int uses = 0;
+        private final String username;
+        private final int maxUses = 1;
+        private int uses = 0;
 
-    	public SingleAccessToken(String username) {
-    		this.username = username;
-    	}
+        public SingleAccessToken(String username) {
+            this.username = username;
+        }
 
-    	public boolean isValid() {
-    		return maxUses < uses;
-    	}
+        public boolean isValid() {
+            return uses < maxUses;
+        }
 
-    	public String getUserName() {
-    		return username;
-    	}
+        public String getUserName() {
+            return username;
+        }
 
-    	public void use() {
-    		uses++;
-    	}
+        public void use() {
+            uses++;
+        }
     }
 
     public static class ApiPermission
     {
-    	public enum Level {RO, RW};
+        public enum Level {RO, RW};
 
-    	private final Level level;
-		private final Profile profile;
+        private final Level level;
+        private final Profile profile;
 
-		/*
-		 * Only the ProfileManager has permission to grant API permissions.
-		 */
-		private ApiPermission(Profile profile, Level level) {
-    		this.level = level;
-    		this.profile = profile;
-		}
+        /*
+         * Only the ProfileManager has permission to grant API permissions.
+         */
+        private ApiPermission(Profile profile, Level level) {
+            this.level = level;
+            this.profile = profile;
+        }
 
-    	public Profile getProfile() {
-			return profile;
-		}
+        public Profile getProfile() {
+            return profile;
+        }
 
-    	public Level getLevel() {
-			return level;
-		}
+        public Level getLevel() {
+            return level;
+        }
 
-    	public boolean isRW() {
-    		return level == Level.RW;
-    	}
+        public boolean isRW() {
+            return level == Level.RW;
+        }
 
-    	public boolean isRO() {
-    		return level == Level.RO;
-    	}
+        public boolean isRO() {
+            return level == Level.RO;
+        }
     }
 
     /**
@@ -742,34 +747,34 @@ public class ProfileManager
      * @return
      */
     public ApiPermission getPermission(String token) {
-    	ApiPermission permission;
-    	if (singleUseTokens.containsKey(token)) {
-    		SingleAccessToken t = singleUseTokens.get(token);
+        ApiPermission permission;
+        if (singleUseTokens.containsKey(token)) {
+            SingleAccessToken t = singleUseTokens.get(token);
             if (!t.isValid()) {
                 throw new AuthenticationException("This token (" + token + ")is invalid.");
             }
-    		Profile p = getProfile(t.getUserName());
-    		t.use();
-    		if (!t.isValid()) {
-    			singleUseTokens.remove(token);
-    		}
-    		// Grant RO permission to user data
-    		permission = new ApiPermission(p, ApiPermission.Level.RO);
-    	} else {
+            Profile p = getProfile(t.getUserName());
+            t.use();
+            if (!t.isValid()) {
+                singleUseTokens.remove(token);
+            }
+            // Grant RO permission to user data
+            permission = new ApiPermission(p, ApiPermission.Level.RO);
+        } else {
             Profile p = getProfileByApiKey(token);
             if (p == null) {
                 throw new AuthenticationException("This token is not a valid access key: "
-                		+ token);
+                        + token);
             } else {
                 // Grant RW permission to user data
                 permission = new ApiPermission(p, ApiPermission.Level.RW);
             }
         }
-    	return permission;
+        return permission;
     }
 
     public ApiPermission getPermission(String username, String password) {
-    	if (StringUtils.isEmpty(username)) {
+        if (StringUtils.isEmpty(username)) {
             throw new AuthenticationException("Empty user name.");
         }
         if (StringUtils.isEmpty(password)) {
@@ -777,43 +782,43 @@ public class ProfileManager
         }
         if (hasProfile(username)) {
             if (!validPassword(username, password)) {
-            	throw new AuthenticationException("Invalid password supplied: " + password);
+                throw new AuthenticationException("Invalid password supplied: " + password);
             } else {
-            	Profile p = getProfile(username);
-            	ApiPermission permission = new ApiPermission(p, ApiPermission.Level.RW);
-            	return permission;
+                Profile p = getProfile(username);
+                ApiPermission permission = new ApiPermission(p, ApiPermission.Level.RW);
+                return permission;
             }
         } else {
-        	throw new AuthenticationException("Unknown username: " + username);
+            throw new AuthenticationException("Unknown username: " + username);
         }
     }
 
     private Profile getProfileByApiKey(String token) {
-    	UserProfile profile = new UserProfile();
+        UserProfile profile = new UserProfile();
         profile.setApiKey(token);
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("apiKey");
         try {
             profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
-        	return null; // Could not be found.
+            return null; // Could not be found.
         }
         if (profile == null) {
-        	throw new AuthenticationException("'" + token + "' is not a valid API access key");
+            throw new AuthenticationException("'" + token + "' is not a valid API access key");
         }
         return getProfile(profile.getUsername());
     }
 
     public static class AuthenticationException extends RuntimeException {
 
-    	/**
-		 * Default serial UID
-		 */
-		private static final long serialVersionUID = 1L;
+        /**
+         * Default serial UID
+         */
+        private static final long serialVersionUID = 1L;
 
-		public AuthenticationException(String message) {
-    		super(message);
-    	}
+        public AuthenticationException(String message) {
+            super(message);
+        }
 
     }
 }
