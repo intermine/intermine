@@ -40,6 +40,7 @@ public class InlineResultsTableTest extends TestCase
     private Company company;
     private CEO ceo;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -207,7 +208,7 @@ public class InlineResultsTableTest extends TestCase
                 typeClasses);
 
         // List<InlineResultsTableRow>
-        List<Object> rows = resultsTable.getResultElementRows();
+        List<Object> rows = rows = resultsTable.getResultElementRows();
         assertEquals(new Integer(2), new Integer(rows.size()));
         // traverse and create a map to match
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
@@ -222,7 +223,7 @@ public class InlineResultsTableTest extends TestCase
             assertTrue("Company".equals(row.getClassName()) || "CEO".equals(row.getClassName()));
 
             // assert the (not implemented) object IDs contained in a Collection
-            assertTrue("Not implemented".equals((String) row.getObjectId()));
+            assertTrue("Not implemented".equals(row.getObjectId()));
 
             // traverse the ResultElements
             for (Object resultElementObject : row.getItems()) {
