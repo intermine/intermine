@@ -35,13 +35,20 @@
       <h3>${classname} &rarr; ${imf:formatPath(classname, INTERMINE_API, WEBCONFIG)}</h3>
       <table>
       <tbody>
-          <c:forEach var="fd" items="${cd.fieldDescriptors}">
-            <tr>
-                <td><c:out value="${fd.name}"/></td>
-                <c:set var="pathStr" value="${classname}.${fd.name}"/>
-                <td><c:out value="${imf:formatFieldStr(pathStr, INTERMINE_API, WEBCONFIG)}"/></td>
-            </tr>
-          </c:forEach>
+          <c:choose>
+            <c:when test="${empty cd.fieldDescriptors}">
+              <td><fmt:message key="viewlabels.nofields"/></td>
+            </c:when>
+      <c:otherwise>
+        <c:forEach var="fd" items="${cd.fieldDescriptors}">
+                <tr>
+                    <td><c:out value="${fd.name}"/></td>
+                    <c:set var="pathStr" value="${classname}.${fd.name}"/>
+                    <td><c:out value="${imf:formatFieldStr(pathStr, INTERMINE_API, WEBCONFIG)}"/></td>
+                </tr>
+                </c:forEach>
+        </c:otherwise>
+          </c:choose>
       </tbody>
       </table>
   </div>
