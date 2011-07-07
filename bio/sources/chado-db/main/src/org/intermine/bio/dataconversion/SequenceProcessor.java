@@ -282,6 +282,18 @@ public class SequenceProcessor extends ChadoProcessor
         OrganismData orgData = fdat.getOrganismData();
         List<ConfigAction> nameActionList = getConfig(orgData.getTaxonId()).get(nameKey);
 
+        // check interMineType not chadoType - FlyBase subclass converts some Genes to Alleles
+        if (fdat.getInterMineType().endsWith("Gene")) {
+//          setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
+            setGeneSource(fdat, dataSourceName);
+            
+            if (dataSourceName.equalsIgnoreCase("modENCODE")) {
+                fixedUniqueName = fdat.getUniqueName();                    
+                LOG.debug("AAAsp2: " + fixedUniqueName);
+            }        
+        }
+
+
         Set<String> fieldValuesSet = new HashSet<String>();
 
         String fixedName = fixIdentifier(fdat, name);
@@ -366,11 +378,6 @@ public class SequenceProcessor extends ChadoProcessor
             }
         }
 
-        // check interMineType not chadoType - FlyBase subclass converts some Genes to Alleles
-        if (fdat.getInterMineType().endsWith("Gene")) {
-            setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
-        }
-
         addToFeatureMap(featureId, fdat);
 
         return true;
@@ -383,6 +390,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException exception
      */
 
+    // to remove, substituted by the next one
     protected void setGeneSource(Integer imObjectId, String dataSourceName)
         throws ObjectStoreException {
         // for gene in modENCODE
@@ -390,9 +398,20 @@ public class SequenceProcessor extends ChadoProcessor
         if (cd.getFieldDescriptorByName("source") != null) {
             // if it is there (e.g. modmine) let's set it
             setAttribute(imObjectId, "source", dataSourceName);
+            
         }
     }
 
+    protected void setGeneSource(FeatureData fdat, String dataSourceName)
+    throws ObjectStoreException {
+    // for gene in modENCODE
+    ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
+    if (cd.getFieldDescriptorByName("source") != null) {
+        Integer imObjectId = fdat.getIntermineObjectId();
+        // if it is there (e.g. modmine) let's set it
+        setAttribute(imObjectId, "source", dataSourceName);        
+    }
+}
     /**
      * Add feature data to FeatureMap, can be overidden by subclasses that need to store some
      * features in additional maps.
@@ -451,6 +470,7 @@ public class SequenceProcessor extends ChadoProcessor
         BioStoreHook.setSOTerm(getChadoDBConverter(), feature, chadoType,
                 getChadoDBConverter().getSequenceOntologyRefId());
         fdat.setFieldExistenceFlags(feature);
+
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
         fdat.setUniqueName(uniqueName);
@@ -1515,6 +1535,18 @@ public class SequenceProcessor extends ChadoProcessor
      * @return a cleaned identifier
      */
     protected String fixIdentifier(FeatureData featureData, String identifier) {
+        return identifier;
+    }
+
+    /**
+     * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
+     * data problem.
+     * @param featureData the FeatureData object of the feature that this identifier came from
+     * @param identifier the identifier
+     * @param prefix Needed for modencode to distinguish gene names coming from a gene model
+     * @return a cleaned identifier
+     */
+    protected String fixIdentifier(FeatureData featureData, String identifier, String prefix) {
         return identifier;
     }
 
