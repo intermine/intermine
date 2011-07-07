@@ -47,6 +47,7 @@ class ProfileHandler extends DefaultHandler
     private Map<String, Set<String>> bagsValues;
     private ObjectStoreWriter osw;
     private int version;
+	private String apiKey = null;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -101,7 +102,7 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, savedTemplates);
+                                     savedBags, savedTemplates, apiKey);
         return retval;
     }
 
@@ -112,7 +113,7 @@ class ProfileHandler extends DefaultHandler
     public Set<Tag> getTags() {
         return tags;
     }
-    
+
     /**
      * Return a map of bag values for each bag.
      * @return the map of bag values
@@ -132,6 +133,9 @@ class ProfileHandler extends DefaultHandler
             }
             if (attrs.getValue("password") != null) {
                 password = attrs.getValue("password");
+            }
+            if (attrs.getValue("apikey") != null) {
+            	apiKey = attrs.getValue("apikey");
             }
         }
         if ("bags".equals(qName)) {

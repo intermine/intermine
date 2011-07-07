@@ -52,8 +52,9 @@ public class Profile
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
     private final SearchRepository searchRepository;
+    private String token;
 
-    /**
+	/**
      * Construct a Profile
      * @param manager the manager for this profile
      * @param username the username for this profile
@@ -65,7 +66,7 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, TemplateQuery> savedTemplates) {
+                   Map<String, TemplateQuery> savedTemplates, String token) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
@@ -80,6 +81,7 @@ public class Profile
             this.savedTemplates.putAll(savedTemplates);
         }
         searchRepository = new SearchRepository(this, Scope.USER);
+        this.token = token;
     }
 
     /**
@@ -479,4 +481,24 @@ public class Profile
     public SearchRepository getSearchRepository() {
         return searchRepository;
     }
+
+
+    /**
+     * Get the user's API key token.
+     * @return
+     */
+    public String getApiKey() {
+		return token;
+	}
+
+    /**
+     * Set the API token for this user, and save it in
+     * the backing db.
+     * @param token
+     */
+	public void setApiKey(String token) {
+		this.token = token;
+		manager.saveProfile(this);
+	}
+
 }
