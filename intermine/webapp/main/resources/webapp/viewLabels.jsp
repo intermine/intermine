@@ -47,6 +47,8 @@
   </div>
 </c:forEach>
 
+<html:link action="/labelListing"><fmt:message key="viewlabels.csv"/></html:link>
+
 <!-- /viewLabels.jsp -->
 
 
