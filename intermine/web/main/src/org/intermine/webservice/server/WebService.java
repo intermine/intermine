@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
@@ -177,6 +178,8 @@ public abstract class WebService
 
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
 
+	private static final String AUTH_TOKEN_PARAM_KEY = "token";
+
     protected HttpServletRequest request;
 
     protected HttpServletResponse response;
@@ -186,6 +189,8 @@ public abstract class WebService
     private boolean authenticated = false;
 
     protected InterMineAPI im;
+
+	private ApiPermission permission = null;
 
     /**
      * Construct the web service with the InterMine API object that gives access
@@ -264,6 +269,8 @@ public abstract class WebService
      * profile in session. User was authenticated. It is using Http basis access
      * authentication.
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
+     * IMPORTANT NOTE: This implementation of Basic Auth is flawed - it does not include
+     * the String "Basic" before the encoded section.
      *
      * THIS IS NOT BASIC AUTHENTICATION - WE NEED TO FIX THIS!!
      *
@@ -271,41 +278,34 @@ public abstract class WebService
      *            request
      */
     private void authenticate(HttpServletRequest request) {
-        String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-        if (authString == null || authString.length() == 0 || formatIsJSONP() ) {
-            return;
-        }
 
-        String decoded = new String(Base64.decodeBase64(authString.getBytes()));
-        String[] parts = decoded.split(":", 2);
-        if (parts.length != 2) {
-            throw new BadRequestException(
-                "Invalid request authentication. "
-                + "Authorization field contains invalid value. "
-                + "Decoded authorization value: " + parts[0]);
-        }
-        String userName = parts[0];
-        String password = parts[1];
+        final String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        final ProfileManager pm = im.getProfileManager();
 
-        if (userName.length() == 0) {
-            throw new BadRequestException("Empty user name.");
-        }
-        if (password.length() == 0) {
-            throw new BadRequestException("Empty password.");
-        }
-        im = SessionMethods.getInterMineAPI(request.getSession());
-        ProfileManager pm = im.getProfileManager();
-        if (pm.hasProfile(userName)) {
-            if (!pm.validPassword(userName, password)) {
-                throw new BadRequestException("Invalid password: " + password);
+        if (StringUtils.isEmpty(authToken)) {
+            final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
+            if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
+                return;
             }
+
+            final String decoded = new String(Base64.decodeBase64(authString.getBytes()));
+            final String[] parts = decoded.split(":", 2);
+            if (parts.length != 2) {
+                throw new BadRequestException(
+                    "Invalid request authentication. "
+                    + "Authorization field contains invalid value. "
+                    + "Decoded authorization value: " + parts[0]);
+            }
+            final String username = parts[0];
+            final String password = parts[1];
+
+            permission = pm.getPermission(username, password);
         } else {
-            throw new BadRequestException("Unknown user name: " + userName);
+            permission = pm.getPermission(authToken);
         }
 
-        HttpSession session = request.getSession();
-        LoginHandler.setUpProfile(session, pm, userName, password);
-        authenticated = true;
+        final HttpSession session = request.getSession();
+        LoginHandler.setUpProfile(session, pm, permission.getProfile());
     }
 
     private void sendError(Throwable t, HttpServletResponse response) {
@@ -781,6 +781,6 @@ public abstract class WebService
      * @return true if request specified user name and password
      */
     public boolean isAuthenticated() {
-        return authenticated;
+        return permission != null;
     }
 }
