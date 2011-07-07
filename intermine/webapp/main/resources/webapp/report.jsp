@@ -53,7 +53,7 @@
     </c:if>
     <a name="summary">
     <h1 class="title">
-        ${object.type}:
+        <c:out value="${imf:formatPath(object.type, INTERMINE_API, WEBCONFIG)}"/>:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
           <c:if test="${status.count > 0}"> </c:if><strong>${title.value}</strong>
         </c:forEach>
@@ -144,6 +144,7 @@
         <input type="text" value="${stableLink}">
       </div>
       <script type="text/javascript">
+ <![CDATA[
         jQuery('#object_header a.share').click(function() {
           // show
           jQuery("#object_header #share div.popup").show();
@@ -154,6 +155,7 @@
           // hide
           jQuery("#object_header #share div.popup").hide();
         });
+]]>
       </script>
   </div>
 
@@ -173,6 +175,7 @@
     <tiles:insert name="reportMenu.jsp" />
   </div>
   <script type="text/javascript">
+     <![CDATA[
     (function() {
       jQuery('#fixed-menu').hide(); // hide for IE7
       jQuery(window).scroll(function() {
@@ -182,7 +185,6 @@
         } else {
           jQuery('#fixed-menu').show();
         }
-
         // where are we
         var currentAspect = null;
         var currentAspectDistance = 9999;
@@ -239,6 +241,7 @@
         });
       }
     })();
+  ]]>
   </script>
 </c:if>
 
