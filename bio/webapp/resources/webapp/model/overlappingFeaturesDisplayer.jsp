@@ -3,28 +3,28 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- overlappingFeaturesDisplayer.jsp -->
 
 <div class="collection-of-collections" id="overlapping-features">
-	<div class="header">
-	  	<h3>Overlapping Features</h3>
-	  	<p>
-	    	<img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
-	    	Genome features that overlap coordinates of this ${reportObject.type}
-	  	</p>
-	  	<div class="switchers">
-	    	<c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
-	    		<%-- TODO: potential fail if key has spaces --%>
-	    	<a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher">${entry.key}</a>: ${entry.value}</c:forEach>
-	  	</div>
-  	</div>
+  <div class="header">
+      <h3>Overlapping Features</h3>
+      <p>
+        <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+        Genome features that overlap coordinates of this ${reportObject.type}
+      </p>
+      <div class="switchers">
+        <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
+          <%-- TODO: potential fail if key has spaces --%>
+        <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher"><c:out value="${imf:formatPath(entry.key, INTERMINE_API, WEBCONFIG)}"/><c:if test="${entry.value != 1}">s</c:if></a>: ${entry.value}</c:forEach>
+      </div>
+    </div>
 
   <c:if test="${!empty featureTables}">
     <c:forEach items="${featureTables}" var="entry">
       <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3>${entry.key}</h3>
+        <h3><c:out value="${imf:formatPath(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
         <div class="clear"></div>
 
         <c:set var="inlineResultsTable" value="${entry.value}" />
@@ -38,7 +38,7 @@
         </div>
         <div class="show-in-table">
           <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
-            Show all in a table »
+            Show all in a table &raquo;
           </html:link>
         </div>
       <br/>
@@ -47,7 +47,7 @@
     </c:forEach>
     <div class="show-in-table outer">
       <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
-        Show all in a table »
+        Show all in a table &raquo;
       </html:link>
     </div>
   </c:if>
@@ -88,22 +88,22 @@
                         text: 'Show more rows'
                     }),
                     click: function(f) {
-	                    // show another 10 rows
-	                    var limit = 10;
-	                    jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").each(function(i, val) {
-	                          if (i <= limit) {
-		                          jQuery(this).show();
-	                          }
-	                    });
+                      // show another 10 rows
+                      var limit = 10;
+                      jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").each(function(i, val) {
+                            if (i <= limit) {
+                              jQuery(this).show();
+                            }
+                      });
 
-	                    // we have no more rows to show
-	                    if (jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").length == 0) {
-	                        // hide the link to more
-	                        jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table div.toggle a.more").remove();
-	                    }
+                      // we have no more rows to show
+                      if (jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").length == 0) {
+                          // hide the link to more
+                          jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table div.toggle a.more").remove();
+                      }
 
-	                    // no linking on my turf
-	                    f.preventDefault();
+                      // no linking on my turf
+                      f.preventDefault();
                     }
                 }).appendTo("#overlapping-features.collection-of-collections #" + jQuery(this).attr('id') + ".collection-table div.toggle");
             }
