@@ -150,7 +150,6 @@ div.widgetcontainer ul li { margin-left: 10px; }
 span.tablePageLinks a, span.tablePageLinks span { margin-right:6px; }
 
 /* table */
-div.table { margin-bottom:30px; }
 div.table h3 { border-top-width:1px; border-top-style:solid; font-size:14px; padding:2px 6px;
     margin-bottom:0; /*height:25px;*/ }
 div.table td[width="15"] { display:none; } /* ridicurous */
