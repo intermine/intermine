@@ -217,12 +217,27 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      *
      */
     @Override
-    protected void setGeneSource(Integer imObjectId, String dataSourceName)
-        throws ObjectStoreException {
+//    protected void setGeneSource(Integer imObjectId, String dataSourceName)
+//        throws ObjectStoreException {
+//        String source = dataSourceName + "-" + title;
+//        setAttribute(imObjectId, "source", source);
+//    }
+
+    
+    protected void setGeneSource(FeatureData fdat, String dataSourceName)
+    throws ObjectStoreException {
         String source = dataSourceName + "-" + title;
+        
+        Integer imObjectId = fdat.getIntermineObjectId();
         setAttribute(imObjectId, "source", source);
+        
+        if (title.equalsIgnoreCase("MB9")) {
+            String id = fdat.getUniqueName();
+            fdat.setUniqueName(title.concat(":" + id));
+        }        
     }
 
+    
     /**
      * Override method that adds completed features to featureMap.  Also put features that will
      * appear in multiple submissions in a map made available at the end of processing.
@@ -597,7 +612,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return identifier;
     }
 
-
+    
     private void processPeaksSources(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getPeaksSources(connection);
