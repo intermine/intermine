@@ -7,7 +7,7 @@
 
 <!-- sequenceFeatureDisplayer.jsp -->
 
-<div class="collection-table column-border-by-2">
+<div id="sequence-feature-displayer" class="collection-table column-border-by-2">
 
 <c:set var="feature" value="${reportObject.object}"/>
 
@@ -21,33 +21,52 @@
 </c:choose>
 
 <table border="0" cellspacing="0">
+  <%-- sequence ontology type and length --%>
+  <c:choose>
+    <c:when test="${!empty feature.sequenceOntologyTerm}">
+      <tr>
+        <c:choose>
+          <c:when test="${!empty feature.length}">
+            <td>Region:</td>
+            <td>
+              <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
+              <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
+            </td>
+            <td>Length:</td>
+            <td>
+              <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
+              <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
+                <tiles:put name="expr" value="length" />
+              </tiles:insert>
+            </td>
+          </c:when>
+          <c:otherwise>
+            <td colspan="4">
+              <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
+              <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
+            </td>
+          </c:otherwise>
+        </c:choose>
+      </tr>
+    </c:when>
+    <c:otherwise>
+      <c:choose>
+        <c:when test="${!empty feature.length}">
+          <tr>
+            <td>Length:</td>
+            <td colspan="3">
+              <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
+              <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
+                <tiles:put name="expr" value="length" />
+              </tiles:insert>
+            </td>
+          </tr>
+        </c:when>
+      </c:choose>
+    </c:otherwise>
+  </c:choose>
+
   <tr>
-    <c:choose>
-      <c:when test="${!empty feature.sequenceOntologyTerm}">
-        <td>Sequence ontology type:</td>
-        <td>
-          <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
-          <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
-        </td>
-      </c:when>
-      <c:otherwise>
-        <td colspan="2"></td>
-      </c:otherwise>
-    </c:choose>
-    <c:choose>
-      <c:when test="${!empty feature.length}">
-        <td class="border-left">Length:</td>
-        <td>
-          <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
-          <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
-            <tiles:put name="expr" value="length" />
-          </tiles:insert>
-        </td>
-      </c:when>
-      <c:otherwise></c:otherwise>
-    </c:choose>
-  </tr>
-  <tr class="even">
     <td>Location:</td>
       <c:choose>
         <c:when test="${!empty feature.chromosomeLocation}">
@@ -59,82 +78,94 @@
             <c:if test="${!empty loc.strand}">
               <span class="smallnote">
                 <c:choose>
-                  <c:when test="${loc.strand == 1}">
-                    forward strand
-                  </c:when>
-                  <c:when test="${loc.strand == -1}">
-                    reverse strand
-                  </c:when>
+                  <c:when test="${loc.strand == 1}">forward strand</c:when>
+                  <c:when test="${loc.strand == -1}">reverse strand</c:when>
                 </c:choose>
               </span>
             </c:if>
+          </td>
         </c:when>
         <c:when test="${locationsCollection != null}">
           <td>
-            <div id="locations-collection">
-              <table class="noborder" cellspacing="0" border="0"><tbody><tr>
+            <div class="collection-table column-border nomargin locations-table">
+              <table><tbody><tr>
                 <c:forEach items="${locationsCollection}" var="loc" varStatus="statei">
-                  <td <c:if test="${(statei.count + 1) % 3 == 0}">class="centered"</c:if>>
-                    <strong>
-                      <c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/>
-                    </strong>
+                  <td class="<c:if test="${(statei.count + 1) % 3 == 0}">centered</c:if>">
+                    <strong><c:out value="${loc.locatedOn.primaryIdentifier}:${loc.start}-${loc.end}"/></strong>
                     <c:if test="${!empty loc.strand}">
                       <span class="smallnote">
                         <c:choose>
-                          <c:when test="${loc.strand == 1}">
-                            forward strand
-                          </c:when>
-                          <c:when test="${loc.strand == -1}">
-                            reverse strand
-                          </c:when>
+                          <c:when test="${loc.strand == 1}">forward strand</c:when>
+                          <c:when test="${loc.strand == -1}">reverse strand</c:when>
                         </c:choose>
                       </span>
                     </c:if>
                   </td>
-                  <c:if test="${statei.count % 3 == 0}"></tr>
+                  <c:if test="${statei.count % 3 == 0}">
+                    </tr>
                     <c:choose>
-                        <c:when test="${statei.count >= 9}"><tr style="display:none;"></c:when>
-                        <c:otherwise><tr></c:otherwise>
+                      <c:when test="${statei.count >= 9}"><tr style="display:none;"></c:when>
+                      <c:otherwise><tr></c:otherwise>
                     </c:choose>
                   </c:if>
                 </c:forEach>
-                </tr></tbody></table>
-                <c:if test="${locationsCollectionSize >= 9}">
-                    <p class="toggle"><a href="#"
-                    onclick="return showMoreRows('#locations-collection', 1, 3);">Show more rows</a></p>
-                </c:if>
-              </div>
-              <p style="display:none;" class="in_table">
-                <html:link action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
-                  Show all in a table
-                </html:link>
-              </p>
+              </tr></tbody></table>
+              <c:if test="${locationsCollectionSize >= 9}">
+                <div class="toggle">
+                  <a class="more">Show more rows</a>
+                </div>
+              </c:if>
+            </div>
+            <div style="display:none;" class="show-in-table">
+              <html:link action="/collectionDetails?id=${feature.id}&amp;field=locations&amp;trail=${param.trail}">
+                Show all in a table
+              </html:link>
+            </div>
         </c:when>
         <c:otherwise>
-          <td colspan="3">
+          <c:choose>
+            <c:when test="${empty cytoLocation && empty mapLocation}">
+              <td colspan="3">
+            </c:when>
+            <c:otherwise>
+              <td colspan="4">
+            </c:otherwise>
+          </c:choose>
             No location information in ${WEB_PROPERTIES['project.title']}
         </c:otherwise>
       </c:choose>
     </td>
     <c:choose>
       <c:when test="${!empty cytoLocation}">
-        <td class="border-left">Cyto location:</td>
+        <td>Cyto location:</td>
         <td>
           <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
       <c:when test="${!empty mapLocation}">
-        <td class="border-left">Map location:</td>
+        <td>Map location:</td>
         <td>
           <strong><c:out value="${mapLocation}"/></strong>
         </td>
       </c:when>
-      <c:otherwise>
-        <td class="border-left" colspan="2"></td>
-      </c:otherwise>
     </c:choose>
   </tr>
 </table>
+
+<script type="text/javascript">
+(function() {
+  jQuery("#sequence-feature-displayer div.toggle a.more").click(function() {
+    jQuery("#sequence-feature-displayer div.locations-table tr:hidden").each(function(index) {
+        if (index < 3) {
+            jQuery(this).show();
+        }
+    });
+    if (jQuery("#sequence-feature-displayer div.locations-table tr:hidden").length <= 0) {
+        jQuery("#sequence-feature-displayer div.toggle a.more").remove();
+    }
+  });
+})();
+</script>
 
 </div>
 
