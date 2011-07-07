@@ -4,7 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
   <style>
-    #proteinAtlasDisplayer h3 { background-image:url("images/icons/protein-atlas.gif"); background-repeat:no-repeat; background-position:6px 2px; padding-left:28px; }
+    #proteinAtlasDisplayer h3 { background-image:url("images/icons/protein-atlas.gif"); background-repeat:no-repeat; background-position:6px 2px;
+      padding-left:28px; line-height:20px; }
 
     #proteinAtlasDisplayer table { float:left; border-spacing:0; border-collapse:collapse; }
     #proteinAtlasDisplayer table td, #proteinAtlasDisplayer table th { padding:2px 10px 2px 4px; }
@@ -60,7 +61,7 @@
 
 <c:choose>
 <c:when test="${expressions.reliability != null}">
-<h3>Protein Atlas Tissue Expression</h3>
+<h3 class="goog">Protein Atlas Tissue Expression</h3>
 
   <div class="sidebar">
     <p>Reliability: <strong class="${fn:toLowerCase(expressions.reliability)}">${expressions.reliability}</strong> (${expressionType.text})</p>
