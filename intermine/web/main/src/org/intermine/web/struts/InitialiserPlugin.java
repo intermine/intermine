@@ -645,7 +645,7 @@ public class InitialiserPlugin implements PlugIn
                         if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
                             DatabaseUtil.updateColumnValue(
                                          ((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                                         "savedbag", "intermine_current", "false");
+                                         "savedbag", "intermine_current", Boolean.FALSE);
                         }
                     } catch (SQLException sqle) {
                         throw new BuildException("Problems connecting bagvalues table", sqle);
