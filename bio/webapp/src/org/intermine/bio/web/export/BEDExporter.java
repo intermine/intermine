@@ -152,7 +152,9 @@ public class BEDExporter implements Exporter
                 for (String org : orgSet) {
                     String gb = OrganismGenomeBuildLookup.getGenomeBuildbyOrgansimAbbreviation(org);
                     if (gb != null && gb.length() > 0) {
-                        genomeBuildList.add(gb);
+                        genomeBuildList.add(org + " " + gb);
+                    } else {
+                        genomeBuildList.add(org + " unknown build");
                     }
                 }
 
