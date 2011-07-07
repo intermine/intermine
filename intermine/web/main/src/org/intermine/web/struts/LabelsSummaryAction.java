@@ -14,7 +14,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.pathquery.Path;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -31,35 +30,38 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class LabelsSummaryAction extends InterMineAction
 {
-	private static final Logger LOG = Logger.getLogger(LabelsSummaryAction.class);
+    private static final Logger LOG = Logger.getLogger(LabelsSummaryAction.class);
 
-	 @Override
-	    public ActionForward execute(ActionMapping mapping, ActionForm form,
-	            HttpServletRequest request, HttpServletResponse response)
-	        throws Exception {
-		 InterMineAPI api = SessionMethods.getInterMineAPI(request);
-		 Model model = api.getModel();
-		 WebConfig config = SessionMethods.getWebConfig(request);
-
-		 PrintStream out;
-		 response.setContentType("text/plain");
-		 response.setHeader("Content-Disposition",  "inline; filename=labels.csv");
-	     try {
-	         out = new PrintStream(response.getOutputStream());
-	         for (ClassDescriptor cd: model.getClassDescriptors()) {
-	        	 for (FieldDescriptor fd: cd.getFieldDescriptors()) {
-	        		 String path = cd.getUnqualifiedName() + "." + fd.getName();
-	        		 out.print(path);
-	        		 out.print(",");
-	        		 out.print(WebUtil.formatColumnName(path, model, config));
-	        		 out.println();
-	        	 }
-	         }
-	         out.flush();
-	     } catch (IOException e) {
-	         LOG.error(e);
-	         return mapping.findForward("begin");
-	     }
-	     return null;
-	 }
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+               HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
+        InterMineAPI api = SessionMethods.getInterMineAPI(request);
+        Model model = api.getModel();
+        WebConfig config = SessionMethods.getWebConfig(request);
+        PrintStream out;
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition",  "inline; filename=labels.csv");
+        try {
+            out = new PrintStream(response.getOutputStream());
+            for (ClassDescriptor cd: model.getClassDescriptors()) {
+                out.print(cd.getUnqualifiedName());
+                out.print(",");
+                out.print(WebUtil.formatColumnName(cd.getUnqualifiedName(), model, config));
+                out.println();
+                for (FieldDescriptor fd: cd.getFieldDescriptors()) {
+                    String path = cd.getUnqualifiedName() + "." + fd.getName();
+                    out.print(path);
+                    out.print(",");
+                    out.print(WebUtil.formatColumnName(path, model, config));
+                    out.println();
+                }
+            }
+            out.flush();
+        } catch (IOException e) {
+            LOG.error(e);
+            return mapping.findForward("begin");
+        }
+        return null;
+    }
 }
