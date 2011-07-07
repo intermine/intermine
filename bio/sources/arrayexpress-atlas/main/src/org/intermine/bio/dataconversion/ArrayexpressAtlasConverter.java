@@ -46,6 +46,8 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private String taxonId = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
 
+    private static final int MAX_FILES = 1000;
+
     //String[] types = new String[] {"organism_part", "disease_state", "cell_type", "cell_line"};
     static String[] types = new String[] {"organism_part", "disease_state", "cell_type"};
     private static final Set<String> EXPRESSION_TYPES = new HashSet<String>(Arrays.asList(types));
@@ -65,11 +67,17 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
         List<File> files = readFilesInDir(dataDir);
 
+        int counter = 0;
         for (File f : files) {
+            if (counter >= MAX_FILES) {
+                break;
+            }
             String fileName = f.getName();
             if (fileName.endsWith("json")) {
+                LOG.info("Reading file: " + fileName);
                 process(new FileReader(f));
             }
+            counter++;
         }
 
     }
