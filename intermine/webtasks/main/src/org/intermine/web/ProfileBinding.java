@@ -90,6 +90,9 @@ public final class ProfileBinding
             if (writeUserAndPassword) {
                 writer.writeAttribute("password", profile.getPassword());
                 writer.writeAttribute("username", profile.getUsername());
+                if (profile.getApiKey() != null) {
+                	writer.writeAttribute("apikey", profile.getApiKey());
+            	}
             }
 
             if (writeBags) {
