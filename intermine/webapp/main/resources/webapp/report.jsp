@@ -144,7 +144,7 @@
         <input type="text" value="${stableLink}">
       </div>
       <script type="text/javascript">
- <![CDATA[
+        //<![CDATA[
         jQuery('#object_header a.share').click(function() {
           // show
           jQuery("#object_header #share div.popup").show();
@@ -155,7 +155,7 @@
           // hide
           jQuery("#object_header #share div.popup").hide();
         });
-]]>
+        //]]>
       </script>
   </div>
 
@@ -175,7 +175,7 @@
     <tiles:insert name="reportMenu.jsp" />
   </div>
   <script type="text/javascript">
-     <![CDATA[
+    //<![CDATA[
     (function() {
       jQuery('#fixed-menu').hide(); // hide for IE7
       jQuery(window).scroll(function() {
@@ -241,7 +241,7 @@
         });
       }
     })();
-  ]]>
+  //]]>
   </script>
 </c:if>
 
@@ -252,10 +252,10 @@
   var="miscId" value="reportMisc${objectType}" /> <%-- All other references and collections --%>
 
 <script type="text/javascript">
-<!--//<![CDATA[
+  //<![CDATA[
     var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
     var detailsType = 'object';
-//]]>-->
+  //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js"></script>
 
