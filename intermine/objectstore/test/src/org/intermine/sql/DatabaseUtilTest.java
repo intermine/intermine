@@ -10,29 +10,31 @@ package org.intermine.sql;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Date;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
+import junit.framework.TestCase;
+
 import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.model.testmodel.*;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.util.DynamicUtil;
 
 public class DatabaseUtilTest extends TestCase
@@ -44,12 +46,14 @@ public class DatabaseUtilTest extends TestCase
         super(arg1);
     }
 
+    @Override
     public void setUp() throws Exception {
         db = DatabaseFactory.getDatabase("db.unittest");
         con = db.getConnection();
         con.setAutoCommit(true);
     }
 
+    @Override
     public void tearDown() throws Exception {
         con.close();
     }
@@ -382,4 +386,51 @@ public class DatabaseUtilTest extends TestCase
 
         assertEquals(expected, result);
     }
+
+    public void testColumnNameLegality() {
+
+        assertFalse(DatabaseUtil.isLegalColumnName(null));
+        assertFalse(DatabaseUtil.isLegalColumnName(""));
+        assertFalse(DatabaseUtil.isLegalColumnName("FOO"));
+        assertFalse(DatabaseUtil.isLegalColumnName("foo!"));
+        assertFalse(DatabaseUtil.isLegalColumnName("foo; drop table userprofile;"));
+
+        assertTrue(DatabaseUtil.isLegalColumnName("foo"));
+        assertTrue(DatabaseUtil.isLegalColumnName("foo123"));
+        assertTrue(DatabaseUtil.isLegalColumnName("foo_bar"));
+        assertTrue(DatabaseUtil.isLegalColumnName("foo_bar_123"));
+    }
+
+    public void testAddColumn() throws Exception {
+        createTable();
+
+        try {
+            DatabaseUtil.addColumn(con, "FOO", "bar", DatabaseUtil.Type.integer);
+            fail("An exception should have been thrown");
+        } catch (IllegalArgumentException e) {
+            //
+        }
+
+        try {
+            DatabaseUtil.addColumn(con, "table1", "BAR", DatabaseUtil.Type.integer);
+            fail("An exception should have been thrown");
+        } catch (IllegalArgumentException e) {
+            //
+        }
+
+        DatabaseUtil.addColumn(con, "table1", "col1", DatabaseUtil.Type.integer);
+        assertTrue(DatabaseUtil.columnExists(con, "table1", "col1"));
+
+        assertFalse(DatabaseUtil.columnExists(con, "table1", "col2"));
+        DatabaseUtil.addColumn(con, "table1", "col2", DatabaseUtil.Type.integer);
+        assertTrue(DatabaseUtil.columnExists(con, "table1", "col2"));
+        DatabaseUtil.updateColumnValue(db, "table1", "col2", 2);
+
+        DatabaseUtil.addColumn(con, "table1", "col3", DatabaseUtil.Type.text);
+        DatabaseUtil.updateColumnValue(db, "table1", "col3", "bar");
+
+        dropTable();
+    }
+
+
 }
