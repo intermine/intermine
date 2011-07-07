@@ -68,7 +68,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     protected final String type;
     private String description;
     private Date dateCreated;
-    private List<String> keyFieldNames;
+    private List<String> keyFieldNames = new ArrayList<String>();
     private boolean isCurrent;
     private ObjectStoreBag osb;
     private ObjectStore os;
@@ -295,10 +295,14 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param ids the collection of id
      * @return the list of values
      */
+    @SuppressWarnings("unchecked")
     public List<String> getKeyFieldValues(Collection<Integer> ids) {
         List<String> keyFieldValueList = new ArrayList<String>();
         Query q = new Query();
         q.setDistinct(false);
+        if (keyFieldNames.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
         try {
             QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
             q.addFrom(qc);
@@ -426,6 +430,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Returns the value of name
      * @return the name of the bag
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -452,6 +457,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Return the description of this bag.
      * @return the description
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -501,6 +507,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getTitle() {
         return getName();
     }
