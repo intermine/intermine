@@ -52,7 +52,7 @@
 
           <%-- LINK --%>
           <c:otherwise>
-            <a href="${object}" class="value extlink">${object}</a>
+            <a href="${object}" class="value extlink"><c:out value="${object}" escapeXml="false" /></a>
           </c:otherwise>
         </c:choose>
       </c:when>
@@ -70,8 +70,7 @@
       </c:when>
       <c:when test="${resultElement.keyField}">
         <%-- key field --%>
-        <a href="${detailsLink}"${extlink}><c:out value="${object}"
-          default="${nullFieldText}" /></a>
+        <a href="${detailsLink}"${extlink}><c:out value="${object}" default="${nullFieldText}" escapeXml="false" /></a>
         <c:if
           test="${(!empty columnType) && (resultElement.type != columnType)}">
              [<c:out value="${resultElement.type}" />]
