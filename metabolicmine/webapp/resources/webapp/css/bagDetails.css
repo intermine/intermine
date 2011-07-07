@@ -125,7 +125,7 @@ table.results tr.bodyRow.odd td.highlightCell { background:#FFFBD8 !important; b
 table.results td { border-right:none; }
 #results.box div.selected span.desc { font-weight:bold; }
 
-#results.box div.pagination { margin-bottom:3px; float:left; line-height:38px; vertical-align:bottom; }
+#results.box div.pagination { margin-bottom:3px; float:left; vertical-align:bottom; margin-top:15px; }
     #results.box div.pagination { color:#FFF; }
         #results.box div.pagination td.resBar a { height:12px; display:inline-block; }
         #results.box div.pagination td.resBar span a { height:auto; display:inline; }

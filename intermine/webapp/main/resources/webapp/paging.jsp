@@ -14,14 +14,12 @@
 <html:xhtml/>
 
   <%-- Paging controls --%>
-    <span style="padding-top:15px">
     <tiles:insert page="/tablePageLinks.jsp">
       <tiles:put name="resultsTable" beanName="resultsTable" />
       <tiles:put name="currentPage" value="${currentPage}" />
       <tiles:put name="bagName" value="${bag.name}" />
     </tiles:insert>
-    </span>
-	&nbsp;|&nbsp;
+    &nbsp;|&nbsp;
     <fmt:message key="results.pageinfo.estimate" var="estimateMessage"/>
     <fmt:message key="results.pageinfo.exact" var="exactMessage"/>
     <%-- "Displaying xxx to xxx of xxx rows" messages --%>

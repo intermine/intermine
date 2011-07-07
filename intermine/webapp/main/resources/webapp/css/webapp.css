@@ -158,7 +158,7 @@ p#version {
 }
 
 tbody#summary_table td {
-	padding-right:4px;
+  padding-right:4px;
 }
 
 /* =MENU
@@ -1388,7 +1388,8 @@ form#queryBuilderTemplateSettings span.errors {
 form#queryBuilderTemplateSettings table input[type="text"], form#queryBuilderTemplateSettings table textarea { width:500px; }
 
 /* pagin */
-span.tablePageLinks span, span.tablePageLinks a { margin-right:5px; }
+#table-page-links, #table-page-links div { display:inline-block; }
+#table-page-links img { margin:0 !important; vertical-align:middle; }
 
 /* widgets on list results */
 p#toggleWidgets, ol#widgetList { line-height:32px; vertical-align:middle; }
