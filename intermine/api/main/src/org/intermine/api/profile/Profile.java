@@ -26,8 +26,8 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -54,7 +54,7 @@ public class Profile
     private final SearchRepository searchRepository;
     private String token;
 
-	/**
+    /**
      * Construct a Profile
      * @param manager the manager for this profile
      * @param username the username for this profile
@@ -63,6 +63,7 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
+     * @param token The token to use as an API key
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
@@ -82,6 +83,23 @@ public class Profile
         }
         searchRepository = new SearchRepository(this, Scope.USER);
         this.token = token;
+    }
+
+    /**
+     * Construct a profile without an API key
+     * @param manager the manager for this profile
+     * @param username the username for this profile
+     * @param userId the id of this user
+     * @param password the password for this profile
+     * @param savedQueries the saved queries for this profile
+     * @param savedBags the saved bags for this profile
+     * @param savedTemplates the saved templates for this profile
+     */
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+            Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
+            Map<String, TemplateQuery> savedTemplates) {
+        this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
+                null);
     }
 
     /**
@@ -362,7 +380,7 @@ public class Profile
         Map<String, List<FieldDescriptor>> classKeys) throws ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
-        List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+        List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
                                     classKeys, type);
         InterMineBag bag = new InterMineBag(name, type, description, new Date(), true, os, userId,
                                            uosw, keyFielNames);
@@ -488,17 +506,17 @@ public class Profile
      * @return
      */
     public String getApiKey() {
-		return token;
-	}
+        return token;
+    }
 
     /**
      * Set the API token for this user, and save it in
      * the backing db.
      * @param token
      */
-	public void setApiKey(String token) {
-		this.token = token;
-		manager.saveProfile(this);
-	}
+    public void setApiKey(String token) {
+        this.token = token;
+        manager.saveProfile(this);
+    }
 
 }
