@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -70,6 +71,8 @@ public class ProfileManager
     private String superuser = null;
     /** Number determining format of queries in the database */
     protected int version;
+
+    private Map<String, SingleAccessToken> singleUseTokens = new HashMap<String, SingleAccessToken>();
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -339,7 +342,7 @@ public class ProfileManager
             }
         }
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
-                savedQueries, savedBags, savedTemplates);
+                savedQueries, savedBags, savedTemplates, userProfile.getApiKey());
         profileCache.put(username, profile);
         return profile;
     }
@@ -362,6 +365,7 @@ public class ProfileManager
         Integer userId = profile.getUserId();
         try {
             UserProfile userProfile = getUserProfile(userId);
+            userProfile.setApiKey(profile.getApiKey());
             if (userProfile != null) {
                 for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                     uosw.delete((InterMineObject) i.next());
@@ -441,6 +445,51 @@ public class ProfileManager
             throw new RuntimeException(e);
         }
         saveProfile(profile);
+    }
+
+    /**
+     * Generate a new API access key for this profile and return it.
+     * @param profile The profile to generate the new API key for.
+     * @return A new API access key
+     */
+    public synchronized String generateApiKey(Profile profile) {
+        String newApiKey = generateApiKey();
+    	profile.setApiKey(newApiKey);
+
+    	return newApiKey;
+    }
+
+    public synchronized String generateSingleUseKey(Profile profile) {
+        String key = generateApiKey();
+        SingleAccessToken token = new SingleAccessToken(profile.getUsername());
+        singleUseTokens.put(key, token);
+        return key;
+    }
+
+    private static String generateApiKey() {
+    	String timePrefix = Long.toHexString(new Date().getTime());
+    	String randomSuffix = RandomStringUtils.randomAlphanumeric(16);
+
+    	StringBuilder sb = new StringBuilder();
+
+    	// Interleave the random and predictable portions so that
+    	// the time string isn't so obvious.
+    	int tpl = timePrefix.length();
+    	int rsl = randomSuffix.length();
+    	for (int i = 0; i < tpl || i < rsl; i++) {
+    		if (i < randomSuffix.length()) {
+    		    sb.append(randomSuffix.charAt(i));
+    		}
+    		if (i < timePrefix.length()) {
+    		    sb.append(timePrefix.charAt(i));
+    		}
+    	}
+
+        return sb.toString();
+    }
+
+    public String generateReadOnlyAccessToken(Profile profile) {
+    	return null;
     }
 
     /**
@@ -555,12 +604,7 @@ public class ProfileManager
     public synchronized String createPasswordChangeToken(String username) {
         if (hasProfile(username)) {
             Date expiry = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
-            Random random = new Random();
-            char[] tokenArray = new char[10];
-            for (int i = 0; i < 10; i++) {
-                tokenArray[i] = (char) (random.nextInt(26) + 'a');
-            }
-            String token = new String(tokenArray);
+            String token = generateApiKey();
             passwordChangeTokens.put(token, new PasswordChangeToken(username, expiry));
             return token;
         } else {
@@ -630,5 +674,146 @@ public class ProfileManager
         public boolean isValid() {
             return System.currentTimeMillis() < expiry.getTime();
         }
+    }
+
+    /**
+     * Transient API access keys for automated API access. These tokens are only valid for a single use.
+     * @author Alex Kalderimis
+     *
+     */
+    private static class SingleAccessToken
+    {
+    	private String username;
+    	private final int maxUses = 1;
+    	private int uses = 0;
+
+    	public SingleAccessToken(String username) {
+    		this.username = username;
+    	}
+
+    	public boolean isValid() {
+    		return maxUses < uses;
+    	}
+
+    	public String getUserName() {
+    		return username;
+    	}
+
+    	public void use() {
+    		uses++;
+    	}
+    }
+
+    public static class ApiPermission
+    {
+    	public enum Level {RO, RW};
+
+    	private final Level level;
+		private final Profile profile;
+
+		/*
+		 * Only the ProfileManager has permission to grant API permissions.
+		 */
+		private ApiPermission(Profile profile, Level level) {
+    		this.level = level;
+    		this.profile = profile;
+		}
+
+    	public Profile getProfile() {
+			return profile;
+		}
+
+    	public Level getLevel() {
+			return level;
+		}
+
+    	public boolean isRW() {
+    		return level == Level.RW;
+    	}
+
+    	public boolean isRO() {
+    		return level == Level.RO;
+    	}
+    }
+
+    /**
+     * Get the level of permission granted by an access token.
+     * @param token
+     * @return
+     */
+    public ApiPermission getPermission(String token) {
+    	ApiPermission permission;
+    	if (singleUseTokens.containsKey(token)) {
+    		SingleAccessToken t = singleUseTokens.get(token);
+            if (!t.isValid()) {
+                throw new AuthenticationException("This token (" + token + ")is invalid.");
+            }
+    		Profile p = getProfile(t.getUserName());
+    		t.use();
+    		if (!t.isValid()) {
+    			singleUseTokens.remove(token);
+    		}
+    		// Grant RO permission to user data
+    		permission = new ApiPermission(p, ApiPermission.Level.RO);
+    	} else {
+            Profile p = getProfileByApiKey(token);
+            if (p == null) {
+                throw new AuthenticationException("This token is not a valid access key: "
+                		+ token);
+            } else {
+                // Grant RW permission to user data
+                permission = new ApiPermission(p, ApiPermission.Level.RW);
+            }
+        }
+    	return permission;
+    }
+
+    public ApiPermission getPermission(String username, String password) {
+    	if (StringUtils.isEmpty(username)) {
+            throw new AuthenticationException("Empty user name.");
+        }
+        if (StringUtils.isEmpty(password)) {
+            throw new AuthenticationException("Empty password.");
+        }
+        if (hasProfile(username)) {
+            if (!validPassword(username, password)) {
+            	throw new AuthenticationException("Invalid password supplied: " + password);
+            } else {
+            	Profile p = getProfile(username);
+            	ApiPermission permission = new ApiPermission(p, ApiPermission.Level.RW);
+            	return permission;
+            }
+        } else {
+        	throw new AuthenticationException("Unknown username: " + username);
+        }
+    }
+
+    private Profile getProfileByApiKey(String token) {
+    	UserProfile profile = new UserProfile();
+        profile.setApiKey(token);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("apiKey");
+        try {
+            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+        } catch (ObjectStoreException e) {
+        	return null; // Could not be found.
+        }
+        if (profile == null) {
+        	throw new AuthenticationException("'" + token + "' is not a valid API access key");
+        }
+        return getProfile(profile.getUsername());
+    }
+
+    public static class AuthenticationException extends RuntimeException {
+
+    	/**
+		 * Default serial UID
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public AuthenticationException(String message) {
+    		super(message);
+    	}
+
     }
 }

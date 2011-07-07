@@ -87,8 +87,8 @@ public class LoadBagValuesTask extends Task
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current", "boolean");
-                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current", "true");
+                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current", DatabaseUtil.Type.boolean_type);
+                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current", Boolean.TRUE);
                 }
             } catch (SQLException sqle) {
                 throw new BuildException("Problems connecting bagvalues table", sqle);
@@ -104,7 +104,7 @@ public class LoadBagValuesTask extends Task
         try {
             uosw = uos.getNewWriter();
         } catch (ObjectStoreException ose) {
-            throw new BuildException("Problems retriving the new writer", ose);
+            throw new BuildException("Problems retrieving the new writer", ose);
         }
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);

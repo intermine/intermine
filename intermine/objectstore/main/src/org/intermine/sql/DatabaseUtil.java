@@ -11,6 +11,7 @@ package org.intermine.sql;
  */
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.CharUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -450,6 +453,26 @@ public final class DatabaseUtil
         "YEAR",
         "ZONE"));
 
+    public enum Type {
+    	text("TEXT"),
+    	integer("integer"),
+    	bigint("bigint"),
+    	real("real"),
+    	double_precision("double precision"),
+    	timestamp("timestamp"),
+    	boolean_type("boolean");
+
+    	private final String sqlType;
+
+    	Type(String sqlType) {
+    		this.sqlType = sqlType;
+    	}
+
+    	String getSQLType() {
+    		return sqlType;
+    	}
+    }
+
     private DatabaseUtil() {
         // empty
     }
@@ -860,7 +883,8 @@ public final class DatabaseUtil
     }
 
     /**
-     * Add a column in the table specified in input
+     * Add a column in the table specified in input. A connection is obtained to the database
+     * and automatically released after the addition of the column.
      * @param database the database to use
      * @param tableName the table where to add the column
      * @param columnName the column to add
@@ -868,19 +892,55 @@ public final class DatabaseUtil
      * @throws SQLException if there is a database problem
      */
     public static void addColumn(Database database, String tableName, String columnName,
-                                String type)
+                                Type type)
         throws SQLException {
         Connection connection = database.getConnection();
-        if (DatabaseUtil.tableExists(connection, tableName)
-            && !DatabaseUtil.columnExists(connection, tableName, columnName)) {
+        if (DatabaseUtil.tableExists(connection, tableName)) {
             try {
-                String sqlAddColumn = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName
-                                    + " " + type;
-                connection.createStatement().execute(sqlAddColumn);
+            	addColumn(connection, tableName, columnName, type);
             } finally {
                 connection.close();
             }
         }
+    }
+
+    /**
+     * Add a column to an existing database table, if it does not already exist.
+     * It is the users responsibility to close the connection after use.
+     * @param con A connection to the database.
+     * @param tableName The table to add the database too
+     * @param columnName The column to add
+     * @param type The SQL type to add
+     * @throws SQLException
+     */
+    public static void addColumn(Connection con, String tableName, String columnName, Type type)
+    	throws SQLException {
+    	if (!DatabaseUtil.tableExists(con, tableName)) {
+    		throw new IllegalArgumentException("there is no table named " + tableName + "in this"
+    				+ " database to add a new column to");
+    	}
+    	if (DatabaseUtil.columnExists(con, tableName, columnName)) {
+    		return;
+    	}
+    	if (!DatabaseUtil.isLegalColumnName(columnName)) {
+    		throw new IllegalArgumentException("This is not a legal column name: " + columnName);
+    	}
+    	String sql = "ALTER TABLE " + tableName +" ADD COLUMN " + columnName + " " + type.getSQLType();
+    	PreparedStatement stmt = con.prepareStatement(sql);
+    	LOG.info(stmt.toString());
+    	stmt.executeUpdate();
+    }
+
+    private static boolean isLegalColumnName(String name) {
+    	if (StringUtils.isEmpty(name)) {
+    		return false;
+    	}
+    	boolean isValid = true;
+    	for (int i = 0; i < name.length(); i++) {
+    		char c = name.charAt(i);
+    		isValid = isValid && (CharUtils.isAsciiAlphaLower(c) || c == '_');
+    	}
+    	return isValid;
     }
 
     /**
@@ -892,14 +952,16 @@ public final class DatabaseUtil
      * @throws SQLException if there is a database problem
      */
     public static void updateColumnValue(Database database, String tableName, String columnName,
-                                         String newValue)
+                                         Object newValue)
         throws SQLException {
         Connection connection = database.getConnection();
         if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
             try {
-                String sqlUpdateColumnValue = "UPDATE " + tableName + " SET " + columnName
-                    + "=" + newValue;
-                connection.createStatement().execute(sqlUpdateColumnValue);
+            	String sql = "UPDATE " + tableName + " SET " + columnName + " = ?";
+            	PreparedStatement stmt = connection.prepareStatement(sql);
+            	stmt.setObject(1, newValue);
+            	LOG.info(stmt.toString());
+            	stmt.executeUpdate();
             } finally {
                 connection.close();
             }

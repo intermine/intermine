@@ -113,7 +113,8 @@ ul#submenulist li a:hover {
   color:#FFF;text-decoration: underline;font-weight: bold;}
 
 ul#submenulist li.myminebagstabtitle a, ul#submenulist li.myminehistorytabtitle a, ul#submenulist li.myminesavedqueriestabtitle a,
-ul#submenulist li.myminesavedtemplatestabtitle a, ul#submenulist li.myminepasswordtabtitle a, ul#submenulist li.myminetrackstabtitle a { color:#000; }
+ul#submenulist li.myminesavedtemplatestabtitle a, ul#submenulist li.myminepasswordtabtitle a, ul#submenulist li.myminetrackstabtitle a,
+ul#submenulist li.mymineapikeytabtitle a { color:#000; }
 
 /* =MEGATILE SEARCH
 --------------------------*/

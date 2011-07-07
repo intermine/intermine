@@ -452,7 +452,7 @@ public final class SessionMethods
         ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                    new HashMap<String, TemplateQuery>()));
+                    new HashMap<String, TemplateQuery>(), null));
         session.setAttribute(Constants.REPORT_OBJECT_CACHE, new ReportObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
