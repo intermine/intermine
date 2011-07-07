@@ -65,14 +65,9 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
         List<File> files = readFilesInDir(dataDir);
 
-        int counter = 0;
         for (File f : files) {
             String fileName = f.getName();
             if (fileName.endsWith("json")) {
-                counter++;
-                if (counter >= 100) {
-                    break;
-                }
                 process(new FileReader(f));
             }
         }
