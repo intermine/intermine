@@ -17,6 +17,8 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -45,8 +47,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 
-import junit.framework.TestCase;
-
 public class TrackerDelegateTest extends TestCase
 {
     TrackerDelegate trackerDelegate;
@@ -56,6 +56,7 @@ public class TrackerDelegateTest extends TestCase
     ProfileManager pm;
     Connection conn;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
@@ -68,9 +69,9 @@ public class TrackerDelegateTest extends TestCase
 
         pm = new ProfileManager(os, uosw);
         superUser = new Profile(pm, "superuser", null, "password", new HashMap(),
-                new HashMap(), new HashMap());
+                new HashMap(), new HashMap(), null);
         user = new Profile(pm, "user", null, "password", new HashMap(),
-                new HashMap(), new HashMap());
+                new HashMap(), new HashMap(), null);
         pm.createProfile(superUser);
         pm.createProfile(user);
         pm.setSuperuser("superuser");
@@ -102,6 +103,7 @@ public class TrackerDelegateTest extends TestCase
         user.saveTemplate("template2", template2);
     }
 
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         superUser.deleteTemplate("template1", null);
