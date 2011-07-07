@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -788,12 +791,13 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     private void deleteBagValues() {
         Connection conn = null;
-        Statement stm = null;
+        PreparedStatement stm = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            stm = conn.createStatement();
-            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "'";
-            stm.executeUpdate(sql);
+            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId= ? ";
+            stm = conn.prepareStatement(sql);
+            stm.setObject(1, savedBagId);
+            stm.executeUpdate();
         } catch (SQLException sqle) {
             throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
         } finally {
@@ -811,23 +815,26 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     private void deleteBagValues(Collection<Integer> ids) {
         Connection conn = null;
-        Statement stm = null;
+        PreparedStatement stm = null;
         List<String> values = getKeyFieldValues(ids);
         if (values.size() > 0) {
             try {
                 conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-                stm = conn.createStatement();
-                String sql;
-                String valuesList = "";
-                for (String value : values) {
-                    valuesList = valuesList + "'" + value + "',";
+                Collection<String> placeHolders = CollectionUtils.collect(values, new ConstantTransformer("?"));
+                String valuesList = StringUtils.join(placeHolders, ", ");
+
+                String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? "
+                    + " AND value IN (" + valuesList + " )";
+                
+                stm = conn.prepareStatement(sql);
+                stm.setInt(1, savedBagId);
+                for (int i = 0; i < values.size(); i++) {
+                    stm.setString(i + 2, values.get(i));
                 }
-                valuesList = valuesList.substring(0, valuesList.length() - 1);
-                sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "' "
-                    + " AND value IN (" + valuesList + ")";
-                stm.executeUpdate(sql);
+
+                stm.executeUpdate();
             } catch (SQLException sqle) {
-                throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
+                throw new RuntimeException("Error deleting the " + values.size() + " bagvalues of bag : " + savedBagId, sqle);
             } finally {
                 if (stm != null) {
                     try {
