@@ -35,6 +35,9 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.bio.web.export.BEDHttpExporter;
+import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -49,6 +52,8 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -75,15 +80,18 @@ public class GalaxyExportOptionsController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
 
+        boolean canExportAsBED = false;
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         PathQuery query = new PathQuery(model);
 
-        // Build Span pathquery
-        if (request.getParameter("value") != null) { // TODO why did I write this???
+        // Build GenomicRegion pathquery, the request is from GenomicRegionSearch "export to Galaxy"
+        if (request.getParameter("value") != null) {
             String value = request.getParameter("value");
 
+            // TODO this could be configurable?
             String path = "SequenceFeature";
             query.addView(path + ".primaryIdentifier");
             query.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
@@ -96,7 +104,7 @@ public class GalaxyExportOptionsController extends TilesAction
             Set<Integer> ids = new HashSet<Integer>();
             boolean isIds = true;
             for (String id : idsInStr) {
-                if (!Pattern.matches("^\\d*$", id)) {
+                if (!Pattern.matches("^\\d+$", id)) {
                     isIds = false;
                     break;
                 }
@@ -109,9 +117,20 @@ public class GalaxyExportOptionsController extends TilesAction
                 query.addConstraint(Constraints.lookup(path, value, null));
             }
 
-        } else {
+            canExportAsBED = true;
+
+        } else { // request from normal result table
             String tableName = request.getParameter("table");
             PagedTable pt = SessionMethods.getResultsTable(session, tableName);
+
+            // Check if can export as BED
+            TableHttpExporter tableExporter = new BEDHttpExporter();
+
+            try {
+                canExportAsBED = tableExporter.canExport(pt);
+            } catch (Exception e) {
+                LOG.error("Caught an error running canExport() for: BEDHttpExporter. " + e);
+            }
 
             LinkedHashMap<Path, Integer> exportClassPathsMap = getExportClassPaths(pt);
             List<Path> exportClassPaths = new ArrayList<Path>(exportClassPathsMap.keySet());
@@ -132,15 +151,6 @@ public class GalaxyExportOptionsController extends TilesAction
 
             request.setAttribute("exportClassPaths", pathMap);
             request.setAttribute("pathIndexMap", pathIndexMap);
-
-            // If can export feature
-            if (request.getParameter("exportAsBED") != null) {
-                request.setAttribute("exportAsBED", request.getParameter("exportAsBED"));
-            } else {
-                request.setAttribute("exportAsBED", false);
-            }
-
-            // Build webservice URL
 
             // Support export public and private lists to Galaxy
             query = pt.getWebTable().getPathQuery();
@@ -187,12 +197,31 @@ public class GalaxyExportOptionsController extends TilesAction
                                                    PathQuery.USERPROFILE_VERSION);
 
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
-        String link = new URLGenerator(request).getPermanentBaseURL()
+
+        String tableURL = new URLGenerator(request).getPermanentBaseURL()
                         + "/service/query/results?query="
                         + encodedQueryXML
                         + "&size=1000000";
 
-        request.setAttribute("viewURL", link);
+        request.setAttribute("tableURL", tableURL);
+
+        // If can export as BED
+        request.setAttribute("canExportAsBED", canExportAsBED);
+        if (canExportAsBED) {
+            String bedURL = new URLGenerator(request).getPermanentBaseURL()
+                + "/service/query/results/bed?query="
+                + encodedQueryXML
+                + "&";
+
+            request.setAttribute("bedURL", bedURL);
+
+            Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(query, session);
+            Set<String> genomeBuildSet = (Set<String>) OrganismGenomeBuildLookup
+                    .getGenomeBuildByOrgansimCollection(orgSet);
+
+            request.setAttribute("org", StringUtil.join(orgSet, ","));
+            request.setAttribute("dbkey", StringUtil.join(genomeBuildSet, ","));
+        }
 
         return null;
     }
