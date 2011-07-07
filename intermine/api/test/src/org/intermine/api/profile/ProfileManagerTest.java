@@ -32,6 +32,8 @@ import junit.framework.Test;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.ProfileManager.ApiPermission;
+import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -68,16 +70,19 @@ public class ProfileManagerTest extends StoreDataTestCase
     private ProfileManager pm;
     private ObjectStore os, uos;
     private ObjectStoreWriter osw, uosw;
-    private Integer bobId = new Integer(101);
-    private Integer sallyId = new Integer(102);
-    private String bobPass = "bob_pass";
-    private String sallyPass = "sally_pass";
+    private final Integer bobId = new Integer(101);
+    private final Integer sallyId = new Integer(102);
+    private final String bobPass = "bob_pass";
+    private final String sallyPass = "sally_pass";
     private Map<String, List<FieldDescriptor>>  classKeys;
+
+    private final String bobKey = "BOBKEY";
 
     public ProfileManagerTest(String arg) {
         super(arg);
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
@@ -91,9 +96,11 @@ public class ProfileManagerTest extends StoreDataTestCase
         classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
     }
 
+    @Override
     public void executeTest(String type) {
     }
 
+    @Override
     public void testQueries() throws Throwable {
     }
 
@@ -113,7 +120,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         // bob's details
         String bobName = "bob";
-        List<String> keyFieldNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+        List<String> keyFieldNames = ClassKeyHelper.getKeyFieldNames(
                 classKeys, "Department");
         InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
                 new Date(), true, os, bobId, uosw);
@@ -135,7 +142,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap());
+                                 new HashMap(), new HashMap(), new HashMap(), bobKey);
         pm.createProfile(bobProfile);
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -174,6 +181,7 @@ public class ProfileManagerTest extends StoreDataTestCase
     }
 
 
+    @Override
     public void tearDown() throws Exception {
         if (bobProfile != null) {
             for (String name : bobProfile.getSavedQueries().keySet()) {
@@ -288,6 +296,125 @@ public class ProfileManagerTest extends StoreDataTestCase
         return new TagManagerFactory(uosw).getTagManager();
     }
 
+    public void testApiKeys() throws Exception {
+        setUpUserProfiles();
+        Profile bob = pm.getProfile("bob");
+
+        assertEquals(bob.getApiKey(), bobKey);
+
+        Profile sally = pm.getProfile("sally");
+
+        assertEquals(sally.getApiKey(), null);
+
+        bob.setApiKey("NEW-TOKEN");
+        assertEquals(bob.getApiKey(), "NEW-TOKEN");
+
+        sally.setApiKey("ANOTHER-TOKEN");
+        assertEquals(sally.getApiKey(), "ANOTHER-TOKEN");
+
+    }
+
+    public void testGetRWPermission() throws Exception {
+        setUpUserProfiles();
+
+        ApiPermission permission = null;
+        permission = pm.getPermission(bobKey);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        permission = pm.getPermission("bob", bobPass);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        permission = pm.getPermission("sally", sallyPass);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), sallyProfile.getUsername());
+
+        String newKey = pm.generateApiKey(bobProfile);
+        permission = pm.getPermission(newKey);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        try {
+            pm.getPermission("foo");
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        String[] keys = new String[1000];
+        Set<String> uniqueKeys = new HashSet<String>();
+        for (int i = 0; i < 1000; i++) {
+            keys[i] = pm.generateApiKey(bobProfile);
+            uniqueKeys.add(keys[i]);
+        }
+
+        assertEquals(uniqueKeys.size(), 1000);
+
+        // It's not ok to have many single use keys
+        for (int j = 0; j < 999; j++) {
+            try {
+                pm.getPermission(keys[j]);
+                fail("expected authentication exception");
+            } catch (AuthenticationException e) {
+                // expected
+            }
+        }
+
+        // Only the last key is valid
+        permission = pm.getPermission(keys[999]);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+    }
+
+    public void testGetROPermission() throws Exception {
+        setUpUserProfiles();
+        ApiPermission permission = null;
+
+        String key = pm.generateSingleUseKey(bobProfile);
+        permission = pm.getPermission(key);
+        assertNotNull(permission);
+        assertTrue(permission.isRO());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        try {
+            pm.getPermission(key);
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        try {
+            pm.getPermission("foo");
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        String[] keys = new String[1000];
+        Set<String> uniqueKeys = new HashSet<String>();
+        for (int i = 0; i < 1000; i++) {
+            keys[i] = pm.generateSingleUseKey(bobProfile);
+            uniqueKeys.add(keys[i]);
+        }
+
+        assertEquals(uniqueKeys.size(), 1000);
+
+        // It's ok to have many single use keys
+        for (int j = 0; j < 1000; j++) {
+            permission = pm.getPermission(keys[j]);
+            assertNotNull(permission);
+            assertTrue(permission.isRO());
+            assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+        }
+
+    }
+
     public void testXMLRead() throws Exception {
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
@@ -317,7 +444,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         System.out.println("Testing profile with hashCode " + System.identityHashCode(sallyProfile));
         assertEquals(3, sallyProfile.getSavedBags().size());
-        assertEquals(expectedBagContents, ((InterMineBag) sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
+        assertEquals(expectedBagContents, (sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
 
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
