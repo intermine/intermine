@@ -63,10 +63,12 @@ start_codon
 stop_codon
 substitution
 TF_binding_site
+three_prime_RACE_clone
 three_prime_RST
 three_prime_UST
 three_prime_UTR
 transcript
+transcript_region
 transcription_end_site
 transposable_element
 transposable_element_gene
