@@ -798,3 +798,9 @@ function reDrawConstraintLogic() {
   });
 }
 
+function refreshSavedBagStatus() {
+    AjaxServices.getSavedBagStatus(function(savedBagStatusMap) {
+        //alert(savedBagStatusMap.key);
+    });
+}
+

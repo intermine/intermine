@@ -80,6 +80,7 @@ import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
@@ -1364,6 +1365,11 @@ public class AjaxServices
         }
         String[] defaultList = {""};
         return defaultList;
+    }
+
+    public Map<String, String> getSavedBagStatus() {
+        HttpSession session = WebContextFactory.get().getSession();
+        return (Map<String, String>) session.getAttribute(UpgradeBagList.SAVED_BAG_STATUS);
     }
 
 }

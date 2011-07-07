@@ -14,7 +14,11 @@
 <script type="text/javascript" src="js/historyBagView.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
-
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    //setTimeout("refreshSavedBagStatus()", 5000);
+})
+</script>
 <im:body id="bagHistory">
 
   <p>
@@ -100,11 +104,22 @@
                 </c:choose>
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
-              <td class="sorting" align="right">
-                <c:choose>
-                <c:when test="${savedBag.value.current}">Current</c:when>
-                <c:otherwise><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}">Upgrade</html:link></c:otherwise>
-                </c:choose>
+              <td id="status_${savedBag.value.name}" class="sorting" align="right">
+              <c:set var="status" value=""/>
+              <c:forEach items="${SAVED_BAG_STATUS}" var="savedBagStatus">
+                <c:if test="${savedBagStatus.key == savedBag.value.name}">
+                <c:set var="status" value="${savedBagStatus.value}"/>
+               </c:if>
+              </c:forEach>
+               <c:choose>
+               <c:when test="${status == ''}">Upgrading...</c:when>
+               <c:otherwise>
+                  <c:if test="${status == 'CURRENT'}">Current</c:if>
+                  <c:if test="${status == 'UPGRADING'}">Upgrading...</c:if>
+                  <c:if test="${status == 'TO_UPGRADE'}"><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}">Upgrade</html:link></c:if>
+               </c:otherwise>
+               </c:choose>
+              
               </td>
             </tr>
           </c:forEach>

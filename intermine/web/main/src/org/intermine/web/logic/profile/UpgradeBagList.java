@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryResult;
@@ -33,6 +34,10 @@ public class UpgradeBagList implements Runnable
     private Profile profile;
     private BagQueryRunner bagQueryRunner;
     private HttpSession session;
+    public static final String SAVED_BAG_STATUS = "SAVED_BAG_STATUS";
+    static final String CURRENT = "CURRENT";
+    static final String TO_UPGRADE = "TO_UPGRADE";
+    static final String UPGRADING = "UPGRADING";
 
     public UpgradeBagList(Profile profile, BagQueryRunner bagQueryRunner, HttpSession session) {
         this.profile = profile;
@@ -42,8 +47,11 @@ public class UpgradeBagList implements Runnable
 
     public void run() {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        Map<String, String> savedBagsStatus = new HashedMap();
+        session.setAttribute(SAVED_BAG_STATUS, savedBagsStatus);
         for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
+                savedBagsStatus.put(bag.getName(), UPGRADING);
                 List<String> primaryIdentifiersList =
                     bag.getContentsASKeyFieldValues();
                 try {
@@ -52,8 +60,10 @@ public class UpgradeBagList implements Runnable
                     if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                         Map<Integer, List> matches = result.getMatches();
                         bag.upgradeOsb(matches.keySet());
+                        savedBagsStatus.put(bag.getName(), CURRENT);
                     } else {
                         session.setAttribute("bagQueryResult_" + bag.getName(), result);
+                        savedBagsStatus.put(bag.getName(), TO_UPGRADE);
                     }
                 } catch (ClassNotFoundException cnfe) {
                     LOG.warn("The type " + bag.getType() + "isn't in the model."
@@ -63,6 +73,8 @@ public class UpgradeBagList implements Runnable
                 } catch (ObjectStoreException ose) {
                     LOG.warn("Impossible upgrade the bags list", ose);
                 }
+            } else {
+                savedBagsStatus.put(bag.getName(), CURRENT);
             }
         }
     }
