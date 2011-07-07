@@ -277,6 +277,47 @@ public class AjaxServices
         }
     }
 
+    /**
+     * Generate a new API key for a given user.
+     * @param username the user to generate the key for.
+     * @return A new API key, or null if something untoward happens.
+     * @throws Exception an exception.
+     */
+    public String generateApiKey(String username) throws Exception {
+    	try {
+	    	WebContext ctx = WebContextFactory.get();
+	    	HttpSession session = ctx.getSession();
+	    	final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+	    	final ProfileManager pm = im.getProfileManager();
+	    	Profile p = pm.getProfile(username);
+	    	return pm.generateApiKey(p);
+    	} catch (RuntimeException e) {
+    		processException(e);
+    		return null;
+    	}
+    }
+
+    /**
+     * Delete a user's API key, thus disabling webservice access. A message "deleted"
+     * is returned to confirm success.
+     * @param username The user whose key we should delete.
+     * @return A confirmation string.
+     * @throws Exception
+     */
+    public String deleteApiKey(String username) throws Exception {
+    	try {
+    		WebContext ctx = WebContextFactory.get();
+	    	HttpSession session = ctx.getSession();
+	    	final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+	    	final ProfileManager pm = im.getProfileManager();
+	    	Profile p = pm.getProfile(username);
+	    	p.setApiKey(null);
+	    	return "deleted";
+    	} catch (RuntimeException e) {
+    		processException(e);
+    		return null;
+    	}
+    }
 
     /**
      * For a given bag, set its description
