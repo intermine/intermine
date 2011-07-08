@@ -7,6 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- layout.jsp -->
 <html:xhtml/>
@@ -89,7 +90,22 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
   jQuery("p#contactUsLink").toggle();
-});
+  });
+
+$MODEL_TRANSLATION_TABLE = {
+    <c:forEach var="cd" items="${INTERMINE_API.model.classDescriptors}" varStatus="cdStat">
+        "${cd.unqualifiedName}": {
+            displayName: "${imf:formatPathStr(cd.unqualifiedName, INTERMINE_API, WEBCONFIG)}",
+            fields: {
+                <c:forEach var="fd" items="${cd.allFieldDescriptors}" varStatus="fdStat">
+                    <c:set var="fdPath" value="${cd.unqualifiedName}.${fd.name}"/>
+                    "${fd.name}": "${imf:formatFieldStr(fdPath, INTERMINE_API, WEBCONFIG)}"<c:if test="${!fdStat.last}">,</c:if>
+                </c:forEach>
+            }
+        }<c:if test="${!cdStat.last}">,</c:if>
+    </c:forEach>
+};
+
 </script>
 
       <%-- Render messages --%>
