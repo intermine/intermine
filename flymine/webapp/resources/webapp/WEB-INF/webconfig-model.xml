@@ -1,6 +1,6 @@
 <webconfig>
 
-  <class className="org.intermine.model.bio.AGambiaeLifeCycle" label="A. Gambiae Life-Cycle"/>
+  <class className="org.intermine.model.bio.AGambiaeLifeCycle" label="A. gambiae Life Cycle"/>
 
   <class className="org.intermine.model.bio.Allele">
     <fields>
@@ -106,7 +106,7 @@
   <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="url" doNotTruncate="true" label="URL"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
 
@@ -163,7 +163,7 @@
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
-      <fieldconfig fieldExpr="secondaryIdentifier" label="Computed id"/>
+      <fieldconfig fieldExpr="secondaryIdentifier" label="Identifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -252,11 +252,11 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="chromosomeLocation" label="Location" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Chromosome" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" label="Start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" label="End" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.name" name="Organism"/>
     </fields>
   </class>
 
@@ -298,7 +298,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.MRNAExpressionResult" label="mRNA Expression Result">
+  <class className="org.intermine.model.bio.MRNAExpressionResult">
     <fields>
       <fieldconfig fieldExpr="stageRange"/>
       <fieldconfig fieldExpr="expressed"/>
@@ -476,7 +476,7 @@
       <fieldconfig fieldExpr="journal"/>
       <fieldconfig fieldExpr="volume"/>
       <fieldconfig fieldExpr="pages"/>
-      <fieldconfig fieldExpr="pubMedId" label="PubMed ID"/>
+      <fieldconfig fieldExpr="pubMedId"/>
     </fields>
   </class>
 
@@ -519,15 +519,15 @@
       <fieldconfig fieldExpr="pcrProduct.primaryIdentifier" label="PCR Product"/>
       <fieldconfig fieldExpr="rnaiScreen" showInInlineCollection="false" showInSummary="false" showInResults="false" label="RNAi Screen"/>
       <fieldconfig fieldExpr="pcrProduct" showInInlineCollection="false" showInSummary="false" showInResults="false" label="PCR Product"/>
-      <fieldconfig fieldExpr="rnaiScreen.name"/>
-      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" />
+      <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" "PubMed ID"/>
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.Sample">
     <fields>
       <fieldconfig fieldExpr="materialType"/>
-      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="organism.name" "Organism"/>
       <fieldconfig fieldExpr="primaryCharacteristicType"/>
       <fieldconfig fieldExpr="primaryCharacteristic"/>
     </fields>
@@ -572,12 +572,12 @@
   <class className="org.intermine.model.bio.TFBindingSite">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-      <fieldconfig fieldExpr="factor.primaryIdentifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="gene.symbol" "Gene"/>
+      <fieldconfig fieldExpr="factor.primaryIdentifier" "Factor"/>
+      <fieldconfig fieldExpr="chromosomeLocation" label="Location" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Chromosome" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" label="Start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" label="End" showInInlineCollection="false" showInSummary="false" />
     </fields>
   </class>
 
@@ -589,8 +589,7 @@
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="gene.primaryIdentifier" showInSummary="false"/>
-      <fieldconfig fieldExpr="gene.symbol" showInSummary="false" />
+      <fieldconfig fieldExpr="gene.symbol" label="Gene" showInSummary="false" />
     </fields>
   </class>
 
