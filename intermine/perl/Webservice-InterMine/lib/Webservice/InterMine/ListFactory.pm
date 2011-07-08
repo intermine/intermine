@@ -120,8 +120,10 @@ sub get_lists_with_object {
     my $self = shift;
     my $obj = shift;
     my $obj_id = eval {$obj->{objectId}} || $obj;
-    my $uri = URI->new($self->service_root . $self->service->LISTS_WITH_OBJ_PATH);
-    $uri->query_form(id => $obj_id);
+    my $uri = $self->service->build_uri(
+        $self->service_root . $self->service->LISTS_WITH_OBJ_PATH,
+        id => $obj_id,
+    );
     my $str = $self->service->get($uri)->decoded_content;
     my $parsed = $self->decode($str);
     unless ($parsed->{wasSuccessful}) {
@@ -168,8 +170,7 @@ sub subtract {
             . join(' and ', @ref_names);
     my $tags = shift || [];
 
-    my $uri = URI->new($self->service_root . SUBTRACTION_PATH);
-    $uri->query_form(
+    my $uri = $self->service->build_uri($self->service_root . SUBTRACTION_PATH,
         name => $name,
         description => $description,
         references => join(';', @ref_names),
@@ -214,8 +215,7 @@ sub _do_commutative_list_operation {
     my $name        = shift || $self->get_unused_list_name;
     my $description = shift || $operation . " of " . join(' and ', @list_names);
 
-    my $uri = URI->new($self->service_root . $path);
-    $uri->query_form(
+    my $uri = $self->service->build_uri($self->service_root . $path,
         name => $name,
         lists => join(';', @list_names),
         description => $description,
@@ -228,10 +228,8 @@ sub delete_lists {
     my $self = shift;
     my @list_names = uniq(map { blessed($_) ? $_->name : $_ } @_);
     for my $list (@list_names) {
-        my $uri = URI->new($self->service_root . DELETION_PATH);
-        $uri->query_form(name => $list);
-        my $resp = $self->service->agent->request(
-            HTTP::Request::Common::DELETE($uri));
+        my $uri = $self->service->build_uri($self->service_root . DELETION_PATH, name => $list);
+        my $resp = $self->service->agent->request(HTTP::Request::Common::DELETE($uri));
         $self->check_response_for_error($resp);
     }
     $self->refresh_lists;
@@ -250,8 +248,7 @@ sub new_list {
     confess "Tags may not contain the ';' character" if (grep {/;/} @$tags);
     my $tag_list = join(';', @$tags);
 
-    my $uri = URI->new($self->service_root . UPLOAD_PATH);
-    $uri->query_form(
+    my $uri = $self->service->build_uri($self->service_root . UPLOAD_PATH,
         name => $name,
         description => $description, 
         type => $args{type},
@@ -262,7 +259,7 @@ sub new_list {
 
     my $resp = match_on_type $content => (
         ListOperable, sub {
-            $uri = URI->new($content->get_list_upload_uri);
+            $uri = $self->service->build_uri($content->get_list_upload_uri);
             my $params = {
                 listName    => $name,
                 description => $description,

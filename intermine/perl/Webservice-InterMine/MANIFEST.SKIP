@@ -28,3 +28,4 @@ nytprof
 .*\.out
 scripts
 \.prove.*
+MYMETA.*
