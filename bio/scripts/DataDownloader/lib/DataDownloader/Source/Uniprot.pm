@@ -36,7 +36,7 @@ sub BUILD {
     for my $org (@$organisms) {
         my $sp_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %sp_params = (
-            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes ' . $excluded_organisms,
+            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes ' . $excluded_str,
             compress => 'yes', 
             format => 'xml',
         );
@@ -51,7 +51,7 @@ sub BUILD {
 
         my $tr_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %tr_params = (
-            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no' . $excluded_organisms,
+            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no' . $excluded_str,
             compress => 'yes', 
             format => 'xml',
         );
