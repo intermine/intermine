@@ -45,12 +45,8 @@ public class WebConfigTest extends TestCase
     public void testParse() throws Exception{
         WebConfig wc1 = WebConfig.parse(context, Model.getInstanceByName("testmodel"));
 
-        Displayer employeeDisplayer = new Displayer();
-        employeeDisplayer.setSrc("/model/employee.jsp");
-
         Type employeeType = new Type();
         employeeType.setClassName("org.intermine.model.testmodel.Employee");
-        employeeType.addLongDisplayer(employeeDisplayer);
         employeeType.setLabel("Angestellter");
         FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("name");
@@ -65,16 +61,11 @@ public class WebConfigTest extends TestCase
         df2.setShowInSummary(true);
         employeeType.addFieldConfig(df2);
 
-        Displayer managerDisplayer = new Displayer();
-        managerDisplayer.setSrc("/model/manager.jsp");
-        managerDisplayer.setAspects("Aspect1, Aspect2");
-        Displayer tdisp = new Displayer();
-        tdisp.setSrc("/model/tableManager.jsp");
-
         Type managerType = new Type();
         managerType.setClassName("org.intermine.model.testmodel.Manager");
-        managerType.addLongDisplayer(managerDisplayer);
-        managerType.setTableDisplayer(tdisp);
+        Displayer managerTableDisplayer = new Displayer();
+        managerTableDisplayer.setSrc("/model/tableManager.jsp");
+        managerType.setTableDisplayer(managerTableDisplayer);
 
         FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
@@ -92,16 +83,6 @@ public class WebConfigTest extends TestCase
         df5.setFieldExpr("title");
         df5.setDoNotTruncate(true);
         managerType.addFieldConfig(df5);
-
-        Displayer disp2 = new Displayer();
-        disp2.setSrc("/model/page4.jsp");
-        Displayer disp3 = new Displayer();
-        disp3.setSrc("tile2.tile");
-
-        Type thingType = new Type();
-        thingType.setClassName("org.intermine.model.testmodel.Thing");
-        thingType.addLongDisplayer(disp2);
-        thingType.addLongDisplayer(disp3);
 
         Type contractorType = new Type();
         contractorType.setClassName("org.intermine.model.testmodel.Contractor");
@@ -138,7 +119,6 @@ public class WebConfigTest extends TestCase
         WebConfig wc2 = new WebConfig();
         wc2.addType(employeeType);
         wc2.addType(managerType);
-        wc2.addType(thingType);
         wc2.addType(companyType);
         wc2.addType(secretaryType);
         wc2.addType(contractorType);
@@ -146,6 +126,7 @@ public class WebConfigTest extends TestCase
         wc2.addTableExportConfig(tableExportConfig);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
+        /*
         HashMap displayerAspects = new HashMap();
         displayerAspects.put("Aspect1", Arrays.asList(
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
@@ -153,6 +134,7 @@ public class WebConfigTest extends TestCase
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
         assertEquals(displayerAspects, (wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
                 .getAspectDisplayers());
+        */
 
         assertEquals(wc2.toString(), wc1.toString());
 
