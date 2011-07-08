@@ -74,7 +74,7 @@ around BUILDARGS => sub {
     my %args;
     if      ( @_ == 3 ) {
         @args{qw/root user pass/} = @build_args;
-    } elsif ( @_ == 2 ) {
+    } elsif ( @_ == 2 and $_[0] ne "root" ) {
         @args{qw/root token/} = @build_args;
     } elsif ( @_ == 1 ) {
         @args{qw/root/} = @build_args;

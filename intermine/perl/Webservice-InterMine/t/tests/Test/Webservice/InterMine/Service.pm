@@ -165,7 +165,7 @@ sub auth_service : Test(2) {
 }
     
 
-sub bad_services : Test(3) {
+sub bad_services : Test(5) {
     my $test = shift;
     my @args = ( root => $test->fake_queryurl );
 
@@ -175,9 +175,18 @@ sub bad_services : Test(3) {
     throws_ok {$test->class->new(@args, pass => "Foo")} qr/not both/, 
         "demands a user for a password";
 
+    throws_ok {$test->class->new(@args, user => "Foo", pass => "Foo", token => "Foo")} qr/choose only one/,
+        "doesn't accept tokens and passwords";
+
+    $test->{version} = 5;
+    throws_ok {$test->class->new(@args, token => "Foo")} qr/does not support token/,
+        "Requires a sufficiently advanced service to handle tokens";
+
     $test->{version} = 0;
     throws_ok {$test->class->new(@args)} qr/check the url/, 
         "Throws a sensible error when it can't get the version";
+
+
 }
 
 sub release : Test(2) {
@@ -215,6 +224,33 @@ sub list_methods : Test(3) {
     
 }
 
+sub token_auth : Test(4) {
+
+    my $test = shift;
+    my @args = ( root => $test->fake_queryurl );
+    my $service = $test->class->new(@args, token => "FOO");
+
+    NO_PARAMS: {
+        my $uri = $service->build_uri("http://some.url");
+        is_deeply([$uri->query_form], [token => "FOO"], "Adds tokens to uris it constructs");
+    }
+
+    PARAMS: {
+        my $uri = $service->build_uri("http://some.url", some => "param");
+        is_deeply([$uri->query_form], [some => "param", token => "FOO"], "... and plays nice with other params")
+    }
+
+    HASH_PARAMS: {
+        my $uri = $service->build_uri("http://some.url", {some => "param"});
+        is_deeply([$uri->query_form], [some => "param", token => "FOO"], "... even when they are as a hashref")
+    }
+
+    ARRAY_PARAMS: {
+        my $uri = $service->build_uri("http://some.url", [some => "param"]);
+        is_deeply([$uri->query_form], [some => "param", token => "FOO"], "... and when they are as a arrayref")
+    }
+
+}
     
 
 1;
