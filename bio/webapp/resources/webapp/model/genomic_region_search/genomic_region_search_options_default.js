@@ -89,7 +89,7 @@
    function appendFeatureTypes(org) {
 
          var ftHTMLArray = [];
-         for(i in webDataJSON.featureTypes){
+         for(var i in webDataJSON.featureTypes){
                if (webDataJSON.featureTypes[i].organism == org) {
                    //jQuery.each(webDataJSON.featureTypes[i].features, function(){
                    //    ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
@@ -99,30 +99,39 @@
                      var feature_size = webDataJSON.featureTypes[i].features.length;
                      var columns = 3;
                      var rows = Math.ceil(feature_size/columns);
+                     var row = "<tr></tr>",
+                         input = "<input type='checkbox' checked='yes' class='featureType' name='featureTypes'>",
+                         cell = "<td width='300'></td>",
+                         br = "<br/>",
+                         sp = "&nbsp;";
+
 
                      for (j = 0; j < rows; j++)
                      {
-                        ftHTMLArray.push("<tr>");
-
+                        var rowElem = jQuery(row);
                         for (k = 0; k < columns; k++)
                         {
-                            current_loc = j + k*rows;
+                            var current_loc = j + k*rows;
                             if (!(current_loc >= feature_size)) {
-                                ftHTMLArray.push("<td width='300'>");
-                                                       ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
-                                                        + webDataJSON.featureTypes[i].features[current_loc] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>&nbsp;" + webDataJSON.featureTypes[i].features[current_loc] + "<br/>");
-                                ftHTMLArray.push("</td>");
+                                var current = webDataJSON.featureTypes[i].features[current_loc];
+                                var displayName = $MODEL_TRANSLATION_TABLE[current].displayName || current;
+                                var cellElem = jQuery(cell);
+                                var ckbx = jQuery(input).attr("value", current).click(function() {uncheck(this.checked, 'featureTypes')});
+                                cellElem.append(ckbx).append(displayName).append(sp);
+                                rowElem.append(cellElem);
                             }
                         }
-
-                        ftHTMLArray.push("</tr>");
+                        ftHTMLArray.push(rowElem);
                     }
                }
          }
 
-         if(ftHTMLArray.join("") != "") {
+         if (ftHTMLArray.length > 0) {
              jQuery("#selectFeatureTypes").html("<input id=\"check\" type=\"checkbox\" checked=\"yes\" onclick=\"checkAll(this.id)\"/>&nbsp;Select Feature Types:");
-             jQuery("#featureTypes").html(ftHTMLArray.join(""));
+             var fts = jQuery("#featureTypes").empty();
+             jQuery.each(ftHTMLArray, function(idx, elem) {
+                 fts.append(elem);
+             });
          }
          else {
              jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>"+org+" does not have any features</i>");
