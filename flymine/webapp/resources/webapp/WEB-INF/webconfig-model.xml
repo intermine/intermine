@@ -7,7 +7,7 @@
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="alleleClass"/>
-      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="organism.name" label="Organism" />
     </fields>
   </class>
 
@@ -162,9 +162,9 @@
       <table path="pathways.name" showLinksToObjects="true" />
     </inlinelist>
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="secondaryIdentifier" label="Identifier"/>
       <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
