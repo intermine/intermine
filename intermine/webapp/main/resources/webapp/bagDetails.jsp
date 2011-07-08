@@ -6,6 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- bagDetails.jsp -->
 
@@ -36,7 +37,11 @@
 <div class="heading results">
   <img src="images/icons/lists-64.png" alt="lists icon"/>
   <h1>
-    <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">&nbsp;for <b>${bag.name}</b> (${bag.size}&nbsp;${bag.type}s)</span>
+      <fmt:message key="bagDetails.title"/> 
+      <span style="font-size:0.9em;font-weight:normal">
+          for <b>${bag.name}</b> 
+          (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
+      </span>
   </h1>
   <div id="tool_bar_div">
       <ul id="button_bar">
