@@ -64,10 +64,10 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
       <!-- field name -->
       <c:choose>
         <c:when test="${empty dec.path.fieldName}">
-          <span class="type"> <c:out value="${imf:formatColumnName(dec.path.path, WEBCONFIG)}" /> </span>
+          <span class="type"> <c:out value="${imf:formatPathStr(dec.path.path, WEBCONFIG)}" /> </span>
         </c:when>
         <c:otherwise>
-          <span class="attributeField">&nbsp;<c:out value="${imf:formatColumnName(dec.path.path, WEBCONFIG)}" />&nbsp;</span>
+          <span class="attributeField">&nbsp;<c:out value="${imf:formatPathStr(dec.path.path, WEBCONFIG)}" />&nbsp;</span>
         </c:otherwise>
       </c:choose>
       <c:choose>
@@ -283,7 +283,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
       <html:select property="subclassValue" styleId="subclass1" disabled="true">
           <c:forEach items="${SUBCLASSES[dec.path.type]}" var="subclass">
               <html:option value="${subclass}">
-                  <c:out value="${imf:formatPath(subclass, INTERMINE_API, WEBCONFIG)}"/>
+                  <c:out value="${imf:formatPathStr(subclass, INTERMINE_API, WEBCONFIG)}"/>
               </html:option>
           </c:forEach>
       </html:select>
@@ -315,7 +315,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
     <html:select property="loopQueryValue" styleId="loopQuery2" disabled="true">
         <c:forEach items="${dec.candidateLoops}" var="loopPath">
             <html:option value="${loopPath}">
-                <c:out value="${imf:formatPath(loopPath, INTERMINE_API, WEBCONFIG)}"/>
+                <c:out value="${imf:formatPathStr(loopPath, INTERMINE_API, WEBCONFIG)}"/>
             </html:option>
         </c:forEach>
     </html:select>
@@ -368,8 +368,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <input type="radio" name="joinType" value="inner" id="inner" <c:if test="${joinType == 'inner'}">checked</c:if>/>
           <label for="inner">&nbsp;
             <fmt:message key="query.innerJoin">
-              <fmt:param value="${imf:formatPath(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
-              <fmt:param value="${imf:formatPath(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPathStr(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPathStr(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
             </fmt:message>
             <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
           </label>
@@ -378,8 +378,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <input type="radio"  name="joinType" value="outer" id="outer" <c:if test="${joinType == 'outer'}">checked</c:if>/>
           <label for="outer">&nbsp;
             <fmt:message key="query.outerJoin">
-              <fmt:param value="${imf:formatPath(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
-              <fmt:param value="${imf:formatPath(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPathStr(dec.path.path.secondLastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
+              <fmt:param value="${imf:formatPathStr(dec.path.path.lastClassDescriptor.unqualifiedName, INTERMINE_API, WEBCONFIG)}"/>
             </fmt:message>
             <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
           </label>

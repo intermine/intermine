@@ -87,11 +87,11 @@
             <td>
                   <html:select styleId="typeSelector" property="type" onchange="typeChanged();">
                       <c:forEach items="${preferredTypeList}" var="type">
-                      <html:option value="${type}" style="font-weight:bold"><c:out value="${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}"/></html:option>
+                      <html:option value="${type}" style="font-weight:bold"><c:out value="${imf:formatPathStr(type, INTERMINE_API, WEBCONFIG)}"/></html:option>
                       </c:forEach>
                     <html:option value="" style="text-align:center">----------------</html:option>
                     <c:forEach items="${typeList}" var="type">
-                          <html:option value="${type}"><c:out value="${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}"/></html:option>
+                          <html:option value="${type}"><c:out value="${imf:formatPathStr(type, INTERMINE_API, WEBCONFIG)}"/></html:option>
                     </c:forEach>
                   </html:select>
             </td>

@@ -53,7 +53,7 @@
     </c:if>
     <a name="summary">
     <h1 class="title">
-        <c:out value="${imf:formatPath(object.type, INTERMINE_API, WEBCONFIG)}"/>:
+        <c:out value="${imf:formatPathStr(object.type, INTERMINE_API, WEBCONFIG)}"/>:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
           <c:if test="${status.count > 0}"> </c:if><strong>${title.value}</strong>
         </c:forEach>

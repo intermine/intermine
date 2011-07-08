@@ -172,14 +172,21 @@ public abstract class WebUtil
             .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
 
-    public static String formatColumnName(String original, HttpServletRequest request) {
+    /**
+     * Formats a column name, using the webconfig to produce configured labels.
+     * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
+     * @param original The column name (a path string) to format
+     * @param request The request to use to get the configuration off.
+     * @return A formatted column name
+     */
+    public static String formatPath(String original, HttpServletRequest request) {
         if (request == null) { 
             throw new IllegalArgumentException("request cannot be null");
         }
         final InterMineAPI im = SessionMethods.getInterMineAPI(request);
         final Model model = im.getModel();
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
-        return formatColumnName(original, model, webConfig);
+        return formatPath(original, model, webConfig);
     }
 
     public static List<String> formatPathQueryView(PathQuery pq, HttpServletRequest request) {
@@ -195,22 +202,55 @@ public abstract class WebUtil
             } catch (PathException e) {
                 throw new RuntimeException(e);
             }
-            formattedViews.add(formatColumnName(p, webConfig));
+            formattedViews.add(formatPath(p, webConfig));
         }
         return formattedViews;
     }
 
-    public static String formatColumnName(String original, Model model, WebConfig webConfig) {
+    /**
+     * Formats a column name, using the webconfig to produce configured labels.
+     * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
+     * @param original The column name (a path string) to format
+     * @param model The model to use to parse the string
+     * @param webConfig The configuration to find labels in
+     * @return A formatted column name
+     */
+    public static String formatPath(String original, Model model, WebConfig webConfig) {
         Path viewPath;
         try {
             viewPath = new Path(model, original);
         } catch (PathException e) {
             return original;
         }
-        return formatColumnName(viewPath, webConfig);
+        return formatPath(viewPath, webConfig);
     }
 
-    public static String formatColumnName(Path viewColumn, WebConfig webConfig) {
+    /**
+     * Formats a column name, using the webconfig to produce configured labels.
+     * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
+     * @param pathString A string representing a path to format
+     * @param api the webapp configuration to aquire a model from
+     * @param webConfig The configuration to find labels in
+     * @return A formatted column name
+     */
+    public static String formatPath(String pathString, InterMineAPI api, WebConfig webConfig) {
+        Path viewPath;
+        try {
+            viewPath = new Path(api.getModel(), pathString);
+        } catch (PathException e) {
+            return pathString;
+        }
+        return formatPath(viewPath, webConfig);
+    }
+
+    /**
+     * Formats a column name, using the webconfig to produce configured labels.
+     * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
+     * @param viewColumn A path representing a column name
+     * @param webConfig The configuration to find labels in
+     * @return A formatted column name
+     */
+    public static String formatPath(Path viewColumn, WebConfig webConfig) {
         List<Path> parts = viewColumn.decomposePath();
         List<String> aliasedParts = new ArrayList<String>();
         for (Path p: parts) {
@@ -228,17 +268,7 @@ public abstract class WebUtil
         }
         return StringUtils.join(aliasedParts, " > ");
     }
-
-    public static String formatPathString(String pathString, InterMineAPI api, WebConfig webConfig) {
-        Path viewPath;
-        try {
-            viewPath = new Path(api.getModel(), pathString);
-        } catch (PathException e) {
-            return pathString;
-        }
-        return formatColumnName(viewPath, webConfig);
-    }
-
+    
     public static String formatField(String s, InterMineAPI api, WebConfig webConfig) {
         if (StringUtils.isEmpty(s)) {
             return "";
@@ -273,7 +303,7 @@ public abstract class WebUtil
     }
 
     public static String formatFieldChain(String s, InterMineAPI api, WebConfig webConfig) {
-        String fullPath = formatColumnName(s, api.getModel(), webConfig);
+        String fullPath = formatPath(s, api.getModel(), webConfig);
         if (StringUtils.isEmpty(fullPath)) {
             return fullPath;
         } else {

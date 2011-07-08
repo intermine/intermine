@@ -143,7 +143,7 @@ input.submit {
                                    <c:param name="facet_${facet.field}" value="${facetItem.value}" />
                             </c:url>"
                 title="Click to show '<c:out value="${facetItem.value}" />'">
-              <c:out value="${imf:formatPath(facetItem.value, INTERMINE_API, WEBCONFIG)}" /> (<c:out
+              <c:out value="${imf:formatPathStr(facetItem.value, INTERMINE_API, WEBCONFIG)}" /> (<c:out
                 value="${facetItem.facetValueHitCount}"></c:out>) </a></li>
             </c:forEach>
           </ul>
@@ -390,13 +390,13 @@ input.submit {
                   value="${searchResult.id}"
                   onclick="updateCheckStatus(this.checked)" /></td>
               </c:if>
-              <td><c:out value="${imf:formatPath(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out></td>
+              <td><c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out></td>
               <td>
                   <div class="objectKeys">
                       <html:link
                 href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
                 <c:if test="${empty searchResult.keyFields}">
-                  <c:out value="${imf:formatPath(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out>
+                  <c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out>
                 </c:if>
                 <c:forEach items="${searchResult.keyFields}" var="field"
                   varStatus="status">

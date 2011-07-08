@@ -77,7 +77,7 @@
                 <td>
                     <div class="constraint_${index} ${constraintHeadingClass}">
                         <span class="templateConstraintPath"> 
-                            <c:out value="${imf:formatPath(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
+                            <c:out value="${imf:formatPathStr(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
                             <c:set var="fieldDisplay" value="${imf:formatField(dec.path.path, WEBCONFIG)}" />
                             <c:if test="${!empty fieldDisplay}">
                                 &gt;&nbsp;${fieldDisplay}

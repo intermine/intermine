@@ -6,15 +6,15 @@
 <uri>/WEB-INF/functions.tld</uri>
 
 <function>
-  <name>formatColumnName</name>
+  <name>formatPath</name>
   <function-class>org.intermine.web.logic.WebUtil</function-class>
-  <function-signature>java.lang.String formatColumnName( org.intermine.pathquery.Path, org.intermine.web.logic.config.WebConfig )</function-signature>
+  <function-signature>java.lang.String formatPath( org.intermine.pathquery.Path, org.intermine.web.logic.config.WebConfig )</function-signature>
 </function> 
 
 <function>
-  <name>formatPath</name>
+  <name>formatPathStr</name>
   <function-class>org.intermine.web.logic.WebUtil</function-class>
-  <function-signature>java.lang.String formatPathString( java.lang.String, org.intermine.api.InterMineAPI, org.intermine.web.logic.config.WebConfig )</function-signature>
+  <function-signature>java.lang.String formatPath( java.lang.String, org.intermine.api.InterMineAPI, org.intermine.web.logic.config.WebConfig )</function-signature>
 </function> 
 
 <function>

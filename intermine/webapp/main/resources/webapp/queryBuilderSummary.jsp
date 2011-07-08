@@ -110,7 +110,7 @@
                 </fmt:message>
                 <im:viewableSpan path="${path.pathString}" viewPaths="${viewPaths}" test="${empty path.fieldName}" idPrefix="query">
                   <html:link action="/queryBuilderChange?method=changePath&amp;path=${path.pathString}"
-                   title="${changePath}"><span class="type"><c:out value="${imf:formatPath(path.type, INTERMINE_API, WEBCONFIG)}"/></span></html:link>
+                   title="${changePath}"><span class="type"><c:out value="${imf:formatPathStr(path.type, INTERMINE_API, WEBCONFIG)}"/></span></html:link>
                 </im:viewableSpan>
                 <c:if test="${path.collection}">
                   <fmt:message key="query.collection"/>
@@ -154,7 +154,7 @@
                 <c:when test="${QUERY.outerMap[path.pathString] && !path.attribute && !empty path.parent}">
                   <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
                   <html:link action="/queryBuilderChange?method=editJoinStyle&amp;path=${path.pathString}"
-                        onclick="return editJoinStyle('${path.pathString}', '${imf:formatPath(path.pathString, INTERMINE_API, WEBCONFIG)}');"
+                        onclick="return editJoinStyle('${path.pathString}', '${imf:formatPathStr(path.pathString, INTERMINE_API, WEBCONFIG)}');"
                          title="${editConstraintTitle}">
                     <img border="0" src="images/join_outer.png" width="13" height="13"
                      title="Outer join"/>
@@ -163,7 +163,7 @@
                 <c:when test="${!QUERY.outerMap[path.pathString] && !path.attribute && !empty path.parent}">
                   <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
                   <html:link action="/queryBuilderChange?method=editJoinStyle&amp;path=${path.pathString}"
-                        onclick="return editJoinStyle('${path.pathString}', '${imf:formatPath(path.pathString, INTERMINE_API, WEBCONFIG)}');"
+                        onclick="return editJoinStyle('${path.pathString}', '${imf:formatPathStr(path.pathString, INTERMINE_API, WEBCONFIG)}');"
                          title="${editConstraintTitle}">
                     <img border="0" src="images/join_inner.png" width="13" height="13"
                      title="Inner join"/>
@@ -180,7 +180,7 @@
               <fmt:message key="query.subclassConstraint" var="msg"/>
               <span class="constraint">
                 <c:out value="${msg}"/>&nbsp;
-                <c:out value="${imf:formatPath(path.subclass, INTERMINE_API, WEBCONFIG)}"/>
+                <c:out value="${imf:formatPathStr(path.subclass, INTERMINE_API, WEBCONFIG)}"/>
               </span>
               <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
               <html:link action="/queryBuilderChange?method=removeSubclass&amp;path=${path.pathString}" title="${removeConstraintTitle}">
@@ -203,7 +203,7 @@
                   <img border="0" src="images/cross.gif" width="13" height="13"
                        title="Remove this constraint"/>
                 </html:link>&nbsp;<fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/><html:link action="/queryBuilderChange?method=editConstraint&amp;code=${constraint.code}"
-                    onclick="return editConstraint('${path.pathString}', '${constraint.code}', '${imf:formatPath(path.pathString, INTERMINE_API, WEBCONFIG)}')"
+                    onclick="return editConstraint('${path.pathString}', '${constraint.code}', '${imf:formatPathStr(path.pathString, INTERMINE_API, WEBCONFIG)}')"
                            title="${editConstraintTitle}">
                   <img border="0" src="images/edit.gif" width="13" height="13"
                        title="Edit this constraint"/>
@@ -212,7 +212,7 @@
                   <c:choose>
                     <c:when test="${constraint.validEditableConstraintType}">
                       <html:link action="/queryBuilderChange?method=editTemplateConstraint&amp;code=${constraint.code}"
-                                 titleKey="templateBuilder.editTemplateConstraint.linktitle" onclick="return editTemplateConstraint('${path.pathString}', '${constraint.code}', '${imf:formatPath(path.pathString, INTERMINE_API, WEBCONFIG)}')" >
+                                 titleKey="templateBuilder.editTemplateConstraint.linktitle" onclick="return editTemplateConstraint('${path.pathString}', '${constraint.code}', '${imf:formatPathStr(path.pathString, INTERMINE_API, WEBCONFIG)}')" >
                         <c:choose>
                           <c:when test="${constraint.editableInTemplate}">
                             <img border="0" src="images/unlocked.gif" width="13" height="13" title="Unlocked"/>

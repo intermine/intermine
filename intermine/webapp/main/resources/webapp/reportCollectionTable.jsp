@@ -33,7 +33,7 @@
                 </c:when>
                 <c:when test="${fc.isDottedPath && !empty WEBCONFIG && !empty INTERMINE_API}">
                     <c:set var="pathString" value="${fc.classConfig.unqualifiedClassName}.${fc.fieldExpr}"/>
-                    <c:set var="columnDisplayName" value="${imf:formatPath(pathString, INTERMINE_API, WEBCONFIG)}"/>
+                    <c:set var="columnDisplayName" value="${imf:formatPathStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
                 </c:when>
                 <c:otherwise>
                     <c:set var="columnDisplayName" value="${fc.displayName}"/>

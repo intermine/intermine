@@ -15,7 +15,7 @@
     <c:forEach var="cd" items="${im_model.classDescriptors}">
         <c:set var="classname" value="${cd.unqualifiedName}"/>
         <option value="${classname}">
-            <c:out value="${imf:formatPath(classname, INTERMINE_API, WEBCONFIG)}"/>
+            <c:out value="${imf:formatPathStr(classname, INTERMINE_API, WEBCONFIG)}"/>
         </option>
     </c:forEach>
 </select>
@@ -32,7 +32,7 @@
   </c:choose>
 
   <div class="collection-table classLabels" id="labelsFor${classname}" style="${css}">
-      <h3>${classname} &rarr; ${imf:formatPath(classname, INTERMINE_API, WEBCONFIG)}</h3>
+      <h3>${classname} &rarr; ${imf:formatPathStr(classname, INTERMINE_API, WEBCONFIG)}</h3>
       <table>
       <tbody>
           <c:choose>
