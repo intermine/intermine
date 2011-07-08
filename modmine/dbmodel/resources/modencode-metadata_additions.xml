@@ -12,6 +12,21 @@
   <collection name="submissions" referenced-type="Submission"/>
 </class>
 
+<class name="PeptideCollection" extends="BioEntity" is-interface="true">
+  <collection name="polypeptideRegions" referenced-type="PolypeptideRegion"/>
+  <collection name="submissions" referenced-type="Submission" reverse-reference="peptides"/>
+<!--  
+<reference name="submission" referenced-type="Submission" reverse-reference="peptides"/>
+  <reference name="submission" referenced-type="Submission" />
+-->
+</class>
+
+<class name="PolypeptideRegion" is-interface="true">
+  <reference name="peptideCollection" referenced-type="PeptideCollection"/>
+  <reference name="submission" referenced-type="Submission" reverse-reference="polypeptideRegions"/>
+  <collection name="introns" referenced-type="Intron" reverse-reference="polypeptideRegion" />
+</class>
+
 <class name="CDS" is-interface="true">
   <attribute name="status" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
@@ -32,12 +47,15 @@
   <collection name="expressionScores" referenced-type="ExonExpressionScore" reverse-reference="exon"/>
 </class>
 
+
 <class name="ExonRegion" is-interface="true">
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="exonRegions" />
 </class>
 
 <class name="Intron" is-interface="true">
+  <reference name="polypeptideRegion" referenced-type="PolypeptideRegion" reverse-reference="introns" />
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="introns" />
+  <collection name="matureTranscripts" referenced-type="MatureTranscript" reverse-reference="intron" />
 </class>
 
 <class name="Gene" is-interface="true">
@@ -48,6 +66,10 @@
 <class name="MRNA" is-interface="true">
   <attribute name="CDS" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
+</class>
+
+<class name="MatureTranscript" is-interface="true">
+  <reference name="intron" referenced-type="Intron" reverse-reference="matureTranscripts" />
 </class>
 
 <class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true">
@@ -297,6 +319,8 @@
   <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
   <collection name="relatedSubmissions" referenced-type="Submission"/>
   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="submission"/>
+  <collection name="peptides" referenced-type="PeptideCollection" reverse-reference="submissions"/>
+  <collection name="polypeptideRegions" referenced-type="PolypeptideRegion" reverse-reference="submission"/>
 </class>
 
 <class name="SubmissionData" is-interface="true">
