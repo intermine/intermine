@@ -233,7 +233,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         
         if (title.equalsIgnoreCase("MB9")) {
             String id = fdat.getUniqueName();
-            fdat.setUniqueName(title.concat(":" + id));
+            fdat.setUniqueName(title.concat("." + id));
         }        
     }
 
