@@ -189,7 +189,7 @@ public class DynamicUtilTest extends TestCase
 
     public void testGetSimpleClassName() throws Exception {
         FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
-        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClass(obj.getClass()));
+        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClassName(obj.getClass()));
 
         Set<Class<?>> interfaces = new HashSet<Class<?>>();
         interfaces.add(Company.class);
