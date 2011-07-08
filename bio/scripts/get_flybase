@@ -23,9 +23,9 @@ my ($logdir,$logname,$home,$file);
 if(@ARGV!=3){
 	#die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
     my $tempname="temp_log.txt";
-    $logdir="/shared/data/download_logs/";
+    $logdir="/micklem/data/download_logs/";
     $logname=$logdir.$tempname;
-    $home="/shared/data";
+    $home="/micklem/data";
 }else{
     $logdir = $ARGV[0];
     $logname= $ARGV[1];
