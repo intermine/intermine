@@ -543,7 +543,7 @@
 -->
 
     <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/biopax/reactome/current/not-curated"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
@@ -551,7 +551,7 @@
     </source>
 
     <source name="reactome-curated" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/biopax/reactome/current/curated"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/current/curated"/>
       <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="FlyReactome data set"/>
