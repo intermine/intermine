@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -47,7 +46,6 @@ import org.intermine.sql.DatabaseUtil;
 
 public class LoadBagValuesTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(LoadBagValuesTask.class);
     private String osAlias;
     private String userProfileAlias;
 
@@ -115,16 +113,18 @@ public class LoadBagValuesTask extends Task
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             if (StringUtils.isBlank(savedBag.getName())) {
-                LOG.warn("Failed to load bag with blank name");
+                System.out.println("Failed to load bag with blank name");
             } else {
                 try {
                     InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
+                    System.out.println("Start loading bag: " + bag.getName());
                     Properties classKeyProps = new Properties();
                     try {
                         classKeyProps.load(this.getClass().getClassLoader()
                                 .getResourceAsStream("class_keys.properties"));
                     } catch (Exception e) {
-                        LOG.error("Error loading class descriptions", e);
+                        System.out.println("Error loading class descriptions.");
+                        e.printStackTrace();
                     }
                     Map<String, List<FieldDescriptor>>  classKeys =
                         ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
@@ -134,9 +134,11 @@ public class LoadBagValuesTask extends Task
                     bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
                     bag.setCurrent(true);
+                    System.out.println("Loaded bag: " + bag.getName());
                 } catch (UnknownBagTypeException e) {
-                    LOG.warn("Ignoring a bag '" + savedBag.getName() + " because type: "
-                             + savedBag.getType() + " is not in the model.", e);
+                    System.out.println("Ignoring a bag '" + savedBag.getName() + " because type: "
+                             + savedBag.getType() + " is not in the model.");
+                    e.printStackTrace();
                 } catch (ObjectStoreException ose) {
                     throw new BuildException("Exception while creating InterMineBag", ose);
                 }
