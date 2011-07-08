@@ -288,7 +288,8 @@ public class SequenceProcessor extends ChadoProcessor
             setGeneSource(fdat, dataSourceName);
             
             if (dataSourceName.equalsIgnoreCase("modENCODE")) {
-                fixedUniqueName = fdat.getUniqueName();                    
+//                fixedUniqueName = fdat.getUniqueName();                    
+                fixedUniqueName = fixIdentifier(fdat,fdat.getUniqueName());                    
                 LOG.debug("AAAsp2: " + fixedUniqueName);
             }        
         }
