@@ -527,7 +527,7 @@
   <class className="org.intermine.model.bio.Sample">
     <fields>
       <fieldconfig fieldExpr="materialType"/>
-      <fieldconfig fieldExpr="organism.name" "Organism"/>
+      <fieldconfig fieldExpr="organism.name" label="Organism"/>
       <fieldconfig fieldExpr="primaryCharacteristicType"/>
       <fieldconfig fieldExpr="primaryCharacteristic"/>
     </fields>
@@ -572,8 +572,8 @@
   <class className="org.intermine.model.bio.TFBindingSite">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="gene.symbol" "Gene"/>
-      <fieldconfig fieldExpr="factor.primaryIdentifier" "Factor"/>
+      <fieldconfig fieldExpr="gene.symbol" label="Gene"/>
+      <fieldconfig fieldExpr="factor.primaryIdentifier" label="Factor"/>
       <fieldconfig fieldExpr="chromosomeLocation" label="Location" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Chromosome" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" label="Start" showInInlineCollection="false" showInSummary="false" />
