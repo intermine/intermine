@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <tiles:importAttribute/>
 
@@ -37,29 +38,29 @@
           </html:link>
         </c:otherwise>
       </c:choose>
-      <span
-         <c:if test="${node.open}">
-  class="treeOpen"
-         </c:if>
-      >
-      <span
-         <c:if test="${node.selected}">
-  class="treeSelected"
-         </c:if>
-      >
-        <a name="${node.object.name}"/>
-        <c:choose>
-          <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
-            <im:unqualify className="${node.object.name}" var="name"/>${name}
-          </c:when>
-          <c:otherwise>
-            <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
-              <im:unqualify className="${node.object.name}" var="name"/>${name}
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-        <im:typehelp type="${name}"/>
-      </span>
+      <c:if test="${node.open}">
+        <c:set var="cssClass" value="treeOpen"/>
+      </c:if>
+      <span class="${cssClass}">
+        <c:if test="${node.selected}">
+            <c:set var="cssClass" value="treeSelected"/>
+        </c:if>
+        <span class="${cssClass}">
+            <a name="${node.object.name}"/>
+            <im:unqualify className="${node.object.name}" var="name"/>
+            <c:set var="displayName" value="${imf:formatPath(name, INTERMINE_API, WEBCONFIG)}"/>
+            <c:choose>
+            <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
+                    ${displayName}
+            </c:when>
+            <c:otherwise>
+                <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
+                    ${displayName}
+                </html:link>
+            </c:otherwise>
+            </c:choose>
+            <im:typehelp type="${name}"/>
+        </span>
       </span>
       ${node.text}
 
