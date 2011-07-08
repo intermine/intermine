@@ -84,7 +84,7 @@
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/wormbase-rnai/current"/>
+      <property name="src.data.dir" location="/micklem/data/old_shared_data/wormbase/rnai/current"/>
     </source>
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/micklem/data/old_shared_data/mage/arbeitman/arbeitman-tgt-items.xml"/>
