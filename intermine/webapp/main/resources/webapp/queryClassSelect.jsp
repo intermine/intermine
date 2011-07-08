@@ -57,11 +57,11 @@
         <html:form action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
           <c:forEach items="${preferredTypeList}" var="type">
-            <html:option value="${type}" style="font-weight:bold">${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}</html:option>
+            <html:option value="${type}" style="font-weight:bold">${imf:formatPathStr(type, INTERMINE_API, WEBCONFIG)}</html:option>
           </c:forEach>
            <html:option value="" style="text-align:center">----------------</html:option>
           <c:forEach items="${typeList}" var="type">
-            <html:option value="${type}">${imf:formatPath(type, INTERMINE_API, WEBCONFIG)}</html:option>
+            <html:option value="${type}">${imf:formatPathStr(type, INTERMINE_API, WEBCONFIG)}</html:option>
           </c:forEach>
           </html:select>
           <br/>

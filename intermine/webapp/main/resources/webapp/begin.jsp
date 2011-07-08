@@ -40,7 +40,7 @@
                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                     <select name="type">
                       <c:forEach var="bag" items="${preferredBags}">
-                        <option value="<c:out value="${bag}" />"><c:out value="${imf:formatPath(bag, INTERMINE_API, WEBCONFIG)}" /></option>
+                        <option value="<c:out value="${bag}" />"><c:out value="${imf:formatPathStr(bag, INTERMINE_API, WEBCONFIG)}" /></option>
                       </c:forEach>
                     </select>
 

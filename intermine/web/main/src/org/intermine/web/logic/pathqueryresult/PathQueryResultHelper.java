@@ -309,7 +309,7 @@ public final class PathQueryResultHelper
             } catch (PathException e) {
                 throw new RuntimeException(e);
             }
-            aliasedViews.add(WebUtil.formatColumnName(viewPath, webConfig));
+            aliasedViews.add(WebUtil.formatPath(viewPath, webConfig));
         }  
 
         return aliasedViews;

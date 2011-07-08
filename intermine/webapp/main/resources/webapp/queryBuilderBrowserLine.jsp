@@ -183,26 +183,26 @@
           <c:if test="${node.type != 'String'}">
             <c:choose>
               <c:when test="${node.reverseReference && node.reference}">
-                <span class="reverseReference"><c:out value="${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}"/></span>
+                <span class="reverseReference"><c:out value="${imf:formatPathStr(node.type, INTERMINE_API, WEBCONFIG)}"/></span>
               </c:when>
               <c:when test="${node.origType != null}">
-                <span class="${type}"><c:out value="${imf:formatPath(node.origType, INTERMINE_API, WEBCONFIG)}"/></span>
+                <span class="${type}"><c:out value="${imf:formatPathStr(node.origType, INTERMINE_API, WEBCONFIG)}"/></span>
                 <fmt:message key="query.usingSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.origType}"/>
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/usingSubclasses.png" title="${tooltipSubclasses}"/>
-                <span class="subclass"><c:out value="${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}"/></span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+                <span class="subclass"><c:out value="${imf:formatPathStr(node.type, INTERMINE_API, WEBCONFIG)}"/></span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:when>
               <c:when test="${node.hasSubclasses}">
-                <span class="${type}">${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+                <span class="${type}">${imf:formatPathStr(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
                 <fmt:message key="query.hasSubclasses" var="tooltipSubclasses">
                   <fmt:param value="${node.type}"/>
                 </fmt:message>
                 <img class="arrow" src="images/hasSubclasses.png" title="${tooltipSubclasses}"/>
               </c:when>
               <c:otherwise>
-              <span class="${type}"">${imf:formatPath(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
+              <span class="${type}"">${imf:formatPathStr(node.type, INTERMINE_API, WEBCONFIG)}</span><c:if test="${!isNull}">&nbsp;<im:typehelp type="${node.type}"/></c:if>
               </c:otherwise>
             </c:choose>
           </c:if>
@@ -249,7 +249,7 @@
           </c:when>
           <c:otherwise>
             <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
-                onclick="return addConstraint('${node.pathString}', '${imf:formatPath(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
+                onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
               <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
             </html:link>
           </c:otherwise>

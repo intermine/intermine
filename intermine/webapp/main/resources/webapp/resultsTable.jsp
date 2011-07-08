@@ -74,7 +74,7 @@
 
         <c:choose>
         	<c:when test="${!empty WEBCONFIG}">
-            	<c:set var="colName" value="${imf:formatColumnName(column.path, WEBCONFIG)}"/>
+            	<c:set var="colName" value="${imf:formatPath(column.path, WEBCONFIG)}"/>
             </c:when>
             <c:otherwise>
                 <im:debug message="WEBCONFIG is empty"/>

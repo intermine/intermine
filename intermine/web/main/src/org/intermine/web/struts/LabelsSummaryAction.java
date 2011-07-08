@@ -47,13 +47,13 @@ public class LabelsSummaryAction extends InterMineAction
             for (ClassDescriptor cd: model.getClassDescriptors()) {
                 out.print(cd.getUnqualifiedName());
                 out.print(",");
-                out.print(WebUtil.formatColumnName(cd.getUnqualifiedName(), model, config));
+                out.print(WebUtil.formatPath(cd.getUnqualifiedName(), model, config));
                 out.println();
                 for (FieldDescriptor fd: cd.getFieldDescriptors()) {
                     String path = cd.getUnqualifiedName() + "." + fd.getName();
                     out.print(path);
                     out.print(",");
-                    out.print(WebUtil.formatColumnName(path, model, config));
+                    out.print(WebUtil.formatPath(path, model, config));
                     out.println();
                 }
             }

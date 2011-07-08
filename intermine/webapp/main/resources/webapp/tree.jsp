@@ -48,7 +48,7 @@
         <span class="${cssClass}">
             <a name="${node.object.name}"/>
             <im:unqualify className="${node.object.name}" var="name"/>
-            <c:set var="displayName" value="${imf:formatPath(name, INTERMINE_API, WEBCONFIG)}"/>
+            <c:set var="displayName" value="${imf:formatPathStr(name, INTERMINE_API, WEBCONFIG)}"/>
             <c:choose>
             <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
                     ${displayName}
