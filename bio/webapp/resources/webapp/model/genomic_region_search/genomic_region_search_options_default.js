@@ -96,15 +96,14 @@
                    //             + this + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + this + "<br/>");
                    //});
 
-                     var feature_size = webDataJSON.featureTypes[i].features.length;
-                     var columns = 3;
-                     var rows = Math.ceil(feature_size/columns);
-                     var row = "<tr></tr>",
+                     var feature_size = webDataJSON.featureTypes[i].features.length,
+                         columns = 3,
+                         rows = Math.ceil(feature_size/columns),
+                         row = "<tr></tr>",
                          input = "<input type='checkbox' checked='yes' class='featureType' name='featureTypes'>",
                          cell = "<td width='300'></td>",
                          br = "<br/>",
                          sp = "&nbsp;";
-
 
                      for (j = 0; j < rows; j++)
                      {
@@ -117,7 +116,7 @@
                                 var displayName = $MODEL_TRANSLATION_TABLE[current].displayName || current;
                                 var cellElem = jQuery(cell);
                                 var ckbx = jQuery(input).attr("value", current).click(function() {uncheck(this.checked, 'featureTypes')});
-                                cellElem.append(ckbx).append(displayName).append(sp);
+                                cellElem.append(ckbx).append(sp).append(displayName);
                                 rowElem.append(cellElem);
                             }
                         }
