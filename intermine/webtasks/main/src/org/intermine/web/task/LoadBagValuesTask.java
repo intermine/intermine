@@ -117,7 +117,7 @@ public class LoadBagValuesTask extends Task
             } else {
                 try {
                     InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
-                    System.out.println("Start loading bag: " + bag.getName());
+                    System.out.println("Start loading bag: " + bag.getName() + " - id: " + bag.getSavedBagId());
                     Properties classKeyProps = new Properties();
                     try {
                         classKeyProps.load(this.getClass().getClassLoader()
@@ -134,7 +134,7 @@ public class LoadBagValuesTask extends Task
                     bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
                     bag.setCurrent(true);
-                    System.out.println("Loaded bag: " + bag.getName());
+                    System.out.println("Loaded bag: " + bag.getName() + " - id: " + bag.getSavedBagId());
                 } catch (UnknownBagTypeException e) {
                     System.out.println("Ignoring a bag '" + savedBag.getName() + " because type: "
                              + savedBag.getType() + " is not in the model.");
