@@ -113,11 +113,11 @@
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/test"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/kegg/current"/>
+      <property name="src.data.dir" location="/micklem/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
     </source>
     <source name="kegg-orthologues" type="kegg-orthologues">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/kegg/orthologues"/>
+      <property name="src.data.dir" location="/micklem/data/kegg/orthologues"/>
       <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
     </source>
     <source name="flyatlas" type="flyatlas">
@@ -130,9 +130,9 @@
     </source>
 
     <source name="treefam" type="treefam">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/treefam/current"/>
+      <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="geneFile" value="/micklem/data/old_shared_data/treefam/current/genes.txt.table"/>
+      <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239 7165 4932"/>
       <property name="treefam.homologues" value="9606 10090 10116 7955"/>
     </source>
@@ -173,19 +173,19 @@
     <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/redfly/current/tfbs"/>
+      <property name="src.data.dir" location="/micklem/data/redfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/redfly/current/crm"/>
+      <property name="src.data.dir" location="/micklem/data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/drsc/current"/>
+      <property name="src.data.dir" location="/micklem/data/drsc/current"/>
       <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
-      <property name="screenDetailsFile" location="/micklem/data/old_shared_data/drsc/current/RNAi_screen_details"/>
+      <property name="screenDetailsFile" location="/micklem/data/drsc/current/RNAi_screen_details"/>
     </source>
     <source name="fly-fish" type="fly-fish">
       <property name="src.data.dir" location="/micklem/data/old_shared_data/flyfish"/>
@@ -565,10 +565,10 @@
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-      <property name="src.data.file" location="/micklem/data/old_shared_data/ontologies/fly-development/current/fly_development.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/micklem/data/old_shared_data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
 
     <source name="drosdel-gff" type="drosdel-gff">
