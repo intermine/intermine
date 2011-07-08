@@ -520,7 +520,7 @@
       <fieldconfig fieldExpr="rnaiScreen" showInInlineCollection="false" showInSummary="false" showInResults="false" label="RNAi Screen"/>
       <fieldconfig fieldExpr="pcrProduct" showInInlineCollection="false" showInSummary="false" showInResults="false" label="PCR Product"/>
       <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
-      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" "PubMed ID"/>
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
     </fields>
   </class>
 
