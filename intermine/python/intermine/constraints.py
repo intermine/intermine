@@ -238,6 +238,7 @@ class LogicParser(object):
                 else:
                     ret.append(item)
             return ret
+
         logic_str = logic_str.upper()
         tokens = re.split("\s+", logic_str)
         tokens = flatten([self.ops[x] if x in self.ops else re.split("\b", x) for x in tokens])
