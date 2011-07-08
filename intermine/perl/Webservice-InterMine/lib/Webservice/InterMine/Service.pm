@@ -71,22 +71,31 @@ around BUILDARGS => sub {
     my $orig  = shift;
     my $class = shift;
     my @build_args = @_;
-    if ( @_ <= 3 and $_[0] ne 'root' ) {
-        my %args;
-        for (qw/root user pass/) {
-            my $next = shift @build_args;
-            $args{$_} = $next if $next;
-        }
-        return $class->$orig(%args);
+    my %args;
+    if      ( @_ == 3 ) {
+        @args{qw/root user pass/} = @build_args;
+    } elsif ( @_ == 2 ) {
+        @args{qw/root token/} = @build_args;
+    } elsif ( @_ == 1 ) {
+        @args{qw/root/} = @build_args;
     } else {
-        return $class->$orig(@_);
+        %args = @build_args;
     }
+    return $class->$orig(%args);
 };
 
+# validate the initial state of the object
 sub BUILD {
     my $self = shift;
     if ($self->has_user xor $self->has_pass) {
         croak "User name or password supplied, but not both";
+    }
+    if ($self->has_user and $self->has_token) {
+        croak "Both user/password and token credentials supplied. Please choose only one";
+    }
+    if ($self->has_token and ($self->version < 6)) {
+        croak "This service does not support token authentication - it is only at version ", 
+            $self->version;
     }
 }
 
@@ -138,7 +147,7 @@ fetch templates and load saved queries.
 
 =head1 ATTRIBUTES
 
-=head2 root | user | pass
+=head2 root | user | pass | token
 
 The values passed into the constructor can be accessed
 via these methods. Note that the url passed in will have
@@ -154,17 +163,9 @@ has root => (
     handles  => { host => 'host', },
 );
 
-has user => (
-    is  => 'ro',
-    isa => Str,
-    predicate => 'has_user',
-);
-
-has pass => (
-    is  => 'ro',
-    isa => Str,
-    predicate => 'has_pass',
-);
+for my $attr (qw/user pass token/) {
+    has $attr => (is => 'ro', isa => Str, predicate => 'has_' . $attr);
+}
 
 =head2 model
 
@@ -250,6 +251,25 @@ sub get_authstring {
     }
     return undef;
 }
+
+sub build_uri {
+    my $self = shift;
+    my $uri = shift;
+    my @params = $self->build_params(@_);
+    $uri = URI->new($uri);
+    $uri->query_form(@params);
+    return $uri;
+}
+
+sub build_params {
+    my $self = shift;
+    my @params = (@_ != 1) 
+        ? @_
+        : (ref $_[0] eq 'HASH') ? %{$_[0]} : @{$_[0]};
+    push @params, token => $self->token if ($self->has_token);
+    return @params;
+}
+
 
 =head1 METHODS
 
@@ -634,6 +654,8 @@ sub get_results_iterator {
     my $parser = $self->create_row_parser($row_format, $view_list, $json_format);
     my $request_format = $self->get_request_format($row_format);
 
+    $query_form->{token} = $self->token if $self->has_token;
+
     my $response = Webservice::InterMine::ResultIterator->new(
         url           => $url,
         parameters    => $query_form,
@@ -688,7 +710,7 @@ items of data from the service.
 sub fetch {
     my $self = shift;
     my $url  = shift;
-    my $uri  = URI->new($url);
+    my $uri  = $self->build_uri($url);
     warn "FETCHING $uri " . gettimeofday() if $ENV{DEBUG};
     my $resp = $self->agent->get($uri);
     if ( $resp->is_error ) {
@@ -737,7 +759,8 @@ This is used internally to save templates and queries.
 sub send_off {
     my $self = shift;
     my ( $xml, $url ) = @_;
-    my $form = { xml => $xml, };
+    my $uri = $self->build_uri($url);
+    my $form = {xml => $xml};
     my $resp = $self->post( $url, $form );
     if ( $resp->is_error ) {
         confess $resp->status_line, "\n", $resp->content;

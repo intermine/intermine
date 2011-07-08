@@ -201,8 +201,7 @@ sub _update_name {
     return unless (@_ > 2); 
     my ( $self, $name, $old_name ) = @_;
     return if ($name eq $old_name);
-    my $uri = URI->new($self->service_root . RENAME_PATH);
-    $uri->query_form(
+    my $uri = $self->service->build_uri($self->service_root . RENAME_PATH,
         oldname => $old_name,
         newname => $name,
     );
@@ -594,13 +593,13 @@ sub append {
     );
     match_on_type $ids => (
         ListableQuery, sub {
-            my $uri = URI->new($_->get_list_append_uri);
-            $uri->query_form(listName => $name, path => $path, $_->get_request_parameters);
+            my $uri = $self->service->build_uri($_->get_list_append_uri,
+                listName => $name, path => $path, $_->get_request_parameters,
+            );
             $resp = $self->service->get($uri);
         },
         sub {
-            my $uri = URI->new($self->service_root . LIST_APPEND_PATH);
-            $uri->query_form(name => $name);
+            my $uri = $self->service->build_uri($self->service_root . LIST_APPEND_PATH, name => $name);
             $resp = $self->service->post($uri, 'Content-Type' => $content_type, Content => $_);
         }
     );

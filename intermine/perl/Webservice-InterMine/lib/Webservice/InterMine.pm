@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9705";
+our $VERSION = "0.9800";
 
 =head1 NAME
 
@@ -264,23 +264,23 @@ Please see: L<Webservice::InterMine::Service>
 sub get_service {
     my $class = shift;
 
-    my $url = shift || $service_url;
+    my $url = $_[0] || $service_url;
     croak "No url provided - either directly or on 'use'"
       unless $url;
     if ( $services{$url} ) {
         return $services{$url};
     }
 
-    my ( $user, $pass ) = @_;
-    unless ($user and $pass) {
-        ($user, $pass) = get_saved_user_info($url);
-    }
+    # my ( $user, $pass ) = @_;
+    # unless ($user and $pass) {
+    #     ($user, $pass) = get_saved_user_info($url);
+    # }
 
-    if ( $user and $pass ) {
-        $user_for{$url} = $user;
-        $pass_for{$url} = $pass;
-    }
-    my $service = Webservice::InterMine::Service->new( $url, $user, $pass );
+    # if ( $user and $pass ) {
+    #     $user_for{$url} = $user;
+    #     $pass_for{$url} = $pass;
+    # }
+    my $service = Webservice::InterMine::Service->new( @_ );
     $services{$url} = $service;
     return $service;
 }
