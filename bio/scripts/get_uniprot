@@ -16,9 +16,9 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($logdir,$logname,$home,$config_file);
 
-$logdir="/shared/data/download_logs/";
+$logdir="/micklem/data/download_logs/";
 my $tempname="temp_log.txt";
-my $shared_data="/shared/data";
+my $shared_data="/micklem/data";
 $config_file="./resources/get_scripts.config";
 
 if (@ARGV!=4) {
