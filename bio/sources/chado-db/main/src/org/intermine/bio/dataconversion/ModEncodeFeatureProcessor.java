@@ -73,7 +73,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
-            , "full_transcript", "polypeptide_region"
+            , "full_transcript", "polypeptide_region", "peptide_collection"
     );
 
     // the FB name for the mitochondrial genome
@@ -365,6 +365,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
             map.put(new MultiKey("relationship", "ExperimentalFeature",
                     "evidence_for_feature", "ExonRegion"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "Intron",
+                    "evidence_for_feature", "PolypeptideRegion"),
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
             // partial_evidence_for_feature
