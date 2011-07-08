@@ -64,10 +64,10 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
       <!-- field name -->
       <c:choose>
         <c:when test="${empty dec.path.fieldName}">
-          <span class="type"> <c:out value="${imf:formatPathStr(dec.path.path, WEBCONFIG)}" /> </span>
+          <span class="type"> <c:out value="${imf:formatPath(dec.path.path, WEBCONFIG)}" /> </span>
         </c:when>
         <c:otherwise>
-          <span class="attributeField">&nbsp;<c:out value="${imf:formatPathStr(dec.path.path, WEBCONFIG)}" />&nbsp;</span>
+          <span class="attributeField">&nbsp;<c:out value="${imf:formatPath(dec.path.path, WEBCONFIG)}" />&nbsp;</span>
         </c:otherwise>
       </c:choose>
       <c:choose>
