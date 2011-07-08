@@ -39,24 +39,28 @@ public class WebUtilTest extends TestCase {
         config = WebConfig.parse(context, model);
     }
 
-    public void testFormatColumn() throws PathException {
+    public void testFormatPath() throws PathException {
     	Path p = new Path(model, "Employee.name");
     	String expected = "Angestellter > Name";
     	// Check class name labels
-    	assertEquals(expected, WebUtil.formatColumnName(p, config));
+    	assertEquals(expected, WebUtil.formatPath(p, config));
 
     	p = new Path(model, "Contractor.oldComs.vatNumber");
     	// Check reference and attribute labels
     	expected = "Contractor > Companies they used to work for > VAT Number";
-    	assertEquals(expected, WebUtil.formatColumnName(p, config));
+    	assertEquals(expected, WebUtil.formatPath(p, config));
 
     	p = new Path(model, "Contractor.personalAddress.address");
     	// Check default munging
     	expected = "Contractor > Personal Address > Address";
-    	assertEquals(expected, WebUtil.formatColumnName(p, config));
+    	assertEquals(expected, WebUtil.formatPath(p, config));
+
+        // Check path making
+    	expected = "Contractor > Companies they used to work for > VAT Number";
+    	assertEquals(expected, WebUtil.formatPath("Contractor.oldComs.vatNumber", model, config));
     }
 
-    public void testFormatPath() throws PathException {
+    public void testFormatField() throws PathException {
     	Path p = new Path(model, "Employee.name");
     	String expected = "Name";
     	assertEquals(expected, WebUtil.formatField(p, config));
