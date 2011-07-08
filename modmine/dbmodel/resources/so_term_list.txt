@@ -39,6 +39,7 @@ natural_transposable_element
 ncRNA
 origin_of_replication
 overlapping_EST_set
+peptide_collection
 PCR_product
 point_mutation
 polyA_sequence
@@ -68,7 +69,6 @@ three_prime_RST
 three_prime_UST
 three_prime_UTR
 transcript
-transcript_region
 transcription_end_site
 transposable_element
 transposable_element_gene
