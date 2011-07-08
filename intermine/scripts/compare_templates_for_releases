@@ -41,8 +41,9 @@ $sendmail =~ s/\n?$/ -t\n/; # add on the -t flag
 my $reply_to = "Reply-to: $from\n";
 my $send_to  = "To: $to\n";
 my (%rows_from, %failure_from);
+my $char = "A";
 my %services = map {
-    (Webservice::InterMine->get_service($_)->release() 
+    (Webservice::InterMine->get_service($_)->release() . $char++ 
         => Webservice::InterMine->get_service($_))} @urls;
 
 # Get the results, and store them by template name and service
@@ -122,7 +123,7 @@ for my $failure (sort($icmp keys %failure_from)) {
 # email the data structures
 
 my $subject  = sprintf(
-    "Subject: Results of comparision between flymine releases %s and %s on %s",
+    "Subject: Results of comparision between releases %s and %s on %s",
     @services,
     qx/date/, # <== this will add a new-line
 );
