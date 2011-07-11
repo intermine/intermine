@@ -270,7 +270,9 @@
   <c:set var="object" value="${reportObject.object}" scope="request"/>
   <div id="external-links">
     <tiles:insert name="otherMinesLink.tile" />
-    <tiles:insert name="attributeLinks.tile" />
+    <tiles:insert name="attributeLinks.tile" >
+        <tiles:put name="reportObject" beanName="object" />
+  </tiles:insert>
   </div>
   <c:set var="object" value="${object_bk}"/>
 
