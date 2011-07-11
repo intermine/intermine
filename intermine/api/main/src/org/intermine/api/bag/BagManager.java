@@ -287,14 +287,14 @@ public class BagManager
                                                                            Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         for (InterMineBag bag: getGlobalBagsContainingId(id)) {
-        	if (bag.isCurrent()) {
-        		bagsContainingId.add(bag);
-        	}
+            if (bag.isCurrent()) {
+                bagsContainingId.add(bag);
+        }
         }
         for (InterMineBag bag: getUserBagsContainingId(profile, id)) {
-        	if (bag.isCurrent()) {
-        		bagsContainingId.add(bag);
-        	}
+            if (bag.isCurrent()) {
+                bagsContainingId.add(bag);
+            }
         }
         return bagsContainingId;
     }
