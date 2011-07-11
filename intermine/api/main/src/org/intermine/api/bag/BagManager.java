@@ -278,6 +278,7 @@ public class BagManager
     /**
      * Fetch the current user or global bags that contain the given id.  If user has a bag
      * with the same name as a global bag the user's bag takes precedence.
+     * Only current bags are included.
      * @param id the id to search bags for
      * @param profile the user to fetch bags from
      * @return bags containing the given id
@@ -285,13 +286,15 @@ public class BagManager
     public Collection<InterMineBag> getCurrentUserOrGlobalBagsContainingId(Profile profile,
                                                                            Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
-        bagsContainingId.addAll(getGlobalBagsContainingId(id));
-        bagsContainingId.addAll(getUserBagsContainingId(profile, id));
-        for (Iterator<InterMineBag> it = bagsContainingId.iterator(); it.hasNext();) {
-            InterMineBag bag= it.next();
-            if (!bag.isCurrent()) {
-                bagsContainingId.remove(bag);
-            }
+        for (InterMineBag bag: getGlobalBagsContainingId(id)) {
+        	if (bag.isCurrent()) {
+        		bagsContainingId.add(bag);
+        	}
+        }
+        for (InterMineBag bag: getUserBagsContainingId(profile, id)) {
+        	if (bag.isCurrent()) {
+        		bagsContainingId.add(bag);
+        	}
         }
         return bagsContainingId;
     }
