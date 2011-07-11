@@ -20,7 +20,7 @@ Webservice::InterMine - modules for interacting with InterMine datawarehouse web
 
   OR
 
-    use Webservice::InterMine 'flymine', 'some-username', 'some-password';
+    use Webservice::InterMine 'flymine', 'SOMETOKEN';
 
     my $query    = Webservice::InterMine->new_query;
     $query->add_view(@views);
@@ -57,19 +57,39 @@ If any runtime dependencies are missing, you can use the following command to in
 
 =head2 IMPORT STATEMENTS
 
-In the example above the modules are imported with the following statements:
+You must import the module with "use" to utilise its functionality. Additional
+parameters can be supplied at import to specify a default service.
+
+Simply import the module:
 
     use Webservice::InterMine; 
 
-and
+Import the module, and specify the default service as FlyMine (the url will be looked
+up at the central mine registry L<http://www.intermine.org/registry>.
 
-    use Webservice::InterMine 'flymine', 'some-username', 'some-password';
+    use Webservice::InterMine 'flymine';
+
+The same, only with the full url, eliminating the need for an extra lookup:
+
+    use Webservice::InterMine 'www.flymine.org/query';
+
+The same, but with authentication supplied by an API access token:
+
+    use Webservice::InterMine 'flymine', 'SOMETOKEN';
+
+The same, but with authentication supplied username and password credentials: (deprecated)
+
+    use Webservice::InterMine 'flymine', 'username', 'password';
+
+The same, with explicit, named parameters:
+
+    use Webservice::InterMine root => 'flymine', user => 'username', pass => 'password';
   
 Calling C<use Webservice::InterMine> without any parameters simply
 means you need to either specify the webservice url on every call, or
 call the methods on a service directly.
 
-If you call C<use Webservice::InterMine $mine, [$user, $pass]>, a default service will be set,
+If you pass parameters to import, a default service will be set
 meaning method calls will not require the webservice url. Unless you are
 intending to access multiple services, this form is recommended.
 
@@ -91,10 +111,11 @@ my %user_for;
 
 sub import {
     my $class = shift;
-    my ( $url, $user, $pass ) = @_;
-    if ($url) {
-        $service_url = $url;
-        return $class->get_service( $url, $user, $pass );
+    my @args = @_;
+    if (@args) {
+        my $service = $class->get_service(@args);
+        $service_url = $service->root;
+        return $service;
     }
 }
 
@@ -247,12 +268,57 @@ sub saved_query {
     return $class->get_service(@_)->saved_query($name, %args);
 }
 
-=head2 get_service( $url, $user, $pass )
+=head2 get_service( $root, ($token | $user, $pass) )
 
 returns a webservice object, which is used to construct
 queries and fetch templates and saved queries. If a url is
 passed, the webservice for that url is returned, otherwise the
 service for the url given to C<use> is returned.
+
+Get the default service defined at import:
+
+  use Webservice::InterMine qw(http://squirrel.flymine.org/intermine-demo SOMETOKEN);
+
+  my $service =  InterMine::Webservice->get_service;
+
+OR get a specific service, authenticated using an API access token:
+
+  my $service = InterMine::Webservice->get_service($url, $token);
+
+Fetch that same authenticated service later:
+
+  my $service = InterMine::Webservice->get_service($url);
+
+OR make the same call using a hash reference and named parameters:
+
+  my $service = InterMine::Webservice->get_service({ root => $url, token => $token);
+
+Parameters:
+
+=over 4
+
+=item * $root - The base url for the service.
+
+=item * $token - An API access key
+
+=item * $username, $password - A user's login credentials
+
+=back
+
+InterMine webservices support two authentication mechanisms to provide
+access to private data. The recommended method is to use API access
+keys, which have the advantage of eliminating the need to transmit your 
+login details. If compromised, an access key can be easily changed
+or disabled without needing to change either the associated username or password.
+However this facility is new, so for backwards compatibility, the older
+mechanism for passing along username and password credentials has been retained.
+
+If three arguments are supplied, they will be interpreted as C<($root, $user, $pass)>, 
+but if two are supplied, they will be intepreted as C<($root, $token)>.
+
+These arguments may also be passed in a keyword/hash style, either as a list
+or a hash reference, in which case the full list will be passed to the 
+L<Webservice::InterMine::Service::new> constructor.
 
 If a service for a url has been created previously, that one is returned,
 even if different login details are provided.
@@ -264,24 +330,29 @@ Please see: L<Webservice::InterMine::Service>
 sub get_service {
     my $class = shift;
 
-    my $url = $_[0] || $service_url;
+    my @args = (@_ == 1 and ref $_[0] eq 'HASH') ? %{$_[0]} : @_;
+    my $url;
+
+    # Try to interpret the arguments as a hash
+    if (@args % 2 == 0) {
+        my %hash = @args;
+        $url = $hash{root};
+    }
+
+    # Prefer a keyword parameter, then take the first positional parameter,
+    # then fallback to the default service url
+    $url = $url || $_[0] || $service_url;
     croak "No url provided - either directly or on 'use'"
       unless $url;
     if ( $services{$url} ) {
         return $services{$url};
     }
 
-    # my ( $user, $pass ) = @_;
-    # unless ($user and $pass) {
-    #     ($user, $pass) = get_saved_user_info($url);
-    # }
+    my $service = Webservice::InterMine::Service->new( @args );
 
-    # if ( $user and $pass ) {
-    #     $user_for{$url} = $user;
-    #     $pass_for{$url} = $pass;
-    # }
-    my $service = Webservice::InterMine::Service->new( @_ );
+    # Store service under both user supplied and expanded form
     $services{$url} = $service;
+    $services{$service->root} = $service;
     return $service;
 }
 
