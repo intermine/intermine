@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
+<%@ taglib uri="/WEB-INF/imutil.tld" prefix="imutil" %>
 <%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- report.jsp -->

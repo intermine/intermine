@@ -33,14 +33,15 @@
 
   </div>
 
+  <%-- CURRENTLY DISABLED DUE TO CONFLICTS WITH MODEL LABEL LOGIC - TO BE REINSTATED OR REMOVED BY v.99
   <c:if test="${!empty path}">
     <im:prefixSubstring str="${pathString}" outVar="pathPrefix" delimiter="."/>
     <tiles:insert name="queryBuilderViewDescription.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
       <tiles:put name="description" value="${QUERY.descriptions[pathPrefix]}"/>
     </tiles:insert>
-  </c:if>
-
+    </c:if>
+  --%>
 
   <div style="white-space:nowrap;">
     <c:if test="${!iePre7}">
