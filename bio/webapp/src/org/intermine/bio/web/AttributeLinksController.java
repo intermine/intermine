@@ -32,15 +32,20 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.util.PathUtil;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.AttributeLinkURL;
 
@@ -71,28 +76,22 @@ public class AttributeLinksController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-
         ServletContext servletContext = request.getSession().getServletContext();
-
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
-
+        ReportObject reportObject = null;
         InterMineObject imo = null;
-
         if (bag == null) {
-            imo = (InterMineObject) request.getAttribute("object");
+            reportObject = (ReportObject) request.getAttribute("reportObject");
+            imo = reportObject.getObject();
         }
-
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
-
         Set<ClassDescriptor> classDescriptors;
-
         if (imo == null) {
             classDescriptors = bag.getClassDescriptors();
         } else {
             classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
         }
-
         StringBuffer sb = new StringBuffer();
         for (ClassDescriptor cd : classDescriptors) {
             if (sb.length() <= 0) {
@@ -109,7 +108,7 @@ public class AttributeLinksController extends TilesAction
         if (imo != null) {
             try {
                 organismReference = (Organism) imo.getFieldValue("organism");
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 // no organism field
             }
 
@@ -129,7 +128,7 @@ public class AttributeLinksController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter|enctype)";
+            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter|enctype|dataset)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -221,6 +220,8 @@ public class AttributeLinksController extends TilesAction
                     config.put("delimiter", value);
                 } else if ("enctype".equals(propType)) {
                     config.put("enctype", value);
+                } else if ("dataset".equals(propType)) {
+                    config.put("dataset", value);
                 } else if ("text".equals(propType)) {
                     // parse out the title of the external link, e.g. "blabla: <>" => "blabla"
                     config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "")
@@ -232,7 +233,7 @@ public class AttributeLinksController extends TilesAction
                 }
             }
         }
-        processConfigs(linkConfigs);
+        linkConfigs = processConfigs(im, linkConfigs, reportObject);
         request.setAttribute("attributeLinkConfiguration", linkConfigs);
         request.setAttribute("attributeLinkClassName", className);
 
@@ -265,9 +266,7 @@ public class AttributeLinksController extends TilesAction
                 xrefMap.put(sourceName, xref);
             }
         }
-
         request.setAttribute("xrefMap", xrefMap);
-
         return null;
     }
 
@@ -277,8 +276,11 @@ public class AttributeLinksController extends TilesAction
      * GET form of url is modified to POST form.
      * @param linkConfigs
      */
-    private void processConfigs(Map<String, ConfigMap> linkConfigs) {
-        for (ConfigMap config : linkConfigs.values()) {
+    private Map<String, ConfigMap> processConfigs(InterMineAPI im,
+            Map<String, ConfigMap> linkConfigs, ReportObject reportObject) {
+        Map<String, ConfigMap> newMap = new HashMap<String, ConfigMap>(linkConfigs);
+        for (Map.Entry<String, ConfigMap> entry : newMap.entrySet()) {
+            ConfigMap config = entry.getValue();
             if (config.get("delimiter") != null) {
                 modifyIdString(config);
             }
@@ -286,7 +288,45 @@ public class AttributeLinksController extends TilesAction
                     && ((String) config.get("usePost")).equalsIgnoreCase("true")) {
                 modifyConfigToPost(config);
             }
+            if (config.get("dataset") != null) {
+                String datasetToMatch = (String) config.get("dataset");
+                boolean hasValidDataset = false;
+                try {
+                    hasValidDataset = hasDataset(im, reportObject, datasetToMatch);
+                } catch (Exception e) {
+                    // no dataset
+                }
+                if (!hasValidDataset) {
+                    linkConfigs.remove(entry.getKey());
+                }
+            }
         }
+        return linkConfigs;
+    }
+
+    private boolean hasDataset(InterMineAPI im, ReportObject reportObject,
+            String datasetToMatch) throws PathException {
+        boolean isValidDataset = false;
+        InterMineObject imo = reportObject.getObject();
+        Path path = new Path(im.getModel(), DynamicUtil.getSimpleClass(
+                imo.getClass()).getSimpleName()
+                + ".dataSets");
+        Set<Object> listOfListObjects = PathUtil.resolveCollectionPath(path, imo);
+        for (Object listObject : listOfListObjects) {
+            InterMineObject interMineListObject = (InterMineObject) listObject;
+            Object value = null;
+            try {
+                // get field values from the object
+                value = interMineListObject.getFieldValue("name");
+            } catch (IllegalAccessException e) {
+                // no dataset
+                continue;
+            }
+            if (value != null && value.toString().equals(datasetToMatch)) {
+                isValidDataset = true;
+            }
+        }
+        return isValidDataset;
     }
 
     private void modifyIdString(ConfigMap config) {
