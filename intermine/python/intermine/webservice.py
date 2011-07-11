@@ -107,14 +107,31 @@ class Service(object):
 
         Construct a connection to a webservice::
 
-            service = Service("http://www.flymine.org/query/service")
+            url = "http://www.flymine.org/query/service"
+
+            # An unauthenticated connection - access to all public data
+            service = Service(url)
+
+            # An authenticated connection - access to private and public data
+            service = Service(url, token="ABC123456")
+
 
         @param root: the root url of the webservice (required)
         @param username: your login name (optional)
         @param password: your password (required if a username is given)
+        @param token: your API access token(optional - used in preference to username and password)
 
         @raise ServiceError: if the version cannot be fetched and parsed
         @raise ValueError:   if a username is supplied, but no password
+
+        There are two alternative authentication systems supported by InterMine
+        webservices. The first is username and password authentication, which
+        is supported by all webservices. Newer webservices (version 6+)
+        also support API access token authentication, which is the recommended 
+        system to use. Token access is more secure as you will never have 
+        to transmit your username or password, and the token can be easily changed
+        or disabled without changing your webapp login details.
+
         """
         self.root = root
         self._templates = None
@@ -136,11 +153,14 @@ class Service(object):
         else:
             self.opener = InterMineURLOpener()
 
-# This works in the real world, but not in testing...
-#       try:
-#           self.version
-#       except ServiceError:
-#           raise ServiceError("Could not validate service - is the root url correct?")
+        try:
+            self.version
+        except ServiceError:
+            raise ServiceError("Could not validate service - is the root url correct?")
+
+        if token and self.version < 6:
+            raise ServiceError("This service does not support API access token authentication")
+
 
     # Delegated list methods
 
