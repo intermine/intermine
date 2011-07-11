@@ -1,5 +1,6 @@
 package org.intermine.api.bag;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -232,9 +233,11 @@ public class BagManagerTest extends TestCase
         userAddressBag.addIdToBag(ADDRESS_ID, "Address");
         userAddressBag.setCurrent(false);
 
-        Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpectedCurrent(globalAddressBag, userAddressBag).values());
+        Set<InterMineBag> expected = new HashSet<InterMineBag>(Arrays.asList(globalAddressBag));
         try {
-            assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
+        	for (int i = 0; i < 1000; i++) { // try and provoke the intermittent exception
+        		assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
+        	}
         } finally {
             deleteAddress();
         }
@@ -252,7 +255,7 @@ public class BagManagerTest extends TestCase
         }
         return expected;
     }
-    
+
     private Map<String, InterMineBag> createExpectedCurrent(InterMineBag... bags) {
         Map<String, InterMineBag> expected = new HashMap<String, InterMineBag>();
         for(InterMineBag bag : bags) {
