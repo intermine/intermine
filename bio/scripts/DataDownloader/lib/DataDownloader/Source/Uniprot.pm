@@ -33,6 +33,21 @@ sub BUILD {
     my $excluded_organisms = $self->get_options->{excluded_organisms} || [];
     my $excluded_str = join(' ', map { "NOT $_" } @$excluded_organisms);
 
+    my $header_checker = sub {
+        my $response = shift;
+        my $total = $response->header("X-Total-Results");
+        if (defined $total and $total) {
+            $self->debug("Returned $total results.");
+            return 1;
+        } elsif (not defined $total) {
+            $self->debug("No total count found, assuming it went ok");
+            return 1;
+        } else {
+            $self->debug("$total results returned. Not saving file");
+            return 0;
+        }
+    };
+
     for my $org (@$organisms) {
         my $sp_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %sp_params = (
@@ -47,11 +62,12 @@ sub BUILD {
             FILE => $org . '_uniprot_sprot.xml.gz',
             EXTRACT => 1,
             METHOD => 'HTTP',
+            HEADER_CHECKER => $header_checker,
         };
 
         my $tr_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %tr_params = (
-            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no' . $excluded_str,
+            query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no ' . $excluded_str,
             compress => 'yes', 
             format => 'xml',
         );
@@ -62,6 +78,7 @@ sub BUILD {
             FILE => $org . '_uniprot_trembl.xml.gz',
             EXTRACT => 1,
             METHOD => 'HTTP',
+            HEADER_CHECKER => $header_checker,
         };
     }
 
