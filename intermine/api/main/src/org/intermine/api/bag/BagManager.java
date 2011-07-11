@@ -287,7 +287,8 @@ public class BagManager
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         bagsContainingId.addAll(getGlobalBagsContainingId(id));
         bagsContainingId.addAll(getUserBagsContainingId(profile, id));
-        for (InterMineBag bag: bagsContainingId) {
+        for (Iterator<InterMineBag> it = bagsContainingId.iterator(); it.hasNext();) {
+            InterMineBag bag= it.next();
             if (!bag.isCurrent()) {
                 bagsContainingId.remove(bag);
             }
