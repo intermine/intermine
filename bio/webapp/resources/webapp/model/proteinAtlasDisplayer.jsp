@@ -144,7 +144,7 @@
   </script>
 </c:when>
 <c:otherwise>
-<h3 class="gray">Protein Atlas Tissue Expression</h3>
+<h3 class="goog gray">Protein Atlas Tissue Expression</h3>
 </c:otherwise>
 </c:choose>
 </div>
