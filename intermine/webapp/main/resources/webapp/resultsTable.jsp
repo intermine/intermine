@@ -37,7 +37,7 @@
   <tr>
     <c:forEach var="column" items="${pagedResults.columns}" varStatus="status">
       <c:set var="colcount" value="${colcount+1}"/>
-      <im:formatColumnName outVar="displayPath" str="${column.name}" />
+      <c:set var="displayPath" value="${imf:formatPath(column.path, WEBCONFIG)}" />
       <im:unqualify className="${column.name}" var="pathEnd"/>
 
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>

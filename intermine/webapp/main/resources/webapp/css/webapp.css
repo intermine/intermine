@@ -1554,3 +1554,21 @@ h3.goog { border-top-width:1px; border-top-style:solid; margin-bottom:6px; paddi
 .one-line * { display:block; }
 .tiny-font * { font-size:11px; }
 .loading-spinner { background:url('../images/icons/ajax-loader.gif') no-repeat center; display:inline-block; width:16px; height:11px; }
+
+table.summary.results {
+  border-collapse: collapse;
+  margin: 10px;
+  margin-top: 0px;
+}
+
+table.summary.results th {
+  padding: 3px;
+  padding-top: 0px;
+  border-bottom: 1px solid grey
+}
+
+table.summary.results td {
+ background-color: #EFE7D1;
+ border: 1px solid grey;
+}
+
