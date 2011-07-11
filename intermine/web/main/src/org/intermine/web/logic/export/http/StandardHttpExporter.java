@@ -19,13 +19,17 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.RequestUtil;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
@@ -79,7 +83,7 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
         List<String> headers = null;
         if (form != null && form.getIncludeHeaders()) {
-            headers = getHeaders(pt);
+            headers = getHeaders(pt, SessionMethods.getWebConfig(request));
         }
         Exporter exporter = getExporter(out, separator, headers);
         ExportResultsIterator iter = null;
@@ -104,11 +108,11 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
     }
 
-    private List<String> getHeaders(PagedTable pt) {
+    private List<String> getHeaders(PagedTable pt, WebConfig webConfig) {
         List<String> headers;
         headers = new ArrayList<String>();
-        for (String columnName: pt.getColumnNames()) {
-            headers.add(columnName);
+        for (Column col: pt.getColumns()) {
+            headers.add(WebUtil.formatPath(col.getPath(), webConfig));
         }
         return headers;
     }
