@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -31,6 +33,8 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
+
+    private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
 
     protected PathQueryBuilder() {
     	// empty constructor for testing
@@ -73,6 +77,8 @@ public class PathQueryBuilder
                         + " query: " + xml);
             }
         } else {
+            logger.debug("Received invalid xml: " + xml);
+
             throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
         }
     }
