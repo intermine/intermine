@@ -17,7 +17,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 69 );
+    plan( tests => 72 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -380,6 +380,24 @@ $exp_res = [ ['EmployeeA1','DepartmentA1'] ];
 $res = $loaded->results;
 is_deeply($res, $exp_res, "Can get results for queries loaded from xml")
     or diag(explain $res);
+
+AUTHENTICATION: {
+    require Webservice::InterMine::Service;
+    my $authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");
+
+    my $template = $authenticated_service->template("private-template-1");
+
+    is($template->get_count, 48, "Can read a private template");
+
+    my $token_service = Webservice::InterMine::Service->new($url, 'a1v3V1X0f3hdmaybq0l6b7Z4eVG');
+
+    is($token_service->token, 'a1v3V1X0f3hdmaybq0l6b7Z4eVG', "Interprets arguments correctly as token");
+
+    my $template2 = $authenticated_service->template("private-template-1");
+
+    is($template2->get_count, 48, "Can read a private template");
+}
+
 
 PARSING_EMPTY_RESULTS: {
     my $q = $module->new_query(class => 'Manager');
