@@ -17,14 +17,14 @@
       <div class="switchers">
         <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
           <%-- TODO: potential fail if key has spaces --%>
-        <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher"><c:out value="${imf:formatPath(entry.key, INTERMINE_API, WEBCONFIG)}"/><c:if test="${entry.value != 1}">s</c:if></a>: ${entry.value}</c:forEach>
+        <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher"><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/><c:if test="${entry.value != 1}">s</c:if></a>: ${entry.value}</c:forEach>
       </div>
     </div>
 
   <c:if test="${!empty featureTables}">
     <c:forEach items="${featureTables}" var="entry">
       <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3><c:out value="${imf:formatPath(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
+        <h3><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
         <div class="clear"></div>
 
         <c:set var="inlineResultsTable" value="${entry.value}" />
