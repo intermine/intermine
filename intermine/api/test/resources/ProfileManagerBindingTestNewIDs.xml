@@ -78,7 +78,8 @@
       <bagValue value="CompanyA"/>
       </bag>
       <bag name="sally_bag3" type="Employee">
-      <bagValue value="EmployeeA1"/>
+      <bagValue value="EmployeeA3"/>
+      <bagValue value="EmployeeB2"/>
       </bag>
     </bags>
     <queries>
