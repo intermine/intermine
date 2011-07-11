@@ -155,7 +155,7 @@ class Service(object):
 
         try:
             self.version
-        except ServiceError:
+        except WebserviceError:
             raise ServiceError("Could not validate service - is the root url correct?")
 
         if token and self.version < 6:
