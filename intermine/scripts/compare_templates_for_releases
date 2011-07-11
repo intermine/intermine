@@ -19,15 +19,23 @@ qq{$0: Compare templates from two versions of the same webservice
 
 usage: $0 "www.flymine.org/query/service" "beta.flymine.org/beta/service" "email\@to.send.results.to" "email\@to.set.as.reply.to"
 
+OR 
+
+usage: $0 "www.flymine.org/query/service" "beta.flymine.org/beta/service" "email\@to.use.as.to.and.from"
+
+OR
+
+usage: $0 "www.flymine.org/query/service" "email\@to.use.as.to.and.from"
+
 };
     die $message;
 }
 
-usage() unless (@ARGV == 4);
+usage() unless (@ARGV == 4 or @ARGV == 3 or @ARGV == 2);
 
-my @urls = @ARGV[0, 1];
-my $to   = $ARGV[2];
-my $from = $ARGV[3];
+my @urls = (@ARGV > 2) ? @ARGV[0, 1] : @ARGV[0, 0] ;
+my $to   = (@ARGV == 4) ? $ARGV[-2] : $ARGV[-1];
+my $from = $ARGV[-1];
 
 for ($to, $from) {
     usage() unless ($validator->("Email::Valid", $_));
