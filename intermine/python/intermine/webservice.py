@@ -100,7 +100,7 @@ class Service(object):
     RELEASE_PATH           = '/version/release'
     SCHEME                 = 'http://'
 
-    def __init__(self, root, username=None, password=None):
+    def __init__(self, root, username=None, password=None, token=None):
         """
         Constructor
         ===========
@@ -123,9 +123,15 @@ class Service(object):
         self._release = None
         self._list_manager = ListManager(self)
         self.__missing_method_name = None
-        if username:
+        if token:
+            self.opener = InterMineURLOpener(token=token)
+        elif username:
+            if token:
+                raise ValueError("Both username and token credentials supplied")
+
             if not password:
                 raise ValueError("Username given, but no password supplied")
+
             self.opener = InterMineURLOpener((username, password))
         else:
             self.opener = InterMineURLOpener()
@@ -609,7 +615,7 @@ class InterMineURLOpener(urllib.FancyURLopener):
     """
     version = "InterMine-Python-Client-0.96.00"
 
-    def __init__(self, credentials=None):
+    def __init__(self, credentials=None, token=None):
         """
         Constructor
         ===========
@@ -619,6 +625,7 @@ class InterMineURLOpener(urllib.FancyURLopener):
         Return a new url-opener with the appropriate credentials
         """
         urllib.FancyURLopener.__init__(self)
+        self.token = token
         self.plain_post_header = {
             "Content-Type": "text/plain; charset=utf-8",
             "UserAgent": Service.USER_AGENT
@@ -632,6 +639,7 @@ class InterMineURLOpener(urllib.FancyURLopener):
             self.using_authentication = False
 
     def post_plain_text(self, url, body):
+        url = self.prepare_url(url)
         o = urlparse(url)
         con = httplib.HTTPConnection(o.hostname, o.port)
         con.request('POST', url, body, self.plain_post_header)
@@ -642,7 +650,23 @@ class InterMineURLOpener(urllib.FancyURLopener):
             raise WebserviceError(resp.status, resp.reason, content)
         return content
 
+    def open(self, url, data=None):
+        url = self.prepare_url(url)
+        return urllib.FancyURLopener.open(self, url, data) 
+
+    def prepare_url(self, url):
+        if self.token:
+            token_param = "token=" + self.token
+            o = urlparse(url)
+            if o.query:
+                url += "&" + token_param
+            else:
+                url += "?" + token_param
+
+        return url
+
     def delete(self, url):
+        url = self.prepare_url(url)
         o = urlparse(url)
         con = httplib.HTTPConnection(o.hostname, o.port)
         con.request('DELETE', url, None, self.plain_post_header)
