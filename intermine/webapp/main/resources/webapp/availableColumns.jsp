@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- availableColumns.jsp -->
 <%-- Tiles that prints out drop down box with with available columns, 
@@ -16,7 +17,9 @@ that can be added to results table, which id is saved in table parameter --%>
 	    </c:when>
 	    <c:otherwise>
 	        <c:forEach var="column" items="${availableColumns}">
-	             <option value="${column.key}" />${column.value}
+                <option value="${column.key}">
+                    <im:displaypath path="${column.key}"/>
+                </option>
 	        </c:forEach>
 	    </c:otherwise>
     </c:choose>		
