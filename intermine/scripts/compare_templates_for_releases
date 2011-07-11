@@ -105,7 +105,7 @@ for my $template (sort($icmp keys %rows_from)) {
 my %failures_in;
 for my $failure (sort($icmp keys %failure_from)) {
     my @errs = map {$failure_from{$failure}{$_}} @services;
-    my $c;
+    my $c = 0;
     for (@errs) {
         if (defined) {
             my $line = sprintf(
