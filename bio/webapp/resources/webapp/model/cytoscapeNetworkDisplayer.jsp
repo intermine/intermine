@@ -110,44 +110,44 @@
       </div>
   </div>
   <script type="text/javascript">
-  	(function() {
-	    <%-- sidebar toolbar bar --%>
-	    var sidebarPages = new Array();
-	    jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
-	      <%-- push targets --%>
-	      sidebarPages.push(jQuery(this).attr('href'));
-	      <%-- attaché onclick behavior --%>
-	      jQuery(this).click(function(e) {
-	        var that = this;
-	        jQuery.each(sidebarPages, function(index, target) {
-	          if (target == jQuery(that).attr('href')) {
-	            jQuery("#cwtabsbyside "+target).show();
-	          } else {
-	            jQuery("#cwtabsbyside "+target).hide();
-	          }
-	        });
-	        jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
-	            jQuery(this).removeClass('active');
-	        });
-	        jQuery(that).addClass('active');
-	        e.preventDefault();
-	      });
-	    });
-	    <%-- show only first tab --%>
-	    jQuery.each(sidebarPages, function(index, target) {
-	      if (index > 0) {
-	        jQuery("#cwtabsbyside "+target).hide();
-	      }
-	    });
-	    <%-- toggle table btn --%>
-	    jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
-	      if (jQuery('#cwinlinetable').is(":hidden")) {
-	        jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
-	      } else {
-	        jQuery('#cwinlinetable').hide();
-	      }
-	    });
-  	})();
+    (function() {
+      <%-- sidebar toolbar bar --%>
+      var sidebarPages = new Array();
+      jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+        <%-- push targets --%>
+        sidebarPages.push(jQuery(this).attr('href'));
+        <%-- attaché onclick behavior --%>
+        jQuery(this).click(function(e) {
+          var that = this;
+          jQuery.each(sidebarPages, function(index, target) {
+            if (target == jQuery(that).attr('href')) {
+              jQuery("#cwtabsbyside "+target).show();
+            } else {
+              jQuery("#cwtabsbyside "+target).hide();
+            }
+          });
+          jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
+              jQuery(this).removeClass('active');
+          });
+          jQuery(that).addClass('active');
+          e.preventDefault();
+        });
+      });
+      <%-- show only first tab --%>
+      jQuery.each(sidebarPages, function(index, target) {
+        if (index > 0) {
+          jQuery("#cwtabsbyside "+target).hide();
+        }
+      });
+      <%-- toggle table btn --%>
+      jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
+        if (jQuery('#cwinlinetable').is(":hidden")) {
+          jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
+        } else {
+          jQuery('#cwinlinetable').hide();
+        }
+      });
+    })();
   </script>
   <div id="cwcontent"></div>
   </div>
@@ -173,43 +173,43 @@
   </div>
 </div>
 <script type="text/javascript">
-	(function() {
-		  <%-- hide more than 10 rows --%>
-		  var bodyRows = jQuery("#cwinlinetable table tbody tr");
-		  if (bodyRows.length > 10) {
-		    bodyRows.each(function(i) {
-		      if (i > 9) {
-		        jQuery(this).hide();
-		      }
-		    });
-		    <%-- 'provide' toggler --%>
-		    jQuery("#cwinlinetable div.toggle").show();
-		    <%-- attach toggler event --%>
-		    jQuery('#cwinlinetable div.toggle a.more').click(function(e) {
-		      jQuery("#cwinlinetable table tbody tr:hidden").each(function(i) {
-		        if (i < 10) {
-		          jQuery(this).show();
-		        }
-		      });
-		      jQuery("#cwinlinetable div.toggle a.less").show();
-		      if (jQuery("#cwinlinetable table tbody tr:hidden").length == 0) {
-		        jQuery('#cwinlinetable div.toggle a.more').hide();
-		      }
-		    });
-		    <%-- attach collapser event --%>
-		    jQuery('#cwinlinetable div.toggle a.less').click(function(e) {
-		      var that = this;
-		      bodyRows.each(function(i) {
-		        if (i > 9) {
-		          jQuery(this).hide();
-		          jQuery(that).hide();
-		        }
-		      });
-		      jQuery('#cwinlinetable div.toggle a.more').show();
-		      jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
-		    });
-		  }
-	})();
+  (function() {
+      <%-- hide more than 10 rows --%>
+      var bodyRows = jQuery("#cwinlinetable table tbody tr");
+      if (bodyRows.length > 10) {
+        bodyRows.each(function(i) {
+          if (i > 9) {
+            jQuery(this).hide();
+          }
+        });
+        <%-- 'provide' toggler --%>
+        jQuery("#cwinlinetable div.toggle").show();
+        <%-- attach toggler event --%>
+        jQuery('#cwinlinetable div.toggle a.more').click(function(e) {
+          jQuery("#cwinlinetable table tbody tr:hidden").each(function(i) {
+            if (i < 10) {
+              jQuery(this).show();
+            }
+          });
+          jQuery("#cwinlinetable div.toggle a.less").show();
+          if (jQuery("#cwinlinetable table tbody tr:hidden").length == 0) {
+            jQuery('#cwinlinetable div.toggle a.more').hide();
+          }
+        });
+        <%-- attach collapser event --%>
+        jQuery('#cwinlinetable div.toggle a.less').click(function(e) {
+          var that = this;
+          bodyRows.each(function(i) {
+            if (i > 9) {
+              jQuery(this).hide();
+              jQuery(that).hide();
+            }
+          });
+          jQuery('#cwinlinetable div.toggle a.more').show();
+          jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
+        });
+      }
+  })();
 </script>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
@@ -268,7 +268,6 @@
                 } else {
                     networkdata = response;
                     displayNetwork(networkdata, fullInteractingGeneSet, project_title, project_baseurl, project_path);
-                    jQuery("#cwtabsbyside").tabs();
                     jQuery("#cwtabsbyside").css('display', 'inline');
                 }
             },
@@ -281,12 +280,12 @@
     jQuery('#legendall').svg();
     var legendall = jQuery('#legendall').svg('get');
     if (legendall) {
-	    legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
-	    legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
-	    legendall.text(70, 15, "Physical");
-	    legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
-	    legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
-	    legendall.text(210, 15, "Genetic");
+      legendall.line(0, 10, 45, 10, {stroke: "red", strokeWidth: 4});
+      legendall.polygon([[45, 5], [45, 15], [65, 10]], {fill: "red"});
+      legendall.text(70, 15, "Physical");
+      legendall.line(140, 10, 185, 10, {stroke: "blue", strokeWidth: 4});
+      legendall.polygon([[185, 5], [185, 15], [205, 10]], {fill: "blue"});
+      legendall.text(210, 15, "Genetic");
     }
 
     jQuery("svg").height("100%").width("100%");
