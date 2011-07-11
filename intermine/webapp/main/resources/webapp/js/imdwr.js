@@ -181,7 +181,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                       <div id="summary_row_count"></div>                      \
                       <div id="summary_unique_count"></div>                   \
                       <br/>                                                   \
-                      <table class="results" cellpadding="0" cellspacing="0"> \
+                      <table class="results summary" cellpadding="0" cellspacing="0"> \
                         <thead id="summary_head">' + headerText +'</thead>    \
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
                       </table>';
