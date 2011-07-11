@@ -314,7 +314,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
     }
 
-    public void tesGetRWPermission() throws Exception {
+    public void testGetRWPermission() throws Exception {
         setUpUserProfiles();
 
         ApiPermission permission = null;
@@ -372,7 +372,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
     }
 
-    public void tesGetROPermission() throws Exception {
+    public void testGetROPermission() throws Exception {
         setUpUserProfiles();
         ApiPermission permission = null;
 
