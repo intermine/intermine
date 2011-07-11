@@ -424,6 +424,12 @@
                      replacesFields="proteinAtlasExpression"
                      placement="summary"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasDisplayer"
+                     jspName="model/geneExpressionAtlasDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
 </reportdisplayers>
 
 <!-- widgets -->
