@@ -48,7 +48,6 @@
       <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
   </head>
-  <body>
 
   <!-- Check if the current page has fixed layout -->
   <c:forTokens items="${WEB_PROPERTIES['layout.fixed']}" delims="," var="currentPage">
@@ -56,6 +55,15 @@
       <c:set var="fixedLayout" value="true" />
     </c:if>
   </c:forTokens>
+
+  <c:choose>
+    <c:when test="${!empty fixedLayout}">
+      <body class="fixed">
+    </c:when>
+    <c:otherwise>
+      <body class="stretched">
+    </c:otherwise>
+  </c:choose>
 
   <!-- Page header -->
   <tiles:insert name="headMenu.tile">
