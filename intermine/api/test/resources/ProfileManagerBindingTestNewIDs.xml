@@ -10,8 +10,8 @@
     </items>
     <bags>
       <bag name="bag1" type="Department">
-        <bagElement id="1" type="org.intermine.model.testmodel.Department"/>
-        <bagElement id="2" type="org.intermine.model.testmodel.Department"/>
+        <bagValue value="DepartmentA1"/>
+        <bagValue value="DepartmentB1"/>
       </bag>
     </bags>
     <queries>
@@ -74,7 +74,8 @@
       <bag name="sally_bag1" type="Department">
       <bagValue value="DepartmentA1"/>
       </bag>
-      <bag name="sally_bag2" type="CEO">
+      <bag name="sally_bag2" type="Company">
+      <bagValue value="CompanyA"/>
       </bag>
       <bag name="sally_bag3" type="Employee">
       <bagValue value="EmployeeA1"/>
