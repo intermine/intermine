@@ -36,6 +36,14 @@ has user_agent => (
     builder => 'build_user_agent',
 );
 
+has header_checker => (
+    init_arg => 'HEADER_CHECKER',
+    isa => 'CodeRef',
+    is => 'ro',
+    predicate => 'has_header_checker',
+    default => sub { sub {1} },
+);
+
 sub build_user_agent {
     return LWP::UserAgent->new;
 }
@@ -51,8 +59,10 @@ sub fetch {
     if ($response->is_error()) {
         $self->die($response->status_line());
     } else {
-        my $fh = $self->get_temp_file->openw();
-        $fh->print($response->content);
+        if ($self->get_header_checker->($response)) {
+            my $fh = $self->get_temp_file->openw();
+            $fh->print($response->content);
+        }
     }
     $self->make_destination(
         $self->get_temp_file => $self->get_destination);
