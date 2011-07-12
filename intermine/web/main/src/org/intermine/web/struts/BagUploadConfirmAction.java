@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
@@ -92,10 +95,16 @@ public class BagUploadConfirmAction extends InterMineAction
                                    ListBuildMode.IDENTIFIERS, profile, session.getId());
             session.removeAttribute("bagQueryResult");
         } else {
-            String bagToUpgradeName = bagName;
-            InterMineBag bagToUpgrade = profile.getSavedBags().get(bagToUpgradeName);
+            BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult_"
+                                                                             + bagName);
+            Map<String, Object> unresolved = bagQueryResult.getUnresolved();
+            InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
             bagToUpgrade.upgradeOsb(contents);
-            session.removeAttribute("bagQueryResult_" + bagToUpgradeName);
+            if (!unresolved.isEmpty()) {
+                List<String> unresolvedValues = new ArrayList<String>(unresolved.keySet());
+                bagToUpgrade.deleteBagValues(unresolvedValues);
+            }
+            session.removeAttribute("bagQueryResult_" + bagName);
         }
 
         ForwardParameters forwardParameters
