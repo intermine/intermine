@@ -9,7 +9,7 @@ use constant {
     TITLE => 'Biogrid',
     DESCRIPTION => 'Biological General Repository for Interaction Datasets',
     SOURCE_LINK => 'http://thebiogrid.org',
-    SOURCE_DIR => 'psi/biogrid',
+    SOURCE_DIR => 'biogrid',
     METADATA_URL => "http://thebiogrid.org/scripts/fetchDirectoryDescription.php",
 };
 use constant ORGANISMS => (
