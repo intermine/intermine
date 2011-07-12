@@ -109,17 +109,16 @@ jQuery(document).ready(function() {
               <c:forEach items="${SAVED_BAG_STATUS}" var="savedBagStatus">
                 <c:if test="${savedBagStatus.key == savedBag.value.name}">
                 <c:set var="status" value="${savedBagStatus.value}"/>
-               </c:if>
-              </c:forEach>
-               <c:choose>
-               <c:when test="${status == ''}">Upgrading...</c:when>
-               <c:otherwise>
-                  <c:if test="${status == 'CURRENT'}">Current</c:if>
-                  <c:if test="${status == 'UPGRADING'}">Upgrading...</c:if>
-                  <c:if test="${status == 'TO_UPGRADE'}"><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}">Upgrade</html:link></c:if>
+                <c:choose>
+                <c:when test="${status == ''}"><fmt:message key="history.upgradingBag"/></c:when>
+                <c:otherwise>
+                  <c:if test="${status == 'CURRENT'}"><fmt:message key="history.currentBag"/></c:if>
+                  <c:if test="${status == 'UPGRADING'}"><fmt:message key="history.upgradingBag"/></c:if>
+                  <c:if test="${status == 'TO_UPGRADE'}"><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}"><fmt:message key="history.bagToUpgrade"/></html:link></c:if>
                </c:otherwise>
                </c:choose>
-              
+              </c:if>
+              </c:forEach>
               </td>
             </tr>
           </c:forEach>
