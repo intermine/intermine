@@ -54,13 +54,13 @@ public class BagUpgradeAction extends InterMineAction
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult;
         bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult_" + bagName);
-        
+
         if (bagQueryResult == null) {
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = SessionMethods.getProfile(session);
             InterMineBag savedBag = profile.getSavedBags().get(bagName);
             List<String> primaryIdentifiersList =
-            	savedBag.getContentsASKeyFieldValues();
+                savedBag.getContentsASKeyFieldValues();
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             bagQueryResult = bagRunner.searchForBag(bagType, primaryIdentifiersList, "", false);
             session.setAttribute("bagQueryResult_" + bagName, bagQueryResult);
