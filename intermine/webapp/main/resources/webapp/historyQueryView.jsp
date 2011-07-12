@@ -144,10 +144,15 @@
                     <c:if test="${status.first}">
                       <c:choose>
                         <c:when test="${fn:indexOf(item, '.') > 0}">
-                          <span class="historySummaryRoot">${fn:substringBefore(item, '.')}</span>
+                            <c:set var="rootClass" value="${fn:substringBefore(item, '.')}"/>
+                            <span class="historySummaryRoot">
+                                <im:displaypath path="${rootClass}"/>
+                            </span>
                         </c:when>
                         <c:otherwise>
-                          <span class="historySummaryRoot">${item}</span>
+                            <span class="historySummaryRoot">
+                                <im:displaypath path="${item}"/>
+                            </span>
                         </c:otherwise>
                       </c:choose>
                     </c:if>
@@ -156,7 +161,9 @@
                 <td class="sorting" align="left">
                   <c:forEach items="${savedQuery.value.pathQuery.view}" var="item">
                     <im:unqualify className="${item}" var="text"/>
-                    <span class="historySummaryShowing">${text}</span>
+                    <span class="historySummaryShowing">
+                        <im:displayfield path="${item}"/>
+                    </span>
                   </c:forEach>
                 </td>
                 <td class="sorting" align="center" nowrap>
