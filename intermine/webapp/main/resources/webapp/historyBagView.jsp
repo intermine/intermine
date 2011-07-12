@@ -96,7 +96,7 @@ jQuery(document).ready(function() {
                 &nbsp;
               </td>
 
-              <td class="sorting"><c:out value="${savedBag.value.type}"/></td>
+              <td class="sorting"><im:displaypath path="${savedBag.value.type}"/></td>
               <td class="sorting" align="right">
                 <c:out value="${savedBag.value.size}"/>&nbsp;<c:choose>
                   <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
