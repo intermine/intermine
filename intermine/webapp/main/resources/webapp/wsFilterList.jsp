@@ -220,7 +220,7 @@ function clearBagName(element) {
   <!--
       jQuery('#${wsListId}_${type}_filter_text').attr('autocomplete','off');
     -->
---</script>
+</script>
 
 <tiles:insert name="webSearchableList.tile">
   <tiles:put name="type" value="${type}"/>
