@@ -167,7 +167,7 @@
             <c:set var="fieldNameClass" value="${fieldNameClass} nullReferenceField"/>
           </c:if>
           <span class="${fieldNameClass}" id="drag_${node.pathString}">
-            <c:out value="${imf:formatField(node.minimalPath, WEBCONFIG)}"/>
+              <im:displayfield path="${node.minimalPath}"/>
           </span>
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
         </c:if>
