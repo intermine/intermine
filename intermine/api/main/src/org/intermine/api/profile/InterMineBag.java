@@ -786,33 +786,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    /**
-     *
-     */
-    private void deleteBagValues() {
-        Connection conn = null;
-        PreparedStatement stm = null;
-        try {
-            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId= ? ";
-            stm = conn.prepareStatement(sql);
-            stm.setObject(1, savedBagId);
-            stm.executeUpdate();
-        } catch (SQLException sqle) {
-            throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
-        } finally {
-            if (stm != null) {
-                try {
-                    stm.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Problem closing  resources in deleteBagValues()",
-                                               e);
-                }
-            }
-            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
-        }
-    }
-
     private void deleteBagValues(Collection<Integer> ids) {
         List<String> values = getKeyFieldValues(ids);
         if (values.size() > 0) {
