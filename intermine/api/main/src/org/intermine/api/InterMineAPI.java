@@ -88,8 +88,9 @@ public class InterMineAPI
         // only null for testing
         if (userProfileWriter != null) {
             this.profileManager = new ProfileManager(objectStore, userProfileWriter);
-            this.bagManager = new BagManager(profileManager.getSuperuserProfile(), model);
-            this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model,
+            Profile superUser = profileManager.getSuperuserProfile(classKeys);
+            this.bagManager = new BagManager(superUser, model);
+            this.templateManager = new TemplateManager(superUser, model,
                     trackerDelegate.getTemplateTracker());
             this.templateSummariser = new TemplateSummariser(objectStore,
                     profileManager.getProfileObjectStoreWriter());

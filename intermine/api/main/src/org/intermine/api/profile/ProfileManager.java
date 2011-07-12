@@ -596,6 +596,13 @@ public class ProfileManager
         return getProfile(superuser);
     }
 
+    /**
+     * @return the superuser profile
+     */
+    public Profile getSuperuserProfile(Map<String, List<FieldDescriptor>> classKeys) {
+        return getProfile(superuser, classKeys);
+    }
+
     private final Map<String, PasswordChangeToken> passwordChangeTokens
         = new HashMap<String, PasswordChangeToken>();
 
