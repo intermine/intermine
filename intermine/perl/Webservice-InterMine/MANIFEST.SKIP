@@ -16,7 +16,6 @@ extras
 \.svn
 \..*swp$
 ^MYMETA.yml$
-\.yml$
 old_t
 ^cover
 make_distribution\.pl
@@ -28,4 +27,5 @@ nytprof
 .*\.out
 scripts
 \.prove.*
-MYMETA.*
+MYMETA\.*
+
