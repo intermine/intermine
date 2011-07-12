@@ -318,29 +318,29 @@ public class ProfileManagerTest extends StoreDataTestCase
         setUpUserProfiles();
 
         ApiPermission permission = null;
-        permission = pm.getPermission(bobKey);
+        permission = pm.getPermission(bobKey, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
 
-        permission = pm.getPermission("bob", bobPass);
+        permission = pm.getPermission("bob", bobPass, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
 
-        permission = pm.getPermission("sally", sallyPass);
+        permission = pm.getPermission("sally", sallyPass, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), sallyProfile.getUsername());
 
         String newKey = pm.generateApiKey(bobProfile);
-        permission = pm.getPermission(newKey);
+        permission = pm.getPermission(newKey, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
 
         try {
-            pm.getPermission("foo");
+            pm.getPermission("foo", classKeys);
             fail("Expected an exception here");
         } catch (AuthenticationException e) {
             //
@@ -358,7 +358,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         // It's not ok to have many single use keys
         for (int j = 0; j < 999; j++) {
             try {
-                pm.getPermission(keys[j]);
+                pm.getPermission(keys[j], classKeys);
                 fail("expected authentication exception");
             } catch (AuthenticationException e) {
                 // expected
@@ -366,7 +366,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         }
 
         // Only the last key is valid
-        permission = pm.getPermission(keys[999]);
+        permission = pm.getPermission(keys[999], classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRW());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
@@ -377,20 +377,20 @@ public class ProfileManagerTest extends StoreDataTestCase
         ApiPermission permission = null;
 
         String key = pm.generateSingleUseKey(bobProfile);
-        permission = pm.getPermission(key);
+        permission = pm.getPermission(key, classKeys);
         assertNotNull(permission);
         assertTrue(permission.isRO());
         assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
 
         try {
-            pm.getPermission(key);
+            pm.getPermission(key, classKeys);
             fail("Expected an exception here");
         } catch (AuthenticationException e) {
             //
         }
 
         try {
-            pm.getPermission("foo");
+            pm.getPermission("foo", classKeys);
             fail("Expected an exception here");
         } catch (AuthenticationException e) {
             //
@@ -407,7 +407,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         // It's ok to have many single use keys
         for (int j = 0; j < 1000; j++) {
-            permission = pm.getPermission(keys[j]);
+            permission = pm.getPermission(keys[j], classKeys);
             assertNotNull(permission);
             assertTrue(permission.isRO());
             assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());

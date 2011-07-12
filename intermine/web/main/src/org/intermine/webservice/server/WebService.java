@@ -301,9 +301,9 @@ public abstract class WebService
 	            final String username = parts[0];
 	            final String password = parts[1];
 
-	            permission = pm.getPermission(username, password);
+	            permission = pm.getPermission(username, password, im.getClassKeys());
 	        } else {
-	            permission = pm.getPermission(authToken);
+	            permission = pm.getPermission(authToken, im.getClassKeys());
 	        }
         } catch (AuthenticationException e) {
         	throw new ServiceForbiddenException(e.getMessage(), e);

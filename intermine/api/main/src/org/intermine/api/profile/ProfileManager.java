@@ -753,14 +753,14 @@ public class ProfileManager
      * @param token
      * @return
      */
-    public ApiPermission getPermission(String token) {
+    public ApiPermission getPermission(String token, Map<String, List<FieldDescriptor>> classKeys) {
         ApiPermission permission;
         if (singleUseTokens.containsKey(token)) {
             SingleAccessToken t = singleUseTokens.get(token);
             if (!t.isValid()) {
                 throw new AuthenticationException("This token (" + token + ")is invalid.");
             }
-            Profile p = getProfile(t.getUserName());
+            Profile p = getProfile(t.getUserName(), classKeys);
             t.use();
             if (!t.isValid()) {
                 singleUseTokens.remove(token);
@@ -768,7 +768,7 @@ public class ProfileManager
             // Grant RO permission to user data
             permission = new ApiPermission(p, ApiPermission.Level.RO);
         } else {
-            Profile p = getProfileByApiKey(token);
+            Profile p = getProfileByApiKey(token, classKeys);
             if (p == null) {
                 throw new AuthenticationException("This token is not a valid access key: "
                         + token);
@@ -780,7 +780,7 @@ public class ProfileManager
         return permission;
     }
 
-    public ApiPermission getPermission(String username, String password) {
+    public ApiPermission getPermission(String username, String password, Map<String, List<FieldDescriptor>> classKeys) {
         if (StringUtils.isEmpty(username)) {
             throw new AuthenticationException("Empty user name.");
         }
@@ -791,7 +791,7 @@ public class ProfileManager
             if (!validPassword(username, password)) {
                 throw new AuthenticationException("Invalid password supplied: " + password);
             } else {
-                Profile p = getProfile(username);
+                Profile p = getProfile(username, classKeys);
                 ApiPermission permission = new ApiPermission(p, ApiPermission.Level.RW);
                 return permission;
             }
@@ -800,7 +800,7 @@ public class ProfileManager
         }
     }
 
-    private Profile getProfileByApiKey(String token) {
+    private Profile getProfileByApiKey(String token, Map<String, List<FieldDescriptor>> classKeys) {
         UserProfile profile = new UserProfile();
         profile.setApiKey(token);
         Set<String> fieldNames = new HashSet<String>();
@@ -813,7 +813,7 @@ public class ProfileManager
         if (profile == null) {
             throw new AuthenticationException("'" + token + "' is not a valid API access key");
         }
-        return getProfile(profile.getUsername());
+        return getProfile(profile.getUsername(), classKeys);
     }
 
     public static class AuthenticationException extends RuntimeException {
