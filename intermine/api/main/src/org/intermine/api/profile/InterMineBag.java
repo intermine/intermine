@@ -814,38 +814,41 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     private void deleteBagValues(Collection<Integer> ids) {
-        Connection conn = null;
-        PreparedStatement stm = null;
         List<String> values = getKeyFieldValues(ids);
         if (values.size() > 0) {
-            try {
-                conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-                Collection<String> placeHolders = CollectionUtils.collect(values, new ConstantTransformer("?"));
-                String valuesList = StringUtils.join(placeHolders, ", ");
+            deleteBagValues(values);
+        }
+    }
 
-                String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? "
-                    + " AND value IN (" + valuesList + " )";
-                
-                stm = conn.prepareStatement(sql);
-                stm.setInt(1, savedBagId);
-                for (int i = 0; i < values.size(); i++) {
-                    stm.setString(i + 2, values.get(i));
-                }
-
-                stm.executeUpdate();
-            } catch (SQLException sqle) {
-                throw new RuntimeException("Error deleting the " + values.size() + " bagvalues of bag : " + savedBagId, sqle);
-            } finally {
-                if (stm != null) {
-                    try {
-                        stm.close();
-                    } catch (SQLException e) {
-                        throw new RuntimeException("Problem closing  resources in"
-                                                   + " deleteBagValues()", e);
-                    }
-                }
-                ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+    public void deleteBagValues(List<String> values) {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            
+            Collection<String> placeHolders = CollectionUtils.collect(values,
+                                              new ConstantTransformer("?"));
+            String valuesList = StringUtils.join(placeHolders, ", ");
+            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? "
+                + " AND value IN (" + valuesList + " )";
+            stm = conn.prepareStatement(sql);
+            stm.setInt(1, savedBagId);
+            for (int i = 0; i < values.size(); i++) {
+                stm.setString(i + 2, values.get(i));
             }
+            stm.executeUpdate();
+        } catch (SQLException sqle) {
+            throw new RuntimeException("Error deleting the " + values.size() + " bagvalues of bag : " + savedBagId, sqle);
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Problem closing  resources in"
+                                               + " deleteBagValuesByValue()", e);
+                }
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
 }
