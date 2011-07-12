@@ -321,13 +321,16 @@ psql -q -o /dev/null -d  $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty
 
 if [ "$CHADODB" = "modchado-white" ]
 then
-echo "Dropping constraint attribute_name_key in modchado-white.."
+echo
+echo "WARNING: dropping constraint attribute_name_key in modchado-white and substituting with a unique index for record with char_length(value) < 2700.."
 # there are white submissions that give an error in the row size of the index because of the very
 # long string in the value of the attribute (a seq). Here postgres suggestions.
 # ERROR:  index row size 3376 exceeds btree maximum, 2712
 # HINT:  Values larger than 1/3 of a buffer page cannot be indexed.
 # Consider a function index of an MD5 hash of the value, or use full text indexing
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "alter table attribute drop constraint attribute_name_key;"
+psql -h $DBHOST -d $CHADODB -U $DBUSER -c "CREATE UNIQUE INDEX att_value_idx ON  attribute (name, heading, rank, value, type_id)
+    where char_length(value) < 2700;"
 fi
 
 fi
