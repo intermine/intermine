@@ -39,7 +39,7 @@ use constant {
     METHOD => 'FTP',
     
 };
-my %GOA_TAXA = (flybase => 'fb', wormbase => 'wb', mgi => 'mgi', sgd => 'sgd', pombe => 'GeneDB_Spombe');
+my %GOA_TAXA = (flybase => 'fb', wormbase => 'wb', mgi => 'mgi', sgd => 'sgd');
 my %UNIPROT_TAXA = ( '7165' => 'agp' );
 sub field2_of { return [ split( /\t/, shift ) ]->[1] || '' }
 my $order = sub { field2_of($a) cmp field2_of($b) };
