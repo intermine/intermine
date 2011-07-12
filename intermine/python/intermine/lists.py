@@ -36,7 +36,16 @@ class ListManager(object):
         if not list_info.get("wasSuccessful"):
             raise webservice.WebserviceError(list_info.get("error"))
         for l in list_info["lists"]:
+            l = ListManager.safe_dict(l) # Workaround for python 2.6 unicode key issues
             self.lists[l["name"]] = List(service=self.service, manager=self, **l)
+
+    @staticmethod
+    def safe_dict(d):
+        """Recursively clone json structure with UTF-8 dictionary keys""" 
+        if isinstance(d, dict): 
+            return dict([(k.encode('utf-8'), v) for k,v in d.iteritems()]) 
+        else: 
+            return d 
 
     def get_list(self, name):
         if self.lists is None:
