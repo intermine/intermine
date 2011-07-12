@@ -21,7 +21,7 @@ use constant {
 };
 
 use constant ORGANISMS => qw(
-  DROME CAEEL SACCE ANOGA HOMSA MUSMU RATNO APIME 9MUSC DROPS
+  DROME CAEEL SACCE ANOGA HOMSA MUSMU RATNO 9MUSC DROPS
 );
 
 my $match_complete_post_processor = sub {
