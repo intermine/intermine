@@ -27,13 +27,13 @@
   </div>
   <div class="settings">
     <strong>Show regulation type</strong>
-    <fieldset>
+    <fieldset class="regulation-type">
       <label for="upregulation-check">Upregulation</label>
-      <input type="checkbox" id="upregulation-check" checked="checked" />
+      <input type="checkbox" id="upregulation-check" title="UP" checked="checked" />
       <label for="downregulation-check">Downregulation</label>
-      <input type="checkbox" id="downregulation-check" checked="checked" />
+      <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" />
       <label for="noregulation-check">Not expressed</label>
-      <input type="checkbox" id="noregulation-check" />
+      <input type="checkbox" id="noregulation-check" title="NONE" />
     </fieldset>
   </div>
 </div>
@@ -43,10 +43,16 @@
   <div class="chart" id="gene-expression-atlas-chart-${category.key}"></div>
 
   <script type="text/javascript">
+    <%-- stuff this goodie bag --%>
+    var geneExpressionAtlasDisplayer = {};
+
     <%-- call me to draw me --%>
-    function drawChart(liszt) {
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(googleChart);
+    function drawChart(liszt, redraw) {
+      if (redraw) {
+        googleChart();
+      } else {
+        google.setOnLoadCallback(googleChart);
+      }
 
       <%-- the Goog draws here --%>
       function googleChart() {
@@ -101,16 +107,19 @@
           legend: 'none'
         };
 
+        // TODO: switch off any loading messages
+
         var chart = new google.visualization.BarChart(document.getElementById("gene-expression-atlas-chart-${category.key}"));
         chart.draw(data, options);
       }
     }
 
-    <%-- stuff this goodie bag --%>
-    var geneExpressionAtlasDisplayer = {};
-
     <%-- filter expressions in the chart given a variety of filters --%>
-    function filterAndDrawChart(filters) {
+    function filterAndDrawChart(redraw) {
+      // TODO: chart loading msg
+
+      var filters = geneExpressionAtlasDisplayer.currentFilter;
+
       <%-- should the expression be included? --%>
       function iCanIncludeExpression(expression, filters) {
         <%-- regulation type (UP/DOWN/NONE) --%>
@@ -161,8 +170,8 @@
         newLiszt = geneExpressionAtlasDisplayer.originalList;
       }
 
-      <%-- redraw the chart --%>
-      drawChart(newLiszt);
+      <%-- re-/draw the chart --%>
+      drawChart(newLiszt, redraw);
     }
 
     <%-- load the Goog and create the initial bag from Java --%>
@@ -190,12 +199,30 @@
       </c:forEach>;
 
       <%-- default filter --%>
-      var filter = {
+      geneExpressionAtlasDisplayer.currentFilter = {
         'regulationType': ["UP", "DOWN"]
       };
 
       <%-- let's rumble --%>
-      filterAndDrawChart(filter);
+      filterAndDrawChart();
+    })();
+
+    <%-- attache events to the sidebar settings and set as filters --%>
+    (function() {
+      function updateCurrentFilter() {
+        <%-- regulation type (UP/DOWN/NONE) --%>
+        geneExpressionAtlasDisplayer.currentFilter.regulationType = new Array();
+        jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input:checked").each(function() {
+          geneExpressionAtlasDisplayer.currentFilter.regulationType.push(jQuery(this).attr('title'));
+        });
+
+        jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
+
+        <%-- redraw --%>
+        filterAndDrawChart(true);
+      }
+
+      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(updateCurrentFilter);
     })();
   </script>
 </c:forEach>
