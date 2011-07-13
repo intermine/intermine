@@ -65,38 +65,39 @@
         data.addColumn('number', 'Low UP');
         data.addColumn('number', 'High UP');
 
-        <c:set var="counter" value="0" />
+        var n = 0;
         <%-- for each cell type --%>
-        <c:forEach var="cellType" items="${category.value}">
+        for (x in liszt) {
+          var cellType = liszt[x];
+          data.addRows(cellType.expressions.length);
 
-          data.addRows(${fn:length(cellType.value)});
+          <%-- for each expression (one bar) in this cell type --%>
+          for (y in cellType.expressions) {
+            var expression = cellType.expressions[y];
 
-          <%-- for each expression (one bar) --%>
-          <c:forEach var="expression" items="${cellType.value}">
-            <%-- T statistic --%>
-            var tStatistic = ${expression.tStatistic};
-            data.setValue(${counter}, 0, '${expression.condition}');
-            if (tStatistic > 0) {
-              data.setValue(${counter}, 1, 0);
-              data.setValue(${counter}, 2, 0);
-              data.setValue(${counter}, 3, 0);
-              data.setValue(${counter}, 4, tStatistic);
-            } else {
-              data.setValue(${counter}, 1, tStatistic);
-              data.setValue(${counter}, 2, 0);
-              data.setValue(${counter}, 3, 0);
-              data.setValue(${counter}, 4, 0);
+            var tStatistic = expression.tStatistic;
+            data.setValue(n, 0, cellType.condition);
+            if (tStatistic > 0) { <%-- UP --%>
+              data.setValue(n, 1, 0);
+              data.setValue(n, 2, 0);
+              data.setValue(n, 3, 0);
+              data.setValue(n, 4, tStatistic);
+            } else {  <%-- DOWN --%>
+              data.setValue(n, 1, tStatistic);
+              data.setValue(n, 2, 0);
+              data.setValue(n, 3, 0);
+              data.setValue(n, 4, 0);
             }
 
-            <c:set var="counter" value="${counter + 1}" />
-          </c:forEach>
-        </c:forEach>
+            n++;
+          }
+        }
 
         var options = {
           isStacked: true,
           width: 800,
-          chartArea: {left: 400, top: 0, height: 9 * ${counter}},
-          height: (9 * ${counter}) + 20,
+          chartArea: {left: 400, top: 0, height: 9 * n},
+          height: (9 * n) + 20,
           backgroundColor: ["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: ['#0000FF', '#D2D2F8', '#C2EAB8', '#59BB14'],
           fontName: "Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
