@@ -125,7 +125,7 @@ public class GFF3Exporter implements Exporter
                     String fV = props.getProperty("genomeVersion.fly");
                     if (fV != null && fV.length() > 0) {
                         header.append("\n##species " + FLY_LINK);
-                        header.append("\n##genome-build FlyBase r" + fV + "(drosophila)");
+                        header.append("\n##genome-build FlyBase r" + fV);
                     }
                 }
             }
@@ -134,7 +134,7 @@ public class GFF3Exporter implements Exporter
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
                         header.append("\n##species " + WORM_LINK);
-                        header.append("\n##genome-build WormBase r" + wV + "(worm)");
+                        header.append("\n##genome-build WormBase ws" + wV);
                     }
                 }
             }
