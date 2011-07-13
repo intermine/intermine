@@ -76,13 +76,13 @@
 
                 <td>
                     <div class="constraint_${index} ${constraintHeadingClass}">
-                        <span class="templateConstraintPath"> 
+                        <span class="templateConstraintPath">
                             <c:out value="${imf:formatPathStr(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
                             <c:set var="fieldDisplay" value="${imf:formatField(dec.path.path, WEBCONFIG)}" />
                             <c:if test="${!empty fieldDisplay}">
                                 &gt;&nbsp;${fieldDisplay}
                             </c:if>
-                        </span> 
+                        </span>
                         <c:if test="${not empty dec.description}">
                             <span class="templateConstraintDescription">
                                 <c:out value=" - ${dec.description}" />
@@ -323,7 +323,7 @@
           <%-- For some reason, we are faking up the real sumbit actions with these buttons... --%>
           <div class="floatRight">
           <input type="button" onclick="jQuery('input#editQueryButton').click();" class="editQueryBuilder" value="<fmt:message key="template.submitToQuery"/>" />
-          <c:if test="${IS_SUPERUSER}">
+          <c:if test="${IS_SUPERUSER || scope == 'user'}">
             <input type="button" onclick="jQuery('input#editTemplateButton').click();" class="editTemplate" value="<fmt:message key="template.submitToQueryEdit"/>" />
           </c:if>
           </div>
