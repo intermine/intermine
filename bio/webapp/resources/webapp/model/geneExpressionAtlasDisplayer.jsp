@@ -174,6 +174,16 @@
       drawChart(newLiszt, redraw);
     }
 
+    function updateCurrentFilter() {
+      <%-- regulation type (UP/DOWN/NONE) --%>
+      geneExpressionAtlasDisplayer.currentFilter.regulationType = new Array();
+      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input:checked").each(function() {
+        geneExpressionAtlasDisplayer.currentFilter.regulationType.push(jQuery(this).attr('title'));
+      });
+
+      jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
+    }
+
     <%-- load the Goog and create the initial bag from Java --%>
     (function() {
       google.load("visualization", "1", {packages:["corechart"]});
@@ -198,10 +208,9 @@
         geneExpressionAtlasDisplayer.originalList.push(expression);
       </c:forEach>;
 
-      <%-- default filter --%>
-      geneExpressionAtlasDisplayer.currentFilter = {
-        'regulationType': ["UP", "DOWN"]
-      };
+      <%-- create filter --%>
+      geneExpressionAtlasDisplayer.currentFilter = {};
+      updateCurrentFilter();
 
       <%-- let's rumble --%>
       filterAndDrawChart();
@@ -209,20 +218,11 @@
 
     <%-- attache events to the sidebar settings and set as filters --%>
     (function() {
-      function updateCurrentFilter() {
-        <%-- regulation type (UP/DOWN/NONE) --%>
-        geneExpressionAtlasDisplayer.currentFilter.regulationType = new Array();
-        jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input:checked").each(function() {
-          geneExpressionAtlasDisplayer.currentFilter.regulationType.push(jQuery(this).attr('title'));
-        });
-
-        jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
-
+      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
+        updateCurrentFilter();
         <%-- redraw --%>
         filterAndDrawChart(true);
-      }
-
-      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(updateCurrentFilter);
+      });
     })();
   </script>
 </c:forEach>
