@@ -50,7 +50,7 @@
           <c:forEach items="${inlineResultsTable.resultElementRows}" var="resultElementRow" varStatus="status">
             <tr>
               <c:choose>
-                <c:when test="${!empty(resultElementRow.items)}">
+                <c:when test="${!empty (resultElementRow.items)}">
                   <c:forEach items="${resultElementRow.items}" var="resultElementColumn" varStatus="rowStatus">
                     <c:if test="${rowStatus.count == 1 && inlineResultsTable.hasMoreThanOneType}">
                       <td class="type">
