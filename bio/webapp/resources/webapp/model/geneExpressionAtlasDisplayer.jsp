@@ -33,6 +33,27 @@
 
   <script type="text/javascript">
     (function() {
+      <%-- Java to JavaScript --%>
+      var liszt = new Array();
+
+      <c:forEach var="cellType" items="${category.value}">
+        var expressions = new Array();
+        <c:forEach var="expression" items="${cellType.value}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        liszt.push(expression);
+        im.log(expression.condition);
+      </c:forEach>;
+
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
@@ -52,7 +73,7 @@
 
           <%-- for each expression (one bar) --%>
           <c:forEach var="expression" items="${cellType.value}">
-            // T statistic
+            <%-- T statistic --%>
             var tStatistic = ${expression.tStatistic};
             data.setValue(${counter}, 0, '${expression.condition}');
             if (tStatistic > 0) {

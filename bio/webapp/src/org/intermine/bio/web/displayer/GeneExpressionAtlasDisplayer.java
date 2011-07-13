@@ -112,6 +112,7 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer {
                 "Gene.primaryIdentifier");
         query.addConstraint(Constraints.eq("Gene.primaryIdentifier", genePrimaryID));
         query.addConstraint(Constraints.eq("Gene.atlasExpression.type", "organism_part"));
+        query.addConstraint(Constraints.notLike("Gene.atlasExpression.condition", "(empty)"));
         query.addOrderBy("Gene.atlasExpression.condition", OrderDirection.ASC);
 
         return query;
