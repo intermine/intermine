@@ -25,6 +25,17 @@
     </ul>
     <p class="small">* Color intensity denotes the reliability of the regulation if more that one probe set is present and their results differ.</p>
   </div>
+  <div class="settings">
+    <strong>Show regulation type</strong>
+    <fieldset>
+      <label for="upregulation-check">Upregulation</label>
+      <input type="checkbox" id="upregulation-check" checked="checked" />
+      <label for="downregulation-check">Downregulation</label>
+      <input type="checkbox" id="downregulation-check" checked="checked" />
+      <label for="noregulation-check">Not expressed</label>
+      <input type="checkbox" id="noregulation-check" />
+    </fieldset>
+  </div>
 </div>
 
 <%-- for each category/type --%>
@@ -32,31 +43,13 @@
   <div class="chart" id="gene-expression-atlas-chart-${category.key}"></div>
 
   <script type="text/javascript">
-    (function() {
-      <%-- Java to JavaScript --%>
-      var liszt = new Array();
-
-      <c:forEach var="cellType" items="${category.value}">
-        var expressions = new Array();
-        <c:forEach var="expression" items="${cellType.value}">
-          var expression = {
-            'pValue': ${expression.pValue},
-            'tStatistic': ${expression.tStatistic}
-          };
-          expressions.push(expression);
-        </c:forEach>
-
-        var expression = {
-          'condition': '${cellType.key}',
-          'expressions': expressions
-        };
-        liszt.push(expression);
-        im.log(expression.condition);
-      </c:forEach>;
-
+    <%-- call me to draw me --%>
+    function drawChart(liszt) {
       google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
+      google.setOnLoadCallback(googleChart);
+
+      <%-- the Goog draws here --%>
+      function googleChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Cell type');
 
@@ -93,6 +86,7 @@
           }
         }
 
+        <%-- modify the chart properties --%>
         var options = {
           isStacked: true,
           width: 800,
@@ -110,6 +104,98 @@
         var chart = new google.visualization.BarChart(document.getElementById("gene-expression-atlas-chart-${category.key}"));
         chart.draw(data, options);
       }
+    }
+
+    <%-- stuff this goodie bag --%>
+    var geneExpressionAtlasDisplayer = {};
+
+    <%-- filter expressions in the chart given a variety of filters --%>
+    function filterAndDrawChart(filters) {
+      <%-- should the expression be included? --%>
+      function iCanIncludeExpression(expression, filters) {
+        <%-- regulation type (UP/DOWN/NONE) --%>
+        if ("regulationType" in filters) {
+          if (expression.tStatistic > 0) {
+            if (filters.regulationType.indexOf("UP") < 0) {
+              return false;
+            }
+          } else {
+            if (expression.tStatistic < 0) {
+              if (filters.regulationType.indexOf("DOWN") < 0) {
+                return false;
+              }
+            } else {
+              if (filters.regulationType.indexOf("NONE") < 0) return false;
+            }
+          }
+        }
+
+        <%-- something did not work --%>
+        return true;
+      }
+
+      <%-- go through the original list here --%>
+      var newLiszt = new Array();
+      if (filters) {
+        for (x in geneExpressionAtlasDisplayer.originalList) {
+          var oldCellType = geneExpressionAtlasDisplayer.originalList[x]
+          var newExpressions = new Array();
+          <%-- traverse the unfiltered expressions --%>
+          for (y in oldCellType.expressions) {
+            var expression = oldCellType.expressions[y];
+            <%-- I can not haz dis 1? --%>
+            if (iCanIncludeExpression(expression, filters)) {
+              newExpressions.push(expression);
+            }
+          }
+
+          if (newExpressions.length > 0) { <%-- one/some expression(s) met the bar --%>
+            var newCellType = {
+              'condition': oldCellType.condition,
+              'expressions': newExpressions
+            };
+            newLiszt.push(newCellType);
+          }
+        }
+      } else {
+        newLiszt = geneExpressionAtlasDisplayer.originalList;
+      }
+
+      <%-- redraw the chart --%>
+      drawChart(newLiszt);
+    }
+
+    <%-- load the Goog and create the initial bag from Java --%>
+    (function() {
+      google.load("visualization", "1", {packages:["corechart"]});
+
+      <%-- Java to JavaScript --%>
+      geneExpressionAtlasDisplayer.originalList = new Array();
+
+      <c:forEach var="cellType" items="${category.value}">
+        var expressions = new Array();
+        <c:forEach var="expression" items="${cellType.value}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.push(expression);
+      </c:forEach>;
+
+      <%-- default filter --%>
+      var filter = {
+        'regulationType': ["UP", "DOWN"]
+      };
+
+      <%-- let's rumble --%>
+      filterAndDrawChart(filter);
     })();
   </script>
 </c:forEach>
