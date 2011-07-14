@@ -50,23 +50,22 @@ public class BagUpgradeAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         String bagName = (String) request.getParameter("bagName");
-        String bagType = (String) request.getParameter("bagType");
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult;
         bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult_" + bagName);
 
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        InterMineBag savedBag = profile.getSavedBags().get(bagName);
         if (bagQueryResult == null) {
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            Profile profile = SessionMethods.getProfile(session);
-            InterMineBag savedBag = profile.getSavedBags().get(bagName);
             List<String> primaryIdentifiersList =
                 savedBag.getContentsASKeyFieldValues();
             BagQueryRunner bagRunner = im.getBagQueryRunner();
-            bagQueryResult = bagRunner.searchForBag(bagType, primaryIdentifiersList, "", false);
+            bagQueryResult = bagRunner.searchForBag(savedBag.getType(), primaryIdentifiersList, "", false);
             session.setAttribute("bagQueryResult_" + bagName, bagQueryResult);
         }
         request.setAttribute("newBagName", bagName);
-        request.setAttribute("bagType", bagType);
+        request.setAttribute("bagType", savedBag.getType());
         return mapping.findForward("bagUploadConfirm");
     }
 }

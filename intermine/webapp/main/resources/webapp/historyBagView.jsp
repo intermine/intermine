@@ -14,11 +14,7 @@
 <script type="text/javascript" src="js/historyBagView.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
-<script type="text/javascript">
-jQuery(document).ready(function() {
-    //setTimeout("refreshSavedBagStatus()", 5000);
-})
-</script>
+
 <im:body id="bagHistory">
 
   <p>
@@ -105,20 +101,13 @@ jQuery(document).ready(function() {
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
               <td id="status_${savedBag.value.name}" class="sorting" align="right">
-              <c:set var="status" value=""/>
-              <c:forEach items="${SAVED_BAG_STATUS}" var="savedBagStatus">
-                <c:if test="${savedBagStatus.key == savedBag.value.name}">
-                <c:set var="status" value="${savedBagStatus.value}"/>
                 <c:choose>
-                <c:when test="${status == ''}"><fmt:message key="history.upgradingBag"/></c:when>
+                <c:when test="${savedBag.value.current}"><fmt:message key="history.currentBag"/></c:when>
                 <c:otherwise>
-                  <c:if test="${status == 'CURRENT'}"><fmt:message key="history.currentBag"/></c:if>
-                  <c:if test="${status == 'UPGRADING'}"><fmt:message key="history.upgradingBag"/></c:if>
-                  <c:if test="${status == 'TO_UPGRADE'}"><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}"><fmt:message key="history.bagToUpgrade"/></html:link></c:if>
-               </c:otherwise>
-               </c:choose>
-              </c:if>
-              </c:forEach>
+                    <fmt:message key="history.notCurrentBag"/>
+                    <input id="notCurrent" type="hidden" name="notCurrent" value="true"/>
+                    </c:otherwise>
+                </c:choose>
               </td>
             </tr>
           </c:forEach>
@@ -143,7 +132,14 @@ jQuery(document).ready(function() {
 
     </c:otherwise>
   </c:choose>
-
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    if(document.getElementById('bagTable') != null ) {
+        if (document.getElementById('notCurrent') != null)
+           setTimeout('refreshSavedBagStatus()', 1000);
+    }
+})
+</script>
 </im:body>
 
 
