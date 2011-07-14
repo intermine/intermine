@@ -97,6 +97,7 @@ import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.util.InterMineLinkGenerator;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -1367,9 +1368,23 @@ public class AjaxServices
         return defaultList;
     }
 
-    public Map<String, String> getSavedBagStatus() {
+    public String getSavedBagStatus() {
+        Collection<JSONObject> jsonSavedBagStatus = new HashSet<JSONObject>();
         HttpSession session = WebContextFactory.get().getSession();
-        return (Map<String, String>) session.getAttribute(UpgradeBagList.SAVED_BAG_STATUS);
+        Map<String, String> savedBagStatus =
+            (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
+        JSONObject jsonSavedBag = null;
+        try {
+            for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
+                jsonSavedBag = new JSONObject();
+                jsonSavedBag.put("key", entry.getKey());
+                jsonSavedBag.put("value", entry.getValue());
+                jsonSavedBagStatus.add(jsonSavedBag);
+            }
+        } catch (JSONException jse) {
+            LOG.error("Errors generating json objects", jse);
+        }
+        return jsonSavedBagStatus.toString();
     }
 
 }

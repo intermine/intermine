@@ -29,6 +29,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -87,6 +88,7 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
+        //if upgradeBagName is null we are creating a new bag, otherwise we are upgrading an existing bag
         if (request.getParameter("upgradeBagName") == null) {
             InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
             bag.addIdsToBag(contents, bagType);
@@ -105,6 +107,7 @@ public class BagUploadConfirmAction extends InterMineAction
                 bagToUpgrade.deleteBagValues(unresolvedValues);
             }
             session.removeAttribute("bagQueryResult_" + bagName);
+            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, Constants.CURRENT_BAG);
         }
 
         ForwardParameters forwardParameters

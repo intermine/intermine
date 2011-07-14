@@ -799,8 +799,32 @@ function reDrawConstraintLogic() {
 }
 
 function refreshSavedBagStatus() {
-    AjaxServices.getSavedBagStatus(function(savedBagStatusMap) {
-        //alert(savedBagStatusMap.key);
+    AjaxServices.getSavedBagStatus(function(savedBagStatus) {
+        var allCurrent = true;
+        if(savedBagStatus) {
+            var jSONObject = jQuery.parseJSON(savedBagStatus);
+            jQuery.each(jSONObject, function(key, entry) {
+                var bagName = entry['key'];
+                var status = entry['value'];
+                if (status == 'NOT_CURRENT' || status == 'UPGRADING')
+                    allCurrent = false;
+                document.getElementById("status_" + bagName).innerHTML = getHTML(status, bagName);
+            })
+            if (!allCurrent) {
+                setTimeout('refreshSavedBagStatus()', 1000);
+            }
+        }
     });
+}
+
+function getHTML(status, bagName) {
+    if (status == 'CURRENT')
+      return "Current";
+    else if (status == 'NOT_CURRENT')
+      return "Not current";
+    else if (status == 'UPGRADING')
+      return "Upgrading...";
+    else if (status == 'TO_UPGRADE')
+      return "<a href='bagUpgrade.do?bagName=" + bagName + "'>Upgrade</html:link>";
 }
 

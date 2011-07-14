@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
@@ -1101,5 +1102,36 @@ public final class SessionMethods
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns SavedBagsStatus saved in session.
+     * @param session session
+     * @return SavedBagsStatus
+     */
+    public static Map<String, String> getNotCurrentSavedBagsStatus(HttpSession session) {
+        return (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
+    }
+
+    /**
+     * Sets in the session the map containing the status of the bags not current. 
+     * A bag not current could be:
+     * not current (= the upgrading process has not started upgrading it yet),
+     * upgrading...(= the upgrading process is upgrading it), 
+     * to upgrade (= the upgrading process has not been able to upgrade it because there are some
+     * conflicts that the user has to resolve manually ).
+     * @param session the session
+     * @param profile the profile used to retrieve the savedbags
+     * object to put in the session
+     */
+    public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
+        Map<String, String> savedBagsStatus = new HashedMap();
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (!bag.isCurrent()) {
+                savedBagsStatus.put(bag.getName(), Constants.NOT_CURRENT_BAG);
+            }
+        }
+        session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
 }
