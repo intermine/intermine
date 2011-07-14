@@ -159,6 +159,10 @@ public class SimpleConstraint extends Constraint
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
         ConstraintOp.CONTAINS,
+        ConstraintOp.LESS_THAN,
+        ConstraintOp.LESS_THAN_EQUALS,
+        ConstraintOp.GREATER_THAN,
+        ConstraintOp.GREATER_THAN_EQUALS,
         ConstraintOp.MATCHES,
         ConstraintOp.DOES_NOT_MATCH});
 
