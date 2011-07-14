@@ -13,6 +13,7 @@ package org.intermine.bio.web.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -148,7 +149,12 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         Map<String, List<String>> results = new HashMap<String, List<String>>();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
         PathQuery q = getLocalOrthologueQuery(im, identifiers, organisms, isOrthologue);
-        ExportResultsIterator it = executor.execute(q);
+        ExportResultsIterator it = null;
+        try {
+            it = executor.execute(q);
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String orthologuePrimaryIdentifier = (String) row.get(0).getField();

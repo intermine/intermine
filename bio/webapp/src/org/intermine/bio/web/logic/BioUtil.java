@@ -67,7 +67,6 @@ public class BioUtil implements WidgetHelper
      * @param organismFieldName eg. name, shortName or taxonId
      * @return collection of organism names
      */
-    @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
             boolean lowercase, String organismFieldName) {
 
@@ -111,16 +110,18 @@ public class BioUtil implements WidgetHelper
         q.setConstraint(cs);
 
         Results r = os.execute(q);
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> it = (Iterator) r.iterator();
+        Iterator<ResultsRow> it = (Iterator) r.iterator();
         Collection<String> orgs = new ArrayList();
 
         while (it.hasNext()) {
             ResultsRow rr = it.next();
             Object org =  rr.get(0);
-            if (lowercase) {
-                orgs.add(org.toString().toLowerCase());
-            } else {
-                orgs.add(org.toString());
+            if (org != null) {
+                if (lowercase) {
+                    orgs.add(org.toString().toLowerCase());
+                } else {
+                    orgs.add(org.toString());
+                }
             }
         }
         return orgs;
