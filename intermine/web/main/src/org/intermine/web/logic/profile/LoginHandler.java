@@ -104,8 +104,8 @@ public abstract class LoginHandler extends InterMineAction
      */
     public static Profile setUpProfile(HttpSession session, ProfileManager pm,
             String username, String password) {
-    	final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-    	Profile profile;
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile;
         if (pm.hasProfile(username)) {
             profile = pm.getProfile(username, password, im.getClassKeys());
         } else {
@@ -117,8 +117,7 @@ public abstract class LoginHandler extends InterMineAction
     }
 
     public static Profile setUpProfile(HttpSession session, ProfileManager pm, Profile profile) {
-    	SessionMethods.setProfile(session, profile);
-
+        SessionMethods.setProfile(session, profile);
         if (profile.getUsername().equals(pm.getSuperuser())) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
