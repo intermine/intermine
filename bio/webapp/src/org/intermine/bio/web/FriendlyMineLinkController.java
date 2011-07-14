@@ -55,7 +55,10 @@ public class FriendlyMineLinkController  extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, false,
                 "shortName");
-        String organisms = StringUtil.join(organismsInBag, ",");
+        String organisms = null;
+        if (!organismsInBag.isEmpty()) {
+            organisms = StringUtil.join(organismsInBag, ",");
+        }
         Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
         String localMineName = webProperties.getProperty("project.title");
@@ -91,7 +94,7 @@ public class FriendlyMineLinkController  extends TilesAction
         String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifierList", identifierList);
 
-        if (!mines.isEmpty()) {
+        if (!mines.isEmpty() && StringUtils.isNotEmpty(organisms)) {
             request.setAttribute("mines", mines);
             request.setAttribute("organisms", organisms);
         }
