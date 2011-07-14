@@ -113,22 +113,20 @@ public class TableExportAction extends InterMineAction
             HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
         PathQuery pathQuery = pt.getWebTable().getPathQuery();
-        PathQuery newPathQuery = null;
+        PathQuery newPathQuery = new PathQuery(pathQuery);
         if (pathQuery instanceof TemplateQuery) {
-            TemplateQuery templateQuery = (TemplateQuery) pathQuery;
+            newPathQuery = new PathQuery(pathQuery);
+            TemplateQuery templateQuery = (TemplateQuery) pathQuery.clone();
             Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
                                                    templateQuery.getConstraintSwitchOffAbility();
             for (Map.Entry<PathConstraint, SwitchOffAbility> entry
                 : constraintSwitchOffAbilityMap.entrySet()) {
                 if (entry.getValue().compareTo(SwitchOffAbility.OFF) == 0) {
-                    templateQuery.removeConstraint(entry.getKey());
+                    newPathQuery.removeConstraint(entry.getKey());
                 }
             }
         }
-
-        newPathQuery = new PathQuery(pathQuery);
         newPathQuery.clearView();
         try {
             if (!pathsString.contains("[]=")) { // BED format case
