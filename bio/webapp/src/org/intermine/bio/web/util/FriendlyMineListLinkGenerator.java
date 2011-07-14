@@ -29,6 +29,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -149,12 +150,10 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         Map<String, List<String>> results = new HashMap<String, List<String>>();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
         PathQuery q = getLocalOrthologueQuery(im, identifiers, organisms, isOrthologue);
-        ExportResultsIterator it = null;
-        try {
-            it = executor.execute(q);
-        } catch (Exception e) {
+        if (!q.isValid()) {
             return Collections.emptyMap();
         }
+        ExportResultsIterator it = executor.execute(q);
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String orthologuePrimaryIdentifier = (String) row.get(0).getField();
