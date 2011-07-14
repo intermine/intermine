@@ -197,7 +197,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
                     SavedBag.class);
             uosw.delete(savedBag);
-            removeIdsFromBag(getContentsAsIds());
+            removeIdsFromBag(getContentsAsIds(), false);
+            deleteAllBagValues();
             this.profileId = null;
             this.savedBagId = null;
         }
@@ -708,7 +709,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if problem storing
      */
     public void removeIdFromBag(Integer id) throws ObjectStoreException {
-        removeIdsFromBag(Collections.singleton(id));
+        removeIdsFromBag(Collections.singleton(id), true);
     }
 
     /**
@@ -716,7 +717,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param ids the ids to remove
      * @throws ObjectStoreException if problem storing
      */
-    public void removeIdsFromBag(Collection<Integer> ids) throws ObjectStoreException {
+    public void removeIdsFromBag(Collection<Integer> ids, boolean updateBagValues) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         try {
             oswProduction = os.getNewWriter();
@@ -726,7 +727,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                 oswProduction.close();
             }
         }
-        if (profileId != null) {
+        if (profileId != null && updateBagValues) {
             deleteBagValues(ids);
         }
     }
@@ -819,6 +820,30 @@ public class InterMineBag implements WebSearchable, Cloneable
                 } catch (SQLException e) {
                     throw new RuntimeException("Problem closing  resources in"
                                                + " deleteBagValuesByValue()", e);
+                }
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+    }
+    
+    public void deleteAllBagValues() {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? ";
+            stm = conn.prepareStatement(sql);
+            stm.setInt(1, savedBagId);
+            stm.executeUpdate();
+        } catch (SQLException sqle) {
+            throw new RuntimeException("Error deleting the bagvalues of bag : " + savedBagId, sqle);
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Problem closing  resources in"
+                                               + " deleteAllBagValues()", e);
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
