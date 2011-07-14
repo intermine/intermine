@@ -1088,7 +1088,7 @@ public class PagedTable
             return removedCount;
         }
         Set<Integer> idsToRemove = getIdsToRemove(bag);
-        bag.removeIdsFromBag(idsToRemove);
+        bag.removeIdsFromBag(idsToRemove, true);
         removedCount = idsToRemove.size();
         
         SessionMethods.invalidateBagTable(session, bag.getName());
