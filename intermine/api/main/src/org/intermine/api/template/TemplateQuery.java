@@ -45,7 +45,6 @@ import org.intermine.pathquery.PathQuery;
  */
 public class TemplateQuery extends PathQuery implements WebSearchable
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
 
     /** Template query name. */
@@ -549,51 +548,51 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * Returns a JSON string representation of the template query.
      * @return A string representation of the template query.
      */
-	public synchronized String toJSON() {
-		StringBuffer sb = new StringBuffer("{");
-		addJsonProperty(sb, "name", getName());
-		addJsonProperty(sb, "title", getTitle());
-		addJsonProperty(sb, "description", getDescription());
-		addJsonProperty(sb, "comment", getComment());
-		addJsonProperty(sb, "view", getView());
+    public synchronized String toJSON() {
+        StringBuffer sb = new StringBuffer("{");
+        addJsonProperty(sb, "name", getName());
+        addJsonProperty(sb, "title", getTitle());
+        addJsonProperty(sb, "description", getDescription());
+        addJsonProperty(sb, "comment", getComment());
+        addJsonProperty(sb, "view", getView());
 
         sb.append(",\"constraints\":[");
         Iterator<PathConstraint> iter = getEditableConstraints().iterator();
         Map<PathConstraint, String> codeForConstraint = getConstraints();
         while (iter.hasNext()) {
             PathConstraint pc = iter.next();
-			StringBuffer pcw = new StringBuffer("{");
+            StringBuffer pcw = new StringBuffer("{");
 
-			addJsonProperty(pcw, "path", pc.getPath());
-			addJsonProperty(pcw, "op", pc.getOp().toString());
-			addJsonProperty(pcw, "value", PathConstraint.getValue(pc));
-			addJsonProperty(pcw, "code", codeForConstraint.get(pc));
-			addJsonProperty(pcw, "extraValue", PathConstraint.getExtraValue(pc));
+            addJsonProperty(pcw, "path", pc.getPath());
+            addJsonProperty(pcw, "op", pc.getOp().toString());
+            addJsonProperty(pcw, "value", PathConstraint.getValue(pc));
+            addJsonProperty(pcw, "code", codeForConstraint.get(pc));
+            addJsonProperty(pcw, "extraValue", PathConstraint.getExtraValue(pc));
 
-			pcw.append("}");
-			
-			sb.append(pcw.toString());
-			if (iter.hasNext()) {
-				sb.append(",");
-			}
+            pcw.append("}");
+
+            sb.append(pcw.toString());
+            if (iter.hasNext()) {
+                sb.append(",");
+            }
         }
         sb.append("]");
-		
-		sb.append("}");
+
+        sb.append("}");
         return sb.toString();
     }
 
-	private void addJsonProperty(StringBuffer sb, String key, Object value) {
-		if (value != null) {
-			if (!sb.toString().endsWith("{")) {
-				sb.append(",");
-			}
-			sb.append(formatKVPair(key, value));
-		}
-	}
-	
-	private String formatKVPair(String key, Object value) {
-		if (value instanceof List) {
+    private void addJsonProperty(StringBuffer sb, String key, Object value) {
+        if (value != null) {
+            if (!sb.toString().endsWith("{")) {
+                sb.append(",");
+            }
+            sb.append(formatKVPair(key, value));
+        }
+    }
+
+    private String formatKVPair(String key, Object value) {
+        if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
             boolean needsSep = false;
             for (Object obj: (List) value) {
@@ -604,13 +603,13 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                 needsSep = true;
             }
             sb.append("]");
-			return("\"" + key + "\":" + sb.toString());
-		} else if (value instanceof String) {
-			value = StringEscapeUtils.escapeJavaScript((String) value);
-			return("\"" + key + "\":\""  + value + "\"");
-		}
-		throw new IllegalArgumentException(value + " must be either String or a list of strings");
-	}
+            return "\"" + key + "\":" + sb.toString();
+        } else if (value instanceof String) {
+            String newValue = StringEscapeUtils.escapeJavaScript((String) value);
+            return "\"" + key + "\":\""  + newValue + "\"";
+        }
+        throw new IllegalArgumentException(value + " must be either String or a list of strings");
+    }
 
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
@@ -631,8 +630,9 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         this.edited = edited;
     }
 
-    /*
+    /**
      * Removed from the view all the direct attributes that aren't editable constraints
+     * @return altered template query
      */
     public TemplateQuery removeDirectAttributesFromView() {
         TemplateQuery templateQuery = (TemplateQuery) super.clone();
