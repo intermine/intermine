@@ -56,7 +56,7 @@ public class UpgradeBagList implements Runnable
                                             primaryIdentifiersList, "", false);
                     if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                         Map<Integer, List> matches = result.getMatches();
-                        bag.upgradeOsb(matches.keySet());
+                        bag.upgradeOsb(matches.keySet(), false);
                         savedBagsStatus.put(bag.getName(), Constants.CURRENT_BAG);
                     } else {
                         session.setAttribute("bagQueryResult_" + bag.getName(), result);
