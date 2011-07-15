@@ -116,7 +116,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
                 return;
             }
 
-            PathQuery query = buildQuery(model, reportObject.getId());
+            PathQuery query = buildQuery(model, new Integer(reportObject.getId()));
             ExportResultsIterator result = executor.execute(query);
 
             Map<String, Map<GOTerm, Set<String>>> goTermsByOntology =
@@ -202,8 +202,8 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             }
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
             ExportResultsIterator result = executor.execute(q, 0, 1);
-            organismCache.put(organismField, result.hasNext());
+            organismCache.put(organismField, Boolean.valueOf(result.hasNext()));
         }
-        return organismCache.get(organismField);
+        return organismCache.get(organismField).booleanValue();
     }
 }
