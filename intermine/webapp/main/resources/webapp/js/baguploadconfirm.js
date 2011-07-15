@@ -2,8 +2,8 @@ var duplicateArray = new Array();
 var tdColorArray = new Array();
 var highlightColor = '#FFF3D3';
 
-function initForm(bagName) {
-    if (bagName != null && bagName != "") {
+function initForm(buildNewBag) {
+    if (buildNewBag == null) {
         jQuery("#newBagName").attr('disabled', 'disabled');
     }
 }
