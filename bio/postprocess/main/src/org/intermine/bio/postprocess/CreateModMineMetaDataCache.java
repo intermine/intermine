@@ -492,6 +492,4 @@ public final class CreateModMineMetaDataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read sequenced features types, took: " + timeTaken + " ms.");
     }
-
-    
 }
