@@ -49,8 +49,10 @@ public class FriendlyMineLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, false,

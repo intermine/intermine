@@ -73,7 +73,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
 
         //=== Handle object ===
         // From gene report page
-        InterMineObject object = (InterMineObject) reportObject.getObject();
+        InterMineObject object = reportObject.getObject();
         // From list analysis page
         InterMineBag bag = (InterMineBag) request.getAttribute("bag"); // OrthologueLinkController
 
@@ -142,7 +142,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
             WebResultsExecutor we = im.getWebResultsExecutor(profile);
             WebResults webResults = we.execute(q);
             PagedTable pagedResults = new PagedTable(webResults,
-                    reportObject.getNumberOfTableRowsToShow());
+                    reportObject.getNumberOfTableRowsToShow().intValue());
             pagedResults.setTableid("CytoscapeNetworkDisplayer");
             request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
         } catch (ObjectStoreException e) {
