@@ -173,7 +173,7 @@ public class CreateFlankingRegions
                     try {
                         PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
                                 "includeGene", "Not setting");
-                        region.setFieldValue("includeGene", includeGene);
+                        region.setFieldValue("includeGene", Boolean.valueOf(includeGene));
                     } catch (MetaDataException e) {
                         // GeneFlankingRegion.includeGene not in model so do nothing
                     }
