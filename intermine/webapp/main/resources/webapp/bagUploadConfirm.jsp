@@ -20,7 +20,7 @@
 <div id="sidebar">
   <div class="wrap">
   <c:choose>
-  <c:when test="${empty bagName}">
+  <c:when test="${!empty buildNewBag}">
     <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
           value='Save a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
@@ -229,7 +229,7 @@
 
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
-  initForm("${bagName}");
+  initForm("${buildNewBag}");
   checkIfAlreadyInTheBag();
 </script>
 
