@@ -25,7 +25,7 @@ h2 { margin-bottom:10px; }
     #object_header table.fields { width:50%; }
 
     /* header inline lists */
-	#object_header div.inline-list { margin:0; }
+  #object_header div.inline-list { margin:0; }
     #object_header div.inline-list ul { margin-left:3px; }
 
     /* header link */
@@ -36,9 +36,9 @@ h2 { margin-bottom:10px; }
         #object_header #displayers.table h3 { border:0; }
 
     /* share this */
-	#object_header #share { position:relative; font-size:11px; margin-top:6px; }
+  #object_header #share { position:relative; font-size:11px; margin-top:6px; }
     #object_header #share a { background:url('../images/report/share_badge.png') no-repeat left; width:44px; height:11px;
-     display:inline-block; margin-left:3px; }
+     display:inline-block; margin-left:3px; cursor:pointer; }
     #object_header #share div.popup { display:none; position:absolute; top:0px; left:0; z-index:2; background:#FFF;
      border:1px solid #7F7F7F; padding:6px; }
     #object_header #share div.popup input { display:block; width:400px; font-size:11px; }
