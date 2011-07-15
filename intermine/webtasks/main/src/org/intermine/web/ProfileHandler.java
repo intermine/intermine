@@ -47,7 +47,7 @@ class ProfileHandler extends DefaultHandler
     private Map<String, Set<String>> bagsValues;
     private ObjectStoreWriter osw;
     private int version;
-	private String apiKey = null;
+    private String apiKey = null;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -85,8 +85,7 @@ class ProfileHandler extends DefaultHandler
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, String defaultUsername,
-    		String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
-            int version) {
+            String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version) {
         super();
         this.profileManager = profileManager;
         this.username = defaultUsername;
@@ -119,10 +118,10 @@ class ProfileHandler extends DefaultHandler
      * @return the map of bag values
      */
     public Map<String, Set<String>> getBagsValues() {
-		return bagsValues;
-	}
+        return bagsValues;
+    }
 
-	/**
+    /**
      * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
@@ -135,7 +134,7 @@ class ProfileHandler extends DefaultHandler
                 password = attrs.getValue("password");
             }
             if (attrs.getValue("apikey") != null) {
-            	apiKey = attrs.getValue("apikey");
+                apiKey = attrs.getValue("apikey");
             }
         }
         if ("bags".equals(qName)) {
