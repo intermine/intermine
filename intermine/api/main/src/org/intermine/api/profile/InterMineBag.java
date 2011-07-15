@@ -338,9 +338,10 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Upgrades the ObjectStoreBag with a new ObjectStoreBag containing the collection of elements
      * given in input
      * @param values the collection of elements to add
+     * @param updateBagValues id true if we upgrade the bagvalues table
      * @throws ObjectStoreException if an error occurs fetching a new ID
      */
-    public void upgradeOsb(Collection<Integer> values) throws ObjectStoreException {
+    public void upgradeOsb(Collection<Integer> values, boolean updateBagValues) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         SavedBag savedBag = (SavedBag) uosw.getObjectById(savedBagId, SavedBag.class);
         try {
@@ -351,6 +352,10 @@ public class InterMineBag implements WebSearchable, Cloneable
             savedBag.setCurrent(true);
             isCurrent = true;
             uosw.store(savedBag);
+            if (updateBagValues) {
+                deleteAllBagValues();
+                addBagValues();
+            }
         } finally {
             if (oswProduction != null) {
                 oswProduction.close();
