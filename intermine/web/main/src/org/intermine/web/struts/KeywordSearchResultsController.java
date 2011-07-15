@@ -120,16 +120,24 @@ public class KeywordSearchResultsController extends TilesAction
         searchTime = System.currentTimeMillis() - searchTime;
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
+        Set<Integer> objectIds = new HashSet<Integer>();
         if (result != null) {
             totalHits = result.getNumHits();
             LOG.debug("Browse found " + result.getNumHits() + " hits");
             BrowseHit[] browseHits = result.getHits();
-            Set<Integer> objectIds = getObjectIds(browseHits);
+            objectIds = getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = getObjects(im, objectIds);
             Vector<KeywordSearchHit> searchHits = getSearchHits(browseHits, objMap);
             searchResultsParsed = parseResults(im, request, searchHits);
             searchResultsFacets = parseFacets(result, facets, facetValues);
         }
+
+        if (objectIds.size() == 1) {
+            String id = objectIds.iterator().next().toString();
+            return new ForwardParameters(mapping.findForward("report"))
+                .addParameter("id", id).forward();
+        }
+
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
 
