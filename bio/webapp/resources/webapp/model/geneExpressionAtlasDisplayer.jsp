@@ -39,9 +39,11 @@
     <strong>Adjust the p value</strong>
     <fieldset class="p-value">
       <tiles:insert name="geneExpressionAtlasDisplayerSlider.jsp">
-        <tiles:put name="defaultPValue" value="0.05" />
+        <tiles:put name="defaultPValue" value="${defaultPValue}" />
       </tiles:insert>
     </fieldset>
+
+    <input class="update" type="button" value="Update" title="Update the chart"></input>
   </div>
 </div>
 
@@ -146,7 +148,14 @@
           }
         }
 
-        <%-- something did not work --%>
+        <%-- p-value --%>
+        if ("pValue" in filters) {
+          if (expression.pValue > filters.pValue) {
+            return false;
+          }
+        }
+
+        <%-- all fine --%>
         return true;
       }
 
@@ -188,6 +197,9 @@
         geneExpressionAtlasDisplayer.currentFilter.regulationType.push(jQuery(this).attr('title'));
       });
 
+      <%-- p-value --%>
+      geneExpressionAtlasDisplayer.currentFilter.pValue = jQuery("#gene-expression-atlas div.settings fieldset.p-value input.value").val();
+
       jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
     }
 
@@ -225,7 +237,7 @@
 
     <%-- attache events to the sidebar settings, set as filters and redraw --%>
     (function() {
-      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
+      jQuery("#gene-expression-atlas div.settings input.update").click(function() {
         updateCurrentFilter();
         <%-- redraw --%>
         filterAndDrawChart(true);

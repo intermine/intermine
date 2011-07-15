@@ -67,7 +67,7 @@
         //var a = value.substring(0, value.indexOf("e"));
         //var b = Math.abs(value.substring(value.indexOf("e") + 1));
         var x = - (Math.log(pValue)) / (10 * Math.log(10));
-        im.log("p: " + value + " slider: " + x);
+        //im.log("p: " + value + " slider: " + x);
 
         if (x > 1) x = 1;
 
@@ -102,7 +102,7 @@
 
       // non linear
       var p = new Number((1/Math.pow(10, value * 10)).toPrecision(21)).toExponential(2);
-      im.log("slider: " + value + ", p: " + p);
+      //im.log("slider: " + value + ", p: " + p);
       return p;
     });
   });
