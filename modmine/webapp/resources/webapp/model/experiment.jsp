@@ -110,8 +110,15 @@ input.submit {
 <c:set var="proGFF" value="PianoWaterstonCelniker"/>
 <c:set var="ANTIBODY" value="antibody"/>
 
-  <im:boxarea title="${exp.name}" stylename="gradientbox">
+<%
+// this is used to check if embargo is ended
+java.util.Date now = new java.util.Date();
+// set the variable in this page context
+pageContext.setAttribute("now",now);
+%>
 
+<im:boxarea title="${exp.name}" stylename="gradientbox">
+  
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr>
 
@@ -558,7 +565,7 @@ All GBrowse tracks generated for this experiment:
           </c:choose>
 
       </c:forEach>
-    <th>Date</th>
+    <th>Embargoed until</th>
     <th>Features, GBrowse and Data Files</th>
   </tr>
 
@@ -674,8 +681,22 @@ target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.
            </c:forEach>
       </td>
     </c:forEach>
-
+<!--
 <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
+-->
+
+<td class="sorting">
+<c:choose>
+<c:when test="${sub.embargoDate < now}" >
+embargo expired
+</c:when>
+<c:otherwise>
+<fmt:formatDate value="${sub.embargoDate}" type="date"/>
+</c:otherwise>
+</c:choose>
+</td>
+
+
 <%-- FEATURES --%>
   <td class="sorting">
     <c:if test="${!empty subCounts.value}">
