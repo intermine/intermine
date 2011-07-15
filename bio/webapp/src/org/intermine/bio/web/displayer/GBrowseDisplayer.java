@@ -34,6 +34,8 @@ public class GBrowseDisplayer extends ReportDisplayer
     }
 
     @Override
-    public void display(HttpServletRequest request, ReportObject reportObject) {
+    public void display(@SuppressWarnings("unused") HttpServletRequest request,
+            @SuppressWarnings("unused") ReportObject reportObject) {
+        // dummy, all the action happens on the JSP
     }
 }
