@@ -11,6 +11,7 @@
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
   #gene-expression-atlas div.sidebar div.legend span.up { background:#59BB14; }
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
+  #gene-expression-atlas fieldset { border:0; }
 </style>
 
 <div id="gene-expression-atlas">
@@ -29,11 +30,17 @@
     <strong>Show regulation type</strong>
     <fieldset class="regulation-type">
       <label for="upregulation-check">Upregulation</label>
-      <input type="checkbox" id="upregulation-check" title="UP" checked="checked" />
+      <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
       <label for="downregulation-check">Downregulation</label>
-      <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" />
+      <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
       <label for="noregulation-check">Not expressed</label>
-      <input type="checkbox" id="noregulation-check" title="NONE" />
+      <input type="checkbox" id="noregulation-check" title="NONE" autocomplete="off" />
+    </fieldset>
+    <strong>Adjust the p value</strong>
+    <fieldset class="p-value">
+      <tiles:insert name="geneExpressionAtlasDisplayerSlider.jsp">
+        <tiles:put name="defaultPValue" value="0.05" />
+      </tiles:insert>
     </fieldset>
   </div>
 </div>
@@ -94,17 +101,17 @@
 
         <%-- modify the chart properties --%>
         var options = {
-          isStacked: true,
-          width: 800,
-          chartArea: {left: 400, top: 0, height: 9 * n},
-          height: (9 * n) + 20,
-          backgroundColor: ["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
-          colors: ['#0000FF', '#D2D2F8', '#C2EAB8', '#59BB14'],
-          fontName: "Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
-          fontSize: 11,
-          vAxis: {title: 'Condition', titleTextStyle: {color: '#1F7492'}},
-          hAxis: {title: 'Expression Value', titleTextStyle: {color: '#1F7492'}},
-          legend: 'none'
+          isStacked:		true,
+          width:			800,
+          height:			(9 * n) + 20,
+          chartArea:		{left: 400, top: 0, height: 9 * n},
+          backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
+          colors: 			['#0000FF', '#D2D2F8', '#C2EAB8', '#59BB14'],
+          fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
+          fontSize: 		11,
+          vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
+          hAxis: 			{title: 'Expression Value', titleTextStyle:	{color: '#1F7492'}},
+          legend: 			'none'
         };
 
         // TODO: switch off any loading messages
@@ -216,7 +223,7 @@
       filterAndDrawChart();
     })();
 
-    <%-- attache events to the sidebar settings and set as filters --%>
+    <%-- attache events to the sidebar settings, set as filters and redraw --%>
     (function() {
       jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
         updateCurrentFilter();
