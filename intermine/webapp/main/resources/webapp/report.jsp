@@ -145,7 +145,7 @@
       </div>
       <script type="text/javascript">
         //<![CDATA[
-        jQuery('#object_header a.share').click(function() {
+        jQuery('#object_header #share a').click(function() {
           // show
           jQuery("#object_header #share div.popup").show();
           // select
