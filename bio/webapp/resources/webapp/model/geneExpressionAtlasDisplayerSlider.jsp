@@ -10,7 +10,7 @@
 <style>
 .slider { float:right; padding:6px 2px; margin-top:1px; }
 .slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; }
-.dragdealer { width:360px; position:relative; height:3px; background:url('model/images/scale.png') repeat-y top left; position:relative; }
+.dragdealer { width:340px; position:relative; height:3px; background:url('model/images/scale.png') repeat-y top left; position:relative; }
 .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:12px; height:23px; background-repeat:no-repeat; background-position:top left; }
 .dragdealer .handle.blue { background-image:url('model/images/slider-blue.gif'); }
 .dragdealer .handle.green { background-image:url('model/images/slider-green.gif'); }
@@ -19,7 +19,7 @@
 <div class="slider-wrap">
   <div class="slider">
     <div id="slider" class="dragdealer">
-      <div class="handle"></div>
+      <div class="handle green"></div>
     </div>
   </div>
   <input type="text" class="value" value="${defaultPValue}" autocomplete="off">
@@ -32,18 +32,33 @@
   new Dragdealer('slider');
 
   adjustSliderPosition();
-  <%-- adjust position of handle based on input --%>
+  <%-- derive slider position from p-value --%>
   function adjustSliderPosition() {
+    Math.log10 = function(arg) {
+      return Math.log(arg) / Math.LN10;
+    };
+
     jQuery("#slider div.handle").css('left', function() {
       var pValue = jQuery("div.slider-wrap input.value").val();
       if (!isNaN(parseFloat(pValue)) && isFinite(pValue) && pValue >= 0 && pValue <= 1) {
-        updateSliderColor();
+        //updateSliderColor();
 
         var width = jQuery("#slider div.handle").css('width').replace(/[^0-9]/g, '');
         var total = jQuery("#slider").css('width').replace(/[^0-9]/g, '');
 
-        // linear slider
-        return (pValue * (total - width)) + "px";
+        // linear
+        // return (pValue * (total - width)) + "px";
+
+        // non linear (http://www.wolframalpha.com/input/?i=p+%3D+10^%28-10x%29)
+        var value = new Number(pValue).toExponential().toString();
+        //var a = value.substring(0, value.indexOf("e"));
+        //var b = Math.abs(value.substring(value.indexOf("e") + 1));
+        var x = - (Math.log(pValue)) / (10 * Math.log(10));
+        im.log("p: " + value + " slider: " + x);
+
+        if (x > 1) x = 1;
+
+        return (x * (total - width)) + "px";
       } else {
         alert('The p value needs to be between 0 and 1');
       }
@@ -66,7 +81,7 @@
     if (e.keyCode == 13) adjustSliderPosition();
   });
 
-  <%-- update input on handle mouse --%>
+  <%-- derive p-value from slider --%>
   jQuery("#slider div.handle").mousemove(function(event) {
     var handle = jQuery(this);
     jQuery("div.slider-wrap input.value").val(function() {
@@ -74,7 +89,7 @@
       var width = handle.css('width').replace(/[^0-9.]/g, '');
       var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
 
-      updateSliderColor();
+      //updateSliderColor();
 
       var value = 1 - ((total - distance - width) / (total - width));
 
@@ -82,7 +97,9 @@
       // return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
 
       // non linear
-      return new Number((1/Math.pow(10, value * 10)).toPrecision(25)).toExponential(2);
+      var p = new Number((1/Math.pow(10, value * 10)).toPrecision(25)).toExponential(2);
+      im.log("slider: " + value + ", p: " + p);
+      return p;
     });
   });
 })();
