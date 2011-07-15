@@ -97,15 +97,8 @@ public class BagUploadConfirmAction extends InterMineAction
                                    ListBuildMode.IDENTIFIERS, profile, session.getId());
             session.removeAttribute("bagQueryResult");
         } else {
-            BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult_"
-                                                                             + bagName);
-            Map<String, Object> unresolved = bagQueryResult.getUnresolved();
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
-            bagToUpgrade.upgradeOsb(contents);
-            if (!unresolved.isEmpty()) {
-                List<String> unresolvedValues = new ArrayList<String>(unresolved.keySet());
-                bagToUpgrade.deleteBagValues(unresolvedValues);
-            }
+            bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
             SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, Constants.CURRENT_BAG);
         }
