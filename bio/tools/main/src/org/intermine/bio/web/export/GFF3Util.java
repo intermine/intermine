@@ -34,6 +34,7 @@ public final class GFF3Util
     private static final String UCSC_PREFIX = "chr";
 
     private GFF3Util() {
+        // don't
     }
 
     /**

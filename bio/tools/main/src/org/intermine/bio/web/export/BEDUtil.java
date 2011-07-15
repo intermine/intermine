@@ -30,6 +30,7 @@ public final class BEDUtil
     private static final String UCSC_CHR_PREFIX = "chr";
 
     private BEDUtil() {
+       // dont'
     }
 
     /**
