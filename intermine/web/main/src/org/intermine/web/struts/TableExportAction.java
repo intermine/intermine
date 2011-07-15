@@ -116,7 +116,6 @@ public class TableExportAction extends InterMineAction
         PathQuery pathQuery = pt.getWebTable().getPathQuery();
         PathQuery newPathQuery = new PathQuery(pathQuery);
         if (pathQuery instanceof TemplateQuery) {
-            newPathQuery = new PathQuery(pathQuery);
             TemplateQuery templateQuery = (TemplateQuery) pathQuery.clone();
             Map<PathConstraint, SwitchOffAbility>  constraintSwitchOffAbilityMap =
                                                    templateQuery.getConstraintSwitchOffAbility();
