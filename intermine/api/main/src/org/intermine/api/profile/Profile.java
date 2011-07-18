@@ -239,7 +239,7 @@ public class Profile
      * @param name the template name
      * @param trackerDelegate used to rename the template tracks.
      */
-    public void deleteTemplate(String name, TrackerDelegate trackerDelegate) {
+    public void deleteTemplate(String name, TrackerDelegate trackerDelegate, boolean deleteTracks) {
         savedTemplates.remove(name);
         if (manager != null) {
             if (!savingDisabled) {
@@ -249,7 +249,7 @@ public class Profile
         }
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-        if (trackerDelegate != null) {
+        if (trackerDelegate != null && deleteTracks) {
             trackerDelegate.updateTemplateName(name, "deleted_" + name);
         }
     }
