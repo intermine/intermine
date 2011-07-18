@@ -13,7 +13,7 @@
     /* use absolute value */
     #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0;
         -moz-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; float:left; }
-    #cwtabsbyside { float: right; width: 300px; }
+    #cwtabsbyside { float: right; width: 300px; display:none; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
     label { vertical-align: middle; }
     #powerby { padding: 5px; text-align: center; }
@@ -22,7 +22,6 @@
 
     #legendall { width:100%; height:50px; }
 
-    #interactions-wrap { overflow-x:auto; }
     #interactions-wrap div.inside { min-width:1040px; }
 
     <%-- sidebar toolbar bar --%>
@@ -267,7 +266,11 @@
                                              .width(600);
                 } else {
                     networkdata = response;
+                    <%-- attach overflow --%>
+                    jQuery("#interactions-wrap").css('overflow-x', 'auto');
+                    <%-- show network --%>
                     displayNetwork(networkdata, fullInteractingGeneSet, project_title, project_baseurl, project_path);
+                    <%-- show toolbox --%>
                     jQuery("#cwtabsbyside").css('display', 'inline');
                 }
             },
