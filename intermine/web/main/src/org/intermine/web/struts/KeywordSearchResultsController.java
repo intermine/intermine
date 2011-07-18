@@ -132,12 +132,6 @@ public class KeywordSearchResultsController extends TilesAction
             searchResultsFacets = parseFacets(result, facets, facetValues);
         }
 
-        if (objectIds.size() == 1) {
-            String id = objectIds.iterator().next().toString();
-            return new ForwardParameters(mapping.findForward("report"))
-                .addParameter("id", id).forward();
-        }
-
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
 

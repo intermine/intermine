@@ -223,12 +223,9 @@ public class AttributeLinksController extends TilesAction
                 } else if ("dataset".equals(propType)) {
                     config.put("dataset", value);
                 } else if ("text".equals(propType)) {
-                    // parse out the title of the external link, e.g. "blabla: <>" => "blabla"
                     config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "")
                             .replaceFirst("attributeValue", ""));
-
-                    String text;
-                    text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
+                    String text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
                     config.put("text", text);
                 }
             }
