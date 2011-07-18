@@ -3,7 +3,7 @@ var tdColorArray = new Array();
 var highlightColor = '#FFF3D3';
 
 function initForm(buildNewBag) {
-    if (buildNewBag == null) {
+    if (buildNewBag == null || buildNewBag != 'true') {
         jQuery("#newBagName").attr('disabled', 'disabled');
     }
 }
