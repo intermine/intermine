@@ -101,7 +101,7 @@ public class ModifyTemplateAction extends InterMineAction
                                new ActionMessage("errors.modifyTemplate.delete"));
                 }
 
-                profile.deleteTemplate(template, im.getTrackerDelegate());
+                profile.deleteTemplate(template, im.getTrackerDelegate(), true);
             }
 
             if (SessionMethods.isSuperUser(session)) {

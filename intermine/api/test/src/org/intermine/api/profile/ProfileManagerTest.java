@@ -188,7 +188,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                 bobProfile.deleteQuery(name);
             }
             for (String name : bobProfile.getSavedTemplates().keySet()) {
-                bobProfile.deleteTemplate(name, null);
+                bobProfile.deleteTemplate(name, null, true);
             }
             for (String name : bobProfile.getSavedBags().keySet()) {
                 bobProfile.deleteBag(name);
@@ -199,7 +199,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                 sallyProfile.deleteQuery(name);
             }
             for (String name : sallyProfile.getSavedTemplates().keySet()) {
-                sallyProfile.deleteTemplate(name, null);
+                sallyProfile.deleteTemplate(name, null, true);
             }
             for (String name : sallyProfile.getSavedBags().keySet()) {
                 sallyProfile.deleteBag(name);

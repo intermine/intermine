@@ -139,7 +139,7 @@ public class LoadDefaultTemplatesTask extends Task
                 Map<String, TemplateQuery> tmpls
                     = new HashMap<String, TemplateQuery>(profileDest.getSavedTemplates());
                 for (String templateName : tmpls.keySet()) {
-                    profileDest.deleteTemplate(templateName, null);
+                    profileDest.deleteTemplate(templateName, null, true);
                 }
             }
 

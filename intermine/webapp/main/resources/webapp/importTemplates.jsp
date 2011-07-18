@@ -26,6 +26,9 @@
       <tr>
         <td align="right" valign="top"><fmt:message key="importTemplates.overwriting"/> <html:checkbox property="overwriting"/></td>
       </tr>
+            <tr>
+        <td align="right" valign="top"><fmt:message key="importTemplates.deleteTracks"/> <html:checkbox property="deleteTracks"/></td>
+      </tr>
     </c:if>
     <tr>
       <td align="center">
