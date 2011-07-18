@@ -61,6 +61,7 @@
                     <tiles:insert name="renamableElement.jsp">
                       <tiles:put name="name" value="${savedBag.value.name}"/>
                       <tiles:put name="type" value="${type}"/>
+                      <tiles:put name="current" value="${savedBag.value.current}"/>
                       <tiles:put name="index" value="${status.count-1}"/>
                     </tiles:insert>
 
