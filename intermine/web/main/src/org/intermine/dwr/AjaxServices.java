@@ -1371,14 +1371,28 @@ public class AjaxServices
     public String getSavedBagStatus() {
         Collection<JSONObject> jsonSavedBagStatus = new HashSet<JSONObject>();
         HttpSession session = WebContextFactory.get().getSession();
+        Profile profile = SessionMethods.getProfile(session);
         Map<String, String> savedBagStatus =
             (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
         JSONObject jsonSavedBag = null;
+        String bagName = null;
+        String status = null;
         try {
             for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
                 jsonSavedBag = new JSONObject();
-                jsonSavedBag.put("key", entry.getKey());
-                jsonSavedBag.put("value", entry.getValue());
+                bagName = entry.getKey();
+                status = entry.getValue();
+                jsonSavedBag.put("bagName", bagName);
+                jsonSavedBag.put("status", status);
+                try {
+                    if (status.equals(Constants.CURRENT_BAG)) {
+                        jsonSavedBag.put("size", profile.getSavedBags().get(bagName).getSize());
+                    } else {
+                        jsonSavedBag.put("size", 0);
+                    }
+                } catch (ObjectStoreException ose) {
+                    LOG.error("Error retriving the size of beg: " + bagName, ose);
+                }
                 jsonSavedBagStatus.add(jsonSavedBag);
             }
         } catch (JSONException jse) {

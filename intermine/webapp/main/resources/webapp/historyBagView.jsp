@@ -93,7 +93,7 @@
               </td>
 
               <td class="sorting"><im:displaypath path="${savedBag.value.type}"/></td>
-              <td class="sorting" align="right">
+              <td id="size_${savedBag.value.name}" class="sorting" align="right">
                 <c:out value="${savedBag.value.size}"/>&nbsp;<c:choose>
                   <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
                   <c:otherwise>values</c:otherwise>

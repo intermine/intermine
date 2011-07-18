@@ -804,11 +804,12 @@ function refreshSavedBagStatus() {
         if(savedBagStatus) {
             var jSONObject = jQuery.parseJSON(savedBagStatus);
             jQuery.each(jSONObject, function(key, entry) {
-                var bagName = entry['key'];
-                var status = entry['value'];
+                var bagName = entry['bagName'];
+                var status = entry['status'];
                 if (status == 'NOT_CURRENT' || status == 'UPGRADING')
                     allCurrent = false;
                 document.getElementById("status_" + bagName).innerHTML = getHTML(status, bagName);
+                document.getElementById("size_" + bagName).innerHTML = entry['size'];
             })
             if (!allCurrent) {
                 setTimeout('refreshSavedBagStatus()', 1000);
