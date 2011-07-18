@@ -346,9 +346,13 @@ class Path(object):
         @param subclasses: a dict which maps subclasses (defaults to an empty dict)
         @type subclasses: dict
         """
-        self._string = str(path)
         self.model = weakref.proxy(model)
-        self.parts = model.parse_path_string(str(path), subclasses)
+        if isinstance(path, Class):
+            self._string = path.name
+            self.parts = [path]
+        else:
+            self._string = str(path)
+            self.parts = model.parse_path_string(str(path), subclasses)
 
     def __str__(self):
         return self._string
@@ -644,6 +648,9 @@ class Model(object):
 
     def column(self, path, *rest):
         return Column(path, self, *rest)
+
+    def __getattr__(self, name):
+        return self.column(name)
 
     def get_class(self, name):
         """
