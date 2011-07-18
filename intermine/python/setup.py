@@ -119,7 +119,7 @@ setup(
         name = "intermine",
         packages = ["intermine"],
         cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.98.00",
+        version = "0.98.01",
         description = "InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
