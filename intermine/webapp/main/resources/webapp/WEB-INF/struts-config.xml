@@ -445,12 +445,10 @@
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
 
-    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
-      <forward name="begin" redirect="true" path="/begin.do"/>
-    </action>
+    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
 
-    <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
-    <action path="/keywordSearchResults" forward="keywordsearchresults.page" />
+    <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController"/>
+    <action path="/keywordSearchResults" forward="keywordsearchresults.page"/>
 
     <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
@@ -461,7 +459,7 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
 
-	<action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
+    <action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
 
