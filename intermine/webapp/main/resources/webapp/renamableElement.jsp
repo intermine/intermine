@@ -6,6 +6,7 @@
 
 <tiles:useAttribute id="name" name="name"/>
 <tiles:useAttribute id="type" name="type"/>
+<tiles:useAttribute id="current" name="current" ignore="true"/>
 <tiles:useAttribute id="index" name="index"/>
 
 <!-- renamableElement.jsp -->
@@ -18,7 +19,7 @@
     <c:set var="nameForURL"/>
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
   <c:choose>
-         <c:when test="${type == 'bag'}">
+         <c:when test="${type == 'bag' && current}">
            <html:link action="/bagDetails?bagName=${nameForURL}">
              <c:out value="${name}"/>
            </html:link>
@@ -28,7 +29,9 @@
       </c:otherwise>
   </c:choose>
  </span>
+ <c:if test="${(type != 'bag' || (type == 'bag' && current))}">
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
   </a>
+ </c:if>
 <!-- /renamableElement.jsp -->
