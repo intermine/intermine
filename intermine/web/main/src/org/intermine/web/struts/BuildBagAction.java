@@ -177,6 +177,7 @@ public class BuildBagAction extends InterMineAction
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
         request.setAttribute("bagExtraFilter", buildBagForm.getExtraFieldValue());
+        //buildNewBag used by jsp to set editable the bag name field
         request.setAttribute("buildNewBag", "true");
         return mapping.findForward("bagUploadConfirm");
     }
