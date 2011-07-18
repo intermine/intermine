@@ -13,13 +13,37 @@
 <script type="text/javascript">
   <!--
   function toggleNode(id, path) {
-    /*if (isExplorer()) {
-      return true;
-    }*/
     if ($(id).innerHTML=='') {
+        <%-- can't touch these --%>
+        var parents = jQuery("#" + id.replace(/\./g, "\\.")).parents("*");
+        var cantTouchThese = new Array();
+        for (var i = 0; i < parents.length; i++) {
+          var parentId = jQuery(parents[i]).attr('id');
+          if (typeof parentId !== 'undefined' && parentId !== false && parentId.length > 0) {
+            cantTouchThese.push(parentId);
+          }
+        }
+
+        <%-- collapse all expanded --%>
+        jQuery("div.browserline img.toggle").each(function() {
+            if (jQuery(this).attr("src").indexOf("minus") != -1) {
+                var id = jQuery(this).parent().attr('title');
+                var target = id.replace(/\./g, "\\.");
+                <%-- clear the target div if not our new toggle's daddy --%>
+                if (jQuery("#" + target).exists() && cantTouchThese.indexOf(id) < 0) {
+                  jQuery("#" + target).html('');
+                  jQuery(this).attr('src', 'images/plus.gif');
+                }
+            }
+        });
+
+
       new Ajax.Updater(id, '<html:rewrite action="/queryBuilderChange"/>',
         {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
       $('img_'+path).src='images/minus.gif';
+
+      <%-- TODO: scroll to target --%>
+
     } else {
       // still need to call queryBuilderChange
       $('img_'+path).src='images/plus.gif';
@@ -28,6 +52,7 @@
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
       $(id).innerHTML='';
     }
+
     return false;
   }
 

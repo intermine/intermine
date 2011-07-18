@@ -10,8 +10,8 @@
 <html:xhtml/>
 
 <c:set var="indent" value="0"/>
-<%-- Table tag is tricky here. It closes all the nested divs so when 
-there is some closing div missing than it doesn't spoil query builder page. 
+<%-- Table tag is tricky here. It closes all the nested divs so when
+there is some closing div missing than it doesn't spoil query builder page.
 --%>
 <table cellpadding="0" cellspacing="0" border="0"><tr><td>
 <c:forEach var="node" items="${nodes}">

@@ -129,12 +129,14 @@
         </c:when>
         <c:when test="${node.button == '+'}">
           <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.pathString}"
+            title="${node.pathString}"
             onclick="return toggleNode('${node.pathString}', '${node.pathString}')">
             <img class="toggle" id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
           </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
           <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.prefix}"
+            title="${node.pathString}"
             onclick="return toggleNode('${node.pathString}', '${node.pathString}');">
             <img class="toggle" id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
           </html:link>
