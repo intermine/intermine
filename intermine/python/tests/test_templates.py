@@ -9,7 +9,7 @@ class TestTemplates(WebserviceTest):
         self.service = Service(self.get_test_root())
 
     def testGetTemplate(self):
-        """Should be able to get a template from the webservice, if it exists"""
+        """Should be able to get a template from the webservice, if it exists, and get its results"""
         self.assertEqual(len(self.service.templates), 12)
         t = self.service.get_template("MultiValueConstraints")
         self.assertTrue(isinstance(t, Template))
@@ -20,7 +20,7 @@ class TestTemplates(WebserviceTest):
         def do_tests(error=None):
             if attempts < 5:
                 try:
-                    self.assertEqual(t.get_results_list(), expected)
+                    self.assertEqual(t.get_results_list("list"), expected)
                 except IOError, e:
                     do_tests(e)
             else:

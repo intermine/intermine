@@ -230,7 +230,7 @@ class Query(object):
         +==============================================
 
     """
-    def __init__(self, model, service=None, validate=True):
+    def __init__(self, model, service=None, validate=True, root=None):
         """
         Construct a new Query
         =====================
@@ -251,6 +251,11 @@ class Query(object):
 
         """
         self.model = model
+        if root is None:
+            self.root = root
+        else:
+            self.root = model.make_path(root).root
+
         self.name = ''
         self.description = ''
         self.service = service
@@ -264,6 +269,16 @@ class Query(object):
         self._logic_parser = constraints.LogicParser(self)
         self._logic = None
         self.constraint_factory = constraints.ConstraintFactory()
+
+        # Set up sugary aliases
+        self.c = self.column
+        self.filter = self.where
+        self.add_column = self.add_view
+        self.add_columns = self.add_view
+        self.add_views = self.add_view
+        self.select = self.add_view
+        self.order_by = self.add_sort_order
+        self.all = self.get_results_list
 
     @classmethod
     def from_xml(cls, xml, *args, **kwargs):
@@ -395,8 +410,36 @@ class Query(object):
                 views.extend(list(p))
             else:
                 views.extend(re.split("(?:,?\s+|,)", p))
-        if self.do_verification: self.verify_views(views)
-        self.views.extend(views)
+
+        views = map(self.prefix_path, views)
+
+        views_to_add = []
+        for view in views:
+            if view.endswith(".*"):
+                view = re.sub("\.\*$", "", view)
+                path = self.model.make_path(view, self.get_subclass_dict())
+                cd = path.end_class
+                attr_views = map(lambda x: view + "." + x.name, cd.attributes)
+                views_to_add.extend(attr_views)
+            else:
+                views_to_add.append(view)
+
+        if self.do_verification: 
+            self.verify_views(views_to_add)
+
+        self.views.extend(views_to_add)
+            
+        return self
+    
+    def prefix_path(self, path):
+        if self.root is None:
+            self.root = self.model.make_path(path, self.get_subclass_dict()).root
+            return path
+        else:
+            if path.startswith(self.root.name):
+                return path
+            else: 
+                return self.root.name + "." + path
 
     def clear_view(self):
         """
@@ -453,7 +496,15 @@ class Query(object):
 
         @rtype: L{intermine.constraints.Constraint}
         """
-        con = self.constraint_factory.make_constraint(*args, **kwargs)
+        if len(args) == 1 and len(kwargs) == 0:
+            if isinstance(args[0], tuple):
+                con = self.constraint_factory.make_constraint(*args[0])
+            else:
+                con = args[0]
+        else:
+            con = self.constraint_factory.make_constraint(*args, **kwargs)
+
+        con.path = self.prefix_path(con.path)
         if self.do_verification: self.verify_constraint_paths([con])
         if hasattr(con, "code"): 
             self.constraint_dict[con.code] = con
@@ -461,6 +512,13 @@ class Query(object):
             self.uncoded_constraints.append(con)
         
         return con
+
+    def where(self, *args, **kwargs):
+        self.add_constraint(*args, **kwargs)
+        return self
+
+    def column(self, string):
+        return self.model.column(self.prefix_path(string), self.model, self.get_subclass_dict(), self)
 
     def verify_constraint_paths(self, cons=None):
         """
@@ -584,9 +642,13 @@ class Query(object):
         @rtype: L{intermine.pathfeatures.Join}
         """
         join = Join(*args, **kwargs)
+        join.path = self.prefix_path(join.path)
         if self.do_verification: self.verify_join_paths([join])
         self.joins.append(join)
-        return join
+        return self
+
+    def outerjoin(self, column):
+        return self.add_join(str(column), "OUTER")
 
     def verify_join_paths(self, joins=None):
         """
@@ -622,6 +684,7 @@ class Query(object):
 
         """
         path_description = PathDescription(*args, **kwargs)
+        path_description.path = self.prefix_path(path_description.path)
         if self.do_verification: self.verify_pd_paths([path_description])
         self.path_descriptions.append(path_description)
         return path_description
@@ -696,6 +759,7 @@ class Query(object):
             logic = self._logic_parser.parse(value)
         if self.do_verification: self.validate_logic(logic)
         self._logic = logic
+        return self
 
     def validate_logic(self, logic=None):
         """
@@ -772,9 +836,11 @@ class Query(object):
         This method will try to validate the sort order
         by calling validate_sort_order()
         """
-        so = SortOrder(path, direction)
+        so = SortOrder(str(path), direction)
+        so.path = self.prefix_path(so.path)
         if self.do_verification: self.validate_sort_order(so)
         self._sort_order_list.append(so)
+        return self
 
     def validate_sort_order(self, *so_elems):
         """
@@ -822,7 +888,7 @@ class Query(object):
                 subclass_dict[c.path] = c.subclass
         return subclass_dict
 
-    def results(self, row="list", start=0, size=None):
+    def results(self, row="rr", start=0, size=None):
         """
         Return an iterator over result rows
         ===================================
@@ -847,6 +913,19 @@ class Query(object):
             params["size"] = size
         view = self.views
         return self.service.get_results(path, params, row, view)
+
+    def one(self, row="rr"):
+        c = self.count()
+        if (c != 1):
+            raise "Result size is not one: got " + str(c) + " results"
+        else:
+            return self.first(row)
+
+    def first(self, row="rr"):
+        try:
+            return self.results(row, start=0, size=1).next()
+        except StopIteration:
+            return None
 
     def get_results_list(self, *args, **kwargs):
         """
@@ -1205,7 +1284,7 @@ class Template(Query):
                 setattr(con, key, value)
         return clone
 
-    def results(self, row="list", start=0, size=None, **con_values):
+    def results(self, row="rr", start=0, size=None, **con_values):
         """
         Get an iterator over result rows
         ================================
@@ -1235,7 +1314,7 @@ class Template(Query):
         clone = self.get_adjusted_template(con_values)
         return super(Template, clone).results(row, start, size)
 
-    def get_results_list(self, row="list", start=0, size=None, **con_values):
+    def get_results_list(self, row="rr", start=0, size=None, **con_values):
         """
         Get a list of result rows
         =========================

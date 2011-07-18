@@ -5,6 +5,7 @@ from intermine.model import *
 from intermine.webservice import *
 from intermine.query import *
 from intermine.constraints import *
+from intermine.lists.list import List
 
 from testserver import TestServer
 
@@ -103,18 +104,25 @@ class TestService(WebserviceTest):
 class TestQuery(WebserviceTest):
 
     model = None
+    service = None
     expected_unary = '[<UnaryConstraint: Employee.age IS NULL>, <UnaryConstraint: Employee.name IS NOT NULL>]'
     expected_binary = '[<BinaryConstraint: Employee.age > 50000>, <BinaryConstraint: Employee.name = John>, <BinaryConstraint: Employee.end != 0>]'
-    expected_multi = "[<MultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry']>, <MultiConstraint: Manager.name NONE OF ['Sue', 'Jane', 'Helen']>]"
-    expected_list = "[<ListConstraint: Employee IN my-list>, <ListConstraint: Manager NOT IN my-list>]"
-    expected_loop = '[<LoopConstraint: Employee IS Employee.department.manager>, <LoopConstraint: CEO IS NOT CEO.company.departments.employees>]' 
+    expected_multi = "[<MultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry']>, <MultiConstraint: Employee.name NONE OF ['Sue', 'Jane', 'Helen']>]"
+    expected_list = '[<ListConstraint: Employee IN my-list>, <ListConstraint: Employee.department.manager NOT IN my-list>]' 
+    expected_loop = '[<LoopConstraint: Employee IS Employee.department.manager>, <LoopConstraint: Employee.department.manager IS NOT Employee.department.company.CEO>]'
     expected_ternary = '[<TernaryConstraint: Employee LOOKUP Susan>, <TernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg>]'
     expected_subclass = "[<SubClassConstraint: Department.employees ISA Manager>]"
 
     def setUp(self):
+        if self.service is None:
+            self.__class__.service = Service(self.get_test_root())
         if self.model is None:
-            self.__class__.model = Model(self.get_test_root() + "/model")
-        self.q = Query(self.model)
+            self.__class__.model = Model(self.get_test_root() + "/model", self.service)
+        self.q = Query(self.model, self.service)
+        class DummyManager:
+            pass
+        list_dict = {"service": None, "manager": DummyManager(), "name": "my-list", "title": None, "type": "Employee", "size": 10}
+        self.l = List(**list_dict)
 
     def testAddViews(self):
         """Queries should be able to add legal views, and complain about illegal ones"""
@@ -162,6 +170,14 @@ class TestQuery(WebserviceTest):
         self.q.add_constraint('Employee.name', 'IS NOT NULL')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_unary)
 
+    def testUnaryConstraintsSugar(self):
+        """Queries should be fine with NULL/NOT NULL constraints"""
+        Employee = self.q.model.table("Employee")
+
+        self.q.add_constraint(Employee.age == None)
+        self.q.add_constraint(Employee.name != None)
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_unary)
+
     def testAddBinaryConstraints(self):
         """Queries should be able to handle constraints on attribute values"""
         self.q.add_constraint('Employee.age', '>', 50000)
@@ -169,10 +185,24 @@ class TestQuery(WebserviceTest):
         self.q.add_constraint('Employee.end', '!=', 0)
         self.assertEqual(self.q.constraints.__repr__(), self.expected_binary)
         try:
-            self.q.add_constraint('Department.company', '=', "foo")
+            self.q.add_constraint('Employee.department', '=', "foo")
             self.fail("No ConstraintError thrown for non attribute BinaryConstraint")
         except ConstraintError, ex:
-            self.assertEqual(ex.message, "'Department.company' does not represent an attribute")
+            self.assertEqual(ex.message, "'Employee.department' does not represent an attribute")
+
+    def testAddBinaryConstraintsSugar(self):
+        """Queries should be able to handle constraints on attribute values"""
+        Employee = self.q.model.table("Employee")
+
+        self.q.add_constraint(Employee.age > 50000)
+        self.q.add_constraint(Employee.name == 'John')
+        self.q.add_constraint(Employee.end != 0)
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_binary)
+        try:
+            self.q.add_constraint(Employee.department == "foo")
+            self.fail("No ConstraintError thrown for non attribute BinaryConstraint")
+        except ConstraintError, ex:
+            self.assertEqual(ex.message, "'Employee.department' does not represent an attribute")
 
     def testTernaryConstraint(self):
         """Queries should be able to add constraints for LOOKUPs"""
@@ -180,33 +210,60 @@ class TestQuery(WebserviceTest):
         self.q.add_constraint('Employee.department.manager', 'LOOKUP', 'John', 'Wernham-Hogg')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_ternary)
         try:
-            self.q.add_constraint('Department.company.name', 'LOOKUP', "foo")
+            self.q.add_constraint('Employee.department.name', 'LOOKUP', "foo")
             self.fail("No ConstraintError thrown for non object TernaryConstraint")
         except ConstraintError, ex:
-            self.assertEqual(ex.message, "'Department.company.name' does not represent a class, or a reference to a class")
+            self.assertEqual(ex.message, "'Employee.department.name' does not represent a class, or a reference to a class")
 
     def testMultiConstraint(self):
         """Queries should be ok with multi-value constraints"""
         self.q.add_constraint('Employee.name', 'ONE OF', ['Tom', 'Dick', 'Harry'])
-        self.q.add_constraint('Manager.name', 'NONE OF', ['Sue', 'Jane', 'Helen'])
+        self.q.add_constraint('Employee.name', 'NONE OF', ['Sue', 'Jane', 'Helen'])
         self.assertEqual(self.q.constraints.__repr__(), self.expected_multi)
-        self.assertRaises(TypeError, self.q.add_constraint, "Manager.name", "ONE OF", "Tom, Dick, Harry")
-        self.assertRaises(ConstraintError, self.q.add_constraint, "Manager", "ONE OF", ["Tom", "Dick", "Harry"])
+        self.assertRaises(TypeError, self.q.add_constraint, "Employee.name", "ONE OF", "Tom, Dick, Harry")
+        self.assertRaises(ConstraintError, self.q.add_constraint, "Employee", "ONE OF", ["Tom", "Dick", "Harry"])
+
+    def testMultiConstraintSugar(self):
+        """Queries should be ok with multi-value constraints"""
+        Employee = self.q.model.table("Employee")
+
+        self.q.add_constraint(Employee.name == ['Tom', 'Dick', 'Harry'])
+        self.q.add_constraint(Employee.name != ['Sue', 'Jane', 'Helen'])
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_multi)
+        self.q.add_constraint(Employee.name == "Tom, Dick, Harry") # This method does not throw an error in this form!!
+        self.assertRaises(ConstraintError, self.q.add_constraint, Employee == ["Tom", "Dick", "Harry"])
 
     def testListConstraint(self):
         """Queries should be ok with list constraints"""
         self.q.add_constraint('Employee', 'IN', 'my-list')
-        self.q.add_constraint('Manager', 'NOT IN', 'my-list')
+        self.q.add_constraint('Employee.department.manager', 'NOT IN', 'my-list')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_list)
         self.assertRaises(ConstraintError, self.q.add_constraint, "Employee.name", "IN", "some list")
+
+    def testListConstraintSugar(self):
+        """Queries should be ok with list constraints"""
+        Employee = self.q.model.table("Employee")
+
+        self.q.add_constraint(Employee == self.l)
+        self.q.add_constraint(Employee.department.manager != self.l)
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_list)
+        self.assertRaises(ConstraintError, self.q.add_constraint, Employee.name == self.l)
 
     def testLoopConstraint(self):
         """Queries should be ok with loop constraints"""
         self.q.add_constraint('Employee', 'IS', 'Employee.department.manager')
-        self.q.add_constraint('CEO', 'IS NOT', 'CEO.company.departments.employees')
+        self.q.add_constraint('Employee.department.manager', 'IS NOT', 'Employee.department.company.CEO')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_loop)
         self.assertRaises(ConstraintError, self.q.add_constraint, "Employee", "IS", "Employee.department")
-        self.assertRaises(ConstraintError, self.q.add_constraint, "Company", "IS", "Company.CEO")
+
+    def testLoopConstraintSugar(self):
+        """Queries should be ok with loop constraints made with alchemical sugar"""
+        Employee = self.q.model.table("Employee")
+
+        self.q.add_constraint(Employee == Employee.department.manager)
+        self.q.add_constraint(Employee.department.manager != Employee.department.company.CEO)
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_loop)
+        self.assertRaises(ConstraintError, self.q.add_constraint, Employee == Employee.department)
 
     def testSubclassConstraints(self):
         """Queries should be ok with sub class constraints"""
@@ -273,15 +330,56 @@ class TestQuery(WebserviceTest):
         expected ='<query constraintLogic="((A and B) or (A and C and D)) and (E or F)" longDescription="" model="testmodel" name="" sortOrder="Employee.age asc" view="Employee.name Employee.age Employee.department.name"><join path="Employee.department" style="OUTER"/><constraint code="A" op="IS NOT NULL" path="Employee.name"/><constraint code="B" op="&gt;" path="Employee.age" value="10"/><constraint code="C" extraValue="Wernham-Hogg" op="LOOKUP" path="Employee.department" value="Sales"/><constraint code="D" op="ONE OF" path="Employee.department.employees.name"><value>John</value><value>Paul</value><value>Mary</value></constraint><constraint code="E" loopPath="Employee" op="=" path="Employee.department.manager"/><constraint code="F" op="IN" path="Employee" value="some list of employees"/><constraint path="Employee.department.employees" type="Manager"/></query>'        
         self.assertEqual(expected, self.q.to_xml())
 
+    def testSugaryQueryConstruction(self):
+        """Test use of operation coercion which is similar to SQLAlchemy"""
+        model = self.q.model
+
+        Employee = model.table("Employee")
+        Manager = model.table("Manager")
+
+        expected = '<query constraintLogic="((A and B) or (A and C and D)) and (E or F)" longDescription="" model="testmodel" name="" sortOrder="Employee.age asc" view="Employee.name Employee.age Employee.department.name"><join path="Employee.department" style="OUTER"/><constraint code="A" op="IS NOT NULL" path="Employee.name"/><constraint code="B" op="&gt;" path="Employee.age" value="10"/><constraint code="C" extraValue="Wernham-Hogg" op="LOOKUP" path="Employee.department" value="Sales"/><constraint code="D" op="ONE OF" path="Employee.department.employees.name"><value>John</value><value>Paul</value><value>Mary</value></constraint><constraint code="E" loopPath="Employee" op="=" path="Employee.department.manager"/><constraint code="F" op="IN" path="Employee" value="my-list"/><constraint path="Employee.department.employees" type="Manager"/></query>'        
+
+        # SQL style
+        q = Employee.\
+                select("name", "age", "department.name").\
+                where(Employee.name != None).\
+                where(Employee.age > 10).\
+                where(Employee.department % ("Sales", "Wernham-Hogg")).\
+                where(Employee.department.employees.name == ["John", "Paul", "Mary"]).\
+                where(Employee.department.manager == Employee).\
+                where(Employee == self.l).\
+                where(Employee.department.employees >> Manager).\
+                outerjoin(Employee.department).\
+                order_by(Employee.age).\
+                set_logic("(A and B) or (A and C and D) and (E or F)")
+
+        self.assertEqual(expected, q.to_xml())
+
+        # SQLAlchemy style
+        q = self.service.query(Employee).\
+                add_columns("name", "age", "department.name").\
+                filter(Employee.name != None).\
+                filter(Employee.age > 10).\
+                filter(Employee.department % ("Sales", "Wernham-Hogg")).\
+                filter(Employee.department.employees.name == ["John", "Paul", "Mary"]).\
+                filter(Employee.department.manager == Employee).\
+                filter(Employee == self.l).\
+                filter(Employee.department.employees >> Manager).\
+                outerjoin(Employee.department).\
+                order_by(Employee.age).\
+                set_logic("(A and B) or (A and C and D) and (E or F)")
+
+        self.assertEqual(expected, q.to_xml())
+
 class TestTemplate(TestQuery):
     
     expected_unary = '[<TemplateUnaryConstraint: Employee.age IS NULL (editable, locked)>, <TemplateUnaryConstraint: Employee.name IS NOT NULL (editable, locked)>]'
     expected_binary = '[<TemplateBinaryConstraint: Employee.age > 50000 (editable, locked)>, <TemplateBinaryConstraint: Employee.name = John (editable, locked)>, <TemplateBinaryConstraint: Employee.end != 0 (editable, locked)>]'
-    expected_multi = "[<TemplateMultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry'] (editable, locked)>, <TemplateMultiConstraint: Manager.name NONE OF ['Sue', 'Jane', 'Helen'] (editable, locked)>]"
+    expected_multi = "[<TemplateMultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry'] (editable, locked)>, <TemplateMultiConstraint: Employee.name NONE OF ['Sue', 'Jane', 'Helen'] (editable, locked)>]"
     expected_ternary = '[<TemplateTernaryConstraint: Employee LOOKUP Susan (editable, locked)>, <TemplateTernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg (editable, locked)>]'
     expected_subclass = '[<TemplateSubClassConstraint: Department.employees ISA Manager (editable, locked)>]'
-    expected_list = "[<TemplateListConstraint: Employee IN my-list (editable, locked)>, <TemplateListConstraint: Manager NOT IN my-list (editable, locked)>]"
-    expected_loop = '[<TemplateLoopConstraint: Employee IS Employee.department.manager (editable, locked)>, <TemplateLoopConstraint: CEO IS NOT CEO.company.departments.employees (editable, locked)>]'
+    expected_list = '[<TemplateListConstraint: Employee IN my-list (editable, locked)>, <TemplateListConstraint: Employee.department.manager NOT IN my-list (editable, locked)>]'
+    expected_loop = '[<TemplateLoopConstraint: Employee IS Employee.department.manager (editable, locked)>, <TemplateLoopConstraint: Employee.department.manager IS NOT Employee.department.company.CEO (editable, locked)>]'
 
     def setUp(self):
         super(TestTemplate, self).setUp()
@@ -335,7 +433,7 @@ class TestQueryResults(WebserviceTest):
                 'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
                 'start': 0
             }, 
-            'list', 
+            'rr', 
             ['Employee.name', 'Employee.age', 'Employee.id']
         )
         self.assertEqual(expectedQ, q.results())
@@ -348,7 +446,7 @@ class TestQueryResults(WebserviceTest):
                 'start': 10,
                 'size': 200
             }, 
-            'list', 
+            'rr', 
             ['Employee.name', 'Employee.age', 'Employee.id']
         )
         self.assertEqual(expectedQ, q.results(start=10, size=200))
@@ -368,7 +466,7 @@ class TestQueryResults(WebserviceTest):
              'value2': '25',
              'start': 0
             }, 
-           'list', 
+           'rr', 
            ['Employee.name', 'Employee.age', 'Employee.id'])
         self.assertEqual(expected1, t.results())
         self.assertEqual(list(expected1), t.get_results_list())
@@ -387,7 +485,7 @@ class TestQueryResults(WebserviceTest):
              'value2': '55',
              'start': 0
             }, 
-           'list', 
+           'rr', 
            ['Employee.name', 'Employee.age', 'Employee.id'])
         self.assertEqual(expected2, t.results(
             A = {"op": "<", "value": "Tom"},
@@ -409,7 +507,7 @@ class TestQueryResults(WebserviceTest):
              'start': 10,
              'size': 200
             }, 
-           'list', 
+           'rr', 
            ['Employee.name', 'Employee.age', 'Employee.id'])
         self.assertEqual(expected2, t.results(
             start = 10,
@@ -433,9 +531,33 @@ class TestQueryResults(WebserviceTest):
         def do_tests(error=None):
             if attempts < 5:
                 try:
-                    self.assertEqual(self.query.get_results_list(), expected)
-                    self.assertEqual(self.template.get_results_list(), expected)
+                    self.assertEqual(self.query.get_results_list("list"), expected)
+                    self.assertEqual(self.template.get_results_list("list"), expected)
                 except IOError, e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
+
+    def testResultRows(self):
+        """Should be able to get results as result rows"""
+        attempts = 0
+        assertEqual = self.assertEqual
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    q_res = self.query.all()
+                    t_res = self.template.all()
+                    for results in [q_res, t_res]:
+                        assertEqual(results[0]["age"], 'bar')
+                        assertEqual(results[1]["Employee.age"], 1.23)
+                        assertEqual(results[2][0], True)
+                        assertEqual(len(results), 3)
+                        for row in results:
+                            assertEqual(len(row), 3)
+
+                except Error, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
@@ -477,7 +599,7 @@ class TestTSVResults(WebserviceTest):
         if self.service is None:
             self.__class__.service = Service(self.get_test_root())
         if self.model is None:
-            self.__class__.model = Model(self.get_test_root() + "/model")
+            self.__class__.model = Model(self.get_test_root() + "/service/model")
 
         q = Query(self.model, self.service)
         q.add_view("Employee.name", "Employee.age", "Employee.id")

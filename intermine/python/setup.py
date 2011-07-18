@@ -30,7 +30,7 @@ class TestCommand(Command):
 
     def run(self):
         '''
-        Finds all the tests modules in tests/, and runs them.
+        Finds all the tests modules in tests/, and runs them, exiting after they are all done
         '''
 
         log.set_verbosity(self.verbose)
@@ -53,6 +53,7 @@ class TestCommand(Command):
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = self.verbose)
         t.run(tests)
+        exit()
 
 class CleanCommand(Command):
     """

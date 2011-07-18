@@ -40,6 +40,7 @@ class TestServer( threading.Thread ):
         super(TestServer, self).__init__()
         self.daemon = daemonise
         self.silent = silent
+        self.http = None
         # Try and get a free port number
         sock = socket()
         sock.bind(('', 0))
@@ -53,11 +54,11 @@ class TestServer( threading.Thread ):
         SilentRequestHandler.silent = self.silent
         if not self.silent:
             print "Starting", protocol, "server on port", self.port
-        httpd = HTTPServer(server_address, SilentRequestHandler)
+        self.http = HTTPServer(server_address, SilentRequestHandler)
+        self.http.serve_forever()
 
-        sa = httpd.socket.getsockname()
-        httpd.serve_forever()
-
+    def shutdown(self):
+        self.join()
 
 if __name__ == '__main__':
     server = TestServer(silent=False)
