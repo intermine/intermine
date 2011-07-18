@@ -1,7 +1,9 @@
 from xml.dom import minidom
+import weakref
 import re
 
 from .util import openAnything, ReadableException
+from .lists.list import List
 
 """
 Classes representing the data model
@@ -50,7 +52,7 @@ class Class(object):
     as part of the model they belong to.
 
     """
-    def __init__(self, name, parents):
+    def __init__(self, name, parents, model):
         """
         Constructor - Creates a new Class descriptor
         ============================================
@@ -67,6 +69,7 @@ class Class(object):
         """
         self.name = name
         self.parents = parents
+        self.model = model
         self.parent_classes = []
         self.field_dict = {}
         id = Attribute("id", "Integer", self) # All classes have the id attr
@@ -326,7 +329,7 @@ class Path(object):
     to some extent, but there are additional methods for verifying certain
     relationships as well
     """
-    def __init__(self, path_string, model, subclasses={}):
+    def __init__(self, path, model, subclasses={}):
         """
         Constructor
         ===========
@@ -343,14 +346,24 @@ class Path(object):
         @param subclasses: a dict which maps subclasses (defaults to an empty dict)
         @type subclasses: dict
         """
-        self._string = path_string
-        self.parts = model.parse_path_string(path_string, subclasses)
+        self._string = str(path)
+        self.model = weakref.proxy(model)
+        self.parts = model.parse_path_string(str(path), subclasses)
 
     def __str__(self):
         return self._string
 
     def __repr__(self):
         return '<' + self.__module__ + "." + self.__class__.__name__ + ": " + self._string + '>'
+
+    @property
+    def root(self):
+        """
+        The descriptor for the first part of the string. This should always a class descriptor.
+
+        @rtype: L{intermine.model.Class}
+        """
+        return self.parts[0]
 
     @property
     def end(self):
@@ -374,6 +387,7 @@ class Path(object):
             return self.end.type_class
         else:
             return None
+    end_class = property(get_class)
     
     def is_reference(self):
         """
@@ -400,6 +414,82 @@ class Path(object):
         """
         return isinstance(self.end, Attribute)
 
+class Column(object):
+
+    def __init__(self, path, model, subclasses={}, query=None):
+        self._model = model
+        self._query = query
+        self._subclasses = subclasses
+        if isinstance(path, Path):
+            self._path = path
+        else:
+            self._path = model.make_path(path, subclasses)
+
+    def select(self, *cols):
+        q = self._model.service.new_query(str(self))
+        q.select(*cols)
+        return q
+
+    def __getattr__(self, name):
+        cld = self._path.get_class()
+        if cld is not None:
+            try:
+                fld = cld.get_field(name)
+                return Column(str(self) + "." + name, self._model, self._subclasses, self._query)
+            except ModelError, e:
+                raise AttributeError(str(e))
+        raise AttributeError("No attribute '" + name + "'") 
+
+    def __str__(self):
+        return str(self._path)
+
+    def __mod__(self, other):
+        if isinstance(other, tuple):
+            l = [str(self), "LOOKUP"]
+            l.extend(other)
+            return tuple(l) 
+        else:
+            return (str(self), 'LOOKUP', str(other))
+
+    def __rshift__(self, other):
+        return (str(self), str(other))
+
+    def __eq__(self, other):
+        if isinstance(other, Column):
+            return (str(self), "IS", str(other))
+        elif other is None:
+            return (str(self), "IS NULL")
+        elif isinstance(other, list):
+            return (str(self), "ONE OF", other)
+        elif isinstance(other, List):
+            return (str(self), "IN", other.name)
+        else:
+            return (str(self), "=", other)
+
+    def __ne__(self, other):
+        if isinstance(other, Column):
+            return (str(self), "IS NOT", str(other))
+        elif other is None:
+            return (str(self), "IS NOT NULL")
+        elif isinstance(other, list):
+            return (str(self), "NONE OF", other)
+        elif isinstance(other, List):
+            return (str(self), "NOT IN", other.name)
+        else:
+            return (str(self), "!=", other)
+
+    def __lt__(self, other):
+        return (str(self), "<", other)
+
+    def __le__(self, other):
+        return (str(self), "<=", other)
+
+    def __gt__(self, other):
+        return (str(self), ">", other)
+
+    def __ge__(self, other):
+        return (str(self), ">=", other)
+
 class Model(object):
     """
     A class for representing the data model of an InterMine datawarehouse
@@ -422,7 +512,7 @@ class Model(object):
     of the database schema. It can be used to introspect what 
     data is available and how it is inter-related
     """
-    def __init__(self, source):
+    def __init__(self, source, service=None):
         """
         Constructor
         ===========
@@ -438,9 +528,13 @@ class Model(object):
         """
         assert source is not None
         self.source = source
+        self.service = weakref.proxy(service) if service is not None else service
         self.classes= {}
         self.parse_model(source)
         self.vivify()
+
+        # Make sugary aliases
+        self.table = self.column
 
     def parse_model(self, source):
         """
@@ -470,7 +564,7 @@ class Model(object):
                     return re.sub(r'.*\.', '', x)
                 parents = map(strip_java_prefix, 
                         c.getAttribute('extends').split(' '))
-                cl =  Class(class_name, parents)
+                cl =  Class(class_name, parents, self)
                 for a in c.getElementsByTagName('attribute'):
                     name = a.getAttribute('name')
                     type_name = strip_java_prefix(a.getAttribute('type'))
@@ -547,6 +641,9 @@ class Model(object):
         @rtype: list(L{intermine.model.Class})
         """
         return map(self.get_class, classnames)
+
+    def column(self, path, *rest):
+        return Column(path, self, *rest)
 
     def get_class(self, name):
         """

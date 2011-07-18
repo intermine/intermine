@@ -5,6 +5,7 @@ from urlparse import urlparse
 import csv
 import base64
 import httplib
+import re
 
 # Use core json for 2.6+, simplejson for <=2.5
 try:
@@ -16,7 +17,7 @@ except ImportError:
 from .query import Query, Template
 from .model import Model
 from .util import ReadableException
-from .lists import ListManager
+from .lists.listmanager import ListManager
 
 """
 Webservice Interaction Routines for InterMine Webservices
@@ -133,6 +134,10 @@ class Service(object):
         or disabled without changing your webapp login details.
 
         """
+        o = urlparse(root)
+        if not o.scheme: root = "http://" + root
+        if not root.endswith("/service"): root = root + "/service"
+
         self.root = root
         self._templates = None
         self._model = None
@@ -155,30 +160,29 @@ class Service(object):
 
         try:
             self.version
-        except WebserviceError:
-            raise ServiceError("Could not validate service - is the root url correct?")
+        except WebserviceError, e:
+            raise ServiceError("Could not validate service - is the root url correct? " + str(e))
 
         if token and self.version < 6:
             raise ServiceError("This service does not support API access token authentication")
+
+        # Set up sugary aliases
+        self.query = self.new_query
 
 
     # Delegated list methods
 
     LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists", "get_all_list_names",
-        "create_list", "get_list_count", "delete_lists"])
+        "create_list", "get_list_count", "delete_lists", "l"])
 
     def __getattribute__(self, name):
         return object.__getattribute__(self, name)
     
     def __getattr__(self, name):
-        self.__missing_method_name = name # Could also be a property
-        return getattr(self, '__methodmissing__')
-
-    def __methodmissing__(self, *args, **kwargs):
-        if self.__missing_method_name in self.LIST_MANAGER_METHODS:
-            method = getattr(self._list_manager, self.__missing_method_name)
-        self.__missing_method_name = None
-        return method(*args, **kwargs)
+        if name in self.LIST_MANAGER_METHODS:
+            method = getattr(self._list_manager, name)
+            return method
+        raise AttributeError("Could not find " + name)
 
     def __del__(self):
         try: 
@@ -204,8 +208,8 @@ class Service(object):
             try:
                 url = self.root + self.VERSION_PATH
                 self._version = int(self.opener.open(url).read())
-            except ValueError:
-                raise ServiceError("Could not parse a valid webservice version")
+            except ValueError, e:
+                raise ServiceError("Could not parse a valid webservice version: " + str(e))
         return self._version
     @property
     def release(self):
@@ -228,7 +232,7 @@ class Service(object):
             self._release = urllib.urlopen(self.root + RELEASE_PATH).read()
         return self._release
 
-    def new_query(self):
+    def new_query(self, root=None):
         """
         Construct a new Query object for the given webservice
         =====================================================
@@ -240,7 +244,7 @@ class Service(object):
 
         @return: L{intermine.query.Query}
         """
-        return Query(self.model, self)
+        return Query(self.model, self, root=root)
 
     def get_template(self, name):
         """
@@ -327,7 +331,7 @@ class Service(object):
         """
         if self._model is None:
             model_url = self.root + self.MODEL_PATH
-            self._model = Model(model_url)
+            self._model = Model(model_url, self)
         return self._model
 
     def get_results(self, path, params, rowformat, view):
@@ -354,9 +358,56 @@ class Service(object):
         """
         return ResultIterator(self.root, path, params, rowformat, view, self.opener)
 
+class ResultRow(object):
+
+    def __init__(self, data, views):
+        self.data = data
+        self.views = views
+        self.index_map = None
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.data[key]["value"]
+        else:
+            index = self._get_index_for(key)
+            return self.data[index]["value"]
+
+    def _get_index_for(self, key):
+        if self.index_map is None:
+            self.index_map = {}
+            for i in range(len(self.views)):
+                view = self.views[i]
+                headless_view = re.sub("^[^.]+.", "", view)
+                self.index_map[view] = i
+                self.index_map[headless_view] = i
+
+        return self.index_map[key]
+
+    def __str__(self):
+       root = re.sub("\..*$", "", self.views[0])
+       parts = [root + ":"]
+       for view in self.views:
+           short_form = re.sub("^[^.]+.", "", view)
+           value = self[view]
+           parts.append(short_form + "=" + str(value))
+       return " ".join(parts)
+
+    def to_l(self):
+       return map(lambda x: x["value"], self.data)
+
+    def to_d(self):
+       d = {}
+       for view in self.views:
+           d[view] = self[view]
+
+       return d
+
 class ResultIterator(object):
     
-    PARSED_FORMATS = frozenset(["list", "dict"])
+    PARSED_FORMATS = frozenset(["rr", "list", "dict"])
     STRING_FORMATS = frozenset(["tsv", "csv", "count"])
     JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
     ROW_FORMATS = PARSED_FORMATS | STRING_FORMATS | JSON_FORMATS
@@ -401,6 +452,7 @@ class ResultIterator(object):
             "csv"         : lambda: FlatFileIterator(con, EchoParser()),
             "count"       : lambda: FlatFileIterator(con, EchoParser()),
             "list"        : lambda: JSONIterator(con, ListValueParser()),
+            "rr"          : lambda: JSONIterator(con, ResultRowParser(view)),
             "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
             "jsonobjects" : lambda: JSONIterator(con, EchoParser()),
             "jsonrows"    : lambda: JSONIterator(con, EchoParser())
@@ -527,8 +579,12 @@ class JSONIterator(object):
                 self.check_return_status()
             else:
                 line = line.strip().strip(',')
-                row = json.loads(line)
-                next_row = self.parser.parse(row)
+                if len(line)> 0:
+                    try:
+                        row = json.loads(line)
+                    except json.decoder.JSONDecodeError, e:
+                        raise WebserviceError("Error parsing line from results: '" + line + "' - " + str(e)) 
+                    next_row = self.parser.parse(row)
         except StopIteration:
             raise WebserviceError("Connection interrupted")
 
@@ -625,6 +681,29 @@ class DictValueParser(Parser):
         for view, cell in pairs:
             return_dict[view] = cell.get("value")
         return return_dict
+
+class ResultRowParser(Parser):
+    """
+    A result parser that produces ResultRow objects, which support both index and key access
+    ========================================================================================
+
+    Parses jsonrow formatted rows into ResultRows,
+    which supports key access by list indices (based on the 
+    selected view) as well as lookup by view name (based 
+    on the selected view value).
+    """
+
+    def parse(self, row):
+        """
+        Parse a row of JSON results into a ResultRow
+        
+        @param row: a row of data from a result set
+        @type row: a JSON string
+
+        @rtype: ResultRow
+        """
+        rr = ResultRow(row, self.view)
+        return rr
 
 class InterMineURLOpener(urllib.FancyURLopener):
     """
