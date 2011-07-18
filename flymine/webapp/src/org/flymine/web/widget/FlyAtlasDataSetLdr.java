@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.ProbeSet;
 import org.intermine.model.bio.Tissue;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
@@ -126,6 +127,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
     private Query createQuery(InterMineBag bag) {
 
+        String bagType = bag.getType();
+
         QueryClass far = new QueryClass(FlyAtlasResult.class);
         QueryClass tissue = new QueryClass(Tissue.class);
         QueryClass gene = new QueryClass(Gene.class);
@@ -133,9 +136,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         QueryField tissueName = new QueryField(tissue, "name");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryField qf = new QueryField(gene, "id");
-        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
         QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, gene));
@@ -147,7 +147,26 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
         q.addToSelect(new QueryField(far, "affyCall"));
         q.addToSelect(tissueName);
-        q.addToSelect(new QueryField(gene, "primaryIdentifier"));
+
+        QueryField qf = null;
+
+        if ("ProbeSet".equalsIgnoreCase(bagType)) {
+            QueryClass probe = new QueryClass(ProbeSet.class);
+            qf = new QueryField(probe, "id");
+
+
+            q.addFrom(probe);
+            q.addToSelect(new QueryField(probe, "primaryIdentifier"));
+
+            QueryCollectionReference r3 = new QueryCollectionReference(gene, "probeSets");
+            cs.addConstraint(new ContainsConstraint(r3, ConstraintOp.CONTAINS, probe));
+        } else {
+            qf = new QueryField(gene, "id");
+            cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+
+            q.addToSelect(new QueryField(gene, "primaryIdentifier"));
+        }
+        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
         q.addFrom(far);
         q.addFrom(tissue);

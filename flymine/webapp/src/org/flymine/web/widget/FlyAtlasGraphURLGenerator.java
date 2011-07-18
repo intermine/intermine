@@ -65,13 +65,21 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
      */
     public PathQuery generatePathQuery(ObjectStore os, InterMineBag bag,
                                        String category, String series) {
+        String bagType = bag.getType();
 
         // initialise our query
         PathQuery q = new PathQuery(os.getModel());
 
+        if ("ProbeSet".equals(bagType)) {
+            q.addConstraint(Constraints.in("FlyAtlasResult.genes.probeSets", bag.getName()));
+            q.addView("FlyAtlasResult.genes.probeSets.primaryIdentifier");
+        } else {
+            q.addConstraint(Constraints.in("FlyAtlasResult.genes", bag.getName()));
+        }
+
         // add columns to the output
         q.addViews("FlyAtlasResult.genes.secondaryIdentifier",
-                  "FlyAtlasResult.genes.primaryIdentifier",
+                  "FlyAtlasResult.genes.symbol",
                   "FlyAtlasResult.genes.name",
                   "FlyAtlasResult.genes.organism.name",
                   "FlyAtlasResult.tissue.name",
@@ -80,9 +88,6 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
                   "FlyAtlasResult.mRNASignal",
                   "FlyAtlasResult.mRNASignalSEM",
                   "FlyAtlasResult.presentCall");
-
-        // all results have to be in list
-        q.addConstraint(Constraints.in("FlyAtlasResult.genes", bag.getName()));
 
         // sort based on whether up or down regulated
         OrderDirection sortOrder = (category.equalsIgnoreCase("up") ? OrderDirection.ASC
