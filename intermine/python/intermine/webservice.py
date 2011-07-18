@@ -15,7 +15,7 @@ except ImportError:
 
 # Local intermine imports
 from .query import Query, Template
-from .model import Model
+from .model import Model, Attribute, Reference, Collection
 from .util import ReadableException
 from .lists.listmanager import ListManager
 
@@ -334,7 +334,7 @@ class Service(object):
             self._model = Model(model_url, self)
         return self._model
 
-    def get_results(self, path, params, rowformat, view):
+    def get_results(self, path, params, rowformat, view, cld=None):
         """
         Return an Iterator over the rows of the results
         ===============================================
@@ -356,7 +356,37 @@ class Service(object):
 
         @return: L{intermine.webservice.ResultIterator}
         """
-        return ResultIterator(self.root, path, params, rowformat, view, self.opener)
+        return ResultIterator(self.root, path, params, rowformat, view, self.opener, cld)
+
+class ResultObject(object):
+    
+    def __init__(self, data, cld):
+        self._data = data
+        self._cld = cld
+        self._attr_cache = {}
+
+    def __getattr__(self, name):
+        if name in self._attr_cache:
+            return self._attr_cache[name]
+
+        fld = self._cld.get_field(name)
+        attr = None
+        if isinstance(fld, Attribute):
+            if name in self._data:
+                attr = self._data[name]
+        elif isinstance(fld, Collection):
+            if name in self._data:
+                attr = map(lambda x: ResultObject(x, fld.type_class), self._data[name])
+            else:
+                attr = []
+        elif isinstance(fld, Reference):
+            if name in self._data:
+                attr = ResultObject(self._data[name], fld.type_class)
+        else:
+            raise WebserviceError("Inconsistent model - This should never happen")
+        self._attr_cache[name] = attr
+        return attr
+            
 
 class ResultRow(object):
 
@@ -367,6 +397,9 @@ class ResultRow(object):
 
     def __len__(self):
         return len(self.data)
+
+    def __iter__(self):
+        return self.to_l()
 
     def __getitem__(self, key):
         if isinstance(key, int):
@@ -412,7 +445,7 @@ class ResultIterator(object):
     JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
     ROW_FORMATS = PARSED_FORMATS | STRING_FORMATS | JSON_FORMATS
 
-    def __init__(self, root, path, params, rowformat, view, opener):
+    def __init__(self, root, path, params, rowformat, view, opener, cld=None):
         """
         Constructor
         ===========
@@ -454,7 +487,7 @@ class ResultIterator(object):
             "list"        : lambda: JSONIterator(con, ListValueParser()),
             "rr"          : lambda: JSONIterator(con, ResultRowParser(view)),
             "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
-            "jsonobjects" : lambda: JSONIterator(con, EchoParser()),
+            "jsonobjects" : lambda: JSONIterator(con, ResultObjParser(cld)),
             "jsonrows"    : lambda: JSONIterator(con, EchoParser())
         }.get(rowformat)()
 
@@ -646,6 +679,7 @@ class ListValueParser(Parser):
     of values.
     """
 
+
     def parse(self, row):
         """
         Parse a row of JSON results into a list
@@ -704,6 +738,39 @@ class ResultRowParser(Parser):
         """
         rr = ResultRow(row, self.view)
         return rr
+
+class ResultObjParser(Parser):
+    """
+    A result parser that produces ResultRow objects, which support both index and key access
+    ========================================================================================
+
+    Parses jsonrow formatted rows into ResultRows,
+    which supports key access by list indices (based on the 
+    selected view) as well as lookup by view name (based 
+    on the selected view value).
+    """
+
+    def __init__(self, cld):
+        """
+        Constructor
+        ===========
+
+        @param cld: the class of object this result object represents
+        @type cld: intermine.model.Class
+        """
+        self.cld = cld
+
+    def parse(self, row):
+        """
+        Parse a row of JSON results into a ResultRow
+        
+        @param row: a row of data from a result set
+        @type row: a JSON string
+
+        @rtype: ResultObject
+        """
+        ro = ResultObject(row, self.cld)
+        return ro
 
 class InterMineURLOpener(urllib.FancyURLopener):
     """

@@ -4,6 +4,7 @@ from xml.dom import minidom, getDOMImplementation
 
 from .util import openAnything, ReadableException
 from .pathfeatures import PathDescription, Join, SortOrder, SortOrderList
+from .model import Column, Class
 import constraints
 
 """
@@ -280,6 +281,9 @@ class Query(object):
         self.order_by = self.add_sort_order
         self.all = self.get_results_list
 
+    def __iter__(self):
+        return self.results("jsonobjects")
+
     @classmethod
     def from_xml(cls, xml, *args, **kwargs):
         """
@@ -408,6 +412,13 @@ class Query(object):
         for p in paths:
             if isinstance(p, (set, list)):
                 views.extend(list(p))
+            elif isinstance(p, Class):
+                views.append(p.name + ".*")
+            elif isinstance(p, Column):
+                if p._path.is_attribute():
+                    views.append(str(p))
+                else:
+                    views.append(str(p) + ".*")
             else:
                 views.extend(re.split("(?:,?\s+|,)", p))
 
@@ -514,6 +525,9 @@ class Query(object):
         return con
 
     def where(self, *args, **kwargs):
+        if len(self.views) == 0:
+            self.add_view(self.root)
+
         self.add_constraint(*args, **kwargs)
         return self
 
@@ -912,7 +926,8 @@ class Query(object):
         if size:
             params["size"] = size
         view = self.views
-        return self.service.get_results(path, params, row, view)
+        cld = self.root
+        return self.service.get_results(path, params, row, view, cld)
 
     def one(self, row="rr"):
         c = self.count()
