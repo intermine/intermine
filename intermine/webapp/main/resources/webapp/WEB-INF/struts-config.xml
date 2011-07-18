@@ -79,6 +79,7 @@
          (as opposed to we ran it but there were no results)  -->
     <action path="/noResults" forward="noResults.page">
     </action>
+    <action path="/keywordSearchResults" forward="keywordsearchresults.page"/>
     <action path="/aspect" forward="aspect.page">
     </action>
     <action path="/importQueries" forward="importQueries.page">
@@ -343,6 +344,18 @@
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
     </action>
+    <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+      <forward name="api" redirect="true" path="/api.do?subtab=java"/>
+    </action>
+
+    <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
+
+    <action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
     <action path="/columnSummary" type="org.intermine.web.struts.ColumnSummaryAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
@@ -440,33 +453,13 @@
     <action path="/initReportInList" type="org.intermine.web.struts.ReportInListController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
-    <!-- <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/> -->
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
-
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
-
     <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController"/>
-    <action path="/keywordSearchResults" forward="keywordsearchresults.page"/>
-
-    <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
-      <forward name="begin" redirect="true" path="/begin.do"/>
-      <forward name="api" redirect="true" path="/api.do?subtab=java"/>
-    </action>
-
-    <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
-      <forward name="begin" redirect="true" path="/begin.do"/>
-    </action>
-
-    <action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
-      <forward name="begin" redirect="true" path="/begin.do"/>
-    </action>
-
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
-
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
-
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
