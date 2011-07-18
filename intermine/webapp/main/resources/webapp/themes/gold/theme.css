@@ -243,6 +243,8 @@ table.internal td {
   margin:5px 6px 5x 6px;
   font-size: 12px; color: #333;}
 
+ul#button_bar span { color:#FFF; }
+
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
 
 /* keyword search results */
