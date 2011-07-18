@@ -56,7 +56,7 @@ public class UserTemplateAction extends InterMineDispatchAction
         if (template != null) {
             recordMessage(new ActionMessage("templateList.deleted", templateName), request);
             InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            profile.deleteTemplate(templateName, im.getTrackerDelegate());
+            profile.deleteTemplate(templateName, im.getTrackerDelegate(), true);
             // If superuser then rebuild shared templates
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);

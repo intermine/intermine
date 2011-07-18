@@ -106,8 +106,8 @@ public class TrackerDelegateTest extends TestCase
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        superUser.deleteTemplate("template1", null);
-        user.deleteTemplate("template2", null);
+        superUser.deleteTemplate("template1", null, true);
+        user.deleteTemplate("template2", null, true);
         removeUserProfile("superuser");
         removeUserProfile("user");
         if (conn != null) {

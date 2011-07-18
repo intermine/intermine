@@ -72,7 +72,7 @@ public class TemplatesImportAction extends InterMineAction
             Set<String> templateNames = new HashSet<String>(profile.getSavedTemplates().keySet());
             if (tif.isOverwriting() && templateNames.size() > 0) {
                 for (String templateName : templateNames) {
-                    profile.deleteTemplate(templateName, im.getTrackerDelegate());
+                    profile.deleteTemplate(templateName, im.getTrackerDelegate(), tif.isDeleteTracks());
                     deleted++;
                 }
             }

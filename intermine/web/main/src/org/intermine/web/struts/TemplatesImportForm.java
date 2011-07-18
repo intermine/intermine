@@ -36,6 +36,7 @@ public class TemplatesImportForm extends ValidatorForm
 {
     private String xml;
     private boolean overwriting = false;
+    private boolean deleteTracks = false;
 
     /**
      * Creates a new instance of TemplatesImportForm.
@@ -77,6 +78,22 @@ public class TemplatesImportForm extends ValidatorForm
     }
 
     /**
+     * Get the deleteTracks flag.
+     * @return  true true to delete tracks associated to the template, false to keep
+     */
+    public boolean isDeleteTracks() {
+        return deleteTracks;
+    }
+
+    /**
+     * Set the deleteTracks flag.
+     * @param deleteTracks true to delete tracks associated to the template, false to keep
+     */
+    public void setDeleteTracks(boolean deleteTracks) {
+        this.deleteTracks = deleteTracks;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -90,6 +107,7 @@ public class TemplatesImportForm extends ValidatorForm
     protected void reset() {
         xml = "";
         overwriting = false;
+        deleteTracks = false;
     }
 
     /**

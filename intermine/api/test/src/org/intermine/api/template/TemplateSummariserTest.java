@@ -80,7 +80,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
 
     @Override
     public void tearDown() throws Exception {
-        profile.deleteTemplate("template", null);
+        profile.deleteTemplate("template", null, true);
         removeUserProfile(profile.getUsername());
         uosw.close();
     }
