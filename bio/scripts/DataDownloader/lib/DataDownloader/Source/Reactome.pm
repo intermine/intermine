@@ -13,7 +13,7 @@ use constant {
     SOURCE_LINK    => 
         'http://www.reactome.org',
     SOURCE_DIR     => 
-       'biopax/reactome', 
+       'reactome', 
     SOURCES => [{
         SERVER  => "http://reactome.org/download/current",
         FILE    => 'biopax.zip',
