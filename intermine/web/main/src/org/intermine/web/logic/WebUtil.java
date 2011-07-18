@@ -18,6 +18,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,159 +29,185 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.intermine.util.StringUtil;
+import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathException;
-import org.intermine.web.logic.results.WebState;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.config.Type;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.WebState;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Utility methods for the web package.
- *
+ * 
  * @author Kim Rutherford
  * @author Julie Sullivan
  */
 
-public abstract class WebUtil
-{
+public abstract class WebUtil {
     protected static final Logger LOG = Logger.getLogger(WebUtil.class);
-
+    
     /**
      * Lookup an Integer property from the SessionContext and return it.
-     * @param session the current session
-     * @param propertyName the property to find
-     * @param defaultValue the value to return if the property isn't present
+     * 
+     * @param session
+     *            the current session
+     * @param propertyName
+     *            the property to find
+     * @param defaultValue
+     *            the value to return if the property isn't present
      * @return the int value of the property
      */
-    public static int getIntSessionProperty(HttpSession session, String propertyName,
-                                            int defaultValue) {
-        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
-        String n = webProperties.getProperty(propertyName);
-
+    public static int getIntSessionProperty(final HttpSession session,
+            final String propertyName, final int defaultValue) {
+        final Properties webProperties = SessionMethods
+                .getWebProperties(session.getServletContext());
+        final String n = webProperties.getProperty(propertyName);
+        
         int intVal = defaultValue;
-
+        
         try {
             intVal = Integer.parseInt(n);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             LOG.warn("Failed to parse " + propertyName + " property: " + n);
         }
-
+        
         return intVal;
     }
-
+    
     /**
-     * takes a map and puts it in random order
-     * also shortens the list to be map.size() = max
-     * @param map The map to be randomised - the Map will be unchanged after the call
-     * @param max the number of items to be in the final list
-     * @param <V> the value type
+     * takes a map and puts it in random order also shortens the list to be
+     * map.size() = max
+     * 
+     * @param map
+     *            The map to be randomised - the Map will be unchanged after the
+     *            call
+     * @param max
+     *            the number of items to be in the final list
+     * @param <V>
+     *            the value type
      * @return the newly randomised, shortened map
      */
-    public static <V> Map<String, V> shuffle(Map<String, V> map, int max) {
+    public static <V> Map<String, V> shuffle(final Map<String, V> map,
+            final int max) {
         List<String> keys = new ArrayList<String>(map.keySet());
-
+        
         Collections.shuffle(keys);
-
+        
         if (keys.size() > max) {
             keys = keys.subList(0, max);
         }
-
-        Map<String, V> returnMap = new HashMap<String, V>();
-
-        for (String key: keys) {
+        
+        final Map<String, V> returnMap = new HashMap<String, V>();
+        
+        for (final String key : keys) {
             returnMap.put(key, map.get(key));
         }
         return returnMap;
     }
-
-
+    
     /**
-     * Return the contents of the page given by prefixURLString + '/' + path as a String.  Any
-     * relative links in the page will be modified to go via showStatic.do
-     * @param prefixURLString the prefix (including "http://...") of the web site to read from.
-     *    eg. http://www.flymine.org/doc/help
-     * @param path the page to retrieve eg. manualFlyMineHome.shtml
+     * Return the contents of the page given by prefixURLString + '/' + path as
+     * a String. Any relative links in the page will be modified to go via
+     * showStatic.do
+     * 
+     * @param prefixURLString
+     *            the prefix (including "http://...") of the web site to read
+     *            from. eg. http://www.flymine.org/doc/help
+     * @param path
+     *            the page to retrieve eg. manualFlyMineHome.shtml
      * @return the contents of the page
-     * @throws IOException if there is a problem while reading
+     * @throws IOException
+     *             if there is a problem while reading
      */
-    public static String getStaticPage(String prefixURLString, String path)
-        throws IOException {
-        StringBuffer buf = new StringBuffer();
-
-        URL url = new URL(prefixURLString + '/' + path);
-        URLConnection connection = url.openConnection();
-        InputStream is = connection.getInputStream();
-        Reader reader = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(reader);
+    public static String getStaticPage(final String prefixURLString,
+            final String path) throws IOException {
+        final StringBuffer buf = new StringBuffer();
+        
+        final URL url = new URL(prefixURLString + '/' + path);
+        final URLConnection connection = url.openConnection();
+        final InputStream is = connection.getInputStream();
+        final Reader reader = new InputStreamReader(is);
+        final BufferedReader br = new BufferedReader(reader);
         String line;
         while ((line = br.readLine()) != null) {
             // replace relative urls ie. href="manualExportfasta.shtml"
             line = line.replaceAll("href=\"([^\"]+)\"",
-                                   "href=\"showStatic.do?path=$1\"");
+                    "href=\"showStatic.do?path=$1\"");
             buf.append(line + "\n");
         }
         return buf.toString();
     }
-
-
+    
     /**
-     * Look at the current webapp page and subtab and return the help page and tab.
-     * @param request the request object
+     * Look at the current webapp page and subtab and return the help page and
+     * tab.
+     * 
+     * @param request
+     *            the request object
      * @return the help page and tab
      */
-    public static String[] getHelpPage(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Properties webProps = SessionMethods.getWebProperties(servletContext);
-        WebState webState = SessionMethods.getWebState(request.getSession());
-        String pageName = (String) request.getAttribute("pageName");
-        String subTab = webState.getSubtab("subtab" + pageName);
-
+    public static String[] getHelpPage(final HttpServletRequest request) {
+        final HttpSession session = request.getSession();
+        final ServletContext servletContext = session.getServletContext();
+        final Properties webProps = SessionMethods
+                .getWebProperties(servletContext);
+        final WebState webState = SessionMethods.getWebState(request
+                .getSession());
+        final String pageName = (String) request.getAttribute("pageName");
+        final String subTab = webState.getSubtab("subtab" + pageName);
+        
         String prop;
         if (subTab == null) {
             prop = webProps.getProperty("help.page." + pageName);
         } else {
             prop = webProps.getProperty("help.page." + pageName + "." + subTab);
         }
-
+        
         if (prop == null) {
             return new String[0];
         }
         return StringUtil.split(prop, ":");
     }
-
+    
     /**
      * Formats column name. Replaces " &gt; " with "&amp;nbsp;&amp;gt; ".
-     * @param original original column name
+     * 
+     * @param original
+     *            original column name
      * @return modified string
      */
-    public static String formatColumnName(String original) {
-        // replaces all dots and colons but not dots with following space - they are probably
+    public static String formatColumnName(final String original) {
+        // replaces all dots and colons but not dots with following space - they
+        // are probably
         // part of name, e.g. 'D. melanogaster'
-        return original.replaceAll("&", "&amp;").replaceAll(" > ", "&nbsp;&gt; ")
-            .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        return original.replaceAll("&", "&amp;")
+                .replaceAll(" > ", "&nbsp;&gt; ").replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
     }
-
+    
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * @param original The column name (a path string) to format
-     * @param request The request to use to get the configuration off.
+     * 
+     * @param original
+     *            The column name (a path string) to format
+     * @param request
+     *            The request to use to get the configuration off.
      * @return A formatted column name
      */
-    public static String formatPath(String original, HttpServletRequest request) {
-        if (request == null) { 
+    public static String formatPath(final String original,
+            final HttpServletRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("request cannot be null");
         }
         final InterMineAPI im = SessionMethods.getInterMineAPI(request);
@@ -188,79 +215,95 @@ public abstract class WebUtil
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
         return formatPath(original, model, webConfig);
     }
-
-    public static List<String> formatPathQueryView(PathQuery pq, HttpServletRequest request) {
-        if (request == null) { 
+    
+    public static List<String> formatPathQueryView(final PathQuery pq,
+            final HttpServletRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("request cannot be null");
         }
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
-        List<String> formattedViews = new ArrayList<String>();
-        for (String view : pq.getView()) {
+        final List<String> formattedViews = new ArrayList<String>();
+        for (final String view : pq.getView()) {
             Path p;
             try {
                 p = pq.makePath(view);
-            } catch (PathException e) {
+            } catch (final PathException e) {
                 throw new RuntimeException(e);
             }
             formattedViews.add(formatPath(p, webConfig));
         }
         return formattedViews;
     }
-
+    
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * @param original The column name (a path string) to format
-     * @param model The model to use to parse the string
-     * @param webConfig The configuration to find labels in
+     * 
+     * @param original
+     *            The column name (a path string) to format
+     * @param model
+     *            The model to use to parse the string
+     * @param webConfig
+     *            The configuration to find labels in
      * @return A formatted column name
      */
-    public static String formatPath(String original, Model model, WebConfig webConfig) {
+    public static String formatPath(final String original, final Model model,
+            final WebConfig webConfig) {
         Path viewPath;
         try {
             viewPath = new Path(model, original);
-        } catch (PathException e) {
+        } catch (final PathException e) {
             return original;
         }
         return formatPath(viewPath, webConfig);
     }
-
+    
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * @param pathString A string representing a path to format
-     * @param api the webapp configuration to aquire a model from
-     * @param webConfig The configuration to find labels in
+     * 
+     * @param pathString
+     *            A string representing a path to format
+     * @param api
+     *            the webapp configuration to aquire a model from
+     * @param webConfig
+     *            The configuration to find labels in
      * @return A formatted column name
      */
-    public static String formatPath(String pathString, InterMineAPI api, WebConfig webConfig) {
+    public static String formatPath(final String pathString,
+            final InterMineAPI api, final WebConfig webConfig) {
         Path viewPath;
         try {
             viewPath = new Path(api.getModel(), pathString);
-        } catch (PathException e) {
+        } catch (final PathException e) {
             return pathString;
         }
         return formatPath(viewPath, webConfig);
     }
-
+    
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * @param viewColumn A path representing a column name
-     * @param webConfig The configuration to find labels in
+     * 
+     * @param viewColumn
+     *            A path representing a column name
+     * @param webConfig
+     *            The configuration to find labels in
      * @return A formatted column name
      */
-    public static String formatPath(Path viewColumn, WebConfig webConfig) {
-        List<Path> parts = viewColumn.decomposePath();
-        List<String> aliasedParts = new ArrayList<String>();
-        for (Path p: parts) {
+    public static String formatPath(final Path viewColumn,
+            final WebConfig webConfig) {
+        final List<Path> parts = viewColumn.decomposePath();
+        final List<String> aliasedParts = new ArrayList<String>();
+        for (final Path p : parts) {
             if (p.isRootPath()) {
-                ClassDescriptor cld = p.getStartClassDescriptor();
-                Type type = webConfig.getTypes().get(cld.getName());
+                final ClassDescriptor cld = p.getStartClassDescriptor();
+                final Type type = webConfig.getTypes().get(cld.getName());
                 if (type != null) {
                     aliasedParts.add(type.getDisplayName());
                 } else {
-                    aliasedParts.add(Type.getFormattedClassName(cld.getUnqualifiedName()));
+                    aliasedParts.add(Type.getFormattedClassName(cld
+                            .getUnqualifiedName()));
                 }
             } else {
                 aliasedParts.add(formatField(p, webConfig));
@@ -269,50 +312,124 @@ public abstract class WebUtil
         return StringUtils.join(aliasedParts, " > ");
     }
     
-    public static String formatField(String s, InterMineAPI api, WebConfig webConfig) {
+    public static String formatField(final String s, final InterMineAPI api,
+            final WebConfig webConfig) {
         if (StringUtils.isEmpty(s)) {
             return "";
         }
         Path viewPath;
         try {
             viewPath = new Path(api.getModel(), s);
-        } catch (PathException e) {
+        } catch (final PathException e) {
             return s;
         }
         return formatField(viewPath, webConfig);
     }
-
-    public static String formatField(Path p, WebConfig webConfig) {
+    
+    public static String formatField(final Path p, final WebConfig webConfig) {
         if (p == null) {
             return "";
         }
-        FieldDescriptor fd = p.getEndFieldDescriptor();
+        final FieldDescriptor fd = p.getEndFieldDescriptor();
         if (fd == null) {
             return "";
         }
-        ClassDescriptor cld = (fd.isAttribute())
-                              ? p.getLastClassDescriptor()
-                              : p.getSecondLastClassDescriptor();
-
-        FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
+        final ClassDescriptor cld = fd.isAttribute() ? p
+                .getLastClassDescriptor() : p.getSecondLastClassDescriptor();
+        
+        final FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld,
+                fd);
         if (fc != null) {
             return fc.getDisplayName();
         } else {
             return FieldConfig.getFormattedName(fd.getName());
         }
     }
-
-    public static String formatFieldChain(String s, InterMineAPI api, WebConfig webConfig) {
-        String fullPath = formatPath(s, api.getModel(), webConfig);
+    
+    public static String formatFieldChain(final String s,
+            final InterMineAPI api, final WebConfig webConfig) {
+        final String fullPath = formatPath(s, api.getModel(), webConfig);
         if (StringUtils.isEmpty(fullPath)) {
             return fullPath;
         } else {
-            int idx = fullPath.indexOf(">");
+            final int idx = fullPath.indexOf(">");
             if (idx != -1) {
                 return fullPath.substring(idx + 1);
             }
         }
         return fullPath;
     }
-
+    
+    private static String replaceDescribedPart(final String s,
+            final Map<String, String> descriptions) {
+        final String retval = descriptions.get(s);
+        if (retval == null) {
+            final int lastDot = s.lastIndexOf('.');
+            if (lastDot == -1) {
+                return s;
+            } else {
+                return replaceDescribedPart(s.substring(0, lastDot),
+                        descriptions) + " > " + s.substring(lastDot + 1);
+            }
+        } else {
+            return retval;
+        }
+    }
+    
+    /**
+     * Return a string suitable for displaying a PathQuery's path, taking any
+     * path descriptions it has configured into account.
+     * 
+     * @param s
+     *            The path to display
+     * @param pq
+     *            The PathQuery it relates to
+     * @param config
+     *            The Web-Configuration to use to lookup labels
+     * @return A string suitable for external display.
+     */
+    public static String formatPathDescription(final String s,
+            final PathQuery pq, final WebConfig config) {
+        final Map<String, String> descriptions = pq.getDescriptions();
+        Path p;
+        try {
+            p = pq.makePath(s);
+        } catch (final PathException e) {
+            return formatPath(s, pq.getModel(), config); // Format it nicely
+                                                         // anyway
+        }
+        final String withLabels = formatPath(p, config);
+        final String withReplaceMents = replaceDescribedPart(s, descriptions);
+        final List<String> originalParts = Arrays.asList(StringUtils.split(s,
+                '.'));
+        final int originalPartsSize = originalParts.size();
+        final List<String> replacedParts = Arrays.asList(StringUtils
+                .splitByWholeSeparator(withReplaceMents, " > "));
+        final int replacedSize = replacedParts.size();
+        final List<String> labeledParts = Arrays.asList(StringUtils
+                .splitByWholeSeparator(withLabels, " > "));
+        int partsToKeepFromOriginal = 0;
+        int partsToTakeFromReplaced = replacedSize;
+        for (int i = 0; i < originalPartsSize; i++) {
+            final String fromOriginal = originalParts.get(originalPartsSize
+                    - (i + 1));
+            final int replaceMentsIndex = replacedSize - (i + 1);
+            final String fromReplacement = replaceMentsIndex > 0 ? replacedParts
+                    .get(replaceMentsIndex) : null;
+            if (fromOriginal != null && fromOriginal.equals(fromReplacement)) {
+                partsToKeepFromOriginal++;
+                partsToTakeFromReplaced--;
+            }
+        }
+        final List<String> returners = new ArrayList<String>();
+        if (partsToTakeFromReplaced > 0) {
+            returners.addAll(replacedParts.subList(0, partsToTakeFromReplaced));
+        }
+        if (partsToKeepFromOriginal > 0) {
+            final int start = originalPartsSize - partsToKeepFromOriginal;
+            final int end = start + partsToKeepFromOriginal;
+            returners.addAll(labeledParts.subList(start, end));
+        }
+        return StringUtils.join(returners, " > ");
+    }
 }
