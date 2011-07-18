@@ -113,7 +113,10 @@ public class BEDQueryService extends AbstractQueryService
             Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(pathQuery, session);
             organisms = StringUtil.join(orgSet, ",");
         } catch (Exception e) {
-            throw new RuntimeException("Get organism failed", e);
+            throw new RuntimeException(pathQuery.getRootClass()
+                + " does not have organism as reference. "
+                + "Non sequnce feature type is not supported...",
+                    e);
         }
 
         boolean makeUcscCompatible = true;

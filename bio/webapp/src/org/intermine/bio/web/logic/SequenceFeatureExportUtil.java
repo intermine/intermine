@@ -119,7 +119,7 @@ public final class SequenceFeatureExportUtil
             }
 
             if (i == superClassNames.size()) {
-                throw new Exception("Located sequence feature type "
+                throw new Exception("Sequence feature type "
                         + pathQuery.getRootClass()
                         + " does not have organism as reference.");
             }
