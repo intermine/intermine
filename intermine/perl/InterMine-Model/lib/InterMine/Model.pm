@@ -209,11 +209,9 @@ sub _get_fields {
 
 =head2 get_classdescriptor_by_name
 
- Title   : get_classdescriptor_by_name
- Usage   : $cd = $model->get_classdescriptor_by_name("Gene");
- Function: return the InterMine::Model::ClassDescriptor for the given class or
-           undef if the class isn't in the model
- Args    : the classname
+Get the L<InterMine::Model::ClassDescriptor> (meta-class) with the given name.
+ 
+ my $cd = $model->get_classdescriptor_by_name("Gene");
 
 =cut
 
@@ -249,8 +247,8 @@ given
 
  my $gene = $model->make_new(Gene => {symbol => "zen", organism => {name => 'D. melanogaster}});
 
- say $gene->get_symbol             # "zen"
- say $gene->get_organism->get_name # "D. melanogaster"
+ say $gene->getSymbol             # "zen"
+ say $gene->getOrganism->getName # "D. melanogaster"
 
 =cut
 
@@ -275,11 +273,9 @@ sub make_new {
 
 =head2 get_all_classdescriptors
 
- Title   : get_all_classdescriptors
- Usage   : @cds = $model->get_all_classdescriptors();
- Function: return all the InterMine::Model::ClassDescriptor objects for this
-           model
- Args    : none
+Return all the L<InterMine::Model::ClassDescriptor>s for this model
+
+ my @cds = $model->get_all_classdescriptors();
 
 =cut
 
@@ -290,9 +286,10 @@ sub get_all_classdescriptors {
 
 =head2 get_referenced_classdescriptor
 
- Usage    : my $cd = $model->get_referenced_classdescriptor($ref);
- Function : get the class descriptor at the other end of a reference
- Args     : The reference
+Get the class descriptor at the other end of a reference. The main use for this 
+method is internal, during the construction of a model
+
+ my $cd = $model->get_referenced_classdescriptor($ref);
 
 =cut
 
@@ -313,9 +310,9 @@ sub get_referenced_classdescriptor {
 
 =head2 find_classes_declaring_field( $name )
 
- Usage    : my @classes = $model->find_classes_declaring_field($str);
- Function : get the class descriptors that declare fields of a certain name  
- Args     : The field's name
+Get the class descriptors that declare fields of a certain name  
+
+ my @classes = $model->find_classes_declaring_field($str);
 
 =cut
 
@@ -333,11 +330,9 @@ sub find_classes_declaring_field {
 
 =head2 package_name
 
- Title   : package_name
- Usage   : $package_name = $model->package_name();
- Function: return the package name derived from the name space
-           eg. "org.intermine.model"
- Args    : none
+Return the package name derived from the original java name space, eg. org.intermine.model
+
+  my $java_package = $model->package_name;
 
 =cut
 
@@ -348,10 +343,10 @@ sub package_name {
 
 =head2 model_name
 
- Title   : model_name
- Usage   : $model_name = $model->model_name();
- Function: return the model name from the model file eg. "testmodel"
- Args    : none
+Return the name of this model. Conceptually, this maps to the enclosing package for the 
+generated classes.
+
+ my $model_name = $model->model_name();
 
 =cut
 

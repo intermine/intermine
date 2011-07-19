@@ -45,20 +45,22 @@ use Carp qw(cluck);
 
 =head2 create( $name | $name, %attributes | $name, \%attributes | \%attributes )
 
-The class constructor inherited from L<Moose::Meta::Class>.
+The class constructor inherited from L<Moose::Meta::Class>. Creates a new 
+ClassDescriptor metaclass.
 
- Usage   : my $cd = InterMine::Model::ClassDescriptor->create(
-                "Gene" => (
-                    model => $model,
-                    parents => ["BioEntity"]
-                )
-            );
+  my $cd = InterMine::Model::ClassDescriptor->create(
+       "Gene" => (
+           model => $model,
+           parents => ["BioEntity"]
+       )
+  );
 
- Function: create a new ClassDescriptor object
- Args    : model   - the InterMine::Model that this class is a part of
-           name    - the class name
-           parents - a list of the classes and interfaces that this 
-                     classes extends
+Params:
+=over 4
+=item model - the InterMine::Model that this class is a part of
+=item name - the class name
+=item parents - a list of the classes and interfaces that this classes extends
+=back
 
 In most normal use cases, the typical user should NOT need 
 to call this method. It is used internally when parsing the 
@@ -274,17 +276,16 @@ has parents => (
 
 =head2 parental_class_descriptors
 
-The parents as a list of class objects.
+return a list of the ClassDescriptor objects for the
+classes/interfaces that this class directly extends
 
- Usage   : @parent_cds = $cd->parental_class_descriptors();
- Function: return a list of the ClassDescriptor objects for the
-           classes/interfaces that this class directly extends
- Note    : Calling this method retrives the parents from the model
-           and also sets up superclass relationships
-           in Moose. It should not be called until the Model is completely
-           parsed. It is called automatically once the model has been 
-           parsed.
- Args    : none
+ my @parent_cds = $cd->parental_class_descriptors();
+
+Calling this method retrives the parents from the model
+and also sets up superclass relationships
+in Moose. It should not be called until the Model is completely
+parsed. It is called automatically once the model has been 
+parsed.
 
 =cut
 
@@ -392,10 +393,10 @@ sub _make_fields_into_attributes {
 
 =head2 sub_class_of
 
- Usage   : if ($class_desc->sub_class_of($other_class_desc)) { ... }
- Function: Returns true if and only if this class is a sub-class 
-           of the given class or is the same class
- Args    : $other_class_desc - a ClassDescriptor, or name of one
+Returns true if and only if this class is a sub-class 
+of the given class or is the same class
+
+ if ($cld->sub_class_of($other_cld)) { ... }
 
 =cut
 
