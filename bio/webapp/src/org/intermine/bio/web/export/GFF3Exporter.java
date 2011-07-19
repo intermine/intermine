@@ -41,6 +41,7 @@ import org.intermine.web.logic.export.Exporter;
  */
 public class GFF3Exporter implements Exporter
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
 
 
@@ -202,80 +203,82 @@ public class GFF3Exporter implements Exporter
 
         // loop through all the objects in a row
         for (ResultElement re : elWithObject) {
-            SequenceFeature lsf = (SequenceFeature) re.getObject();
-            //             LOG.info("GFFrePath: " + re.getPath());
-            boolean isCollection = re.getPath().containsCollections();
+            try {
+                SequenceFeature lsf = (SequenceFeature) re.getObject();
+                //             LOG.info("GFFrePath: " + re.getPath());
+                boolean isCollection = re.getPath().containsCollections();
 
-            if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
-                continue;
-            }
-
-            if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
-                makeRecord();
-            }
-
-            if (lastLsfId == null) {
-                attributes = new LinkedHashMap<String, List<String>>();
-            }
-
-            String parent = null;
-            String parentClass = null;
-
-            for (int i = 0; i < row.size(); i++) {
-                ResultElement el = row.get(i);
-
-                if (el == null) {
+                if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
                     continue;
                 }
 
-                if (i == 0) { // this is the beginning of the path
-                    parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
-//                    LOG.info("PAR: " + parentClass);
-                    if (cNames.contains(parentClass.toLowerCase())) {
-                        parent = (String) el.getField();
-//                        LOG.info("PARent: " + parent);
-                    }
+                if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+                    makeRecord();
                 }
 
-                // checks for attributes:
-                if (isCollection && !el.getPath().containsCollections()) {
-                    // one is collection, the other is not: do not show
-                    continue;
-                }
-                if (!isCollection && el.getPath().containsCollections()
-                        && soClassNames.containsKey(el.getType())) {
-                    // show attributes only if they are not linked to features
-                    // (they will be displayed with the relevant one, see below)
-                    continue;
+                if (lastLsfId == null) {
+                    attributes = new LinkedHashMap<String, List<String>>();
                 }
 
-                if (isCollection && el.getPath().containsCollections()) {
-                    // show only if of the same class
-                    Class<?> reType = re.getPath().getLastClassDescriptor().getType();
-                    Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                    if (!reType.isAssignableFrom(elType)) {
+                String parent = null;
+                String parentClass = null;
+
+                for (int i = 0; i < row.size(); i++) {
+                    ResultElement el = row.get(i);
+
+                    if (el == null) {
                         continue;
                     }
-                }
 
-                if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
-                        equalsIgnoreCase("location")) {
-                    // don't show locations (they are already displayed parts of the element)
-                    continue;
-                }
+                    if (i == 0) { // this is the beginning of the path
+                        parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
+//                        LOG.info("PAR: " + parentClass);
+                        if (cNames.contains(parentClass.toLowerCase())) {
+                            parent = (String) el.getField();
+//                            LOG.info("PARent: " + parent);
+                        }
+                    }
 
-                if (el.getField() != null) {
-                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();
-                    String attributeName = trimAttribute(attributesNames.get(i), unqualName);
-                    //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
-                    checkAttribute(el, attributeName);
-                }
+                    // checks for attributes:
+                    if (isCollection && !el.getPath().containsCollections()) {
+                        // one is collection, the other is not: do not show
+                        continue;
+                    }
+                    if (!isCollection && el.getPath().containsCollections()
+                            && soClassNames.containsKey(el.getType())) {
+                        // show attributes only if they are not linked to features
+                        // (they will be displayed with the relevant one, see below)
+                        continue;
+                    }
 
-                // TEMP out (fm release)
-                // add the parent
-                if (i >= 1 && parent != null) {
-                    if (!parentClass.equalsIgnoreCase(
-                            re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
+                    if (isCollection && el.getPath().containsCollections()) {
+                        // show only if of the same class
+                        Class<?> reType = re.getPath().getLastClassDescriptor().getType();
+                        Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+                        if (!reType.isAssignableFrom(elType)) {
+                            continue;
+                        }
+                    }
+
+                    if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
+                            equalsIgnoreCase("location")) {
+                        // don't show locations (they are already displayed parts of the element)
+                        continue;
+                    }
+
+                    if (el.getField() != null) {
+                        String unqualName = el.getPath()
+                                .getLastClassDescriptor().getUnqualifiedName();
+                        String attributeName = trimAttribute(attributesNames.get(i), unqualName);
+                        //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
+                        checkAttribute(el, attributeName);
+                    }
+
+                    // TEMP out (fm release)
+                    // add the parent
+                    if (i >= 1 && parent != null) {
+                        if (!parentClass.equalsIgnoreCase(
+                                re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
 //                    LOG.info("PAR: " + parentClass + " -> "
 //                    + re.getPath().getLastClassDescriptor().getUnqualifiedName()
 //                    + re.getPath().getLastClassDescriptor().getType()
@@ -283,15 +286,18 @@ public class GFF3Exporter implements Exporter
 //                    + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
 //                    + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
 //                    + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
-//                    );
-                        List<String> addPar = new ArrayList<String>();
-                        addPar.add(parent);
-                        attributes.put("Parent", addPar);
+//                        );
+                            List<String> addPar = new ArrayList<String>();
+                            addPar.add(parent);
+                            attributes.put("Parent", addPar);
+                        }
                     }
                 }
+                lastLsfId = lsf.getId();
+                lastLsf = lsf;
+            } catch (Exception ex) {
+                continue;
             }
-            lastLsfId = lsf.getId();
-            lastLsf = lsf;
         }
     }
 

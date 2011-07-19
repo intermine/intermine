@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.bed.BEDRecord;
 import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
@@ -121,18 +122,22 @@ public class BEDExporter implements Exporter
 
         // loop through all the objects in a row
         for (ResultElement re : elWithObject) {
-            SequenceFeature lsf = (SequenceFeature) re.getObject();
+            try { // some ResultElements are not SequenceFeature
+                SequenceFeature lsf = (SequenceFeature) re.getObject();
 
-            if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
+                if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
+                    continue;
+                }
+
+                if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+                    makeRecord();
+                }
+
+                lastLsfId = lsf.getId();
+                lastLsf = lsf;
+            } catch (Exception ex) {
                 continue;
             }
-
-            if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
-                makeRecord();
-            }
-
-            lastLsfId = lsf.getId();
-            lastLsf = lsf;
         }
     }
 
