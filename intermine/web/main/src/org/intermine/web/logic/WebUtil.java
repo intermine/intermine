@@ -48,17 +48,17 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Utility methods for the web package.
- * 
+ *
  * @author Kim Rutherford
  * @author Julie Sullivan
  */
 
 public abstract class WebUtil {
     protected static final Logger LOG = Logger.getLogger(WebUtil.class);
-    
+
     /**
      * Lookup an Integer property from the SessionContext and return it.
-     * 
+     *
      * @param session
      *            the current session
      * @param propertyName
@@ -72,22 +72,22 @@ public abstract class WebUtil {
         final Properties webProperties = SessionMethods
                 .getWebProperties(session.getServletContext());
         final String n = webProperties.getProperty(propertyName);
-        
+
         int intVal = defaultValue;
-        
+
         try {
             intVal = Integer.parseInt(n);
         } catch (final NumberFormatException e) {
             LOG.warn("Failed to parse " + propertyName + " property: " + n);
         }
-        
+
         return intVal;
     }
-    
+
     /**
      * takes a map and puts it in random order also shortens the list to be
      * map.size() = max
-     * 
+     *
      * @param map
      *            The map to be randomised - the Map will be unchanged after the
      *            call
@@ -100,26 +100,26 @@ public abstract class WebUtil {
     public static <V> Map<String, V> shuffle(final Map<String, V> map,
             final int max) {
         List<String> keys = new ArrayList<String>(map.keySet());
-        
+
         Collections.shuffle(keys);
-        
+
         if (keys.size() > max) {
             keys = keys.subList(0, max);
         }
-        
+
         final Map<String, V> returnMap = new HashMap<String, V>();
-        
+
         for (final String key : keys) {
             returnMap.put(key, map.get(key));
         }
         return returnMap;
     }
-    
+
     /**
      * Return the contents of the page given by prefixURLString + '/' + path as
      * a String. Any relative links in the page will be modified to go via
      * showStatic.do
-     * 
+     *
      * @param prefixURLString
      *            the prefix (including "http://...") of the web site to read
      *            from. eg. http://www.flymine.org/doc/help
@@ -132,7 +132,7 @@ public abstract class WebUtil {
     public static String getStaticPage(final String prefixURLString,
             final String path) throws IOException {
         final StringBuffer buf = new StringBuffer();
-        
+
         final URL url = new URL(prefixURLString + '/' + path);
         final URLConnection connection = url.openConnection();
         final InputStream is = connection.getInputStream();
@@ -147,11 +147,11 @@ public abstract class WebUtil {
         }
         return buf.toString();
     }
-    
+
     /**
      * Look at the current webapp page and subtab and return the help page and
      * tab.
-     * 
+     *
      * @param request
      *            the request object
      * @return the help page and tab
@@ -165,23 +165,23 @@ public abstract class WebUtil {
                 .getSession());
         final String pageName = (String) request.getAttribute("pageName");
         final String subTab = webState.getSubtab("subtab" + pageName);
-        
+
         String prop;
         if (subTab == null) {
             prop = webProps.getProperty("help.page." + pageName);
         } else {
             prop = webProps.getProperty("help.page." + pageName + "." + subTab);
         }
-        
+
         if (prop == null) {
             return new String[0];
         }
         return StringUtil.split(prop, ":");
     }
-    
+
     /**
      * Formats column name. Replaces " &gt; " with "&amp;nbsp;&amp;gt; ".
-     * 
+     *
      * @param original
      *            original column name
      * @return modified string
@@ -194,11 +194,11 @@ public abstract class WebUtil {
                 .replaceAll(" > ", "&nbsp;&gt; ").replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;");
     }
-    
+
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * 
+     *
      * @param original
      *            The column name (a path string) to format
      * @param request
@@ -215,36 +215,47 @@ public abstract class WebUtil {
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
         return formatPath(original, model, webConfig);
     }
-    
+
+    /**
+     * Format a query's view into a list of displayable strings, taking both
+     * the query's path descriptions and the application's web configuration into
+     * account.
+     * @param pq The query to format
+     * @param request The request to use to look up configuration from
+     * @return A list of displayable strings
+     */
     public static List<String> formatPathQueryView(final PathQuery pq,
             final HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("request cannot be null");
         }
         final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        return formatPathQueryView(pq, webConfig);
+    }
+
+    /**
+     * Format a query's view into a list of displayable strings, taking both
+     * the query's path descriptions and the application's web configuration into
+     * account.
+     * @param pq The query to format
+     * @param wc The configuration to use to find labels in
+     * @return A list of displayable strings
+     */
+    public static List<String> formatPathQueryView(final PathQuery pq, final WebConfig wc) {
         final List<String> formattedViews = new ArrayList<String>();
         for (final String view : pq.getView()) {
-            Path p;
-            try {
-                p = pq.makePath(view);
-            } catch (final PathException e) {
-                throw new RuntimeException(e);
-            }
-            formattedViews.add(formatPath(p, webConfig));
+            formattedViews.add(formatPathDescription(view, pq, wc));
         }
         return formattedViews;
     }
-    
+
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * 
-     * @param original
-     *            The column name (a path string) to format
-     * @param model
-     *            The model to use to parse the string
-     * @param webConfig
-     *            The configuration to find labels in
+     *
+     * @param original The column name (a path string) to format
+     * @param model The model to use to parse the string
+     * @param webConfig The configuration to find labels in
      * @return A formatted column name
      */
     public static String formatPath(final String original, final Model model,
@@ -257,11 +268,11 @@ public abstract class WebUtil {
         }
         return formatPath(viewPath, webConfig);
     }
-    
+
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * 
+     *
      * @param pathString
      *            A string representing a path to format
      * @param api
@@ -280,11 +291,11 @@ public abstract class WebUtil {
         }
         return formatPath(viewPath, webConfig);
     }
-    
+
     /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
-     * 
+     *
      * @param viewColumn
      *            A path representing a column name
      * @param webConfig
@@ -311,7 +322,17 @@ public abstract class WebUtil {
         }
         return StringUtils.join(aliasedParts, " > ");
     }
-    
+
+    /**
+     * Format a path into a displayable field name.
+     *
+     * eg: Employee.fullTime &rarr; Full Time
+     *
+     * @param s A path represented as a string
+     * @param api The InterMine settings bundle
+     * @param webConfig The Web Configuration
+     * @return A displayable string
+     */
     public static String formatField(final String s, final InterMineAPI api,
             final WebConfig webConfig) {
         if (StringUtils.isEmpty(s)) {
@@ -325,7 +346,16 @@ public abstract class WebUtil {
         }
         return formatField(viewPath, webConfig);
     }
-    
+
+    /**
+     * Format a path into a displayable field name.
+     *
+     * eg: Employee.fullTime &rarr; Full Time
+     *
+     * @param p A path
+     * @param webConfig The Web Configuration
+     * @return A displayable string
+     */
     public static String formatField(final Path p, final WebConfig webConfig) {
         if (p == null) {
             return "";
@@ -336,7 +366,7 @@ public abstract class WebUtil {
         }
         final ClassDescriptor cld = fd.isAttribute() ? p
                 .getLastClassDescriptor() : p.getSecondLastClassDescriptor();
-        
+
         final FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld,
                 fd);
         if (fc != null) {
@@ -345,7 +375,7 @@ public abstract class WebUtil {
             return FieldConfig.getFormattedName(fd.getName());
         }
     }
-    
+
     public static String formatFieldChain(final String s,
             final InterMineAPI api, final WebConfig webConfig) {
         final String fullPath = formatPath(s, api.getModel(), webConfig);
@@ -359,7 +389,7 @@ public abstract class WebUtil {
         }
         return fullPath;
     }
-    
+
     private static String replaceDescribedPart(final String s,
             final Map<String, String> descriptions) {
         final String retval = descriptions.get(s);
@@ -375,32 +405,46 @@ public abstract class WebUtil {
             return retval;
         }
     }
-    
+
     /**
      * Return a string suitable for displaying a PathQuery's path, taking any
      * path descriptions it has configured into account.
-     * 
-     * @param s
-     *            The path to display
-     * @param pq
-     *            The PathQuery it relates to
-     * @param config
-     *            The Web-Configuration to use to lookup labels
+     *
+     * @param s The path to display
+     * @param pq The PathQuery it relates to
+     * @param config The Web-Configuration to use to lookup labels
      * @return A string suitable for external display.
      */
     public static String formatPathDescription(final String s,
             final PathQuery pq, final WebConfig config) {
-        final Map<String, String> descriptions = pq.getDescriptions();
         Path p;
         try {
             p = pq.makePath(s);
         } catch (final PathException e) {
             return formatPath(s, pq.getModel(), config); // Format it nicely
-                                                         // anyway
+            // anyway
         }
+
+        return formatPathDescription(p, pq, config);
+    }
+
+    /**
+     * Return a string suitable for displaying a PathQuery's path, taking any
+     * path descriptions it has configured into account.
+     *
+     * @param p The path to display
+     * @param pq The PathQuery it relates to
+     * @param config The Web-Configuration to use to lookup labels
+     * @return A string suitable for external display.
+     */
+    public static String formatPathDescription(final Path p, final PathQuery pq,
+            final WebConfig config) {
+        final Map<String, String> descriptions = pq.getDescriptions();
         final String withLabels = formatPath(p, config);
-        final String withReplaceMents = replaceDescribedPart(s, descriptions);
-        final List<String> originalParts = Arrays.asList(StringUtils.split(s,
+        final String withReplaceMents = replaceDescribedPart(
+                p.getNoConstraintsString(), descriptions);
+        final List<String> originalParts = Arrays.asList(
+                StringUtils.split(p.getNoConstraintsString(),
                 '.'));
         final int originalPartsSize = originalParts.size();
         final List<String> replacedParts = Arrays.asList(StringUtils
