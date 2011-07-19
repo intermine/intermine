@@ -763,6 +763,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void addBagValues(Collection<String> bagValues) {
         Connection conn = null;
+        Batch batch = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
@@ -770,7 +771,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
-                Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
+                batch = new Batch(new BatchWriterPostgresCopyImpl());
                 String[] colNames = new String[] {"savedbagid", "value"};
                 for (String value : bagValues) {
                     batch.addRow(conn, BAG_VALUES, null, colNames,
@@ -781,6 +782,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                 conn.setAutoCommit(true);
             }
         } catch (SQLException sqle) {
+            System.out.println("Exception committing bagValues for bag: " + savedBagId);
             try {
                 conn.rollback();
                 conn.setAutoCommit(true);
@@ -788,6 +790,11 @@ public class InterMineBag implements WebSearchable, Cloneable
                 throw new RuntimeException("Error aborting transaction", sqlex);
             }
         } finally {
+            try {
+                batch.close(conn);
+            } catch (Exception e) {
+                LOG.error("Exception caught when closing Batch while addbagValues", e);
+            }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
