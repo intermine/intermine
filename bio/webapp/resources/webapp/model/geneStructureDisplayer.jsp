@@ -7,7 +7,7 @@
 
 <!-- geneStructureDisplayer.jsp -->
 
-<div class="basic-table">
+<div class="collection-table">
 
 <c:choose>
 <c:when test="${gene.id == actualId}">
