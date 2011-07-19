@@ -64,7 +64,8 @@ public class GenomicRegionSearchAction extends InterMineAction
         }
 
         // Span validation
-        Map<String, Map<String, ChromosomeInfo>> chrInfoMap = grsService.getChrInfoMap();
+        Map<String, Map<String, ChromosomeInfo>> chrInfoMap = grsService
+                .getChromosomeInfomationMap();
         Map<String, List<GenomicRegion>> resultMap = grsService.validateGenomicRegions();
 
         if (chrInfoMap != null && chrInfoMap.size() > 0 && resultMap != null) {
@@ -86,6 +87,7 @@ public class GenomicRegionSearchAction extends InterMineAction
             if (resultMap.get("error").size() == grsService.getConstraint()
                     .getSpanList().size()) { // all spans are wrong
                 request.setAttribute("SpanAllWrong", "true");
+                return mapping.findForward("genomicRegionSearchResults");
             } else {
                 grsService.getConstraint().setSpanList(resultMap.get("pass"));
             }
