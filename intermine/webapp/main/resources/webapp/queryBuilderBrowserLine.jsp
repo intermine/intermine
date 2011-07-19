@@ -114,7 +114,7 @@
 
         </c:forEach>
       </c:if>
-      <a name="${node.pathString}"></a>
+      <a name="${node.pathString}">&nbsp;</a>
       <c:set var="isNull" value="${EMPTY_FIELD_MAP[node.parentType][node.fieldName]}"/>
       <c:if test="${isNull}">
         <span class="nullStrike">
