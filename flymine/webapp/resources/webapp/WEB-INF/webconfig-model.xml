@@ -162,7 +162,7 @@
       <table path="pathways.name" showLinksToObjects="true" />
     </inlinelist>
     <fields>
-      <fieldconfig fieldExpr="secondaryIdentifier" label="Identifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="name"/>
