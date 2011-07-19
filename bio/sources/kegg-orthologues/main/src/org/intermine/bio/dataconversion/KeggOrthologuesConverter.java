@@ -64,9 +64,6 @@ public class KeggOrthologuesConverter extends BioFileConverter
         // only construct factory here so can be replaced by mock factory in tests
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
         wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
-
-        flyResolver = flyResolverFactory.getIdResolver(false);
-        wormResolver = wormResolverFactory.getIdResolver(false);
     }
 
     /**
@@ -217,8 +214,16 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private String getGene(String identifierType, String id, String taxonId)
         throws ObjectStoreException {
         String identifier = id;
-        if ("7227".equals(taxonId) || "6239".equals(taxonId)) {
-            identifier = resolveGene(identifier, taxonId);
+
+        IdResolver resolver = null;
+        if ("7227".equals(taxonId)) {
+            resolver = flyResolverFactory.getIdResolver();
+        } else if ("6239".equals(taxonId)) {
+            resolver = wormResolverFactory.getIdResolver();
+        }
+
+        if (resolver != null) {
+            identifier = resolveGene(identifier, taxonId, resolver);
             if (identifier == null) {
                 return null;
             }
@@ -267,24 +272,21 @@ public class KeggOrthologuesConverter extends BioFileConverter
         return evidenceRefId;
     }
 
-    private String resolveGene(String identifier, String taxonId) {
-        IdResolver resolver = null;
-        if ("7227".equals(taxonId)) {
-            resolver = flyResolver;
-        } else if ("6329".equals(taxonId)) {
-            resolver = wormResolver;
-        }
-        if (resolver == null) {
-            // no id resolver available, so return the original identifier
-            return identifier;
-        }
-        int resCount = resolver.countResolutions(taxonId, identifier);
+
+    private String resolveGene(String originalId, String taxonId, IdResolver resolver) {
+        String primaryIdentifier = null;
+        int resCount = resolver.countResolutions(taxonId, originalId);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(taxonId, identifier));
-            return null;
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring "
+                    + "gene: " + originalId + " for organism " + taxonId + " count: " + resCount
+                    + " found ids: " + resolver.resolveId(taxonId, originalId) + ".");
+        } else {
+            primaryIdentifier =
+                resolver.resolveId(taxonId, originalId).iterator().next();
+            LOG.info("RESOLVER found gene " + primaryIdentifier
+                    + " for original id: " + originalId);
         }
-        return resolver.resolveId(taxonId, identifier).iterator().next();
+        return primaryIdentifier;
     }
+
 }
