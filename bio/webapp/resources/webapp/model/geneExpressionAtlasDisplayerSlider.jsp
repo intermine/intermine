@@ -42,7 +42,26 @@
 <script type="text/javascript">
 (function() {
   <%-- init the slider --%>
-  new Dragdealer('slider');
+  new Dragdealer('slider', {callback: function() {
+    <%-- derive p-value from slider --%>
+    var handle = jQuery("#slider div.handle");
+    jQuery("div.slider-wrap input.value").val(function() {
+      var distance = handle.css('left').replace(/[^0-9.]/g, '');
+      var width = handle.css('width').replace(/[^0-9.]/g, '');
+      var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
+
+      var value = 1 - ((total - distance - width) / (total - width));
+
+      // linear
+      // return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
+
+      // non linear
+      var p = new Number((1/Math.pow(10, value * 10)).toPrecision(21)).toExponential(2);
+      //im.log("slider: " + value + ", p: " + p);
+      return p;
+    });
+  }
+  });
 
   adjustSliderPosition();
   <%-- derive slider position from p-value --%>
@@ -83,28 +102,6 @@
   .focusout(adjustSliderPosition)
   .bind('keypress', function(e) {
     if (e.keyCode == 13) adjustSliderPosition();
-  });
-
-  <%-- derive p-value from slider --%>
-  jQuery("#slider div.handle").mouseup(function(event) {
-    var handle = jQuery(this);
-    jQuery("div.slider-wrap input.value").val(function() {
-      var distance = handle.css('left').replace(/[^0-9.]/g, '');
-      var width = handle.css('width').replace(/[^0-9.]/g, '');
-      var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
-
-      //updateSliderColor();
-
-      var value = 1 - ((total - distance - width) / (total - width));
-
-      // linear
-      // return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
-
-      // non linear
-      var p = new Number((1/Math.pow(10, value * 10)).toPrecision(21)).toExponential(2);
-      //im.log("slider: " + value + ", p: " + p);
-      return p;
-    });
   });
 
   <%-- key points on the scale --%>
