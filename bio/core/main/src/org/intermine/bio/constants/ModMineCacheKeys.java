@@ -52,7 +52,7 @@ public final class ModMineCacheKeys
      * Key to submission located feature type cache entry.
      */
     public static final String SUB_SEQUENCED_FEATURE_TYPE
-        = "submissionLocatedFeatureTypes";
+        = "submissionSequencedFeatureTypes";
 
 
 
