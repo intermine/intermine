@@ -283,4 +283,5 @@
     <c:if test="${node.button == '+'}">
       <div id="${node.pathString}"></div><!-- div+ ${node.pathString} -->
     </c:if>
+
 <!-- /queryBuilderBrowserLine.jsp -->

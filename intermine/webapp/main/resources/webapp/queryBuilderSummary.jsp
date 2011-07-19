@@ -12,6 +12,46 @@
 <html:xhtml/>
 
 <script>
+  function showInModel(path) {
+    <%-- collapse all expanded --%>
+    jQuery("div.browserline img.toggle").each(function() {
+        if (jQuery(this).attr("src").indexOf("minus") != -1) {
+            var id = jQuery(this).parent().attr('title');
+            var target = id.replace(/\./g, "\\.");
+            <%-- clear the target div --%>
+            if (jQuery("#" + target).exists()) {
+              jQuery("#" + target).html('');
+              jQuery(this).attr('src', 'images/plus.gif');
+            }
+        }
+    });
+
+    // go through the path we want to show and continuously expand
+    var nodes = path.split('.');
+    for (var i = 0; i < nodes.length; i++) {
+        var node = new Array();
+        for (var j = 0; j <= i; j++) node.push(nodes[j]);
+        if (node.length > 0) {
+          node = node.join('.');
+          new Ajax.Updater(node, '<html:rewrite action="/queryBuilderChange"/>',
+                { parameters:'method=ajaxExpand&path='+node,
+                  asynchronous:true
+                });
+        }
+    };
+
+
+    var url = window.location.pathname;
+    if (url.indexOf("#anchor") > 0) {
+      url = url.substring(0, url.indexOf("#anchor"));
+    }
+    document.location.href = url + "#anchor=" + node;
+    location.reload();
+    //im.log("http://" + window.location.host + url + "#anchor=" + node);
+
+    return false;
+  }
+
   function editConstraint(path, code, displayPath) {
     /*if (isExplorer()) {
       return true;
@@ -110,11 +150,9 @@
                 </fmt:message>
                 <im:viewableSpan path="${path.pathString}" viewPaths="${viewPaths}" test="${empty path.fieldName}" idPrefix="query">
                   <html:link action="/queryBuilderChange?method=changePath&amp;path=${path.pathString}"
+                   onclick="return showInModel('${path.pathString}');"
                    title="${changePath}"><span class="type"><c:out value="${imf:formatPathStr(path.type, INTERMINE_API, WEBCONFIG)}"/></span></html:link>
-                </im:viewableSpan>
-                <c:if test="${path.collection}">
-                  <fmt:message key="query.collection"/>
-                </c:if>
+                </im:viewableSpan><c:if test="${path.collection}">&nbsp;<fmt:message key="query.collection"/></c:if>
               </c:if>
             </span>
             <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
