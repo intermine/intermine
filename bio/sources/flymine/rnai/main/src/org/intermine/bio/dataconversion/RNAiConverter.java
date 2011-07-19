@@ -21,7 +21,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -80,12 +79,11 @@ public class RNAiConverter extends BioFileConverter
                         comment = line[10].trim();
                     }
                     String isObserved = null;
-                    if (line[5] != null && line[5].equals("1")) {
+                    if (line[5] != null && ("1").equals(line[5])) {
                         isObserved = "true";
-                    } else
-                        if (line[6] != null && line[6].equals("1")) {
-                            isObserved = "false";
-                        }
+                    } else if (line[6] != null && ("1").equals(line[6])) {
+                        isObserved = "false";
+                    }
                     Item phenotype = createPhenotype(line[2], line[4], line[3], comment, isObserved,
                         line[7], line[8]);
                     phenotype.setReference("gene", gene.getIdentifier());
@@ -101,8 +99,8 @@ public class RNAiConverter extends BioFileConverter
     }
 
     private Item createGene(String primaryIdentifier)
-        throws ObjectStoreException, SAXException {
-        Item gene = (Item) geneMap.get(primaryIdentifier);
+        throws ObjectStoreException {
+        Item gene = geneMap.get(primaryIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
             gene.setReference("organism", getOrganism("6239"));
@@ -132,7 +130,7 @@ public class RNAiConverter extends BioFileConverter
             rnaiPhenotype.setAttribute("comment", comment);
         }
 
-        Item phenotype = (Item) phenotypeMap.get(identifier);
+        Item phenotype = phenotypeMap.get(identifier);
         if (phenotype == null) {
             phenotype = createItem("Phenotype");
             phenotype.setAttribute("identifier", identifier);
@@ -152,7 +150,7 @@ public class RNAiConverter extends BioFileConverter
 
     private Item createPub(String pubMedId)
         throws ObjectStoreException {
-        Item pub = (Item) pubMap.get(pubMedId);
+        Item pub = pubMap.get(pubMedId);
         if (pub == null) {
             pub = createItem("Publication");
             pub.setAttribute("pubMedId", pubMedId);
@@ -165,7 +163,7 @@ public class RNAiConverter extends BioFileConverter
     private Item createScreen(Item pub)
         throws ObjectStoreException {
         String pubId = pub.getIdentifier();
-        Item screen = (Item) screenMap.get(pubId);
+        Item screen = screenMap.get(pubId);
         if (screen == null) {
             screen = createItem("RNAiScreen");
             screen.setReference("publication", pubId);
