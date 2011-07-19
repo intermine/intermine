@@ -544,7 +544,6 @@ html, body {
 
 #templates table#menu td span, #templates table#menu td.active span {
     color: #292727;
-    color: #292727;
 }
 
 #templates table#menu td.active span {
@@ -563,6 +562,11 @@ html, body {
     line-height: 39px;
     display: inline-block;
     padding-top: 6px;
+}
+
+/* Opera */
+noindex:-o-prefocus, #templates table#menu td.active span {
+    padding-top:5px;
 }
 
 #templates table#menu td:hover span {
