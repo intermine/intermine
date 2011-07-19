@@ -280,6 +280,7 @@ class Query(object):
         self.select = self.add_view
         self.order_by = self.add_sort_order
         self.all = self.get_results_list
+        self.rows = self.results
 
     def __iter__(self):
         return self.results("jsonobjects")
