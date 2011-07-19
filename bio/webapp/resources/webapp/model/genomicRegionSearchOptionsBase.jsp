@@ -59,10 +59,15 @@
     <html:form action="/genomicRegionSearchAction" method="POST" enctype="multipart/form-data">
 
       <p>${WEB_PROPERTIES['genomicRegionSearch.caption']}</p>
-      <br/>
-      ${WEB_PROPERTIES['genomicRegionSearch.howTo']}
-      <br/>
 
+      <br/>
+      <a href="javascript:jQuery('#region-help').slideToggle('slow')">Genome coordinates help</a>
+
+      <div id="region-help" style="display:none">
+         ${WEB_PROPERTIES['genomicRegionSearch.howTo']}
+      </div>
+      <br/>
+      <br/>
       <ol id="optionlist">
 
         <li id="genomicRegionInput">
