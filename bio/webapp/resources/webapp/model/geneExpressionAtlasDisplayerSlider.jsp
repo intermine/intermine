@@ -20,16 +20,15 @@
 
 <div class="slider-wrap">
   <div class="slider">
-    <a style="margin-left:3px;" title="1"><span>1<sup>0</sup></span>|</a>
-    <a style="margin-left:23px;" title="5e-2"><span>5<sup>-2</sup></span>|</a>
-    <a style="margin-left:12px;" title="5e-3"><span>5<sup>-3</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-4"><span>5<sup>-4</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-5"><span>5<sup>-5</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-6"><span>5<sup>-6</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-7"><span>5<sup>-7</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-8"><span>5<sup>-8</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-9"><span>5<sup>-9</sup></span>|</a>
-    <a style="margin-left:13px;" title="5e-10"><span>5<sup>-10</sup></span>|</a>
+    <a style="margin-left:3px;" title="1"><span>1<sup>&nbsp;</sup></span>|</a>
+    <a style="margin-left:46px;" title="1e-2"><span>e<sup>-2</sup></span>|</a>
+    <a style="margin-left:12px;" title="1e-3"><span>e<sup>-3</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-4"><span>e<sup>-4</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-5"><span>e<sup>-5</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-6"><span>e<sup>-6</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-7"><span>e<sup>-7</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-8"><span>e<sup>-8</sup></span>|</a>
+    <a style="margin-left:13px;" title="1e-9"><span>e<sup>-9</sup></span>|</a>
     <div style="clear:both;"></div>
     <div id="slider" class="dragdealer">
       <div class="handle green"></div>
