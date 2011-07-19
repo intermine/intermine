@@ -4,7 +4,7 @@
 <%@ attribute name="colNo" required="false" %>
 <%@ attribute name="maxLength" required="false" %>
 <%@ attribute name="noHead" required="false" %>
-
+<%@ attribute name="onHover" required="false" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -12,6 +12,8 @@
 
 <c:set var="columnDisplayNameList" value="${fn:split(columnName,'>')}"/>
 <c:set var="begin" value="0"/>
+
+<im:debug message="${columnName}"/>
 
 <c:if test="${empty maxLength}">
     <c:set var="maxLength" value="3"/>
@@ -26,17 +28,14 @@
 
 <c:choose>
     <c:when test="${!empty tableId && !empty colNo}">
-        <span id="header_${fn:replace(tableId,'.','_')}_${colNo}" style="cursor:default;">
+        <span title="${onHover}" id="header_${fn:replace(tableId,'.','_')}_${colNo}" style="cursor:default;">
     </c:when>
     <c:otherwise>
-        <span>
+        <span title="${onHover}">
     </c:otherwise>
 </c:choose>
 
 <em style="font-size:9px;">
-
-<im:debug message="${columnName}"/>
-<im:debug message="BEGIN: ${begin}"/>
 
 <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="colNameStat" begin="${begin}">
     <c:set var="wouldBePos" value="${colNameStat.index + begin}"/>

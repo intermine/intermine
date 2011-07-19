@@ -108,7 +108,16 @@
           pathIndex = 1;
 
         <c:forEach var="path" items="${pathsMap}">
-            addPathElement("${path.key}", "${imf:formatPathStr(path.key, INTERMINE_API, WEBCONFIG)}");
+            <c:choose>
+                <c:when test="${empty QUERY}">
+                    <im:debug message="QUERY is empty"/>
+                    <c:set var="displayPath" value="${imf:formatPathStr(path.key, INTERMINE_API, WEBCONFIG)}"/>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="displayPath" value="${imf:formatViewElementStr(path.key, QUERY, WEBCONFIG)}"/>
+                </c:otherwise>
+            </c:choose>
+            addPathElement("${path.key}", "${displayPath}");
         </c:forEach>
 
         if (document.getElementById('columnToAdd')[0].value == '') {

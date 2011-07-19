@@ -42,10 +42,9 @@
 
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
       <c:choose>
-        <c:when test="${!empty QUERY
-                      && !empty QUERY.descriptions[columnPathPrefix] && empty notUseQuery}">
+        <c:when test="${!empty QUERY}">
           <c:set var="columnDisplayName"
-                 value="<span class='viewPathDescription' title='${displayPath}'>${QUERY.descriptions[columnPathPrefix]}</span> &gt; ${pathEnd}"/>
+                 value="${imf:formatViewElement(column.path, QUERY, WEBCONFIG)}"/>
         </c:when>
         <c:otherwise>
           <c:set var="columnDisplayName" value="${displayPath}"/>
@@ -71,18 +70,7 @@
             	<c:out value="${column.columnId}"/>
             </html:multibox>
         </c:if>
-
-        <c:choose>
-        	<c:when test="${!empty WEBCONFIG}">
-            	<c:set var="colName" value="${imf:formatPath(column.path, WEBCONFIG)}"/>
-            </c:when>
-            <c:otherwise>
-                <im:debug message="WEBCONFIG is empty"/>
-                <c:set var="colName" value="${column.name}"/>
-            </c:otherwise>
-        </c:choose>
-
-        <im:columnName columnName="${colName}" tableId="${pagedResults.tableid}" colNo="${status.count}"/>
+        <im:columnName onHover="${displayPath}" columnName="${columnDisplayName}" tableId="${pagedResults.tableid}" colNo="${status.count}"/>
 
       </th>
     </c:forEach>
