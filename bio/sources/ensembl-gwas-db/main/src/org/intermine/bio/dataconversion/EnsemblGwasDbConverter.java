@@ -45,6 +45,9 @@ public class EnsemblGwasDbConverter extends BioDBConverter
     private EntrezGeneIdResolverFactory resolverFactory;
     private int taxonId = 9606;
 
+    // approximately the minimum permitted double value in postgres
+    private static final double MIN_POSTGRES_DOUBLE = 1.0E-307;
+
     private static final Logger LOG = Logger.getLogger(EnsemblGwasDbConverter.class);
 
     /**
@@ -143,7 +146,13 @@ public class EnsemblGwasDbConverter extends BioDBConverter
                 input = input.replace("^", "E");
             }
             try {
-                return "" + Double.parseDouble(input);
+                double pValue = Double.parseDouble(input);
+                // Postgres JDBC driver is allowing double values outside the permitted range to be
+                // stored which are then unusable.  This a hack to prevent it.
+                if (pValue < MIN_POSTGRES_DOUBLE) {
+                    pValue = 0.0;
+                }
+                return "" + pValue;
             } catch (NumberFormatException e) {
                 LOG.warn("Could not parse pValue: " + input);
                 // no nothing, method will return null
