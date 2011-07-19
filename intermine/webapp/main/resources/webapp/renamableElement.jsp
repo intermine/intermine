@@ -18,6 +18,7 @@
   <span id="name_${name}">
     <c:set var="nameForURL"/>
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
+  <span id="linkBag_${name}">
   <c:choose>
          <c:when test="${type == 'bag' && current}">
            <html:link action="/bagDetails?bagName=${nameForURL}">
@@ -28,10 +29,13 @@
            <c:out value="${name}"/>
       </c:otherwise>
   </c:choose>
+  </span>
  </span>
+ <span id="editName_${name}">
  <c:if test="${(type != 'bag' || (type == 'bag' && current))}">
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
   </a>
  </c:if>
+ </span>
 <!-- /renamableElement.jsp -->
