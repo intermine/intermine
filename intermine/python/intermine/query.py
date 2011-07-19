@@ -1151,7 +1151,7 @@ class Query(object):
         for attr in ["joins", "views", "_sort_order_list", "_logic", "path_descriptions", "constraint_dict"]:
             setattr(newobj, attr, deepcopy(getattr(self, attr)))
 
-        for attr in ["name", "description", "service", "do_verification", "constraint_factory"]:
+        for attr in ["name", "description", "service", "do_verification", "constraint_factory", "root"]:
             setattr(newobj, attr, getattr(self, attr))
         return newobj
 

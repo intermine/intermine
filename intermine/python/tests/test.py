@@ -434,7 +434,8 @@ class TestQueryResults(WebserviceTest):
                 'start': 0
             }, 
             'rr', 
-            ['Employee.name', 'Employee.age', 'Employee.id']
+            ['Employee.name', 'Employee.age', 'Employee.id'],
+            self.model.get_class("Employee")
         )
         self.assertEqual(expectedQ, q.results())
         self.assertEqual(list(expectedQ), q.get_results_list())
@@ -447,7 +448,8 @@ class TestQueryResults(WebserviceTest):
                 'size': 200
             }, 
             'rr', 
-            ['Employee.name', 'Employee.age', 'Employee.id']
+            ['Employee.name', 'Employee.age', 'Employee.id'],
+            self.model.get_class("Employee")
         )
         self.assertEqual(expectedQ, q.results(start=10, size=200))
         self.assertEqual(list(expectedQ), q.get_results_list(start=10, size=200))
@@ -467,7 +469,9 @@ class TestQueryResults(WebserviceTest):
              'start': 0
             }, 
            'rr', 
-           ['Employee.name', 'Employee.age', 'Employee.id'])
+           ['Employee.name', 'Employee.age', 'Employee.id'],
+           self.model.get_class("Employee")
+           )
         self.assertEqual(expected1, t.results())
         self.assertEqual(list(expected1), t.get_results_list())
 
@@ -486,7 +490,9 @@ class TestQueryResults(WebserviceTest):
              'start': 0
             }, 
            'rr', 
-           ['Employee.name', 'Employee.age', 'Employee.id'])
+           ['Employee.name', 'Employee.age', 'Employee.id'],
+           self.model.get_class("Employee")
+           )
         self.assertEqual(expected2, t.results(
             A = {"op": "<", "value": "Tom"},
             B = {"value": 55} 
@@ -508,7 +514,9 @@ class TestQueryResults(WebserviceTest):
              'size': 200
             }, 
            'rr', 
-           ['Employee.name', 'Employee.age', 'Employee.id'])
+           ['Employee.name', 'Employee.age', 'Employee.id'],
+           self.model.get_class("Employee")
+           )
         self.assertEqual(expected2, t.results(
             start = 10,
             size = 200,
@@ -557,12 +565,13 @@ class TestQueryResults(WebserviceTest):
                         for row in results:
                             assertEqual(len(row), 3)
 
-                except Error, e:
+                except IOError, e:
                     do_tests(e)
             else:
                 raise RuntimeError("Error connecting to " + self.query.service.root, error)
 
         do_tests()
+
 
     def testResultsDict(self):
         """Should be able to get results as one dictionary per row"""
@@ -630,6 +639,65 @@ class TestCSVResults(TestTSVResults):
     PATH = "/testservice/csvservice"
     FORMAT = "csv"
     EXPECTED_RESULTS = ['"foo","bar","baz"', '"123","1.23","-1.23"']
+
+class TestResultObjects(WebserviceTest):
+    model = None
+    service = None
+
+    def get_test_root(self):
+        return "http://localhost:" + str(self.TEST_PORT) + "/testservice/testresultobjs"
+    
+    def setUp(self):
+        if self.service is None:
+            self.__class__.service = Service(self.get_test_root())
+        if self.model is None:
+            self.__class__.model = self.service.model
+
+        q = Query(self.model, self.service)
+        q.add_view("Department.name", "Department.employees.name", "Department.employees.age", "Department.company.vatNumber")
+        self.query = q
+        t = Template(self.model, self.service)
+        q.add_view("Department.name", "Department.employees.name", "Department.employees.age", "Department.company.vatNumber")
+        t.add_constraint("Department.manager.name", '=', "Fred")
+        self.template = t
+
+    def testResultObjs(self):
+        """Should be able to get results as result objects"""
+        attempts = 0
+        assertEqual = self.assertEqual
+        def do_tests(error=None):
+            if attempts < 5:
+                try:
+                    q_res = self.query.all("jsonobjects")
+                    t_res = self.template.all("jsonobjects")
+                    for departments in [q_res, t_res]:
+                        assertEqual(departments[0].name, 'Sales')
+                        assertEqual(departments[0].company.vatNumber, 665261)
+                        assertEqual(departments[0].employees[2].name, "Tim Canterbury")
+                        assertEqual(departments[0].employees[3].age, 58)
+                        assertEqual(len(departments[0].employees), 6)
+
+                        assertEqual(departments[-1].name, 'Slashes')
+                        assertEqual(departments[-1].company.vatNumber, 764575)
+                        assertEqual(departments[-1].employees[2].name, "Double forward Slash //")
+                        assertEqual(departments[-1].employees[2].age, 62)
+                        assertEqual(len(departments[-1].employees), 5)
+
+                        for idx in [0, -1]:
+                            assertEqual(departments[idx].manager, None) # Unrequested refs are none, even if they would otherwise have had a value
+                            assertEqual(departments[idx].company.name, None) # Unrequested attrs are none
+                            assertEqual(departments[idx].company.contractors, []) # Unrequested collections are empty
+                            self.assertRaises(ModelError, lambda: departments[idx].foo) # Model errors are thrown for illegal field access
+                            self.assertRaises(ModelError, lambda: departments[idx].company.foo)
+
+                        assertEqual(len(departments), 8)
+
+                except IOError, e:
+                    do_tests(e)
+            else:
+                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+
+        do_tests()
 
 class TestCountResults(TestTSVResults):
 
