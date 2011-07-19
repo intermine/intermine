@@ -37,7 +37,6 @@
             }
         });
 
-
       new Ajax.Updater(id, '<html:rewrite action="/queryBuilderChange"/>',
         {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
       $('img_'+path).src='images/minus.gif';

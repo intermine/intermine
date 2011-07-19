@@ -376,6 +376,7 @@ public class QueryBuilderChange extends DispatchAction
         }
         request.setAttribute("nodes", newNodes);
         request.setAttribute("noTreeIds", Boolean.TRUE);
+        request.setAttribute("scrollTo", request.getParameter("path"));
         return mapping.findForward("browserLines");
     }
 
