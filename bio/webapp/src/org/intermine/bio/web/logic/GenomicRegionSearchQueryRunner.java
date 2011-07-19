@@ -305,6 +305,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         q.addFrom(qcFeature);
         q.addFrom(qcSOTerm);
 
+        // TODO missing values in the results...e.g. GoldenPathFragment
         QueryObjectReference soTerm = new QueryObjectReference(qcFeature,
                 "sequenceOntologyTerm");
         ContainsConstraint ccSoTerm = new ContainsConstraint(soTerm,

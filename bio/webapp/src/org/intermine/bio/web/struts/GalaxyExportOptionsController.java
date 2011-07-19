@@ -90,6 +90,7 @@ public class GalaxyExportOptionsController extends TilesAction
         // Build GenomicRegion pathquery, the request is from GenomicRegionSearch "export to Galaxy"
         if (request.getParameter("value") != null) {
             String value = request.getParameter("value");
+            // TODO genomeBuild and organism?
 
             // TODO this could be configurable?
             String path = "SequenceFeature";
@@ -104,6 +105,7 @@ public class GalaxyExportOptionsController extends TilesAction
             Set<Integer> ids = new HashSet<Integer>();
             boolean isIds = true;
             for (String id : idsInStr) {
+                id = id.trim();
                 if (!Pattern.matches("^\\d+$", id)) {
                     isIds = false;
                     break;

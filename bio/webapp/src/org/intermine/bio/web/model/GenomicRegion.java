@@ -23,25 +23,13 @@ public class GenomicRegion
     private Integer end;
     // user add region flanking
     private Integer extendedStart = 0;
-    private Integer extenededEnd = 0;
+    private Integer extendedEnd = 0;
     private int extendedRegionSize = 0;
 
     /**
-     * Constructor
-     * @param grAsString a genomic region such as X:100..105
-     */
-    public GenomicRegion (String grAsString) {
-        String[] temp = grAsString.split(":");
-        this.chr = temp[0];
-        temp = temp[1].split("\\.\\.");
-        this.start = Integer.parseInt(temp[0]);
-        this.end = Integer.parseInt(temp[1]);
-        this.extendedStart = this.start;
-        this.extenededEnd = this.end;
-    }
-
-    /**
      * Default constructor
+     *
+     * a new GenomicRegion must use setters to set start, end, extendedRegionSize
      */
     public GenomicRegion() {
 
@@ -103,17 +91,17 @@ public class GenomicRegion
     }
 
     /**
-     * @return the extenededEnd
+     * @return the extendedEnd
      */
-    public Integer getExtenededEnd() {
-        return extenededEnd;
+    public Integer getExtendedEnd() {
+        return extendedEnd;
     }
 
     /**
-     * @param extenededEnd the extenededEnd to set
+     * @param extendedEnd the extendedEnd to set
      */
-    public void setExtenededEnd(Integer extenededEnd) {
-        this.extenededEnd = extenededEnd;
+    public void setExtendedEnd(Integer extendedEnd) {
+        this.extendedEnd = extendedEnd;
     }
 
     /**
@@ -141,8 +129,8 @@ public class GenomicRegion
     /**
      * @return chr:extendedStart..extenededEnd
      */
-    public String getExtentedRegion() {
-        return chr + ":" + extendedStart + ".." + extenededEnd;
+    public String getExtendedRegion() {
+        return chr + ":" + extendedStart + ".." + extendedEnd;
     }
 
     /**
@@ -155,8 +143,8 @@ public class GenomicRegion
             GenomicRegion s = (GenomicRegion) obj;
 
             return (chr.equals(s.getChr())
-                    && extendedStart.equals(s.getExtendedStart()) && extenededEnd
-                    .equals(s.getExtenededEnd())
+                    && extendedStart.equals(s.getExtendedStart()) && extendedEnd
+                    .equals(s.getExtendedEnd())
                     && start.equals(s.getStart()) && end.equals(s.getEnd()));
         }
         return false;
@@ -168,7 +156,7 @@ public class GenomicRegion
     @Override
     public int hashCode() {
         return chr.hashCode() + start.hashCode() + end.hashCode()
-                + extendedStart.hashCode() + extenededEnd.hashCode();
+                + extendedStart.hashCode() + extendedEnd.hashCode();
     }
 
     /**

@@ -62,6 +62,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
 
@@ -103,9 +104,7 @@ public class GenomicRegionSearchService
 
     /**
      * Constructor
-     *
-     * @param request
-     *            HttpServletRequest
+     * @param request HttpServletRequest
      */
     public GenomicRegionSearchService(HttpServletRequest request) {
         this.request = request;
@@ -116,8 +115,7 @@ public class GenomicRegionSearchService
      * GenomicRegionSearchQueryRunner.
      *
      * @return a JSON string
-     * @throws Exception
-     *             e
+     * @throws Exception e
      */
     public String setupWebData() throws Exception {
         // By default, query all organisms in the database
@@ -128,7 +126,7 @@ public class GenomicRegionSearchService
 
         List<String> orgList = new ArrayList<String>();
 
-        Set<String> chrOrgSet = getChrInfoMap().keySet();
+        Set<String> chrOrgSet = getChromosomeInfomationMap().keySet();
 
         if (chrOrgSet == null || chrOrgSet.size() == 0) {
             throw new RuntimeException(
@@ -176,6 +174,141 @@ public class GenomicRegionSearchService
         } else {
             return orgFeatureJSONString;
         }
+    }
+
+    private String prepareWebData(List<String> orgList) {
+
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcOrg = new QueryClass(Organism.class);
+        QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+
+        QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+        QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+
+        q.addToSelect(qfOrgName);
+        q.addToSelect(qfFeatureClass);
+
+        q.addFrom(qcOrg);
+        q.addFrom(qcFeature);
+
+        q.addToOrderBy(qfOrgName, "ascending");
+
+        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
+
+        q.setConstraint(constraints);
+
+        // SequenceFeature.organism = Organism
+        QueryObjectReference organism = new QueryObjectReference(qcFeature,
+                "organism");
+        ContainsConstraint ccOrg = new ContainsConstraint(organism,
+                ConstraintOp.CONTAINS, qcOrg);
+        constraints.addConstraint(ccOrg);
+
+        // constraints.addConstraint(new BagConstraint(qfOrgName,
+        // ConstraintOp.IN, orgList));
+
+        Results results = SessionMethods.getInterMineAPI(request.getSession())
+                .getObjectStore().execute(q);
+
+        // Parse results data to a map
+        Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
+        Set<String> featureTypeSet = new LinkedHashSet<String>();
+
+        // TODO this will be very slow when query too many features
+        if (results == null || results.size() < 0) {
+            return "";
+        } else {
+            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                String org = (String) row.get(0);
+                @SuppressWarnings("rawtypes")
+                // TODO exception - feature type is NULL
+                String featureType = ((Class) row.get(1)).getSimpleName();
+                if (!"Chromosome".equals(featureType) && orgList.contains(org)) {
+                    if (resultsMap.size() < 1) {
+                        featureTypeSet.add(featureType);
+                        resultsMap.put(org, featureTypeSet);
+                    } else {
+                        if (resultsMap.keySet().contains(org)) {
+                            resultsMap.get(org).add(featureType);
+                        } else {
+                            Set<String> s = new LinkedHashSet<String>();
+                            s.add(featureType);
+                            resultsMap.put(org, s);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Get all feature types
+        for (Set<String> ftSet : resultsMap.values()) {
+            if (featureTypesInOrgs == null) {
+                featureTypesInOrgs = new HashSet<String>();
+                featureTypesInOrgs.addAll(ftSet);
+            }
+        }
+
+        getFeatureTypeToSOTermMap();
+        getOrganismToTaxonMap();
+
+        // Parse data to JSON string
+        List<Object> ft = new ArrayList<Object>();
+        List<Object> gb = new ArrayList<Object>();
+        Map<String, Object> ma = new LinkedHashMap<String, Object>();
+
+        for (Entry<String, Set<String>> e : resultsMap.entrySet()) {
+            Map<String, Object> mft = new LinkedHashMap<String, Object>();
+            Map<String, Object> mgb = new LinkedHashMap<String, Object>();
+
+            mft.put("organism", e.getKey());
+
+            List<Object> featureTypeAndDespMapList = new ArrayList<Object>();
+            for (String className : e.getValue()) {
+                Map<String, String> featureTypeAndDespMap = new LinkedHashMap<String, String>();
+
+                String soTermDes = "description not avaliable";
+                List<String> soInfo = featureTypeToSOTermMap.get(className);
+
+                if (soInfo != null) {
+                    soTermDes = featureTypeToSOTermMap.get(className).get(1);
+                }
+
+                featureTypeAndDespMap.put("featureType", className);
+                featureTypeAndDespMap.put("description", soTermDes);
+                featureTypeAndDespMapList.add(featureTypeAndDespMap);
+            }
+            mft.put("features", featureTypeAndDespMapList);
+
+            ft.add(mft);
+
+            mgb.put("organism", e.getKey());
+            mgb.put("genomeBuild",
+                    (OrganismGenomeBuildLookup
+                            .getGenomeBuildbyOrgansimAbbreviation(e.getKey()) == null)
+                            ? "not available"
+                            : OrganismGenomeBuildLookup
+                                    .getGenomeBuildbyOrgansimAbbreviation(e
+                                            .getKey()));
+
+            gb.add(mgb);
+        }
+
+        ma.put("organisms", orgList);
+        ma.put("genomeBuilds", gb);
+        ma.put("featureTypes", ft);
+        JSONObject jo = new JSONObject(ma);
+
+        // Note: JSONObject toString will replace \' to \\', so don't convert it before the method
+        //       was called.
+
+        String preDataStr = jo.toString();
+        preDataStr = preDataStr.replaceAll("'", "\\\\'");
+
+        return preDataStr;
     }
 
     /**
@@ -250,8 +383,7 @@ public class GenomicRegionSearchService
     /**
      * To parse form data
      *
-     * @param grsForm
-     *            GenomicRegionSearchForm
+     * @param grsForm GenomicRegionSearchForm
      * @return genomic region search constraint
      */
     public ActionMessage parseGenomicRegionSearchForm(
@@ -268,8 +400,7 @@ public class GenomicRegionSearchService
 
     /**
      *
-     * @param grsForm
-     *            GenomicRegionSearchForm
+     * @param grsForm GenomicRegionSearchForm
      * @return ActionMessage
      */
     public ActionMessage parseBasicInput(GenomicRegionSearchForm grsForm) {
@@ -295,9 +426,8 @@ public class GenomicRegionSearchService
                     "feature types");
         }
 
-        // // featureTypes in this case are (the last bit of) class instead of
-        // featuretype in the db
-        // // table; gain the full name by Model.getQualifiedTypeName(className)
+        // featureTypes in this case are (the last bit of) class instead of
+        // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
         @SuppressWarnings("rawtypes")
         List<Class> ftList = new ArrayList<Class>();
         String modelPackName = SessionMethods
@@ -313,6 +443,9 @@ public class GenomicRegionSearchService
 
         String ftString = "";
         for (String aFeaturetype : featureTypes) {
+            aFeaturetype = WebUtil.formatPath(aFeaturetype,
+                    SessionMethods.getInterMineAPI(request.getSession()),
+                    SessionMethods.getWebConfig(request));
             ftString = ftString + aFeaturetype + ", ";
         }
         selectionInfo.add("<b>Selected feature types: </b>"
@@ -416,15 +549,12 @@ public class GenomicRegionSearchService
         List<GenomicRegion> spanList = new ArrayList<GenomicRegion>();
         for (String spanStr : spanStringSet) {
             GenomicRegion aSpan = new GenomicRegion();
-            // >>> Use regular expression to validate user's input
-            // "chr:start..end" - [^:]+:\d+\.{2,}\d+
-            // "chr:start-end" - [^:]+:\d+\-\d+
-            // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
-            // "chr:singlePosition" - [^:]+:[\d]+$
-            String ddotsRegex = "[^:]+: ?\\d+\\.\\.\\d+$";
-            String tabRegex = "[^\\t]+\\t\\d+\\t\\d+$";
-            String dashRegex = "[^:]+: ?\\d+\\-\\d+$";
-            String snpRegex = "[^:]+: ?\\d+$";
+
+            // Use regular expression to validate user's input:
+            String ddotsRegex = "[^:]+: ?\\d+\\.\\.\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            String tabRegex = "[^\\t]+\\t\\d+\\t\\d+$"; // "chr:start-end" - [^:]+:\d+\-\d+
+            String dashRegex = "[^:]+: ?\\d+\\-\\d+$"; // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
+            String snpRegex = "[^:]+: ?\\d+$"; // "chr:singlePosition" - [^:]+:[\d]+$
 
             if (Pattern.matches(ddotsRegex, spanStr)) {
                 aSpan.setChr((spanStr.split(":"))[0]);
@@ -472,13 +602,6 @@ public class GenomicRegionSearchService
             spanList.add(aSpan);
         }
 
-        // Chromesome starts with "chr" - UCSC formats
-        for (GenomicRegion aSpan : spanList) {
-            if (aSpan.getChr().startsWith("chr")) {
-                aSpan.setChr(aSpan.getChr().substring(3));
-            }
-        }
-
         grsc.setSpanList(spanList);
 
         return null;
@@ -501,7 +624,7 @@ public class GenomicRegionSearchService
 
             String chrPID = aSpan.getChr();
             Integer start = aSpan.getExtendedStart();
-            Integer end = aSpan.getExtenededEnd();
+            Integer end = aSpan.getExtendedEnd();
 
             QueryClass qcOrg = new QueryClass(Organism.class);
             QueryClass qcChr = new QueryClass(Chromosome.class);
@@ -585,7 +708,7 @@ public class GenomicRegionSearchService
     }
 
     /**
-     *
+     * To extend genomic region
      * @param gr GenomicRegion
      * @return GenomicRegion
      */
@@ -594,7 +717,7 @@ public class GenomicRegionSearchService
         int extendedRegionSize = grsc.getExtendedRegionSize();
         gr.setExtendedRegionSize(extendedRegionSize);
 
-        int max = getChrInfoMap().get(grsc.getOrgName())
+        int max = getChromosomeInfomationMap().get(grsc.getOrgName())
                 .get(gr.getChr().toLowerCase()).getChrLength();
         int min = 1;
 
@@ -611,9 +734,9 @@ public class GenomicRegionSearchService
         }
 
         if (extendedEnd > max) {
-            gr.setExtenededEnd(max);
+            gr.setExtendedEnd(max);
         } else {
-            gr.setExtenededEnd(extendedEnd);
+            gr.setExtendedEnd(extendedEnd);
         }
 
         return gr;
@@ -627,10 +750,10 @@ public class GenomicRegionSearchService
     }
 
     /**
-     *
+     * Get chromosome information as in a map, keys are lowercased chromosome ids
      * @return chrInfoMap
      */
-    public Map<String, Map<String, ChromosomeInfo>> getChrInfoMap() {
+    public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
         if (chrInfoMap == null) {
             chrInfoMap = GenomicRegionSearchQueryRunner
                     .getChromosomeInfo(SessionMethods.getInterMineAPI(request
@@ -644,7 +767,7 @@ public class GenomicRegionSearchService
      *
      * @return featureTypeToSOTermMap
      */
-    public Map<String, List<String>> getFtToSoMap() {
+    public Map<String, List<String>> getFeatureTypeToSOTermMap() {
 
         if (featureTypeToSOTermMap == null) {
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
@@ -679,7 +802,7 @@ public class GenomicRegionSearchService
      *
      * @return orgTaxonIdMap
      */
-    public Map<String, Integer> getOrgTaxonIdMap() {
+    public Map<String, Integer> getOrganismToTaxonMap() {
         Profile profile = SessionMethods.getProfile(request.getSession());
         if (orgTaxonIdMap == null) {
             orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(
@@ -690,13 +813,14 @@ public class GenomicRegionSearchService
     }
 
     /**
-     *
+     * Validate input genomic regions
      * @return resultMap
      */
     public Map<String, List<GenomicRegion>> validateGenomicRegions() {
-        // the Map has two key-value mappings
-        // PASS-ArrayList<passedSpan>
-        // ERROR-ArrayList<errorSpan>
+        /* the Map has two key-value mappings
+         * PASS-ArrayList<passedSpan>
+         * ERROR-ArrayList<errorSpan>
+         */
         Map<String, List<GenomicRegion>> resultMap = new HashMap<String, List<GenomicRegion>>();
         List<GenomicRegion> passedSpanList = new ArrayList<GenomicRegion>();
         List<GenomicRegion> errorSpanList = new ArrayList<GenomicRegion>();
@@ -710,7 +834,23 @@ public class GenomicRegionSearchService
         // Create passedSpanList
         for (GenomicRegion aSpan : grsc.getSpanList()) {
             // User input could be x instead of X for human chromosome, converted to lowercase
-            ChromosomeInfo ci = chrInfo.get(aSpan.getChr().toLowerCase());
+            ChromosomeInfo ci = null;
+            String chr = aSpan.getChr().toLowerCase();
+
+            if (chrInfo.containsKey(chr)) {
+                ci = chrInfo.get(chr);
+            } else {
+                if (chr.startsWith("chr")) { // UCSC format
+                    if (chrInfo.containsKey(chr.substring(3))) {
+                        ci = chrInfo.get(chr.substring(3));
+                    } else {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
             if ((aSpan.getStart() >= 1 && aSpan.getStart() <= ci
                     .getChrLength())
                     && (aSpan.getEnd() >= 1 && aSpan.getEnd() <= ci
@@ -729,11 +869,8 @@ public class GenomicRegionSearchService
         }
 
         // make errorSpanList
-        for (GenomicRegion aSpan : grsc.getSpanList()) {
-            if (!passedSpanList.contains(aSpan)) {
-                errorSpanList.add(aSpan);
-            }
-        }
+        errorSpanList.addAll(grsc.getSpanList());
+        errorSpanList.removeAll(passedSpanList);
 
         resultMap.put("pass", passedSpanList);
         resultMap.put("error", errorSpanList);
@@ -751,130 +888,14 @@ public class GenomicRegionSearchService
         return this.selectionInfo;
     }
 
-    private String prepareWebData(List<String> orgList) {
-
-        Query q = new Query();
-        q.setDistinct(true);
-
-        QueryClass qcOrg = new QueryClass(Organism.class);
-        QueryClass qcFeature = new QueryClass(SequenceFeature.class);
-
-        QueryField qfOrgName = new QueryField(qcOrg, "shortName");
-        QueryField qfFeatureClass = new QueryField(qcFeature, "class");
-
-        q.addToSelect(qfOrgName);
-        q.addToSelect(qfFeatureClass);
-
-        q.addFrom(qcOrg);
-        q.addFrom(qcFeature);
-
-        q.addToOrderBy(qfOrgName, "ascending");
-
-        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
-
-        q.setConstraint(constraints);
-
-        // SequenceFeature.organism = Organism
-        QueryObjectReference organism = new QueryObjectReference(qcFeature,
-                "organism");
-        ContainsConstraint ccOrg = new ContainsConstraint(organism,
-                ConstraintOp.CONTAINS, qcOrg);
-        constraints.addConstraint(ccOrg);
-
-        // constraints.addConstraint(new BagConstraint(qfOrgName,
-        // ConstraintOp.IN, orgList));
-
-        Results results = SessionMethods.getInterMineAPI(request.getSession())
-                .getObjectStore().execute(q);
-
-        // Parse results data to a map
-        Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
-        Set<String> featureTypeSet = new LinkedHashSet<String>();
-
-        // TODO this will be very slow when query too many features
-        if (results == null || results.size() < 0) {
-            return "";
-        } else {
-            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-                ResultsRow<?> row = (ResultsRow<?>) iter.next();
-
-                String org = (String) row.get(0);
-                @SuppressWarnings("rawtypes")
-                // TODO exception - feature type is NULL
-                String featureType = ((Class) row.get(1)).getSimpleName();
-
-                if (!"Chromosome".equals(featureType) && orgList.contains(org)) {
-                    if (resultsMap.size() < 1) {
-                        featureTypeSet.add(featureType);
-                        resultsMap.put(org, featureTypeSet);
-                    } else {
-                        if (resultsMap.keySet().contains(org)) {
-                            resultsMap.get(org).add(featureType);
-                        } else {
-                            Set<String> s = new LinkedHashSet<String>();
-                            s.add(featureType);
-                            resultsMap.put(org, s);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Get all feature types
-        for (Set<String> ftSet : resultsMap.values()) {
-            if (featureTypesInOrgs == null) {
-                featureTypesInOrgs = new HashSet<String>();
-                featureTypesInOrgs.addAll(ftSet);
-            }
-        }
-
-        getFtToSoMap();
-        getOrgTaxonIdMap();
-
-        // Parse data to JSON string
-        List<Object> ft = new ArrayList<Object>();
-        List<Object> gb = new ArrayList<Object>();
-        Map<String, Object> ma = new LinkedHashMap<String, Object>();
-
-        for (Entry<String, Set<String>> e : resultsMap.entrySet()) {
-            Map<String, Object> mft = new LinkedHashMap<String, Object>();
-            Map<String, Object> mgb = new LinkedHashMap<String, Object>();
-
-            mft.put("organism", e.getKey());
-            mft.put("features", new ArrayList<String>(e.getValue()));
-
-            ft.add(mft);
-
-            mgb.put("organism", e.getKey());
-            mgb.put("genomeBuild",
-                    (OrganismGenomeBuildLookup
-                            .getGenomeBuildbyOrgansimAbbreviation(e.getKey()) == null)
-                            ? "not available"
-                            : OrganismGenomeBuildLookup
-                                    .getGenomeBuildbyOrgansimAbbreviation(e
-                                            .getKey()));
-
-            gb.add(mgb);
-        }
-
-        ma.put("organisms", orgList);
-        ma.put("genomeBuilds", gb);
-        ma.put("featureTypes", ft);
-        JSONObject jo = new JSONObject(ma);
-
-        return jo.toString();
-    }
-
     /**
-     * for GenomicRegionSearchAjaxAction use.
+     * Get organism for GenomicRegionSearchAjaxAction use.
      *
-     * @param spanUUIDString
-     *            uuid
-     * @param spanConstraintMap
-     *            map of contraints
+     * @param spanUUIDString uuid
+     * @param spanConstraintMap map of contraints
      * @return the organism
      */
-    public String getSpanOrganism(String spanUUIDString,
+    public String getGenomicRegionOrganismConstraint(String spanUUIDString,
             Map<GenomicRegionSearchConstraint, String> spanConstraintMap) {
 
         for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
@@ -887,26 +908,73 @@ public class GenomicRegionSearchService
     }
 
     /**
+     * Get flanking size for GenomicRegionSearchAjaxAction use.
+     *
+     * @param spanUUIDString uuid
+     * @param spanConstraintMap map of contraints
+     * @return the flanking size
+     */
+    public int getGenomicRegionFlankingSizeConstraint(String spanUUIDString,
+            Map<GenomicRegionSearchConstraint, String> spanConstraintMap) {
+
+        for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
+                .entrySet()) {
+            if (e.getValue().equals(spanUUIDString)) {
+                return e.getKey().getExtendedRegionSize();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Get a comma separated string of a span's overlap features. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param spanUUIDString
-     *            uuid
-     * @param spanString
-     *            span in string
-     * @param resultMap
-     *            map of search results
-     * @return String
+     * @param spanString span in string
+     * @param flankingSize int value of extended genomic region size
+     * @param resultMap map of search results
+     * @return String feature ids joined by comma
      */
-    public String getSpanOverlapFeatures(String spanUUIDString,
-            String spanString, Map<GenomicRegion, List<List<String>>> resultMap) {
+    public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String spanString, int flankingSize,
+            Map<GenomicRegion, List<List<String>>> resultMap) {
 
-        Set<String> featureSet = new HashSet<String>();
+        Set<Integer> featureSet = new HashSet<Integer>();
 
-        GenomicRegion spanToExport = new GenomicRegion(spanString);
+        GenomicRegion spanToExport = new GenomicRegion();
+
+        // spanString is extended span
+        String[] temp = spanString.split(":");
+        spanToExport.setChr(temp[0]);
+        temp = temp[1].split("\\.\\.");
+        spanToExport.setExtendedStart(Integer.parseInt(temp[0]));
+        spanToExport.setExtendedEnd(Integer.parseInt(temp[1]));
+        spanToExport.setExtendedRegionSize(flankingSize);
+        spanToExport.setStart(spanToExport.getExtendedStart()
+                + spanToExport.getExtendedRegionSize());
+        spanToExport.setEnd(spanToExport.getExtendedEnd() - spanToExport.getExtendedRegionSize());
+
         for (List<String> r : resultMap.get(spanToExport)) {
-            featureSet.add(r.get(1)); // the first element (0) is InterMine Id, second (1) is PID
+            // the first element (0) is InterMine Id, second (1) is PID
+            featureSet.add(Integer.valueOf(r.get(0)));
         }
+
+        return featureSet;
+    }
+
+    /**
+     * Get a comma separated string of a span's overlap features. for
+     * GenomicRegionSearchAjaxAction use.
+     *
+     * @param spanString span in string
+     * @param flankingSize int value of extended genomic region size
+     * @param resultMap map of search results
+     * @return String feature ids joined by comma
+     */
+    public String getGenomicRegionOverlapFeaturesAsString(String spanString, int flankingSize,
+            Map<GenomicRegion, List<List<String>>> resultMap) {
+
+        Set<Integer> featureSet = getGenomicRegionOverlapFeaturesAsSet(
+                spanString, flankingSize, resultMap);
 
         return StringUtil.join(featureSet, ",");
     }
@@ -915,9 +983,8 @@ public class GenomicRegionSearchService
      * Check whether the results have empty features. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param resultMap
-     *            map of search results
-     * @return String
+     * @param resultMap map of search results
+     * @return String "hasFeature" or "emptyFeature"
      */
     public String isEmptyFeature(
             Map<GenomicRegion, List<List<String>>> resultMap) {
@@ -932,19 +999,13 @@ public class GenomicRegionSearchService
     /**
      * Convert result map to HTML string.
      *
-     * @param resultMap
-     *            resultMap
-     * @param spanList
-     *            spanList
-     * @param fromIdx
-     *            offsetStart
-     * @param toIdx
-     *            offsetEnd
-     * @param session
-     *            the current session
-     * @param orgName
-     *            organism
-     * @return a String
+     * @param resultMap resultMap
+     * @param spanList spanList
+     * @param fromIdx offsetStart
+     * @param toIdx offsetEnd
+     * @param session the current session
+     * @param orgName organism
+     * @return a String of HTML
      */
     public String convertResultMapToHTML(
             Map<GenomicRegion, List<List<String>>> resultMap,
@@ -972,7 +1033,7 @@ public class GenomicRegionSearchService
 
         for (GenomicRegion s : subSpanList) {
 
-            String span = s.getExtentedRegion();
+            String span = s.getExtendedRegion();
             List<List<String>> features = resultMap.get(s);
 
             /*
@@ -984,8 +1045,10 @@ public class GenomicRegionSearchService
                 String loc = firstFeature.get(3) + ":" + firstFeature.get(4)
                         + ".." + firstFeature.get(5);
 
-                String firstSoTerm = featureTypeToSOTermMap.get(
-                        firstFeature.get(2)).get(0);
+                // translatedClassName
+                String firstSoTerm = WebUtil.formatPath(firstFeature.get(2),
+                        SessionMethods.getInterMineAPI(request.getSession()),
+                        SessionMethods.getWebConfig(request));
                 String firstSoTermDes = featureTypeToSOTermMap.get(
                         firstFeature.get(2)).get(1);
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
@@ -1041,8 +1104,11 @@ public class GenomicRegionSearchService
 
 
                 for (int i = 1; i < length; i++) {
-                    String soTerm = featureTypeToSOTermMap.get(
-                            features.get(i).get(2)).get(0);
+//                    String soTerm = featureTypeToSOTermMap.get(
+//                            features.get(i).get(2)).get(0);
+                    String soTerm = WebUtil.formatPath(features.get(i).get(2),
+                            SessionMethods.getInterMineAPI(request.getSession()),
+                            SessionMethods.getWebConfig(request));
                     String soTermDes = featureTypeToSOTermMap.get(
                             features.get(i).get(2)).get(1);
                     soTermDes = soTermDes.replaceAll("'", "\\\\'");
@@ -1124,10 +1190,8 @@ public class GenomicRegionSearchService
 
     /**
      *
-     * @param featureIds
-     *            set of feature intermine ids
-     * @param featureType
-     *            feature class name
+     * @param featureIds set of feature intermine ids
+     * @param featureType feature class name
      * @return a pathquery
      */
     public PathQuery getExportFeaturesQuery(Set<Integer> featureIds,
@@ -1151,15 +1215,14 @@ public class GenomicRegionSearchService
 
     /**
      *
-     * @param organisms
-     *            set of org names
+     * @param organisms set of org names
      * @return set of taxonIds
      */
     public Set<Integer> getTaxonIds(Set<String> organisms) {
         Set<Integer> taxIds = new HashSet<Integer>();
 
         for (String org : organisms) {
-            taxIds.add(this.getOrgTaxonIdMap().get(org));
+            taxIds.add(this.getOrganismToTaxonMap().get(org));
         }
 
         return taxIds;

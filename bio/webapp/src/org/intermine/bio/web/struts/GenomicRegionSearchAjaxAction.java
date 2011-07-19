@@ -105,7 +105,8 @@ public class GenomicRegionSearchAjaxAction extends Action
                 }
             }
 
-            String orgName = grsService.getSpanOrganism(spanUUIDString, spanConstraintMap);
+            String orgName = grsService.getGenomicRegionOrganismConstraint(
+                    spanUUIDString, spanConstraintMap);
             String htmlStr = grsService.convertResultMapToHTML(
                     spanOverlapFullResultMap.get(spanUUIDString), spanList,
                     fromIdx, toIdx, request.getSession(),
@@ -117,17 +118,19 @@ public class GenomicRegionSearchAjaxAction extends Action
             out.close();
         }
 
-        // Get span overlap feature pids by giving a span
+        // Get span overlap feature pids by giving a span (extended)
         if (request.getParameter("getFeatures") != null
                 && request.getParameter("spanString") != null) {
 
             PrintWriter out = response.getWriter();
 
-            String featurePids = grsService.getSpanOverlapFeatures(spanUUIDString,
-                    request.getParameter("spanString"),
+            int flankingSize = grsService
+                    .getGenomicRegionFlankingSizeConstraint(spanUUIDString, spanConstraintMap);
+            String featureIds = grsService.getGenomicRegionOverlapFeaturesAsString(
+                    request.getParameter("spanString"), flankingSize,
                     spanOverlapFullResultMap.get(spanUUIDString));
 
-            out.println(featurePids);
+            out.println(featureIds);
 
             out.flush();
             out.close();
@@ -173,10 +176,11 @@ public class GenomicRegionSearchAjaxAction extends Action
                 }
 
             } else {
-                GenomicRegion spanToExport = new GenomicRegion(criteria);
-                for (List<String> r : featureMap.get(spanToExport)) {
-                    featureIdSet.add(Integer.valueOf(r.get(0)));
-                }
+                int flankingSize = grsService
+                        .getGenomicRegionFlankingSizeConstraint(spanUUIDString,
+                                spanConstraintMap);
+                featureIdSet = grsService.getGenomicRegionOverlapFeaturesAsSet(
+                        criteria, flankingSize, featureMap);
             }
 
             PathQuery q = grsService.getExportFeaturesQuery(featureIdSet, facet);
@@ -224,6 +228,8 @@ public class GenomicRegionSearchAjaxAction extends Action
                 exportForm = new SequenceExportForm();
                 exportForm.setDoGzip(doGzip);
             }
+
+            // TODO add BED format
 
             exporter.export(pt, request, response, exportForm);
 
