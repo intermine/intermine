@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -54,7 +53,7 @@ public class LoginAction extends LoginHandler
 
         ActionErrors errors = lf.validate(mapping, request);
         if (!errors.isEmpty()) {
-            saveErrors(request, (ActionMessages) errors);
+            saveErrors(request, errors);
             return mapping.findForward("login");
         }
         Map<String, String> renamedBags = doLogin(request, response, session, pm, lf.getUsername(),
