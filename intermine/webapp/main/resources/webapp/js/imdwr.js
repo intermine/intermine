@@ -810,6 +810,11 @@ function refreshSavedBagStatus() {
                     allCurrent = false;
                 document.getElementById("status_" + bagName).innerHTML = getHTML(status, bagName);
                 document.getElementById("size_" + bagName).innerHTML = entry['size'];
+                if (status == 'CURRENT') {
+                    document.getElementById("linkBag_" + bagName).innerHTML = '<a href="bagDetails.do?bagName=' + bagName + '">' + bagName + '</html:link>';
+                    hrefEdit='<a href="javascript:editName(\'' + bagName + '\');"><img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/></a>';
+                    document.getElementById("editName_" + bagName).innerHTML = hrefEdit;
+                }
             })
             if (!allCurrent) {
                 setTimeout('refreshSavedBagStatus()', 1000);
