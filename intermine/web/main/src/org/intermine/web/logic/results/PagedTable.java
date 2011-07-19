@@ -52,6 +52,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -66,7 +67,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class PagedTable
 {
     private static final int FIRST_SELECTED_FIELDS_COUNT = 25;
-    private WebTable webTable;
+    private final WebTable webTable;
     private List<String> columnNames = null;
     private int startRow = 0;
 
@@ -91,7 +92,7 @@ public class PagedTable
      * Construct a PagedTable with a list of column names
      * @param webTable the WebTable that this PagedTable will display
      */
-    public PagedTable(WebTable webTable) {
+    public PagedTable(final WebTable webTable) {
         super();
         this.webTable = webTable;
     }
@@ -101,7 +102,7 @@ public class PagedTable
      * @param webTable the WebTable that this PagedTable will display
      * @param pageSize the number of records to show on each page.  Default value is 10.
      */
-    public PagedTable(WebTable webTable, int pageSize) {
+    public PagedTable(final WebTable webTable, final int pageSize) {
         super();
         this.webTable = webTable;
         this.pageSize = pageSize;
@@ -137,9 +138,9 @@ public class PagedTable
     public List<String> getColumnNames() {
         if (columnNames == null) {
             columnNames = new ArrayList<String>();
-            Iterator<Column> iter = getColumns().iterator();
+            final Iterator<Column> iter = getColumns().iterator();
             while (iter.hasNext()) {
-                String columnName = iter.next().getName();
+                final String columnName = iter.next().getName();
                 columnNames.add(columnName);
             }
         }
@@ -152,8 +153,8 @@ public class PagedTable
      */
     public int getVisibleColumnCount() {
         int count = 0;
-        for (Iterator<Column> i = getColumnsInternal().iterator(); i.hasNext();) {
-            Column obj = i.next();
+        for (final Iterator<Column> i = getColumnsInternal().iterator(); i.hasNext();) {
+            final Column obj = i.next();
             if (obj.isVisible()) {
                 count++;
             }
@@ -166,7 +167,7 @@ public class PagedTable
      *
      * @param index the index of the column to move
      */
-    public void moveColumnLeft(int index) {
+    public void moveColumnLeft(final int index) {
         if (index > 0 && index <= getColumnsInternal().size() - 1) {
             getColumnsInternal().add(index - 1, getColumnsInternal().remove(index));
         }
@@ -177,7 +178,7 @@ public class PagedTable
      *
      * @param index the index of the column to move
      */
-    public void moveColumnRight(int index) {
+    public void moveColumnRight(final int index) {
         if (index >= 0 && index < getColumnsInternal().size() - 1) {
             getColumnsInternal().add(index + 1, getColumnsInternal().remove(index));
         }
@@ -189,11 +190,11 @@ public class PagedTable
      * @param i1 the index of column 1
      * @param i2 the index of column 2
      */
-    public void swapColumns(int i1, int i2) {
+    public void swapColumns(final int i1, final int i2) {
         int index1 = i1;
         int index2 = i2;
         if (index2 < index1) {
-            int tmp = index2;
+            final int tmp = index2;
             index2 = index1;
             index1 = tmp;
         }
@@ -206,9 +207,9 @@ public class PagedTable
      *
      * @param pageSize the page size
      */
-    public void setPageSize(int pageSize) {
+    public void setPageSize(final int pageSize) {
         this.pageSize = pageSize;
-        startRow = (startRow / pageSize) * pageSize;
+        startRow = startRow / pageSize * pageSize;
         updateRows();
     }
 
@@ -234,7 +235,7 @@ public class PagedTable
      * @return current page index
      */
     public int getPage() {
-        return (startRow / pageSize);
+        return startRow / pageSize;
     }
 
     /**
@@ -243,9 +244,9 @@ public class PagedTable
      * @param page page number
      * @param size page size
      */
-    public void setPageAndPageSize(int page, int size) {
-        this.pageSize = size;
-        this.startRow = size * page;
+    public void setPageAndPageSize(final int page, final int size) {
+        pageSize = size;
+        startRow = size * page;
         updateRows();
     }
 
@@ -270,14 +271,14 @@ public class PagedTable
      * @return true if we are on the first page
      */
     public boolean isFirstPage() {
-        return (startRow == 0);
+        return startRow == 0;
     }
 
     /**
      * Go to the last page
      */
     public void lastPage() {
-        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
+        startRow = (getExactSize() - 1) / pageSize * pageSize;
         updateRows();
     }
 
@@ -286,7 +287,7 @@ public class PagedTable
      * @return true if we are on the last page
      */
     public boolean isLastPage() {
-        return (!isSizeEstimate() && getEndRow() == getEstimatedSize() - 1);
+        return !isSizeEstimate() && getEndRow() == getEstimatedSize() - 1;
     }
 
     /**
@@ -353,14 +354,22 @@ public class PagedTable
     }
 
     /**
+     * Get the underlying query for these results.
+     * @return
+     */
+    public PathQuery getPathQuery() {
+        return webTable.getPathQuery();
+    }
+
+    /**
      * Add an object id and its field value
      * that has been selected in the table.
      * @param objectId the id to select
      * @param columnIndex the column of the selected id
      */
-    public void selectId(Integer objectId, int columnIndex) {
+    public void selectId(final Integer objectId, final int columnIndex) {
         if (allSelected == -1) {
-            ResultElement resultElement = findIdInVisible(objectId);
+            final ResultElement resultElement = findIdInVisible(objectId);
             if (resultElement != null) {
                 if (resultElement.getField() == null) {
                     selectionIds.put(objectId, null);
@@ -381,7 +390,7 @@ public class PagedTable
      * Remove the object with the given object id from the list of selected objects.
      * @param objectId the object store id
      */
-    public void deSelectId(Integer objectId) {
+    public void deSelectId(final Integer objectId) {
         if (allSelected == -1) {
             selectionIds.remove(objectId);
             if (selectionIds.size() <= 0) {
@@ -390,7 +399,7 @@ public class PagedTable
             }
         } else {
             // add because the all checkbox is on
-            ResultElement resultElement = findIdInVisible(objectId);
+            final ResultElement resultElement = findIdInVisible(objectId);
             if (resultElement != null) {
                 if (resultElement.getField() == null) {
                     selectionIds.put(objectId, null);
@@ -407,15 +416,15 @@ public class PagedTable
     /**
      * Search the visible rows and return the first ResultElement with the given ID./
      */
-    private ResultElement findIdInVisible(Integer id) {
-        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : getRows()) {
-            for (ResultsRow<MultiRowValue<ResultElement>> rv : mr) {
-                for (MultiRowValue<ResultElement> mrv : rv) {
+    private ResultElement findIdInVisible(final Integer id) {
+        for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : getRows()) {
+            for (final ResultsRow<MultiRowValue<ResultElement>> rv : mr) {
+                for (final MultiRowValue<ResultElement> mrv : rv) {
                     // We don't need to check other MultiRowValues are we've already seen them
                     if (mrv instanceof MultiRowFirstValue<?>) {
-                        ResultElement resultElement = mrv.getValue();
-                        if ((resultElement != null) && (resultElement.getId().equals(id))
-                            && (resultElement.isKeyField())) {
+                        final ResultElement resultElement = mrv.getValue();
+                        if (resultElement != null && resultElement.getId().equals(id)
+                            && resultElement.isKeyField()) {
                             return resultElement;
                         }
                     }
@@ -434,34 +443,34 @@ public class PagedTable
      * @param classKeysMap map of key field for a given class name
      * @return the list
      */
-    public List<String> getFirstSelectedFields(ObjectStore os,
-                                               Map<String, List<FieldDescriptor>> classKeysMap) {
-        Set<String> retList = new LinkedHashSet<String>();
+    public List<String> getFirstSelectedFields(final ObjectStore os,
+                                               final Map<String, List<FieldDescriptor>> classKeysMap) {
+        final Set<String> retList = new LinkedHashSet<String>();
         // only find values if individual elements selected, not if whole column selected
-        Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+        final Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
         boolean seenNullField = false;
         while (selectedEntryIter.hasNext()) {
             if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
-                SelectionEntry entry = selectedEntryIter.next();
-                String fieldValue = entry.fieldValue;
+                final SelectionEntry entry = selectedEntryIter.next();
+                final String fieldValue = entry.fieldValue;
                 if (fieldValue == null) {
                     // the select column doesn't have a value for this object; use class keys to
                     // find a value
                     InterMineObject object;
                     try {
-                        Integer id = entry.id;
+                        final Integer id = entry.id;
                         object = os.getObjectById(id);
                         if (object == null) {
                             throw new RuntimeException("internal error - unknown object id: "
                                     + id);
                         }
-                        String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
+                        final String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
                         if (classKeyFieldValue == null) {
                             seenNullField = true;
                         } else {
                             retList.add(classKeyFieldValue);
                         }
-                    } catch (ObjectStoreException e) {
+                    } catch (final ObjectStoreException e) {
                         seenNullField = true;
                     }
                 } else {
@@ -486,19 +495,19 @@ public class PagedTable
      * @param object InterMineObject
      * @return the first non-null class key field
      */
-    public String findClassKeyValue(Map<String, List<FieldDescriptor>> classKeysMap,
-                                     InterMineObject object) {
+    public String findClassKeyValue(final Map<String, List<FieldDescriptor>> classKeysMap,
+                                     final InterMineObject object) {
         try {
-            String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
-            List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
-            for (FieldDescriptor fd: classKeyFds) {
-                Object value = object.getFieldValue(fd.getName());
+            final String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
+            final List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
+            for (final FieldDescriptor fd: classKeyFds) {
+                final Object value = object.getFieldValue(fd.getName());
                 if (value != null) {
                     return value.toString();
                 }
             }
             return null;
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             return null;
         }
     }
@@ -516,14 +525,14 @@ public class PagedTable
      * @return the list.
      */
     public List<String> getCurrentSelectedIdStringsList() {
-        List<String> selected = new ArrayList<String>();
+        final List<String> selected = new ArrayList<String>();
         if (allSelected == -1) {
             if (!selectionIds.isEmpty()) {
-                for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
-                    for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
-                        for (MultiRowValue<ResultElement> multiRowValue : resultsRow) {
+                for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
+                    for (final ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
+                        for (final MultiRowValue<ResultElement> multiRowValue : resultsRow) {
                             if (multiRowValue instanceof MultiRowFirstValue<?>) {
-                                ResultElement resElt = multiRowValue.getValue();
+                                final ResultElement resElt = multiRowValue.getValue();
                                 if (resElt != null) {
                                     if (selectionIds.containsKey(resElt.getId())) {
                                         selected.add(resElt.getId().toString());
@@ -535,11 +544,11 @@ public class PagedTable
                 }
             }
         } else {
-            for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
-                for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
-                    MultiRowValue<ResultElement> multiRowValue = resultsRow.get(allSelected);
+            for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
+                for (final ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
+                    final MultiRowValue<ResultElement> multiRowValue = resultsRow.get(allSelected);
                     if (multiRowValue instanceof MultiRowFirstValue<?>) {
-                        ResultElement resElt = multiRowValue.getValue();
+                        final ResultElement resElt = multiRowValue.getValue();
                         if (resElt != null) {
                             if (!selectionIds.containsKey(resElt.getId())) {
                                 selected.add(resElt.getId().toString());
@@ -576,16 +585,19 @@ public class PagedTable
             return new Iterator<SelectionEntry>() {
                 Iterator<Map.Entry<Integer, String>> selectionIter =
                     selectionIds.entrySet().iterator();
+                @Override
                 public boolean hasNext() {
                     return selectionIter.hasNext();
                 }
+                @Override
                 public SelectionEntry next() {
-                    SelectionEntry retEntry = new SelectionEntry();
-                    Map.Entry<Integer, String> entry = selectionIter.next();
+                    final SelectionEntry retEntry = new SelectionEntry();
+                    final Map.Entry<Integer, String> entry = selectionIter.next();
                     retEntry.id = entry.getKey();
                     retEntry.fieldValue = entry.getValue();
                     return retEntry;
                 }
+                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
@@ -602,20 +614,20 @@ public class PagedTable
             private void moveToNext() {
                 while (true) {
                     try {
-                        MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow
+                        final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow
                             = getAllRows().getResultElements(currentIndex);
                         if (multiRow.size() <= multiRowIndex) {
                             currentIndex++;
                             multiRowIndex = 0;
                         } else {
-                            ResultsRow<MultiRowValue<ResultElement>> row
+                            final ResultsRow<MultiRowValue<ResultElement>> row
                                 = multiRow.get(multiRowIndex);
                             multiRowIndex++;
-                            MultiRowValue<ResultElement> value = row.get(allSelected);
+                            final MultiRowValue<ResultElement> value = row.get(allSelected);
                             if (value instanceof MultiRowFirstValue<?>) {
-                                ResultElement element = value.getValue();
+                                final ResultElement element = value.getValue();
                                 if (element != null) {
-                                    Integer elementId = element.getId();
+                                    final Integer elementId = element.getId();
                                     if (!selectionIds.containsKey(elementId)) {
                                         nextEntry = new SelectionEntry();
                                         nextEntry.id = elementId;
@@ -629,23 +641,26 @@ public class PagedTable
                                 }
                             }
                         }
-                    } catch (IndexOutOfBoundsException e) {
+                    } catch (final IndexOutOfBoundsException e) {
                         nextEntry = null;
                         break;
                     }
                 }
             }
 
+            @Override
             public boolean hasNext() {
                 return nextEntry != null;
             }
 
+            @Override
             public SelectionEntry next() {
-                SelectionEntry retVal = nextEntry;
+                final SelectionEntry retVal = nextEntry;
                 moveToNext();
                 return retVal;
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -660,12 +675,15 @@ public class PagedTable
     public Iterator<Integer> selectedIdsIterator() {
         return new Iterator<Integer>() {
             Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+            @Override
             public boolean hasNext() {
                 return selectedEntryIter.hasNext();
             }
+            @Override
             public Integer next() {
                 return selectedEntryIter.next().id;
             }
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -687,14 +705,14 @@ public class PagedTable
      * Select a whole column.
      * @param columnSelected the column index
      */
-    public void setAllSelectedColumn(int columnSelected) {
+    public void setAllSelectedColumn(final int columnSelected) {
         if (columnSelected == -1) {
             selectedClass = null;
         } else {
-            Class<?> columnClass = getAllRows().getColumns().get(columnSelected).getType();
+            final Class<?> columnClass = getAllRows().getColumns().get(columnSelected).getType();
             selectedClass = TypeUtil.unqualifiedName(columnClass.getName());
         }
-        this.allSelected = columnSelected;
+        allSelected = columnSelected;
     }
 
     /**
@@ -707,7 +725,7 @@ public class PagedTable
     /**
      * @param selectedColumn the selectedColumn to set
      */
-    public void setSelectedColumn(int selectedColumn) {
+    public void setSelectedColumn(final int selectedColumn) {
         this.selectedColumn = selectedColumn;
     }
 
@@ -721,7 +739,7 @@ public class PagedTable
     /**
      * @param selectedClass the selectedClass to set
      */
-    public void setSelectedClass(String selectedClass) {
+    public void setSelectedClass(final String selectedClass) {
         this.selectedClass = selectedClass;
     }
 
@@ -730,9 +748,9 @@ public class PagedTable
      * getResultElementRows().
      */
     private void updateRows() {
-        List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> newRows
+        final List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> newRows
             = new ArrayList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>();
-        String invalidStartMessage = "Invalid start row of table: " + startRow;
+        final String invalidStartMessage = "Invalid start row of table: " + startRow;
         if (startRow < 0) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
@@ -743,20 +761,20 @@ public class PagedTable
             } else {
                 webTable.getResultElements(startRow);
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (final IndexOutOfBoundsException e) {
             throw new PageOutOfRangeException(invalidStartMessage);
         }
 
-        int max = startRow + pageSize;
+        final int max = startRow + pageSize;
         for (int i = startRow; i < max; i++) {
             try {
                 newRows.add(webTable.getResultElements(i));
-            } catch (IndexOutOfBoundsException e) {
+            } catch (final IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
                 break;
             }
         }
-        this.rows = newRows;
+        rows = newRows;
     }
 
     /**
@@ -776,7 +794,7 @@ public class PagedTable
      * @param index of column to find type for
      * @return the class or parent class for the indexed column
      */
-    public Class<?> getTypeForColumn(int index) {
+    public Class<?> getTypeForColumn(final int index) {
         return webTable.getColumns().get(index).getType();
     }
 
@@ -784,7 +802,7 @@ public class PagedTable
      * Set the column names
      * @param columnNames a list of Strings
      */
-    public void setColumnNames(List<String> columnNames) {
+    public void setColumnNames(final List<String> columnNames) {
         this.columnNames = columnNames;
     }
 
@@ -805,7 +823,7 @@ public class PagedTable
     /**
      * @param tableid the tableid to set
      */
-    public void setTableid(String tableid) {
+    public void setTableid(final String tableid) {
         this.tableid = tableid;
     }
 
@@ -814,7 +832,7 @@ public class PagedTable
      * @return indexes
      */
     public List<Integer> getVisibleIndexes() {
-        List<Integer> ret = new ArrayList<Integer>();
+        final List<Integer> ret = new ArrayList<Integer>();
         for (int i = 0; i < getColumns().size(); i++) {
             if (getColumns().get(i) != null && getColumns().get(i).isVisible()) {
                 ret.add(new Integer(getColumns().get(i).getIndex()));
@@ -832,17 +850,17 @@ public class PagedTable
         if (allSelected == -1) {
             return selectionIds.isEmpty();
         }
-        WebResults webResults = (WebResults) getAllRows();
-        Results results = webResults.getInterMineResults();
-        int batchSize = results.getBatchSize();
+        final WebResults webResults = (WebResults) getAllRows();
+        final Results results = webResults.getInterMineResults();
+        final int batchSize = results.getBatchSize();
         int i = 0;
-        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getAllRows()) {
-            for (ResultsRow<MultiRowValue<ResultElement>> subRow : multiRow) {
-                MultiRowValue<ResultElement> value = subRow.get(allSelected);
+        for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getAllRows()) {
+            for (final ResultsRow<MultiRowValue<ResultElement>> subRow : multiRow) {
+                final MultiRowValue<ResultElement> value = subRow.get(allSelected);
                 if (value instanceof MultiRowFirstValue<?>) {
-                    ResultElement element = value.getValue();
+                    final ResultElement element = value.getValue();
                     if (element != null) {
-                        Integer elementId = element.getId();
+                        final Integer elementId = element.getId();
                         if (!selectionIds.containsKey(elementId)) {
                             return false;
                         }
@@ -851,13 +869,13 @@ public class PagedTable
             }
             i++;
             if (i >= batchSize) {
-                Query bagCreationQuery = getBagCreationQuery();
-                Results bagCreationResults = results.getObjectStore()
+                final Query bagCreationQuery = getBagCreationQuery();
+                final Results bagCreationResults = results.getObjectStore()
                     .executeSingleton(bagCreationQuery, 1, true, false, true);
                 try {
                     bagCreationResults.get(0);
                     return false;
-                } catch (IndexOutOfBoundsException e) {
+                } catch (final IndexOutOfBoundsException e) {
                     return true;
                 }
             }
@@ -872,7 +890,7 @@ public class PagedTable
      */
     public boolean isAllRowsSelected() {
         if (allSelected == -1) {
-            int selectedCount = selectionIds.size();
+            final int selectedCount = selectionIds.size();
             if (selectedCount > 0) {
                 // If there is at least one more row than there are selected elements, it's not
                 // all selected.  We use get()/try/catch to avoid calling size() which can be slow
@@ -880,7 +898,7 @@ public class PagedTable
                     getAllRows().get(selectedCount);
                     // success
                     return false;
-                } catch (IndexOutOfBoundsException e) {
+                } catch (final IndexOutOfBoundsException e) {
                     return true;
                 }
             }
@@ -898,16 +916,16 @@ public class PagedTable
             throw new IllegalArgumentException("Don't use a query, when a whole column is not "
                     + "selected");
         }
-        WebResults webResults = (WebResults) getAllRows();
-        Results results = webResults.getInterMineResults();
-        Query oldQuery = results.getQuery();
-        Query newQuery = QueryCloner.cloneQuery(oldQuery);
+        final WebResults webResults = (WebResults) getAllRows();
+        final Results results = webResults.getInterMineResults();
+        final Query oldQuery = results.getQuery();
+        final Query newQuery = QueryCloner.cloneQuery(oldQuery);
 
         newQuery.clearOrderBy();
-        Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>(oldQuery.getSelect());
+        final Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>(oldQuery.getSelect());
         newQuery.clearSelect();
-        Path summaryPath = columns.get(allSelected).getPath().getPrefix();
-        QuerySelectable summarySelectable = ((WebResults) webTable).getPathToQueryNode().get(
+        final Path summaryPath = columns.get(allSelected).getPath().getPrefix();
+        final QuerySelectable summarySelectable = ((WebResults) webTable).getPathToQueryNode().get(
                 summaryPath.toStringNoConstraints());
         if (summarySelectable == null) {
             throw new NullPointerException("Error - path " + summaryPath.toStringNoConstraints()
@@ -916,17 +934,17 @@ public class PagedTable
         return recursiveGetBagCreationQuery(summarySelectable, newQuery, oldSelect);
     }
 
-    private Query recursiveGetBagCreationQuery(QuerySelectable summary, Query newQuery,
-            Set<QuerySelectable> oldSelect) {
+    private Query recursiveGetBagCreationQuery(final QuerySelectable summary, final Query newQuery,
+            final Set<QuerySelectable> oldSelect) {
         if (summary instanceof QueryObjectPathExpression) {
-            QueryObjectPathExpression qope = (QueryObjectPathExpression) summary;
+            final QueryObjectPathExpression qope = (QueryObjectPathExpression) summary;
             if (oldSelect.contains(qope) || oldSelect.contains(new PathExpressionField(qope, 0))) {
                 // We need to add QueryClasses to the query for this outer join. This will make it
                 // an inner join, so the "no object" results will disappear.
-                QueryClass lastQc = qope.getDefaultClass();
+                final QueryClass lastQc = qope.getDefaultClass();
                 newQuery.addFrom(lastQc);
                 newQuery.addToSelect(lastQc);
-                QueryClass rootQc = qope.getQueryClass();
+                final QueryClass rootQc = qope.getQueryClass();
                 QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
                             new QueryObjectReference(rootQc, qope.getFieldName()),
                             ConstraintOp.CONTAINS, lastQc));
@@ -941,22 +959,22 @@ public class PagedTable
                 return newQuery;
             }
         } else if (summary instanceof QueryCollectionPathExpression) {
-            QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) summary;
+            final QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) summary;
             if (oldSelect.contains(qcpe)) {
-                QueryClass lastQc = qcpe.getDefaultClass();
+                final QueryClass lastQc = qcpe.getDefaultClass();
                 newQuery.addFrom(lastQc);
                 newQuery.addToSelect(lastQc);
-                QueryClass rootQc = qcpe.getQueryClass();
+                final QueryClass rootQc = qcpe.getQueryClass();
                 try {
                     QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
                                 new QueryCollectionReference(rootQc, qcpe.getFieldName()),
                                 ConstraintOp.CONTAINS, lastQc));
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
                                 new QueryObjectReference(rootQc, qcpe.getFieldName()),
                                 ConstraintOp.CONTAINS, lastQc));
                 }
-                for (FromElement extraQc : qcpe.getFrom()) {
+                for (final FromElement extraQc : qcpe.getFrom()) {
                     if (extraQc instanceof QueryClass) {
                         newQuery.addFrom(extraQc);
                     } else {
@@ -975,7 +993,7 @@ public class PagedTable
                 return newQuery;
             }
         } else if (summary instanceof QueryClass) {
-            QueryClass qc = (QueryClass) summary;
+            final QueryClass qc = (QueryClass) summary;
             if (oldSelect.contains(qc)) {
                 newQuery.addToSelect(qc);
                 newQuery.setDistinct(true);
@@ -989,15 +1007,15 @@ public class PagedTable
             throw new IllegalArgumentException("Error - path resolves to unknown object "
                     + summary);
         }
-        for (QuerySelectable qs : oldSelect) {
+        for (final QuerySelectable qs : oldSelect) {
             try {
-                if ((qs instanceof PathExpressionField)
-                        && (((PathExpressionField) qs).getFieldNumber() == 0)) {
-                    QueryObjectPathExpression qope = ((PathExpressionField) qs).getQope();
-                    Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
-                    QueryClass lastQc = qope.getDefaultClass();
+                if (qs instanceof PathExpressionField
+                        && ((PathExpressionField) qs).getFieldNumber() == 0) {
+                    final QueryObjectPathExpression qope = ((PathExpressionField) qs).getQope();
+                    final Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
+                    final QueryClass lastQc = qope.getDefaultClass();
                     tempNewQuery.addFrom(lastQc);
-                    QueryClass rootQc = qope.getQueryClass();
+                    final QueryClass rootQc = qope.getQueryClass();
                     QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
                                 new QueryObjectReference(rootQc, qope.getFieldName()),
                                 ConstraintOp.CONTAINS, lastQc));
@@ -1007,21 +1025,21 @@ public class PagedTable
                     return recursiveGetBagCreationQuery(summary, tempNewQuery,
                             new HashSet<QuerySelectable>(qope.getSelect()));
                 } else if (qs instanceof QueryCollectionPathExpression) {
-                    QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
-                    QueryClass lastQc = qcpe.getDefaultClass();
-                    Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
+                    final QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
+                    final QueryClass lastQc = qcpe.getDefaultClass();
+                    final Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
                     tempNewQuery.addFrom(lastQc);
-                    QueryClass rootQc = qcpe.getQueryClass();
+                    final QueryClass rootQc = qcpe.getQueryClass();
                     try {
                         QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
                                     new QueryCollectionReference(rootQc, qcpe.getFieldName()),
                                     ConstraintOp.CONTAINS, lastQc));
-                    } catch (IllegalArgumentException e) {
+                    } catch (final IllegalArgumentException e) {
                         QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
                                     new QueryObjectReference(rootQc, qcpe.getFieldName()),
                                     ConstraintOp.CONTAINS, lastQc));
                     }
-                    for (FromElement extraQc : qcpe.getFrom()) {
+                    for (final FromElement extraQc : qcpe.getFrom()) {
                         if (extraQc instanceof QueryClass) {
                             tempNewQuery.addFrom(extraQc);
                         } else {
@@ -1035,7 +1053,7 @@ public class PagedTable
                     return recursiveGetBagCreationQuery(summary, tempNewQuery,
                             new HashSet<QuerySelectable>(qcpe.getSelect()));
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 // Ignore it - we are searching for a working branch of the query
             }
         }
@@ -1052,7 +1070,7 @@ public class PagedTable
     /**
      * @param selectionIds the selectionIds to set
      */
-    public void setSelectionIds(Map<Integer, String> selectionIds) {
+    public void setSelectionIds(final Map<Integer, String> selectionIds) {
         this.selectionIds = selectionIds;
     }
 
@@ -1062,7 +1080,7 @@ public class PagedTable
      * @param bag the bag to add ids to
      * @throws ObjectStoreException if an error occurs
      */
-    public void addSelectedToBag(InterMineBag bag) throws ObjectStoreException {
+    public void addSelectedToBag(final InterMineBag bag) throws ObjectStoreException {
         if (allSelected == -1) {
             bag.addIdsToBag(selectionIds.keySet(), selectedClass);
         } else {
@@ -1081,28 +1099,28 @@ public class PagedTable
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public int removeSelectedFromBag(InterMineBag bag, HttpSession session) throws Exception {
+    public int removeSelectedFromBag(final InterMineBag bag, final HttpSession session) throws Exception {
         int removedCount = 0;
         // don't remove all ids from bag
         if (bag.size() == selectionIds.size()) {
             return removedCount;
         }
-        Set<Integer> idsToRemove = getIdsToRemove(bag);
+        final Set<Integer> idsToRemove = getIdsToRemove(bag);
         bag.removeIdsFromBag(idsToRemove, true);
         removedCount = idsToRemove.size();
-        
+
         SessionMethods.invalidateBagTable(session, bag.getName());
         return removedCount;
     }
-    
-    public Set<Integer> getIdsToRemove(InterMineBag bag) {
+
+    public Set<Integer> getIdsToRemove(final InterMineBag bag) {
     	Set<Integer> idsToRemove = new HashSet<Integer>();
     	if (allSelected == -1) {
             idsToRemove = selectionIds.keySet();
     	} else {
     		// selection is reversed, so selectionIds.keySet() are the ids to keep
     		 idsToRemove = new HashSet<Integer>();
-             for (Integer id : bag.getContentsAsIds()) {
+             for (final Integer id : bag.getContentsAsIds()) {
                  if (!selectionIds.keySet().contains(id)) {
                      idsToRemove.add(id);
                  }
