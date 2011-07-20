@@ -12,6 +12,7 @@ package org.intermine.bio.web.struts;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -224,7 +225,10 @@ public class GalaxyExportOptionsController extends TilesAction
             String org = (orgSet == null || orgSet.size() < 1)
                     ? "Organism information not available"
                     : StringUtil.join(orgSet, ",");
-            String dbkey = (genomeBuildSet == null || genomeBuildSet.size() < 1)
+
+            // possible scenario: [null, ce3, null], should remove all null element and then join
+            genomeBuildSet.removeAll(Collections.singleton(null));
+            String dbkey = (genomeBuildSet.size() < 1)
                     ? "Genome Build information not available"
                     : StringUtil.join(genomeBuildSet, ",");
 

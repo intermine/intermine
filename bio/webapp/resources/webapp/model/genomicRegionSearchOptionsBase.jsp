@@ -35,7 +35,7 @@
     jQuery(function() {
         jQuery( "#extendSlider" ).slider({
             range: "min",
-            value: 500,
+            value: 0,
             min: 0,
             max: 10000,
             slide: function( event, ui ) {
@@ -103,7 +103,7 @@
            <span>Extend your regions at both sides: <i><b id="extendLength"></b></i></span>
            <div id="extendSlider" style="width:70%;margin-top:5px">
            </div>
-           <html:hidden styleId="extendedRegionSize" property="extendedRegionSize" value="500" />
+           <html:hidden styleId="extendedRegionSize" property="extendedRegionSize" value="0" />
         </li>
 
       </ol>
