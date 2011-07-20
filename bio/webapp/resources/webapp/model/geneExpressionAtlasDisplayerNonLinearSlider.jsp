@@ -46,6 +46,11 @@
     <%-- derive value from slider --%>
     var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
     jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
+      <%-- call a log that something has updated --%>
+      if (typeof geneExpressionAtlasDisplayer == 'object') {
+        geneExpressionAtlasDisplayer.settingsUpdated();
+      }
+
       var distance = handle.css('left').replace(/[^0-9.]/g, '');
       var width = handle.css('width').replace(/[^0-9.]/g, '');
       var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
@@ -73,6 +78,11 @@
     jQuery("#${sliderIdentifier}-slider div.handle").css('left', function() {
       var pValue = jQuery("#${sliderIdentifier}.slider-wrap input.value").val();
       if (!isNaN(parseFloat(pValue)) && isFinite(pValue) && pValue >= 0 && pValue <= 1) {
+        <%-- call a log that something has updated --%>
+        if (typeof geneExpressionAtlasDisplayer == 'object') {
+          geneExpressionAtlasDisplayer.settingsUpdated();
+        }
+
         //updateSliderColor();
 
         var width = jQuery("#${sliderIdentifier}-slider div.handle").css('width').replace(/[^0-9]/g, '');

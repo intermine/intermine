@@ -11,6 +11,8 @@
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
   #gene-expression-atlas div.sidebar div.legend span.up { background:#59BB14; }
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
+  #gene-expression-atlas div.sidebar input.update { font-weight:bold; }
+  #gene-expression-atlas div.sidebar input.update.inactive { font-weight:normal; }
   #gene-expression-atlas fieldset { border:0; }
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
 </style>
@@ -28,7 +30,7 @@
     <p class="small">* Color intensity denotes the reliability of the regulation if more that one probe set is present and their results differ.</p>
   </div>
   <div class="settings">
-    <strong>Show regulation type</strong>
+    <strong>1) Show regulation type</strong>
     <fieldset class="regulation-type">
       <label for="upregulation-check">Upregulation:</label>
       <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
@@ -36,7 +38,7 @@
       <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
     </fieldset>
 
-    <strong>Adjust the p value</strong>
+    <strong>2) Adjust the p value</strong>
     <fieldset class="p-value">
       <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
         <tiles:put name="sliderIdentifier" value="p-value" />
@@ -44,7 +46,7 @@
       </tiles:insert>
     </fieldset>
 
-    <strong>Adjust the t-statistic</strong>
+    <strong>3) Adjust the t-statistic</strong>
     <fieldset class="t-statistic">
       <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
         <tiles:put name="sliderIdentifier" value="t-statistic" />
@@ -52,7 +54,8 @@
       </tiles:insert>
     </fieldset>
 
-    <input class="update" type="button" value="Update" title="Update the chart"></input>
+    <strong>4)</strong>
+    <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
   </div>
 </div>
 
@@ -63,6 +66,11 @@
   <script type="text/javascript">
     <%-- stuff this goodie bag --%>
     var geneExpressionAtlasDisplayer = {};
+
+    <%-- call me to tell me settings have updated --%>
+    geneExpressionAtlasDisplayer.settingsUpdated = function() {
+      jQuery("#gene-expression-atlas div.settings input.update").removeClass('inactive');
+    };
 
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
@@ -260,6 +268,17 @@
         updateCurrentFilter();
         <%-- redraw --%>
         filterAndDrawChart(true);
+        <%-- update button not highlighted --%>
+        jQuery(this).addClass('inactive');
+      });
+    })();
+
+    <%-- attache monitoring for regulation type checkbox change --%>
+    (function() {
+      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
+        if (typeof geneExpressionAtlasDisplayer == 'object') {
+          geneExpressionAtlasDisplayer.settingsUpdated();
+        }
       });
     })();
   </script>
