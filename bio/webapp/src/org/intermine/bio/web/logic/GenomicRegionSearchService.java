@@ -25,9 +25,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +41,8 @@ import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.bio.web.struts.GenomicRegionSearchForm;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
@@ -428,16 +430,13 @@ public class GenomicRegionSearchService
 
         // featureTypes in this case are (the last bit of) class instead of
         // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
-        @SuppressWarnings("rawtypes")
-        List<Class> ftList = new ArrayList<Class>();
-        String modelPackName = SessionMethods
-                .getInterMineAPI(request.getSession()).getModel()
-                .getPackageName();
+        Model model = SessionMethods.getInterMineAPI(request.getSession()).getModel();
+        Set<Class<?>> ftList = new HashSet<Class<?>>();
         for (String f : featureTypes) {
-            try {
-                ftList.add(Class.forName(modelPackName + "." + f));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            ClassDescriptor cld = model.getClassDescriptorByName(f);
+            ftList.add(cld.getType());
+            for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                ftList.add(subCld.getType());
             }
         }
 
@@ -461,7 +460,7 @@ public class GenomicRegionSearchService
             }
         }
 
-        grsc.setFtList(ftList);
+        grsc.setFeatureTypes(ftList);
 
         // File parsing
         BufferedReader reader = null;
@@ -691,7 +690,7 @@ public class GenomicRegionSearchService
 
             // SequenceFeature.class in a list
             constraints.addConstraint(new BagConstraint(qfFeatureClass,
-                    ConstraintOp.IN, grsc.getFtList()));
+                    ConstraintOp.IN, grsc.getFeatureTypes()));
 
             OverlapRange overlapInput = new OverlapRange(new QueryValue(start),
                     new QueryValue(end), locObject);

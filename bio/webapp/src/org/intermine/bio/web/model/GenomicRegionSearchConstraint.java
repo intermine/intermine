@@ -11,6 +11,7 @@ package org.intermine.bio.web.model;
  */
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A class to represent the constraints a user selected including a list of features and spans, etc.
@@ -20,8 +21,7 @@ import java.util.List;
 public class GenomicRegionSearchConstraint
 {
     private String orgName = null;
-    @SuppressWarnings("rawtypes")
-    private List<Class> ftList = null;
+    private Set<Class<?>> featureTypes = null;
     private List<GenomicRegion> spanList = null;
     private int extendedRegionSize = 0;
 
@@ -39,17 +39,16 @@ public class GenomicRegionSearchConstraint
     }
 
     /**
-     * @return the ftList
+     * @return the feature types to search for
      */
-    @SuppressWarnings("rawtypes")
-    public List<Class> getFtList() {
-        return ftList;
+    public Set<Class<?>> getFeatureTypes() {
+        return featureTypes;
     }
     /**
-     * @param ftList the ftList to set
+     * @param featureTypes the feature types to search for
      */
-    public void setFtList(@SuppressWarnings("rawtypes") List<Class> ftList) {
-        this.ftList = ftList;
+    public void setFeatureTypes(Set<Class<?>> featureTypes) {
+        this.featureTypes = featureTypes;
     }
 
     /**
@@ -88,7 +87,7 @@ public class GenomicRegionSearchConstraint
             GenomicRegionSearchConstraint c = (GenomicRegionSearchConstraint) obj;
             return (extendedRegionSize == c.getExtendedRegionSize()
                     && spanList.equals(c.getSpanList())
-                    && ftList.equals(c.getFtList())
+                    && featureTypes.equals(c.getFeatureTypes())
                     && orgName.equals(c.getOrgName()));
         }
         return false;
@@ -99,7 +98,8 @@ public class GenomicRegionSearchConstraint
      */
     @Override
     public int hashCode() {
-        return extendedRegionSize + spanList.hashCode() + ftList.hashCode() + orgName.hashCode();
+        return extendedRegionSize + spanList.hashCode() + featureTypes.hashCode()
+            + orgName.hashCode();
     }
 
 }
