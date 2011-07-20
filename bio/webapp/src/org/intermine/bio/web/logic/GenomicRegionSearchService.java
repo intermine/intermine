@@ -25,9 +25,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -47,6 +49,7 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -65,6 +68,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
 
@@ -79,37 +83,45 @@ public class GenomicRegionSearchService
     private static final Logger LOG = Logger
             .getLogger(GenomicRegionSearchService.class);
 
-    private HttpServletRequest request = null;
-
+    private InterMineAPI interMineAPI = null;
+    private Model model = null;
+    private ObjectStore objectStore = null;
+    private Properties webProperties = null;
+    private Profile profile = null;
+    private WebConfig webConfig = null;
     private static String orgFeatureJSONString = "";
-
     private static final String GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT =
         "genomic_region_search_options_default";
-
     private static final String GENOMIC_REGION_SEARCH_RESULTS_DEFAULT =
         "genomic_region_search_results_default";
-
     private static final int READ_AHEAD_CHARS = 10000;
-
     private GenomicRegionSearchConstraint grsc = null;
-
     // Key - organism : Value - map <key - chr : value - chromosome information>
     private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
-
     private static Set<String> featureTypesInOrgs = null;
-
     private static Map<String, List<String>> featureTypeToSOTermMap = null;
-
     private static Map<String, Integer> orgTaxonIdMap = null;
-
     private List<String> selectionInfo = new ArrayList<String>();
 
     /**
      * Constructor
+     */
+    public GenomicRegionSearchService() {
+    }
+
+    /**
+     * To set globally used variables.
      * @param request HttpServletRequest
      */
-    public GenomicRegionSearchService(HttpServletRequest request) {
-        this.request = request;
+    public void init (HttpServletRequest request) {
+        this.webProperties = SessionMethods.getWebProperties(
+                request.getSession().getServletContext());
+        this.webConfig = SessionMethods.getWebConfig(request);
+        this.interMineAPI = SessionMethods.getInterMineAPI(request.getSession());
+        this.profile = SessionMethods.getProfile(request.getSession());
+        this.model = this.interMineAPI.getModel();
+        this.objectStore = this.interMineAPI.getObjectStore();
+
     }
 
     /**
@@ -122,8 +134,7 @@ public class GenomicRegionSearchService
     public String setupWebData() throws Exception {
         // By default, query all organisms in the database
         // pre defined organism short names can be read out from web.properties
-        String presetOrganisms = (String) SessionMethods.getWebProperties(
-                request.getSession().getServletContext()).get(
+        String presetOrganisms = webProperties.getProperty(
                 "genomicRegionSearch.defaultOrganisms");
 
         List<String> orgList = new ArrayList<String>();
@@ -211,8 +222,7 @@ public class GenomicRegionSearchService
         // constraints.addConstraint(new BagConstraint(qfOrgName,
         // ConstraintOp.IN, orgList));
 
-        Results results = SessionMethods.getInterMineAPI(request.getSession())
-                .getObjectStore().execute(q);
+        Results results = objectStore.execute(q);
 
         // Parse results data to a map
         Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
@@ -320,9 +330,8 @@ public class GenomicRegionSearchService
      * @return the name of options javascript name
      */
     public String getOptionsJavascript() {
-        String optionsJavascriptName = (String) SessionMethods
-                .getWebProperties(request.getSession().getServletContext())
-                .get("genomicRegionSearch.optionsJavascript");
+        String optionsJavascriptName = webProperties
+                .getProperty("genomicRegionSearch.optionsJavascript");
 
         if (optionsJavascriptName == null || "".equals(optionsJavascriptName)) {
             optionsJavascriptName = GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT;
@@ -337,9 +346,8 @@ public class GenomicRegionSearchService
      * @return the name of results page
      */
     public String getResultsJavascript() {
-        String resultsJavascriptName = (String) SessionMethods
-                .getWebProperties(request.getSession().getServletContext())
-                .get("genomicRegionSearch.resultsJavascript");
+        String resultsJavascriptName = webProperties
+                .getProperty("genomicRegionSearch.resultsJavascript");
 
         if (resultsJavascriptName == null || "".equals(resultsJavascriptName)) {
             resultsJavascriptName = GENOMIC_REGION_SEARCH_RESULTS_DEFAULT;
@@ -354,8 +362,7 @@ public class GenomicRegionSearchService
      * @return the name of options css
      */
     public String getOptionsCss() {
-        String optionsCssName = (String) SessionMethods.getWebProperties(
-                request.getSession().getServletContext()).get(
+        String optionsCssName = webProperties.getProperty(
                 "genomicRegionSearch.optionsCss");
 
         if (optionsCssName == null || "".equals(optionsCssName)) {
@@ -371,8 +378,7 @@ public class GenomicRegionSearchService
      * @return the name of results css
      */
     public String getResultsCss() {
-        String resultsCssName = (String) SessionMethods.getWebProperties(
-                request.getSession().getServletContext()).get(
+        String resultsCssName = webProperties.getProperty(
                 "genomicRegionSearch.resultsCss");
 
         if (resultsCssName == null || "".equals(resultsCssName)) {
@@ -430,7 +436,6 @@ public class GenomicRegionSearchService
 
         // featureTypes in this case are (the last bit of) class instead of
         // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
-        Model model = SessionMethods.getInterMineAPI(request.getSession()).getModel();
         Set<Class<?>> ftList = new HashSet<Class<?>>();
         for (String f : featureTypes) {
             ClassDescriptor cld = model.getClassDescriptorByName(f);
@@ -442,9 +447,7 @@ public class GenomicRegionSearchService
 
         String ftString = "";
         for (String aFeaturetype : featureTypes) {
-            aFeaturetype = WebUtil.formatPath(aFeaturetype,
-                    SessionMethods.getInterMineAPI(request.getSession()),
-                    SessionMethods.getWebConfig(request));
+            aFeaturetype = WebUtil.formatPath(aFeaturetype, interMineAPI, webConfig);
             ftString = ftString + aFeaturetype + ", ";
         }
         selectionInfo.add("<b>Selected feature types: </b>"
@@ -755,8 +758,7 @@ public class GenomicRegionSearchService
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
         if (chrInfoMap == null) {
             chrInfoMap = GenomicRegionSearchQueryRunner
-                    .getChromosomeInfo(SessionMethods.getInterMineAPI(request
-                            .getSession()));
+                    .getChromosomeInfo(interMineAPI);
         }
 
         return chrInfoMap;
@@ -770,8 +772,7 @@ public class GenomicRegionSearchService
 
         if (featureTypeToSOTermMap == null) {
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
-                    .getFeatureAndSOInfo(SessionMethods.getInterMineAPI(request
-                            .getSession()));
+                    .getFeatureAndSOInfo(interMineAPI);
 
             if (!(featureTypesInOrgs.size() == featureTypeToSOTermMap.size() && featureTypesInOrgs
                     .containsAll(featureTypeToSOTermMap.keySet()))) {
@@ -802,10 +803,8 @@ public class GenomicRegionSearchService
      * @return orgTaxonIdMap
      */
     public Map<String, Integer> getOrganismToTaxonMap() {
-        Profile profile = SessionMethods.getProfile(request.getSession());
         if (orgTaxonIdMap == null) {
-            orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(
-                    SessionMethods.getInterMineAPI(request.getSession()),
+            orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(interMineAPI,
                     profile);
         }
         return orgTaxonIdMap;
@@ -1011,10 +1010,8 @@ public class GenomicRegionSearchService
             List<GenomicRegion> spanList, int fromIdx, int toIdx,
             HttpSession session, String orgName) {
 
-        String baseURL = SessionMethods.getWebProperties(
-                session.getServletContext()).getProperty("webapp.baseurl");
-        String path = SessionMethods.getWebProperties(
-                session.getServletContext()).getProperty("webapp.path");
+        String baseURL = webProperties.getProperty("webapp.baseurl");
+        String path = webProperties.getProperty("webapp.path");
 
         List<GenomicRegion> subSpanList = spanList.subList(fromIdx, toIdx + 1);
 
@@ -1045,9 +1042,8 @@ public class GenomicRegionSearchService
                         + ".." + firstFeature.get(5);
 
                 // translatedClassName
-                String firstSoTerm = WebUtil.formatPath(firstFeature.get(2),
-                        SessionMethods.getInterMineAPI(request.getSession()),
-                        SessionMethods.getWebConfig(request));
+                String firstSoTerm = WebUtil.formatPath(firstFeature.get(2), interMineAPI,
+                        webConfig);
                 String firstSoTermDes = featureTypeToSOTermMap.get(
                         firstFeature.get(2)).get(1);
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
@@ -1105,9 +1101,8 @@ public class GenomicRegionSearchService
                 for (int i = 1; i < length; i++) {
 //                    String soTerm = featureTypeToSOTermMap.get(
 //                            features.get(i).get(2)).get(0);
-                    String soTerm = WebUtil.formatPath(features.get(i).get(2),
-                            SessionMethods.getInterMineAPI(request.getSession()),
-                            SessionMethods.getWebConfig(request));
+                    String soTerm = WebUtil.formatPath(features.get(i).get(2), interMineAPI,
+                            webConfig);
                     String soTermDes = featureTypeToSOTermMap.get(
                             features.get(i).get(2)).get(1);
                     soTermDes = soTermDes.replaceAll("'", "\\\\'");
@@ -1196,8 +1191,7 @@ public class GenomicRegionSearchService
     public PathQuery getExportFeaturesQuery(Set<Integer> featureIds,
             String featureType) {
 
-        PathQuery q = new PathQuery(SessionMethods.getInterMineAPI(
-                request.getSession()).getModel());
+        PathQuery q = new PathQuery(model);
 
         String path = featureType;
         q.addView(path + ".primaryIdentifier");
