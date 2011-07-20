@@ -61,7 +61,13 @@
       <p>${WEB_PROPERTIES['genomicRegionSearch.caption']}</p>
 
       <br/>
-      <a href="javascript:jQuery('#region-help').slideToggle('slow')">Genome coordinates help</a>
+      <a id="region-help-link" href="#">Genome coordinates help</a>
+      <script type="text/javascript">
+        jQuery('#region-help-link').click(function(e) {
+            jQuery('#region-help').slideToggle('slow');
+            e.preventDefault();
+            });
+      </script>
 
       <div id="region-help" style="display:none">
          ${WEB_PROPERTIES['genomicRegionSearch.howTo']}
