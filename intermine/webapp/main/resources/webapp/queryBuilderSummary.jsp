@@ -31,7 +31,7 @@
     for (var i = 0; i < nodes.length; i++) {
         var node = new Array();
         for (var j = 0; j <= i; j++) node.push(nodes[j]);
-        if (node.length > 0) {
+        if (node.length > 1) {
           node = node.join('.');
           new Ajax.Updater(node, '<html:rewrite action="/queryBuilderChange"/>',
                 { parameters:'method=ajaxExpand&path='+node,
@@ -41,13 +41,15 @@
     };
 
 
+    /*
     var url = window.location.pathname;
     if (url.indexOf("#anchor") > 0) {
       url = url.substring(0, url.indexOf("#anchor"));
     }
     document.location.href = url + "#anchor=" + node;
     location.reload();
-    //im.log("http://" + window.location.host + url + "#anchor=" + node);
+    im.log("http://" + window.location.host + url + "#anchor=" + node);
+    */
 
     return false;
   }
