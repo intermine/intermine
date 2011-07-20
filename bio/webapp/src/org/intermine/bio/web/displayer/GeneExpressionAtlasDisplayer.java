@@ -78,6 +78,7 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer {
             request.setAttribute("expressions", geae);
             request.setAttribute("url", "http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62/" + genePrimaryID);
             request.setAttribute("defaultPValue", "5e-2");
+            request.setAttribute("defaultTValue", "10");
         }
     }
 
