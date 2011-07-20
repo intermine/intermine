@@ -630,6 +630,7 @@
     <post-process name="transfer-sequences"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
+    <post-process name="make-unique-chromosome-identifiers"/>
     <post-process name="create-intron-features">
       <property name="organisms" value="7165"/>
     </post-process>
