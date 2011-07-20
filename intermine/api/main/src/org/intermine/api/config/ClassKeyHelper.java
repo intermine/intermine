@@ -12,9 +12,11 @@ package org.intermine.api.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
@@ -39,6 +41,8 @@ public final class ClassKeyHelper
 
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
+    private static final String NO_INHERIT = "noinherit";
+
     /**
      * Read class keys from a properties into a map from classname to set of
      * available keys.
@@ -50,9 +54,24 @@ public final class ClassKeyHelper
      * @return map from class name to set of available keys
      */
     public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
+
+        // Note that the noinherit option is a hack to get around chromosomes lacking a unique
+        // primaryIdentifier between organisms which caused problems upgrading from FlyMine 29.0
+        // to 30.0 with the introduction of a new list upgrade system.  I can be removed once
+        // mines have been successfully updated - 20/07/11.
+        Set<String> classesThatDoNotInherit = new HashSet<String>();
+        if (props.containsKey(NO_INHERIT)) {
+            String noinherit = (String) props.get(NO_INHERIT);
+            String[] clsNames = noinherit.split(",");
+            for (String clsName : clsNames) {
+                classesThatDoNotInherit.add(clsName);
+            }
+        }
+
         Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
         for (ClassDescriptor cld : model.getLevelOrderTraversal()) {
             String clsName = cld.getUnqualifiedName();
+
             if (props.containsKey(cld.getUnqualifiedName())) {
                 String keys = (String) props.get(clsName);
                 String[] tokens = keys.split(",");
@@ -62,7 +81,9 @@ public final class ClassKeyHelper
                     if (fld != null) {
                         ClassKeyHelper.addKey(classKeys, clsName, fld);
                         for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                            ClassKeyHelper.addKey(classKeys, subCld.getUnqualifiedName(), fld);
+                            if (!classesThatDoNotInherit.contains(subCld.getUnqualifiedName())) {
+                                ClassKeyHelper.addKey(classKeys, subCld.getUnqualifiedName(), fld);
+                            }
                         }
                     } else {
                         LOG.warn("problem loading class key: " + keyString
@@ -74,6 +95,7 @@ public final class ClassKeyHelper
                         + "' but class not found in model");
             }
         }
+        LOG.info("CHR keys: " + classKeys.get("Chromosome"));
         return classKeys;
     }
 
