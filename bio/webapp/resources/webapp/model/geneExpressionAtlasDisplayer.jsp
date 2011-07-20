@@ -27,7 +27,7 @@
       <li><span class="up"></span> Upregulation</li>
       <li><span class="down"></span> Downregulation</li>
     </ul>
-    <p class="small">* Color intensity denotes the reliability of the regulation if more that one probe set is present and their results differ.</p>
+    <p class="small">* Provide displayer description please.</p>
   </div>
   <div class="settings">
     <strong>1) Show regulation type</strong>
@@ -88,6 +88,8 @@
         data.addColumn('number', 'Downregulation');
         data.addColumn('number', 'Upregulation');
 
+        var chartDirections = {'up': false, 'down':false};
+
         var n = 0;
         <%-- for each cell type --%>
         for (x in liszt) {
@@ -107,11 +109,15 @@
               data.setValue(n, 2, tStatistic);
 
               data.setFormattedValue(n, 2, formattedString);
+
+              chartDirections.up = true;
             } else {  <%-- DOWN --%>
               data.setValue(n, 1, tStatistic);
               data.setValue(n, 2, 0);
 
               data.setFormattedValue(n, 1, formattedString);
+
+              chartDirections.down = true;
             }
 
             n++;
@@ -130,7 +136,8 @@
           fontSize: 		11,
           vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
           hAxis: 			{title: 'Expression Value', titleTextStyle:	{color: '#1F7492'}},
-          legend: 			'none'
+          legend: 			'none',
+          hAxis:			{minValue: geneExpressionAtlasDisplayer.peaks.down - 2, maxValue: geneExpressionAtlasDisplayer.peaks.up + 2}
         };
 
         // TODO: switch off any loading messages
@@ -236,15 +243,27 @@
 
       <%-- Java to JavaScript --%>
       geneExpressionAtlasDisplayer.originalList = new Array();
+      geneExpressionAtlasDisplayer.peaks = {"up":0, "down":0}
 
       <c:forEach var="cellType" items="${category.value}">
         var expressions = new Array();
         <c:forEach var="expression" items="${cellType.value}">
+          var tStatistic = ${expression.tStatistic};
           var expression = {
             'pValue': ${expression.pValue},
-            'tStatistic': ${expression.tStatistic}
+            'tStatistic': tStatistic
           };
           expressions.push(expression);
+
+          if (tStatistic > 0) {
+            if (tStatistic > geneExpressionAtlasDisplayer.peaks.up) {
+                geneExpressionAtlasDisplayer.peaks.up = tStatistic;
+            }
+          } else {
+            if (tStatistic < geneExpressionAtlasDisplayer.peaks.down) {
+                geneExpressionAtlasDisplayer.peaks.down = tStatistic;
+            }
+          }
         </c:forEach>
 
         var expression = {
