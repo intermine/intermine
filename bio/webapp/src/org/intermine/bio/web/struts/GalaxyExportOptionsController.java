@@ -88,10 +88,17 @@ public class GalaxyExportOptionsController extends TilesAction
         Model model = im.getModel();
         PathQuery query = new PathQuery(model);
 
+        Set<String> orgSet = new HashSet<String>();
+        Set<String> genomeBuildSet = new HashSet<String>();
+
         // Build GenomicRegion pathquery, the request is from GenomicRegionSearch "export to Galaxy"
-        if (request.getParameter("value") != null) {
-            String value = request.getParameter("value");
-            // TODO genomeBuild and organism?
+        if (request.getParameter("featureIds") != null) {
+            String featureIds = request.getParameter("featureIds");
+            String orgName = request.getParameter("orgName");
+
+            if (orgName != null && !"".equals(orgName)) {
+                orgSet.add(orgName);
+            }
 
             // TODO this could be configurable?
             String path = "SequenceFeature";
@@ -102,7 +109,7 @@ public class GalaxyExportOptionsController extends TilesAction
             query.addView(path + ".organism.name");
 
             // use ids or pids
-            String[] idsInStr = value.split(",");
+            String[] idsInStr = featureIds.split(",");
             Set<Integer> ids = new HashSet<Integer>();
             boolean isIds = true;
             for (String id : idsInStr) {
@@ -117,7 +124,7 @@ public class GalaxyExportOptionsController extends TilesAction
             if (isIds) {
                 query.addConstraint(Constraints.inIds(path, ids));
             } else {
-                query.addConstraint(Constraints.lookup(path, value, null));
+                query.addConstraint(Constraints.lookup(path, featureIds, null));
             }
 
             canExportAsBED = true;
@@ -182,6 +189,8 @@ public class GalaxyExportOptionsController extends TilesAction
                     query.replaceConstraint(constraint, newConstraint);
                 }
             }
+
+            orgSet = SequenceFeatureExportUtil.getOrganisms(query, session);
         }
 
         if (query instanceof TemplateQuery) {
@@ -218,11 +227,10 @@ public class GalaxyExportOptionsController extends TilesAction
 
             request.setAttribute("bedURL", bedURL);
 
-            Set<String> orgSet = SequenceFeatureExportUtil.getOrganisms(query, session);
-            Set<String> genomeBuildSet = (Set<String>) OrganismGenomeBuildLookup
-                    .getGenomeBuildByOrgansimCollection(orgSet);
+            genomeBuildSet = (Set<String>) OrganismGenomeBuildLookup
+            .getGenomeBuildByOrgansimCollection(orgSet);
 
-            String org = (orgSet == null || orgSet.size() < 1)
+            String org = (orgSet.size() < 1)
                     ? "Organism information not available"
                     : StringUtil.join(orgSet, ",");
 

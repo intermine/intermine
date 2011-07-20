@@ -120,10 +120,11 @@
         jQuery.download("genomicRegionSearchAjax.do", "exportFeatures=true&spanUUIDString=${spanUUIDString}&criteria=" + criteria + "&facet=" + facet + "&format=" + format);
     }
 
-    function exportToGalaxy(span) {
-        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getFeatures: "true", spanString: span }, function(featureIds){
-            inputs ='<input type="hidden" name="value" value="' + featureIds + '" />';
-            jQuery('<form action="galaxyExportOptions.do" method="post">'+inputs+'</form>').appendTo('body').submit().remove();
+    function exportToGalaxy(genomicRegion, orgName) {
+        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getFeatures: "true", spanString: genomicRegion }, function(featureIds){
+            featureIds ='<input type="hidden" name="featureIds" value="' + featureIds + '" />';
+            orgName ='<input type="hidden" name="orgName" value="' + orgName + '" />';
+            jQuery('<form action="galaxyExportOptions.do" method="post">' + featureIds + orgName + '</form>').appendTo('body').submit().remove();
         }, "text");
     }
 
