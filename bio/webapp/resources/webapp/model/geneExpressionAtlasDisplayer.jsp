@@ -12,6 +12,7 @@
   #gene-expression-atlas div.sidebar div.legend span.up { background:#59BB14; }
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
   #gene-expression-atlas fieldset { border:0; }
+  #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
 </style>
 
 <div id="gene-expression-atlas">
@@ -29,17 +30,25 @@
   <div class="settings">
     <strong>Show regulation type</strong>
     <fieldset class="regulation-type">
-      <label for="upregulation-check">Upregulation</label>
+      <label for="upregulation-check">Upregulation:</label>
       <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
-      <label for="downregulation-check">Downregulation</label>
+      <label for="downregulation-check">Downregulation:</label>
       <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
-      <label for="noregulation-check">Not expressed</label>
-      <input type="checkbox" id="noregulation-check" title="NONE" autocomplete="off" />
     </fieldset>
+
     <strong>Adjust the p value</strong>
     <fieldset class="p-value">
-      <tiles:insert name="geneExpressionAtlasDisplayerSlider.jsp">
-        <tiles:put name="defaultPValue" value="${defaultPValue}" />
+      <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
+        <tiles:put name="sliderIdentifier" value="p-value" />
+        <tiles:put name="defaultValue" value="${defaultPValue}" />
+      </tiles:insert>
+    </fieldset>
+
+    <strong>Adjust the t-statistic</strong>
+    <fieldset class="t-statistic">
+      <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
+        <tiles:put name="sliderIdentifier" value="t-statistic" />
+        <tiles:put name="defaultValue" value="${defaultTValue}" />
       </tiles:insert>
     </fieldset>
 
@@ -105,7 +114,7 @@
         var options = {
           isStacked:		true,
           width:			800,
-          height:			(9 * n) + 20,
+          height:			(9 * n) + 50,
           chartArea:		{left: 400, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: 			['#0000FF', '#59BB14'],
@@ -155,6 +164,13 @@
           }
         }
 
+        <%-- t-statistic --%>
+        if ("tStatistic" in filters) {
+          if (expression.tStatistic > filters.tStatistic) {
+            return false;
+          }
+        }
+
         <%-- all fine --%>
         return true;
       }
@@ -199,6 +215,9 @@
 
       <%-- p-value --%>
       geneExpressionAtlasDisplayer.currentFilter.pValue = jQuery("#gene-expression-atlas div.settings fieldset.p-value input.value").val();
+
+      <%-- t-statistic --%>
+      geneExpressionAtlasDisplayer.currentFilter.tStatistic = jQuery("#gene-expression-atlas div.settings fieldset.t-statistic input.value").val();
 
       jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
     }
