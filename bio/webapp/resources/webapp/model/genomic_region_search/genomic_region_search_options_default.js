@@ -110,7 +110,7 @@
                             var current_loc = j + k*rows;
                             if (!(current_loc >= feature_size)) {
                                 var current = webDataJSON.featureTypes[i].features[current_loc].featureType;
-                                var displayName = $MODEL_TRANSLATION_TABLE[current].displayName || current;
+                                var displayName = $MODEL_TRANSLATION_TABLE[current].displayName ? $MODEL_TRANSLATION_TABLE[current].displayName : current;
                                 var desciption = webDataJSON.featureTypes[i].features[current_loc].description;
                                 var desBox = "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='" + displayName + ": " + desciption
                                              + "';document.getElementById('ctxHelpDiv').style.display=''; window.scrollTo(0, 0);return false\" title=\"" + desciption

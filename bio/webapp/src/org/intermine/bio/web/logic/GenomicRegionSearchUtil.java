@@ -44,7 +44,8 @@ public final class GenomicRegionSearchUtil
 
         GenomicRegionSearchService grsService = null;
         if (serviceClassName == null || "".equals(serviceClassName)) {
-            grsService = new GenomicRegionSearchService(request);
+            grsService = new GenomicRegionSearchService();
+            grsService.init(request);
         } else { // reflection
             Class<?> serviceClass;
             try {
