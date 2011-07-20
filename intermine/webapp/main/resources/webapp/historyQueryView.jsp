@@ -33,7 +33,7 @@
     }
 
     function doQueryAction(name, url){
-      queryName = document.getElementById('name_'+name).innerHTML.replace(/[\t\n]/g, '')
+      queryName = document.getElementById('linkBag_'+name).innerHTML.replace(/[\t\n]/g, '');
         location.href = url + trim(queryName);
         return false;
     }
