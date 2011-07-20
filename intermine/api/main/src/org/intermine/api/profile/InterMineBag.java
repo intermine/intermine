@@ -783,6 +783,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         } catch (SQLException sqle) {
             System.out.println("Exception committing bagValues for bag: " + savedBagId);
+            sqle.printStackTrace();
+            LOG.error("Exception committing bagValues for bag: " + savedBagId, sqle);
             try {
                 conn.rollback();
                 conn.setAutoCommit(true);
