@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["dev@intermine.org"]
   s.homepage    = "http://www.intermine.org"
   s.summary     = %q{Webservice Client Library for InterMine Data-Warehouses}
-  s.description = File.new('README').read
+  s.description = File.new('README.rdoc').read
   s.add_dependency "json"
   s.add_development_dependency "bundler", ">= 1.0.0"
   s.rubyforge_project = "intermine"

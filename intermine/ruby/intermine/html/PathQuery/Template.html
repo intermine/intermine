@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Class: PathQuery::Template</title>
+
+	<link rel="stylesheet" href="../rdoc.css" type="text/css" media="screen" />
+
+	<script src="../js/jquery.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/thickbox-compressed.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/quicksearch.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/darkfish.js" type="text/javascript" 
+		charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready( function() {
+			hookSourceViews();
+			hookQuickSearch();
+			highlightLocationTarget();
+
+			$('ul.link-list a').bind( "click", highlightClickTarget );
+		});
+	</script>
+
+</head>
+<body class="class">
+	
+	<div id="metadata">
+		<div id="file-metadata">
+			<div id="file-list-section" class="section">
+				<h3 class="section-header">In Files</h3>
+				<div class="section-body">
+					<ul>
+					
+						<li><a href="../lib/intermine/query.rb.html?TB_iframe=true&height=400&width=600"
+							class="thickbox" title="lib/intermine/query.rb">lib/intermine/query.rb</a></li>
+					
+					</ul>
+				</div>
+			</div>
+			
+			
+		</div>
+
+		<div id="class-metadata">
+
+			<!-- Parent Class -->
+			
+			<div id="parent-class-section" class="section">
+				<h3 class="section-header">Parent</h3>
+				
+				<p class="link"><a href="Query.html">PathQuery::Query</a></p>
+				
+			</div>
+			
+
+			<!-- Namespace Contents -->
+			
+
+			<!-- Method Quickref -->
+			
+			<div id="method-list-section" class="section">
+				<h3 class="section-header">Methods</h3>
+				<ul class="link-list">
+					
+					<li><a href="#active_constraints">active_constraints</a></li>
+					
+					<li><a href="#editable_constraints">editable_constraints</a></li>
+					
+					<li><a href="#new">new</a></li>
+					
+					<li><a href="#params">params</a></li>
+					
+					<li><a href="#parser">parser</a></li>
+					
+					<li><a href="#to_xml">to_xml</a></li>
+					
+				</ul>
+			</div>
+			
+
+			<!-- Included Modules -->
+			
+		</div>
+	
+		<div id="project-metadata">
+			<div id="classindex-section" class="section project-section">
+				<h3 class="section-header">Class Index</h3>
+				<ul class="link-list">
+				
+				
+					<li><a href="../PathQuery.html">PathQuery</a></li>
+				
+				
+					<li><a href="../PathQuery/AttributeConstraint.html">PathQuery::AttributeConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Coded.html">PathQuery::Coded</a></li>
+				
+				
+					<li><a href="../PathQuery/ConstraintFactory.html">PathQuery::ConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/Join.html">PathQuery::Join</a></li>
+				
+				
+					<li><a href="../PathQuery/ListConstraint.html">PathQuery::ListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicGroup.html">PathQuery::LogicGroup</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicNode.html">PathQuery::LogicNode</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParseError.html">PathQuery::LogicParseError</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParser.html">PathQuery::LogicParser</a></li>
+				
+				
+					<li><a href="../PathQuery/LookupConstraint.html">PathQuery::LookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LoopConstraint.html">PathQuery::LoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/MultiValueConstraint.html">PathQuery::MultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/ObjectConstraint.html">PathQuery::ObjectConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/PathFeature.html">PathQuery::PathFeature</a></li>
+				
+				
+					<li><a href="../PathQuery/Query.html">PathQuery::Query</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryBuilder.html">PathQuery::QueryBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryLoader.html">PathQuery::QueryLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/SingleValueConstraint.html">PathQuery::SingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/SortOrder.html">PathQuery::SortOrder</a></li>
+				
+				
+					<li><a href="../PathQuery/SubClassConstraint.html">PathQuery::SubClassConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Template.html">PathQuery::Template</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateBuilder.html">PathQuery::TemplateBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraint.html">PathQuery::TemplateConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraintFactory.html">PathQuery::TemplateConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateListConstraint.html">PathQuery::TemplateListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoader.html">PathQuery::TemplateLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLookupConstraint.html">PathQuery::TemplateLookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoopConstraint.html">PathQuery::TemplateLoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateMultiValueConstraint.html">PathQuery::TemplateMultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateSingleValueConstraint.html">PathQuery::TemplateSingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateUnaryConstraint.html">PathQuery::TemplateUnaryConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/UnaryConstraint.html">PathQuery::UnaryConstraint</a></li>
+				
+				
+					<li><a href="../Results.html">Results</a></li>
+				
+				
+					<li><a href="../Results/ResultsReader.html">Results::ResultsReader</a></li>
+				
+				
+					<li><a href="../Results/ResultsRow.html">Results::ResultsRow</a></li>
+				
+				
+					<li><a href="../Results/ServiceError.html">Results::ServiceError</a></li>
+				
+				
+					<li><a href="../Array.html">Array</a></li>
+				
+				
+					<li><a href="../AttributeDescriptor.html">AttributeDescriptor</a></li>
+				
+				
+					<li><a href="../ClassDescriptor.html">ClassDescriptor</a></li>
+				
+				
+					<li><a href="../CollectionDescriptor.html">CollectionDescriptor</a></li>
+				
+				
+					<li><a href="../FieldDescriptor.html">FieldDescriptor</a></li>
+				
+				
+					<li><a href="../InterMineObject.html">InterMineObject</a></li>
+				
+				
+					<li><a href="../Intermine.html">Intermine</a></li>
+				
+				
+					<li><a href="../List.html">List</a></li>
+				
+				
+					<li><a href="../Model.html">Model</a></li>
+				
+				
+					<li><a href="../Path.html">Path</a></li>
+				
+				
+					<li><a href="../PathException.html">PathException</a></li>
+				
+				
+					<li><a href="../ReferenceDescriptor.html">ReferenceDescriptor</a></li>
+				
+				
+					<li><a href="../Service.html">Service</a></li>
+				
+				
+					<li><a href="../SetHashKey.html">SetHashKey</a></li>
+				
+				
+					<li><a href="../String.html">String</a></li>
+				
+				</ul>
+				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
+				
+				<form action="#" method="get" accept-charset="utf-8">
+				<fieldset>
+					<legend>Quicksearch</legend>
+					<input type="text" name="quicksearch" value="" 
+						class="quicksearch-field" />
+				</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="documentation">
+		
+		<h1 class="class">PathQuery::Template</h1>
+		
+
+		<div id="description">
+			
+		</div>
+
+
+		<!-- Constants -->
+		
+
+		<!-- Attributes -->
+		
+		<div id="attribute-method-details" class="method-section section">
+			<h3 class="section-header">Attributes</h3>
+
+			
+			<div id="comment-attribute-method" class="method-detail">
+				<a name="comment"></a>
+				
+				<a name="comment="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">comment</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="longdescription-attribute-method" class="method-detail">
+				<a name="longDescription"></a>
+				
+				<a name="longDescription="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">longDescription</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+		</div>
+		
+
+		<!-- Methods -->
+		
+		
+		<div id="public-class-method-details" class="method-section section">
+			<h3 class="section-header">Public Class Methods</h3>
+
+		
+
+		
+			
+			<div id="new-method" class="method-detail">
+			
+				<a name="new"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">new</span><span 
+						class="method-args">(model, root=nil, service=nil)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="new-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1148</span>
+1148:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">root</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">service</span>=<span class="ruby-keyword kw">nil</span>)
+1149:             <span class="ruby-keyword kw">super</span>
+1150:             <span class="ruby-ivar">@constraint_factory</span> = <span class="ruby-constant">TemplateConstraintFactory</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+1151:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="parser-method" class="method-detail">
+			
+				<a name="parser"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">parser</span><span 
+						class="method-args">(model)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="parser-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1153</span>
+1153:         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parser</span>(<span class="ruby-identifier">model</span>)
+1154:             <span class="ruby-keyword kw">return</span> <span class="ruby-constant">TemplateLoader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">model</span>)
+1155:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+		<div id="public-instance-method-details" class="method-section section">
+			<h3 class="section-header">Public Instance Methods</h3>
+
+		
+
+		
+			
+			<div id="active-constraints-method" class="method-detail">
+			
+				<a name="active_constraints"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">active_constraints</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="active-constraints-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1168</span>
+1168:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active_constraints</span>
+1169:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">coded_constraints</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">con</span><span class="ruby-operator">|</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">switchable</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;off&quot;</span>}
+1170:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="editable-constraints-method" class="method-detail">
+			
+				<a name="editable_constraints"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">editable_constraints</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="editable-constraints-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1164</span>
+1164:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">editable_constraints</span>
+1165:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">coded_constraints</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">con</span><span class="ruby-operator">|</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">editable</span>}
+1166:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="params-method" class="method-detail">
+			
+				<a name="params"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">params</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="params-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1172</span>
+1172:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">params</span> 
+1173:             <span class="ruby-identifier">p</span> = {<span class="ruby-value str">&quot;name&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@name</span>}
+1174:             <span class="ruby-identifier">actives</span> = <span class="ruby-identifier">active_constraints</span>
+1175:             <span class="ruby-identifier">actives</span>.<span class="ruby-identifier">each_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">idx</span><span class="ruby-operator">|</span>
+1176:                 <span class="ruby-identifier">con</span> = <span class="ruby-identifier">actives</span>[<span class="ruby-identifier">idx</span>]
+1177:                 <span class="ruby-identifier">count</span> = (<span class="ruby-identifier">idx</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>).<span class="ruby-identifier">to_s</span>
+1178:                 <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;constraint&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span>
+1179:                 <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;op&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">template_param_op</span>
+1180:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:value</span>
+1181:                     <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;value&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">value</span>
+1182:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:values</span>
+1183:                     <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;value&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">values</span>
+1184:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:loopPath</span>
+1185:                     <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;loopPath&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">loopPath</span>.<span class="ruby-identifier">to_s</span>
+1186:                 <span class="ruby-keyword kw">end</span>
+1187:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:extra_value</span> <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">con</span>.<span class="ruby-identifier">extra_value</span>.<span class="ruby-identifier">nil?</span>
+1188:                     <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;extra&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">count</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">extra_value</span>
+1189:                 <span class="ruby-keyword kw">end</span>
+1190:             <span class="ruby-keyword kw">end</span>
+1191:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">p</span>
+1192:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="to-xml-method" class="method-detail">
+			
+				<a name="to_xml"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">to_xml</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="to-xml-source">
+<pre>
+      <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 1157</span>
+1157:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_xml</span>
+1158:             <span class="ruby-identifier">doc</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span>
+1159:             <span class="ruby-identifier">t</span> = <span class="ruby-identifier">doc</span>.<span class="ruby-identifier">add_element</span> <span class="ruby-value str">'template'</span>, {<span class="ruby-value str">&quot;name&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@name</span>, <span class="ruby-value str">&quot;title&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@title</span>, <span class="ruby-value str">&quot;longDescription&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@longDescription</span>, <span class="ruby-value str">&quot;comment&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@comment</span>}.<span class="ruby-identifier">reject</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">nil?</span>}
+1160:             <span class="ruby-identifier">t</span>.<span class="ruby-identifier">add_element</span> <span class="ruby-keyword kw">super</span>
+1161:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">t</span>
+1162:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+	
+
+	  </div>
+	</div>
+
+
+	<div id="rdoc-debugging-section-dump">
+	
+		<div class="section">
+		<h2 class="section-header">secsequence</h2>
+	
+		<pre>--- SEC00057
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">attributes</h2>
+	
+		<pre>--- 
+- name: comment
+  rw: RW
+  a_desc: &quot;&quot;
+- name: longDescription
+  rw: RW
+  a_desc: &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">seccomment</h2>
+	
+		<pre>--- &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">method_list</h2>
+	
+		<pre>--- 
+- methods: 
+  - aref: M000133
+    name: new
+    params: (model, root=nil, service=nil)
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1148&lt;/span&gt;\n\
+      1148:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;initialize&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt;=&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;nil&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;service&lt;/span&gt;=&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;nil&lt;/span&gt;)\n\
+      1149:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;super&lt;/span&gt;\n\
+      1150:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraint_factory&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;TemplateConstraintFactory&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      1151:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000134
+    name: parser
+    params: (model)
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1153&lt;/span&gt;\n\
+      1153:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;parser&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;)\n\
+      1154:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;TemplateLoader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;)\n\
+      1155:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Class
+  type: Public
+- methods: 
+  - aref: M000137
+    name: active_constraints
+    params: ()
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1168&lt;/span&gt;\n\
+      1168:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;active_constraints&lt;/span&gt;\n\
+      1169:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coded_constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;switchable&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!=&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;off&amp;quot;&lt;/span&gt;}\n\
+      1170:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000136
+    name: editable_constraints
+    params: ()
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1164&lt;/span&gt;\n\
+      1164:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;editable_constraints&lt;/span&gt;\n\
+      1165:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coded_constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;editable&lt;/span&gt;}\n\
+      1166:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000138
+    name: params
+    params: ()
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1172&lt;/span&gt;\n\
+      1172:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;params&lt;/span&gt; \n\
+      1173:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt; = {&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;name&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@name&lt;/span&gt;}\n\
+      1174:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;actives&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;active_constraints&lt;/span&gt;\n\
+      1175:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;actives&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each_index&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;idx&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      1176:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;actives&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;idx&lt;/span&gt;]\n\
+      1177:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt; = (&lt;span class=\&quot;ruby-identifier\&quot;&gt;idx&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-value\&quot;&gt;1&lt;/span&gt;).&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;\n\
+      1178:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;constraint&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;\n\
+      1179:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;op&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;template_param_op&lt;/span&gt;\n\
+      1180:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;respond_to?&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:value&lt;/span&gt;\n\
+      1181:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;value&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;value&lt;/span&gt;\n\
+      1182:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;respond_to?&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:values&lt;/span&gt;\n\
+      1183:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;value&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;values&lt;/span&gt;\n\
+      1184:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;respond_to?&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:loopPath&lt;/span&gt;\n\
+      1185:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;loopPath&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;loopPath&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;\n\
+      1186:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      1187:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;respond_to?&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:extra_value&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;and&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;extra_value&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;\n\
+      1188:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;extra&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;extra_value&lt;/span&gt;\n\
+      1189:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      1190:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      1191:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;\n\
+      1192:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000135
+    name: to_xml
+    params: ()
+    visibility: public
+    sourcecode: &quot;      &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 1157&lt;/span&gt;\n\
+      1157:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;to_xml&lt;/span&gt;\n\
+      1158:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;doc&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;REXML&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;Document&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;\n\
+      1159:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;t&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;doc&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;'template'&lt;/span&gt;, {&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;name&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@name&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;title&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@title&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;longDescription&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@longDescription&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;comment&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@comment&lt;/span&gt;}.&lt;span class=\&quot;ruby-identifier\&quot;&gt;reject&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;,&lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;}\n\
+      1160:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;t&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;super&lt;/span&gt;\n\
+      1161:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;t&lt;/span&gt;\n\
+      1162:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Instance
+  type: Public
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">sectitle</h2>
+	
+		<pre>--- 
+</pre>
+		</div>
+	
+	</div>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+
+</body>
+</html>
+

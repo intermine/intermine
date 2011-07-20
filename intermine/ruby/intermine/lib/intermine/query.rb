@@ -659,7 +659,7 @@ module PathQuery
             model = @path.model
             cdA = model.get_cd(@path.end_type)
             cdB = model.get_cd(@sub_class.end_type)
-            if !cdB.subclass_of(cdA)
+            if !cdB.subclass_of?(cdA)
                 raise ArgumentError, "The subclass in a #{self.class.name} must be a subclass of its path, but #{cdB} is not a subclass of #{cdA}"
             end
 
@@ -825,7 +825,7 @@ module PathQuery
             model = @path.model
             cdA = model.get_cd(@path.end_type)
             cdB = model.get_cd(@loopPath.end_type)
-            if !(cdA == cdB) && !cdA.subclass_of(cdB) && !cdB.subclass_of(cdA)
+            if !(cdA == cdB) && !cdA.subclass_of?(cdB) && !cdB.subclass_of?(cdA)
                 raise ArgumentError, "Incompatible types in #{self.class.name}: #{@path} -> #{cdA} and #{@loopPath} -> #{cdB}"
             end
         end

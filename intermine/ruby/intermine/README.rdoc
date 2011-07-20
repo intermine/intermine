@@ -1,5 +1,4 @@
-Webservice Client Library for InterMine Data-Warehouses
-=======================================================
+= Webservice Client Library for InterMine Data-Warehouses
 
 This library provides an interface to the InterMine webservices
 API. It makes construction and execution of queries more 
@@ -9,8 +8,7 @@ access, the library provides an object-orientated record result
 format (similar to ActiveRecords), and allows for fast, memory 
 efficient iteration of result sets.
 
-Example
--------
+== Example
 
 Get all protein domains associated with a set of genes and print their names:
 
@@ -22,22 +20,20 @@ Get all protein domains associated with a set of genes and print their names:
         where("genes.symbol" => ["zen", "hox", "h", "bib"]).
         each_row { |row| puts row[:name]}
 
-Who is this for?
-----------------
+== Who is this for?
 
 InterMine data warehouses are typically constructed to hold
 Biological data, and as this library facilitates programmatic
 access to these data, this install is primarily aimed at 
 bioinformaticians. In particular, users of the following services
 may find it especially useful:
-    * FlyMine (http://www.flymine.org/query)
-    * YeastMine (http://yeastmine.yeastgenome.org/yeastmine)
-    * RatMine (http://ratmine.mcw.edu/ratmine)
-    * modMine (http://intermine.modencode.org/release-23)
-    * metabolicMine (http://www.metabolicmine.org/beta)
+ * FlyMine (http://www.flymine.org/query)
+ * YeastMine (http://yeastmine.yeastgenome.org/yeastmine)
+ * RatMine (http://ratmine.mcw.edu/ratmine)
+ * modMine (http://intermine.modencode.org/release-23)
+ * metabolicMine (http://www.metabolicmine.org/beta)
 
-How to use this library:
-------------------------
+== How to use this library:
 
 We have tried to construct an interface to this library that
 does not require you to learn an entirely new set of concepts. 
@@ -45,7 +41,7 @@ As such, as well as the underlying methods that are common
 to all libraries, there is an additional set of aliases and sugar
 methods that emulate the DSL style of SQL:
 
-* SQL style
+=== SQL style
 
   service = Service.new("www.flymine.org/query")
   service.model.
@@ -58,7 +54,7 @@ methods that emulate the DSL style of SQL:
        puts r
      end
 
-* Common InterMine interface
+=== Common InterMine interface
 
   service = Service.new("www.flymine.org/query")
   query = service.new_query("Gene")
@@ -73,15 +69,11 @@ methods that emulate the DSL style of SQL:
 For more details, see the accompanying documentation and the unit tests
 for interface examples. Further documentation is available at www.intermine.org.
 
-Support
--------
+== Support
 
-Support is available on our development mailing list:
+Support is available on our development mailing list: dev@intermine.org
 
-    dev@intermine.org
-
-License
--------
+== License
 
 This code is Open Source under the LGPL. Source code for all InterMine code
 can be checked out from svn://subversion.flymine.org/flymine
