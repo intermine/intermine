@@ -1958,15 +1958,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             for (QuerySelectable qs : q.getSelect()) {
                 if (qs instanceof QueryCollectionPathExpression) {
                     Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
-                    retval.addAll(precomputeWithConnection(c, subQ,
+                    if (subQ.getConstraint() != null) {
+                        retval.addAll(precomputeWithConnection(c, subQ,
                                 Collections.singleton((QueryNode) (subQ.getSelect().get(0))),
                                 allFields, category));
+                    }
                 } else if (qs instanceof QueryObjectPathExpression) {
                     Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                             getSchema().isMissingNotXml());
-                    retval.addAll(precomputeWithConnection(c, subQ,
+                    if (subQ.getConstraint() != null) {
+                        retval.addAll(precomputeWithConnection(c, subQ,
                                 Collections.singleton((QueryNode) (subQ.getSelect().get(0))),
                                 allFields, category));
+                    }
                 }
             }
             return retval;
