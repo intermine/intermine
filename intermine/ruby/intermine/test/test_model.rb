@@ -25,13 +25,13 @@ class TestModel < Test::Unit::TestCase
         assert_equal(dept.get_field("company").referencedType, @model.get_cd("Company"))
 
         manager = @model.get_cd("Manager")
-        assert(manager.subclass_of(@model.get_cd("Employee")))
-        assert(manager.subclass_of("Employee"))
-        assert(manager.subclass_of("HasAddress"))
-        assert(!manager.subclass_of("Company"))
-        assert(manager.subclass_of("Company.departments.employees"))
-        assert(!manager.subclass_of("Company.name"))
-        assert_raise(PathException) {manager.subclass_of("Foo")}
+        assert(manager.subclass_of?(@model.get_cd("Employee")))
+        assert(manager.subclass_of?("Employee"))
+        assert(manager.subclass_of?("HasAddress"))
+        assert(!manager.subclass_of?("Company"))
+        assert(manager.subclass_of?("Company.departments.employees"))
+        assert(!manager.subclass_of?("Company.name"))
+        assert_raise(PathException) {manager.subclass_of?("Foo")}
     end
 
     def test_attributes
@@ -382,16 +382,19 @@ class TestModel < Test::Unit::TestCase
         pathstr = "Department.company.CEO.address.address"
         obj = @model.resolve_path(dep, pathstr)
         assert_equal(obj, "42 Some st")
+        assert_equal(dep._resolve(pathstr), "42 Some st")
 
         # Test resolving using Path objects
         path = Path.new(pathstr, @model)
         obj = @model.resolve_path(dep, path)
         assert_equal(obj, "42 Some st")
+        assert_equal(dep._resolve(path), "42 Some st")
 
         # Test resolving items in collections
-        pathstr_with_index = "Department.employees.[1].name"
+        pathstr_with_index = "Department.employees[1].name"
         obj = @model.resolve_path(dep, pathstr_with_index)
         assert_equal(obj, "B")
+        assert_equal(dep._resolve(pathstr_with_index), "B")
 
         # Check bad paths
         assert_raise ArgumentError do

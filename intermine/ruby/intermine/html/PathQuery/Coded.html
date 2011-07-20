@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Module: PathQuery::Coded</title>
+
+	<link rel="stylesheet" href="../rdoc.css" type="text/css" media="screen" />
+
+	<script src="../js/jquery.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/thickbox-compressed.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/quicksearch.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/darkfish.js" type="text/javascript" 
+		charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready( function() {
+			hookSourceViews();
+			hookQuickSearch();
+			highlightLocationTarget();
+
+			$('ul.link-list a').bind( "click", highlightClickTarget );
+		});
+	</script>
+
+</head>
+<body class="module">
+	
+	<div id="metadata">
+		<div id="file-metadata">
+			<div id="file-list-section" class="section">
+				<h3 class="section-header">In Files</h3>
+				<div class="section-body">
+					<ul>
+					
+						<li><a href="../lib/intermine/query.rb.html?TB_iframe=true&height=400&width=600"
+							class="thickbox" title="lib/intermine/query.rb">lib/intermine/query.rb</a></li>
+					
+					</ul>
+				</div>
+			</div>
+			
+			
+		</div>
+
+		<div id="class-metadata">
+
+			<!-- Parent Class -->
+			
+
+			<!-- Namespace Contents -->
+			
+
+			<!-- Method Quickref -->
+			
+			<div id="method-list-section" class="section">
+				<h3 class="section-header">Methods</h3>
+				<ul class="link-list">
+					
+					<li><a href="#to_elem">to_elem</a></li>
+					
+					<li><a href="#valid_ops">valid_ops</a></li>
+					
+				</ul>
+			</div>
+			
+
+			<!-- Included Modules -->
+			
+		</div>
+	
+		<div id="project-metadata">
+			<div id="classindex-section" class="section project-section">
+				<h3 class="section-header">Class Index</h3>
+				<ul class="link-list">
+				
+				
+					<li><a href="../PathQuery.html">PathQuery</a></li>
+				
+				
+					<li><a href="../PathQuery/AttributeConstraint.html">PathQuery::AttributeConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Coded.html">PathQuery::Coded</a></li>
+				
+				
+					<li><a href="../PathQuery/ConstraintFactory.html">PathQuery::ConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/Join.html">PathQuery::Join</a></li>
+				
+				
+					<li><a href="../PathQuery/ListConstraint.html">PathQuery::ListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicGroup.html">PathQuery::LogicGroup</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicNode.html">PathQuery::LogicNode</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParseError.html">PathQuery::LogicParseError</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParser.html">PathQuery::LogicParser</a></li>
+				
+				
+					<li><a href="../PathQuery/LookupConstraint.html">PathQuery::LookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LoopConstraint.html">PathQuery::LoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/MultiValueConstraint.html">PathQuery::MultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/ObjectConstraint.html">PathQuery::ObjectConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/PathFeature.html">PathQuery::PathFeature</a></li>
+				
+				
+					<li><a href="../PathQuery/Query.html">PathQuery::Query</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryBuilder.html">PathQuery::QueryBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryLoader.html">PathQuery::QueryLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/SingleValueConstraint.html">PathQuery::SingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/SortOrder.html">PathQuery::SortOrder</a></li>
+				
+				
+					<li><a href="../PathQuery/SubClassConstraint.html">PathQuery::SubClassConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Template.html">PathQuery::Template</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateBuilder.html">PathQuery::TemplateBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraint.html">PathQuery::TemplateConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraintFactory.html">PathQuery::TemplateConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateListConstraint.html">PathQuery::TemplateListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoader.html">PathQuery::TemplateLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLookupConstraint.html">PathQuery::TemplateLookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoopConstraint.html">PathQuery::TemplateLoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateMultiValueConstraint.html">PathQuery::TemplateMultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateSingleValueConstraint.html">PathQuery::TemplateSingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateUnaryConstraint.html">PathQuery::TemplateUnaryConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/UnaryConstraint.html">PathQuery::UnaryConstraint</a></li>
+				
+				
+					<li><a href="../Results.html">Results</a></li>
+				
+				
+					<li><a href="../Results/ResultsReader.html">Results::ResultsReader</a></li>
+				
+				
+					<li><a href="../Results/ResultsRow.html">Results::ResultsRow</a></li>
+				
+				
+					<li><a href="../Results/ServiceError.html">Results::ServiceError</a></li>
+				
+				
+					<li><a href="../Array.html">Array</a></li>
+				
+				
+					<li><a href="../AttributeDescriptor.html">AttributeDescriptor</a></li>
+				
+				
+					<li><a href="../ClassDescriptor.html">ClassDescriptor</a></li>
+				
+				
+					<li><a href="../CollectionDescriptor.html">CollectionDescriptor</a></li>
+				
+				
+					<li><a href="../FieldDescriptor.html">FieldDescriptor</a></li>
+				
+				
+					<li><a href="../InterMineObject.html">InterMineObject</a></li>
+				
+				
+					<li><a href="../Intermine.html">Intermine</a></li>
+				
+				
+					<li><a href="../List.html">List</a></li>
+				
+				
+					<li><a href="../Model.html">Model</a></li>
+				
+				
+					<li><a href="../Path.html">Path</a></li>
+				
+				
+					<li><a href="../PathException.html">PathException</a></li>
+				
+				
+					<li><a href="../ReferenceDescriptor.html">ReferenceDescriptor</a></li>
+				
+				
+					<li><a href="../Service.html">Service</a></li>
+				
+				
+					<li><a href="../SetHashKey.html">SetHashKey</a></li>
+				
+				
+					<li><a href="../String.html">String</a></li>
+				
+				</ul>
+				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
+				
+				<form action="#" method="get" accept-charset="utf-8">
+				<fieldset>
+					<legend>Quicksearch</legend>
+					<input type="text" name="quicksearch" value="" 
+						class="quicksearch-field" />
+				</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="documentation">
+		
+		<h1 class="module">PathQuery::Coded</h1>
+		
+
+		<div id="description">
+			
+		</div>
+
+
+		<!-- Constants -->
+		
+
+		<!-- Attributes -->
+		
+		<div id="attribute-method-details" class="method-section section">
+			<h3 class="section-header">Attributes</h3>
+
+			
+			<div id="code-attribute-method" class="method-detail">
+				<a name="code"></a>
+				
+				<a name="code="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">code</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="op-attribute-method" class="method-detail">
+				<a name="op"></a>
+				
+				<a name="op="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">op</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+		</div>
+		
+
+		<!-- Methods -->
+		
+		
+		<div id="public-class-method-details" class="method-section section">
+			<h3 class="section-header">Public Class Methods</h3>
+
+		
+
+		
+			
+			<div id="valid-ops-method" class="method-detail">
+			
+				<a name="valid_ops"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">valid_ops</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="valid-ops-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 622</span>
+622:         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid_ops</span>
+623:             <span class="ruby-keyword kw">return</span> []
+624:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+		<div id="public-instance-method-details" class="method-section section">
+			<h3 class="section-header">Public Instance Methods</h3>
+
+		
+
+		
+			
+			<div id="to-elem-method" class="method-detail">
+			
+				<a name="to_elem"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">to_elem</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="to-elem-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 626</span>
+626:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_elem</span>
+627:             <span class="ruby-identifier">attributes</span> = {
+628:                 <span class="ruby-value str">&quot;path&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@path</span>,
+629:                 <span class="ruby-value str">&quot;op&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@op</span>,
+630:                 <span class="ruby-value str">&quot;code&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@code</span>
+631:             }.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">v</span>}
+632:             <span class="ruby-identifier">elem</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Element</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;constraint&quot;</span>)
+633:             <span class="ruby-identifier">elem</span>.<span class="ruby-identifier">add_attributes</span>(<span class="ruby-identifier">attributes</span>)
+634:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">elem</span>
+635:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+	
+
+	  </div>
+	</div>
+
+
+	<div id="rdoc-debugging-section-dump">
+	
+		<div class="section">
+		<h2 class="section-header">secsequence</h2>
+	
+		<pre>--- SEC00035
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">attributes</h2>
+	
+		<pre>--- 
+- name: code
+  rw: RW
+  a_desc: &quot;&quot;
+- name: op
+  rw: RW
+  a_desc: &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">seccomment</h2>
+	
+		<pre>--- &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">method_list</h2>
+	
+		<pre>--- 
+- methods: 
+  - aref: M000061
+    name: valid_ops
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 622&lt;/span&gt;\n\
+      622:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;valid_ops&lt;/span&gt;\n\
+      623:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; []\n\
+      624:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Class
+  type: Public
+- methods: 
+  - aref: M000062
+    name: to_elem
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 626&lt;/span&gt;\n\
+      626:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;to_elem&lt;/span&gt;\n\
+      627:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;attributes&lt;/span&gt; = {\n\
+      628:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;path&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@path&lt;/span&gt;,\n\
+      629:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;op&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@op&lt;/span&gt;,\n\
+      630:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;code&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@code&lt;/span&gt;\n\
+      631:             }.&lt;span class=\&quot;ruby-identifier\&quot;&gt;delete_if&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;,&lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;}\n\
+      632:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;elem&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;REXML&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;Element&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;constraint&amp;quot;&lt;/span&gt;)\n\
+      633:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;elem&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_attributes&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;attributes&lt;/span&gt;)\n\
+      634:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;elem&lt;/span&gt;\n\
+      635:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Instance
+  type: Public
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">sectitle</h2>
+	
+		<pre>--- 
+</pre>
+		</div>
+	
+	</div>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+
+</body>
+</html>
+

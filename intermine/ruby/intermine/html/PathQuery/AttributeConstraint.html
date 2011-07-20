@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Module: PathQuery::AttributeConstraint</title>
+
+	<link rel="stylesheet" href="../rdoc.css" type="text/css" media="screen" />
+
+	<script src="../js/jquery.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/thickbox-compressed.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/quicksearch.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/darkfish.js" type="text/javascript" 
+		charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready( function() {
+			hookSourceViews();
+			hookQuickSearch();
+			highlightLocationTarget();
+
+			$('ul.link-list a').bind( "click", highlightClickTarget );
+		});
+	</script>
+
+</head>
+<body class="module">
+	
+	<div id="metadata">
+		<div id="file-metadata">
+			<div id="file-list-section" class="section">
+				<h3 class="section-header">In Files</h3>
+				<div class="section-body">
+					<ul>
+					
+						<li><a href="../lib/intermine/query.rb.html?TB_iframe=true&height=400&width=600"
+							class="thickbox" title="lib/intermine/query.rb">lib/intermine/query.rb</a></li>
+					
+					</ul>
+				</div>
+			</div>
+			
+			
+		</div>
+
+		<div id="class-metadata">
+
+			<!-- Parent Class -->
+			
+
+			<!-- Namespace Contents -->
+			
+
+			<!-- Method Quickref -->
+			
+			<div id="method-list-section" class="section">
+				<h3 class="section-header">Methods</h3>
+				<ul class="link-list">
+					
+					<li><a href="#coerce_value">coerce_value</a></li>
+					
+					<li><a href="#validate">validate</a></li>
+					
+					<li><a href="#validate_value">validate_value</a></li>
+					
+				</ul>
+			</div>
+			
+
+			<!-- Included Modules -->
+			
+		</div>
+	
+		<div id="project-metadata">
+			<div id="classindex-section" class="section project-section">
+				<h3 class="section-header">Class Index</h3>
+				<ul class="link-list">
+				
+				
+					<li><a href="../PathQuery.html">PathQuery</a></li>
+				
+				
+					<li><a href="../PathQuery/AttributeConstraint.html">PathQuery::AttributeConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Coded.html">PathQuery::Coded</a></li>
+				
+				
+					<li><a href="../PathQuery/ConstraintFactory.html">PathQuery::ConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/Join.html">PathQuery::Join</a></li>
+				
+				
+					<li><a href="../PathQuery/ListConstraint.html">PathQuery::ListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicGroup.html">PathQuery::LogicGroup</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicNode.html">PathQuery::LogicNode</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParseError.html">PathQuery::LogicParseError</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParser.html">PathQuery::LogicParser</a></li>
+				
+				
+					<li><a href="../PathQuery/LookupConstraint.html">PathQuery::LookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LoopConstraint.html">PathQuery::LoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/MultiValueConstraint.html">PathQuery::MultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/ObjectConstraint.html">PathQuery::ObjectConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/PathFeature.html">PathQuery::PathFeature</a></li>
+				
+				
+					<li><a href="../PathQuery/Query.html">PathQuery::Query</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryBuilder.html">PathQuery::QueryBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryLoader.html">PathQuery::QueryLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/SingleValueConstraint.html">PathQuery::SingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/SortOrder.html">PathQuery::SortOrder</a></li>
+				
+				
+					<li><a href="../PathQuery/SubClassConstraint.html">PathQuery::SubClassConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Template.html">PathQuery::Template</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateBuilder.html">PathQuery::TemplateBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraint.html">PathQuery::TemplateConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraintFactory.html">PathQuery::TemplateConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateListConstraint.html">PathQuery::TemplateListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoader.html">PathQuery::TemplateLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLookupConstraint.html">PathQuery::TemplateLookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoopConstraint.html">PathQuery::TemplateLoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateMultiValueConstraint.html">PathQuery::TemplateMultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateSingleValueConstraint.html">PathQuery::TemplateSingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateUnaryConstraint.html">PathQuery::TemplateUnaryConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/UnaryConstraint.html">PathQuery::UnaryConstraint</a></li>
+				
+				
+					<li><a href="../Results.html">Results</a></li>
+				
+				
+					<li><a href="../Results/ResultsReader.html">Results::ResultsReader</a></li>
+				
+				
+					<li><a href="../Results/ResultsRow.html">Results::ResultsRow</a></li>
+				
+				
+					<li><a href="../Results/ServiceError.html">Results::ServiceError</a></li>
+				
+				
+					<li><a href="../Array.html">Array</a></li>
+				
+				
+					<li><a href="../AttributeDescriptor.html">AttributeDescriptor</a></li>
+				
+				
+					<li><a href="../ClassDescriptor.html">ClassDescriptor</a></li>
+				
+				
+					<li><a href="../CollectionDescriptor.html">CollectionDescriptor</a></li>
+				
+				
+					<li><a href="../FieldDescriptor.html">FieldDescriptor</a></li>
+				
+				
+					<li><a href="../InterMineObject.html">InterMineObject</a></li>
+				
+				
+					<li><a href="../Intermine.html">Intermine</a></li>
+				
+				
+					<li><a href="../List.html">List</a></li>
+				
+				
+					<li><a href="../Model.html">Model</a></li>
+				
+				
+					<li><a href="../Path.html">Path</a></li>
+				
+				
+					<li><a href="../PathException.html">PathException</a></li>
+				
+				
+					<li><a href="../ReferenceDescriptor.html">ReferenceDescriptor</a></li>
+				
+				
+					<li><a href="../Service.html">Service</a></li>
+				
+				
+					<li><a href="../SetHashKey.html">SetHashKey</a></li>
+				
+				
+					<li><a href="../String.html">String</a></li>
+				
+				</ul>
+				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
+				
+				<form action="#" method="get" accept-charset="utf-8">
+				<fieldset>
+					<legend>Quicksearch</legend>
+					<input type="text" name="quicksearch" value="" 
+						class="quicksearch-field" />
+				</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="documentation">
+		
+		<h1 class="module">PathQuery::AttributeConstraint</h1>
+		
+
+		<div id="description">
+			
+		</div>
+
+
+		<!-- Constants -->
+		
+
+		<!-- Attributes -->
+		
+
+		<!-- Methods -->
+		
+		
+		<div id="public-instance-method-details" class="method-section section">
+			<h3 class="section-header">Public Instance Methods</h3>
+
+		
+
+		
+			
+			<div id="coerce-value-method" class="method-detail">
+			
+				<a name="coerce_value"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">coerce_value</span><span 
+						class="method-args">(val)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="coerce-value-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 685</span>
+685:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">coerce_value</span>(<span class="ruby-identifier">val</span>)
+686:             <span class="ruby-identifier">nums</span> = [<span class="ruby-value str">&quot;Float&quot;</span>, <span class="ruby-value str">&quot;Double&quot;</span>, <span class="ruby-value str">&quot;float&quot;</span>, <span class="ruby-value str">&quot;double&quot;</span>]
+687:             <span class="ruby-identifier">ints</span> = [<span class="ruby-value str">&quot;Integer&quot;</span>, <span class="ruby-value str">&quot;int&quot;</span>]
+688:             <span class="ruby-identifier">bools</span> = [<span class="ruby-value str">&quot;Boolean&quot;</span>, <span class="ruby-value str">&quot;boolean&quot;</span>]
+689:             <span class="ruby-identifier">dataType</span> = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">elements</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">dataType</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;.&quot;</span>).<span class="ruby-identifier">last</span>
+690:             <span class="ruby-identifier">coerced</span> = <span class="ruby-identifier">val</span>
+691:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nums</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+692:                 <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Numeric</span>)
+693:                     <span class="ruby-identifier">coerced</span> = <span class="ruby-identifier">val</span>.<span class="ruby-identifier">to_f</span>
+694:                 <span class="ruby-keyword kw">end</span>
+695:             <span class="ruby-keyword kw">end</span>
+696:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ints</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+697:                 <span class="ruby-identifier">coerced</span> = <span class="ruby-identifier">val</span>.<span class="ruby-identifier">to_i</span>
+698:             <span class="ruby-keyword kw">end</span>
+699:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bools</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+700:                 <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">TrueClass</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">FalseClass</span>)
+701:                     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;0&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;yes&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;true&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;t&quot;</span>
+702:                         <span class="ruby-identifier">coerced</span> = <span class="ruby-keyword kw">true</span>
+703:                     <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;1&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;no&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;false&quot;</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;f&quot;</span>
+704:                         <span class="ruby-identifier">coerced</span> = <span class="ruby-keyword kw">false</span>
+705:                     <span class="ruby-keyword kw">end</span>
+706:                 <span class="ruby-keyword kw">end</span>
+707:             <span class="ruby-keyword kw">end</span>
+708:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">coerced</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">val</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">&quot;0&quot;</span>)
+709:                <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;cannot coerce #{val} to a #{dataType}&quot;</span>
+710:             <span class="ruby-keyword kw">end</span>
+711:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">coerced</span>
+712:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="validate-method" class="method-detail">
+			
+				<a name="validate"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">validate</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="validate-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 679</span>
+679:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate</span>
+680:             <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@path</span>.<span class="ruby-identifier">elements</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">AttributeDescriptor</span>)
+681:                 <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Attribute constraints must be on attributes, got #{@path}&quot;</span>
+682:             <span class="ruby-keyword kw">end</span>
+683:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="validate-value-method" class="method-detail">
+			
+				<a name="validate_value"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">validate_value</span><span 
+						class="method-args">(val)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="validate-value-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 714</span>
+714:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_value</span>(<span class="ruby-identifier">val</span>)
+715:             <span class="ruby-identifier">nums</span> = [<span class="ruby-value str">&quot;Float&quot;</span>, <span class="ruby-value str">&quot;Double&quot;</span>, <span class="ruby-value str">&quot;float&quot;</span>, <span class="ruby-value str">&quot;double&quot;</span>]
+716:             <span class="ruby-identifier">ints</span> = [<span class="ruby-value str">&quot;Integer&quot;</span>, <span class="ruby-value str">&quot;int&quot;</span>]
+717:             <span class="ruby-identifier">bools</span> = [<span class="ruby-value str">&quot;Boolean&quot;</span>, <span class="ruby-value str">&quot;boolean&quot;</span>]
+718:             <span class="ruby-identifier">dataType</span> = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">elements</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">dataType</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">&quot;.&quot;</span>).<span class="ruby-identifier">last</span>
+719:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nums</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+720:                 <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Numeric</span>)
+721:                     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;value #{val} is not numeric for #{@path}&quot;</span>
+722:                 <span class="ruby-keyword kw">end</span>
+723:             <span class="ruby-keyword kw">end</span>
+724:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ints</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+725:                 <span class="ruby-identifier">val</span> = <span class="ruby-identifier">val</span>.<span class="ruby-identifier">to_i</span>
+726:                 <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Integer</span>)
+727:                     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;value #{val} is not an integer for #{@path}&quot;</span>
+728:                 <span class="ruby-keyword kw">end</span>
+729:             <span class="ruby-keyword kw">end</span>
+730:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bools</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dataType</span>)
+731:                 <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">TrueClass</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">val</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">FalseClass</span>)
+732:                     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;value #{val} is not a boolean value for #{@path}&quot;</span>
+733:                 <span class="ruby-keyword kw">end</span>
+734:             <span class="ruby-keyword kw">end</span>
+735:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+	
+
+	  </div>
+	</div>
+
+
+	<div id="rdoc-debugging-section-dump">
+	
+		<div class="section">
+		<h2 class="section-header">secsequence</h2>
+	
+		<pre>--- SEC00038
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">seccomment</h2>
+	
+		<pre>--- &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">method_list</h2>
+	
+		<pre>--- 
+- methods: 
+  - aref: M000067
+    name: coerce_value
+    params: (val)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 685&lt;/span&gt;\n\
+      685:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerce_value&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;)\n\
+      686:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;nums&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Float&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Double&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;float&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;double&amp;quot;&lt;/span&gt;]\n\
+      687:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;ints&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Integer&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;int&amp;quot;&lt;/span&gt;]\n\
+      688:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;bools&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Boolean&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;boolean&amp;quot;&lt;/span&gt;]\n\
+      689:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;elements&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;last&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;split&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;.&amp;quot;&lt;/span&gt;).&lt;span class=\&quot;ruby-identifier\&quot;&gt;last&lt;/span&gt;\n\
+      690:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;\n\
+      691:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;nums&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      692:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Numeric&lt;/span&gt;)\n\
+      693:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_f&lt;/span&gt;\n\
+      694:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      695:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      696:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;ints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      697:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_i&lt;/span&gt;\n\
+      698:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      699:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;bools&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      700:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;TrueClass&lt;/span&gt;) &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;FalseClass&lt;/span&gt;)\n\
+      701:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value\&quot;&gt;0&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;yes&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;t&amp;quot;&lt;/span&gt;\n\
+      702:                         &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; = &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;true&lt;/span&gt;\n\
+      703:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value\&quot;&gt;1&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;1&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;no&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;false&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;downcase&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;f&amp;quot;&lt;/span&gt;\n\
+      704:                         &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; = &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;false&lt;/span&gt;\n\
+      705:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      706:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      707:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      708:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value\&quot;&gt;0&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;and&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;not&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;start_with?&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt;)\n\
+      709:                &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;cannot coerce #{val} to a #{dataType}&amp;quot;&lt;/span&gt;\n\
+      710:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      711:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coerced&lt;/span&gt;\n\
+      712:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000066
+    name: validate
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 679&lt;/span&gt;\n\
+      679:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;validate&lt;/span&gt;\n\
+      680:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-ivar\&quot;&gt;@path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;elements&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;last&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;AttributeDescriptor&lt;/span&gt;)\n\
+      681:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;Attribute constraints must be on attributes, got #{@path}&amp;quot;&lt;/span&gt;\n\
+      682:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      683:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000068
+    name: validate_value
+    params: (val)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 714&lt;/span&gt;\n\
+      714:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;validate_value&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;)\n\
+      715:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;nums&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Float&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Double&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;float&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;double&amp;quot;&lt;/span&gt;]\n\
+      716:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;ints&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Integer&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;int&amp;quot;&lt;/span&gt;]\n\
+      717:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;bools&lt;/span&gt; = [&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Boolean&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;boolean&amp;quot;&lt;/span&gt;]\n\
+      718:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;elements&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;last&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;split&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;.&amp;quot;&lt;/span&gt;).&lt;span class=\&quot;ruby-identifier\&quot;&gt;last&lt;/span&gt;\n\
+      719:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;nums&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      720:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Numeric&lt;/span&gt;)\n\
+      721:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;value #{val} is not numeric for #{@path}&amp;quot;&lt;/span&gt;\n\
+      722:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      723:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      724:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;ints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      725:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_i&lt;/span&gt;\n\
+      726:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Integer&lt;/span&gt;)\n\
+      727:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;value #{val} is not an integer for #{@path}&amp;quot;&lt;/span&gt;\n\
+      728:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      729:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      730:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;bools&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;dataType&lt;/span&gt;)\n\
+      731:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;TrueClass&lt;/span&gt;) &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;val&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;FalseClass&lt;/span&gt;)\n\
+      732:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;value #{val} is not a boolean value for #{@path}&amp;quot;&lt;/span&gt;\n\
+      733:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      734:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      735:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Instance
+  type: Public
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">sectitle</h2>
+	
+		<pre>--- 
+</pre>
+		</div>
+	
+	</div>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+
+</body>
+</html>
+

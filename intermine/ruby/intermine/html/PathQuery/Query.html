@@ -1,0 +1,2249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Class: PathQuery::Query</title>
+
+	<link rel="stylesheet" href="../rdoc.css" type="text/css" media="screen" />
+
+	<script src="../js/jquery.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/thickbox-compressed.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/quicksearch.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../js/darkfish.js" type="text/javascript" 
+		charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready( function() {
+			hookSourceViews();
+			hookQuickSearch();
+			highlightLocationTarget();
+
+			$('ul.link-list a').bind( "click", highlightClickTarget );
+		});
+	</script>
+
+</head>
+<body class="class">
+	
+	<div id="metadata">
+		<div id="file-metadata">
+			<div id="file-list-section" class="section">
+				<h3 class="section-header">In Files</h3>
+				<div class="section-body">
+					<ul>
+					
+						<li><a href="../lib/intermine/query.rb.html?TB_iframe=true&height=400&width=600"
+							class="thickbox" title="lib/intermine/query.rb">lib/intermine/query.rb</a></li>
+					
+					</ul>
+				</div>
+			</div>
+			
+			
+		</div>
+
+		<div id="class-metadata">
+
+			<!-- Parent Class -->
+			
+			<div id="parent-class-section" class="section">
+				<h3 class="section-header">Parent</h3>
+				
+				<p class="link">Object</p>
+				
+			</div>
+			
+
+			<!-- Namespace Contents -->
+			
+
+			<!-- Method Quickref -->
+			
+			<div id="method-list-section" class="section">
+				<h3 class="section-header">Methods</h3>
+				<ul class="link-list">
+					
+					<li><a href="#add_constraint">add_constraint</a></li>
+					
+					<li><a href="#add_join">add_join</a></li>
+					
+					<li><a href="#add_prefix">add_prefix</a></li>
+					
+					<li><a href="#add_sort_order">add_sort_order</a></li>
+					
+					<li><a href="#add_views">add_views</a></li>
+					
+					<li><a href="#coded_constraints">coded_constraints</a></li>
+					
+					<li><a href="#count">count</a></li>
+					
+					<li><a href="#each_result">each_result</a></li>
+					
+					<li><a href="#each_row">each_row</a></li>
+					
+					<li><a href="#get_constraint">get_constraint</a></li>
+					
+					<li><a href="#is_valid_code">is_valid_code</a></li>
+					
+					<li><a href="#join">join</a></li>
+					
+					<li><a href="#new">new</a></li>
+					
+					<li><a href="#next_code">next_code</a></li>
+					
+					<li><a href="#order">order</a></li>
+					
+					<li><a href="#order_by">order_by</a></li>
+					
+					<li><a href="#outerjoin">outerjoin</a></li>
+					
+					<li><a href="#params">params</a></li>
+					
+					<li><a href="#parser">parser</a></li>
+					
+					<li><a href="#results">results</a></li>
+					
+					<li><a href="#select">select</a></li>
+					
+					<li><a href="#set_logic">set_logic</a></li>
+					
+					<li><a href="#sortOrder=">sortOrder=</a></li>
+					
+					<li><a href="#subclass_constraints">subclass_constraints</a></li>
+					
+					<li><a href="#subclasses">subclasses</a></li>
+					
+					<li><a href="#to_xml">to_xml</a></li>
+					
+					<li><a href="#used_codes">used_codes</a></li>
+					
+					<li><a href="#view=">view=</a></li>
+					
+					<li><a href="#where">where</a></li>
+					
+				</ul>
+			</div>
+			
+
+			<!-- Included Modules -->
+			
+		</div>
+	
+		<div id="project-metadata">
+			<div id="classindex-section" class="section project-section">
+				<h3 class="section-header">Class Index</h3>
+				<ul class="link-list">
+				
+				
+					<li><a href="../PathQuery.html">PathQuery</a></li>
+				
+				
+					<li><a href="../PathQuery/AttributeConstraint.html">PathQuery::AttributeConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Coded.html">PathQuery::Coded</a></li>
+				
+				
+					<li><a href="../PathQuery/ConstraintFactory.html">PathQuery::ConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/Join.html">PathQuery::Join</a></li>
+				
+				
+					<li><a href="../PathQuery/ListConstraint.html">PathQuery::ListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicGroup.html">PathQuery::LogicGroup</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicNode.html">PathQuery::LogicNode</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParseError.html">PathQuery::LogicParseError</a></li>
+				
+				
+					<li><a href="../PathQuery/LogicParser.html">PathQuery::LogicParser</a></li>
+				
+				
+					<li><a href="../PathQuery/LookupConstraint.html">PathQuery::LookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/LoopConstraint.html">PathQuery::LoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/MultiValueConstraint.html">PathQuery::MultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/ObjectConstraint.html">PathQuery::ObjectConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/PathFeature.html">PathQuery::PathFeature</a></li>
+				
+				
+					<li><a href="../PathQuery/Query.html">PathQuery::Query</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryBuilder.html">PathQuery::QueryBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/QueryLoader.html">PathQuery::QueryLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/SingleValueConstraint.html">PathQuery::SingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/SortOrder.html">PathQuery::SortOrder</a></li>
+				
+				
+					<li><a href="../PathQuery/SubClassConstraint.html">PathQuery::SubClassConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/Template.html">PathQuery::Template</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateBuilder.html">PathQuery::TemplateBuilder</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraint.html">PathQuery::TemplateConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateConstraintFactory.html">PathQuery::TemplateConstraintFactory</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateListConstraint.html">PathQuery::TemplateListConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoader.html">PathQuery::TemplateLoader</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLookupConstraint.html">PathQuery::TemplateLookupConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateLoopConstraint.html">PathQuery::TemplateLoopConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateMultiValueConstraint.html">PathQuery::TemplateMultiValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateSingleValueConstraint.html">PathQuery::TemplateSingleValueConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/TemplateUnaryConstraint.html">PathQuery::TemplateUnaryConstraint</a></li>
+				
+				
+					<li><a href="../PathQuery/UnaryConstraint.html">PathQuery::UnaryConstraint</a></li>
+				
+				
+					<li><a href="../Results.html">Results</a></li>
+				
+				
+					<li><a href="../Results/ResultsReader.html">Results::ResultsReader</a></li>
+				
+				
+					<li><a href="../Results/ResultsRow.html">Results::ResultsRow</a></li>
+				
+				
+					<li><a href="../Results/ServiceError.html">Results::ServiceError</a></li>
+				
+				
+					<li><a href="../Array.html">Array</a></li>
+				
+				
+					<li><a href="../AttributeDescriptor.html">AttributeDescriptor</a></li>
+				
+				
+					<li><a href="../ClassDescriptor.html">ClassDescriptor</a></li>
+				
+				
+					<li><a href="../CollectionDescriptor.html">CollectionDescriptor</a></li>
+				
+				
+					<li><a href="../FieldDescriptor.html">FieldDescriptor</a></li>
+				
+				
+					<li><a href="../InterMineObject.html">InterMineObject</a></li>
+				
+				
+					<li><a href="../Intermine.html">Intermine</a></li>
+				
+				
+					<li><a href="../List.html">List</a></li>
+				
+				
+					<li><a href="../Model.html">Model</a></li>
+				
+				
+					<li><a href="../Path.html">Path</a></li>
+				
+				
+					<li><a href="../PathException.html">PathException</a></li>
+				
+				
+					<li><a href="../ReferenceDescriptor.html">ReferenceDescriptor</a></li>
+				
+				
+					<li><a href="../Service.html">Service</a></li>
+				
+				
+					<li><a href="../SetHashKey.html">SetHashKey</a></li>
+				
+				
+					<li><a href="../String.html">String</a></li>
+				
+				</ul>
+				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
+				
+				<form action="#" method="get" accept-charset="utf-8">
+				<fieldset>
+					<legend>Quicksearch</legend>
+					<input type="text" name="quicksearch" value="" 
+						class="quicksearch-field" />
+				</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="documentation">
+		
+		<h1 class="class">PathQuery::Query</h1>
+		
+
+		<div id="description">
+			
+		</div>
+
+
+		<!-- Constants -->
+		
+		<div id="constants-list" class="section">
+			<h3 class="section-header">Constants</h3>
+			<dl>
+			
+				<dt><a name="LOWEST_CODE">LOWEST_CODE</a></dt>
+				
+				<dd class="description missing-docs">(Not documented)</dd>
+				
+			
+				<dt><a name="HIGHEST_CODE">HIGHEST_CODE</a></dt>
+				
+				<dd class="description missing-docs">(Not documented)</dd>
+				
+			
+			</dl>
+		</div>
+		
+
+		<!-- Attributes -->
+		
+		<div id="attribute-method-details" class="method-section section">
+			<h3 class="section-header">Attributes</h3>
+
+			
+			<div id="constraints-attribute-method" class="method-detail">
+				<a name="constraints"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">constraints</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="joins-attribute-method" class="method-detail">
+				<a name="joins"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">joins</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="logic-attribute-method" class="method-detail">
+				<a name="logic"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">logic</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="model-attribute-method" class="method-detail">
+				<a name="model"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">model</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="name-attribute-method" class="method-detail">
+				<a name="name"></a>
+				
+				<a name="name="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">name</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="root-attribute-method" class="method-detail">
+				<a name="root"></a>
+				
+				<a name="root="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">root</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="sort-order-attribute-method" class="method-detail">
+				<a name="sort_order"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">sort_order</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="title-attribute-method" class="method-detail">
+				<a name="title"></a>
+				
+				<a name="title="></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">title</span><span 
+						class="attribute-access-type">[RW]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+			<div id="views-attribute-method" class="method-detail">
+				<a name="views"></a>
+				
+				<div class="method-heading attribute-method-heading">
+					<span class="method-name">views</span><span 
+						class="attribute-access-type">[R]</span>
+				</div>
+
+				<div class="method-description">
+				
+				<p class="missing-docs">(Not documented)</p>
+				
+				</div>
+			</div>
+			
+		</div>
+		
+
+		<!-- Methods -->
+		
+		
+		<div id="public-class-method-details" class="method-section section">
+			<h3 class="section-header">Public Class Methods</h3>
+
+		
+
+		
+			
+			<div id="is-valid-code-method" class="method-detail">
+			
+				<a name="is_valid_code"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">is_valid_code</span><span 
+						class="method-args">(str)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="is-valid-code-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 481</span>
+481:         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">is_valid_code</span>(<span class="ruby-identifier">str</span>)
+482:             <span class="ruby-keyword kw">return</span> (<span class="ruby-identifier">str</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">str</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">LOWEST_CODE</span>) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">str</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">HIGHEST_CODE</span>)
+483:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="new-method" class="method-detail">
+			
+				<a name="new"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">new</span><span 
+						class="method-args">(model, root=nil, service=nil)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="new-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 202</span>
+202:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">model</span>, <span class="ruby-identifier">root</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">service</span>=<span class="ruby-keyword kw">nil</span>)
+203:             <span class="ruby-ivar">@model</span> = <span class="ruby-identifier">model</span>
+204:             <span class="ruby-ivar">@service</span> = <span class="ruby-identifier">service</span>
+205:             <span class="ruby-ivar">@url</span> = (<span class="ruby-ivar">@service</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-operator">?</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@service</span>.<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Service</span><span class="ruby-operator">::</span><span class="ruby-constant">QUERY_RESULTS_PATH</span>
+206:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">root</span>
+207:                 <span class="ruby-ivar">@root</span> = <span class="ruby-constant">Path</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">root</span>, <span class="ruby-identifier">model</span>).<span class="ruby-identifier">rootClass</span>
+208:             <span class="ruby-keyword kw">end</span>
+209:             <span class="ruby-ivar">@constraints</span> = []
+210:             <span class="ruby-ivar">@joins</span> = []
+211:             <span class="ruby-ivar">@views</span> = []
+212:             <span class="ruby-ivar">@sort_order</span> = []
+213:             <span class="ruby-ivar">@used_codes</span> = []
+214:             <span class="ruby-ivar">@logic_parser</span> = <span class="ruby-constant">LogicParser</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+215:             <span class="ruby-ivar">@constraint_factory</span> = <span class="ruby-constant">ConstraintFactory</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+216:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="parser-method" class="method-detail">
+			
+				<a name="parser"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">parser</span><span 
+						class="method-args">(model)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="parser-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 218</span>
+218:         <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parser</span>(<span class="ruby-identifier">model</span>)
+219:             <span class="ruby-keyword kw">return</span> <span class="ruby-constant">QueryLoader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">model</span>)
+220:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+		<div id="public-instance-method-details" class="method-section section">
+			<h3 class="section-header">Public Instance Methods</h3>
+
+		
+
+		
+			
+			<div id="add-constraint-method" class="method-detail">
+			
+				<a name="add_constraint"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">add_constraint</span><span 
+						class="method-args">(*parameters)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="add-constraint-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 383</span>
+383:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_constraint</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">parameters</span>)
+384:             <span class="ruby-identifier">con</span> = <span class="ruby-ivar">@constraint_factory</span>.<span class="ruby-identifier">make_constraint</span>(<span class="ruby-identifier">parameters</span>)
+385:             <span class="ruby-ivar">@constraints</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">con</span>
+386:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">con</span>
+387:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="add-join-method" class="method-detail">
+			
+				<a name="add_join"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">add_join</span><span 
+						class="method-args">(path, style=&quot;OUTER&quot;)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="add-join-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 340</span>
+340:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_join</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">style</span>=<span class="ruby-value str">&quot;OUTER&quot;</span>)
+341:             <span class="ruby-identifier">p</span> = <span class="ruby-constant">Path</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">add_prefix</span>(<span class="ruby-identifier">path</span>), <span class="ruby-ivar">@model</span>, <span class="ruby-identifier">subclasses</span>)
+342:             <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@root</span>.<span class="ruby-identifier">nil?</span>
+343:                 <span class="ruby-ivar">@root</span> = <span class="ruby-identifier">p</span>.<span class="ruby-identifier">rootClass</span>
+344:             <span class="ruby-keyword kw">end</span>
+345:             <span class="ruby-ivar">@joins</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Join</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">p</span>, <span class="ruby-identifier">style</span>)
+346:             <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+347:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+				<div class="aliases">
+					Also aliased as: <a href="Query.html#M000088">join</a>
+				</div>
+				
+			</div>
+
+		
+
+		
+			
+			<div id="add-prefix-method" class="method-detail">
+			
+				<a name="add_prefix"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">add_prefix</span><span 
+						class="method-args">(x)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="add-prefix-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 485</span>
+485:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_prefix</span>(<span class="ruby-identifier">x</span>)
+486:             <span class="ruby-identifier">x</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span>
+487:             <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@root</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-ivar">@root</span>.<span class="ruby-identifier">name</span>)
+488:                 <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@root</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>
+489:             <span class="ruby-keyword kw">else</span> 
+490:                 <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">x</span>
+491:             <span class="ruby-keyword kw">end</span>
+492:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="add-sort-order-method" class="method-detail">
+			
+				<a name="add_sort_order"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">add_sort_order</span><span 
+						class="method-args">(path, direction=&quot;ASC&quot;)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="add-sort-order-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 355</span>
+355:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_sort_order</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">direction</span>=<span class="ruby-value str">&quot;ASC&quot;</span>) 
+356:             <span class="ruby-identifier">p</span> = <span class="ruby-constant">Path</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">add_prefix</span>(<span class="ruby-identifier">path</span>), <span class="ruby-ivar">@model</span>, <span class="ruby-identifier">subclasses</span>)
+357:             <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@views</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">p</span>
+358:                 <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Sort order (#{p}) not in view&quot;</span>
+359:             <span class="ruby-keyword kw">end</span>
+360:             <span class="ruby-ivar">@sort_order</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">SortOrder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">p</span>, <span class="ruby-identifier">direction</span>)
+361:             <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+362:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="add-views-method" class="method-detail">
+			
+				<a name="add_views"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">add_views</span><span 
+						class="method-args">(*views)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="add-views-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 298</span>
+298:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_views</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">views</span>)
+299:             <span class="ruby-identifier">views</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> 
+300:                 <span class="ruby-identifier">y</span> = <span class="ruby-identifier">add_prefix</span>(<span class="ruby-identifier">x</span>)
+301:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">end_with?</span>(<span class="ruby-value str">&quot;*&quot;</span>)
+302:                     <span class="ruby-identifier">prefix</span> = <span class="ruby-identifier">y</span>.<span class="ruby-identifier">chomp</span>(<span class="ruby-value str">&quot;.*&quot;</span>)
+303:                     <span class="ruby-identifier">path</span> = <span class="ruby-constant">Path</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">prefix</span>, <span class="ruby-ivar">@model</span>, <span class="ruby-identifier">subclasses</span>)
+304:                     <span class="ruby-identifier">attrs</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">end_cd</span>.<span class="ruby-identifier">attributes</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">prefix</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span>}
+305:                     <span class="ruby-identifier">add_views</span>(<span class="ruby-identifier">attrs</span>)
+306:                 <span class="ruby-keyword kw">else</span>
+307:                     <span class="ruby-identifier">path</span> = <span class="ruby-constant">Path</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">y</span>, <span class="ruby-ivar">@model</span>, <span class="ruby-identifier">subclasses</span>)
+308:                     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@root</span>.<span class="ruby-identifier">nil?</span>
+309:                         <span class="ruby-ivar">@root</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">rootClass</span>
+310:                     <span class="ruby-keyword kw">end</span>
+311:                     <span class="ruby-ivar">@views</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">path</span>
+312:                 <span class="ruby-keyword kw">end</span>
+313:             <span class="ruby-keyword kw">end</span>
+314:             <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+315:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="coded-constraints-method" class="method-detail">
+			
+				<a name="coded_constraints"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">coded_constraints</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="coded-constraints-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 222</span>
+222:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">coded_constraints</span>
+223:             <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SubClassConstraint</span>)}
+224:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="count-method" class="method-detail">
+			
+				<a name="count"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">count</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="count-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 274</span>
+274:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">count</span>
+275:             <span class="ruby-identifier">rr</span> = <span class="ruby-constant">Results</span><span class="ruby-operator">::</span><span class="ruby-constant">ResultsReader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@url</span>, <span class="ruby-keyword kw">self</span>)
+276:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">rr</span>.<span class="ruby-identifier">get_size</span>
+277:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="each-result-method" class="method-detail">
+			
+				<a name="each_result"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">each_result</span><span 
+						class="method-args">() {|row| ...}</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="each-result-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 266</span>
+266:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_result</span>
+267:             <span class="ruby-identifier">rr</span> = <span class="ruby-constant">Results</span><span class="ruby-operator">::</span><span class="ruby-constant">ResultsReader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@url</span>, <span class="ruby-keyword kw">self</span>)
+268:             <span class="ruby-identifier">rr</span>.<span class="ruby-identifier">each_result</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+269:                 <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">row</span>
+270:             }
+271:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="each-row-method" class="method-detail">
+			
+				<a name="each_row"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">each_row</span><span 
+						class="method-args">() {|row| ...}</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="each-row-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 259</span>
+259:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_row</span>
+260:             <span class="ruby-identifier">rr</span> = <span class="ruby-constant">Results</span><span class="ruby-operator">::</span><span class="ruby-constant">ResultsReader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@url</span>, <span class="ruby-keyword kw">self</span>)
+261:             <span class="ruby-identifier">rr</span>.<span class="ruby-identifier">each_row</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+262:                 <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">row</span>
+263:             }
+264:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="get-constraint-method" class="method-detail">
+			
+				<a name="get_constraint"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">get_constraint</span><span 
+						class="method-args">(code)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="get-constraint-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 289</span>
+289:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_constraint</span>(<span class="ruby-identifier">code</span>)
+290:             <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span>
+291:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">code</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">code</span>
+292:                     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">x</span>
+293:                 <span class="ruby-keyword kw">end</span>
+294:             <span class="ruby-keyword kw">end</span>
+295:             <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;#{code} not in query&quot;</span>
+296:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="join-method" class="method-detail method-alias">
+			
+				<a name="join"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">join</span><span 
+						class="method-args">(path, style=&quot;OUTER&quot;)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p><p>
+Alias for <a href="Query.html#M000087">#add_join</a>
+</p></p>
+					
+					
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="next-code-method" class="method-detail">
+			
+				<a name="next_code"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">next_code</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="next-code-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 464</span>
+464:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">next_code</span>
+465:             <span class="ruby-identifier">c</span> = <span class="ruby-constant">LOWEST_CODE</span>
+466:             <span class="ruby-keyword kw">while</span> <span class="ruby-constant">Query</span>.<span class="ruby-identifier">is_valid_code</span>(<span class="ruby-identifier">c</span>)
+467:                 <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">c</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">used_codes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">c</span>)
+468:                 <span class="ruby-identifier">c</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">next</span>
+469:             <span class="ruby-keyword kw">end</span>
+470:             <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>, <span class="ruby-value str">&quot;Maximum number of codes reached - all 26 have been allocated&quot;</span>
+471:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="order-method" class="method-detail">
+			
+				<a name="order"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">order</span><span 
+						class="method-args">(*args)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="order-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 379</span>
+379:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">order</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+380:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">add_sort_order</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+381:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="order-by-method" class="method-detail">
+			
+				<a name="order_by"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">order_by</span><span 
+						class="method-args">(*args)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="order-by-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 375</span>
+375:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">order_by</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+376:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">add_sort_order</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+377:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="outerjoin-method" class="method-detail">
+			
+				<a name="outerjoin"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">outerjoin</span><span 
+						class="method-args">(path)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="outerjoin-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 351</span>
+351:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">outerjoin</span>(<span class="ruby-identifier">path</span>)
+352:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">add_join</span>(<span class="ruby-identifier">path</span>)
+353:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="params-method" class="method-detail">
+			
+				<a name="params"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">params</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="params-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 494</span>
+494:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">params</span>
+495:             <span class="ruby-identifier">hash</span> = {<span class="ruby-value str">&quot;query&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_xml</span>}
+496:             <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@service</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@service</span>.<span class="ruby-identifier">token</span>
+497:                 <span class="ruby-identifier">hash</span>[<span class="ruby-value str">&quot;token&quot;</span>] = <span class="ruby-ivar">@service</span>.<span class="ruby-identifier">token</span>
+498:             <span class="ruby-keyword kw">end</span>
+499:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hash</span>
+500:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="results-method" class="method-detail">
+			
+				<a name="results"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">results</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="results-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 279</span>
+279:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">results</span>
+280:             <span class="ruby-identifier">rr</span> = <span class="ruby-constant">Results</span><span class="ruby-operator">::</span><span class="ruby-constant">ResultsReader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@url</span>, <span class="ruby-keyword kw">self</span>)
+281:             <span class="ruby-identifier">res</span> = []
+282:             <span class="ruby-identifier">rr</span>.<span class="ruby-identifier">each_row</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+283:                 <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">row</span>
+284:             }
+285:             <span class="ruby-identifier">res</span>
+286:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="select-method" class="method-detail">
+			
+				<a name="select"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">select</span><span 
+						class="method-args">(*views)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="select-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 317</span>
+317:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">views</span>)
+318:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">add_views</span>(<span class="ruby-identifier">views</span>)
+319:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="set-logic-method" class="method-detail">
+			
+				<a name="set_logic"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">set_logic</span><span 
+						class="method-args">(value)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="set-logic-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 455</span>
+455:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_logic</span>(<span class="ruby-identifier">value</span>)
+456:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">LogicGroup</span>)
+457:                 <span class="ruby-ivar">@logic</span> = <span class="ruby-identifier">value</span>
+458:             <span class="ruby-keyword kw">else</span>
+459:                 <span class="ruby-ivar">@logic</span> = <span class="ruby-ivar">@logic_parser</span>.<span class="ruby-identifier">parse_logic</span>(<span class="ruby-identifier">value</span>)
+460:             <span class="ruby-keyword kw">end</span>
+461:             <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+462:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="sort-rder--method" class="method-detail">
+			
+				<a name="sortOrder="></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">sortOrder=</span><span 
+						class="method-args">(so)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="sort-rder--source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 364</span>
+364:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sortOrder=</span>(<span class="ruby-identifier">so</span>)
+365:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">so</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+366:                 <span class="ruby-identifier">sos</span> = <span class="ruby-identifier">so</span>
+367:             <span class="ruby-keyword kw">else</span>
+368:                 <span class="ruby-identifier">sos</span> = <span class="ruby-identifier">so</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/(ASC|DESC)/</span>).<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">strip</span>}.<span class="ruby-identifier">every</span>(<span class="ruby-value">2</span>)
+369:             <span class="ruby-keyword kw">end</span>
+370:             <span class="ruby-identifier">sos</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
+371:                 <span class="ruby-identifier">add_sort_order</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+372:             <span class="ruby-keyword kw">end</span>
+373:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="subclass-constraints-method" class="method-detail">
+			
+				<a name="subclass_constraints"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">subclass_constraints</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="subclass-constraints-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 226</span>
+226:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">subclass_constraints</span>
+227:             <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SubClassConstraint</span>)}
+228:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="subclasses-method" class="method-detail">
+			
+				<a name="subclasses"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">subclasses</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="subclasses-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 330</span>
+330:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">subclasses</span>
+331:             <span class="ruby-identifier">subclasses</span> = {}
+332:             <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">con</span><span class="ruby-operator">|</span>
+333:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">con</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SubClassConstraint</span>)
+334:                     <span class="ruby-identifier">subclasses</span>[<span class="ruby-identifier">con</span>.<span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">con</span>.<span class="ruby-identifier">sub_class</span>.<span class="ruby-identifier">to_s</span>
+335:                 <span class="ruby-keyword kw">end</span>
+336:             <span class="ruby-keyword kw">end</span>
+337:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">subclasses</span>
+338:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="to-xml-method" class="method-detail">
+			
+				<a name="to_xml"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">to_xml</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="to-xml-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 230</span>
+230:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_xml</span>
+231:             <span class="ruby-identifier">doc</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span>
+232: 
+233:             <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@sort_order</span>.<span class="ruby-identifier">empty?</span>
+234:                 <span class="ruby-identifier">so</span> = <span class="ruby-constant">SortOrder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@views</span>.<span class="ruby-identifier">first</span>, <span class="ruby-value str">&quot;ASC&quot;</span>)
+235:             <span class="ruby-keyword kw">else</span>
+236:                 <span class="ruby-identifier">so</span> = <span class="ruby-ivar">@sort_order</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot; &quot;</span>)
+237:             <span class="ruby-keyword kw">end</span>
+238: 
+239:             <span class="ruby-identifier">query</span> = <span class="ruby-identifier">doc</span>.<span class="ruby-identifier">add_element</span>(<span class="ruby-value str">&quot;query&quot;</span>, {
+240:                 <span class="ruby-value str">&quot;name&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@name</span>, 
+241:                 <span class="ruby-value str">&quot;model&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@model</span>.<span class="ruby-identifier">name</span>, 
+242:                 <span class="ruby-value str">&quot;title&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@title</span>, 
+243:                 <span class="ruby-value str">&quot;sortOrder&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">so</span>,
+244:                 <span class="ruby-value str">&quot;view&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@views</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot; &quot;</span>),
+245:                 <span class="ruby-value str">&quot;constraintLogic&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@logic</span>
+246:             }.<span class="ruby-identifier">delete_if</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> <span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">v</span> })
+247:             <span class="ruby-ivar">@joins</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">join</span><span class="ruby-operator">|</span> 
+248:                 <span class="ruby-identifier">query</span>.<span class="ruby-identifier">add_element</span>(<span class="ruby-value str">&quot;join&quot;</span>, <span class="ruby-identifier">join</span>.<span class="ruby-identifier">attrs</span>) 
+249:             }
+250:             <span class="ruby-identifier">subclass_constraints</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">con</span><span class="ruby-operator">|</span>
+251:                 <span class="ruby-identifier">query</span>.<span class="ruby-identifier">add_element</span>(<span class="ruby-identifier">con</span>.<span class="ruby-identifier">to_elem</span>) 
+252:             }
+253:             <span class="ruby-identifier">coded_constraints</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">con</span><span class="ruby-operator">|</span>
+254:                 <span class="ruby-identifier">query</span>.<span class="ruby-identifier">add_element</span>(<span class="ruby-identifier">con</span>.<span class="ruby-identifier">to_elem</span>) 
+255:             }
+256:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">doc</span>
+257:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="used-codes-method" class="method-detail">
+			
+				<a name="used_codes"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">used_codes</span><span 
+						class="method-args">()</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="used-codes-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 473</span>
+473:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">used_codes</span>
+474:             <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">empty?</span>
+475:                 <span class="ruby-keyword kw">return</span> []
+476:             <span class="ruby-keyword kw">else</span>
+477:                 <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@constraints</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SubClassConstraint</span>)}.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">code</span>}
+478:             <span class="ruby-keyword kw">end</span>
+479:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="view--method" class="method-detail">
+			
+				<a name="view="></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">view=</span><span 
+						class="method-args">(view)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="view--source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 321</span>
+321:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view=</span>(<span class="ruby-identifier">view</span>)
+322:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">view</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+323:                 <span class="ruby-identifier">views</span> = <span class="ruby-identifier">view</span>
+324:             <span class="ruby-keyword kw">else</span>
+325:                 <span class="ruby-identifier">views</span> = <span class="ruby-identifier">view</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/(?:,\s*|\s+)/</span>)
+326:             <span class="ruby-keyword kw">end</span>
+327:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">add_views</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">views</span>)
+328:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="where-method" class="method-detail">
+			
+				<a name="where"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">where</span><span 
+						class="method-args">(*wheres)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p class="missing-docs">(Not documented)</p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="where-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/query.rb, line 389</span>
+389:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">where</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">wheres</span>)
+390:            <span class="ruby-identifier">wheres</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">w</span><span class="ruby-operator">|</span>
+391:              <span class="ruby-identifier">w</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+392:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+393:                     <span class="ruby-identifier">parameters</span> = {<span class="ruby-identifier">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">k</span>}
+394:                     <span class="ruby-identifier">v</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">subk</span>, <span class="ruby-identifier">subv</span><span class="ruby-operator">|</span>
+395:                         <span class="ruby-identifier">normalised_k</span> = <span class="ruby-identifier">subk</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/_/</span>, <span class="ruby-value str">&quot; &quot;</span>)
+396:                         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:with</span>
+397:                             <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:extra_value</span>] = <span class="ruby-identifier">subv</span>
+398:                         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:sub_class</span>
+399:                             <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">subk</span>] = <span class="ruby-identifier">subv</span>
+400:                         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:code</span>
+401:                             <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:code</span>] = <span class="ruby-identifier">subv</span>
+402:                         <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">LoopConstraint</span>.<span class="ruby-identifier">valid_ops</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">normalised_k</span>)
+403:                             <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-identifier">normalised_k</span>
+404:                             <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:loopPath</span>] = <span class="ruby-identifier">subv</span>
+405:                         <span class="ruby-keyword kw">else</span>
+406:                             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">nil?</span>
+407:                                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;=&quot;</span>
+408:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;IS NULL&quot;</span>
+409:                                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;!=&quot;</span>
+410:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;IS NOT NULL&quot;</span>
+411:                                 <span class="ruby-keyword kw">else</span>
+412:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-identifier">normalised_k</span>
+413:                                 <span class="ruby-keyword kw">end</span>
+414:                             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Range</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+415:                                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;=&quot;</span>
+416:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;ONE OF&quot;</span>
+417:                                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;!=&quot;</span>
+418:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;NONE OF&quot;</span>
+419:                                 <span class="ruby-keyword kw">else</span>
+420:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-identifier">normalised_k</span>
+421:                                 <span class="ruby-keyword kw">end</span>
+422:                                 <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:values</span>] = <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">to_a</span>
+423:                             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">List</span>)
+424:                                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;=&quot;</span>
+425:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;IN&quot;</span>
+426:                                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">subk</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;!=&quot;</span>
+427:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-value str">&quot;NOT IN&quot;</span>
+428:                                 <span class="ruby-keyword kw">else</span>
+429:                                     <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-identifier">normalised_k</span>
+430:                                 <span class="ruby-keyword kw">end</span>
+431:                                 <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:value</span>] = <span class="ruby-identifier">subv</span>.<span class="ruby-identifier">name</span>
+432:                             <span class="ruby-keyword kw">else</span>
+433:                                 <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:op</span>] = <span class="ruby-identifier">normalised_k</span>
+434:                                 <span class="ruby-identifier">parameters</span>[<span class="ruby-identifier">:value</span>] = <span class="ruby-identifier">subv</span>
+435:                             <span class="ruby-keyword kw">end</span>
+436:                         <span class="ruby-keyword kw">end</span>
+437:                     <span class="ruby-keyword kw">end</span>
+438:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">parameters</span>)
+439:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Range</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+440:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-value str">'ONE OF'</span>, <span class="ruby-identifier">v</span>.<span class="ruby-identifier">to_a</span>)
+441:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">ClassDescriptor</span>)
+442:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">:sub_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">name</span>)
+443:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">List</span>)
+444:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-value str">'IN'</span>, <span class="ruby-identifier">v</span>.<span class="ruby-identifier">name</span>)
+445:                 <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">nil?</span>
+446:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-value str">&quot;IS NULL&quot;</span>)
+447:                 <span class="ruby-keyword kw">else</span>
+448:                     <span class="ruby-identifier">add_constraint</span>(<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-value str">'='</span>, <span class="ruby-identifier">v</span>)
+449:                 <span class="ruby-keyword kw">end</span>
+450:              <span class="ruby-keyword kw">end</span>
+451:            <span class="ruby-keyword kw">end</span>
+452:            <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">self</span>
+453:         <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+	
+
+	  </div>
+	</div>
+
+
+	<div id="rdoc-debugging-section-dump">
+	
+		<div class="section">
+		<h2 class="section-header">secsequence</h2>
+	
+		<pre>--- SEC00030
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">attributes</h2>
+	
+		<pre>--- 
+- name: constraints
+  rw: R
+  a_desc: &quot;&quot;
+- name: joins
+  rw: R
+  a_desc: &quot;&quot;
+- name: logic
+  rw: R
+  a_desc: &quot;&quot;
+- name: model
+  rw: R
+  a_desc: &quot;&quot;
+- name: name
+  rw: RW
+  a_desc: &quot;&quot;
+- name: root
+  rw: RW
+  a_desc: &quot;&quot;
+- name: sort_order
+  rw: R
+  a_desc: &quot;&quot;
+- name: title
+  rw: RW
+  a_desc: &quot;&quot;
+- name: views
+  rw: R
+  a_desc: &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">seccomment</h2>
+	
+		<pre>--- &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">method_list</h2>
+	
+		<pre>--- 
+- methods: 
+  - aref: M000099
+    name: is_valid_code
+    params: (str)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 481&lt;/span&gt;\n\
+      481:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_valid_code&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;str&lt;/span&gt;)\n\
+      482:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; (&lt;span class=\&quot;ruby-identifier\&quot;&gt;str&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;length&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value\&quot;&gt;1&lt;/span&gt;) &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; (&lt;span class=\&quot;ruby-identifier\&quot;&gt;str&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;LOWEST_CODE&lt;/span&gt;) &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; (&lt;span class=\&quot;ruby-identifier\&quot;&gt;str&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;HIGHEST_CODE&lt;/span&gt;)\n\
+      483:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000073
+    name: new
+    params: (model, root=nil, service=nil)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 202&lt;/span&gt;\n\
+      202:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;initialize&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt;=&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;nil&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;service&lt;/span&gt;=&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;nil&lt;/span&gt;)\n\
+      203:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;\n\
+      204:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;service&lt;/span&gt;\n\
+      205:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@url&lt;/span&gt; = (&lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;) &lt;span class=\&quot;ruby-operator\&quot;&gt;?&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;nil&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;:&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;Service&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;QUERY_RESULTS_PATH&lt;/span&gt;\n\
+      206:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt;\n\
+      207:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;).&lt;span class=\&quot;ruby-identifier\&quot;&gt;rootClass&lt;/span&gt;\n\
+      208:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      209:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt; = []\n\
+      210:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@joins&lt;/span&gt; = []\n\
+      211:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@views&lt;/span&gt; = []\n\
+      212:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@sort_order&lt;/span&gt; = []\n\
+      213:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@used_codes&lt;/span&gt; = []\n\
+      214:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@logic_parser&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;LogicParser&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      215:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraint_factory&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;ConstraintFactory&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      216:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000074
+    name: parser
+    params: (model)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 218&lt;/span&gt;\n\
+      218:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;parser&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;)\n\
+      219:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;QueryLoader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;model&lt;/span&gt;)\n\
+      220:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Class
+  type: Public
+- methods: 
+  - aref: M000094
+    name: add_constraint
+    params: (*parameters)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 383&lt;/span&gt;\n\
+      383:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;)\n\
+      384:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraint_factory&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;make_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;)\n\
+      385:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;\n\
+      386:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;\n\
+      387:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000087
+    name: add_join
+    aka: 
+    - aref: Query.html#M000088
+      name: join
+    params: (path, style=&amp;quot;OUTER&amp;quot;)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 340&lt;/span&gt;\n\
+      340:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_join&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;style&lt;/span&gt;=&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;OUTER&amp;quot;&lt;/span&gt;)\n\
+      341:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_prefix&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;), &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;)\n\
+      342:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;\n\
+      343:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;rootClass&lt;/span&gt;\n\
+      344:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      345:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@joins&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;Join&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;style&lt;/span&gt;)\n\
+      346:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;\n\
+      347:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000100
+    name: add_prefix
+    params: (x)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 485&lt;/span&gt;\n\
+      485:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_prefix&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;)\n\
+      486:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;\n\
+      487:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;start_with?&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;)\n\
+      488:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;.&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;\n\
+      489:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt; \n\
+      490:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;\n\
+      491:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      492:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000090
+    name: add_sort_order
+    params: (path, direction=&amp;quot;ASC&amp;quot;)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 355&lt;/span&gt;\n\
+      355:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_sort_order&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;direction&lt;/span&gt;=&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;ASC&amp;quot;&lt;/span&gt;) \n\
+      356:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_prefix&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;), &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;)\n\
+      357:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-ivar\&quot;&gt;@views&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;\n\
+      358:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;Sort order (#{p}) not in view&amp;quot;&lt;/span&gt;\n\
+      359:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      360:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@sort_order&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;SortOrder&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;direction&lt;/span&gt;)\n\
+      361:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;\n\
+      362:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000083
+    name: add_views
+    params: (*views)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 298&lt;/span&gt;\n\
+      298:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_views&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt;)\n\
+      299:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;flatten&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;map&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; \n\
+      300:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;y&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_prefix&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;)\n\
+      301:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;y&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;end_with?&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;*&amp;quot;&lt;/span&gt;)\n\
+      302:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;prefix&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;y&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;chomp&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;.*&amp;quot;&lt;/span&gt;)\n\
+      303:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;prefix&lt;/span&gt;, &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;)\n\
+      304:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;attrs&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;end_cd&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;attributes&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;map&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;prefix&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;.&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;}\n\
+      305:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_views&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;attrs&lt;/span&gt;)\n\
+      306:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      307:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;y&lt;/span&gt;, &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;)\n\
+      308:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;\n\
+      309:                         &lt;span class=\&quot;ruby-ivar\&quot;&gt;@root&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;rootClass&lt;/span&gt;\n\
+      310:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      311:                     &lt;span class=\&quot;ruby-ivar\&quot;&gt;@views&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;\n\
+      312:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      313:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      314:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;\n\
+      315:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000075
+    name: coded_constraints
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 222&lt;/span&gt;\n\
+      222:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;coded_constraints&lt;/span&gt;\n\
+      223:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;SubClassConstraint&lt;/span&gt;)}\n\
+      224:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000080
+    name: count
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 274&lt;/span&gt;\n\
+      274:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;count&lt;/span&gt;\n\
+      275:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Results&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;ResultsReader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@url&lt;/span&gt;, &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      276:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;get_size&lt;/span&gt;\n\
+      277:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000079
+    name: each_result
+    params: () {|row| ...}
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 266&lt;/span&gt;\n\
+      266:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_result&lt;/span&gt;\n\
+      267:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Results&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;ResultsReader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@url&lt;/span&gt;, &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      268:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each_result&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      269:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;yield&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;\n\
+      270:             }\n\
+      271:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000078
+    name: each_row
+    params: () {|row| ...}
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 259&lt;/span&gt;\n\
+      259:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_row&lt;/span&gt;\n\
+      260:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Results&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;ResultsReader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@url&lt;/span&gt;, &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      261:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each_row&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      262:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;yield&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;\n\
+      263:             }\n\
+      264:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000082
+    name: get_constraint
+    params: (code)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 289&lt;/span&gt;\n\
+      289:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;get_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;code&lt;/span&gt;)\n\
+      290:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      291:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;code&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;code&lt;/span&gt;\n\
+      292:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;\n\
+      293:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      294:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      295:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;ArgumentError&lt;/span&gt;, &lt;span class=\&quot;ruby-node\&quot;&gt;&amp;quot;#{code} not in query&amp;quot;&lt;/span&gt;\n\
+      296:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000088
+    name: join
+    m_desc: |-
+      &lt;p&gt;
+      Alias for &lt;a href=&quot;Query.html#M000087&quot;&gt;#add_join&lt;/a&gt;
+      &lt;/p&gt;
+    params: (path, style=&amp;quot;OUTER&amp;quot;)
+    visibility: public
+  - aref: M000097
+    name: next_code
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 464&lt;/span&gt;\n\
+      464:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;next_code&lt;/span&gt;\n\
+      465:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;LOWEST_CODE&lt;/span&gt;\n\
+      466:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;while&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;Query&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_valid_code&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt;)\n\
+      467:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;unless&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;used_codes&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt;)\n\
+      468:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;c&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;next&lt;/span&gt;\n\
+      469:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      470:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;raise&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;RuntimeError&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;Maximum number of codes reached - all 26 have been allocated&amp;quot;&lt;/span&gt;\n\
+      471:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000093
+    name: order
+    params: (*args)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 379&lt;/span&gt;\n\
+      379:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;order&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;)\n\
+      380:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_sort_order&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;)\n\
+      381:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000092
+    name: order_by
+    params: (*args)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 375&lt;/span&gt;\n\
+      375:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;order_by&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;)\n\
+      376:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_sort_order&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;)\n\
+      377:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000089
+    name: outerjoin
+    params: (path)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 351&lt;/span&gt;\n\
+      351:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;outerjoin&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;)\n\
+      352:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_join&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;)\n\
+      353:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000101
+    name: params
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 494&lt;/span&gt;\n\
+      494:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;params&lt;/span&gt;\n\
+      495:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;hash&lt;/span&gt; = {&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;query&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_xml&lt;/span&gt;}\n\
+      496:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;and&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;token&lt;/span&gt;\n\
+      497:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;hash&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;token&amp;quot;&lt;/span&gt;] = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@service&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;token&lt;/span&gt;\n\
+      498:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      499:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;hash&lt;/span&gt;\n\
+      500:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000081
+    name: results
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 279&lt;/span&gt;\n\
+      279:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;results&lt;/span&gt;\n\
+      280:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;Results&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;ResultsReader&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@url&lt;/span&gt;, &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;)\n\
+      281:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;res&lt;/span&gt; = []\n\
+      282:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;rr&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each_row&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      283:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;res&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;row&lt;/span&gt;\n\
+      284:             }\n\
+      285:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;res&lt;/span&gt;\n\
+      286:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000084
+    name: select
+    params: (*views)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 317&lt;/span&gt;\n\
+      317:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt;)\n\
+      318:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_views&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt;)\n\
+      319:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000096
+    name: set_logic
+    params: (value)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 455&lt;/span&gt;\n\
+      455:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;set_logic&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;value&lt;/span&gt;)\n\
+      456:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;value&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;LogicGroup&lt;/span&gt;)\n\
+      457:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@logic&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;value&lt;/span&gt;\n\
+      458:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      459:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@logic&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@logic_parser&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;parse_logic&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;value&lt;/span&gt;)\n\
+      460:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      461:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;\n\
+      462:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000091
+    name: sortOrder=
+    params: (so)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 364&lt;/span&gt;\n\
+      364:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;sortOrder=&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt;)\n\
+      365:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Array&lt;/span&gt;)\n\
+      366:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;sos&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt;\n\
+      367:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      368:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;sos&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;split&lt;/span&gt;(&lt;span class=\&quot;ruby-regexp re\&quot;&gt;/(ASC|DESC)/&lt;/span&gt;).&lt;span class=\&quot;ruby-identifier\&quot;&gt;map&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;strip&lt;/span&gt;}.&lt;span class=\&quot;ruby-identifier\&quot;&gt;every&lt;/span&gt;(&lt;span class=\&quot;ruby-value\&quot;&gt;2&lt;/span&gt;)\n\
+      369:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      370:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;sos&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      371:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_sort_order&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;args&lt;/span&gt;)\n\
+      372:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      373:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000076
+    name: subclass_constraints
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 226&lt;/span&gt;\n\
+      226:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclass_constraints&lt;/span&gt;\n\
+      227:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;SubClassConstraint&lt;/span&gt;)}\n\
+      228:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000086
+    name: subclasses
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 330&lt;/span&gt;\n\
+      330:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;\n\
+      331:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt; = {}\n\
+      332:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      333:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;SubClassConstraint&lt;/span&gt;)\n\
+      334:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;sub_class&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;\n\
+      335:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      336:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      337:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclasses&lt;/span&gt;\n\
+      338:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000077
+    name: to_xml
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 230&lt;/span&gt;\n\
+      230:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;to_xml&lt;/span&gt;\n\
+      231:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;doc&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;REXML&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;Document&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;\n\
+      232: \n\
+      233:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@sort_order&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;empty?&lt;/span&gt;\n\
+      234:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;SortOrder&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;new&lt;/span&gt;(&lt;span class=\&quot;ruby-ivar\&quot;&gt;@views&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;first&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;ASC&amp;quot;&lt;/span&gt;)\n\
+      235:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      236:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@sort_order&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;join&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot; &amp;quot;&lt;/span&gt;)\n\
+      237:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      238: \n\
+      239:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;query&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;doc&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;query&amp;quot;&lt;/span&gt;, {\n\
+      240:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;name&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@name&lt;/span&gt;, \n\
+      241:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;model&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@model&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;, \n\
+      242:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;title&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@title&lt;/span&gt;, \n\
+      243:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;sortOrder&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;so&lt;/span&gt;,\n\
+      244:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;view&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@views&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;join&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot; &amp;quot;&lt;/span&gt;),\n\
+      245:                 &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;constraintLogic&amp;quot;&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@logic&lt;/span&gt;\n\
+      246:             }.&lt;span class=\&quot;ruby-identifier\&quot;&gt;delete_if&lt;/span&gt; { &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt; })\n\
+      247:             &lt;span class=\&quot;ruby-ivar\&quot;&gt;@joins&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; { &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;join&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; \n\
+      248:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;query&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;join&amp;quot;&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;join&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;attrs&lt;/span&gt;) \n\
+      249:             }\n\
+      250:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;subclass_constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; { &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      251:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;query&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_elem&lt;/span&gt;) \n\
+      252:             }\n\
+      253:             &lt;span class=\&quot;ruby-identifier\&quot;&gt;coded_constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; { &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      254:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;query&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;add_element&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;con&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_elem&lt;/span&gt;) \n\
+      255:             }\n\
+      256:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;doc&lt;/span&gt;\n\
+      257:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000098
+    name: used_codes
+    params: ()
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 473&lt;/span&gt;\n\
+      473:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;used_codes&lt;/span&gt;\n\
+      474:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;empty?&lt;/span&gt;\n\
+      475:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; []\n\
+      476:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      477:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-ivar\&quot;&gt;@constraints&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;select&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;!&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;SubClassConstraint&lt;/span&gt;)}.&lt;span class=\&quot;ruby-identifier\&quot;&gt;map&lt;/span&gt; {&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;x&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;code&lt;/span&gt;}\n\
+      478:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      479:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000085
+    name: view=
+    params: (view)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 321&lt;/span&gt;\n\
+      321:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;view=&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;view&lt;/span&gt;)\n\
+      322:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;view&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Array&lt;/span&gt;)\n\
+      323:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;view&lt;/span&gt;\n\
+      324:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      325:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;view&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;split&lt;/span&gt;(&lt;span class=\&quot;ruby-regexp re\&quot;&gt;/(?:,\\s*|\\s+)/&lt;/span&gt;)\n\
+      326:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      327:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_views&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;views&lt;/span&gt;)\n\
+      328:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000095
+    name: where
+    params: (*wheres)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/query.rb, line 389&lt;/span&gt;\n\
+      389:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;where&lt;/span&gt;(&lt;span class=\&quot;ruby-operator\&quot;&gt;*&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;wheres&lt;/span&gt;)\n\
+      390:            &lt;span class=\&quot;ruby-identifier\&quot;&gt;wheres&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;w&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      391:              &lt;span class=\&quot;ruby-identifier\&quot;&gt;w&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;,&lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      392:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Hash&lt;/span&gt;)\n\
+      393:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt; = {&lt;span class=\&quot;ruby-identifier\&quot;&gt;:path&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;}\n\
+      394:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;each&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      395:                         &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;upcase&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;gsub&lt;/span&gt;(&lt;span class=\&quot;ruby-regexp re\&quot;&gt;/_/&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot; &amp;quot;&lt;/span&gt;)\n\
+      396:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:with&lt;/span&gt;\n\
+      397:                             &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:extra_value&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;\n\
+      398:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:sub_class&lt;/span&gt;\n\
+      399:                             &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;\n\
+      400:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;:code&lt;/span&gt;\n\
+      401:                             &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:code&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;\n\
+      402:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;LoopConstraint&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;valid_ops&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;include?&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;)\n\
+      403:                             &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;\n\
+      404:                             &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:loopPath&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;\n\
+      405:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      406:                             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;\n\
+      407:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;=&amp;quot;&lt;/span&gt;\n\
+      408:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;IS NULL&amp;quot;&lt;/span&gt;\n\
+      409:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;!=&amp;quot;&lt;/span&gt;\n\
+      410:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;IS NOT NULL&amp;quot;&lt;/span&gt;\n\
+      411:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      412:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;\n\
+      413:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      414:                             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Range&lt;/span&gt;) &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Array&lt;/span&gt;)\n\
+      415:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;=&amp;quot;&lt;/span&gt;\n\
+      416:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;ONE OF&amp;quot;&lt;/span&gt;\n\
+      417:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;!=&amp;quot;&lt;/span&gt;\n\
+      418:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;NONE OF&amp;quot;&lt;/span&gt;\n\
+      419:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      420:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;\n\
+      421:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      422:                                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:values&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_a&lt;/span&gt;\n\
+      423:                             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;List&lt;/span&gt;)\n\
+      424:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;if&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;=&amp;quot;&lt;/span&gt;\n\
+      425:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;IN&amp;quot;&lt;/span&gt;\n\
+      426:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;subk&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;==&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;!=&amp;quot;&lt;/span&gt;\n\
+      427:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;NOT IN&amp;quot;&lt;/span&gt;\n\
+      428:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      429:                                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;\n\
+      430:                                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      431:                                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:value&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;\n\
+      432:                             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      433:                                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:op&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;normalised_k&lt;/span&gt;\n\
+      434:                                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;:value&lt;/span&gt;] = &lt;span class=\&quot;ruby-identifier\&quot;&gt;subv&lt;/span&gt;\n\
+      435:                             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      436:                         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      437:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      438:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;parameters&lt;/span&gt;)\n\
+      439:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Range&lt;/span&gt;) &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;or&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;Array&lt;/span&gt;)\n\
+      440:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;'ONE OF'&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_a&lt;/span&gt;)\n\
+      441:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;ClassDescriptor&lt;/span&gt;)\n\
+      442:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;:path&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;:sub_class&lt;/span&gt; =&lt;span class=\&quot;ruby-operator\&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;)\n\
+      443:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;is_a?&lt;/span&gt;(&lt;span class=\&quot;ruby-constant\&quot;&gt;List&lt;/span&gt;)\n\
+      444:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;'IN'&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;name&lt;/span&gt;)\n\
+      445:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;elsif&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;nil?&lt;/span&gt;\n\
+      446:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;IS NULL&amp;quot;&lt;/span&gt;)\n\
+      447:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;else&lt;/span&gt;\n\
+      448:                     &lt;span class=\&quot;ruby-identifier\&quot;&gt;add_constraint&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;k&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;, &lt;span class=\&quot;ruby-value str\&quot;&gt;'='&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;v&lt;/span&gt;)\n\
+      449:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      450:              &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      451:            &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      452:            &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;return&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;self&lt;/span&gt;\n\
+      453:         &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Instance
+  type: Public
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">constants</h2>
+	
+		<pre>--- 
+- name: LOWEST_CODE
+  value: &quot;&amp;quot;A&amp;quot;&quot;
+- name: HIGHEST_CODE
+  value: &quot;&amp;quot;Z&amp;quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">sectitle</h2>
+	
+		<pre>--- 
+</pre>
+		</div>
+	
+	</div>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+
+</body>
+</html>
+

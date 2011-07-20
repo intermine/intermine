@@ -1,10 +1,48 @@
+# Classes that represent the data model of an InterMine data-warehouse,
+# and elements within that data model. 
+#
+
 require 'rubygems'
 require 'json'
 
+
+# 
+# == Description
+#
+# A representation of the data model of an InterMine data warehouse. 
+# This class contains access to all aspects of the model, including the tables
+# of data stored, and the kinds of data in those tables. It is also the
+# mechanism for creating objects which are representations of data within 
+# the data model, including records, paths and columns.
+#
+#   model = Model.new(data)
+#
+#   model.classes.each do |c|
+#       puts "#{c.name} has #{c.fields.size} fields"
+#   end
+#
+#:include:contact_header.rdoc
+#
 class Model
 
-    attr_reader :name, :classes, :service
 
+    # The name of the model
+    attr_reader :name
+
+    # The classes within this model
+    attr_reader :classes
+
+    # The Service this model belongs to
+    attr_reader :service
+
+    # Construct a new model from its textual json representation
+    #
+    # Arguments:
+    # [+model_data+] The JSON serialization of the model
+    # [+service+] The Service this model belongs to
+    #
+    #   model = Model.new(json)
+    #
     def initialize(model_data, service=nil) 
         result = JSON.parse(model_data)
         @model = result["model"]
@@ -25,11 +63,14 @@ class Model
 
     end
 
-    def table(name)
-        return get_cd(name)
-    end
-
-
+    # call-seq:
+    #   get_cd(name) => ClassDescriptor
+    #
+    # Get a ClassDescriptor from the model by name.
+    #
+    # If a ClassDescriptor itself is passed as the argument,
+    # it will be passed through.
+    #
     def get_cd(cls)
         if cls.is_a?(ClassDescriptor)
             return cls
@@ -38,44 +79,53 @@ class Model
         end
     end
 
+    alias cd get_cd
+    alias table get_cd
+
+    # call-seq:
+    #   make_new(name=nil, opts={}) => InterMineObject
+    #
+    # Make a new InterMineObject which is an instantiation of a class a ClassDescriptor represents
+    #
+    # Arguments:
+    # [+name+] The name of the class to instantiate
+    # [+opts+] The values to assign to the new object
+    #
+    #   gene = model.make_new 'Gene', {
+    #       "symbol" => "zen",
+    #       "name" => "zerknullt",
+    #       "organism => {
+    #           "shortName" => "D. melanogaster",
+    #           "taxonId" => 7217
+    #       }
+    #   }
+    #
+    #   puts gene.organism.taxonId
+    #   >>> 7217
+    #
     def make_new(class_name=nil, opts={})
         # Support calling with just opts
         if class_name.is_a?(Hash)
             opts = class_name
             class_name = nil
         end
-        if class_name && opts["class"] && (class_name != opts["class"]) && !get_cd(opts["class"]).subclass_of(class_name)
+        if class_name && opts["class"] && (class_name != opts["class"]) && !get_cd(opts["class"]).subclass_of?(class_name)
             raise ArgumentError, "class name in options hash is not compatible with passed class name: #{opts["class"]} is not a subclass of #{class_name}"
         end
         # Prefer the options value to the passed value
         cd_name = opts["class"] || class_name
         cls = get_cd(cd_name).to_class
-        return cls.new(opts)
+        obj = cls.new(opts)
+        obj.send(:__cd__=, get_cd(cd_name))
+        return obj
     end
 
+    # === Resolve the value referred to by a path on an object
+    #
+    # The path may be either a string such as "Department.employees[2].name", 
+    # or a Path object
     def resolve_path(obj, path)
-        begin
-            parts = path.split(".")
-        rescue NoMethodError
-            parts = path.elements.map { |x| x.name }
-        end
-        root = parts.shift
-        if !obj.is_a?(get_cd(root).to_module)
-            raise ArgumentError, "Incompatible path '#{path}': #{obj} is not a #{root}"
-        end
-        begin
-            res = parts.inject(obj) do |memo, part| 
-                args = part.split(/[\[\]]/)
-                if args.length == 2
-                    args[0] = "[]"
-                    args[1] = args[1].to_i
-                end
-                memo.send(*args) 
-            end
-        rescue NoMethodError => e
-            raise ArgumentError, "Incompatible path '#{path}' for #{obj}, #{e}"
-        end
-        return res
+        return obj._resolve(path)
     end
 
     private
@@ -87,13 +137,27 @@ class Model
 
 end
 
+# == A base class for all objects instantiated from a ClassDescriptor
+#
+# This class described the common behaviour for all objects instantiated 
+# as representations of classes defined by a ClassDescriptor. It is not intended
+# to be instantiated directly, but inherited from.
+#
+#:include:contact_header.rdoc
+#
 class InterMineObject
+
+    # The database internal id in the originating mine. Serves as a guarantor
+    # of object identity.
     attr_reader :objectId
 
-    def InterMineObject.class_name
-        return @class_name
-    end
+    # The ClassDescriptor for this object
+    attr_reader :__cd__
 
+    # Arguments:
+    # hash:: The properties of this object represented as a Hash. Nested 
+    #        Arrays and Hashes are expected for collections and references.
+    #
     def initialize(hash=nil)
         hash ||= {}
         hash.each do |key, value|
@@ -103,34 +167,117 @@ class InterMineObject
         end
     end
 
+    # call-seq:
+    #   is_a?(other) => bool
+    #
+    # Determine if this class is a subclass of other.
+    #
+    # Overridden to provide support for querying against ClassDescriptors and Strings.
+    #
     def is_a?(other)
         if other.is_a?(ClassDescriptor)
             return is_a?(other.to_module)
+        elsif other.is_a?(String)
+            return is_a?(@__cd__.model.cd(other))
         else
             return super
         end
     end
 
+    # call-seq:
+    #   to_s() => human-readable string
+    #
+    # Serialise to a readable representation
     def to_s
-        parts = [self.class.class_name + ':' + self.objectId.to_s]
+        parts = [@__cd__.name + ':' + self.objectId.to_s]
         self.instance_variables.reject{|var| var.to_s.end_with?("objectId")}.each do |var|
             parts << "#{var}=#{self.instance_variable_get(var).inspect}"
         end
         return "<#{parts.join(' ')}>"
     end
 
+    # call-seq:
+    #   [key] => value
+    #
+    # Alias property fetches as item retrieval, so the following are equivalent:
+    #
+    #   organism = gene.organism
+    #   organism = gene["organism"]
+    #
+    def [](key)
+        if @__cd__.has_field?(key):
+            return self.send(key)
+        end
+        raise IndexError, "No field #{key} found for #{@__cd__.name}"
+    end
+
+    # call-seq:
+    #   _resolve(path) => value
+    #
+    # Resolve a path represented as a String or as a Path into a value
+    #
+    # This is designed to automate access to values in deeply nested objects. So:
+    #
+    #   name = gene._resolve('Gene.organism.name')
+    #
+    # Array indices are supported:
+    #  
+    #   symbol = gene._resolve('Gene.alleles[3].symbol')
+    #
+    def _resolve(path)
+        begin
+            parts = path.split(/(?:\.|\[|\])/).reject {|x| x.empty?}
+        rescue NoMethodError
+            parts = path.elements.map { |x| x.name }
+        end
+        root = parts.shift
+        if !is_a?(root)
+            raise ArgumentError, "Incompatible path '#{path}': #{self} is not a #{root}"
+        end
+        begin
+            res = parts.inject(self) do |memo, part| 
+                part = part.to_i if (memo.is_a?(Array) and part.to_i.to_s == part)
+                begin
+                    new = memo[part]
+                rescue TypeError
+                    raise ArgumentError, "Incompatible path '#{path}' for #{self}, expected an index"
+                end
+                new
+            end
+        rescue IndexError => e
+            raise ArgumentError, "Incompatible path '#{path}' for #{self}, #{e}"
+        end
+        return res
+    end
+
     alias inspect to_s
 
     private 
+
+    def __cd__=(cld)
+        @__cd__ = cld
+    end
     
     def objectId=(val)
         @objectId = val
     end
 end
 
+# == A base module that provides helpers for setting up classes bases on the contents of a Hash
+#
+#  ClassDescriptors and FieldDescriptors are instantiated 
+#  with hashes that provide their properties. This module
+#  makes sure that the appropriate instance variables are set
+#
+#:include:contact_header.rdoc
+#
 module SetHashKey 
 
-    def set_key_value(k, v) 
+    # call-seq:
+    #   set_key_value(key, value)
+    #
+    # Set up instance variables based on the contents of a hash
+    def set_key_value(k, v)
         if (k == "type")
             k = "dataType"
         end
@@ -143,8 +290,13 @@ module SetHashKey
         ## create the setter that sets the instance variable
         self.class.send(:define_method, "#{k}=", 
             proc{|v| self.instance_variable_set("@#{k}", v)})  
+        return
     end
 
+    # call-seq: 
+    #   inspect() => readable-string
+    #
+    # Produce a readable string
     def inspect
         parts = []
         self.instance_variables.each do |x|
@@ -159,11 +311,35 @@ module SetHashKey
     end
 end
 
+# == A class representing a table in the InterMine data model
+#
+# A class descriptor represents a logical abstraction of a table in the 
+# InterMine model, and contains information about the columns in the table
+# and the other tables that are referenced by this table.
+#
+# It can be used to construct queries directly, when obtained from a webservice.
+#
+#   cld = service.model.table('Gene')
+#   cld.where(:symbol => 'zen').each_row {|row| puts row}       
+#
+#:include:contact_header.rdoc
+#
 class ClassDescriptor
     include SetHashKey
 
-    attr_accessor :model, :fields
+    # The InterMine Model
+    attr_reader :model
 
+    # The Hash containing the fields of this model
+    attr_reader :fields
+
+    # ClassDescriptors are constructed automatically when the model itself is 
+    # parsed. They should not be constructed on their own.
+    #
+    # Arguments:
+    # [+opts+] A Hash containing the information to initialise this ClassDescriptor.
+    # [+model+] The model this ClassDescriptor belongs to.
+    #
     def initialize(opts, model)
         @model = model
         @fields = {}
@@ -187,17 +363,49 @@ class ClassDescriptor
         end
     end
 
+    # call-seq: 
+    #   new_query => PathQuery::Query
+    #
+    # Construct a new query for the service this ClassDescriptor belongs to
+    # rooted on this table.
+    #
+    #   query = model.table('Gene').new_query
+    #
     def new_query
         q = @model.service.new_query(self.name)
         return q
     end
 
+    alias query new_query
+
+    # call-seq:
+    #   select(*columns) => PathQuery::Query
+    #
+    # Construct a new query on this table in the originating
+    # service with given columns selected for output.
+    #
+    #   query = model.table('Gene').select(:symbol, :name, "organism.name", "alleles.*")
+    #
+    #   query.each_result do |gene|
+    #       puts "#{gene.symbol} (#{gene.organism.name}): #{gene.alleles.size} Alleles"
+    #   end
+    #
     def select(*cols)
         q = new_query
         q.add_views(cols)
         return q
     end
 
+    # call-seq: 
+    #   where(*constraints) => PathQuery::Query
+    #
+    # Returns a new query on this table in the originating
+    # service will all attribute columns selected for output 
+    # and the given constraints applied.
+    #
+    #   zen = model.table('Gene').where(:symbol => 'zen').one
+    #   puts "Zen is short for #{zen.name}, and has a length of #{zen.length}"
+    #
     def where(*args)
         q = new_query
         q.select("*")
@@ -205,26 +413,69 @@ class ClassDescriptor
         return q
     end
 
+    # call-seq:
+    #   get_field(name) => FieldDescriptor
+    #
+    # Returns the field of the given name if it exists in the
+    # referenced table.
+    #
     def get_field(name)
         return @fields[name]
     end
 
+    alias field get_field
+
+    # call-seq:
+    #   has_field?(name) => bool
+    #
+    # Returns true if the table has a field of the given name.
+    #
+    def has_field?(name)
+        return @fields.has_key?(name)
+    end
+
+    # call-seq:
+    #   attributes => Array[AttributeDescriptor]
+    #
+    # Returns an Array of all fields in the current table that represent 
+    # attributes (ie. columns that can hold values, rather than references to 
+    # other tables.)
+    #
     def attributes
         return @fields.select {|k, v| v.is_a?(AttributeDescriptor)}.map {|pair| pair[1]}
     end
 
-    def to_s 
-        return "<#{self.class.name}:#{self.object_id} #{self.model.name}.#{@name}>"
+    # Returns a human readable string
+    def to_s
+        return "#{@model.name}.#{@name}"
     end
 
-    def subclass_of(other)
+    # Return a fuller string representation.
+    def inspect 
+        return "<#{self.class.name}:#{self.object_id} #{to_s}>"
+    end
+
+    # call-seq:
+    #   subclass_of?(other) => bool
+    #
+    # Returns true if the class this ClassDescriptor describes is a
+    # subclass of the class the other element evaluates to. The other
+    # may be a ClassDescriptor, or a Path, or a String describing a path.
+    #
+    #   model.table('Gene').subclass_of?(model.table('SequenceFeature'))
+    #   >>> true
+    #
+    #   model.table('Gene').subclass_of?(model.table('Protein'))
+    #   >>> false
+    #
+    def subclass_of?(other)
         path = Path.new(other, @model)
         if @extends.include? path.end_type
             return true
         else
             @extends.each do |x|
                 superCls = @model.get_cd(x)
-                if superCls.subclass_of(path)
+                if superCls.subclass_of?(path)
                     return true
                 end
             end
@@ -232,6 +483,16 @@ class ClassDescriptor
         return false
     end
 
+    # call-seq: 
+    #   to_module => Module
+    #
+    # Produces a module containing the logic this ClassDescriptor represents,
+    # suitable for including into a class definition.
+    #
+    # The use of modules enables multiple inheritance, which is supported in 
+    # the InterMine data model, to be represented in the classes instantiated
+    # in the client.
+    #
     def to_module
         if @module.nil?
             nums = ["Float", "Double", "float", "double"]
@@ -319,14 +580,20 @@ class ClassDescriptor
         return @module
     end
 
+    # call-seq:
+    #   to_class => Class
+    #
+    # Returns a Class that can be used to instantiate new objects
+    # representing rows of data in the InterMine database.
+    #
     def to_class
         if @klass.nil?
             mod = to_module
             kls = Class.new(InterMineObject)
-            class_n = self.name
+            cd = self
             kls.class_eval do
                 include mod
-                @class_name = class_n
+                @__cd__ = cd
             end
             @klass = kls
         end
@@ -516,7 +783,4 @@ class PathException < RuntimeError
         end
     end
 end
-
-
-
 
