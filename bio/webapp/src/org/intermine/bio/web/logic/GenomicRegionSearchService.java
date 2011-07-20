@@ -121,7 +121,6 @@ public class GenomicRegionSearchService
         this.profile = SessionMethods.getProfile(request.getSession());
         this.model = this.interMineAPI.getModel();
         this.objectStore = this.interMineAPI.getObjectStore();
-
     }
 
     /**
@@ -1074,8 +1073,8 @@ public class GenomicRegionSearchService
                         + span
                         + "\", \"SequenceFeature\", \"sequence\");' class='ext_link'>SEQ</a>"
                         + "</li></ul></div><div style='align:center'>"
-                        + "<a href='javascript: exportToGalaxy(\"" + span + "\");' "
-                        + "class='ext_link'> Export to Galaxy <img border='0' "
+                        + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
+                        + "\");' class='ext_link'> Export to Galaxy <img border='0' "
                         + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
                         + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
                         + "<a target='_blank' title='' href='" + baseURL + "/" + path
