@@ -9,7 +9,7 @@
 
 <style>
 .slider { float:right; padding:6px 2px; margin-top:1px; }
-.slider a { font-size:10px; float:left; cursor:pointer; width:20px; }
+.slider a { font-size:10px; float:left; cursor:pointer; width:22px; }
 .slider a span { display:block; }
 .slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; margin-top:8px; }
 .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/scale.png') repeat-y top left; position:relative; }
@@ -21,14 +21,14 @@
 <div class="slider-wrap">
   <div class="slider">
     <a style="margin-left:3px;" title="1"><span>1<sup>&nbsp;</sup></span>|</a>
-    <a style="margin-left:46px;" title="1e-2"><span>e<sup>-2</sup></span>|</a>
-    <a style="margin-left:12px;" title="1e-3"><span>e<sup>-3</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-4"><span>e<sup>-4</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-5"><span>e<sup>-5</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-6"><span>e<sup>-6</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-7"><span>e<sup>-7</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-8"><span>e<sup>-8</sup></span>|</a>
-    <a style="margin-left:13px;" title="1e-9"><span>e<sup>-9</sup></span>|</a>
+    <a style="margin-left:43px;" title="1e-2"><span>10<sup>-2</sup></span>|</a>
+    <a style="margin-left:12px;" title="1e-3"><span>10<sup>-3</sup></span>|</a>
+    <a style="margin-left:11px;" title="1e-4"><span>10<sup>-4</sup></span>|</a>
+    <a style="margin-left:11px;" title="1e-5"><span>10<sup>-5</sup></span>|</a>
+    <a style="margin-left:10px;" title="1e-6"><span>10<sup>-6</sup></span>|</a>
+    <a style="margin-left:11px;" title="1e-7"><span>10<sup>-7</sup></span>|</a>
+    <a style="margin-left:11px;" title="1e-8"><span>10<sup>-8</sup></span>|</a>
+    <a style="margin-left:11px;" title="1e-9"><span>10<sup>-9</sup></span>|</a>
     <div style="clear:both;"></div>
     <div id="slider" class="dragdealer">
       <div class="handle green"></div>
