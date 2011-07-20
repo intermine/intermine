@@ -68,10 +68,8 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Cell type');
 
-        data.addColumn('number', 'High DOWN');
-        data.addColumn('number', 'Low DOWN');
-        data.addColumn('number', 'Low UP');
-        data.addColumn('number', 'High UP');
+        data.addColumn('number', 'Downregulation');
+        data.addColumn('number', 'Upregulation');
 
         var n = 0;
         <%-- for each cell type --%>
@@ -82,19 +80,21 @@
           <%-- for each expression (one bar) in this cell type --%>
           for (y in cellType.expressions) {
             var expression = cellType.expressions[y];
-
             var tStatistic = expression.tStatistic;
             data.setValue(n, 0, cellType.condition);
+
+            var formattedString = tStatistic + ' (t-statistic), ' + expression.pValue + ' (p-value)';
+
             if (tStatistic > 0) { <%-- UP --%>
               data.setValue(n, 1, 0);
-              data.setValue(n, 2, 0);
-              data.setValue(n, 3, 0);
-              data.setValue(n, 4, tStatistic);
+              data.setValue(n, 2, tStatistic);
+
+              data.setFormattedValue(n, 2, formattedString);
             } else {  <%-- DOWN --%>
               data.setValue(n, 1, tStatistic);
               data.setValue(n, 2, 0);
-              data.setValue(n, 3, 0);
-              data.setValue(n, 4, 0);
+
+              data.setFormattedValue(n, 1, formattedString);
             }
 
             n++;
@@ -108,7 +108,7 @@
           height:			(9 * n) + 20,
           chartArea:		{left: 400, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
-          colors: 			['#0000FF', '#D2D2F8', '#C2EAB8', '#59BB14'],
+          colors: 			['#0000FF', '#59BB14'],
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
           fontSize: 		11,
           vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
