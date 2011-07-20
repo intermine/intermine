@@ -768,16 +768,6 @@
     <constraint path="Gene" editable="true" op="LOOKUP" value="F27C8.1" extraValue="C. elegans"/>
   </query>
 </template>
-<template name="Gene_RNAiPhenotype_CE_RNAi" title="Gene [D. melanogaster] --&gt; RNAi screen results + C. elegans orthologues with RNAi results" longDescription="Show results for RNAi screens for a particular D. melanogaster gene and show its C. elegans orthologues which also have RNAi phenotype data." comment="">
-  <query name="Gene_RNAiPhenotype_CE_RNAi" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.pcrProduct.primaryIdentifier Gene.rnaiResults.result Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.rnaiScreen.publication.firstAuthor Gene.rnaiResults.rnaiScreen.name Gene.rnaiResults.rnaiScreen.analysisDescription Gene.rnaiResults.rnaiScreen.cellLine Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.rnaiResults.name Gene.homologues.homologue.rnaiResults.publications.pubMedId" longDescription="Show results for RNAi screens for a particular D. melanogaster gene and show its C. elegans orthologues which also have RNAi phenotype data." sortOrder="Gene.rnaiResults.result desc" constraintLogic="A and B and C">
-    <join path="Gene.homologues.homologue.rnaiResults.publications" style="OUTER"/>
-    <constraint path="Gene.homologues.homologue.rnaiResults" editable="false" type="RNAiPhenotype"/>
-    <constraint path="Gene.homologues.homologue.organism.name" code="C" editable="false" op="=" value="Caenorhabditis elegans"/>
-    <constraint path="Gene.organism.name" code="B" editable="false" op="=" value="Drosophila melanogaster"/>
-    <constraint path="Gene.rnaiResults" editable="false" type="RNAiScreenHit"/>
-    <constraint path="Gene" code="A" editable="true" op="LOOKUP" value="RpL39"/>
-  </query>
-</template>
 <template name="Gene_RegionLocation" title="Gene [D. melanogaster] --&gt; CRMs." longDescription="For a specific gene from D. melanogaster, show its Cis-Regulatory Modules, their chromosomal locations and lengths. (Data Source: REDfly)" comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_RegionLocation" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.regulatoryRegions.primaryIdentifier Gene.regulatoryRegions.chromosome.primaryIdentifier Gene.regulatoryRegions.chromosomeLocation.start Gene.regulatoryRegions.chromosomeLocation.end" longDescription="For a specific gene from D. melanogaster, show its Cis-Regulatory Modules, their chromosomal locations and lengths. (Data Source: REDfly)" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.regulatoryRegions.chromosome" description="Regulatory region chromosome"/>
