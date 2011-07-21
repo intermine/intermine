@@ -10,6 +10,7 @@ with(
 use Carp;
 use List::Util qw/reduce/;
 use List::MoreUtils qw/uniq/;
+use Scalar::Util qw/blessed/;
 
 use MooseX::Types::Moose qw/Str Bool/;
 use InterMine::Model::Types qw/PathList PathHash PathString/;
@@ -38,12 +39,15 @@ has root_path => (
     init_arg  => 'class', 
     isa       => PathString, 
     is        => 'ro',
+    writer    => '_set_root',
     coerce    => 1,
     predicate => 'has_root_path',
     trigger    => sub {
         my ($self, $root) = @_;
-        my $err = validate_path( $self->model, $root, $self->type_dict );
-        confess $err if $err;
+        if ($self->is_validating) {
+            my $err = validate_path( $self->model, $root, $self->type_dict );
+            confess $err if $err;
+        }
     },
 );
 
@@ -70,12 +74,20 @@ has _sort_order => (
 
 sub prefix_pathfeature {
     my ($self, $pf) = @_;
+    my $new_path = $self->prefix_path($pf->path);
+    $pf->set_path($new_path) unless ($new_path eq $pf->path);
+}
+
+sub prefix_path {
+    my ($self, $str) = @_;
     if ($self->has_root_path) {
         my $root = $self->root_path;
-        unless ($pf->path =~ /^$root/) {
-            my $new_path = $self->root_path . '.' . $pf->path;
-            $pf->set_path($new_path);
-        }
+        my $new_path = ($str =~ /^$root/) ? $str : $self->root_path . ".$str";
+        return $new_path;
+    } else {
+        my ($root) = split(/\./, $str);
+        $self->_set_root($root);
+        return $str;
     }
 }
 
@@ -137,12 +149,14 @@ sub add_views {
     return $self->add_view(@_);
 }
 
+sub select {
+    my $self = shift;
+    return $self->add_view(@_);
+}
+
 sub add_view {
     my $self = shift;
-    my @views = map {split} @_;
-    if (my $root = $self->root_path) {
-        @views = map {(/^$root/) ? $_ : "$root.$_"} @views;
-    }
+    my @views = map {$self->prefix_path($_)} map {split} @_;
     my @expanded_views;
     for my $view (@views) {
         if ($view =~ /(.*)\.\*$/) {
@@ -155,6 +169,7 @@ sub add_view {
         }
     }
     $self->_add_views(@expanded_views);
+    return $self;
 }
 
 after qr/^add_/ => sub {
@@ -291,6 +306,11 @@ sub add_join {
     $self->prefix_pathfeature($join);
     $self->push_join($join);
     return $self;
+}
+
+sub outerjoin {
+    my ($self, $path) = @_;
+    return $self->add_join($path, 'OUTER');
 }
 
 =head2 add_outer_join( $path )
@@ -466,6 +486,34 @@ sub add_constraint {
     return $constraint;
 }
 
+sub search {
+    my $self = shift;
+    my $constraints = shift;
+    if (ref $constraints eq 'HASH') {
+        while (my ($path, $con) = each(%$constraints)) {
+            $self->add_constraint($path, $con);
+        }
+    } elsif (ref $constraints eq 'ARRAY' and @$constraints % 2 == 0) {
+        for (my $i = 0; $i < (@$constraints - 1); $i += 2) {
+            my ($path, $con) = @{$constraints}[$i, ($i + 1)];
+            $self->add_constraint($path, $con);
+        }
+    } else {
+        carp "Bad argument: '$constraints' should be a hashref or an array ref with an even number of elements";
+    }
+
+    return $self;
+}
+
+sub where {
+    my $self = shift;
+    if (@_ == 1) {
+        return $self->search(@_);
+    } else {
+        return $self->search([@_]);
+    }
+}
+
 sub parse_constraint_string {
     if ( @_ > 1 ) {
         if ( @_ % 2 == 0 ) {
@@ -477,6 +525,50 @@ sub parse_constraint_string {
                 return %args;
             }
         }
+        if ( @_ == 2 ) {
+            my ($path, $con) = @_;
+
+            if (not defined $con) {
+                return (path => $path, op => 'IS NULL');
+            }
+            unless (grep {$con eq $_} 'IS NULL', 'IS NOT NULL') {
+                my %args;
+                if (ref $con eq 'HASH') {
+                    %args = (path => $path, %$con);
+                } else {
+                    %args = (path => $path);
+                }
+
+                my $value = $con;
+                for my $key (keys %args) {
+                    unless (grep {$key eq $_} qw/path op code extra_value/) {
+                        my $op = $key;
+                        $value = delete($args{$op});
+                        $args{op} = $op;
+                    }
+                }
+                if (not defined $value) {
+                    $args{op} = 'IS NULL' if ($args{op} eq '=');
+                    $args{op} = 'IS NOT NULL' if ($args{op} eq '!=');
+                } elsif (ref $value eq 'ARRAY') {
+                    $args{op} ||= 'ONE OF';
+                    $args{values} = $value;
+                } elsif (blessed $value and $value->isa('Webservice::InterMine::List')) {
+                    $args{op} ||= 'IN';
+                    $args{value} = $value;
+                } elsif (blessed $value and $value->isa('InterMine::Model::Path')) {
+                    $args{op} ||= 'IS';
+                    $args{loop_path} = $value;
+                } elsif (blessed $value and $value->isa('InterMine::Model::ClassDescriptor')) {
+                    $args{type} ||= $value;
+                } else {
+                    $args{op} ||= '=';
+                    $args{value} = $value;
+                }
+                return %args;
+            }
+        }
+
         my %args;
         @args{qw/path op value extra_value/} = @_;
         if ( ref $args{value} eq 'ARRAY' ) {
@@ -497,7 +589,7 @@ sub parse_constraint_string {
                 (
                 IS\sNOT\sNULL|
                 IS\sNULL|
-                NOT\sIN|\S+
+                (?:NOT\s)?IN|\S+
                 )
         	   (
                ?:\s+(.*)
