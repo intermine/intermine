@@ -246,7 +246,9 @@ public class InterMineBag implements WebSearchable, Cloneable
                     for (int index = 0; index < keyFieldNames.size(); index++) {
                         value = (String) row.get(index);
                         if (value != null && !"".equals(value)) {
-                            keyFieldValueList.add(value);
+                            if (! keyFieldValueList.contains(value)) {
+                                keyFieldValueList.add(value);
+                            }
                             break;
                         }
                     }
