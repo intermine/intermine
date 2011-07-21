@@ -289,7 +289,7 @@ public class BagManager
         for (InterMineBag bag: getGlobalBagsContainingId(id)) {
             if (bag.isCurrent()) {
                 bagsContainingId.add(bag);
-        }
+            }
         }
         for (InterMineBag bag: getUserBagsContainingId(profile, id)) {
             if (bag.isCurrent()) {

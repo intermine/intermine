@@ -63,6 +63,7 @@ public class InterMineAPI
      * Protected no-argument constructor only used for building test implementations of this class.
      */
     protected InterMineAPI() {
+        // don't instantiate
     }
 
     /**

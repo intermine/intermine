@@ -34,7 +34,8 @@ import org.intermine.objectstore.ObjectStoreSummary;
  * @author Alex Kalderimis
  *
  */
-public interface API {
+public interface API
+{
 
     /**
      * @return the objectStore
