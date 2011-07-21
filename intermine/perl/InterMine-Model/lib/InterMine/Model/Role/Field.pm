@@ -106,15 +106,15 @@ sub _get_moose_options {
 sub _type_is {
     my $self = shift;
     my $something = shift;
-    if (refaddr($something)) {
-        return (
-            refaddr($self->_get_moose_type)
-            && 
-            refaddr($something) == refaddr($self->_get_moose_type)
-        );
-    } else {
+#    if (refaddr($something)) {
+#        return (
+#            refaddr($self->_get_moose_type)
+#            && 
+#            refaddr($something) == refaddr($self->_get_moose_type)
+#        );
+#    } else {
         return ($something eq $self->_get_moose_type);
-    }
+#    }
 }
 
 =head1 METHODS 
