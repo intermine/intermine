@@ -302,7 +302,7 @@ public class SpanUploadAjaxAction extends Action
 
         Set<String> featureSet = new HashSet<String>();
 
-        GenomicRegion spanToExport = new GenomicRegion(spanString);
+        GenomicRegion spanToExport = new GenomicRegion();
         for (SpanQueryResultRow r : resultMap.get(spanToExport)) {
             featureSet.add(r.getFeaturePID());
         }
