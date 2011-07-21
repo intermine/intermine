@@ -10,7 +10,7 @@ function trimTable(e) {
   var table = jQuery(e).find('table');
 
   // do we have more than 10 rows? XXX: hardcoded value
-  var rows = table.find('tbody tr')
+  var rows = table.find('tbody tr');
   if (rows.length > 10) {
       var count = 10;
       rows.each(function(index) {
@@ -21,7 +21,7 @@ function trimTable(e) {
           jQuery(this).css('display', 'none');
         }
       });
-      // add a toggler for more rows
+      var target = (jQuery.browser.msie) ? table.parent() : table.parent().parent();
       jQuery('<div/>', {
           className: 'toggle',
           html: jQuery('<a/>', {
@@ -33,7 +33,7 @@ function trimTable(e) {
                 event.preventDefault();
               }
           })
-      }).appendTo(table.parent().parent());
+      }).appendTo(target);
   }
 
 }
