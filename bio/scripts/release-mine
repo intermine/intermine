@@ -244,8 +244,9 @@ warn "building new webapp\n";
 
 chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
-system ("ant -Drelease=r$new_version default >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "failed to build webapp: $?";
+#temp
+#system ("ant -Drelease=r$new_version default >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "failed to build webapp: $?";
 
 #################
 
