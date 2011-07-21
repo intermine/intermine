@@ -13,7 +13,7 @@ use InterMine::Model;
 my $model = InterMine::Model->new(file => 't/data/testmodel_model.xml');
 
 subtest "Test instantiation" => sub {
-    plan tests => 11;
+    plan tests => 15;
     note "Testing instantiation";
 
     lives_ok {$model->make_new("Company")} "Can make objects";
@@ -25,7 +25,7 @@ subtest "Test instantiation" => sub {
     lives_ok {$emp2 = $model->make_new(Employee => (name => "John", age => 24, department => undef))} 
         "Can ignore empty (undef) values";
 
-    my $emp3 = $model->make_new(Employee => (name => "Bill", objectId => 12345));
+    my $emp3 = $model->make_new(Employee => (name => "Bill", fullTime => 1, objectId => 12345));
     my $emp4 = $model->make_new(Employee => (age => 17, objectId => 12345));
 
     my $manager = $model->make_new("Manager");
@@ -34,7 +34,11 @@ subtest "Test instantiation" => sub {
 
     is(refaddr($emp3), refaddr($emp4), "The obj is returned from cache if seen before");
     is($emp3->getAge, 17, "And the new fields are merged in");
+    is($emp3->age, 17, "And the new fields are merged in, with aliases");
     is($emp4->getName, "Bill", "And the old fields remain");
+    is($emp4->name, "Bill", "And the old fields remain, with aliases");
+    is($emp4->isFullTime, 1, "Uses boolean access names");
+    is($emp4->fullTime, 1, "as well as unprefixed access names");
 
     is($emp->getName, "John", "who has the right name");
 
@@ -57,9 +61,9 @@ subtest "Test field type constraints" => sub {
         throws_ok {$types->setBooleanObjType("Foo")} qr/Validation failed for 'Bool'/,
             "and it throws errors when you try to put something into the wrong slot";
         lives_ok {$types->setBooleanType(1)} "Can set bool to true";
-        ok($types->getBooleanType, "And it is set correctly");
+        ok($types->isBooleanType, "And it is set correctly");
         lives_ok {$types->setBooleanObjType(0)} "Can set bool to false";
-        ok(! $types->getBooleanObjType, "And it is set correctly");
+        ok(! $types->isBooleanObjType, "And it is set correctly");
     };
 
     subtest "Test float types" => sub {
