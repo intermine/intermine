@@ -738,7 +738,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
         if (profileId != null && updateBagValues) {
-            deleteBagValues(ids);
+            deleteBagValues();
         }
     }
 
@@ -806,11 +806,9 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private void deleteBagValues(Collection<Integer> ids) {
-        List<String> values = getKeyFieldValues(ids);
-        if (values.size() > 0) {
-            deleteBagValues(values);
-        }
+    private void deleteBagValues() {
+        deleteAllBagValues();
+        addBagValues();
     }
 
     public void deleteBagValues(List<String> values) {
