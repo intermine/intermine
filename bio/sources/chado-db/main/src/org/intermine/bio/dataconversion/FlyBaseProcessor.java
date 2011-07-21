@@ -153,9 +153,6 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Pattern PB_INSERTION_PATTERN =
         Pattern.compile(".*\\{.*\\}(?:.*\\[)?([def]\\d+)(?:\\])?");
 
-    // pattern to match GLEANR gene symbols from FlyBase chado
-    private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
-
     private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP
         = new HashMap<String, String>();
     private final Map<String, FeatureData> proteinFeatureDataMap

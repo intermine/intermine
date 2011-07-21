@@ -225,7 +225,8 @@ Example
         /**
          * {@inheritDoc}
          */
-        public void startElement(String uri, String localName, String qName, Attributes attrs) {
+        public void startElement(@SuppressWarnings("unused") String uri,
+                @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
                 name = qName;
             } else if ("Id".equals(qName)) {
@@ -246,7 +247,9 @@ Example
         /**
          * {@inheritDoc}
          */
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(@SuppressWarnings("unused") String uri,
+                @SuppressWarnings("unused") String localName,
+                @SuppressWarnings("unused") String qName) {
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve taxonomy record: " + characters);
             } else if ("Id".equals(name)) {
