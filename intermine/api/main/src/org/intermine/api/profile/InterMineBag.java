@@ -219,6 +219,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Returns a List of key field values of the objects contained by this bag.
+     * Removed any duplicates
      * @return the list of key field values
      */
     public List<String> getContentsASKeyFieldValues() {
@@ -297,7 +298,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Returns the values of the key field objects with id specified in input and contained in
-     * the bag
+     * the bag. Removed any duplicates
      * @param ids the collection of id
      * @return the list of values
      */
@@ -325,7 +326,9 @@ public class InterMineBag implements WebSearchable, Cloneable
                 for (int index = 0; index < keyFieldNames.size(); index++) {
                     value = (String) row.get(index);
                     if (value != null && !"".equals(value)) {
-                        keyFieldValueList.add(value);
+                        if (! keyFieldValueList.contains(value)) {
+                            keyFieldValueList.add(value);
+                        }
                         break;
                     }
                 }
