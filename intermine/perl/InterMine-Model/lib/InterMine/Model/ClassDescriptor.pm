@@ -379,7 +379,7 @@ sub _make_fields_into_attributes {
 
     for my $field (@fields) {
         my $suffix = ucfirst($field->name);
-        my $get = $field->_type_is(Bool)  ? "is" : "get";
+        my $get = $field->_type_is(Bool) ? 'is' : 'get';
         my $options = {
             reader    => $get  . $suffix,
             writer    => "set" . $suffix,
@@ -388,6 +388,7 @@ sub _make_fields_into_attributes {
         };
 
         $self->add_attribute($field->name, $options);
+        $self->add_method($field->name, sub { my $self = shift; my $reader = $get . $suffix; return $self->$reader});
     }
 }
 
