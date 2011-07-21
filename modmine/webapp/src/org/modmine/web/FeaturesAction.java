@@ -529,7 +529,7 @@ public class FeaturesAction extends InterMineAction
             }
 
         } else {
-            GenomicRegion spanToExport = new GenomicRegion(criteria);
+            GenomicRegion spanToExport = new GenomicRegion();
             for (SpanQueryResultRow r : featureMap.get(spanToExport)) {
                 featureSet.add(r.getFeatureId());
             }
