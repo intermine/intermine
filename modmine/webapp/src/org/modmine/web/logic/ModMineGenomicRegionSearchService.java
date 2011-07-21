@@ -27,7 +27,7 @@ public class ModMineGenomicRegionSearchService extends GenomicRegionSearchServic
      * @param request HttpServletRequest
      */
     public ModMineGenomicRegionSearchService(HttpServletRequest request) {
-        super(request);
+        super();
         // TODO Auto-generated constructor stub
     }
 
