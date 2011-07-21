@@ -4,14 +4,14 @@
 #
 # steps:
 #  - find current and previous versions from properties file
-#  - createdb new userprofile database <minename>-r<version>-userprofile
-#  - precompute queries and templates
-#  - create-db-userprofile with new properties file
+#  x createdb new userprofile database <minename>-r<version>-userprofile
+#  x precompute queries and templates
+#  x create-db-userprofile with new properties file
 #  - webapp clean-all
-#  - update gbrowse properties
+#  x update gbrowse properties
 #  - stop old webapp
-#  - write-userprofile-xml for current version
-#  - read-userprofile-xml with new properties
+#  x write-userprofile-xml for current version
+#  x read-userprofile-xml with new properties
 #  - release webapp
 #  - start new webapp
 #  - start old webapp
@@ -126,13 +126,10 @@ if ($opts{t}) {
   $begin = 1;
   $all = 0;
   $test= 1;
-#warn "$all, $begin, $test";
-#exit 0;
 }
 
 
 #################
-
 
 warn "reading current properties file\n";
 
@@ -211,11 +208,10 @@ warn "  new_userprofile: $new_userprofile:\n";
 #   close $old_file or die "can't close $old_file_name: $!\n";
 # }
 
-
+# gone with new system
 # create new userprofile database
-
-system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e $new_userprofile >> $LOG_FILENAME 2>&1") == 0
-   or die_with_log "createdb failed: $?";
+#system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e $new_userprofile >> $LOG_FILENAME 2>&1") == 0
+#   or die_with_log "createdb failed: $?";
 
 
 # load dump file of production database (if needed)
@@ -253,15 +249,14 @@ system ("ant -Drelease=r$new_version default >> $LOG_FILENAME 2>&1") == 0
 
 #################
 
-warn "create-db-userprofile with new properties file\n";
-
-system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "create-db-userprofile failed: $?";
+# gone with new system
+#warn "create-db-userprofile with new properties file\n";
+#system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "create-db-userprofile failed: $?";
 
 #################
 
 #warn "copying gbrowse properties\n";
-
 #create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
 
 #################
@@ -274,23 +269,26 @@ system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 
 
 #################
 
-#warn "***** exiting to run manually the userprofile update *******\n";
-#exit 0;
+warn "***** exiting to run manually the userprofile update *******\n";
+exit 0;
 
-warn "write-userprofile-xml for current version\n";
-
-system ("ant -Drelease=r$current_version -v write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't write userprofile XML: $?";
-
-copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
-  or die_with_log "copy failed: $!";
-
-
+# gone with new system
+#warn "write-userprofile-xml for current version\n";
+#system ("ant -Drelease=r$current_version -v write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "can't write userprofile XML: $?";
+#copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
+#  or die_with_log "copy failed: $!";
 #################
-warn "read-userprofile-xml with new properties\n";
+#warn "read-userprofile-xml with new properties\n";
+#system ("ant -Drelease=r$new_version read-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "can't read userprofile XML into r$new_version: $?";
 
-system ("ant -Drelease=r$new_version read-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't read userprofile XML into r$new_version: $?";
+# change name to modmine-r$current_version-userprofile after this first time!
+warn "making a copy of the current userprofile database r$new_version\n";
+
+system ("createdb -h $prod_host -U $prod_user -E SQL_ASCII -e modmine-rPRIMA-userprofile -T $new_userprofile >> $LOG_FILENAME 2>&1") == 0
+   or die_with_log "createdb failed: $?";
+
 
 
 #################
@@ -385,11 +383,10 @@ system ("ant -Drelease=r$current_version start-webapp >> $LOG_FILENAME 2>&1") ==
 
 
 #################
-warn "re-deploy web site\n";
-
-chdir "../../www/$project_name" or die "can't directory change to www/$project_name\n";
-
-system ("ant -Drelease=r$new_version clean release-www >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't re-release web site with new version (r$current_version): $!";
+#obsolete
+#warn "re-deploy web site\n";
+#chdir "../../www/$project_name" or die "can't directory change to www/$project_name\n";
+#system ("ant -Drelease=r$new_version clean release-www >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "can't re-release web site with new version (r$current_version): $!";
 
 }
