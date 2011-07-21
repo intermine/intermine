@@ -280,8 +280,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
-            } else if ("make-unique-chromosome-identifiers".equals(operation)) {
-                MakeUniqueChromosomeIdentifiers.make(getObjectStoreWriter());
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
