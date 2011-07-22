@@ -269,7 +269,7 @@
       geneExpressionAtlasDisplayer.originalList = new Array();
       geneExpressionAtlasDisplayer.peaks = {"up":0, "down":0}
 
-      <c:forEach var="cellType" items="${expressions.byName}">
+      <c:forEach var="cellType" items="${expressions.byTStatistic}">
         var expressions = new Array();
         <c:set var="expressions" value="${cellType.value}"/>
         <c:forEach var="expression" items="${expressions.values}">
