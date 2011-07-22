@@ -634,8 +634,8 @@ public class GenomicRegionSearchService
 
             QueryField qfOrgName = new QueryField(qcOrg, "shortName");
             QueryField qfFeatureId = new QueryField(qcFeature, "id");
-            QueryField qfFeaturePID = new QueryField(qcFeature,
-                    "primaryIdentifier");
+            QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
+            QueryField qfFeatureSymbol = new QueryField(qcFeature, "symbol");
             QueryField qfFeatureClass = new QueryField(qcFeature, "class");
             QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
             QueryField qfLocStart = new QueryField(qcLoc, "start");
@@ -643,6 +643,7 @@ public class GenomicRegionSearchService
 
             q.addToSelect(qfFeatureId);
             q.addToSelect(qfFeaturePID);
+            q.addToSelect(qfFeatureSymbol);
             q.addToSelect(qfFeatureClass);
             q.addToSelect(qfChr);
             q.addToSelect(qfLocStart);
@@ -1032,19 +1033,33 @@ public class GenomicRegionSearchService
             List<List<String>> features = resultMap.get(s);
 
             /*
-             * order: 0.id 1.feature name 2.feature type 3.chr 4.start 5.end
+             * order: 0.id
+             *        1.feature PID
+             *        2.symbol
+             *        3.feature type
+             *        4.chr
+             *        5.start
+             *        6.end
+             * see query fields in createQueryList method
              */
             if (features != null) {
                 int length = features.size();
                 List<String> firstFeature = features.get(0);
-                String loc = firstFeature.get(3) + ":" + firstFeature.get(4)
-                        + ".." + firstFeature.get(5);
+
+                String firstId = firstFeature.get(0);
+                String firstPid = firstFeature.get(1);
+                String firstSymbol = firstFeature.get(2);
+                String firstFeatureType = firstFeature.get(3);
+                String firstChr = firstFeature.get(4);
+                String firstStart = firstFeature.get(5);
+                String firstEnd = firstFeature.get(6);
+
+                String loc = firstChr + ":" + firstStart + ".." + firstEnd;
 
                 // translatedClassName
-                String firstSoTerm = WebUtil.formatPath(firstFeature.get(2), interMineAPI,
+                String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
                         webConfig);
-                String firstSoTermDes = featureTypeToSOTermMap.get(
-                        firstFeature.get(2)).get(1);
+                String firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                 // hack - feature name is null, use id
@@ -1078,13 +1093,20 @@ public class GenomicRegionSearchService
                         + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
                         + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
                         + "<a target='_blank' title='' href='" + baseURL + "/" + path
-                        + "/report.do?id=" + firstFeature.get(0) + "'>");
+                        + "/report.do?id=" + firstId + "'>");
 
-                if (firstFeature.get(0) == null
-                        || "".equals(firstFeature.get(0))) {
-                    sb.append("<i>PrimaryIdentifier not avaliable</i>");
+                if (firstSymbol == null || "".equals(firstSymbol)) {
+                    sb.append("<strong><i>unknown symbol</i></strong>");
                 } else {
-                    sb.append(firstFeature.get(1));
+                    sb.append("<strong>" + firstSymbol + "</strong>");
+                }
+
+                sb.append(" ");
+
+                if (firstPid == null || "".equals(firstPid)) {
+                    sb.append("<span style='font-size: 11px;'><i>unknown DB identifier</i></span>");
+                } else {
+                    sb.append("<span style='font-size: 11px;'>" + firstPid + "</span>");
                 }
 
                 sb.append("</a></td><td>" + firstSoTerm
@@ -1098,26 +1120,38 @@ public class GenomicRegionSearchService
 
 
                 for (int i = 1; i < length; i++) {
-//                    String soTerm = featureTypeToSOTermMap.get(
-//                            features.get(i).get(2)).get(0);
-                    String soTerm = WebUtil.formatPath(features.get(i).get(2), interMineAPI,
+
+                    String id = features.get(i).get(0);
+                    String pid = features.get(i).get(1);
+                    String symbol = features.get(i).get(2);
+                    String featureType = features.get(i).get(3);
+                    String chr = features.get(i).get(4);
+                    String start = features.get(i).get(5);
+                    String end = features.get(i).get(6);
+
+                    String soTerm = WebUtil.formatPath(featureType, interMineAPI,
                             webConfig);
-                    String soTermDes = featureTypeToSOTermMap.get(
-                            features.get(i).get(2)).get(1);
+                    String soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
                     soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
-                    String location = features.get(i).get(3) + ":"
-                            + features.get(i).get(4) + ".."
-                            + features.get(i).get(5);
+                    String location = chr + ":" + start + ".." + end;
 
-                    sb.append("<tr><td><a target='_blank' title='" + features.get(i).get(1)
-                            + "' href='" + baseURL + "/" + path + "/report.do?id="
-                            + features.get(i).get(0) + "'>");
+                    sb.append("<tr><td><a target='_blank' title='' href='"
+                            + baseURL + "/" + path + "/report.do?id="  + id + "'>");
 
-                    if (features.get(i).get(1) == null || "".equals(features.get(i).get(3))) {
-                        sb.append("<i>PrimaryIdentifier not avaliable</i>");
+                    if (symbol == null || "".equals(symbol)) {
+                        sb.append("<strong><i>unknown symbol</i></strong>");
                     } else {
-                        sb.append(features.get(i).get(1));
+                        sb.append("<strong>" + symbol + "</strong>");
+                    }
+
+                    sb.append(" ");
+
+                    if (pid == null || "".equals(pid)) {
+                        sb.append("<span style='font-size: 11px;'>"
+                                +  "<i>unknown DB identifier</i></span>");
+                    } else {
+                        sb.append("<span style='font-size: 11px;'>" + pid + "</span>");
                     }
 
                     sb.append("</a></td><td>"
