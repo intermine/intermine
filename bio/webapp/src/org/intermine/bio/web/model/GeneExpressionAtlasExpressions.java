@@ -9,8 +9,6 @@ import java.util.TreeMap;
 
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.bio.web.model.ProteinAtlasExpressions.ByCellCountComparator;
-import org.intermine.bio.web.model.ProteinAtlasExpressions.ExpressionList;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -54,10 +52,20 @@ public class GeneExpressionAtlasExpressions {
 
     /**
     *
-    * @return the map of lists sorted by Cell types count
+    * @return the map of lists sorted by highest t-statistic of a cell type expression
     */
-    public Map<String, ExpressionList> getByCells() {
+    public Map<String, ExpressionList> getByTStatistic() {
         TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByTStatisticComparator());
+        n.putAll(results);
+        return n;
+    }
+
+    /**
+    *
+    * @return the map of lists sorted by lowest p-value of a cell type expression
+    */
+    public Map<String, ExpressionList> getByPValue() {
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByPValueComparator());
         n.putAll(results);
         return n;
     }
@@ -104,7 +112,12 @@ public class GeneExpressionAtlasExpressions {
      */
     public class ExpressionList {
 
+        /** @List store the values */
         private List<Map<String, String>> values;
+        /** @float the highest t-statistic */
+        public float tStatistic = -1000;
+        /** @float the highest p-value */
+        public float pValue = 1000;
 
         public ExpressionList() {
             values = new ArrayList<Map<String, String>>();
@@ -115,6 +128,9 @@ public class GeneExpressionAtlasExpressions {
          * @param resultRow
          */
         public void add(Map<String, String> resultRow) {
+            updateTStatistic(resultRow.get("tStatistic"));
+            updatePValue(resultRow.get("pValue"));
+
             values.add(resultRow);
         }
 
@@ -124,6 +140,20 @@ public class GeneExpressionAtlasExpressions {
          */
         public List<Map<String, String>> getValues() {
             return values;
+        }
+
+        private void updateTStatistic(String tStatistic) {
+            Float f = new Float(tStatistic);
+            if (f > this.tStatistic) {
+                this.tStatistic = f;
+            }
+        }
+
+        private void updatePValue(String pValue) {
+            Float f = new Float(pValue);
+            if (f < this.pValue) {
+                this.pValue = f;
+            }
         }
     }
 
@@ -149,25 +179,44 @@ public class GeneExpressionAtlasExpressions {
 
         @Override
         public int compare(String aK, String bK) {
-            // fetch the underlying lists
-            ExpressionList aCells = results.get(aK);
-            ExpressionList bCells = results.get(bK);
+            ExpressionList aExpressions = results.get(aK);
+            ExpressionList bExpressions = results.get(bK);
 
-
-
-            /*Integer aSize = (Integer)results.get(aK).getValues().size();
-            Integer bSize = (Integer)results.get(bK).getValues().size();
-
-            if (aSize < bSize) {
+            if (aExpressions.tStatistic < aExpressions.tStatistic) {
                 return 1;
             } else {
-                if (aSize > bSize) {
+                if (aExpressions.tStatistic > bExpressions.tStatistic) {
                     return -1;
                 } else {
-                    return aK.compareTo(bK);
+                    CaseInsensitiveComparator cic = new CaseInsensitiveComparator();
+                    return cic.compare(aK, bK);
                 }
-            }*/
-            return 0;
+            }
+        }
+    }
+
+    /**
+     * Sort by p-value inversely
+     * @author radek
+     *
+     */
+    public class ByPValueComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String aK, String bK) {
+            ExpressionList aExpressions = results.get(aK);
+            ExpressionList bExpressions = results.get(bK);
+
+            if (aExpressions.pValue < aExpressions.pValue) {
+                return -1;
+            } else {
+                if (aExpressions.pValue > bExpressions.pValue) {
+                    return 1;
+                } else {
+                    CaseInsensitiveComparator cic = new CaseInsensitiveComparator();
+                    return cic.compare(aK, bK);
+                }
+            }
         }
     }
 
