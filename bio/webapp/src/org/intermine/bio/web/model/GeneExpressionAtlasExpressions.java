@@ -27,12 +27,11 @@ public class GeneExpressionAtlasExpressions {
 
     /** @var holds mapped queue of mapped results
      *
-     * map of types ("organism_part")
      *   -> map of cell types ("blood")
      *     -> list of probe sets for each cell type
      *       -> map of key-value attributes of that given expression ("pValue", "tStatistic")
      */
-    private TreeMap<String, Map<String, List<Map<String, String>>>> results;
+    private Map<String, List<Map<String, String>>> results;
 
     /** @var column keys we have in the results table */
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
@@ -43,7 +42,11 @@ public class GeneExpressionAtlasExpressions {
         add("type");
     }};
 
-    public TreeMap<String, Map<String, List<Map<String, String>>>> getMap() {
+    /**
+     *
+     * @return sorted by tissue name
+     */
+    public Map<String, List<Map<String, String>>> getByName() {
         return results;
     }
 
@@ -52,7 +55,7 @@ public class GeneExpressionAtlasExpressions {
      * @param values
      */
     public GeneExpressionAtlasExpressions(ExportResultsIterator values) {
-        results = new TreeMap<String, Map<String, List<Map<String, String>>>>();
+        results = new TreeMap<String, List<Map<String, String>>>(new CaseInsensitiveComparator());
 
         // ResultElement -> Map of Lists
         while (values.hasNext()) {
@@ -64,30 +67,17 @@ public class GeneExpressionAtlasExpressions {
                 resultRow.put(expressionColumns.get(i), valuesRow.get(i).getField().toString());
             }
 
-            // categorized based on type (cell_type, disease_state etc.)
-            String typeKey = resultRow.get("type");
-
-            // create new/add to existing type list
-            Map<String, List<Map<String, String>>> mapOfCellTypes;
-            if (results.containsKey(typeKey)) {
-                mapOfCellTypes = results.get(typeKey);
-            } else {
-                mapOfCellTypes = new TreeMap<String, List<Map<String, String>>>(new CaseInsensitiveComparator());
-                // put
-                results.put(typeKey, mapOfCellTypes);
-            }
-
             // cell type (blood, brain etc)
             String cellKey = resultRow.get("condition");
 
             // crete new/add to existing cell type expressions list
             List<Map<String, String>> listOfCellTypeExpressions;
-            if (mapOfCellTypes.containsKey(cellKey)) {
-                listOfCellTypeExpressions = mapOfCellTypes.get(cellKey);
+            if (results.containsKey(cellKey)) {
+                listOfCellTypeExpressions = results.get(cellKey);
             } else {
                 listOfCellTypeExpressions = new ArrayList<Map<String, String>>();
                 // put
-                mapOfCellTypes.put(cellKey, listOfCellTypeExpressions);
+                results.put(cellKey, listOfCellTypeExpressions);
             }
 
             // push the result
