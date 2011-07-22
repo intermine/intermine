@@ -1,4 +1,5 @@
 import weakref
+import urllib
 
 class List(object):
 
