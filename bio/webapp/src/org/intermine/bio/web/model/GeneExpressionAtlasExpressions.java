@@ -9,6 +9,8 @@ import java.util.TreeMap;
 
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.model.ProteinAtlasExpressions.ByCellCountComparator;
+import org.intermine.bio.web.model.ProteinAtlasExpressions.ExpressionList;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -28,10 +30,10 @@ public class GeneExpressionAtlasExpressions {
     /** @var holds mapped queue of mapped results
      *
      *   -> map of cell types ("blood")
-     *     -> list of probe sets for each cell type
+     *     -> list of probe sets for each cell type (ExpressionList obj)
      *       -> map of key-value attributes of that given expression ("pValue", "tStatistic")
      */
-    private Map<String, List<Map<String, String>>> results;
+    private Map<String, ExpressionList> results;
 
     /** @var column keys we have in the results table */
     private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
@@ -46,8 +48,18 @@ public class GeneExpressionAtlasExpressions {
      *
      * @return sorted by tissue name
      */
-    public Map<String, List<Map<String, String>>> getByName() {
+    public Map<String, ExpressionList> getByName() {
         return results;
+    }
+
+    /**
+    *
+    * @return the map of lists sorted by Cell types count
+    */
+    public Map<String, ExpressionList> getByCells() {
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByTStatisticComparator());
+        n.putAll(results);
+        return n;
     }
 
     /**
@@ -55,7 +67,7 @@ public class GeneExpressionAtlasExpressions {
      * @param values
      */
     public GeneExpressionAtlasExpressions(ExportResultsIterator values) {
-        results = new TreeMap<String, List<Map<String, String>>>(new CaseInsensitiveComparator());
+        results = new TreeMap<String, ExpressionList>(new CaseInsensitiveComparator());
 
         // ResultElement -> Map of Lists
         while (values.hasNext()) {
@@ -71,17 +83,47 @@ public class GeneExpressionAtlasExpressions {
             String cellKey = resultRow.get("condition");
 
             // crete new/add to existing cell type expressions list
-            List<Map<String, String>> listOfCellTypeExpressions;
+            ExpressionList listOfCellTypeExpressions;
             if (results.containsKey(cellKey)) {
                 listOfCellTypeExpressions = results.get(cellKey);
             } else {
-                listOfCellTypeExpressions = new ArrayList<Map<String, String>>();
+                listOfCellTypeExpressions = new ExpressionList();
                 // put
                 results.put(cellKey, listOfCellTypeExpressions);
             }
 
             // push the result
             listOfCellTypeExpressions.add(resultRow);
+        }
+    }
+
+    /**
+     * Represents a list of expressions (taken from multiple probe sets) for a given tissue type
+     * @author radek
+     *
+     */
+    public class ExpressionList {
+
+        private List<Map<String, String>> values;
+
+        public ExpressionList() {
+            values = new ArrayList<Map<String, String>>();
+        }
+
+        /**
+         * Put/add to the list
+         * @param resultRow
+         */
+        public void add(Map<String, String> resultRow) {
+            values.add(resultRow);
+        }
+
+        /**
+         * Get the internal list of expressions
+         * @return
+         */
+        public List<Map<String, String>> getValues() {
+            return values;
         }
     }
 
@@ -95,6 +137,37 @@ public class GeneExpressionAtlasExpressions {
         @Override
         public int compare(String aK, String bK) {
             return aK.toLowerCase().compareTo(bK.toLowerCase());
+        }
+    }
+
+    /**
+     * Sort by t-statistic
+     * @author radek
+     *
+     */
+    public class ByTStatisticComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String aK, String bK) {
+            // fetch the underlying lists
+            ExpressionList aCells = results.get(aK);
+            ExpressionList bCells = results.get(bK);
+
+
+
+            /*Integer aSize = (Integer)results.get(aK).getValues().size();
+            Integer bSize = (Integer)results.get(bK).getValues().size();
+
+            if (aSize < bSize) {
+                return 1;
+            } else {
+                if (aSize > bSize) {
+                    return -1;
+                } else {
+                    return aK.compareTo(bK);
+                }
+            }*/
+            return 0;
         }
     }
 
