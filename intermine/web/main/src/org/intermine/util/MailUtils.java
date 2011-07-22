@@ -54,8 +54,9 @@ public abstract class MailUtils
      * @param to the address to send to
      * @param subject The Subject of the email
      * @param body The content of the email
+     * @param from the address to send from
      * @param webProperties Common properties for all emails (such as from, authentication)
-     * @throws Exception if there is a problem creating the email
+     * @throws MessagingException if there is a problem creating the email
      */
     public static void email(String to, String subject, String body, String from,
             final Map webProperties) throws MessagingException {
@@ -103,6 +104,14 @@ public abstract class MailUtils
         message.setContent(body, "text/plain");
         Transport.send(message);
     }
+
+    /**
+     * @param to the address to send to
+     * @param subject The Subject of the email
+     * @param body The content of the email
+     * @param webProperties Common properties for all emails (such as from, authentication)
+     * @throws MessagingException if there is a problem creating the email
+     */
     public static void email(String to, String subject, String body, final Map webProperties)
         throws MessagingException {
         String from = (String) webProperties.get("mail.from");
