@@ -404,6 +404,9 @@ class ResultRow(object):
     def __getitem__(self, key):
         if isinstance(key, int):
             return self.data[key]["value"]
+        elif isinstance(key, slice):
+            vals = map(lambda x: x["value"], self.data[key])
+            return vals
         else:
             index = self._get_index_for(key)
             return self.data[index]["value"]
