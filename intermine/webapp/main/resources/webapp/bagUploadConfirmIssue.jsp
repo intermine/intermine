@@ -36,7 +36,7 @@
 <table border="0" cellspacing="0" class="inlineResultsTable" align="left">
   <thead>
     <tr>
-      <td>Identifier</td>
+      <td>Identifier You Entered</td>
       <c:if test="${table.hasMoreThanOneType}"><td>Class</td></c:if>
       <c:forEach items="${table.tableFieldConfigs}" var="fc">
         <td>${fc.displayName}</td>
