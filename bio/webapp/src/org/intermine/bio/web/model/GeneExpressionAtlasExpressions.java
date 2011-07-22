@@ -23,6 +23,7 @@ import org.intermine.api.results.ResultElement;
 /**
  * Gene Expression Atlas Expressions
  */
+@SuppressWarnings("serial")
 public class GeneExpressionAtlasExpressions {
 
     /** @var holds mapped queue of mapped results
@@ -116,8 +117,8 @@ public class GeneExpressionAtlasExpressions {
         private List<Map<String, String>> values;
         /** @float the highest t-statistic */
         public float tStatistic = -1000;
-        /** @float the highest p-value */
-        public float pValue = 1000;
+        /** @float the lowest p-value */
+        public double pValue = 1;
 
         public ExpressionList() {
             values = new ArrayList<Map<String, String>>();
@@ -150,9 +151,9 @@ public class GeneExpressionAtlasExpressions {
         }
 
         private void updatePValue(String pValue) {
-            Float f = new Float(pValue);
-            if (f < this.pValue) {
-                this.pValue = f;
+            double d = Double.parseDouble(pValue);
+            if (d < this.pValue) {
+                this.pValue = d;
             }
         }
     }
@@ -204,14 +205,14 @@ public class GeneExpressionAtlasExpressions {
 
         @Override
         public int compare(String aK, String bK) {
-            ExpressionList aExpressions = results.get(aK);
-            ExpressionList bExpressions = results.get(bK);
+            double aDouble = results.get(aK).pValue;
+            double bDouble = results.get(bK).pValue;
 
-            if (aExpressions.pValue < aExpressions.pValue) {
-                return -1;
+            if (aDouble < bDouble) {
+                return 1;
             } else {
-                if (aExpressions.pValue > bExpressions.pValue) {
-                    return 1;
+                if (aDouble > bDouble) {
+                    return -1;
                 } else {
                     CaseInsensitiveComparator cic = new CaseInsensitiveComparator();
                     return cic.compare(aK, bK);

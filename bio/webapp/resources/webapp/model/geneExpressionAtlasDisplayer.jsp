@@ -202,11 +202,12 @@
         return true;
       }
 
-      <%-- go through the original list here --%>
+      <%-- go through the original list here (based on sort order) --%>
+      var originalList = geneExpressionAtlasDisplayer.originalList[getSortOrder()];
       var liszt = new Array();
       if (filters) {
-        for (x in geneExpressionAtlasDisplayer.originalList) {
-          var oldCellType = geneExpressionAtlasDisplayer.originalList[x]
+        for (x in originalList) {
+          var oldCellType = originalList[x]
           var newExpressions = new Array();
           <%-- traverse the unfiltered expressions --%>
           for (y in oldCellType.expressions) {
@@ -226,23 +227,13 @@
           }
         }
       } else {
-        liszt = geneExpressionAtlasDisplayer.originalList;
+        liszt = geneExpressionAtlasDisplayer.originalList[getSortOrder()];
       }
 
       geneExpressionAtlasDisplayer.newList = liszt;
 
       <%-- re-/draw the chart --%>
       drawChart(liszt, redraw);
-    }
-
-    <%-- sort order separate from filters to work faster --%>
-    function sortAndDrawChart(sortOrder) {
-      liszt = (geneExpressionAtlasDisplayer.newList) ? geneExpressionAtlasDisplayer.newList : geneExpressionAtlasDisplayer.originalList;
-
-      var sorted = new Array();
-
-      // byName
-
     }
 
     function updateCurrentFilter() {
@@ -266,13 +257,15 @@
       google.load("visualization", "1", {packages:["corechart"]});
 
       <%-- Java to JavaScript --%>
-      geneExpressionAtlasDisplayer.originalList = new Array();
-      geneExpressionAtlasDisplayer.peaks = {"up":0, "down":0}
+      geneExpressionAtlasDisplayer.originalList =
+          {"byName": new Array(), "byTStatistic": new Array(), "byPValue": new Array()};
+      geneExpressionAtlasDisplayer.peaks = {"up": 0, "down": 0};
 
-      <c:forEach var="cellType" items="${expressions.byTStatistic}">
+      <%-- ordered by organ part --%>
+      <c:forEach var="cellType" items="${expressions.byName}">
         var expressions = new Array();
-        <c:set var="expressions" value="${cellType.value}"/>
-        <c:forEach var="expression" items="${expressions.values}">
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
           var tStatistic = ${expression.tStatistic};
           var expression = {
             'pValue': ${expression.pValue},
@@ -280,6 +273,7 @@
           };
           expressions.push(expression);
 
+          <%-- figure out min/max scale --%>
           if (tStatistic > 0) {
             if (tStatistic > geneExpressionAtlasDisplayer.peaks.up) {
                 geneExpressionAtlasDisplayer.peaks.up = tStatistic;
@@ -295,8 +289,46 @@
           'condition': '${cellType.key}',
           'expressions': expressions
         };
-        geneExpressionAtlasDisplayer.originalList.push(expression);
-      </c:forEach>;
+        geneExpressionAtlasDisplayer.originalList.byName.push(expression);
+      </c:forEach>
+
+      <%-- ordered by t-statistic --%>
+      <c:forEach var="cellType" items="${expressions.byTStatistic}">
+        var expressions = new Array();
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.byTStatistic.push(expression);
+      </c:forEach>
+
+      <%-- ordered by p-value --%>
+      <c:forEach var="cellType" items="${expressions.byPValue}">
+        var expressions = new Array();
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.byPValue.push(expression);
+      </c:forEach>
 
       <%-- create filter --%>
       geneExpressionAtlasDisplayer.currentFilter = {};
@@ -305,6 +337,11 @@
       <%-- let's rumble --%>
       filterAndDrawChart();
     })();
+
+    <%-- what is the current sort order --%>
+    function getSortOrder() {
+        return jQuery("#gene-expression-atlas div.settings ul.sort li.active").attr('title');
+    }
 
     <%-- attache events to the sidebar settings, set as filters and redraw --%>
     (function() {
