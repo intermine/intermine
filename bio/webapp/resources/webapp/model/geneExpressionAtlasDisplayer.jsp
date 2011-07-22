@@ -5,6 +5,8 @@
 
 <style>
   #gene-expression-atlas div.chart { float:left; }
+  #gene-expression-atlas h3 { background-image:url("images/icons/ebi.gif"); background-position:6px 2px; background-repeat:no-repeat;
+    line-height:20px; padding-left:28px; }
   #gene-expression-atlas div.sidebar { float:right; width:35%; }
   #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; }
   #gene-expression-atlas div.sidebar div.legend ul { margin-top:4px; }
@@ -13,6 +15,10 @@
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
   #gene-expression-atlas div.sidebar input.update { font-weight:bold; }
   #gene-expression-atlas div.sidebar input.update.inactive { font-weight:normal; }
+  #gene-expression-atlas div.settings ul.sort { margin-bottom:10px; }
+  #gene-expression-atlas div.settings ul.sort li { margin-left:10px !important; background:url('images/icons/sort-up.gif') no-repeat center left;
+    padding-left:16px; cursor:pointer; }
+  #gene-expression-atlas div.settings ul.sort li.active { background:url('images/icons/sort.gif') no-repeat center left; font-weight:bold; }
   #gene-expression-atlas fieldset { border:0; }
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
 </style>
@@ -29,7 +35,15 @@
     </ul>
     <p class="small">* Provide displayer description please.</p>
   </div>
+
   <div class="settings">
+    <strong>Sort</strong>
+    <ul class="sort">
+      <li class="active" title="byName">By tissue name</li>
+      <li title="byTStatistic">By t-statistic</li>
+      <li title="byPValue">By p-value</li>
+    </ul>
+
     <strong>1) Show regulation type</strong>
     <fieldset class="regulation-type">
       <label for="upregulation-check">Upregulation:</label>
@@ -59,9 +73,7 @@
   </div>
 </div>
 
-<%-- for each category/type --%>
-<c:forEach var="category" items="${expressions.map}">
-  <div class="chart" id="gene-expression-atlas-chart-${category.key}"></div>
+<div class="chart" id="gene-expression-atlas-chart"></div>
 
   <script type="text/javascript">
     <%-- stuff this goodie bag --%>
@@ -135,14 +147,14 @@
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
           fontSize: 		11,
           vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
-          hAxis: 			{title: 'Expression Value', titleTextStyle:	{color: '#1F7492'}},
+          hAxis:			{title: 'Expression Value', titleTextStyle: {color: '#1F7492'}},
           legend: 			'none',
           hAxis:			{minValue: geneExpressionAtlasDisplayer.peaks.down - 2, maxValue: geneExpressionAtlasDisplayer.peaks.up + 2}
         };
 
         // TODO: switch off any loading messages
 
-        var chart = new google.visualization.BarChart(document.getElementById("gene-expression-atlas-chart-${category.key}"));
+        var chart = new google.visualization.BarChart(document.getElementById("gene-expression-atlas-chart"));
         chart.draw(data, options);
       }
     }
@@ -191,7 +203,7 @@
       }
 
       <%-- go through the original list here --%>
-      var newLiszt = new Array();
+      var liszt = new Array();
       if (filters) {
         for (x in geneExpressionAtlasDisplayer.originalList) {
           var oldCellType = geneExpressionAtlasDisplayer.originalList[x]
@@ -210,15 +222,27 @@
               'condition': oldCellType.condition,
               'expressions': newExpressions
             };
-            newLiszt.push(newCellType);
+            liszt.push(newCellType);
           }
         }
       } else {
-        newLiszt = geneExpressionAtlasDisplayer.originalList;
+        liszt = geneExpressionAtlasDisplayer.originalList;
       }
 
+      geneExpressionAtlasDisplayer.newList = liszt;
+
       <%-- re-/draw the chart --%>
-      drawChart(newLiszt, redraw);
+      drawChart(liszt, redraw);
+    }
+
+    <%-- sort order separate from filters to work faster --%>
+    function sortAndDrawChart(sortOrder) {
+      liszt = (geneExpressionAtlasDisplayer.newList) ? geneExpressionAtlasDisplayer.newList : geneExpressionAtlasDisplayer.originalList;
+
+      var sorted = new Array();
+
+      // byName
+
     }
 
     function updateCurrentFilter() {
@@ -245,7 +269,7 @@
       geneExpressionAtlasDisplayer.originalList = new Array();
       geneExpressionAtlasDisplayer.peaks = {"up":0, "down":0}
 
-      <c:forEach var="cellType" items="${category.value}">
+      <c:forEach var="cellType" items="${expressions.byName}">
         var expressions = new Array();
         <c:forEach var="expression" items="${cellType.value}">
           var tStatistic = ${expression.tStatistic};
@@ -301,7 +325,6 @@
       });
     })();
   </script>
-</c:forEach>
 
 <div style="clear:both;"></div>
 </div>
