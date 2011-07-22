@@ -271,7 +271,8 @@
 
       <c:forEach var="cellType" items="${expressions.byName}">
         var expressions = new Array();
-        <c:forEach var="expression" items="${cellType.value}">
+        <c:set var="expressions" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${expressions.values}">
           var tStatistic = ${expression.tStatistic};
           var expression = {
             'pValue': ${expression.pValue},
