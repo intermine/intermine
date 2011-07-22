@@ -22,7 +22,6 @@
             request.setAttribute(variable, "false");
         }
    } catch (Exception e) {
-      application.log("instanceof.tag: " + e.getClass() + ": " + e.getMessage());
       request.setAttribute(variable, "");
    }
 %>
