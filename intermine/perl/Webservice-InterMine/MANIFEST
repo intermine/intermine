@@ -19,6 +19,7 @@ lib/Webservice/InterMine/Constraint/Ternary.pm
 lib/Webservice/InterMine/Constraint/Unary.pm
 lib/Webservice/InterMine/ConstraintFactory.pm
 lib/Webservice/InterMine/Cookbook.pod
+lib/Webservice/InterMine/Cookbook/Lists/Recipe1.pod
 lib/Webservice/InterMine/Cookbook/Recipe1.pod
 lib/Webservice/InterMine/Cookbook/Recipe2.pod
 lib/Webservice/InterMine/Cookbook/Recipe3.pod

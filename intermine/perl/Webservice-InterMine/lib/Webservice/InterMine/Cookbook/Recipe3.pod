@@ -5,141 +5,146 @@
 Webservice::InterMine::Cookbook::Recipe3 - More Constraints
 
 =head1 SYNOPSIS
-
   # Get all papers published by Arnosti, Bhat and Carmena
   # on Even Skipped in D. Melanogater
 
-  use Webservice::InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org/query');
 
-  my $query = Webservice::InterMine->new_query;
+  my $query = Webservice::InterMine->new_query(class => 'Gene');
 
-  # Specifying a name and a description is purely optional
-  $query->name('Tutorial 3 Query');
-  $query->description('All the publications by Arnosti, Bhat and Carmena on Eve in D. Melanogaster');
-
-  $query->add_view(qw/
-      Gene.publications.title
-      Gene.publications.year
-      Gene.publications.firstAuthor
-  /);
-
-  $query->add_constraint(
-     path  => 'Gene',
-     op    => 'LOOKUP',
-     value => 'eve',
-     extra_value => 'D. melanogaster',
-  );
-
-  $query->add_constraint(
-     path   => 'Gene.publications.firstAuthor',
-     op     => 'IN',
-     values => [
-         'Arnosti DN',
-         'Bhat VM',
-         'Carmena A',
-     ],
-  );
-
-  my $results = $query->results(as => 'string');
-  print $results;
+  $query->select('publications.*')->where(
+    'Gene'                     => {lookup => 'eve', extra_value => 'D. melanogaster'},
+    'publications.firstAuthor' => ['Arnosti DN', 'Bhat VM', 'Carmena A']
+  )->show();
 
   # Get all genes that interact with Even Skipped and
   # are annotated as affecting embryonic development
   # or which have not yet been annotated
 
-  my $query2 = Webservice::InterMine->new_query;
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
 
-  # Specifying a name and a description is purely optional
-  $query2->name('Tutorial 3 Query no 2');
-  $query2->description('All genes interacting with Even Skipped that affect embryonic development, or have not been annotated');
-
-  $query2->add_view(qw/
-      Gene.name
-      Gene.symbol
-  /);
-
-  $query2->add_constraint(
-     path => 'Gene.annotations',
-     type => 'PhenotypeAnnotation',
-  );
-
-  my $con1 = $query2->add_constraint(
-     path  => 'Gene.annotations.developmentTerm',
-     op    => 'IS NULL',
-  );
-
-  my $con2 = $query2->add_constraint(
-     path  => 'Gene.annotations.developmentTerm',
-     op    => 'CONTAINS',
-     value => 'embryonic',
-  );
-
-  my $con3 = $query2->add_constraint(
-     path  => 'Gene.interactions.interactingGenes',
-     op    => 'LOOKUP',
-     value => 'eve',
-     extra_value  => 'D. melanogaster',
-  );
-
-  $query->logic( ($con1 | $con2) & $con3 );
-
-  my $results = $query2->results(as => 'string');
-  print $results;
+  $query2->select('primaryIdentifier', 'symbol', 'ontologyAnnotations.ontologyTerm.name')
+         ->where(
+            'ontologyAnnotations' => {type => 'GOAnnotation'},        # Type constraints do not get codes
+            'ontologyAnnotations.ontologyTerm.name' => undef,         # A
+            'ontologyAnnotations.ontologyTerm.name' => '*embryonic*', # B
+            'interactions.interactingGenes' => {lookup => 'eve'},     # C
+            )
+         ->set_logic("(A or B) and C")
+         ->show();
 
 =head1 DESCRIPTION
 
-There are a wide range of ways that paths can be constrained so
-that you can find what you're looking for. These fall under five
-broad categories, defined primarily by their operators:
+There are several different classes of constraints, or filters, that
+allow you to narrow down the result set. These operations map to the 'where' 
+clauses of SQL queries:
 
 =head2 Unary Constraints - constraints which do not take a value
 
-Any string attribute or class can be NULL (absent) - only Integers
+  $query->add_constraint(primaryIdentifier => undef);
+  $query->add_constraint(primaryIdentifier => {isnt => undef});
+
+Any object type (String, Boolean, Integer, Double, Long, Short, BigInt, Date)
+can be C< NULL >, or absent. Attributes whose data types map to Java
+primitives (int, short, long, double, boolean - not the case)
 are always present. In the above example, we test for the absense of
-a developmentTerm with the C<IS NULL> operator
+an ontologyTerm with the C<IS NULL> operator. The following are equivalent:
+
+  $query->add_constraint(primaryIdentifier => undef);
+  $query->add_constraint(primaryIdentifier => {'!=' => undef});
+  $query->add_constraint(primaryIdentifier => {isnt => undef});
+  $query->add_constraint('path' => 'primaryIdentifier', 'op' => 'IS NOT NULL');
+  $query->add_constraint('primaryIdentifier', 'IS NOT NULL');
 
 The Unary constraints are: C<IS NULL>, C<IS NOT NULL>
 
 =head2 Binary Constraints - constraints which take a value
 
+  $query->add_constraint(symbol => '*zen*');
+  $query->add_constraint(path => 'symbol', op => '=', '*zen*');
+  $query->add_constraint('symbol', '=', '*zen*');
+
 This is the largest group of constraints, and the most familiar. These
 constraints only operate on attributes, either on strings (text fields) or
-integers (numbers)
+integers (numbers) or Dates.
 
-=head3 String operators:
-
-C<=>, C<!=>, C<CONTAINS>, C<< > >>, C<< < >>
-
-=head3 Integer operators
+The valid operators are:
 
 C<=>, C<!=>, C<< < >>, C<< > >>, C<< <= >>, C<< >= >>
 
+The following alphabetic forms can be used interchangibly where convenient:
+
+C<eq>, C<ne>, C<lt>, C<gt>, C<le>, C<ge>
+
+When used for matching against strings, these operations are always 
+I<case insensitive>.
+
+Additionally, wildcards may be used to indicate basic pattern matching:
+
+  $query->add_constraint(name => 'ze*'); # Name starts with 'ze'
+  $query->add_constraint(name => '*ze'); # Name ends with 'ze'
+  $query->add_constraint(name => '*ze*'); # Name contains 'ze'
+
 =head2 Ternary Constraints - constraints which take one required and one optional value
 
+  $query->add_constraint(Gene => {lookup => 'zen', extra_value => 'D. melanogaster'});
+
 There is only one of these at present: C<LOOKUP>. This operates over all
-the fields on a class, so its path must be a path to a classm such as C<Gene>,
+the fields on a class, so its path must be a path to a class such as C<Gene>,
 as in the above examples, where both C<Gene> and C<Gene.interactions.interactingGenes>
 are paths to Gene objects. LOOKUP is handy because you don't need to remember
 which specific field a particular piece of information is in; for example C<eve>
 could be the symbol, or primary identifier, or secondary identifier for
 the gene we are looking for, but all those fields will be searched, and if one
-matches then the constraint as a whole will match. C<LOOKUP> is the standard
+matches then the constraint as a whole will match. C<LOOKUP> is a useful
 way of determining an object's identity, rather than interrogating a
 particular field.
 
 Because this can lead to ambiguities, the C<LOOKUP> constraint allows an C<extra_value>,
-which limits the constraint within a particular organism. This is especially
+which limits the constraint within a an area appropriate for that type of object 
+(for genes, this is their organism). This is especially
 useful when constraining genes, one of its main uses, as genes have symbols
 that frequently share values with genes from different organisms.
 
 =head2 Multi Value constraints - constraints that can take more than one value
 
+  $query->add_constraint(symbol => [qw/zen h bib eve/]);
+  $query->add_constraint(symbol => {'none of' => [qw/zen h bib eve/]});
+  $query->add_constraint('symbol', 'ONE OF', [qw/zen h bib eve/]);
+  $query->add_constraint(path => 'Gene.symbol', op => 'ONE OF', values => [qw/zen h bib eve/]);
+
 As the name implies, these constraints can have multiple values. There are two
-of these, C<IN> and C<NOT IN>, and they take a list of values
-(passed as an array reference). C<IN> demand the value of the attribute
-be one of the values, while C<NOT IN> requires it be none of them.
+of these, C<ONE OF> and C<NONE OF>, and they take a list of values
+(passed as an array reference). C<ONE OF> demand the value of the attribute
+be one of the values, while C<NONE OF> requires it be none of them. 
+These constraints are always applied in a case sensitive manner.
+
+=head2 List Constraints - constraints that take a list name as a value
+
+  $query->add_constraint(Gene => {in => 'some-list'});
+  $query->add_constraint(Gene => {'not in' => 'some-list'});
+  $query->add_constraint('Gene', 'IN', 'some-list');
+  $query->add_constraint(path => 'Gene', op => 'NOT IN', value => 'some-list');
+
+Users of InterMine can set up their own lists of objects and use those
+lists in queries. To constrain a particular object to be a member
+of a certain list, the C<IN> and C<NOT IN> constraints can be used.
+You must have access to this list (see AUTHENTICATION) or the request 
+will fail.
+
+=head2 Loop Constraints - Constrain two parts of the query to refer to the same object
+
+ # Constrain to genes that interact with themselves.
+ $query->add_constraint('interactions.interactingGenes' => {is => 'Gene'}); 
+ # Exclude the root object from any results contain in their interactions
+ $query->add_constraint('interactions.interactingGenes.interactions.interactingGenes' => {'is not' => 'Gene'}); 
+
+This a less commonly used constraint type that allows you to assert
+that two parts of the query refer (or must not refer) to the same object.
 
 =head2 Sub Class constraints - constraints on the type of the path
+
+ $query->add_constraint('ontologyAnnotations' => {type => 'GOAnnotation'});
 
 The model that conceptualises the database schema is hierarchical, and
 reflects the relationships between the different objects in part through
@@ -148,18 +153,12 @@ class to constrain a path to. This has two possible uses:
 
 =over
 
-=item
+=item Limit results to only those items of this subclass
 
-Limit results to only those items of this subclass
+=item Allow other paths to use the fields of the subclass as if they were the parent's
 
-=item
-
-Allow other paths to use the fields of the subclass as if they were the parent's
-
-  ie: Normally C<Gene.annotations.developmentTerm> would be invalid, but
-      with the above subclass constraint, it is valid, since C<developmentTerm>
-      is a field on the PhenotypeAnnotation class, which is a subclass of
-      Annotation.
+This is particulary important in collections that may contain several
+subclasses of the one main class.
 
 =back
 
@@ -210,3 +209,32 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+
+  # Get all papers published by Arnosti, Bhat and Carmena
+  # on Even Skipped in D. Melanogater
+
+  use Webservice::InterMine ('www.flymine.org/query');
+
+  my $query = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query->select('publications.*')->where(
+    'Gene'                     => {lookup => 'eve', extra_value => 'D. melanogaster'},
+    'publications.firstAuthor' => ['Arnosti DN', 'Bhat VM', 'Carmena A']
+  )->show();
+
+  # Get all genes that interact with Even Skipped and
+  # are annotated as affecting embryonic development
+  # or which have not yet been annotated
+
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query2->select('primaryIdentifier', 'symbol', 'ontologyAnnotations.ontologyTerm.name')
+         ->where(
+            'ontologyAnnotations' => {type => 'GOAnnotation'},        # Type constraints do not get codes
+            'ontologyAnnotations.ontologyTerm.name' => {is => undef},         # A
+            'ontologyAnnotations.ontologyTerm.name' => '*embryonic*', # B
+            'interactions.interactingGenes' => {lookup => 'eve'},     # C
+            )
+         ->set_logic("(A or B) and C")
+         ->show();
+

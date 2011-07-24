@@ -44,16 +44,17 @@ sub teardown : Test(teardown) {
 
 sub _methods : Test {
     my $test    = shift;
+    # Public API methods
     my @methods = (
 	qw/
 	      name description sort_order set_sort_order view add_view
-	      constraints add_constraint push_constraint find_constraints
+	      constraints add_constraint find_constraints
 	      map_constraints coded_constraints parse_constraint_string
-	      type_dict subclasses joins all_joins push_join map_joins add_join
-	      path_descriptions all_path_descriptions push_path_description
+	      type_dict subclasses joins all_joins map_joins add_join
+	      path_descriptions all_path_descriptions
 	      map_path_descriptions add_pathdescription logic all_paths
 	      validate validate_paths validate_sort_order
-	      validate_subclass_constraints
+	      validate_subclass_constraints select where
 	  /
       );
     can_ok($test->class, @methods);
@@ -281,6 +282,7 @@ sub add_dbix_style_search:Test(19) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
+    $obj->clear_constraints;
 
     lives_ok {
         $obj->search({
@@ -329,6 +331,7 @@ sub add_dbix_style_search_with_order:Test(19) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
+    $obj->clear_constraints;
 
     lives_ok {
         $obj->search([
@@ -377,6 +380,7 @@ sub where_search:Test(21) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
+    $obj->clear_constraints;
 
     lives_ok {
         $obj->where(
@@ -429,6 +433,8 @@ sub chain_wheres_and_select:Test(22) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
+    $obj->clear_constraints;
+    $obj->clear_view;
 
     lives_ok {
         $obj->select('*', 'department.name')
@@ -478,7 +484,22 @@ sub chain_wheres_and_select:Test(22) {
     is('IN', $list->op);
 }
 
+sub logic_after_adding_constraint : Test(1) {
 
+    my $test = shift;
+    my $obj  = $test->{object};
+    $obj->clear_constraints;
+
+    for my $age (1 .. 5) {
+        $obj->add_constraint("Employee.age" => $age);
+    }
+
+    $obj->set_logic("(A and B) or (C and D) or E");
+
+    $obj->add_constraint("Employee.name" => 6);
+
+    is($obj->logic->code, "((A and B or C and D) or E) and F", "Adds an and'ed constraint to the logic");
+}
 
 sub logic : Test(7) {
     my $test = shift;
@@ -567,8 +588,8 @@ sub view : Test(8) {
 sub short_views : Test(4) {
     my $test = shift;
     my $obj  = $test->{object};
-
     $obj->_set_root('Employee');
+    $obj->clear_view;
 
     lives_ok {$obj->add_view(qw/name age fullTime department.name/);} "Can age views without a head";
 
@@ -585,6 +606,7 @@ sub select : Test(6) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
+    $obj->clear_view;
 
     lives_ok {$obj->select(qw/name age fullTime department.name/);} "Can use select";
     is_deeply(

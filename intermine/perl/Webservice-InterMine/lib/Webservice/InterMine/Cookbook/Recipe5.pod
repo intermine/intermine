@@ -10,60 +10,35 @@ Webservice::InterMine::Cookbook::Recipe5 - Dealing with Results
   # Even Skipped, sorted by the number of their
   # papers in the database
 
-  use Webservice::InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org/query');
 
-  my $query = Webservice::InterMine->new_query();
+  my $service = Webservice::InterMine->get_service;
 
-  # Specifying a name and a description is purely optional
-  $query->name('Tutorial 5 Query');
-  $query->description('All papers on Even Skipped in D. Melanogaster');
+  my $query = $service->resultset('Gene')
+                      ->select('publications.*')
+                      ->where(Gene => {lookup => 'eve', extra_value => 'D. melanogaster'});
 
-  ############### SET OUTPUT COLUMNS
-  $query->add_view(qw/
-      Gene.publications.firstAuthor
-      Gene.publications.title
-  /);
+  # Print out number of results
+  printf "Found %s publications\n", $query->count;
 
-  ############## SET QUERY TERMS
-  $query->add_constraint(
-     path  => 'Gene',
-     op    => 'LOOKUP',
-     value => 'eve',
-     extra_value => 'D. melanogaster',
-  );
+  # Print out the first 10 rows to examine them
+  $query->show_first(10);
 
-  ############# GET RESULTS AS ARRAYS
-  my $results = $query->results(as => 'arrayrefs');
+  # Print all the results to a file in TSV format
+  $query->print_results(to => '/tmp/publications.tsv', columnheaders => 1);
 
-  my %papers_by; # Collect all authors by the same author together
-  for my $row (@$results) {
-      my ($author, $paper) = @$row;
-      push @{$papers_by{$author}}, $paper;
+  # Process rows one by one - without loading all data into memory
+  while (my $aref = <$query>) {
+    # handle row as aref
   }
 
-  my @sorted_authors = # sort the authors by the number of paper 
-      sort { @{$papers_by{$b}} <=> @{$papers_by{$a}} } keys %papers_by;
-
-  printf "The most prolific author is %s, with %d papers (%s)",
-         $sorted_authors[0],
-         scalar(@{$papers_by{$sorted_authors[0]}}),
-         join(', ', map {'"'.$_.'"'} @{$papers_by{$sorted_authors[0]}} );
-
-  ############ GET RESULTS AS HASHES
-  $results = $query->results(as => 'hashrefs');
-
-  my %occurances_of;
-  for my $row (@$results) {
-      my $title  = $row->{'Gene.publications.title'};
-      my @words  = split(/\s/, $title);
-      $occurances_of{$_}++ for @words;
+  my $it = $query->results_iterator(as => 'hashrefs');
+  while (my $href = <$it>) { 
+    # handle row as href
   }
 
-  my @sorted_words =
-      sort { $occurances_of{$b} <=> $occurances_of{$a} } keys %occurances_of;
-
-  print "The ten most frequently used words in titles are:"
-        . join(', ', @sorted_words[0 .. 9]);
+  # Get all results as big array of arrays
+  my $results = $query->results;
 
 =head1 DESCRIPTION
 
@@ -77,16 +52,7 @@ The most common data storage format is the flat file (there are other options
 too - please see Recipe7 - Extending Webservice::InterMine). Storing results in a flat file
 is as simple as:
 
-  my $results = $query->result(as => 'string');
-  open(my $outFH, 'w', $filename) or die "$!";
-  print $outFH $results;
-  close $outFH or die "$!";
-
-By passing the parameters C<< as => 'string' >> you are telling the query you
-want your results in a format suitable for flat file storage, ie. a new-line
-delimited string of tab separated values. If you want more control over the lines
-you get back, you can pass C<< as => 'strings' >>, which will return an arrayref
-of strings, so you can handle them yourself.
+  $query->print_results(to => 'some/file.tsv');
 
 =head2 Processing
 
@@ -98,7 +64,7 @@ can do it all in one step, and never have to leave Perl to do so.
 As well as returning rows as tab separated strings, results can be returned as
 an arrayref of either arrayrefs or hashrefs, depending on your needs.(1)
 This means that in most cases, your data is already in a format suitable
-for processing.
+for processing. In addition there is results can be retrieved as full Perl objects.
 
 Above, we can see two basic examples of using I<arrayrefs> and I<hashrefs> to readily access
 your data. Arrayrefs are particularly useful if you want to process each field
@@ -111,24 +77,16 @@ without any format specified.
 
 For unpacking your results, the following pattern will prove useful:
 
-  for my $row (@$results) {
-      # do something with row
+  while (my $row = <$it>) {
+    # process $row
   }
 
-Since the results are in essence just a list of rows, you can also use C<map>
-and C<grep> on them:
-
-  # filters out genes with residue lengths shorter than 5,000
-  my @filtered_results = grep {$_->{'Gene.residue.length'} > 5_000} @$results;
-
-  # Tranforms a two element arrayref row (such as 'Gene.name', 'Gene.symbol')
-  # into a hashref row with the first element as the key (name => 'symbol')
-  # Note: this assumes that the first element is unique in the list
-  my $transformed_results = map { {@$_} } @$results
+Even if you are expecting 100,000's of results, this is designed to be memory 
+efficient by streaming the results line by line rather than storing them all in memory.
 
 =head1 CONCLUSION
 
-By default, result rows can be returned one of three different formats: strings
+By default, result rows can be returned one of several different formats: strings
 (for flat file storage), and hash and array references (for processing).
 Hash and array references (of which the default is hashrefs) make for powerful
 and flexible data-structures which get out of the way between you and your data.
@@ -194,3 +152,24 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+
+  # Get a list of first authors of papers about
+  # Even Skipped, sorted by the number of their
+  # papers in the database
+
+  use Webservice::InterMine ('www.flymine.org/query');
+
+  my $service = Webservice::InterMine->get_service;
+
+  my $query = $service->resultset('Gene')
+                      ->select('publications.*')
+                      ->where(Gene => {lookup => 'eve', extra_value => 'D. melanogaster'});
+
+  # Print out number of results
+  printf "Found %s publications\n", $query->count;
+
+  # Print out the first 10 rows to examine them
+  $query->show_first(10);
+
+  # Print all the results to a file in TSV format
+  $query->print_results(to => '/tmp/publications.tsv', columnheaders => 1, size => 100);

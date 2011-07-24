@@ -9,39 +9,20 @@ Webservice::InterMine::Cookbook::Recipe4 - Other Query Features
   # Get all genes involved in biosynthetic processes, and any
   # publications on them
 
-  use Webservice::InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org/query');
 
-  my $query = Webservice::InterMine->new_query();
+  my $query = Webservice::InterMine->new_query(class => 'Gene');
 
-  # Specifying a name and a description is purely optional
-  $query->name('Tutorial 4 Query');
-  $query->description('All genes involved in biosynthetic processes');
+  $query->select(qw/primaryIdentifier symbol publications.year publications.firstAuthor publications.title/)
+        ->where('ontologyAnnotations.ontologyTerm.name' => '*biosynthetic process*')
+        ->outerjoin('publications')
+        ->show();
 
-  $query->add_view(qw/
-      Gene.primaryIdentifier
-      Gene.publications.title
-      Gene.publications.year
-      Gene.publications.firstAuthor
-  /);
-
-  $query->add_constraint(
-     path  => 'Gene.goAnnotation.ontologyTerm.name',
-     op    => '=',
-     value => '*biosynthetic process*',
-  );
-
-  $query->add_pathdescription(
-     path => 'Gene.goAnnotation.ontologyTerm.name',
-     description => 'The ontology term for the gene',
-  );
-
-  $query->add_join(
-     path  => 'Gene.publications',
-     style => 'OUTER',
-  );
-
-  my $results = $query->results(as => 'string');
-  print $results;
+  # Use path descriptions for printing TSV tables:
+  $query->add_view('ontologyAnnotations.ontologyTerm.name');
+  $query->add_pathdescription('ontologyAnnotations.ontologyTerm' => 'Ontology Term');
+  $query->add_pathdescription('publications' => 'Pub.');
+  $query-print_results(columnheaders => 1);
 
 =head1 DESCRIPTION
 
@@ -66,36 +47,25 @@ Because 'Inner' joins are the default, you do not need to declare them
 as such (although you can, just to remind yourself that you have I<chosen>
 to throw away partially matching records), but 'Outer' joins always need
 to be declared. As we only ever need to declare outer joins, there is a more
-concise way to do this:
+concise way to do this. The following are equivalent:
 
-  $query->add_join('Gene.publications' => 'OUTER');
-
-or
-
+  $query->outerjoin('publications');
   $query->add_join('Gene.publications');
-
-While you don't I<need> to indicate the 'Outer'-ness of each join you declare,
-it is recommended, if only for your own sake when reading back over the
-queries you have created - they form a kind of self-commenting code, which can
-help you understand the complex queries you wrote last week you now have no
-recollection of.
+  $query->add_join('Gene.publications' => 'OUTER');
+  $query->add_join(path => 'Gene.publications', style => 'OUTER');
 
 =head2 Path Descriptions
 
-Another helpful commenting tool (apart from comments, which are whole-heartedly
-recommended) is the C<path_description> method, which simply adds a human readable
-description of what a path references to the query. As seen in the query above,
-these can sometimes be shorter, and more informative than the actual path.
+If you plan to automatically upload queries or to use them to make templates, or
+you simply want to get more concise column headers, then you can use path descriptions:
 
   $query->add_pathdescription(
       path => 'Gene.downstreamIntergenicRegion.overlappingFeatures',
-      description => 'Such as a Gene, or an Exon, or an ESTCluster',
+      description => 'Overlapping Features',
   );
 
-While nice in your code, they can be very useful if your query gets saved,
-or perhaps made into a template (TODO: link to these recipes). When serialised
-to xml, these 'comments' will remain to explain the query, even if nothing
-else does.
+This allows you to alias long paths, and if you use the C<columnheaders> feature to get results
+with them, it can make for more legible result tables.
 
 =head1 CONCLUSION
 
@@ -103,19 +73,6 @@ Joins and path descriptions are two features which help you tell the server,
 and remind yourself, what you meant by the query you composed, and help
 document what kind of results you expect to get back from it, and why
 they will be useful. In the next recipe we look at how to deal with these results.
-
-=head1 FOOTNOTES
-
-Note that there are two list separation operators in Perl: C<,> and C<< => >>
-
-In several places I have used C<< => >> because it is visually more distinct and
-can helpfully convey the appropriate linking semantics, such as associating
-a path with its join style or description. However, while often interchangible,
-they are not always so, as C<< => >>, or C<the fat comma> enforces scalar context
-on the term to its left, meaning that while C<< (one => 'two') >> and C<('one', 'two')>
-are interchangible, C<< (cwd => 'current directory') >> and C<(cwd, 'current directory')>
-are not, with the first one unhelpfully giving us not the current working
-directory, but just the string "cwd".
 
 =head1 AUTHOR
 
@@ -153,3 +110,22 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+
+  # Get all genes involved in biosynthetic processes, and any
+  # publications on them
+
+  use Webservice::InterMine ('www.flymine.org/query');
+
+  my $query = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query->select(qw/primaryIdentifier symbol publications.year publications.firstAuthor publications.title/)
+        ->where('ontologyAnnotations.ontologyTerm.name' => '*biosynthetic process*')
+        ->outerjoin('publications')
+        ->show_first(50);
+
+  # Use path descriptions for printing TSV tables:
+  $query->add_view('ontologyAnnotations.ontologyTerm.name');
+  $query->add_pathdescription('ontologyAnnotations.ontologyTerm' => 'Ontology Term');
+  $query->add_pathdescription('publications' => 'Pub.');
+  $query->print_results(columnheaders => 1, size => 50);
+
