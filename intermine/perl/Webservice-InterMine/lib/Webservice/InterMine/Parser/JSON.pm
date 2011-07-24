@@ -1,5 +1,16 @@
 package Webservice::InterMine::Parser::JSON;
 
+=head1 NAME
+
+Webservice::InterMine::Parser::JSON - parse rows of JSON results
+
+=head1 DESCRIPTION
+
+One of the parsers used to intepret results sent from 
+the webservice.
+
+=cut
+
 use Moose;
 with 'Webservice::InterMine::Parser';
 with 'Webservice::InterMine::Role::KnowsJSON';
@@ -7,11 +18,6 @@ with 'Webservice::InterMine::Role::KnowsJSON';
 use JSON -support_by_pp, -no_export;
 use MooseX::Types::Moose qw(Str);
 use InterMine::Model::Types qw(Model);
-
-=head1 Webservice::InterMine::Parser::JSON
-
-Return each row of results parsed from JSON into a perl data 
-structure.
 
 =head1 IMPLEMENTED PARSER METHODS
 

@@ -96,7 +96,7 @@ sub sort_order_initial_state : Test {
     );
 }
 
-sub view : Test(7) {
+sub view : Test(9) {
     my $test = shift;
     my $obj  = $test->{object};
     my @initial_view = ('Employee.name', 'Employee.age');

@@ -85,4 +85,19 @@ Revision history for Webservice-InterMine
         * Added possible values service methods.
 0.9705: Wed Jun  8 19:34:43 BST 2011
         * Avoid hitting url limits by posting where possible
+0.9800: Added tokens for authentication
+0.9801: Sun Jul 24 00:30:47 BST 2011
+        Revised cookbook, chapters 1-5
+        Added cookbook tests (runnable examples) 
+        Added more POD
+        Added sugar for constraints and views
+          * Query::select for views
+          * Query::where for constraints
+          * Query::search for constraints + results
+          * Service::resultset for queries
+        Added more aliases, with docs, including
+          * Query::count/get_count
+        Hid internal methods, such as Query::push_constraints (and others)
+        Changed logic behaviour on adding constraint (don't discard current logic completely)
+        
 

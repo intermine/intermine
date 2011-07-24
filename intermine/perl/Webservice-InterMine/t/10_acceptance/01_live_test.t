@@ -17,7 +17,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 72 );
+    plan( tests => 73 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -220,7 +220,6 @@ lives_ok(
 is(@$res, 3, "Gets the right number of records");
 is($res->[1]->getAge, 20, "with the right fields - Int");
 is($res->[1]->getAddress->getAddress, "Employee Street, AVille", "with the right fields - Str");
-ok($res->[1]->getFullTime, "with the right fields - Bool");
 
 PRINTING: {
     my $buffer = '';
@@ -246,7 +245,7 @@ SHOWING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $q->show($fh);
     close $fh or die "$!";
-    my $expected = q!VIEW:.[Employee.name,.Employee.age,.Employee.fullTime,.Employee.address.address,.Employee.department.name,.Employee.department.company.name,.Employee.department.manager.name],.CONSTRAINTS:.[[Employee.department.company.LOOKUP."CompanyA".IN."NULL"],[Employee.age.<."35"],],.LOGIC:.A.and.B,.SORT_ORDER:.Employee.name.asc
+    my $expected = q!VIEW:.[Employee.name,.Employee.age,.Employee.fullTime,.Employee.address.address,.Employee.department.name,.Employee.department.company.name,.Employee.department.manager.name],.CONSTRAINTS:.[<Employee.department.company.LOOKUP."CompanyA".IN."NULL">,<Employee.age.<."35">,],.LOGIC:.A.and.B,.SORT_ORDER:.Employee.name.asc
 --------------+--------------+-------------------+--------------------------+--------------------------+----------------------------------+---------------------------------
 Employee.name.|.Employee.age.|.Employee.fullTime.|.Employee.address.address.|.Employee.department.name.|.Employee.department.company.name.|.Employee.department.manager.name
 --------------+--------------+-------------------+--------------------------+--------------------------+----------------------------------+---------------------------------
@@ -406,5 +405,16 @@ PARSING_EMPTY_RESULTS: {
     my $res;
     lives_ok {$res = $q->results} "It's ok to ask about Santa Claus";
     is_deeply($res, [], "But there is no Santa Claus");
+}
+
+DBIX_SUGAR: {
+    my @results = $module->get_service
+                         ->resultset('Manager')
+                         ->search({'department.name' => 'Sales'});
+
+    is(@results, 3);
+    is_deeply([map {$_->getName} @results], ['Michael Scott', 'Gilles Triquet', 'David Brent'])
+        or diag explain(\@results);
+
 }
 

@@ -8,60 +8,105 @@ Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
 
   # Get a list of the drosophilids in the database
 
-  use Webservice::InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org/query');
 
-  my $query = Webservice::InterMine->new_query();
+  my $query = Webservice::InterMine->new_query(class => 'Organism');
 
-  # Specifying a name and a description is purely optional
-  $query->name('Tutorial 2 Query');
-  $query->description('A list of all the drosophilids in the database');
-  $query->add_view(qw/Organism.name Organism.taxonId/);
+  $query->select('*')->where(genus => 'Drosophila')->show();
 
-  $query->add_constraint(
-     path  => 'Organism.name',
-     op    => '=',
-     value => 'Drosophila*'
-  );
+  # Get all the information about of all publications on drosophilid 
+  # published since 2010
 
-  print query->results(as => 'string');
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
 
-  # Get the authors, titles and PubMed IDs of all publications on drosophilid
-  # genes between 2004 and 2010
+  $query2->select('publications.*')
+         ->where('organism.genus' => 'Drosophila', 'publications.year' => {'>=' => 2010})
+         ->show();
 
-  my $query2 = Webservice::InterMine->new_query();
+  # Do the same thing in a more InterMine-y way:
 
-  $query2->add_view(qw/
-      Gene.publications.firstAuthor
-      Gene.publications.pubMedId
-      Gene.publications.title
-  /);
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
 
+  $query2->add_view('publications.*');
+  $query2->add_constraint('organism.genus', '=', 'Drosophila');
+  $query2->add_constraint('publications.year', '>=', 2010);
+  $query2->show();
+
+  # And more explicit yet:
+
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query2->add_view('publications.*');
   $query2->add_constraint(
-      path  => 'Gene.organism.name',
-      op    => '=',
-      value => 'Drosophila*',
-  );
-  $query2->add_constraint(
-      path  => 'Gene.publications.year',
-      op    => '>=',
-      value => 2004,
+    path  => 'organism.genus', 
+    op    => '=', 
+    value => 'Drosophila'
   );
   $query2->add_constraint(
-      path  => 'Gene.publications.year',
-      op    => '<=',
-      value => 2010,
+    path  => 'publications.year', 
+    op    => '>=', 
+    value =>  2010
   );
-
-  print $query2->results(as => 'string');
+  $query2->show();
 
 =head1 DESCRIPTION
 
-Querying is understandably more powerful with constraints on the
-results returned. The mechanism for adding constraints to a query
-is in some ways similar to what we have seen with the C<add_view>
-command - here instead we have C<add_constraint>. Whereas C<add_view> just
-takes a list of paths, C<add_constraint> takes a wider, and more variable,
-list of arguments.
+InterMine offers a powerful and flexible set of constraints, or 
+filters on the results you receive. The flexibility of this system is
+comparable to a full SQL-like query language, and allows complex, 
+arbitrary queries over the entire database schema.
+
+This section introduces ways constraints can be specified.
+
+=head2 The C<where> method:
+
+This method takes a list of constraints, which are implicitly 
+'and'ed together. The syntax for describing these is hopefully relatively
+intuitive, and is based on that of DBIx::Class, one of the 
+larger Perl ORM systems. In this mechanism, a constraint is usually just the
+path and the value it should have:
+
+  my $query = $service->new_query(class => 'Gene');
+  $query->where(
+    symbol => 'zen*',
+    length => 10_000,
+    'organism.genus' => 'Drosophila',
+    'organism.species' => ['melanogaster', 'mojavensis']
+  );
+
+Specifying a list (such as C<['melanogaster', 'mojavensis']>), means that the value must 
+be one of the values in the list.
+
+For those familiar to DBIx::Class, the search method is available:
+
+  $query->search({
+    symbol => 'zen*',
+    length => 10_000,
+    'organism.genus' => 'Drosophila',
+    'organism.species' => ['melanogaster', 'mojavensis']
+  });
+
+In InterMine, the search method accepts either a hashref or an arrayref as its first
+argument. It does not take a second argument. It also does not support the 'AND'/'OR' 
+syntax.
+
+Where you need to be more precise about the operation, replace the 
+value by a hash reference of C<< operator => value >>:
+
+  $query->where(length => {'<' => 10_000});
+
+Note that there are 'legible' versions of the comparison operators which are
+convenient to use as hash keys:
+
+  $query->where(length => {gt => 5_000}, length => {lt => 10_000});
+
+=head2 The C<add_constraint> method
+
+A more traditionally InterMine method, this allows positional and named parameters, 
+as well as the two parameter style above. It does not allow method chaining, instead returning
+the constraint just added.
+
+Most constraints take the following parameters (or a slight variation):
 
 =over
 
@@ -79,12 +124,7 @@ C<value> - the value to be applied to the operator
 
 =back
 
-In the example above we have three different operators: C<=>, C<< >= >>,
-and C<< <= >>, all of which take a value and use it to constrain their path. The 
-C<=> operator permits the use of wild-cards (C<*> in the example above) to search
-on a basic pattern.
-
-It is also possible to specifiy constraints using a list of their parameters:
+When calling with a list of parameters, the order is C<path, operator, value>:
 
   $query->add_constraint('Gene.symbol', '=', 'eve');
   $query->add_constraint('Gene.homologue', 'IS NOT NULL');
@@ -97,45 +137,60 @@ following pattern:
 
   $query->add_constraint('Gene.organism.name = "Drosophila Yakuba"');
 
-Note the quoting: the constraint here is a single string, which is parsed for
-the path, operator and value.
+Note the quoting of the value and the whole string: the constraint here is a single string, 
+which is parsed for the path, operator and value. This format is not recommended - it is always
+better to be explicit about your intentions.
 
 In the examples above the constraints are all cumulative, meaning we only get
 results back if an item satisfies I<all> of their requirements. We say that the
-logic for $query2 is "A and B and C". It is possible however to 'or' your constraints
+logic for $query2 is "A and B". It is possible however to 'or' your constraints
 together as well - see below:
 
   # Get the authors, titles and PubMed IDs of all publications
   # since 2004 on genes in D. Yakuba or D. Melanogaster
 
-  my $query3 = Webservice::InterMine->new_query;
+  my $query3 = Webservice::InterMine->new_query(class => 'Gene');
 
-  $query3->add_view(qw/
-      Gene.publications.firstAuthor
-      Gene.publications.pubMedId
-      Gene.publications.title
-  /);
+  $query3->select('publications.*')
+         ->where(
+            'organism.genus'    => 'Drosophila',   # A
+            'organism.species'  => 'yakuba',       # B
+            'organism.species'  => 'melanogaster', # C
+            'publications.year' => {ge => 2010},   # D
+          )
+         ->set_logic("A and (B or C) and D")
+         ->show();
 
+In this example the logic is specified by a string which names each constraint
+in reference to the order they were added to the query, and sets out the relationship 
+between them all. The valid logical operators are "and" and "or".
+
+The following is a slightly longer-winded equivalent:
+
+  my $query3 = Webservice::InterMine->new_query(class => 'Gene');
   my $con1 = $query3->add_constraint(
-      path  => 'Gene.organism.name',
+      path  => 'Gene.organism.genus',
       op    => '=',
-      value => 'Drosophila Yakuba',
+      value => 'Drosophila',
   );
   my $con2 = $query3->add_constraint(
-      path  => 'Gene.organism.name',
+      path  => 'Gene.organism.species',
       op    => '=',
-      value => 'Drosophila Melanogaster',
+      value => 'yakuba',
   );
   my $con3 = $query3->add_constraint(
+      path  => 'Gene.organism.species',
+      op    => '=',
+      value => 'melanogaster',
+  );
+  my $con4 = $query3->add_constraint(
       path  => 'Gene.publications.year',
       op    => '>=',
-      value => 2004,
+      value => 2010,
   );
 
-  $query3->logic(($con1 | $con2) & $con3);
-
-  my $publications_results = $query2->results(as => 'string');
-  print $publications_results;
+  $query3->set_logic($con1 & ($con1 | $con2) & $con3);
+  $query3->show();
 
 Note that here we keep the constraint objects returned by C<add_constraint>,
 which we would normally just ignore. Then these are combined to create
@@ -159,14 +214,15 @@ having a specific code you can call:
   $query->add_constraint(
       path  => 'Organism.name',
       op    => '=',
-      value => 'Drosophila Melanogaster',
+      value => 'Drosophila melanogaster',
       code  => 'Q',
   );
 
-and then you know that this constraint has code 'Q'. Generally however, you shouldn't
-need to directly handle these codes yourself, as they will be generated
-automatically for you.
+These can even be specified during a where call:
 
+  $query->where(name => {'=' => 'Drosophila melanogaster', code => 'Q'});
+
+Note that in this case we must use the '=' operator and the hashref style.
 
 =head1 CONCLUSION
 
@@ -210,4 +266,47 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+
+  # Get a list of the drosophilids in the database
+
+  use Webservice::InterMine ('www.flymine.org/query');
+
+  my $query = Webservice::InterMine->new_query(class => 'Organism');
+
+  $query->select('*')->where(genus => 'Drosophila')->show();
+
+  # Get all the information about of all publications on drosophilid 
+  # published since 2010
+
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query2->select('publications.*')
+         ->where('organism.genus' => 'Drosophila', 'publications.year' => {'>=' => 2010})
+         ->show();
+
+  # Do the same thing in a more InterMine-y way:
+
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query2->add_view('publications.*');
+  $query2->add_constraint('organism.genus', '=', 'Drosophila');
+  $query2->add_constraint('publications.year', '>=', 2010);
+  $query2->show();
+
+  # And more explicit yet:
+
+  my $query2 = Webservice::InterMine->new_query(class => 'Gene');
+
+  $query2->add_view('publications.*');
+  $query2->add_constraint(
+    path  => 'organism.genus', 
+    op    => '=', 
+    value => 'Drosophila'
+  );
+  $query2->add_constraint(
+    path  => 'publications.year', 
+    op    => '>=', 
+    value =>  2010
+  );
+  $query2->show();
 

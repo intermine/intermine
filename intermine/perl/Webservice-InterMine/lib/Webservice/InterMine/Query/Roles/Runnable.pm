@@ -191,6 +191,16 @@ sub get_count {
     return join('', $iter->get_all());
 }
 
+=head2 count
+
+Alias for get_count
+
+=cut
+
+sub count {
+    goto &get_count;
+}
+
 =head2 url 
 
 Get the url for a webservice resource.
@@ -204,12 +214,26 @@ sub url {
     return $uri;
 }
 
+=head2 get_upload_url
+
+get the url to use to upload queries to the webservice.
+
+=cut
+
 sub get_upload_url {
     my $self = shift;
     my $url = return $self->service->root . $self->upload_path;
     my $uri = URI->new($url);
     return $uri;
 }
+
+=head2 save
+
+Save this query in the user's history in the connected webservice. For queries
+this will be saved into query history, and templates will be saved into your 
+personal collection of private templates.
+
+=cut
 
 sub save {
     my $self = shift;

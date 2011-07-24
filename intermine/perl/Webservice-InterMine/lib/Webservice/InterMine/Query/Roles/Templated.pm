@@ -227,6 +227,7 @@ sub get_adjusted_template {
             confess "no constraint with code $code on this query";
         }
     }
+    $clone->set_logic($self->logic->code);
     return $clone;
 }
 
@@ -236,8 +237,11 @@ around _validate => sub {
     my @errs;
     push @errs, "Templates require a name attribute"
       unless $self->name;
-    push @errs, "Invalid template: no editable constraints"
-      unless $self->editable_constraints;
+    if ($self->count_constraints) {
+        # Allow people to add views first.
+        push @errs, "Invalid template: no editable constraints"
+            unless $self->editable_constraints;
+    }
     return $self->$orig(@errs);
 };
 

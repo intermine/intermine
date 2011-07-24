@@ -1,3 +1,34 @@
+=head1 NAME
+
+Webservice::InterMine::Role::Showable - behaviour for queries that can print their results out
+
+=head1 SYNOPSIS
+
+    use Webservice::InterMine;
+    my $service  = Webservice::InterMine->new_service('www.flymine.org/query');
+
+    # Print out a readable table of all results
+    $query = $service->new_query(class => 'Gene');
+    $query->select('*', 'pathways.*')
+          ->where(symbol => [qw/bib eve h zen/])
+          ->show();
+
+    # Just print the first 20 rows
+    $query = $service->new_query(class => 'Gene');
+    $query->select('*', 'pathways.*')
+          ->show_first(20);
+
+    # Print the results out to a file.
+    $query->print_results(columnheaders => 1, to 'some/file.tsv');
+
+=head1 DESCRIPTION
+
+Print out the results to either the screen (by default) or any 
+arbitrary file or filehandle. These methods are used by queries 
+and lists to diplay their contents for inpection and storage.
+
+=cut
+
 package Webservice::InterMine::Role::Showable;
 
 use Moose::Role;
@@ -7,7 +38,7 @@ requires qw/to_string views results_iterator/;
 use IO::Handle;
 use List::Util qw(max);
 
-=head2 show( [$fh] )
+=head2 show( [$fh, $no_of_rows] )
 
 Print out the results to standard out (or an optional filehandle)
 in a easy to read summary table format, with an informative header, 
@@ -19,26 +50,43 @@ in columns.
 sub show {
     my $self = shift;
     my $fh = shift || \*STDOUT;
+    my $size = shift;
 
     binmode $fh, ':encoding(utf8)';
     print $fh $self->to_string, "\n";
-    print $fh $self->bar_line;
-    printf $fh $self->table_format, $self->views;
-    print $fh $self->bar_line;
-    my $iter = $self->results_iterator;
+    print $fh $self->_bar_line;
+    printf $fh $self->_table_format, $self->views;
+    print $fh $self->_bar_line;
+    my $iter = $self->results_iterator(size => $size);
     while (<$iter>) {
-        printf $fh $self->table_format, map {(defined $_) ? $_ : 'UNDEF'} @$_;
+        printf $fh $self->_table_format, map {(defined $_) ? $_ : 'UNDEF'} @$_;
     }
 }
 
-sub bar_line {
+=head2 show_first($no_of_rows)
+
+Prints out the first C<$no_of_rows> rows, or 10 rows if no argument was given
+in the same format as C<show>.
+
+=cut
+
+sub show_first {
+    my $self = shift;
+    my $size = shift || 10;
+    my $fh = shift || \*STDOUT;
+    $self->show($fh, $size);
+}
+
+# Private methods for formatting tables
+
+sub _bar_line {
     my $self = shift;
     my @view_lengths = map {length} $self->views;
     my $line = join('-+-', map { '-' x $_ } @view_lengths);
     return $line . "\n";
 }
 
-sub table_format {
+sub _table_format {
     my $self = shift;
     my @view_lengths = map {length} $self->views;
     my $format = join(' | ', map {'%-' . $_ . 's'} @view_lengths);
@@ -115,3 +163,54 @@ sub print_results {
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<Webservice::InterMine::Cookbook> for a guide on how to use these modules.
+
+=item * L<Webservice::InterMine::Query>
+
+=item * L<Webservice::InterMine::List>
+
+=item * L<Webservice::InterMine::Query::Template>
+
+=back
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine::Role::Showable
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2011 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut

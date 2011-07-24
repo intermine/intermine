@@ -292,6 +292,10 @@ And avoid having to repeat the root class on other calls:
  # 'Gene.' is now optional
  $query->add_constraint('symbol', '=', 'eve');
 
+Note it is also possible to use a two parameter style for adding constraints:
+
+ $query->add_constraint(symbol => 'eve');
+
 See L<Webservice::InterMine::Query>
 
 =cut
@@ -310,6 +314,35 @@ sub new_query {
     );
     return apply_roles( $query, $roles );
 }
+
+=head2 resultset(name) -> query
+
+Return a new query object with the named class set as the 
+root class of the query and all attribute fields
+selected for output. This method is provided in part
+to emulate some surface features of DBIx::Class.
+
+  my @results = $service->resultset('Gene')->search({symbol => [qw/zen bib h eve/]});
+  for my $gene (@results) {
+    print $gene->name;
+  }
+
+=cut
+
+sub resultset {
+    my ($self, $name) = @_;
+    my $query = $self->new_query(class => $name);
+    $query->select('*');
+    return $query;
+}
+
+=head2 table(name) -> query from table
+
+Alias for resultset()
+
+=cut
+
+sub table { goto &resultset }
 
 =head2 new_from_xml(source_file => $file_name)
 

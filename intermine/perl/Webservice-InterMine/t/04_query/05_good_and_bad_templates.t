@@ -107,7 +107,7 @@ my @baddies_names = (
 my %baddies = mesh( @baddies_names, @baddies );
 my @baddies_errors = (
     'unexpected element: unknown_tag',
-    'BadClass not in the model',
+    'can\'t find field "BadClass"',
     'illegal path',
     'not well-formed',
     'mismatched tag',
@@ -118,7 +118,7 @@ my @baddies_errors = (
     'No name attribute on template node',
     'We have two names and they differ',
     'No constraint with code',
-    'Inconsistent query',
+    'can\'t find field "Employee"',
     'Only editable constraints can be switchable',
 );
 my %exp_err_for = mesh( @baddies_names, @baddies_errors );

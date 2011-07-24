@@ -167,7 +167,7 @@ sub url : Test {
     is($obj->url, $test->exp_url, "Makes a good url");
 }
 
-sub view : Test(7) {
+sub view : Test(9) {
     my $test = shift;
     my $obj  = $test->{object};
     my @initial_view = ('Employee.name', 'Employee.age');
