@@ -214,7 +214,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     }
 
     private final Set<String> bots = Collections.unmodifiableSet(new HashSet<String>(
-                Arrays.asList("googlebot", "slurp", "bot", "spider", "crawl",
-                    "scooter", "yandexbot", "yodaobot", "mj12bot", "ezooms", "archiver",
-                    "eventbox")));
+                Arrays.asList("slurp", "bot", "spider", "crawl",
+                    "scooter", "ezooms", "archiver", "eventbox", "docomo")));
 }
