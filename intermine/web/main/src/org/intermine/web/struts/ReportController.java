@@ -79,7 +79,6 @@ public class ReportController extends InterMineAction
         InterMineObject requestedObject = getRequestedObject(im, request);
 
         long stepTime = System.currentTimeMillis();
-        LOG.info("TIME fetched requested object: " + (stepTime - startTime) + "ms");
         startTime = stepTime;
 
         if (requestedObject != null) {
@@ -87,7 +86,6 @@ public class ReportController extends InterMineAction
             ReportObject reportObject = reportObjectFactory.get(requestedObject);
 
             stepTime = System.currentTimeMillis();
-            LOG.info("TIME created report object: " + (stepTime - startTime) + "ms");
             startTime = stepTime;
 
             request.setAttribute("object", reportObject);
@@ -170,12 +168,10 @@ public class ReportController extends InterMineAction
             }
 
             stepTime = System.currentTimeMillis();
-            LOG.info("TIME placed refs and cols: " + (stepTime - startTime) + "ms");
             startTime = stepTime;
 
             // remove any fields overridden by displayers
             removeFieldsReplacedByReportDisplayers(reportObject, placementRefsAndCollections);
-
             request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
             String type = reportObject.getType();
@@ -188,7 +184,6 @@ public class ReportController extends InterMineAction
             }
 
             stepTime = System.currentTimeMillis();
-            LOG.info("TIME made stable link: " + (stepTime - startTime) + "ms");
             startTime = stepTime;
 
             // attach only non empty categories
@@ -200,7 +195,6 @@ public class ReportController extends InterMineAction
             Map<String, List<ReportDisplayer>> displayerMap = reportObject.getReportDisplayers();
 
             stepTime = System.currentTimeMillis();
-            LOG.info("TIME fetched report displayers: " + (stepTime - startTime) + "ms");
             startTime = stepTime;
 
             List<String> categories = new LinkedList<String>();
@@ -223,11 +217,8 @@ public class ReportController extends InterMineAction
                                 && placementRefsAndCollections.get("im:aspect:" + aspect) != null) {
                             for (DisplayField df : placementRefsAndCollections.get(
                                     "im:aspect:" + aspect).values()) {
-                                //if (df.getSize() > 0) {
-                                //if (!df.isEmpty()) {
-                                    categories.add(aspect);
-                                    break;
-                                //}
+                                categories.add(aspect);
+                                break;
                             }
                         }
                     }
