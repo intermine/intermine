@@ -435,12 +435,12 @@ public class GenomicRegionSearchService
 
         // featureTypes in this case are (the last bit of) class instead of
         // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
-        Set<Class<?>> ftList = new HashSet<Class<?>>();
+        Set<Class<?>> ftSet = new HashSet<Class<?>>();
         for (String f : featureTypes) {
             ClassDescriptor cld = model.getClassDescriptorByName(f);
-            ftList.add(cld.getType());
+            ftSet.add(cld.getType());
             for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                ftList.add(subCld.getType());
+                ftSet.add(subCld.getType());
             }
         }
 
@@ -462,7 +462,7 @@ public class GenomicRegionSearchService
             }
         }
 
-        grsc.setFeatureTypes(ftList);
+        grsc.setFeatureTypes(ftSet);
 
         // File parsing
         BufferedReader reader = null;
@@ -830,10 +830,10 @@ public class GenomicRegionSearchService
         }
 
         // Create passedSpanList
-        for (GenomicRegion aSpan : grsc.getSpanList()) {
+        for (GenomicRegion gr : grsc.getSpanList()) {
             // User input could be x instead of X for human chromosome, converted to lowercase
             ChromosomeInfo ci = null;
-            String chr = aSpan.getChr().toLowerCase();
+            String chr = gr.getChr().toLowerCase();
 
             if (chrInfo.containsKey(chr)) {
                 ci = chrInfo.get(chr);
@@ -849,19 +849,19 @@ public class GenomicRegionSearchService
                 }
             }
 
-            if ((aSpan.getStart() >= 1 && aSpan.getStart() <= ci
+            if ((gr.getStart() >= 1 && gr.getStart() <= ci
                     .getChrLength())
-                    && (aSpan.getEnd() >= 1 && aSpan.getEnd() <= ci
+                    && (gr.getEnd() >= 1 && gr.getEnd() <= ci
                             .getChrLength())) {
-                if (aSpan.getStart() > aSpan.getEnd()) { // Start must be smaller than End
+                if (gr.getStart() > gr.getEnd()) { // Start must be smaller than End
                     GenomicRegion newSpan = new GenomicRegion();
                     newSpan.setChr(ci.getChrPID()); // converted to the right case
-                    newSpan.setStart(aSpan.getEnd());
-                    newSpan.setEnd(aSpan.getStart());
+                    newSpan.setStart(gr.getEnd());
+                    newSpan.setEnd(gr.getStart());
                     passedSpanList.add(newSpan);
                 } else {
-                    aSpan.setChr(ci.getChrPID());
-                    passedSpanList.add(aSpan);
+                    gr.setChr(ci.getChrPID());
+                    passedSpanList.add(gr);
                 }
             }
         }
@@ -928,12 +928,12 @@ public class GenomicRegionSearchService
      * Get a comma separated string of a span's overlap features. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param spanString span in string
+     * @param grString a genomic region in string
      * @param flankingSize int value of extended genomic region size
      * @param resultMap map of search results
      * @return String feature ids joined by comma
      */
-    public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String spanString, int flankingSize,
+    public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String grString, int flankingSize,
             Map<GenomicRegion, List<List<String>>> resultMap) {
 
         Set<Integer> featureSet = new HashSet<Integer>();
@@ -941,7 +941,7 @@ public class GenomicRegionSearchService
         GenomicRegion spanToExport = new GenomicRegion();
 
         // spanString is extended span
-        String[] temp = spanString.split(":");
+        String[] temp = grString.split(":");
         spanToExport.setChr(temp[0]);
         temp = temp[1].split("\\.\\.");
         spanToExport.setExtendedStart(Integer.parseInt(temp[0]));
@@ -1179,16 +1179,14 @@ public class GenomicRegionSearchService
     /**
      * Calculate the number of matched bases.
      *
-     * @param s
-     *            a span object
-     * @param r
-     *            a list of attributes
+     * @param gr a GenomicRegion object
+     * @param r a list of attributes
      * @return matched base count as String
      */
-    protected String getMatchedBaseCount(GenomicRegion s, List<String> r) {
+    protected String getMatchedBaseCount(GenomicRegion gr, List<String> r) {
 
-        int spanStart = s.getStart();
-        int spanEnd = s.getEnd();
+        int spanStart = gr.getStart();
+        int spanEnd = gr.getEnd();
         int featureStart = Integer.valueOf(r.get(3));
         int featureEnd = Integer.valueOf(r.get(4));
 
@@ -1216,23 +1214,31 @@ public class GenomicRegionSearchService
     }
 
     /**
+     * A flexiable way of setting query fields.
      *
      * @param featureIds set of feature intermine ids
      * @param featureType feature class name
+     * @param views user defined views in web.properties
      * @return a pathquery
      */
     public PathQuery getExportFeaturesQuery(Set<Integer> featureIds,
-            String featureType) {
+            String featureType, Set<String> views) {
 
         PathQuery q = new PathQuery(model);
-
         String path = featureType;
-        q.addView(path + ".primaryIdentifier");
-        q.addView(path + ".symbol");
-        q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
-        q.addView(path + ".chromosomeLocation.start");
-        q.addView(path + ".chromosomeLocation.end");
-        q.addView(path + ".organism.name");
+
+        if (views == null) {
+            q.addView(path + ".primaryIdentifier");
+            q.addView(path + ".symbol");
+            q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
+            q.addView(path + ".chromosomeLocation.start");
+            q.addView(path + ".chromosomeLocation.end");
+            q.addView(path + ".organism.name");
+        } else {
+            for (String view : views) {
+                q.addView(view.trim().replace("{0}", path));
+            }
+        }
 
         q.addConstraint(Constraints.inIds(featureType, featureIds), "A");
 
