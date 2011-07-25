@@ -36,11 +36,39 @@ sub unzip_dir {
     $self->execute_system_command("gzip -dr $dir");
 }
 
+=head2 unzip_gz
+
+Decompress a downloaded file using gzunzip
+
+=cut
+
+sub unzip_gz {
+    my $self = shift;
+    my $file = shift || $self->get_destination;
+    my @args = ('gunzip', "$file");
+    if (-s $file) {
+        $self->execute_system_command(@args);
+    }
+    unlink($file);
+    $file =~ s/\.gz$//;
+    unless (-s $file) {
+        $self->debug("Removing empty file: $file");
+        unlink $file;
+    }
+}
+
+=head2 unzip_zip
+
+Decompress a downloaded file using unzip.
+
+=cut
+
 sub unzip_zip {
     my $self = shift;
     my $file = shift || $self->get_destination;
     my @args = ('unzip', "$file", '-d', $self->get_destination_dir);
     $self->execute_system_command(@args);
+    unlink($self->get_destination);
 }
 
 1;
