@@ -36,6 +36,8 @@ sub BUILD {
                 my @args = ('unzip', $file, @files_to_extract, '-d', 
                     $self->get_destination_dir);
                 $self->execute_system_command(@args);
+                $self->debug("Removing original file: $file");
+                unlink($file);
             },
         },
     ]);
