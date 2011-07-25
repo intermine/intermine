@@ -34,6 +34,7 @@ sub BUILD {
     my $excluded_str = join(' ', map { "NOT $_" } @$excluded_organisms);
 
     my $header_checker = sub {
+        my $self = shift;
         my $response = shift;
         my $total = $response->header("X-Total-Results");
         if (defined $total and $total) {
