@@ -199,315 +199,323 @@ public class DisplayConstraintTest extends TestCase
         }
     }
 
-    public void testGetCode() {
-        assertNull(dcAttribute.getCode());
-        assertNull(dcNullPathConstraint.getCode());
-        assertEquals("A", dcInTemplate.getCode());
+    // this test isn't closing database connections properly
+    // or cleaning up the userprofile db, I had 400+ "test users" in my db
+    public void testIAmABadTest() {
+        // TODO please fix this test!
+        assertEquals("I am a working test", "false");
     }
 
-    public void testIsEditableInTemplate() {
-        assertEquals(false, dcAttribute.isEditableInTemplate());
-        assertEquals(false, dcNullPathConstraint.isEditableInTemplate());
-    }
 
-    public void testGetSelectedValue() {
-        assertEquals("11000014", dcAttribute.getSelectedValue());
-        assertEquals("IS NOT NULL", dcNull.getSelectedValue());
-        assertEquals("MySecondEmployeeList", dcBag.getSelectedValue());
-        assertEquals("Employee", dcLookup.getSelectedValue());
-        assertEquals("Manager", dcSubclass.getSelectedValue());
-        assertEquals("Company", dcLoop.getSelectedValue());
-        assertNull(dcNullPathConstraint.getSelectedValue());
-
-        dcAttribute2.setBagSelected(true);
-        dcAttribute2.setSelectedBagValue("secondEmployeeBag");
-        assertEquals("secondEmployeeBag", dcAttribute2.getSelectedValue());
-    }
-
-    public void testIsBagSelected() {
-        assertEquals(false, dcAttribute.isBagSelected());
-        dcAttribute.setBagSelected(true);
-        assertEquals(true, dcAttribute.isBagSelected());
-        dcAttribute.setBagSelected(false);
-        assertEquals(true, dcBag.isBagSelected());
-        assertEquals(false, dcNullPathConstraint.isBagSelected());
-    }
-
-    public void testIsNullSelected() {
-        assertEquals(false, dcAttribute.isNullSelected());
-        assertEquals(true, dcNull.isNullSelected());
-        assertEquals(false, dcNullPathConstraint.isNullSelected());
-    }
-
-    public void testIsValueSelected() {
-        assertEquals(true, dcAttribute.isValueSelected());
-        assertEquals(true, dcLookup.isValueSelected());
-        assertEquals(false, dcNull.isValueSelected());
-        assertEquals(false, dcBag.isValueSelected());
-        assertEquals(true, dcSubclass.isValueSelected());
-        assertEquals(false, dcLoop.isValueSelected());
-        assertEquals(false, dcNullPathConstraint.isValueSelected());
-    }
-
-    public void testIsLoopSelected() {
-        assertEquals(false, dcAttribute.isLoopSelected());
-        assertEquals(true, dcLoop.isLoopSelected());
-        assertEquals(false, dcNullPathConstraint.isLoopSelected());
-    }
-
-    /**
-     * Return the last class in the path and fieldname as the title for the constraint.
-     */
-    public void testGetTitle() {
-        assertEquals("Department id", dcAttribute.getTitle());
-        assertEquals("Company oldComs", dcLoop.getTitle());
-        assertEquals("Employee id", dcNullPathConstraint.getTitle());
-    }
-
-    /**
-     * Return the label associated with a constraint if editing a template query constraint.
-     */
-    public void testGetDescription() {
-        assertNull(dcAttribute.getDescription());
-        assertNull(dcNullPathConstraint.getDescription());
-    }
-
-    /**
-     * Return a help message to display alongside the constraint, this will examine the constraint
-     * type and generate and appropriate message, e.g. list the key fields for LOOKUP constraints
-     * and explain the use of wildcards.  Returns null when there is no appropriate help.
-     */
-    public void testGetHelpMessage() {
-        assertNotNull(dcAttribute.getHelpMessage());
-        assertNotNull(dcLookup.getHelpMessage());
-        assertNotNull(dcNullPathConstraint.getHelpMessage());
-    }
-
-    /**
-     * If the bag is selected, return the value setted with the method setSelectedBagOp
-     * If editing an existing constraint return the operation used.
-     * Otherwise return null.
-     */
-    public void testGetSelectedOp() {
-        DisplayConstraintOption dco = null;
-        dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
-                ConstraintOp.EQUALS.getIndex());
-        assertEquals(dco.getLabel(), dcAttribute.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcAttribute.getSelectedOp().getProperty());
-
-        dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(),
-                ConstraintOp.IS_NOT_NULL.getIndex());
-        assertEquals(dco.getLabel(), dcNull.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcNull.getSelectedOp().getProperty());
-
-        dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(),
-                ConstraintOp.IN.getIndex());
-        assertEquals(dco.getLabel(), dcBag.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcBag.getSelectedOp().getProperty());
-
-        dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(),
-                ConstraintOp.LOOKUP.getIndex());
-        assertEquals(dco.getLabel(), dcLookup.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcLookup.getSelectedOp().getProperty());
-
-        assertNull(dcSubclass.getSelectedOp());
-
-        dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
-                ConstraintOp.EQUALS.getIndex());
-        assertEquals(dco.getLabel(), dcLoop.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcLoop.getSelectedOp().getProperty());
-
-        assertNull(dcNullPathConstraint.getSelectedOp());
-
-        dcAttribute2.setBagSelected(true);
-        dcAttribute2.setSelectedBagOp(ConstraintOp.IN);
-        dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(),
-                ConstraintOp.IN.getIndex());
-        assertEquals(dco.getLabel(), dcAttribute2.getSelectedOp().getLabel());
-        assertEquals(dco.getProperty(), dcAttribute2.getSelectedOp().getProperty());
-    }
-
-    /**
-     * If editing an existing LOOKUP constraint return the value selected for the extra constraint
-     * field.  Otherwise return null
-     */
-    public void testGetSelectedExtraValue() {
-        assertNull(dcAttribute.getSelectedExtraValue());
-        assertEquals("DepartmentA1", dcLookup.getSelectedExtraValue());
-        assertNull(dcNullPathConstraint.getSelectedExtraValue());
-    }
-
-    /**
-     * Given the path being constrained return the valid constraint operations.  If constraining an
-     * attribute the valid ops depend on the type being constraint - String, Integer, Boolean, etc.
-     */
-    public void testGetValidOps() {
-        assertEquals(8, dcAttribute.getValidOps().size());
-        assertEquals(6, dcNull.getValidOps().size());
-        assertEquals(2, dcBag.getValidOps().size());
-        assertEquals(1, dcLookup.getValidOps().size());
-        assertEquals(0, dcSubclass.getValidOps().size());
-        assertEquals(2, dcLoop.getValidOps().size());
-        assertEquals(6, dcNullPathConstraint.getValidOps().size());
-    }
-
-    public void testGetLoopQueryOps() {
-        assertEquals(2, dcLoop.getLoopQueryOps().size());
-    }
-
-    /**
-     * Return true if this constraint should be a LOOKUP, true if constraining a class (ref/col)
-     * instead of an attribute and that class has class keys defined.
-     */
-    public void testIsLookup() {
-        assertEquals(false, dcAttribute.isLookup());
-        assertEquals(true, dcLookup.isLookup());
-        assertEquals(false, dcNullPathConstraint.isLookup());
-    }
-
-    public void testGetLookupOp() {
-        assertEquals(ConstraintOp.LOOKUP.toString(), dcLookup.getLookupOp().getLabel());
-        assertEquals(ConstraintOp.LOOKUP.getIndex(), dcLookup.getLookupOp().getProperty());
-    }
-
-    /**
-     * Return the autocompleter for this path if one is available.  Otherwise return null.
-     * @return an autocompleter for this path or null
-     */
-    /*
-    public void testGetAutoCompleter() {
-        if (ac != null && ac.hasAutocompleter(endCls, fieldName)) {
-            return ac;
-        }
-        return null;
-    }
-    */
-
-    /**
-     * Values to populate a dropdown for the path if possible values are available.
-     */
-    public void testGetPossibleValues() {
-        assertEquals(3, dcAttribute.getPossibleValues().size());
-        assertNull(dcNull.getPossibleValues());
-        assertNull(dcBag.getPossibleValues());
-        assertNull(dcNullPathConstraint.getPossibleValues());
-    }
-
-    /**
-     * If a dropdown is available for a constraint fewer operations are possible, return the list
-     * of operations.
-     */
-    public void testGetFixedOps() {
-        assertEquals(6, dcAttribute.getFixedOps().size());
-        assertNull(dcNull.getFixedOps());
-        assertNull(dcNullPathConstraint.getFixedOps());
-    }
-
-    /**
-     * Return true if this is a LOOKUP constraint and an extra constraint should be available.
-     */
-    public void testIsExtraConstraint() {
-        assertEquals(false, dcAttribute.isExtraConstraint());
-        assertEquals(true, dcLookup.isExtraConstraint());
-        assertEquals(false, dcNullPathConstraint.isExtraConstraint());
-    }
-
-    /**
-     * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
-     * the possible values for populating a dropdown.  Otherwise return null.
-     */
-    public void testGetExtraConstraintValues() {
-        assertNull(dcAttribute.getExtraConstraintValues());
-        assertEquals(3, dcLookup.getExtraConstraintValues().size());
-    }
-
-    /**
-     * If a LOOKUP constraint and an extra value constraint is available return the classname of
-     * the extra constraint so it can be displayed.  Otherwise return null.
-     */
-    public void testGetExtraConstraintClassName() {
-        assertNull(dcAttribute.getExtraConstraintClassName());
-        assertEquals("Department", dcLookup.getExtraConstraintClassName());
-    }
-
-    /**
-     * Get a list of public and user bag names available for this path.  If none available return
-     * null.
-     */
-    public void testGetBags() {
-        assertNull(dcAttribute.getBags());
-        assertEquals(2, dcBag.getBags().size());
-        assertEquals(2, dcNullPathConstraint.getBags().size());
-    }
-
-    public void testGetBagsOps() {
-        assertEquals(2, dcBag.getBagOps().size());
-    }
-
-    /**
-     * Returns the bag type that the constraint can be constrained to.
-     *
-     */
-    public void testGetBagType() {
-        assertNull(dcAttribute.getBagType());
-        assertEquals("Employee", dcNull.getBagType());
-        assertEquals("Employee", dcNullPathConstraint.getBagType());
-    }
-
-    /**
-     * Returns the constraint type selected.
-     *
-     */
-    public void testGetSelectedConstraint() {
-        assertEquals("attribute", dcAttribute.getSelectedConstraint());
-        assertEquals("empty", dcNull.getSelectedConstraint());
-        assertEquals("bag", dcBag.getSelectedConstraint());
-        assertEquals("loopQuery", dcLoop.getSelectedConstraint());
-        assertEquals("attribute", dcLookup.getSelectedConstraint());
-        assertEquals("attribute", dcSubclass.getSelectedConstraint());
-        assertEquals("attribute", dcNullPathConstraint.getSelectedConstraint());
-    }
-
-    /**
-     * Returns the set of paths that could feasibly be loop constrained onto the constraint's path,
-     * given the query's outer join situation. A candidate path must be a class path, of the same
-     * type, and in the same outer join group.
-     */
-    public void testGetCandidateLoops() {
-        try {
-            assertEquals(0, dcAttribute.getCandidateLoops().size());
-            assertEquals(1, dcLoop.getCandidateLoops().size());
-        } catch (PathException pe) {
-            pe.printStackTrace();
-        }
-    }
-
-    /**
-     * Return true if the constraint is locked, it should'n be enabled or disabled.
-     */
-    public void testIsLocked() {
-        assertEquals(true, dcAttribute.isLocked());
-        assertEquals(true, dcNullPathConstraint.isLocked());
-        assertEquals(false, dcInTemplate.isLocked());
-    }
-
-    /**
-     * Return true if the constraint is enabled, false if it is disabled or locked.
-     */
-    public void testIsEnabled() {
-        assertEquals(false, dcAttribute.isEnabled());
-        assertEquals(false, dcNullPathConstraint.isEnabled());
-        assertEquals(true, dcInTemplate.isEnabled());
-    }
-
-    /**
-     * Return the value on, off, locked depending on the constraint SwitchOffAbility .
-     */
-    public void testGetSwitchable() {
-        assertEquals("locked", dcAttribute.getSwitchable());
-        assertEquals("locked", dcNullPathConstraint.getSwitchable());
-        assertEquals("on", dcInTemplate.getSwitchable());
-    }
+//    public void testGetCode() {
+//        assertNull(dcAttribute.getCode());
+//        assertNull(dcNullPathConstraint.getCode());
+//        assertEquals("A", dcInTemplate.getCode());
+//    }
+//
+//    public void testIsEditableInTemplate() {
+//        assertEquals(false, dcAttribute.isEditableInTemplate());
+//        assertEquals(false, dcNullPathConstraint.isEditableInTemplate());
+//    }
+//
+//    public void testGetSelectedValue() {
+//        assertEquals("11000014", dcAttribute.getSelectedValue());
+//        assertEquals("IS NOT NULL", dcNull.getSelectedValue());
+//        assertEquals("MySecondEmployeeList", dcBag.getSelectedValue());
+//        assertEquals("Employee", dcLookup.getSelectedValue());
+//        assertEquals("Manager", dcSubclass.getSelectedValue());
+//        assertEquals("Company", dcLoop.getSelectedValue());
+//        assertNull(dcNullPathConstraint.getSelectedValue());
+//
+//        dcAttribute2.setBagSelected(true);
+//        dcAttribute2.setSelectedBagValue("secondEmployeeBag");
+//        assertEquals("secondEmployeeBag", dcAttribute2.getSelectedValue());
+//    }
+//
+//    public void testIsBagSelected() {
+//        assertEquals(false, dcAttribute.isBagSelected());
+//        dcAttribute.setBagSelected(true);
+//        assertEquals(true, dcAttribute.isBagSelected());
+//        dcAttribute.setBagSelected(false);
+//        assertEquals(true, dcBag.isBagSelected());
+//        assertEquals(false, dcNullPathConstraint.isBagSelected());
+//    }
+//
+//    public void testIsNullSelected() {
+//        assertEquals(false, dcAttribute.isNullSelected());
+//        assertEquals(true, dcNull.isNullSelected());
+//        assertEquals(false, dcNullPathConstraint.isNullSelected());
+//    }
+//
+//    public void testIsValueSelected() {
+//        assertEquals(true, dcAttribute.isValueSelected());
+//        assertEquals(true, dcLookup.isValueSelected());
+//        assertEquals(false, dcNull.isValueSelected());
+//        assertEquals(false, dcBag.isValueSelected());
+//        assertEquals(true, dcSubclass.isValueSelected());
+//        assertEquals(false, dcLoop.isValueSelected());
+//        assertEquals(false, dcNullPathConstraint.isValueSelected());
+//    }
+//
+//    public void testIsLoopSelected() {
+//        assertEquals(false, dcAttribute.isLoopSelected());
+//        assertEquals(true, dcLoop.isLoopSelected());
+//        assertEquals(false, dcNullPathConstraint.isLoopSelected());
+//    }
+//
+//    /**
+//     * Return the last class in the path and fieldname as the title for the constraint.
+//     */
+//    public void testGetTitle() {
+//        assertEquals("Department id", dcAttribute.getTitle());
+//        assertEquals("Company oldComs", dcLoop.getTitle());
+//        assertEquals("Employee id", dcNullPathConstraint.getTitle());
+//    }
+//
+//    /**
+//     * Return the label associated with a constraint if editing a template query constraint.
+//     */
+//    public void testGetDescription() {
+//        assertNull(dcAttribute.getDescription());
+//        assertNull(dcNullPathConstraint.getDescription());
+//    }
+//
+//    /**
+//     * Return a help message to display alongside the constraint, this will examine the constraint
+//     * type and generate and appropriate message, e.g. list the key fields for LOOKUP constraints
+//     * and explain the use of wildcards.  Returns null when there is no appropriate help.
+//     */
+//    public void testGetHelpMessage() {
+//        assertNotNull(dcAttribute.getHelpMessage());
+//        assertNotNull(dcLookup.getHelpMessage());
+//        assertNotNull(dcNullPathConstraint.getHelpMessage());
+//    }
+//
+//    /**
+//     * If the bag is selected, return the value setted with the method setSelectedBagOp
+//     * If editing an existing constraint return the operation used.
+//     * Otherwise return null.
+//     */
+//    public void testGetSelectedOp() {
+//        DisplayConstraintOption dco = null;
+//        dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
+//                ConstraintOp.EQUALS.getIndex());
+//        assertEquals(dco.getLabel(), dcAttribute.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcAttribute.getSelectedOp().getProperty());
+//
+//        dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(),
+//                ConstraintOp.IS_NOT_NULL.getIndex());
+//        assertEquals(dco.getLabel(), dcNull.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcNull.getSelectedOp().getProperty());
+//
+//        dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(),
+//                ConstraintOp.IN.getIndex());
+//        assertEquals(dco.getLabel(), dcBag.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcBag.getSelectedOp().getProperty());
+//
+//        dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(),
+//                ConstraintOp.LOOKUP.getIndex());
+//        assertEquals(dco.getLabel(), dcLookup.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcLookup.getSelectedOp().getProperty());
+//
+//        assertNull(dcSubclass.getSelectedOp());
+//
+//        dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
+//                ConstraintOp.EQUALS.getIndex());
+//        assertEquals(dco.getLabel(), dcLoop.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcLoop.getSelectedOp().getProperty());
+//
+//        assertNull(dcNullPathConstraint.getSelectedOp());
+//
+//        dcAttribute2.setBagSelected(true);
+//        dcAttribute2.setSelectedBagOp(ConstraintOp.IN);
+//        dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(),
+//                ConstraintOp.IN.getIndex());
+//        assertEquals(dco.getLabel(), dcAttribute2.getSelectedOp().getLabel());
+//        assertEquals(dco.getProperty(), dcAttribute2.getSelectedOp().getProperty());
+//    }
+//
+//    /**
+//     * If editing an existing LOOKUP constraint return the value selected for the extra constraint
+//     * field.  Otherwise return null
+//     */
+//    public void testGetSelectedExtraValue() {
+//        assertNull(dcAttribute.getSelectedExtraValue());
+//        assertEquals("DepartmentA1", dcLookup.getSelectedExtraValue());
+//        assertNull(dcNullPathConstraint.getSelectedExtraValue());
+//    }
+//
+//    /**
+//     * Given the path being constrained return the valid constraint operations.  If constraining an
+//     * attribute the valid ops depend on the type being constraint - String, Integer, Boolean, etc.
+//     */
+//    public void testGetValidOps() {
+//        assertEquals(8, dcAttribute.getValidOps().size());
+//        assertEquals(6, dcNull.getValidOps().size());
+//        assertEquals(2, dcBag.getValidOps().size());
+//        assertEquals(1, dcLookup.getValidOps().size());
+//        assertEquals(0, dcSubclass.getValidOps().size());
+//        assertEquals(2, dcLoop.getValidOps().size());
+//        assertEquals(6, dcNullPathConstraint.getValidOps().size());
+//    }
+//
+//    public void testGetLoopQueryOps() {
+//        assertEquals(2, dcLoop.getLoopQueryOps().size());
+//    }
+//
+//    /**
+//     * Return true if this constraint should be a LOOKUP, true if constraining a class (ref/col)
+//     * instead of an attribute and that class has class keys defined.
+//     */
+//    public void testIsLookup() {
+//        assertEquals(false, dcAttribute.isLookup());
+//        assertEquals(true, dcLookup.isLookup());
+//        assertEquals(false, dcNullPathConstraint.isLookup());
+//    }
+//
+//    public void testGetLookupOp() {
+//        assertEquals(ConstraintOp.LOOKUP.toString(), dcLookup.getLookupOp().getLabel());
+//        assertEquals(ConstraintOp.LOOKUP.getIndex(), dcLookup.getLookupOp().getProperty());
+//    }
+//
+//    /**
+//     * Return the autocompleter for this path if one is available.  Otherwise return null.
+//     * @return an autocompleter for this path or null
+//     */
+//    /*
+//    public void testGetAutoCompleter() {
+//        if (ac != null && ac.hasAutocompleter(endCls, fieldName)) {
+//            return ac;
+//        }
+//        return null;
+//    }
+//    */
+//
+//    /**
+//     * Values to populate a dropdown for the path if possible values are available.
+//     */
+//    public void testGetPossibleValues() {
+//        assertEquals(3, dcAttribute.getPossibleValues().size());
+//        assertNull(dcNull.getPossibleValues());
+//        assertNull(dcBag.getPossibleValues());
+//        assertNull(dcNullPathConstraint.getPossibleValues());
+//    }
+//
+//    /**
+//     * If a dropdown is available for a constraint fewer operations are possible, return the list
+//     * of operations.
+//     */
+//    public void testGetFixedOps() {
+//        assertEquals(6, dcAttribute.getFixedOps().size());
+//        assertNull(dcNull.getFixedOps());
+//        assertNull(dcNullPathConstraint.getFixedOps());
+//    }
+//
+//    /**
+//     * Return true if this is a LOOKUP constraint and an extra constraint should be available.
+//     */
+//    public void testIsExtraConstraint() {
+//        assertEquals(false, dcAttribute.isExtraConstraint());
+//        assertEquals(true, dcLookup.isExtraConstraint());
+//        assertEquals(false, dcNullPathConstraint.isExtraConstraint());
+//    }
+//
+//    /**
+//     * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
+//     * the possible values for populating a dropdown.  Otherwise return null.
+//     */
+//    public void testGetExtraConstraintValues() {
+//        assertNull(dcAttribute.getExtraConstraintValues());
+//        assertEquals(3, dcLookup.getExtraConstraintValues().size());
+//    }
+//
+//    /**
+//     * If a LOOKUP constraint and an extra value constraint is available return the classname of
+//     * the extra constraint so it can be displayed.  Otherwise return null.
+//     */
+//    public void testGetExtraConstraintClassName() {
+//        assertNull(dcAttribute.getExtraConstraintClassName());
+//        assertEquals("Department", dcLookup.getExtraConstraintClassName());
+//    }
+//
+//    /**
+//     * Get a list of public and user bag names available for this path.  If none available return
+//     * null.
+//     */
+//    public void testGetBags() {
+//        assertNull(dcAttribute.getBags());
+//        assertEquals(2, dcBag.getBags().size());
+//        assertEquals(2, dcNullPathConstraint.getBags().size());
+//    }
+//
+//    public void testGetBagsOps() {
+//        assertEquals(2, dcBag.getBagOps().size());
+//    }
+//
+//    /**
+//     * Returns the bag type that the constraint can be constrained to.
+//     *
+//     */
+//    public void testGetBagType() {
+//        assertNull(dcAttribute.getBagType());
+//        assertEquals("Employee", dcNull.getBagType());
+//        assertEquals("Employee", dcNullPathConstraint.getBagType());
+//    }
+//
+//    /**
+//     * Returns the constraint type selected.
+//     *
+//     */
+//    public void testGetSelectedConstraint() {
+//        assertEquals("attribute", dcAttribute.getSelectedConstraint());
+//        assertEquals("empty", dcNull.getSelectedConstraint());
+//        assertEquals("bag", dcBag.getSelectedConstraint());
+//        assertEquals("loopQuery", dcLoop.getSelectedConstraint());
+//        assertEquals("attribute", dcLookup.getSelectedConstraint());
+//        assertEquals("attribute", dcSubclass.getSelectedConstraint());
+//        assertEquals("attribute", dcNullPathConstraint.getSelectedConstraint());
+//    }
+//
+//    /**
+//     * Returns the set of paths that could feasibly be loop constrained onto the constraint's path,
+//     * given the query's outer join situation. A candidate path must be a class path, of the same
+//     * type, and in the same outer join group.
+//     */
+//    public void testGetCandidateLoops() {
+//        try {
+//            assertEquals(0, dcAttribute.getCandidateLoops().size());
+//            assertEquals(1, dcLoop.getCandidateLoops().size());
+//        } catch (PathException pe) {
+//            pe.printStackTrace();
+//        }
+//    }
+//
+//    /**
+//     * Return true if the constraint is locked, it should'n be enabled or disabled.
+//     */
+//    public void testIsLocked() {
+//        assertEquals(true, dcAttribute.isLocked());
+//        assertEquals(true, dcNullPathConstraint.isLocked());
+//        assertEquals(false, dcInTemplate.isLocked());
+//    }
+//
+//    /**
+//     * Return true if the constraint is enabled, false if it is disabled or locked.
+//     */
+//    public void testIsEnabled() {
+//        assertEquals(false, dcAttribute.isEnabled());
+//        assertEquals(false, dcNullPathConstraint.isEnabled());
+//        assertEquals(true, dcInTemplate.isEnabled());
+//    }
+//
+//    /**
+//     * Return the value on, off, locked depending on the constraint SwitchOffAbility .
+//     */
+//    public void testGetSwitchable() {
+//        assertEquals("locked", dcAttribute.getSwitchable());
+//        assertEquals("locked", dcNullPathConstraint.getSwitchable());
+//        assertEquals("on", dcInTemplate.getSwitchable());
+//    }
 
     public class MokaBagQueryConfig extends BagQueryConfig {
 
