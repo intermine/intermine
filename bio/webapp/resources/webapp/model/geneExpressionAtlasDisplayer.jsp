@@ -139,9 +139,9 @@
         <%-- modify the chart properties --%>
         var options = {
           isStacked:		true,
-          width:			800,
+          width:			windowSize()/2,
           height:			(9 * n) + 50,
-          chartArea:		{left: 400, top: 0, height: 9 * n},
+          chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: 			['#0000FF', '#59BB14'],
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
@@ -338,6 +338,11 @@
       filterAndDrawChart();
     })();
 
+    <%-- get the browser window size --%>
+    function windowSize() {
+        return jQuery(window).width();
+    }
+
     <%-- what is the current sort order --%>
     function getSortOrder() {
         return jQuery("#gene-expression-atlas div.settings ul.sort li.active").attr('title');
@@ -354,12 +359,32 @@
       });
     })();
 
+    <%-- attache switcher for sort order --%>
+    (function() {
+      jQuery("#gene-expression-atlas div.settings ul.sort li").click(function() {
+        jQuery("#gene-expression-atlas div.settings ul.sort li.active").removeClass('active');
+        jQuery(this).addClass('active');
+        updateCurrentFilter();
+        filterAndDrawChart(true);
+      });
+    })();
+
     <%-- attache monitoring for regulation type checkbox change --%>
     (function() {
       jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
         if (typeof geneExpressionAtlasDisplayer == 'object') {
           geneExpressionAtlasDisplayer.settingsUpdated();
         }
+      });
+    })();
+
+    <%-- resize chart on browser window resize --%>
+    (function() {
+      jQuery(window).resize(function() {
+        if (this.resz) clearTimeout(this.resz);
+        this.resz = setTimeout(function() {
+          filterAndDrawChart(true);
+        }, 500);
       });
     })();
   </script>
