@@ -73,7 +73,7 @@ public class WebConfig
     public static WebConfig parse(ServletContext context, Model model)
         throws IOException, SAXException, ClassNotFoundException, FileNotFoundException {
 
-    	BasicConfigurator.configure();
+        BasicConfigurator.configure();
 
         InputStream webconfXML = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (webconfXML == null)
@@ -244,9 +244,9 @@ public class WebConfig
             if (is == null)
                 throw new FileNotFoundException("Could not find mappings file: " + fileName);
             try {
-	            theseProps.load(is);
+                theseProps.load(is);
             } catch (IOException e) {
-            	throw new Error("Problem reading from " + fileName, e);
+                throw new Error("Problem reading from " + fileName, e);
             }
             if (!props.isEmpty()) {
                 for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
@@ -258,10 +258,10 @@ public class WebConfig
                 }
             }
             if (theseProps.isEmpty()) {
-            	LOG.info("No properties loaded from " + fileName);
+                LOG.info("No properties loaded from " + fileName);
             } else {
-            	LOG.info("Merging in " + theseProps.size() + " mappings from " + fileName);
-	            props.putAll(theseProps);
+                LOG.info("Merging in " + theseProps.size() + " mappings from " + fileName);
+                props.putAll(theseProps);
             }
         }
         return props;
@@ -300,12 +300,12 @@ public class WebConfig
      * @param fieldNameProperties The mapping from our field names to a readable version
      */
     private void labelClass(
-    		final ClassDescriptor cd,
-    		final Properties classNameProperties,
+            final ClassDescriptor cd,
+            final Properties classNameProperties,
             final Properties fieldNameProperties) {
         String originalName = cd.getUnqualifiedName();
         if ("InterMineObject".equals(originalName)) {
-        	return;
+            return;
         }
         Type classConfig = getTypes().get(cd.getName());
         if (classConfig == null) {
