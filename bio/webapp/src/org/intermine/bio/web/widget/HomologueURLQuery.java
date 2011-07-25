@@ -47,7 +47,7 @@ public class HomologueURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName",
+        q.addViews("Gene.secondaryIdentifier", "Gene.symbol", "Gene.organism.shortName",
                 "Gene.homologues.homologue.primaryIdentifier",
                 "Gene.homologues.homologue.symbol",
                 "Gene.homologues.homologue.organism.shortName",
@@ -60,7 +60,7 @@ public class HomologueURLQuery implements WidgetURLQuery
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
-        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy("Gene.secondaryIdentifier", OrderDirection.ASC);
         q.addOrderBy("Gene.homologues.homologue.organism.name", OrderDirection.ASC);
         q.addOrderBy("Gene.homologues.homologue.primaryIdentifier", OrderDirection.ASC);
         return q;
