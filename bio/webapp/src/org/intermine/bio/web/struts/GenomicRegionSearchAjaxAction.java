@@ -11,6 +11,7 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -35,11 +36,13 @@ import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.TableExportForm;
 
 /**
@@ -55,6 +58,7 @@ public class GenomicRegionSearchAjaxAction extends Action
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unused")
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -183,7 +187,26 @@ public class GenomicRegionSearchAjaxAction extends Action
                         criteria, flankingSize, featureMap);
             }
 
-            PathQuery q = grsService.getExportFeaturesQuery(featureIdSet, facet);
+            // Can read from web.properties to get pre-defined views
+            Set<String> exportFeaturesViews = null;
+
+            // == Experiment code ==
+            String exportFeaturesViewsStr = SessionMethods.getWebProperties(
+                    request.getSession().getServletContext()).getProperty(
+                    "genomicRegionSearch.query.exportFeatures.views");
+
+            if (exportFeaturesViewsStr != null) {
+                try {
+                    exportFeaturesViews = new LinkedHashSet<String>(Arrays.asList(StringUtil
+                            .split(exportFeaturesViewsStr, ",")));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // == End of experiment code ==
+
+            PathQuery q = grsService.getExportFeaturesQuery(featureIdSet,
+                    facet, exportFeaturesViews);
 
             String organism = new String();
             for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap.entrySet()) {
@@ -229,11 +252,35 @@ public class GenomicRegionSearchAjaxAction extends Action
                 exportForm.setDoGzip(doGzip);
             }
 
-            // TODO add BED format
+            if ("bed".equals(format)) {
+                String ucscCompatibleCheck = "yes"; // TODO parameter pass from webpage
+                exportForm = new BEDExportForm();
+                exportForm.setDoGzip(doGzip);
+                ((BEDExportForm) exportForm).setOrgansimString(organism);
+                ((BEDExportForm) exportForm).setUcscCompatibleCheck(ucscCompatibleCheck);
+            }
 
             exporter.export(pt, request, response, exportForm);
 
             return null;
+        }
+
+        // Create List
+        if (request.getParameter("createList") != null) {
+            String criteria = request.getParameter("criteria"); // all or location
+            String facet = request.getParameter("facet"); // "SequenceFeature" or any featureType
+
+            // TODO test
+            facet = "Gene";
+            String idStr = "362093157";
+            // get ids
+
+            ForwardParameters forward = new ForwardParameters(
+                    mapping.findForward("saveFromIdsToBag"))
+                    .addParameter("ids", idStr)
+                    .addParameter("type", facet)
+                    .addParameter("source", "genomicRegionSearchAction"); // potentially erroneous
+            return forward.forward();
         }
 
         return null;
