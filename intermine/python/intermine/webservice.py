@@ -62,12 +62,23 @@ class Service(object):
       for row in query.results():
         do_something_with(row)
         ...
+
+      new_list = service.create_list("some/file/with.ids", "Gene")
+      list_on_server = service.get_list("On server")
+      in_both = new_list & list_on_server
+      in_both.name = "Intersection of these lists"
+      for row in in_both.to_attribute_query().results():
+        do_something_with(row)
+        ...
       
     OVERVIEW
     --------
     The two methods the user will be most concerned with are:
       - L{Service.new_query}: constructs a new query to query a service with
       - L{Service.get_template}: gets a template from the service
+      - L{ListManager.create_list}: creates a new list on the service
+
+    For list management information, see L{ListManager}.
 
     TERMINOLOGY
     -----------
@@ -82,6 +93,9 @@ class Service(object):
     values of the constraints that exist on the template. Templates are accessed
     by name, and while you can easily introspect templates, it is assumed
     you know what they do when you use them
+
+    X{List} is a saved result set containing a set of objects previously identified
+    in the database. Lists can be created and managed using this client library.
 
     @see: L{intermine.query}
     """
@@ -229,7 +243,7 @@ class Service(object):
         @rtype: string
         """
         if self._release is None:
-            self._release = urllib.urlopen(self.root + RELEASE_PATH).read()
+            self._release = urllib.urlopen(self.root + self.RELEASE_PATH).read()
         return self._release
 
     def new_query(self, root=None):
@@ -347,7 +361,7 @@ class Service(object):
         @type path: string
         @param params: The query parameters for this request as a dictionary
         @type params: dict
-        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @param rowformat: One of "rr", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
         @type rowformat: string
         @param view: The output columns
         @type view: list
@@ -359,6 +373,18 @@ class Service(object):
         return ResultIterator(self.root, path, params, rowformat, view, self.opener, cld)
 
 class ResultObject(object):
+    """
+    An object used to represent result records as returned in jsonobjects format
+    ============================================================================
+
+    These objects are backed by a row of data and the class descriptor that
+    describes the object. They allow access in standard object style:
+
+        for gene in query.results():
+            print gene.symbol
+            print map(lambda x: x.name, gene.pathways)
+
+    """
     
     def __init__(self, data, cld):
         self._data = data
@@ -389,6 +415,21 @@ class ResultObject(object):
             
 
 class ResultRow(object):
+    """
+    An object for representing a row of data received back from the server.
+    =======================================================================
+
+    ResultRows provide access to the fields of the row through index lookup. However, 
+    for convenience both list indexes and dictionary keys can be used. So the 
+    following all work:
+
+       # view is "Gene.symbol", "Gene.organism.name"
+       row["symbol"]
+       row["Gene.symbol"]
+       row[0]
+       row[:1]
+
+    """
 
     def __init__(self, data, views):
         self.data = data
@@ -396,9 +437,11 @@ class ResultRow(object):
         self.index_map = None
 
     def __len__(self):
+        """Return the number of cells in this row"""
         return len(self.data)
 
     def __iter__(self):
+        """Return the list view of the row, so each cell can be processed"""
         return self.to_l()
 
     def __getitem__(self, key):
@@ -432,9 +475,11 @@ class ResultRow(object):
        return " ".join(parts)
 
     def to_l(self):
+       """Return a list view of this row"""
        return map(lambda x: x["value"], self.data)
 
     def to_d(self):
+       """Return a dictionary view of this row"""
        d = {}
        for view in self.views:
            d[view] = self[view]

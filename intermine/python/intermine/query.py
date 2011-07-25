@@ -48,12 +48,32 @@ class Query(object):
        >>>
        >>> for row in query.results():
        ...     handle_row(row)
+
+    OR, using an SQL style DSL:
+
+        >>> s = Service("www.flymine.org/query") 
+        >>> query = s.query("Gene").\
+        ...           select("*", "pathways.*").\
+        ...           where("symbol", "=", "H").\
+        ...           outerjoin("pathways").\
+        ...           order_by("symbol")
+        >>> for row in query.results():
+        ...     handle_row(row)
+
+    OR, for a more SQL-alchemy, ORM style: 
+
+        >>>
+        >>> for gene in s.query(s.model.Gene).filter(s.model.Gene.symbol == ["zen", "H", "eve"]).add_columns(s.model.Gene.alleles):
+        ...    handle(gene)
     
     Query objects represent structured requests for information over the database
     housed at the datawarehouse whose webservice you are querying. They utilise 
     some of the concepts of relational databases, within an object-related 
     ORM context. If you don't know what that means, don't worry: you
     don't need to write SQL, and the queries will be fast.
+
+    To make things slightly more familiar to those with knowledge of SQL, some syntactical
+    sugar is provided to make constructing queries a bit more recognisable.
 
     PRINCIPLES
     ----------
@@ -119,17 +139,24 @@ class Query(object):
     Note I can freely mix attributes and references, as long as every view ends in
     an attribute (a meaningful value). As a short-cut I can also write:
 
-        >>> query.add_view("Gene.name", "Gene.length", "Gene.proteins.sequence.length")
+        >>> query.add_views("Gene.name", "Gene.length", "Gene.proteins.sequence.length")
 
     or:
 
-        >>> query.add_view("Gene.name Gene.length Gene.proteins.sequence.length") 
+        >>> query.add_views("Gene.name Gene.length Gene.proteins.sequence.length") 
 
-    They are all equivalent.
+    They are all equivalent. You can also use common SQL style shortcuts such as "*" for all 
+    attribute fields:
+
+        >>> query.add_views("Gene.*")
+
+    You can also use "select" as a synonymn for "add_view"
 
     Now I can add my constraints. As, we mentioned, I have information about an organism, so:
 
         >>> query.add_constraint("Gene.organism.name", "=", "D. melanogaster")
+
+    (note, here I can use "where" as a synonymn for "add_constraint")
 
     If I run this query, I will get literally millions of results - 
     it needs to be filtered further:
@@ -175,15 +202,36 @@ class Query(object):
        >>> query.add_join("Gene.proteins", "OUTER")
        >>> query.set_logic("A and (B or C)")
 
+    This can be made more concise and readable with a little DSL sugar:
+
+        >>> query = service.query("Gene")
+        >>> query.select("name", "length", "proteins.sequence.length").\
+        ...       where('organism.name' '=', 'D. melanogaster').\
+        ...       where("proteins.sequence.length", "<", 500).\
+        ...       where('symbol', 'ONE OF', ['eve', 'h', 'zen']).\
+        ...       outerjoin('proteins').\
+        ...       set_logic("A and (B or C)")
+
     And the query is defined.
 
     Result Processing
     -----------------
 
     calling ".results()" on a query will return an iterator of rows, where each row 
-    is a list of values, one for each field in the output columns (view) you selected.
+    is a ResultRow object, which can be treated as both a list and a dictionary.
 
-    To process these simply use normal iteration syntax:
+    Which means you can refer to columns by name:
+        
+        >>> for row in query.results():
+        ...     print "name is %s" % (row["name"])
+        ...     print "length is %d" % (row["length"])
+
+    As well as using list indices:
+
+        >>> for row in query.results():
+        ...     print "The first column is %s" % (row[0])
+
+    Iterating over a row iterates over the cell values as a list:
 
         >>> for row in query.results():
         ...     for column in row:
@@ -191,20 +239,15 @@ class Query(object):
 
     Here each row will have a gene name, a gene length, and a sequence length, eg:
 
-        >>> print row
+        >>> print row.to_l
         ["even skipped", "1359", "376"]
 
     To make that clearer, you can ask for a dictionary instead of a list:
 
-        >>> for row in query.result("dict")
-        ...       print row
+        >>> for row in query.result()
+        ...       print row.to_d
         {"Gene.name":"even skipped","Gene.length":"1359","Gene.proteins.sequence.length":"376"}
 
-    Which means you can refer to columns by name:
-        
-        >>> for row in query.result("dict")
-        ...     print "name is", row["Gene.name"]
-        ...     print "length is", row["Gene.length"]
 
     If you just want the raw results, for printing to a file, or for piping to another program, 
     you can request strings instead:
@@ -526,6 +569,13 @@ class Query(object):
         return con
 
     def where(self, *args, **kwargs):
+        """
+        Add a constraint to the query
+        =============================
+
+        In contrast to add_constraint, this method also adds all attributes to the query 
+        if no view has been set, and returns self to support method chaining.
+        """
         if len(self.views) == 0:
             self.add_view(self.root)
 
@@ -663,6 +713,7 @@ class Query(object):
         return self
 
     def outerjoin(self, column):
+        """Alias for add_join(column, "OUTER")"""
         return self.add_join(str(column), "OUTER")
 
     def verify_join_paths(self, joins=None):
@@ -913,8 +964,8 @@ class Query(object):
           for row in query.results():
             do_sth_with(row)
         
-        @param row: the format for the row. Defaults to "list". Valid options are 
-            "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
+        @param row: the format for the row. Defaults to "rr". Valid options are 
+            "rr", "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
         @type row: string
 
         @rtype: L{intermine.webservice.ResultIterator}
@@ -931,15 +982,18 @@ class Query(object):
         return self.service.get_results(path, params, row, view, cld)
 
     def one(self, row="rr"):
+        """Return one result, and raise an error if the result size is not 1"""
         c = self.count()
         if (c != 1):
             raise "Result size is not one: got " + str(c) + " results"
         else:
             return self.first(row)
 
-    def first(self, row="rr"):
+    def first(self, row="rr", start=0):
+        """Return the first result, or None if the results are empty"""
+        size = None if row == "jsonobjects" else 1
         try:
-            return self.results(row, start=0, size=1).next()
+            return self.results(row, start=start, size=size).next()
         except StopIteration:
             return None
 
@@ -958,6 +1012,8 @@ class Query(object):
         list in one place.
 
         It takes all the same arguments and parameters as Query.results
+
+        aliased as 'all'
 
         @see: L{intermine.query.results}
 

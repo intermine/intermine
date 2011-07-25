@@ -12,6 +12,16 @@ import codecs
 from .list import List
 
 class ListManager(object):
+    """
+    A Class for Managing List Content and Operations
+    ================================================
+
+    This class serves as a delegate for the intermine.webservice.Service class, 
+    managing list content and operations. 
+
+    This class is not meant to be called itself, but rather for its
+    methods to be called by the service object.
+    """
 
     DEFAULT_LIST_NAME = "my_list_"
     DEFAULT_DESCRIPTION = "List created with Python client library"
@@ -27,6 +37,7 @@ class ListManager(object):
         self._temp_lists = set()
 
     def refresh_lists(self):
+        """Update the list information with the latest details from the server"""
         self.lists = {}
         url = self.service.root + self.service.LIST_PATH
         sock = self.service.opener.open(url)
@@ -48,27 +59,36 @@ class ListManager(object):
             return d 
 
     def get_list(self, name):
+        """Return a list from the service by name, if it exists"""
         if self.lists is None:
             self.refresh_lists()
         return self.lists.get(name)
 
     def l(self, name):
+        """Alias for get_list"""
         return self.get_list(name)
 
     def get_all_lists(self):
+        """Get all the lists on a webservice"""
         if self.lists is None:
             self.refresh_lists()
         return self.lists.values()
 
     def get_all_list_names(self):
+        """Get all the names of the lists in a particular webservice"""
         if self.lists is None:
             self.refresh_lists()
         return self.lists.keys()
 
     def get_list_count(self):
+        """
+        Return the number of lists accessible at the given webservice. 
+        This number will vary depending on who you are authenticated as.
+        """
         return len(self.get_all_list_names())
 
     def get_unused_list_name(self):
+        """Get a list name that does not conflict with any lists you have access to"""
         list_names = self.get_all_list_names()
         counter = 1
         name = self.DEFAULT_LIST_NAME + str(counter)
@@ -79,6 +99,16 @@ class ListManager(object):
         return name
 
     def create_list(self, content, list_type="", name=None, description=None, tags=[]):
+        """
+        Create a new list in the webservice
+        ===================================
+
+        If no name is given, the list will be considered to be a temporary
+        list, and will be automatically deleted when the program ends. To prevent
+        this happening, give the list a name, either on creation, or by renaming it.
+
+        @rtype: intermine.lists.List
+        """
         if description is None:
             description = self.DEFAULT_DESCRIPTION
 
@@ -115,6 +145,9 @@ class ListManager(object):
         return self.parse_list_upload_response(data)
 
     def parse_list_upload_response(self, response):
+        """
+        Intepret the response from the webserver to a list request, and return the List it describes
+        """
         try:
             response_data = json.loads(response)
         except ValueError:
@@ -128,6 +161,7 @@ class ListManager(object):
         return new_list
 
     def delete_lists(self, lists):
+        """Delete the given lists from the webserver"""
         for l in lists:
             if isinstance(l, List):
                 name = l.name
@@ -145,19 +179,24 @@ class ListManager(object):
         self.refresh_lists()
 
     def delete_temporary_lists(self):
+        """Delete all the lists considered temporary (those created without names)"""
         self.delete_lists(self._temp_lists)
         self._temp_lists = set()
 
     def intersect(self, lists, name=None, description=None, tags=[]):
+        """Calculate the intersection of a given set of lists, and return the list representing the result"""
         return self._do_operation(self.INTERSECTION_PATH, "Intersection", lists, name, description, tags)
 
     def union(self, lists, name=None, description=None, tags=[]):
+        """Calculate the union of a given set of lists, and return the list representing the result"""
         return self._do_operation(self.UNION_PATH, "Union", lists, name, description, tags)
 
     def xor(self, lists, name=None, description=None, tags=[]):
+        """Calculate the symmetric difference of a given set of lists, and return the list representing the result"""
         return self._do_operation(self.DIFFERENCE_PATH, "Difference", lists, name, description, tags)
 
     def subtract(self, lefts, rights, name=None, description=None, tags=[]):
+        """Calculate the subtraction of rights from lefts, and return the list representing the result"""
         left_names = self.make_list_names(lefts)
         right_names = self.make_list_names(rights)
         if description is None:
@@ -197,6 +236,7 @@ class ListManager(object):
 
 
     def make_list_names(self, lists):
+        """Turn a list of things into a list of list names"""
         list_names = []
         for l in lists:
             try:
@@ -212,4 +252,5 @@ class ListManager(object):
         return list_names
 
 class ListServiceError(IOError):
+    """Errors thrown when something goes wrong with list requests"""
     pass
