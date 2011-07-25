@@ -86,10 +86,14 @@
 
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
-      if (redraw) {
-        googleChart();
+      if (liszt.length > 0) {
+        if (redraw) {
+          googleChart();
+        } else {
+          google.setOnLoadCallback(googleChart);
+        }
       } else {
-        google.setOnLoadCallback(googleChart);
+        notify('Nothing to show, adjust the p-value and/or t-stat to see upto ' + geneExpressionAtlasDisplayer.originalList.byName.length + ' results', true);
       }
 
       <%-- the Goog draws here --%>
@@ -346,6 +350,15 @@
     <%-- what is the current sort order --%>
     function getSortOrder() {
         return jQuery("#gene-expression-atlas div.settings ul.sort li.active").attr('title');
+    }
+
+    <%-- show message in place of the chart --%>
+    function notify(message, clear) {
+      if (clear) jQuery('#gene-expression-atlas-chart').empty();
+      jQuery('<p/>', {
+        text: message,
+        style: "border:1px solid #ED9D12; color:#ED9D12; background:#FEF9F1; padding:4px;"
+      }).appendTo('#gene-expression-atlas-chart');
     }
 
     <%-- attache events to the sidebar settings, set as filters and redraw --%>
