@@ -38,11 +38,24 @@ has user_agent => (
 
 has header_checker => (
     init_arg => 'HEADER_CHECKER',
+    traits => ['Code'],
+    handles => { check_headers => 'execute_method' },
     isa => 'CodeRef',
     is => 'ro',
     predicate => 'has_header_checker',
-    default => sub { sub {1} },
+    default => sub {\&default_error_checker},
 );
+
+sub default_error_checker {
+    my $self = shift;
+    my $response = shift or confess "No response";
+    if ($response->content) {
+        return 1;
+    } else {
+        $self->debug("Successful request, but No content received - skipping");
+        return;
+    }
+}
 
 sub build_user_agent {
     return LWP::UserAgent->new;
@@ -59,7 +72,7 @@ sub fetch {
     if ($response->is_error()) {
         $self->die($response->status_line());
     } else {
-        if ($self->get_header_checker->($response)) {
+        if ($self->check_headers($response)) {
             my $fh = $self->get_temp_file->openw();
             $fh->print($response->content);
         }
