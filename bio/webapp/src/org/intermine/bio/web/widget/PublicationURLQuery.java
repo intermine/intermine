@@ -46,8 +46,8 @@ public class PublicationURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.addViews("Gene.secondaryIdentifier", "Gene.primaryIdentifier", "Gene.name",
-                "Gene.organism.name", "Gene.publications.title", "Gene.publications.firstAuthor",
+        q.addViews("Gene.secondaryIdentifier", "Gene.symbol", "Gene.organism.name",
+                "Gene.publications.title", "Gene.publications.firstAuthor",
                 "Gene.publications.journal", "Gene.publications.year",
                 "Gene.publications.pubMedId");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));

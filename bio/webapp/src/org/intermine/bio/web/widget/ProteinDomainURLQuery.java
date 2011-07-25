@@ -48,7 +48,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         String bagType = bag.getType();
         String prefix = ("Protein".equals(bagType) ? "Protein" : "Gene.proteins");
         if ("Gene".equals(bagType)) {
-            q.addViews("Gene.primaryIdentifier", "Gene.secondaryIdentifier");
+            q.addViews("Gene.secondaryIdentifier", "Gene.symbol");
         }
         q.addViews(prefix + ".primaryIdentifier",
                 prefix + ".organism.name",

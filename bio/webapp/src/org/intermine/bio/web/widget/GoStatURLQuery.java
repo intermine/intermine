@@ -52,10 +52,11 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         if ("Protein".equals(bagType)) {
             q.addViews("Protein.primaryAccession");
+        } else {
+            q.addViews("Gene.secondaryIdentifier", "Gene.symbol");
         }
 
         q.addViews(prefix + ".primaryIdentifier",
-                prefix + ".symbol",
                 prefix + ".organism.name",
                 prefix + ".goAnnotation.ontologyTerm.identifier",
                 prefix + ".goAnnotation.ontologyTerm.name",
