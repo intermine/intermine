@@ -47,8 +47,7 @@ public class BDGPURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.addViews("Gene.secondaryIdentifier", "Gene.name", "Gene.organism.name",
-            "Gene.primaryIdentifier");
+        q.addViews("Gene.secondaryIdentifier", "Gene.symbol", "Gene.organism.name");
         List<String> expressionStrings = new ArrayList<String>(Arrays.asList(new String[] {
             "Gene.mRNAExpressionResults.stageRange",
             "Gene.mRNAExpressionResults.mRNAExpressionTerms.name",
