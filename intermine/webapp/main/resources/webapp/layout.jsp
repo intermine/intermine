@@ -29,7 +29,10 @@
 <!-- for microsoft -->
 <meta name="msvalidate.01" content="${WEB_PROPERTIES['searchengines.msn']}" />
 
-<base href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/" />
+<c:if test="${pageName == 'begin'}">
+  <html:base/>
+  <%-- <base href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/${pageName}.do" /> --%>
+</c:if>
 
 <fmt:message key="${pageName}.noFollow" var="noFollow" />
 
