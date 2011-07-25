@@ -10,7 +10,7 @@
     <tr>
       <th class="sortable" title="byLevel">Overall</th>
       <th class="sortable" title="byOrgan">Organ</th>
-      <th class="sortable" title="byCells">Cells</th>
+      <th class="sortable" title="byCells">Cell<br />types</th>
       <th>Antibody staining</th>
     </tr>
   </thead>

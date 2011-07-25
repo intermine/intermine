@@ -95,7 +95,7 @@
 
       <p class="small">* A validation score for immunohistochemistry is assigned for all antibodies and reflects the results of immunostaining.</p>
 
-      <strong>Source</strong>
+      <strong>About &amp; Source</strong>
       <p class="small">This chart represents a normal tissue &amp; organ summary of the antibody staining or the protein expression in a number of
       human tissues and organs. A description of the assay and annotation can be found <a target="new" href="http://www.proteinatlas.org/about/assays+annotation#ih">here</a>.</p>
       <a target="new" href="http://www.proteinatlas.org/"><img src="model/images/protein-atlas.gif" alt="Human Protein Atlas" /></a>
