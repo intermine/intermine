@@ -85,11 +85,11 @@ public class GenomicRegionSearchAction extends InterMineAction
             }
 
             if (resultMap.get("error").size() == grsService.getConstraint()
-                    .getSpanList().size()) { // all spans are wrong
-                request.setAttribute("SpanAllWrong", "true");
+                    .getGenomicRegionList().size()) { // all genomic regions are invalid
+                request.setAttribute("noneValidGenomicRegions", "true");
                 return mapping.findForward("genomicRegionSearchResults");
             } else {
-                grsService.getConstraint().setSpanList(resultMap.get("pass"));
+                grsService.getConstraint().setGenomicRegionList(resultMap.get("pass"));
             }
 
             request.setAttribute("errorMsg", errorMsg);

@@ -41,8 +41,8 @@
 
     jQuery(document).ready(function(){
 
-       if ("${SpanAllWrong}"=="true") {
-           jQuery("#resultDiv").addClass("altmessage").html("<br>No results found.<p>But if you tell us what you want to find out, maybe we can help!  Send us your question using the contact form at the bottom of the page.</p><br>");
+       if ("${noneValidGenomicRegions}"=="true") {
+           jQuery("#resultDiv").addClass("altmessage").html("<br>All genomic regions are invalid.<br>");
        } else {
            init();
 
@@ -101,7 +101,7 @@
 
     function disableExportAll() {
         jQuery("#exportAll").empty();
-        jQuery("#exportAll").append('Export all features:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
+        jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
     }
 
     function enableExportAll() {
@@ -109,15 +109,19 @@
 
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', isEmptyFeature: "true" }, function(isEmptyFeature){
             if (isEmptyFeature.trim() == "hasFeature") {
-                jQuery("#exportAll").append('Export all features:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>');
+                jQuery("#exportAll").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>');
             } else {
-                jQuery("#exportAll").append('Export all features:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
+                jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
             }
          });
     }
 
     function exportFeatures(criteria, facet, format) {
         jQuery.download("genomicRegionSearchAjax.do", "exportFeatures=true&spanUUIDString=${spanUUIDString}&criteria=" + criteria + "&facet=" + facet + "&format=" + format);
+    }
+
+    function createList(criteria, facet) {
+        jQuery.post("genomicRegionSearchAjax.do", { createList: "true", criteria: criteria, facet: facet });
     }
 
     function exportToGalaxy(genomicRegion, orgName) {
