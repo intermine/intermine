@@ -11,8 +11,6 @@ package org.intermine.web.logic.config;
  */
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -26,67 +24,74 @@ public class WebConfigTest extends TestCase
 
 	MockServletContext context = new MockServletContext();
 
-    public WebConfigTest(String arg) {
+    public WebConfigTest(final String arg) {
         super(arg);
 
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.setProperty("web.config.classname.mappings", "CLASS_NAME_MAPPINGS");
         p.setProperty("web.config.fieldname.mappings", "FIELD_NAME_MAPPINGS");
         SessionMethods.setWebProperties(context, p);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("WebConfigTest.xml");
-        InputStream classesIS = getClass().getClassLoader().getResourceAsStream("testClassMappings.properties");
-        InputStream fieldsIS = getClass().getClassLoader().getResourceAsStream("testFieldMappings.properties");
+        final InputStream is = getClass().getClassLoader().getResourceAsStream("WebConfigTest.xml");
+        final InputStream classesIS = getClass().getClassLoader().getResourceAsStream("testClassMappings.properties");
+        final InputStream fieldsIS = getClass().getClassLoader().getResourceAsStream("testFieldMappings.properties");
         context.addInputStream("/WEB-INF/webconfig-model.xml", is);
         context.addInputStream("/WEB-INF/CLASS_NAME_MAPPINGS", classesIS);
         context.addInputStream("/WEB-INF/FIELD_NAME_MAPPINGS", fieldsIS);
     }
 
     public void testParse() throws Exception{
-        WebConfig wc1 = WebConfig.parse(context, Model.getInstanceByName("testmodel"));
+        final WebConfig wc1 = WebConfig.parse(context, Model.getInstanceByName("testmodel"));
 
-        Type employeeType = new Type();
+        final Type employeeType = new Type();
         employeeType.setClassName("org.intermine.model.testmodel.Employee");
         employeeType.setLabel("Angestellter");
-        FieldConfig df1 = new FieldConfig();
+        final FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("name");
         df1.setShowInInlineCollection(true);
         df1.setShowInResults(true);
         df1.setShowInSummary(true);
         employeeType.addFieldConfig(df1);
-        FieldConfig df2 = new FieldConfig();
+        final FieldConfig df2 = new FieldConfig();
         df2.setFieldExpr("department.name");
         df2.setShowInInlineCollection(true);
         df2.setShowInResults(true);
         df2.setShowInSummary(true);
         employeeType.addFieldConfig(df2);
+        final FieldConfig age = new FieldConfig();
+        age.setFieldExpr("age");
+        age.setLabel("Years Alive");
+        age.setShowInSummary(false);
+        age.setShowInResults(false);
+        age.setShowInInlineCollection(false);
+        employeeType.addFieldConfig(age);
 
-        Type managerType = new Type();
+        final Type managerType = new Type();
         managerType.setClassName("org.intermine.model.testmodel.Manager");
-        Displayer managerTableDisplayer = new Displayer();
+        final Displayer managerTableDisplayer = new Displayer();
         managerTableDisplayer.setSrc("/model/tableManager.jsp");
         managerType.setTableDisplayer(managerTableDisplayer);
 
-        FieldConfig df3 = new FieldConfig();
+        final FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
         df3.setShowInInlineCollection(true);
         df3.setShowInResults(true);
         df3.setShowInSummary(true);
         managerType.addFieldConfig(df3);
-        FieldConfig df4 = new FieldConfig();
+        final FieldConfig df4 = new FieldConfig();
         df4.setFieldExpr("seniority");
         df4.setShowInInlineCollection(true);
         df4.setShowInResults(true);
         df4.setShowInSummary(true);
         managerType.addFieldConfig(df4);
-        FieldConfig df5 = new FieldConfig();
+        final FieldConfig df5 = new FieldConfig();
         df5.setFieldExpr("title");
         df5.setDoNotTruncate(true);
         managerType.addFieldConfig(df5);
 
-        Type contractorType = new Type();
+        final Type contractorType = new Type();
         contractorType.setClassName("org.intermine.model.testmodel.Contractor");
-        FieldConfig oldComs = new FieldConfig();
+        final FieldConfig oldComs = new FieldConfig();
         oldComs.setFieldExpr("oldComs");
         oldComs.setLabel("Companies they used to work for");
         oldComs.setShowInInlineCollection(false);
@@ -94,35 +99,54 @@ public class WebConfigTest extends TestCase
         oldComs.setShowInSummary(false);
         contractorType.addFieldConfig(oldComs);
 
-        TableExportConfig tableExportConfig = new TableExportConfig();
+        final TableExportConfig tableExportConfig = new TableExportConfig();
         tableExportConfig.setId("myExporter");
         tableExportConfig.setClassName("java.lang.String");
 
-        Type companyType = new Type();
+        final Type companyType = new Type();
         companyType.setLabel("Firma");
         companyType.setClassName("org.intermine.model.testmodel.Company");
-        FieldConfig vatNo = new FieldConfig();
+        final FieldConfig vatNo = new FieldConfig();
         vatNo.setFieldExpr("vatNumber");
         vatNo.setLabel("VAT Number");
         vatNo.setShowInInlineCollection(false);
         vatNo.setShowInResults(false);
         vatNo.setShowInSummary(false);
         companyType.addFieldConfig(vatNo);
+        final FieldConfig deps = new FieldConfig();
+        deps.setFieldExpr("departments");
+        deps.setLabel("Abteilungen");
+        deps.setShowInInlineCollection(false);
+        deps.setShowInSummary(false);
+        deps.setShowInResults(false);
+        companyType.addFieldConfig(deps);
 
-        Type secretaryType = new Type();
+        final Type secretaryType = new Type();
         secretaryType.setLabel("Personal Assistant");
         secretaryType.setClassName("org.intermine.model.testmodel.Secretary");
 
-        Type simpleType = new Type();
+        final Type simpleType = new Type();
         simpleType.setClassName("org.intermine.model.testmodel.SimpleObject");
 
-        WebConfig wc2 = new WebConfig();
+        final Type departmentType = new Type();
+        departmentType.setClassName("org.intermine.model.testmodel.Department");
+        departmentType.setLabel("Abteilung");
+        final FieldConfig emps = new FieldConfig();
+        emps.setLabel("Angestellter");
+        emps.setFieldExpr("employees");
+        emps.setShowInInlineCollection(false);
+        emps.setShowInResults(false);
+        emps.setShowInSummary(false);
+        departmentType.addFieldConfig(emps);
+
+        final WebConfig wc2 = new WebConfig();
         wc2.addType(employeeType);
         wc2.addType(managerType);
         wc2.addType(companyType);
         wc2.addType(secretaryType);
         wc2.addType(contractorType);
         wc2.addType(simpleType);
+        wc2.addType(departmentType);
         wc2.addTableExportConfig(tableExportConfig);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
@@ -135,7 +159,6 @@ public class WebConfigTest extends TestCase
         assertEquals(displayerAspects, (wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
                 .getAspectDisplayers());
         */
-
         assertEquals(wc2.toString(), wc1.toString());
 
     }
@@ -144,7 +167,7 @@ public class WebConfigTest extends TestCase
         try {
             WebConfig.parse(null, Model.getInstanceByName("testmodel"));
             fail("Expected: NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
         }
 
     }
