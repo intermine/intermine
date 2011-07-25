@@ -53,7 +53,7 @@ module PathQuery
         end
 
         def parse(xml)
-            xml = (xml.is_a?(String)) ? StringIO.new(xml) : xml
+            xml = StringIO.new(xml.to_s)
             handler = get_handler
             REXML::Document.parse_stream(xml, handler)
             return handler.query
@@ -85,14 +85,17 @@ module PathQuery
             @subclass_constraints.each do |sc|
                 q.add_constraint(sc)
             end
-            @query_attributes.sort_by {|k, v| k}.reverse.each do |k,v|
-                q.send(k + "=", v)
-            end
             @joins.each do |j|
                 q.add_join(*j)
             end
             @coded_constraints.each do |con|
                 q.add_constraint(con)
+            end
+            @query_attributes.sort_by {|k, v| k}.reverse.each do |k,v|
+                begin
+                    q.send(k + "=", v)
+                rescue
+                end
             end
             return q
         end
@@ -186,7 +189,7 @@ module PathQuery
         private
 
         def create_query
-            return Template.new(@model)
+            return Template.new(@model, nil, @model.service)
         end
 
     end
@@ -256,43 +259,47 @@ module PathQuery
             return doc
         end
 
+        def results_reader
+            return Results::ResultsReader.new(@url, self)
+        end
+
         def each_row
-            rr = Results::ResultsReader.new(@url, self)
-            rr.each_row {|row|
+            results_reader.each_row {|row|
                 yield row
             }
         end
 
         def each_result
-            rr = Results::ResultsReader.new(@url, self)
-            rr.each_result {|row|
+            results_reader.each_result {|row|
                 yield row
             }
         end
-            
 
         def count
-            rr = Results::ResultsReader.new(@url, self)
-            return rr.get_size
+            return results_reader.get_size
         end
 
         def results
-            rr = Results::ResultsReader.new(@url, self)
             res = []
-            rr.each_row {|row|
+            results_reader.each_row {|row|
                 res << row
             }
             res
         end
-
         
         def get_constraint(code)
             @constraints.each do |x|
-                if x.code == code
+                if x.respond_to?(:code) and x.code == code
                     return x
                 end
             end
             raise ArgumentError, "#{code} not in query"
+        end
+
+        def remove_constraint(code)
+            @constraints.reject! do |x|
+                x.respond_to?(:code) and x.code == code
+            end
         end
 
         def add_views(*views)
@@ -353,9 +360,9 @@ module PathQuery
         end
 
         def add_sort_order(path, direction="ASC") 
-            p = Path.new(add_prefix(path), @model, subclasses)
+            p = self.path(path)
             if !@views.include? p
-                raise ArgumentError, "Sort order (#{p}) not in view"
+                raise ArgumentError, "Sort order (#{p}) not in view (#{@views.map {|v| v.to_s}.inspect} in #{self.name || 'unnamed query'})"
             end
             @sort_order << SortOrder.new(p, direction)
             return self
@@ -365,7 +372,7 @@ module PathQuery
             if so.is_a?(Array)
                 sos = so
             else
-                sos = so.split(/(ASC|DESC)/).map {|x| x.strip}.every(2)
+                sos = so.split(/(ASC|DESC|asc|desc)/).map {|x| x.strip}.every(2)
             end
             sos.each do |args|
                 add_sort_order(*args)
@@ -384,6 +391,10 @@ module PathQuery
             con = @constraint_factory.make_constraint(parameters)
             @constraints << con
             return con
+        end
+
+        def path(pathstr)
+            return Path.new(add_prefix(pathstr), @model, subclasses)
         end
 
         def where(*wheres)
@@ -445,7 +456,11 @@ module PathQuery
                 elsif v.nil?
                     add_constraint(k.to_s, "IS NULL")
                 else
-                    add_constraint(k.to_s, '=', v)
+                    if path(k.to_s).is_attribute?
+                        add_constraint(k.to_s, '=', v)
+                    else
+                        add_constraint(k.to_s, 'LOOKUP', v)
+                    end
                 end
              end
            end
@@ -460,6 +475,8 @@ module PathQuery
             end
             return self
         end
+
+        alias constraintLogic= set_logic
 
         def next_code
             c = LOWEST_CODE
@@ -543,16 +560,16 @@ module PathQuery
                 is_suitable
             }
             if suitable_classes.size > 1
-                raise ArgumentError, "More than one class found for #{parameters}"
+                raise ArgumentError, "More than one class found for #{parameters.inspect}"
             elsif suitable_classes.size < 1
-                raise ArgumentError, "No suitable classes found for #{parameters}"
+                raise ArgumentError, "No suitable classes found for #{parameters.inspect}"
             end
 
             cls = suitable_classes.first
             con = cls.new
             parameters.each_pair { |key, value|
                 if key == :path || key == :loopPath
-                    value = Path.new(@query.add_prefix(value), @query.model, @query.subclasses)
+                    value = @query.path(value)
                 end
                 if key == :sub_class
                     value = Path.new(value, @query.model)
@@ -577,6 +594,8 @@ module PathQuery
 
             return con
         end
+
+
     end
 
     class TemplateConstraintFactory < ConstraintFactory
@@ -659,7 +678,7 @@ module PathQuery
             model = @path.model
             cdA = model.get_cd(@path.end_type)
             cdB = model.get_cd(@sub_class.end_type)
-            if !cdB.subclass_of?(cdA)
+            if !cdB == cdA and !cdB.subclass_of?(cdA)
                 raise ArgumentError, "The subclass in a #{self.class.name} must be a subclass of its path, but #{cdB} is not a subclass of #{cdA}"
             end
 
@@ -742,7 +761,7 @@ module PathQuery
         attr_accessor :value
 
         def self.valid_ops 
-            return ["=", ">", "<", ">=", "<=", "!=", "CONTAINS"]
+            return ["=", ">", "<", ">=", "<=", "!=", "CONTAINS", "LIKE"]
         end
 
         def to_elem
@@ -1148,6 +1167,7 @@ module PathQuery
         def initialize(model, root=nil, service=nil)
             super
             @constraint_factory = TemplateConstraintFactory.new(self)
+            @url = (@service.nil?) ? nil : @service.root + Service::TEMPLATE_RESULTS_PATH
         end
 
         def self.parser(model)
@@ -1191,6 +1211,41 @@ module PathQuery
             return p
         end
 
+        def each_row(params = {})
+            runner = (params.empty?) ? self : get_adjusted(params)
+            runner.results_reader.each_row {|r| yield r}
+        end
+
+        def each_result(params = {}) 
+            runner = (params.empty?) ? self : get_adjusted(params)
+            runner.results_reader.each_result {|r| yield r}
+        end
+
+        def count(params = {})
+            runner = (params.empty?) ? self : get_adjusted(params)
+            runner.results_reader.get_size
+        end
+
+        def clone
+            other = super
+            other.instance_variable_set(:@constraints, @constraints.map {|c| c.clone})
+            return other
+        end
+
+        private 
+
+        def get_adjusted(params)
+            adjusted = clone
+            params.each do |k,v| 
+                con = adjusted.get_constraint(k)
+                raise ArgumentError, "There is no constraint with code #{k} in this query" unless con
+                path = con.path.to_s
+                adjusted.remove_constraint(k)
+                adjusted.where(path => v)
+                adjusted.constraints.last.code = k
+            end
+            return adjusted
+        end
     end
 
     class TemplateConstraintFactory < ConstraintFactory
