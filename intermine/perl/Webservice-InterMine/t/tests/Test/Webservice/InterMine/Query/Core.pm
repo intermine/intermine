@@ -147,6 +147,40 @@ sub add_binary_constraint:Test(24) {
 
 }
 
+sub add_loop_constraint:Test(7) {
+
+    my $test = shift;
+    my $obj  = $test->{object};
+    my $con;
+
+    $obj->add_views("Employee.department.manager", "Employee.department.company.CEO");
+
+    lives_ok(
+        sub {
+            $con = $obj->add_constraint(
+                path => 'Employee.department.manager',
+                op   => 'IS',
+                loop_path => 'Employee.department.company.CEO',
+                $test->extra_constraint_args,
+            );
+        },
+        "Can make a loop constraint"
+    );
+    isa_ok($con, 'Webservice::InterMine::Constraint::Loop', ".. and it");
+
+    lives_ok {$con = $obj->add_constraint('department.manager' => $obj->path('department.company.CEO'))}
+        "can make a loop constraint in more succinct notation";
+
+    isa_ok($con, 'Webservice::InterMine::Constraint::Loop', ".. and it");
+    
+    lives_ok {$con = $obj->add_constraint('department.manager' => {isnt => $obj->path('department.company.CEO')})}
+        "can make a negative loop constraint in more succinct notation";
+
+    isa_ok($con, 'Webservice::InterMine::Constraint::Loop', ".. and it");
+
+    dies_ok {$obj->path('department.company.vatNumber')} "Throws errors at paths not in the query";
+}
+
 sub add_ternary_constraint:Test(15) {
     my $test = shift;
     my $obj  = $test->{object};

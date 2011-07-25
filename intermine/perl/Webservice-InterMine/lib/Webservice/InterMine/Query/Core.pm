@@ -59,6 +59,24 @@ has root_path => (
     },
 );
 
+=head2 path($expr) -> Path
+
+Return a Webservice::InterMine::Path object corresponding to the
+expression passed in (a dotted path string). The path will be made 
+with the subclass information contained in the query.
+
+=cut
+
+sub path {
+    my ($self, $str) = @_;
+    @_ == 2 or croak "Expected one argument - a path expression, got: @_";
+    my @paths = $self->all_paths or croak "This query does not have any paths yet";
+    $str = $self->prefix_path($str);
+    croak "$str is not a path in this query" unless (grep {$str eq $_} @paths);
+    my $path = Webservice::InterMine::Path->new($str, $self, $self->type_dict);
+    return $path;
+}
+
 =head2 has_sort_order - whether or not this query has a defined sort-order
 
 =head2 push_sort_order - Add a sort order element to the sort order
@@ -873,7 +891,7 @@ sub parse_constraint_string {
                 } elsif (blessed $value and $value->isa('Webservice::InterMine::List')) {
                     $args{op} ||= 'IN';
                     $args{value} = $value;
-                } elsif (blessed $value and $value->isa('InterMine::Model::Path')) {
+                } elsif (blessed $value and $value->isa('Webservice::InterMine::Path')) {
                     $args{op} ||= 'IS';
                     $args{loop_path} = $value;
                 } elsif (blessed $value and $value->isa('InterMine::Model::ClassDescriptor')) {

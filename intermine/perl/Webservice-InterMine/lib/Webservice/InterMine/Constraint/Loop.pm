@@ -14,6 +14,7 @@ has 'loop_path' => (
     isa      => Str,
     required => 1,
     writer   => 'set_loop_path',
+    coerce   => 1,
 );
 
 override to_string => sub {

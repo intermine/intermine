@@ -136,8 +136,9 @@ will fail.
 
  # Constrain to genes that interact with themselves.
  $query->add_constraint('interactions.interactingGenes' => {is => 'Gene'}); 
+ $query->add_constraint('interactions.interactingGenes' => $query->path('Gene')}
  # Exclude the root object from any results contain in their interactions
- $query->add_constraint('interactions.interactingGenes.interactions.interactingGenes' => {'is not' => 'Gene'}); 
+ $query->add_constraint('interactions.interactingGenes.interactions.interactingGenes' => {isnt => 'Gene'}); 
 
 This a less commonly used constraint type that allows you to assert
 that two parts of the query refer (or must not refer) to the same object.
