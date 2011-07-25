@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A class to represent the constraints a user selected including a list of features and spans, etc.
+ * A class to represent the constraints a user selected including a list of features and genomic
+ * regions, etc.
  *
  * @author Fengyuan Hu
  */
@@ -22,7 +23,7 @@ public class GenomicRegionSearchConstraint
 {
     private String orgName = null;
     private Set<Class<?>> featureTypes = null;
-    private List<GenomicRegion> spanList = null;
+    private List<GenomicRegion> genomicRegionList = null;
     private int extendedRegionSize = 0;
 
     /**
@@ -52,16 +53,16 @@ public class GenomicRegionSearchConstraint
     }
 
     /**
-     * @return the spanList
+     * @return the genomicRegionList
      */
-    public List<GenomicRegion> getSpanList() {
-        return spanList;
+    public List<GenomicRegion> getGenomicRegionList() {
+        return genomicRegionList;
     }
     /**
-     * @param spanList the spanList to set
+     * @param genomicRegionList the genomicRegionList to set
      */
-    public void setSpanList(List<GenomicRegion> spanList) {
-        this.spanList = spanList;
+    public void setGenomicRegionList(List<GenomicRegion> genomicRegionList) {
+        this.genomicRegionList = genomicRegionList;
     }
 
     /**
@@ -86,7 +87,7 @@ public class GenomicRegionSearchConstraint
         if (obj instanceof GenomicRegionSearchConstraint) {
             GenomicRegionSearchConstraint c = (GenomicRegionSearchConstraint) obj;
             return (extendedRegionSize == c.getExtendedRegionSize()
-                    && spanList.equals(c.getSpanList())
+                    && genomicRegionList.equals(c.getGenomicRegionList())
                     && featureTypes.equals(c.getFeatureTypes())
                     && orgName.equals(c.getOrgName()));
         }
@@ -98,7 +99,7 @@ public class GenomicRegionSearchConstraint
      */
     @Override
     public int hashCode() {
-        return extendedRegionSize + spanList.hashCode() + featureTypes.hashCode()
+        return extendedRegionSize + genomicRegionList.hashCode() + featureTypes.hashCode()
             + orgName.hashCode();
     }
 
