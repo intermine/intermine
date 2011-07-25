@@ -112,3 +112,24 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+
+    use strict;
+    use warnings;
+    use Webservice::InterMine 'flymine';
+    require Data::Dumper;
+
+    my $query    = Webservice::InterMine->new_query(class => 'Gene');
+    my $results  = $query->select('symbol', 'primaryIdentifier', 'pathways.*')
+                         ->where(symbol => [qw/h H bib eve zen/])
+                         ->all();
+
+    print Data::Dumper->new([$results])->Dump;
+
+    $results = $query->one;
+
+    print Data::Dumper->new([$results])->Dump;
+
+    $results = $query->first;
+
+    print Data::Dumper->new([$results])->Dump;
+

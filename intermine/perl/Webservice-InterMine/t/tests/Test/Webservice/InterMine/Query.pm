@@ -262,4 +262,13 @@ sub results : Test(4) {
     );
 }
 
+sub path_method_modification:Test(2) {
+    my $test = shift;
+    my $obj = $test->{object};
+    $obj->add_view("Employee.name");
+    my $path = $obj->path("name");
+    is ("$path", "Employee.name");
+    isa_ok($path->{service}, 'Webservice::InterMine::Service');
+}
+
 1;

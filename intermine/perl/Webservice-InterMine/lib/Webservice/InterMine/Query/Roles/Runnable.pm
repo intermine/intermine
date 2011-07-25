@@ -36,6 +36,15 @@ around BUILDARGS => sub {
     }
 };
 
+# In Core queries, Paths are made with reference to the 
+# query rather than a service.
+around path => sub {
+    my $orig = shift;
+    my ($self, $str) = @_;
+    my $path = $self->$orig($str);
+    $path->{service} = $self->service;
+    return $path;
+};
 
 =head1 NAME 
 
@@ -176,6 +185,54 @@ sub results {
     my $self = shift;
     my $iter = $self->results_iterator(@_);
     return $iter->get_all();
+}
+
+=head2 all(%options)
+
+Return all rows of results.
+This method takes the same options as C<results>, but any start and size 
+arguments given are ignored.
+
+=cut
+
+sub all { 
+    my ($self, %options) = @_;
+    $options{start} = 0;
+    delete($options{size});
+    return $self->results(%options);
+}
+
+=head2 first(%options)
+
+Return the first result (row or object).
+This method takes the same options as C<results>, but any size 
+arguments given are ignored. May return C<undef> if there
+are no results.
+
+=cut
+
+sub first {
+    my ($self, %options) = @_;
+    $options{start} ||= 0;
+    # rows and objects are not the same thing
+    $options{size} = ($options{as} and $options{as} eq 'jsonobjects') ? undef : 1;
+    my $it = $self->results_iterator(%options);
+    return $it->next;
+}
+
+=head2 one(%options)
+
+Return one result (row or result object), throwing an error if more than one is received.
+
+=cut
+
+sub one {
+    my ($self, %options) = @_;
+    my $it = $self->results_iterator(%options);
+    my $one = $it->next;
+    confess "No results received" unless $one;
+    confess "More than one result received" if $it->next;
+    return $one;
 }
 
 =head2 get_count

@@ -64,7 +64,7 @@ use MooseX::Types -declare => [
         ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
         TernaryOperator MultiOperator LoopOperator ListOperator
         LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator LCMultiOperator 
-        XmlLoopOperators
+        XmlLoopOperators NoSpaceLoopOperator
 
         LogicOperator LogicGroup LogicOrStr
 
@@ -111,6 +111,8 @@ use MooseX::Types -declare => [
         True False TruthValue Truthy 
         
         DomNode
+
+        Path
     )
 ];
 
@@ -147,6 +149,7 @@ coerce BinaryOperator, from FakeBinaryOperator, via {$fake_to_real_ops{lc($_)}};
 
 enum LoopOperator,   [ 'IS', 'IS NOT',];
 enum LCLoopOperator,   [ 'is', 'is not',];
+subtype NoSpaceLoopOperator, as Str, where {lc($_) eq 'isnt'};
 enum XmlLoopOperators, [ '=', '!=', ];
 my %xml_to_readable = (
     '=' => 'IS', 
@@ -154,6 +157,7 @@ my %xml_to_readable = (
 );
 coerce LoopOperator, from LCLoopOperator, via {uc($_)};
 coerce LoopOperator, from XmlLoopOperators, via {$xml_to_readable{$_}};
+coerce LoopOperator, from NoSpaceLoopOperator, via {'IS NOT'};
 
 enum ListOperator,   [ 'IN', 'NOT IN',];
 enum LCListOperator, [ 'in', 'not in', ];
@@ -372,5 +376,8 @@ subtype Truthy, as Object, where {overload::Method($_, 'bool')};
 coerce TruthValue, from Truthy, via {$_ ? 1 : 0};
 
 class_type DomNode, { class => 'XML::DOM::Node' };
+
+class_type Path, { class => 'Webservice::InterMine::Path' };
+coerce Str, from Path, via {$_->to_string};
 
 1;

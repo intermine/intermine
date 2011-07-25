@@ -99,5 +99,9 @@ Revision history for Webservice-InterMine
           * Query::count/get_count
         Hid internal methods, such as Query::push_constraints (and others)
         Changed logic behaviour on adding constraint (don't discard current logic completely)
+0.9802: Sun Jul 24 23:38:52 BST 2011
+        Added all, first and one to runnable queries.
+        Add Query::path method for making Path objects
+        Allowed loop constraints to be built with Path objects.
         
 

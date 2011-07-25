@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9801";
+our $VERSION = "0.9802";
 
 =head1 NAME
 
@@ -22,15 +22,10 @@ Webservice::InterMine - modules for interacting with InterMine datawarehouse web
 
     use Webservice::InterMine 'flymine', 'SOMETOKEN';
 
-    my $query    = Webservice::InterMine->new_query;
-    $query->add_view(@views);
-    $query->add_constraint(
-                    path  => $path,
-                    op    => $op,
-                    value => $value,
-                    );
-    my $results  = $query->results;
-
+    my $query    = Webservice::InterMine->new_query(class => 'Gene');
+    my $results  = $query->select('symbol', 'primaryIdentifier', 'pathways.*')
+                         ->where(symbol => [qw/H bib eve zen/])
+                         ->all();
 
 =head1 DESCRIPTION
 
@@ -277,7 +272,7 @@ service for the url given to C<use> is returned.
 
 Get the default service defined at import:
 
-  use Webservice::InterMine qw(http://squirrel.flymine.org/intermine-demo SOMETOKEN);
+  use Webservice::InterMine qw(http://www.intermine.org/intermine-demo SOMETOKEN);
 
   my $service =  InterMine::Webservice->get_service;
 
@@ -291,7 +286,9 @@ Fetch that same authenticated service later:
 
 OR make the same call using a hash reference and named parameters:
 
-  my $service = InterMine::Webservice->get_service({ root => $url, token => $token);
+  my $service = InterMine::Webservice->get_service({ 
+    root => $url, token => $token
+  });
 
 Parameters:
 
@@ -354,34 +351,6 @@ sub get_service {
     $services{$url} = $service;
     $services{$service->root} = $service;
     return $service;
-}
-
-=head2 get_saved_user_info($mine_name/$mine_url)
-
-Returns saved user name and passwords from the webservice config file
-if it exists. This file should be located at ~/.intermine-webservices.config,
-and should have the following format:
-
-  flymine                        user@somewhere.edu password
-  metabolicmine                  user@somewhere.edu another-password
-  http://yeastmine.org/yeastmine user@somewhere.org A v3rj d1EE!kvlt 0n3
-
-ie., whitespace separated fields. The password may contain whitespace characters, but no
-new-lines. The mine-name/url needs to identical to the name used to request the service.
-
-=cut
-
-sub get_saved_user_info {
-    my $key = shift;
-    if (-f CONFIG_FILE) {
-        open(my $in, '<', CONFIG_FILE) or confess "$!";
-        while (<$in>) {
-            my ($url, $user, $pass) = split(/\s+/, $_, 3);
-            return($user, $pass) if ($url eq $key);
-        }
-        close $in or confess "$!";
-    }
-    return;
 }
 
 =head2 clean_temp_lists()
@@ -484,3 +453,6 @@ under the same terms as Perl itself.
 =cut
 
 1;
+
+
+

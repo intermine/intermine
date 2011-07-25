@@ -42,6 +42,11 @@ use strict;
 use InterMine::Model::Attribute;
 use Carp qw/confess croak/;
 
+use overload (
+    '""' => 'to_string',
+    fallback => 1,
+);
+
 =head1 METHODS
 
 =head2 new(Str path, Service service, [HashRef subtypes])
@@ -63,8 +68,13 @@ sub new {
     $subtypes ||= {};
     my $self = {path => $path, service => $service, subtypes => $subtypes};
 
-    _parse($service->model, $path, $subtypes);
+    $self->{parts} = [_parse($service->model, $path, $subtypes)];
     return bless $self, $class;
+}
+
+sub to_string {
+    my $self = shift;
+    return $self->{path};
 }
 
 =head2 get_results_iterator([$format])
@@ -190,6 +200,9 @@ sub validate_path {
 =cut
 
 sub last_bit {
+    # Called as method
+    return $_->{parts}[-1] if (@_ == 1);
+    # Called as fn.
     my ( $model, $path_string, $types) = @_;
     my @bits = _parse( $model, $path_string, $types);
     return $bits[-1] || $bits[0];
@@ -218,8 +231,15 @@ Resolves a path to a class descriptor, or an attribute descriptor.
 =cut 
 
 sub resolve {
-    my ( $model, $string, $types) = @_;
-    my $bit = last_bit($model, $string, $types);
+    my $bit;
+    if (@_ == 1) {
+        # Calling as method
+        $bit = $_[0]->{parts}[-1];
+    } else {
+        # Calling as fn.
+        my ( $model, $string, $types) = @_;
+        $bit = last_bit($model, $string, $types);
+    }
     return class_of($bit) || $bit;
 }
 
@@ -256,7 +276,7 @@ sub type_of {
 =cut
 
 sub end_is_class {
-    my $end = eval { last_bit(@_) };
+    my $end = (@_ == 1) ? $_[0]->{parts}[-1] : eval { last_bit(@_) };
     if ($end) {
         if ( not class_of($end) ) {
             return sprintf( "%s: %s is a %s, not a class\n",
@@ -314,6 +334,10 @@ sub b_is_subclass_of_a {
 }
 
 sub root {
+    if (@_ == 1) {
+        my $self = shift;
+        return $self->{parts}[0];
+    }
     my ($root) = _parse(@_);
     return $root;
 }
