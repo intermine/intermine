@@ -602,11 +602,20 @@ class ClassDescriptor
 
 end
 
+# A representation of a database column. The characteristics of 
+# these classes are defined by the model information received 
+# from the webservice
 class FieldDescriptor
     include SetHashKey
 
+    # The data model this field descriptor belongs to.
     attr_accessor :model
 
+    # Constructor. 
+    #
+    # [+opts+]  The hash of parameters received from the webservice
+    # [+model+] The parental data model
+    #
     def initialize(opts, model) 
         @model = model
         opts.each do |k, v|
@@ -616,19 +625,54 @@ class FieldDescriptor
 
 end
 
+# A class representing columns that contain data.
 class AttributeDescriptor < FieldDescriptor
 end
 
+# A class representing columns that reference other tables.
 class ReferenceDescriptor < FieldDescriptor
 end
 
+# A class representing a virtual column that contains multiple references.
 class CollectionDescriptor < ReferenceDescriptor
 end
 
+# A representation of a path through the data model, starting at a table/class,
+# and descending ultimately to an attribute. A path represents a valid 
+# sequence of joins and column accesses according to the webservice's database schema.
+#
+# In string format, a path can be represented using dotted notation:
+#
+#   Gene.proteins.proteinDomains.name
+#
+# Which is a valid path through the data-model, starting in the gene table, following
+# a reference to the protein table (via x-to-many relationship) and then to the 
+# protein-domain table and then finally to the name column in the protein domain table.
+# Joins are implicitly implied.
+#
 class Path
 
-    attr_accessor :model, :elements, :subclasses, :rootClass
+    # The data model that this path describes.
+    attr_reader :model
 
+    # The objects represented by each section of the path. The first is always a ClassDescriptor.
+    attr_reader :elements
+    
+    # The subclass information used to create this path. 
+    attr_reader :subclasses
+    
+    # The root class of this path. This is the same as the first element.
+    attr_reader :rootClass
+
+    # Construct a Path
+    #
+    # The standard mechanism is to parse a string representing a path 
+    # with information about the model and the subclasses that are in force. 
+    # However, it is also possible to clone a path by passing a Path through
+    # as the first element, and also to construct a path from a ClassDescriptor. 
+    # In both cases the new Path will inherit the model of the object used to
+    # construct it, this avoid the need for a model in these cases.
+    #
     def initialize(pathstring, model=nil, subclasses={})
         @model = model
         @subclasses = subclasses
@@ -637,6 +681,15 @@ class Path
         parse(pathstring)
     end
 
+    # call-seq:
+    #   end_type => String
+    #
+    # Return the string that describes the kind of thing this path represents.
+    # eg:
+    # :Gene: Gene
+    # :Gene.symbol: java.lang.String
+    # :Gene.proteins: Protein
+    #
     def end_type
         last = @elements.last
         if last.is_a?(ClassDescriptor)
@@ -648,6 +701,16 @@ class Path
         end
     end
 
+    # call-seq:
+    #   end_cd => ClassDescriptor
+    #
+    # Return the last ClassDescriptor mentioned in this path. 
+    # eg:
+    # :Gene: Gene
+    # :Gene.symbol: Gene
+    # :Gene.proteins: Protein
+    # :Gene.proteins.name: Protein
+    #
     def end_cd
         last = @elements.last
         if last.is_a?(ClassDescriptor)
@@ -664,36 +727,44 @@ class Path
         end
     end
 
+    # Two paths can be said to be equal when they stringify to the same representation.
     def ==(other)
         return self.to_s == other.to_s
     end
 
+    # Get the number of elements in the path
     def length
         return @elements.length
     end
 
+    # Return the string representation of this path, eg: "Gene.proteins.name"
     def to_s 
         return @elements.map {|x| x.name}.join(".")
     end
 
+    # Returns a string as to_s without the first element. eg: "proteins.name"
     def to_headless_s
         return @elements[1, @elements.size - 1].map {|x| x.name}.join(".")
     end
 
-    def is_attribute
-        return @elements.last.is_a(AttributeDescriptor)
+    # Return true if the Path ends in an attribute
+    def is_attribute?
+        return @elements.last.is_a?(AttributeDescriptor)
     end
 
-    def is_class
-        return @elements.last.is_a(ClassDescriptor)
+    # Return true if the last element is a class (ie. a path of length 1)
+    def is_class?
+        return @elements.last.is_a?(ClassDescriptor)
     end
 
-    def is_reference
-        return @elements.last.is_a(ReferenceDescriptor)
+    # Return true if the last element is a reference.
+    def is_reference?
+        return @elements.last.is_a?(ReferenceDescriptor)
     end
 
-    def is_collection
-        return @elements.last.is_a(CollectionDescriptor)
+    # Return true if the last element is a collection
+    def is_collection?
+        return @elements.last.is_a?(CollectionDescriptor)
     end
 
     private
@@ -702,6 +773,7 @@ class Path
         if pathstring.is_a?(ClassDescriptor)
             @rootClass = pathstring
             @elements << pathstring
+            @model = pathstring.model
             return
         elsif pathstring.is_a?(Path)
             @rootClass = pathstring.rootClass
@@ -756,6 +828,7 @@ class Path
     end
 end
 
+# An exception class for handling path parsing errors.
 class PathException < RuntimeError
 
     attr_reader :pathstring, :subclasses

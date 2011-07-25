@@ -1084,7 +1084,7 @@ class TestQuery < Test::Unit::TestCase
 
     def test_unmarshall
         # Tricky xml with all constraint types and subclassing, as well as integer values
-        xml = "<query model='testmodel' view='Employee.name Employee.age Employee.fullTime Employee.department.name Employee.title' sortOrder='Employee.title DESC'>" + 
+        xml = "<query model='testmodel' view='Employee.name Employee.age Employee.fullTime Employee.department.name Employee.title' sortOrder='Employee.title DESC' constraintLogic='(A or B) and (C or D) and (E or F)'>" + 
             "<join path='Employee.department' style='OUTER'/>" +
             "<join path='Employee.department.company' style='INNER'/>" +
             "<join path='Employee.department.company.address' style='OUTER'/>" +
