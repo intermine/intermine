@@ -54,6 +54,24 @@
     #proteinAtlasDisplayer div.graph ul.header li { display:inline; font-size:11px; }
 
     #proteinAtlasDisplayer div.inactive { display:none; }
+
+    /* resizing */
+    #proteinAtlasDisplayer.scale-9 table.graph td { padding:0 !important; }
+    #proteinAtlasDisplayer.scale-9 table.graph td span.name { font-size:11px; }
+
+    #proteinAtlasDisplayer.scale-8 table.graph td { padding:0 !important; }
+    #proteinAtlasDisplayer.scale-8 table.graph td span.name { font-size:11px; }
+    #proteinAtlasDisplayer.scale-8 table.graph div.expression { width:12px; }
+
+    #proteinAtlasDisplayer.scale-7 table.graph td { padding:0 !important; }
+    #proteinAtlasDisplayer.scale-7 table.graph td span.name { font-size:11px; }
+    #proteinAtlasDisplayer.scale-7 table.graph div.expression { width:12px; }
+    #proteinAtlasDisplayer.scale-7 div.sidebar { width:30%; }
+
+    #proteinAtlasDisplayer.scale-6 table.graph td { padding:0 !important; }
+    #proteinAtlasDisplayer.scale-6 table.graph td span.name { font-size:10px; }
+    #proteinAtlasDisplayer.scale-6 table.graph div.expression { width:12px; }
+    #proteinAtlasDisplayer.scale-6 div.sidebar { width:20%; }
   </style>
 
 <c:set var="expressionType" value="${expressions.type}" />
@@ -139,6 +157,31 @@
       var order = jQuery(this).attr('title');
       jQuery("#proteinAtlasDisplayer div.table.active").removeClass('active').addClass('inactive');
       jQuery("#proteinAtlasDisplayer div.table."+order).removeClass('inactive').addClass('active');
+    });
+
+    <%-- determine the viewport size and 'resize' the chart --%>
+    function sizeChart() {
+      var width = jQuery(window).width();
+      var ratio = Math.round(width / 160);
+      if (ratio < 5) {
+          ratio = 5;
+      } else if (ratio > 10) {
+          ratio = 10;
+      }
+      if (jQuery("#proteinAtlasDisplayer").hasClass('ape')) {
+          jQuery("#proteinAtlasDisplayer").attr('class', 'ape scale-' + ratio);
+      } else {
+          jQuery("#proteinAtlasDisplayer").attr('class', 'staining scale-' + ratio);
+      }
+    };
+    sizeChart();
+
+    <%-- resize chart on browser window resize --%>
+    jQuery(window).resize(function() {
+      if (this.resz) clearTimeout(this.resz);
+      this.resz = setTimeout(function() {
+        sizeChart();
+      }, 500);
     });
   })();
   </script>
