@@ -17,8 +17,8 @@
     #proteinAtlasDisplayer div.table.byCells table th.sortable[title="byCells"] { background:url("images/icons/sort.gif") no-repeat left; }
     #proteinAtlasDisplayer tr.alt td { background:#F6FCFE; border-top:1px solid #E6F7FE; border-bottom:1px solid #E6F7FE; }
 
-    #proteinAtlasDisplayer table div.expressions { border:1px solid #000; display:inline-block; }
-    #proteinAtlasDisplayer table div.expression { display:inline-block; width:20px; height:15px; cursor:pointer; float:left; }
+    #proteinAtlasDisplayer table div.expressions { border:1px solid #000; border-right:0; display:inline-block; }
+    #proteinAtlasDisplayer table div.expression { display:inline-block; width:20px; height:15px; cursor:pointer; float:left; border-right:1px solid #000; }
     #proteinAtlasDisplayer table div.expression span.tissue { display:none; }
     #proteinAtlasDisplayer table div.expression span.tooltip { z-index:5; background:#FFF; border:1px solid #CCC; whitespace:no-wrap; display:inline-block;
       position:absolute; font-size:11px; padding:1px 2px; -moz-box-shadow:1px 1px 2px #DDD; -webkit-box-shadow:1px 1px 2px #DDD; box-shadow:1px 1px 2px #DDD;
@@ -56,21 +56,22 @@
     #proteinAtlasDisplayer div.inactive { display:none; }
 
     /* resizing */
-    #proteinAtlasDisplayer.scale-9 table.graph td { padding:0 !important; }
-    #proteinAtlasDisplayer.scale-9 table.graph td span.name { font-size:11px; }
+    #proteinAtlasDisplayer.scale-9 table.graph td,
+    #proteinAtlasDisplayer.scale-8 table.graph td,
+    #proteinAtlasDisplayer.scale-7 table.graph td,
+    #proteinAtlasDisplayer.scale-6 table.graph td { padding:0 !important; }
 
-    #proteinAtlasDisplayer.scale-8 table.graph td { padding:0 !important; }
-    #proteinAtlasDisplayer.scale-8 table.graph td span.name { font-size:11px; }
-    #proteinAtlasDisplayer.scale-8 table.graph div.expression { width:12px; }
+    #proteinAtlasDisplayer.scale-9 table.graph td span.name,
+    #proteinAtlasDisplayer.scale-8 table.graph td span.name,
+    #proteinAtlasDisplayer.scale-7 table.graph td span.name,
+    #proteinAtlasDisplayer.scale-6 table.graph td span.name { font-size:11px; }
 
-    #proteinAtlasDisplayer.scale-7 table.graph td { padding:0 !important; }
-    #proteinAtlasDisplayer.scale-7 table.graph td span.name { font-size:11px; }
-    #proteinAtlasDisplayer.scale-7 table.graph div.expression { width:12px; }
+    #proteinAtlasDisplayer.scale-8 table.graph div.expression,
+    #proteinAtlasDisplayer.scale-7 table.graph div.expression,
+    #proteinAtlasDisplayer.scale-6 table.graph div.expression { width:11px; }
+
     #proteinAtlasDisplayer.scale-7 div.sidebar { width:30%; }
 
-    #proteinAtlasDisplayer.scale-6 table.graph td { padding:0 !important; }
-    #proteinAtlasDisplayer.scale-6 table.graph td span.name { font-size:10px; }
-    #proteinAtlasDisplayer.scale-6 table.graph div.expression { width:12px; }
     #proteinAtlasDisplayer.scale-6 div.sidebar { width:20%; }
   </style>
 
