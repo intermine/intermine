@@ -135,52 +135,66 @@ module Results
             result_set = check_result_set(container)
             return result_set["count"]
         end
+        
+        def each_line(data)
+            Net::HTTP.new(@uri.host, @uri.port).start {|http|
+                http.request_post(@uri.path, data) {|resp|
+                    holdover = ""
+                    resp.read_body {|chunk|
+                        sock = StringIO.new(holdover + chunk)
+                        sock.each_line {|line|
+                            if sock.eof?
+                                holdover = line
+                            else
+                                yield line
+                            end
+                        }
+                        sock.close
+                    }
+                    yield holdover
+                }
+            }
+        end
 
         def each_row
             query = get_query_string + "&format=jsonrows"
-            @uri.open(:method => :post, :body => query) do |f|
-                container = ''
-                f.each_line do |line|
-                    if line.start_with?("[")
-                        begin
-                            row = ResultsRow.new(line.chomp("," + $/), @query.views)
-                        rescue => e
-                            raise ServiceError, "Error parsing #{line}: #{e.message}"
-                        end
-                        yield row
-                    else
-                        container << line
+            container = ''
+            self.each_line(query) do |line|
+                if line.start_with?("[")
+                    begin
+                        row = ResultsRow.new(line.chomp("," + $/), @query.views)
+                    rescue => e
+                        raise ServiceError, "Error parsing #{line}: #{e.message}"
                     end
+                    yield row
+                else
+                    container << line
                 end
-                check_result_set(container)
             end
-
+            check_result_set(container)
         end
 
         def each_result
             query = get_query_string + "&format=jsonobjects"
             model = @query.model
-            @uri.open(:method => :post, :body => query) do |f|
-                container = ''
-                f.each_line do |line|
-                    line.chomp!("," + $/)
-                    if line.start_with?("{") and line.end_with?("}")
-                        begin
-                            data = JSON.parse(line)
-                            result = model.make_new(data)
-                        rescue JSON::ParserError => e
-                            raise ServiceError, "Error parsing #{line}: #{e.message}"
-                        rescue => e
-                            raise ServiceError, "Could not instantiate this result object: #{e.message}"
-                        end
-                        yield result
-                    else
-                        container << line
+            container = ''
+            self.each_line(query) do |line|            
+                line.chomp!("," + $/)
+                if line.start_with?("{") and line.end_with?("}")
+                    begin
+                        data = JSON.parse(line)
+                        result = model.make_new(data)
+                    rescue JSON::ParserError => e
+                        raise ServiceError, "Error parsing #{line}: #{e.message}"
+                    rescue => e
+                        raise ServiceError, "Could not instantiate this result object: #{e.message}"
                     end
+                    yield result
+                else
+                    container << line
                 end
-                check_result_set(container)
             end
-
+            check_result_set(container)
         end
 
         private
