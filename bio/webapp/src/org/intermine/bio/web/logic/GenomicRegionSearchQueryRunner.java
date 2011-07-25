@@ -162,6 +162,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                             for (Object o : row) {
                                 String item = new String();
 
+                                // NULL for symbol or PID
+                                o = o == null ? new String() : o;
+
                                 if (o instanceof Class) {
                                     item = ((Class) o).getSimpleName();
                                 } else {
