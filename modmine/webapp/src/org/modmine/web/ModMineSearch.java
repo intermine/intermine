@@ -95,7 +95,7 @@ public class ModMineSearch
     public static Map<Integer, Float> runLuceneSearch(String searchString) {
         LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
 
-        String queryString = parseQueryString(searchString);
+        String queryString = parseQueryString(searchString).toLowerCase();
 
         long time = System.currentTimeMillis();
 
@@ -322,7 +322,8 @@ public class ModMineSearch
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
             LOG.debug("ADDED FIELD TO #" + objectId + ": " + fieldName + " = " + value);
 
-            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
+            Field f = new Field(fieldName, value.toLowerCase(), Field.Store.NO,
+                    Field.Index.ANALYZED);
             doc.add(f);
             fieldNames.add(fieldName);
         }
