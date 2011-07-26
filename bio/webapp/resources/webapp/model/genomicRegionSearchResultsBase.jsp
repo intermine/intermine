@@ -427,7 +427,7 @@ img.tinyQuestionMark {
 <%-- Error Messages --%>
 <c:if test="${!empty errorMsg}">
     <div id="errorMsg" class="topBar errors" style="padding-left:34px;">
-        <a href="#" onclick="javascript:jQuery('#errorMsgs').hide('slow');return false">Hide</a>
+        <a href="#" onclick="javascript:jQuery('#errorMsg').hide('slow');return false">Hide</a>
         ${errorMsg}<br>
     </div>
 </c:if>
