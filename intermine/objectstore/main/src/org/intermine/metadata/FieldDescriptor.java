@@ -145,7 +145,7 @@ public abstract class FieldDescriptor
     /**
      * Return the JSON representation of this object.
      *
-     * @return a string containing JSON 
+     * @return a string containing JSON
      */
     public abstract String toJSONString();
 }

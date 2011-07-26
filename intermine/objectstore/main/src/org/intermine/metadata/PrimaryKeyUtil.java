@@ -33,6 +33,7 @@ import org.intermine.util.TypeUtil;
 public abstract class PrimaryKeyUtil
 {
     private PrimaryKeyUtil() {
+        // don't instantiate
     }
 
     protected static Map<String, Properties> modelKeys = new HashMap<String, Properties>();
