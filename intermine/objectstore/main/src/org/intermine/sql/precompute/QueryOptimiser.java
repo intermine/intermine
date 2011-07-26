@@ -261,7 +261,10 @@ public final class QueryOptimiser
             if (context.isVerbose()) {
                 e.printStackTrace(System.out);
             }
-            LOG.warn("Exception - query cannot be optimised: " + query, e);
+            // TODO put this back.  See #2598
+            // LOG.warn("Exception - query cannot be optimised: " + query, e);
+            // this error message is 120+ lines long and appears 65000+ times in the log files
+            // in one hour
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
