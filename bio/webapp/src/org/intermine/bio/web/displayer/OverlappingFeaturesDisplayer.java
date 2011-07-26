@@ -88,7 +88,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
         request.setAttribute("featureCounts", featureCounts);
 
         long stepTime = System.currentTimeMillis();
-        LOG.info("TIME counted feature types: " + (stepTime - startTime) + "ms");
         startTime = stepTime;
 
         // resolve Collection from FieldDescriptor
@@ -173,15 +172,11 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                         featureTables.put(type, t);
                     }
                     long loopTime = System.currentTimeMillis();
-                    LOG.info("TIME created inline table for type: " + c.getSimpleName() + " took: "
-                            + (loopTime - loopStartTime) + "ms");
-
                 }
             }
         }
 
         stepTime = System.currentTimeMillis();
-        LOG.info("TIME created collections: " + (stepTime - startTime) + "ms");
         startTime = stepTime;
 
         request.setAttribute("featureTables", featureTables);
