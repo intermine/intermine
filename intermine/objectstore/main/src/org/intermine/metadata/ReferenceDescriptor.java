@@ -179,8 +179,8 @@ public class ReferenceDescriptor extends FieldDescriptor
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
         sb.append("{\"name\":\"" + name + "\","
-            + "\"referencedType\":\"" + referencedType.substring(referencedType.lastIndexOf(".") + 1)
-            + "\"");
+            + "\"referencedType\":\""
+            + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"");
         if (reverseRefName != null) {
             sb.append(",\"reverseReference\":\"" + reverseRefName + "\"");
         }
