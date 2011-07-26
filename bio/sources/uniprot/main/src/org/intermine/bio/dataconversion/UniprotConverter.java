@@ -963,7 +963,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private String resolveGene(String taxId, String identifier) {
             OrganismData od = or.getOrganismDataByTaxon(new Integer(taxId));
-            if (od.getGenus().equals(GENUS_LOOKUP)) {
+            if (od != null && od.getGenus().equals(GENUS_LOOKUP)) {
                 return resolveFlyGene(taxId, identifier);
             }
             return identifier;
