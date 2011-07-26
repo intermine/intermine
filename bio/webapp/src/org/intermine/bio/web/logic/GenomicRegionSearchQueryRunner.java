@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -108,7 +108,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         }
 
         request.getSession().setAttribute("spanConstraintMap", spanConstraintMap);
-        request.setAttribute("spanQueryTotalCount", grsc.getSpanList().size());
+        request.setAttribute("spanQueryTotalCount", grsc.getGenomicRegionList().size());
 
         (new Thread(this)).start();
     }
