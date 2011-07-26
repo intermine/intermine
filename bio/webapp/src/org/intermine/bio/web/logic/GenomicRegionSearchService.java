@@ -603,7 +603,7 @@ public class GenomicRegionSearchService
             spanList.add(aSpan);
         }
 
-        grsc.setSpanList(spanList);
+        grsc.setGenomicRegionList(spanList);
 
         return null;
     }
@@ -616,7 +616,7 @@ public class GenomicRegionSearchService
     public Map<GenomicRegion, Query> createQueryList() {
         Map<GenomicRegion, Query> queryMap = new LinkedHashMap<GenomicRegion, Query>();
 
-        for (GenomicRegion aSpan : grsc.getSpanList()) {
+        for (GenomicRegion aSpan : grsc.getGenomicRegionList()) {
 
             aSpan = extendGenomicRegion(aSpan);
 
@@ -830,7 +830,7 @@ public class GenomicRegionSearchService
         }
 
         // Create passedSpanList
-        for (GenomicRegion gr : grsc.getSpanList()) {
+        for (GenomicRegion gr : grsc.getGenomicRegionList()) {
             // User input could be x instead of X for human chromosome, converted to lowercase
             ChromosomeInfo ci = null;
             String chr = gr.getChr().toLowerCase();
@@ -867,7 +867,7 @@ public class GenomicRegionSearchService
         }
 
         // make errorSpanList
-        errorSpanList.addAll(grsc.getSpanList());
+        errorSpanList.addAll(grsc.getGenomicRegionList());
         errorSpanList.removeAll(passedSpanList);
 
         resultMap.put("pass", passedSpanList);

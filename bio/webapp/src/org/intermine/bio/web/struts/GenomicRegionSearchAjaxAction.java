@@ -105,7 +105,7 @@ public class GenomicRegionSearchAjaxAction extends Action
             List<GenomicRegion> spanList = null;
             for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap.entrySet()) {
                 if (e.getValue().equals(spanUUIDString)) {
-                    spanList = e.getKey().getSpanList();
+                    spanList = e.getKey().getGenomicRegionList();
                 }
             }
 
