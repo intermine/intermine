@@ -162,7 +162,7 @@ public class SpanUploadAjaxAction extends Action
 
         for (GenomicRegion s : subSpanList) {
             Map<String, Object> m = new LinkedHashMap<String, Object>();
-            m.put("span", s.toString());
+            m.put("span", s.getOriginalRegion());
             m.put("organism", orgName);
 
             List<Map<String, String>> featureMapList = new ArrayList<Map<String, String>>();
