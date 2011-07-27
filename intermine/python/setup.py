@@ -117,14 +117,14 @@ class CleanCommand(Command):
 
 setup(
         name = "intermine",
-        packages = ["intermine"],
+        packages = ["intermine", "intermine.lists"],
         cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.98.02",
+        version = "0.98.04",
         description = "InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
-        url = "http://www.intermine.org/",
-        download_url = "http://www.intermine.org/lib/python-webservice-client-0.96.00.tar.gz",
+        url = "http://www.intermine.org",
+        download_url = "http://www.intermine.org/lib/python-webservice-client-0.98.02.tar.gz",
         keywords = ["webservice", "genomic", "bioinformatics"],
         classifiers = [
             "Programming Language :: Python",
