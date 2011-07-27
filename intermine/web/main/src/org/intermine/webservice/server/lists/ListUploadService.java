@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +46,13 @@ import org.intermine.web.logic.Constants;
 import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
-public class ListUploadService extends ListMakerService {
+/**
+ * A class to create a new list with via a set of identifiers uploaded by a user.
+ * @author Alexis Kalderimis.
+ *
+ */
+public class ListUploadService extends ListMakerService
+{
 
     /**
      * A usage string to return for bad requests.
@@ -66,18 +82,18 @@ public class ListUploadService extends ListMakerService {
      * Constructor
      * @param im A reference to the main settings bundle
      */
-    public ListUploadService(InterMineAPI im) {
+    public ListUploadService(final InterMineAPI im) {
         super(im);
-        this.runner = im.getBagQueryRunner();
+        runner = im.getBagQueryRunner();
     }
 
     /**
-     * Sets the header attributes on the output object.
-     * @param requiredParams The list of parameters which are required by this service.
+     * Gets the header attributes on the output object.
+     * @return A map of header attributes for JSON output.
      */
     @Override
     protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = super.getHeaderAttributes();
+        final Map<String, Object> attributes = super.getHeaderAttributes();
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"unmatchedIdentifiers\":[");
             attributes.put(JSONFormatter.KEY_OUTRO, "]");
@@ -90,51 +106,66 @@ public class ListUploadService extends ListMakerService {
      * Sets the size of the list on the header attributes.
      * @param size The size of the newly created list.
      */
-    protected void setListSize(Integer size) {
+    protected void setListSize(final Integer size) {
         addOutputInfo(LIST_SIZE_KEY, size + "");
     }
 
     /**
      * Get the String Matcher for parsing the list of identifiers.
-     * @return
+     * @return The matcher to use.
      */
     protected StrMatcher getMatcher() {
-        HttpSession session = request.getSession();
-        Properties webProperties
+        final HttpSession session = request.getSession();
+        final Properties webProperties
             = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
 
-        String bagUploadDelims =
+        final String bagUploadDelims =
             (String) webProperties.get("list.upload.delimiters") + " ";
-        StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
+        final StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
         return matcher;
     }
 
     @Override
-    protected String getNewListType(ListInput input) {
+    protected String getNewListType(final ListInput input) {
         return input.getType();
     }
 
-    protected ListInput getInput(HttpServletRequest request, BagManager bagManager) {
+    /**
+     * Parse the parameters for this request.
+     * @param request The request received.
+     * @param bagManager The bag manager that we are using.
+     * @return A parsed representation of the parameters.
+     */
+    protected ListInput getInput(final HttpServletRequest request, final BagManager bagManager) {
         return new ListCreationInput(request, bagManager);
     }
 
     @Override
-    protected void makeList(ListInput input, String type, Profile profile,
-        Set<String> temporaryBagNamesAccumulator) throws Exception {
+    protected void makeList(final ListInput input, final String type, final Profile profile,
+        final Set<String> temporaryBagNamesAccumulator) throws Exception {
 
-        StrMatcher matcher = getMatcher();
+        if (input.doReplace()) {
+            ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
+        }
+        if (profile.getCurrentSavedBags().containsKey(input.getListName())) {
+            throw new BadRequestException("Attempt to overwrite an existing bag - name:'"
+                    + input.getListName() + "'");
+        }
 
-        BufferedReader r = getReader(request);
-        Set<String> ids = new LinkedHashSet<String>();
-        Set<String> unmatchedIds = new HashSet<String>();
+        final StrMatcher matcher = getMatcher();
 
-        InterMineBag tempBag = profile.createBag(
+        final BufferedReader r = getReader(request);
+        final Set<String> ids = new LinkedHashSet<String>();
+        final Set<String> unmatchedIds = new HashSet<String>();
+
+        final InterMineBag tempBag = profile.createBag(
                 input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         String line;
         while ((line = r.readLine()) != null) {
-            StrTokenizer st = new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
+            final StrTokenizer st =
+                new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
             while (st.hasNext()) {
-                String token = st.nextToken();
+                final String token = st.nextToken();
                 ids.add(token);
             }
             if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
@@ -149,35 +180,40 @@ public class ListUploadService extends ListMakerService {
 
         setListSize(tempBag.size());
 
-        for (Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
-            List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
+        for (final Iterator<String> i = unmatchedIds.iterator(); i.hasNext();) {
+            final List<String> row = new ArrayList<String>(Arrays.asList(i.next()));
             if (i.hasNext()) {
                 row.add("");
             }
             output.addResultItem(row);
         }
-        if (input.doReplace()) {
-            ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
-        }
+
         if (!input.getTags().isEmpty()) {
             im.getBagManager().addTagsToBag(input.getTags(), tempBag, profile);
         }
         profile.renameBag(input.getTemporaryListName(), input.getListName());
     }
 
-    protected BufferedReader getReader(HttpServletRequest request)
+    /**
+     * Get the reader for the identifiers uploaded with this request.
+     * @param request The request object.
+     * @return A buffered reader for reading the identifiers.
+     * @throws IOException If there is a problem getting access to the data.
+     * @throws FileUploadException If there was a problem transferring the file.
+     */
+    protected BufferedReader getReader(final HttpServletRequest request)
         throws IOException, FileUploadException {
         BufferedReader r = null;
 
         if (ServletFileUpload.isMultipartContent(request)) {
-            ServletFileUpload upload = new ServletFileUpload();
-            FileItemIterator iter = upload.getItemIterator(request);
+            final ServletFileUpload upload = new ServletFileUpload();
+            final FileItemIterator iter = upload.getItemIterator(request);
             while (iter.hasNext()) {
-                FileItemStream item = iter.next();
-                String fieldName = item.getFieldName();
+                final FileItemStream item = iter.next();
+                final String fieldName = item.getFieldName();
                 if (!item.isFormField() && "identifiers".equalsIgnoreCase(fieldName)) {
-                    InputStream stream = item.openStream();
-                    InputStreamReader in = new InputStreamReader(stream);
+                    final InputStream stream = item.openStream();
+                    final InputStreamReader in = new InputStreamReader(stream);
                     r = new BufferedReader(in);
                     break;
                 }
@@ -200,8 +236,8 @@ public class ListUploadService extends ListMakerService {
      * @return whether or not this request's content is of the right type for us to read it.
      */
     protected boolean requestIsOfSuitableType() {
-        String mimetype = request.getContentType();
-        return ("application/octet-stream".equals(mimetype) || mimetype.startsWith("text"));
+        final String mimetype = request.getContentType();
+        return "application/octet-stream".equals(mimetype) || mimetype.startsWith("text");
     }
 
     /**
@@ -215,17 +251,18 @@ public class ListUploadService extends ListMakerService {
      * @throws InterMineException If something goes wrong building the bag.
      * @throws ObjectStoreException If there is a problem on the database level.
      */
-    protected void addIdsToList(Collection<? extends String> ids, InterMineBag bag,
-            String type, String extraFieldValue, Set<String> unmatchedIds)
-            throws ClassNotFoundException, InterMineException, ObjectStoreException {
-        BagQueryResult result = runner.searchForBag(
+    protected void addIdsToList(final Collection<? extends String> ids, final InterMineBag bag,
+        final String type, final String extraFieldValue, final Set<String> unmatchedIds)
+        throws ClassNotFoundException, InterMineException, ObjectStoreException {
+        final BagQueryResult result = runner.searchForBag(
                 type, new ArrayList<String>(ids), extraFieldValue, false);
         bag.addIdsToBag(result.getMatches().keySet(), type);
 
-        for (String issueType: result.getIssues().keySet()) {
+        for (final String issueType: result.getIssues().keySet()) {
             @SuppressWarnings("rawtypes")
+            final
             Map<String, Map<String, List>> issueMap = result.getIssues().get(issueType);
-            for (String query: issueMap.keySet()) {
+            for (final String query: issueMap.keySet()) {
                 unmatchedIds.addAll(issueMap.get(query).keySet());
             }
         }
