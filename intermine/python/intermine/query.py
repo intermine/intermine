@@ -2,9 +2,9 @@ import re
 from copy import deepcopy
 from xml.dom import minidom, getDOMImplementation
 
-from .util import openAnything, ReadableException
-from .pathfeatures import PathDescription, Join, SortOrder, SortOrderList
-from .model import Column, Class
+from intermine.util import openAnything, ReadableException
+from intermine.pathfeatures import PathDescription, Join, SortOrder, SortOrderList
+from intermine.model import Column, Class
 import constraints
 
 """
@@ -274,6 +274,14 @@ class Query(object):
         +==============================================
 
     """
+
+    SO_SPLIT_PATTERN = re.compile("\s*(asc|desc)\s*", re.I)
+    LOGIC_SPLIT_PATTERN = re.compile("\s*(?:and|or|\(|\))\s*", re.I)
+    TRAILING_OP_PATTERN = re.compile("\s*(and|or)\s*$", re.I)
+    LEADING_OP_PATTERN = re.compile("^\s*(and|or)\s*", re.I)
+    LOGIC_OPS = ["and", "or"]
+    LOGIC_PRODUCT = [(x, y) for x in LOGIC_OPS for y in LOGIC_OPS]
+
     def __init__(self, model, service=None, validate=True, root=None):
         """
         Construct a new Query
@@ -400,9 +408,58 @@ class Query(object):
             con = obj.add_constraint(**args)
             if not con:
                 raise ConstraintError("error adding constraint with args: " + args)
+
+        def group(iterator, count):
+            itr = iter(iterator)
+            while True:
+                yield tuple([itr.next() for i in range(count)])
+
+        if q.getAttribute('sortOrder') is not None:
+            sos = Query.SO_SPLIT_PATTERN.split(q.getAttribute('sortOrder'))
+            if len(sos) == 1:
+                if sos[0] in obj.views: # Be tolerant of irrelevant sort-orders
+                    obj.add_sort_order(sos[0])
+            else:
+                sos.pop() # Get rid of empty string at end
+                for path, direction in group(sos, 2):
+                    if path in obj.views: # Be tolerant of irrelevant so.
+                        obj.add_sort_order(path, direction)
+
+        if q.getAttribute('constraintLogic') is not None:
+            logic = q.getAttribute('constraintLogic')
+            used_codes = set(obj.constraint_dict.keys())
+            logic_codes = set(Query.LOGIC_SPLIT_PATTERN.split(logic))
+            if "" in logic_codes:
+                logic_codes.remove("")
+            irrelevant_codes = logic_codes - used_codes
+            for c in irrelevant_codes:
+                pattern = re.compile("((and|or)\s+)?\\b" + c + "\\b(\s+(and|or))?", re.I)
+                logic = pattern.sub("", logic)
+            # Remove empty groups
+            logic = re.sub("\(\s*\)", "", logic)
+            # Remove trailing and leading opertators
+            logic = Query.LEADING_OP_PATTERN.sub("", logic)
+            logic = Query.TRAILING_OP_PATTERN.sub("", logic)
+            for left, right in Query.LOGIC_PRODUCT:
+                if left == right:
+                    repl = left
+                else:
+                    repl = "and"
+                pattern = re.compile(left + "\s*" + right, re.I)
+                logic = pattern.sub(repl, logic)
+            logic = logic.strip().lstrip()
+            try: 
+                if len(logic) > 0:
+                    obj.set_logic(logic)
+            except Exception, e:
+                raise Exception("Error parsing " + q.getAttribute('constraintLogic') + " => " + repr(logic) + " with views: " + repr(used_codes) + e.message)
+
         obj.verify()        
 
         return obj
+
+    def __str__(self):
+        return self.to_xml()
 
     def verify(self):
         """
@@ -792,13 +849,19 @@ class Query(object):
         This returns the up to date logic expression. The default
         value is the representation of all coded constraints and'ed together.
 
+        If the logic is empty and there are no constraints, returns an 
+        empty string.
+
         The LogicGroup object stringifies to a string that can be parsed to 
         obtain itself (eg: "A and (B or C or D)").
 
         @rtype: L{intermine.constraints.LogicGroup}
         """
         if self._logic is None:
-            return reduce(lambda x, y: x+y, self.coded_constraints)
+            if len(self.coded_constraints) > 0:
+                return reduce(lambda x, y: x+y, self.coded_constraints)
+            else: 
+                return ""
         else:
             return self._logic
 
@@ -991,7 +1054,10 @@ class Query(object):
 
     def first(self, row="rr", start=0):
         """Return the first result, or None if the results are empty"""
-        size = None if row == "jsonobjects" else 1
+        if row == "jsonobjects":
+            size = None
+        else:
+            size = 1
         try:
             return self.results(row, start=start, size=size).next()
         except StopIteration:
@@ -1173,6 +1239,7 @@ class Query(object):
         """
         n = self.to_Node()
         return n.toxml()
+
     def to_formatted_xml(self):
         """
         Return a readable XML serialisation of the query
@@ -1306,8 +1373,8 @@ class Template(Query):
         for c in self.editable_constraints:
             if not c.switched_on: next
             for k, v in c.to_dict().items():
-                k = "extra" if k == "extraValue" else k
-                k = "constraint" if k == "path" else k
+                if k == "extraValue": k = "extra" 
+                if k == "path": k = "constraint"
                 p[k + str(i)] = v
             i += 1
         return p
