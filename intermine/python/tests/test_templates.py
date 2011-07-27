@@ -2,8 +2,10 @@ import unittest
 from test import WebserviceTest
 
 from intermine.webservice import *
+from intermine.query import Template
+from intermine.constraints import TemplateConstraint
 
-class TestTemplates(WebserviceTest):
+class TestTemplates(WebserviceTest): # pragma: no cover
 
     def setUp(self):
         self.service = Service(self.get_test_root())
@@ -32,6 +34,66 @@ class TestTemplates(WebserviceTest):
             self.fail("No ServiceError raised by non-existant template")
         except ServiceError, ex:
             self.assertEqual(ex.message, "There is no template called 'Non_Existant' at this service")
+
+    def testIrrelevantSO(self):
+        """Should fix up bad sort orders and logic when parsing from xml"""
+        model = self.service.model
+
+        xml = '''<template name="bad_so"><query name="bad_so" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.fullTime ASC"/></template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_sort_order()), "Employee.name asc")
+
+        xml = '''<template name="bad_so"><query name="bad_so" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.fullTime"/></template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_sort_order()), "Employee.name asc")
+
+    def testIrrelevantConstraintLogic(self):
+        """Should fix up bad logic"""
+        model = self.service.model
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B and C"/></template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B or (D and E) and C"/></template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) and C">
+                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/>
+                </query>
+            </template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "A or B")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) and C">
+                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/><constraint path="Employee.fullTime" op="=" value="true"/>
+                </query>
+            </template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "(A or B) and C")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) or C">
+                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/><constraint path="Employee.fullTime" op="=" value="true"/>
+                </query>
+            </template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "A or B or C")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B and (D and E) or C">
+                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/><constraint path="Employee.fullTime" op="=" value="true"/>
+                </query>
+            </template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "(A or B) and C")
+
+        xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) and C">
+                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/>
+                <constraint path="Employee.fullTime" op="=" value="true"/><constraint path="Employee.name" op="IS NULL"/>
+                </query>
+            </template>'''
+        t = Template.from_xml(xml, model)
+        self.assertEqual(str(t.get_logic()), "(A or B or D) and C")
     
     def testTemplateConstraintParsing(self):
         """Should be able to parse template constraints"""
@@ -39,7 +101,8 @@ class TestTemplates(WebserviceTest):
         self.assertEqual(len(t.constraints), 2)
         self.assertEqual(len(t.editable_constraints), 1)
         expected = '[<TemplateBinaryConstraint: Company.name = Woolies (editable, locked)>]'
-        self.assertEqual(expected, t.editable_constraints.__repr__())
+        self.assertEqual(expected, repr(t.editable_constraints))
+        self.assertEqual('<TemplateBinaryConstraint: Company.departments.name = Farm Supplies (non-editable, locked)>', repr(t.get_constraint("B"))) 
 
         t2 = self.service.get_template("SwitchableConstraints")
         self.assertEqual(len(t2.editable_constraints), 3)
@@ -47,5 +110,19 @@ class TestTemplates(WebserviceTest):
         self.assertTrue(con.editable and con.required and con.switched_on)
         con = t2.get_constraint("B")
         self.assertTrue(con.editable and con.optional and con.switched_on)
+        self.assertEqual('<TemplateBinaryConstraint: Company.departments.name = Farm Supplies (editable, on)>', repr(con))
+        con.switch_off()
+        self.assertTrue(con.editable and con.optional and con.switched_off)
+        self.assertEqual('<TemplateBinaryConstraint: Company.departments.name = Farm Supplies (editable, off)>', repr(con))
+        con.switch_on()
+        self.assertTrue(con.editable and con.optional and con.switched_on)
         con = t2.get_constraint("C")
         self.assertTrue(con.editable and con.optional and con.switched_off)
+
+        self.assertRaises(ValueError, lambda: t2.get_constraint("A").switch_off())
+        self.assertRaises(ValueError, lambda: t2.get_constraint("A").switch_on())
+
+    def testBadTemplateConstraint(self):
+        self.assertRaises(TypeError, lambda: TemplateConstraint(True, "BAD_VALUE"))
+
+
