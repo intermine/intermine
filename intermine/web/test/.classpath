@@ -19,6 +19,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/json20110106.jar"/>
-	<classpathentry kind="lib" path="lib/strutstestcase-2.1.4-1.2-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
