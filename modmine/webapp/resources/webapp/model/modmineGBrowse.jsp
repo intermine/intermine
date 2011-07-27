@@ -73,7 +73,7 @@
 
   <c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
   <c:choose>
-  <c:when test="${WEB_PROPERTIES['gbrowse.prefx'] != null}">
+  <c:when test="${WEB_PROPERTIES['gbrowse.prefix'] != null}">
     <div class="loading" align="center">
       <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750"></html:link>
     </div>
