@@ -10,14 +10,14 @@ import re
 # Use core json for 2.6+, simplejson for <=2.5
 try:
     import json
-except ImportError:
+except ImportError: # pragma: no cover
     import simplejson as json
 
 # Local intermine imports
-from .query import Query, Template
-from .model import Model, Attribute, Reference, Collection
-from .util import ReadableException
-from .lists.listmanager import ListManager
+from intermine.query import Query, Template
+from intermine.model import Model, Attribute, Reference, Collection
+from intermine.util import ReadableException
+from intermine.lists.listmanager import ListManager
 
 """
 Webservice Interaction Routines for InterMine Webservices
@@ -99,19 +99,19 @@ class Service(object):
 
     @see: L{intermine.query}
     """
+    USER_AGENT             = 'WebserviceInterMinePerlAPIClient'
     QUERY_PATH             = '/query/results'
     QUERY_LIST_UPLOAD_PATH = '/query/tolist/json'
     QUERY_LIST_APPEND_PATH = '/query/append/tolist/json'
     MODEL_PATH             = '/model'
     TEMPLATES_PATH         = '/templates/xml'
     TEMPLATEQUERY_PATH     = '/template/results'
-    VERSION_PATH           = '/version'
-    USER_AGENT             = 'WebserviceInterMinePerlAPIClient'
     LIST_PATH              = '/lists/json'
     LIST_CREATION_PATH     = '/lists/json'
     LIST_RENAME_PATH       = '/lists/rename/json'
     LIST_APPENDING_PATH    = '/lists/append/json'
     SAVEDQUERY_PATH        = '/savedqueries/xml'
+    VERSION_PATH           = '/version/ws'
     RELEASE_PATH           = '/version/release'
     SCHEME                 = 'http://'
 
@@ -175,7 +175,7 @@ class Service(object):
         try:
             self.version
         except WebserviceError, e:
-            raise ServiceError("Could not validate service - is the root url correct? " + str(e))
+            raise ServiceError("Could not validate service - is the root url (%s) correct? %s" % (root, e))
 
         if token and self.version < 6:
             raise ServiceError("This service does not support API access token authentication")

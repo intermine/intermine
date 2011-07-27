@@ -1,7 +1,7 @@
 import re
 import string
-from .pathfeatures import PathFeature, PATH_PATTERN
-from .util import ReadableException
+from intermine.pathfeatures import PathFeature, PATH_PATTERN
+from intermine.util import ReadableException
 
 class Constraint(PathFeature):
     """
@@ -121,7 +121,10 @@ class LogicGroup(LogicNode):
         original logic group.
         """
         core = ' '.join(map(str, [self.left, self.op.lower(), self.right]))
-        return '(' + core + ')' if self.parent and self.op != self.parent.op else core
+        if self.parent and self.op != self.parent.op:
+            return '(' + core + ')' 
+        else:
+            return core
     def get_codes(self):
         """
         Get a list of all constraint codes used in this group.
@@ -239,11 +242,21 @@ class LogicParser(object):
                 else:
                     ret.append(item)
             return ret
+        def canonical(x, d):
+            if x in d:
+                return d[x]
+            else:
+                return re.split("\b", x)
+        def dedouble(x):
+            if re.search("[()]", x):
+                return list(x)
+            else:
+                return x
 
         logic_str = logic_str.upper()
         tokens = re.split("\s+", logic_str)
-        tokens = flatten([self.ops[x] if x in self.ops else re.split("\b", x) for x in tokens])
-        tokens = flatten([list(x) if re.search("[()]", x) else x for x in tokens])
+        tokens = flatten([canonical(x, self.ops) for x in tokens])
+        tokens = flatten([dedouble(x) for x in tokens])
         self.check_syntax(tokens)
         postfix_tokens = self.infix_to_postfix(tokens)
         abstract_syntax_tree = self.postfix_to_tree(postfix_tokens)
@@ -367,8 +380,8 @@ class LogicParser(object):
                 op = token
                 right = stack.pop()
                 left = stack.pop()
-                right = right if isinstance(right, LogicGroup) else self.get_constraint(right)
-                left = left if isinstance(left, LogicGroup) else self.get_constraint(left)
+                if not isinstance(right, LogicGroup): right = self.get_constraint(right)
+                if not isinstance(left, LogicGroup): left = self.get_constraint(left)
                 stack.append(LogicGroup(left, op, right))
         assert len(stack) == 1, "Tree doesn't have a unique root"
         return stack.pop()
@@ -830,15 +843,44 @@ class TemplateConstraint(object):
         if not self.optional:
             return "locked"
         else:
-            switch = "on" if self.switched_on else "off"
-            return switch
+            if self.switched_on:
+                return "on"
+            else:
+                return "off"
+    
+    def switch_on(self):
+        """
+        Make sure this constraint is active
+        ===================================
+
+        @raise ValueError: if the constraint is not editable and optional
+        """
+        if self.editable and self.optional:
+            self.switched_on = True
+        else:
+            raise ValueError, "This constraint is not switchable"
+
+    def switch_off(self):
+        """
+        Make sure this constraint is inactive
+        =====================================
+
+        @raise ValueError: if the constraint is not editable and optional
+        """
+        if self.editable and self.optional:
+            self.switched_on = False
+        else:
+            raise ValueError, "This constraint is not switchable"
 
     def to_string(self):
         """
         Provide a template specific human readable representation of the 
         constraint. This method is called by repr.
         """
-        editable = "editable" if self.editable else "non-editable"
+        if self.editable:
+            editable = "editable" 
+        else:
+            editable = "non-editable"
         return '(' + editable + ", " + self.get_switchable_status() + ')'
     def separate_arg_sets(self, args):
         """

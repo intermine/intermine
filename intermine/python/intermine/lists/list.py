@@ -26,6 +26,9 @@ class List(object):
         combined_list = new_list | another_list # Same syntax as for sets
         combined_list.name = "Union of the other lists"
 
+        print "The combination of the two lists has %d elements" % combined_list.size
+        print "The combination of the two lists has %d elements" % len(combined_list)
+
         for row in combined_list.to_attribute_query().results():
             print row
 
@@ -69,24 +72,60 @@ class List(object):
         method.
         """
         try: 
-            self.service = args["service"]
-            self.manager = weakref.proxy(args["manager"])
+            self._service = args["service"]
+            self._manager = weakref.proxy(args["manager"])
             self._name = args["name"]
-            self.title = args["title"]
-            self.description = args.get("description")
-            self.list_type = args["type"]
-            self.size = int(args["size"])
-            self.date_created = args.get("dateCreated")
-            self.is_authorized = args.get("authorized")
-            if self.is_authorized is None:
-                self.is_authorized = True
-            tags = args["tags"] if "tags" in args else []
-            self.tags = frozenset(tags)
+            self._title = args["title"]
+            self._description = args.get("description")
+            self._list_type = args["type"]
+            self._size = int(args["size"])
+            self._date_created = args.get("dateCreated")
+            self._is_authorized = args.get("authorized")
+
+            if self._is_authorized is None: self._is_authorized = True
+
+            if "tags" in args:
+                tags = args["tags"]
+            else: 
+                tags = []
+
+            self._tags = frozenset(tags)
         except KeyError:
             raise ValueError("Missing argument") 
         self.unmatched_identifiers = set([])
 
+    @property
+    def date_created(self):
+        """When this list was originally created"""
+        return self._date_created
+
+    @property
+    def tags(self):
+        """The tags associated with this list"""
+        return self._tags
+
+    @property
+    def description(self):
+        """The human readable description of this list"""
+        return self._description
+
+    @property
+    def title(self):
+        """The fixed title of this list"""
+        return self._title
+
+    @property
+    def is_authorized(self):
+        """Whether or not the current user is authorised to make changes to this list"""
+        return self._is_authorized
+
+    @property
+    def list_type(self):
+        """The type of the InterMine objects this list can contain"""
+        return self._list_type
+
     def get_name(self):
+        """The name of the list used to access it programmatically"""
         return self._name
 
     def set_name(self, new_name):
@@ -98,20 +137,35 @@ class List(object):
         """
         if self._name == new_name:
             return
-        uri = self.service.root + self.service.LIST_RENAME_PATH
+        uri = self._service.root + self._service.LIST_RENAME_PATH
         params = {
             "oldname": self._name,
             "newname": new_name
         }
         uri += "?" + urllib.urlencode(params)
-        resp = self.service.opener.open(uri)
+        resp = self._service.opener.open(uri)
         data = resp.read()
         resp.close()
-        new_list = self.manager.parse_list_upload_response(data)
+        new_list = self._manager.parse_list_upload_response(data)
         self._name = new_name
 
     def del_name(self):
+        """Raises an error - lists must always have a name"""
         raise AttributeError("List names cannot be deleted, only changed")
+
+    @property
+    def size(self): 
+        """Return the number of elements in the list. Also available as len(obj)"""
+        return self._size
+
+    @property
+    def count(self):
+        """Alias for obj.size. Also available as len(obj)"""
+        return self.size
+
+    def __len__(self):
+        """Returns the number of elements in the object"""
+        return self.size
 
     name = property(get_name, set_name, del_name, "The name of this list")
 
@@ -136,7 +190,7 @@ class List(object):
         object should not be used after this method is called - attempts
         to do so will raise errors.
         """
-        self.manager.delete_lists([self])
+        self._manager.delete_lists([self])
 
     def to_query(self):
         """
@@ -148,7 +202,7 @@ class List(object):
 
         @rtype: intermine.query.Query
         """
-        q = self.service.new_query()
+        q = self._service.new_query()
         q.add_view(self.list_type + ".id")
         q.add_constraint(self.list_type, "IN", self.name)
         return q
@@ -173,14 +227,14 @@ class List(object):
         """
         Intersect this list and another
         """
-        return self.manager.intersect([self, other])
+        return self._manager.intersect([self, other])
 
     def __iand__(self, other):
         """
         Intersect this list and another, and replace this list with the result of the
         intersection
         """
-        intersection = self.manager.intersect([self, other], description=self.description, tags=self.tags)
+        intersection = self._manager.intersect([self, other], description=self.description, tags=self.tags)
         self.delete()
         intersection.name = self.name
         return intersection
@@ -189,13 +243,13 @@ class List(object):
         """ 
         Return the union of this list and another
         """
-        return self.manager.union([self, other])
+        return self._manager.union([self, other])
 
     def __add__(self, other):
         """ 
         Return the union of this list and another
         """
-        return self.manager.union([self, other])
+        return self._manager.union([self, other])
 
     def __iadd__(self, other):
         """ 
@@ -225,45 +279,45 @@ class List(object):
                     params["listName"] = name
                     params["path"] = None
                     form = urllib.urlencode(params)
-                    resp = self.service.opener.open(uri, form)
+                    resp = self._service.opener.open(uri, form)
                     data = resp.read()
 
         if data is None:
-            uri = self.service.root + self.service.LIST_APPENDING_PATH
+            uri = self._service.root + self._service.LIST_APPENDING_PATH
             query_form = {'name': name}
             uri += "?" + urllib.urlencode(query_form)
-            data = self.service.opener.post_plain_text(uri, ids)
+            data = self._service.opener.post_plain_text(uri, ids)
 
-        new_list = self.manager.parse_list_upload_response(data)
+        new_list = self._manager.parse_list_upload_response(data)
         self.unmatched_identifiers.update(new_list.unmatched_identifiers)
-        self.size = new_list.size
+        self._size = new_list.size
         return self
 
     def append(self, appendix):
         "Append the arguments to this list"
         try:
-            return self._do_append(self.manager.union(appendix))
+            return self._do_append(self._manager.union(appendix))
         except:
             return self._do_append(appendix)
 
     def __xor__(self, other):
         """Calculate the symmetric difference of this list and another"""
-        return self.manager.xor([self, other])
+        return self._manager.xor([self, other])
 
     def __ixor__(self, other):
         """Calculate the symmetric difference of this list and another and replace this list with the result"""
-        diff = self.manager.xor([self, other], description=self.description, tags=self.tags)
+        diff = self._manager.xor([self, other], description=self.description, tags=self.tags)
         self.delete()
         diff.name = self.name
         return diff
 
     def __sub__(self, other):
         """Subtract the other from this list"""
-        return self.manager.subtract([self], [other])
+        return self._manager.subtract([self], [other])
 
     def __isub__(self, other):
         """Replace this list with the subtraction of the other from this list"""
-        subtr = self.manager.subtract([self], [other], description=self.description, tags=self.tags)
+        subtr = self._manager.subtract([self], [other], description=self.description, tags=self.tags)
         self.delete()
         subtr.name = self.name
         return subtr

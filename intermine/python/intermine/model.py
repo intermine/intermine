@@ -2,8 +2,8 @@ from xml.dom import minidom
 import weakref
 import re
 
-from .util import openAnything, ReadableException
-from .lists.list import List
+from intermine.util import openAnything, ReadableException
+from intermine.lists.list import List
 
 """
 Classes representing the data model
@@ -532,7 +532,10 @@ class Model(object):
         """
         assert source is not None
         self.source = source
-        self.service = weakref.proxy(service) if service is not None else service
+        if service is not None:
+            self.service = weakref.proxy(service) 
+        else:
+            self.service = service
         self.classes= {}
         self.parse_model(source)
         self.vivify()

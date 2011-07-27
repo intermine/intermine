@@ -9,7 +9,7 @@ except ImportError:
 import urllib
 import codecs
 
-from .list import List
+from intermine.lists.list import List
 
 class ListManager(object):
     """
