@@ -1,5 +1,6 @@
 import time
 import unittest
+import sys
 
 from intermine.model import *
 from intermine.webservice import *
@@ -9,13 +10,29 @@ from intermine.lists.list import List
 
 from testserver import TestServer
 
-class WebserviceTest(unittest.TestCase):
+class WebserviceTest(unittest.TestCase): # pragma: no cover
     TEST_PORT = 8000
+    MAX_ATTEMPTS = 50
 
     def get_test_root(self):
         return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/service"
 
-class TestInstantiation(WebserviceTest): 
+    def do_unpredictable_test(self, test, attempts=0, error=None):
+        if attempts < WebserviceTest.MAX_ATTEMPTS:
+            try: 
+                test()
+            except IOError, e:
+                self.do_unpredictable_test(test, attempts + 1, e)
+            except:
+                e, t, tb = sys.exc_info()
+                if type(e).__name__ == "type": # Catch old socket.error errors
+                    self.do_unpredictable_test(test, attempts + 1, e)
+                else:
+                    raise
+        else:
+            raise RuntimeError("Max error count reached - last error: " + str(error))
+
+class TestInstantiation(WebserviceTest): # pragma: no cover
 
     def testMakeModel(self):
         """Should be about to make a model, or fail with an appropriate message"""
@@ -32,7 +49,7 @@ class TestInstantiation(WebserviceTest):
         s = Service(self.get_test_root())
         self.assertTrue(isinstance(s, Service), "Can make a service")
 
-class TestModel(WebserviceTest):
+class TestModel(WebserviceTest):# pragma: no cover
 
     model = None
 
@@ -86,7 +103,7 @@ class TestModel(WebserviceTest):
         self.assertTrue(isinstance(dep.get_field("employees"), Collection))
         self.assertTrue(isinstance(dep.get_field("company"), Reference))
 
-class TestService(WebserviceTest):
+class TestService(WebserviceTest): # pragma: no cover
      
     def setUp(self):
         self.s = Service(self.get_test_root())
@@ -95,13 +112,21 @@ class TestService(WebserviceTest):
         """The service should have the right root"""
         self.assertEqual(self.get_test_root(), self.s.root, "it has the right root")
 
+    def testVersion(self):
+        """The service should have a version"""
+        self.assertEqual(self.s.version, 100)
+
+    def testRelease(self):
+        """The service should have a release"""
+        self.assertEqual(self.s.release, "FOO\n")
+
     def testQueryMaking(self):
         """The service should be able to make a query"""
         q = self.s.new_query()
         self.assertTrue(isinstance(q, Query), "Can make a query")
         self.assertEqual(q.model.name, "testmodel", "and it has the right model")
 
-class TestQuery(WebserviceTest):
+class TestQuery(WebserviceTest): # pragma: no cover
 
     model = None
     service = None
@@ -282,10 +307,10 @@ class TestQuery(WebserviceTest):
 
     def testLogic(self):
         """Queries should be able to parse good logic strings"""
-        self.q.add_constraint("Employee.name", "IS NOT NULL")
-        self.q.add_constraint("Employee.age", ">", 10)
-        self.q.add_constraint("Employee.department", "LOOKUP", "Sales", "Wernham-Hogg")
-        self.q.add_constraint("Employee.department.employees.name", "ONE OF", 
+        a = self.q.add_constraint("Employee.name", "IS NOT NULL")
+        b = self.q.add_constraint("Employee.age", ">", 10)
+        c = self.q.add_constraint("Employee.department", "LOOKUP", "Sales", "Wernham-Hogg")
+        d = self.q.add_constraint("Employee.department.employees.name", "ONE OF", 
             ["John", "Paul", "Mary"])
         self.q.add_constraint("Employee.department.employees", "Manager")
         self.assertEqual(str(self.q.get_logic()), "A and B and C and D")
@@ -295,6 +320,17 @@ class TestQuery(WebserviceTest):
         self.assertEqual(str(self.q.get_logic()), "B and (C or A) and D")
         self.q.set_logic("(A and B) or (A and C and D)")
         self.assertEqual(str(self.q.get_logic()), "(A and B) or (A and C and D)")
+        self.q.set_logic(a + b + c + d)
+        self.assertEqual(str(self.q.get_logic()), "A and B and C and D")
+        self.q.set_logic(a & b & c & d)
+        self.assertEqual(str(self.q.get_logic()), "A and B and C and D")
+        self.q.set_logic(a | b | c | d)
+        self.assertEqual(str(self.q.get_logic()), "A or B or C or D")
+        self.q.set_logic(a + b & c | d)
+        self.assertEqual(str(self.q.get_logic()), "(A and B and C) or D")
+
+        self.assertEqual(repr(self.q.get_logic()), '<LogicGroup: (A and B and C) or D>')
+
         self.assertRaises(ConstraintError, self.q.set_logic, "E and C or A and D")
         self.assertRaises(QueryError,      self.q.set_logic, "A and B and C")
         self.assertRaises(LogicParseError, self.q.set_logic, "A and B and C not D")
@@ -302,6 +338,12 @@ class TestQuery(WebserviceTest):
         self.assertRaises(LogicParseError, self.q.set_logic, "A and ((B and C) and D))")
         self.assertRaises(LogicParseError, self.q.set_logic, "A and B( and C and D)")
         self.assertRaises(LogicParseError, self.q.set_logic, "A and (B and C and )D")
+        self.assertRaises(LogicParseError, self.q.set_logic, "A and (B and C) D")
+        self.assertRaises(LogicParseError, self.q.set_logic, "A and (B and C) (D and E)")
+        self.assertRaises(TypeError, lambda: self.q.get_logic() + 1)
+        self.assertRaises(TypeError, lambda: self.q.get_logic() & 1)
+        self.assertRaises(TypeError, lambda: self.q.get_logic() | 1)
+        self.assertRaises(TypeError, lambda: LogicGroup(a, "bar", b))
 
     def testJoins(self):
         """Queries should be able to add joins"""
@@ -371,7 +413,7 @@ class TestQuery(WebserviceTest):
 
         self.assertEqual(expected, q.to_xml())
 
-class TestTemplate(TestQuery):
+class TestTemplate(TestQuery): # pragma: no cover
     
     expected_unary = '[<TemplateUnaryConstraint: Employee.age IS NULL (editable, locked)>, <TemplateUnaryConstraint: Employee.name IS NOT NULL (editable, locked)>]'
     expected_binary = '[<TemplateBinaryConstraint: Employee.age > 50000 (editable, locked)>, <TemplateBinaryConstraint: Employee.name = John (editable, locked)>, <TemplateBinaryConstraint: Employee.end != 0 (editable, locked)>]'
@@ -385,7 +427,7 @@ class TestTemplate(TestQuery):
         super(TestTemplate, self).setUp()
         self.q = Template(self.model)
 
-class TestQueryResults(WebserviceTest):
+class TestQueryResults(WebserviceTest): # pragma: no cover
 
     model = None
     service = None
@@ -534,43 +576,27 @@ class TestQueryResults(WebserviceTest):
 
     def testResultsList(self):
         """Should be able to get results as one list per row"""
-        expected = [['foo', 'bar', 'baz'], [123, 1.23, -1.23], [True, False, None]] 
-        attempts = 0
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    self.assertEqual(self.query.get_results_list("list"), expected)
-                    self.assertEqual(self.template.get_results_list("list"), expected)
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+        def logic():
+            expected = [['foo', 'bar', 'baz'], [123, 1.23, -1.23], [True, False, None]] 
+            self.assertEqual(self.query.get_results_list("list"), expected)
+            self.assertEqual(self.template.get_results_list("list"), expected)
 
-        do_tests()
+        self.do_unpredictable_test(logic)
 
     def testResultRows(self):
         """Should be able to get results as result rows"""
-        attempts = 0
-        assertEqual = self.assertEqual
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    q_res = self.query.all()
-                    t_res = self.template.all()
-                    for results in [q_res, t_res]:
-                        assertEqual(results[0]["age"], 'bar')
-                        assertEqual(results[1]["Employee.age"], 1.23)
-                        assertEqual(results[2][0], True)
-                        assertEqual(len(results), 3)
-                        for row in results:
-                            assertEqual(len(row), 3)
-
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
-
-        do_tests()
+        def logic():
+            assertEqual = self.assertEqual
+            q_res = self.query.all()
+            t_res = self.template.all()
+            for results in [q_res, t_res]:
+                assertEqual(results[0]["age"], 'bar')
+                assertEqual(results[1]["Employee.age"], 1.23)
+                assertEqual(results[2][0], True)
+                assertEqual(len(results), 3)
+                for row in results:
+                    assertEqual(len(row), 3)
+        self.do_unpredictable_test(logic)
 
 
     def testResultsDict(self):
@@ -579,21 +605,14 @@ class TestQueryResults(WebserviceTest):
             {'Employee.age': u'bar', 'Employee.id': u'baz', 'Employee.name': u'foo'}, 
             {'Employee.age': 1.23, 'Employee.id': -1.23, 'Employee.name': 123}, 
             {'Employee.age': False, 'Employee.id': None, 'Employee.name': True}
-        ] 
-        attempts = 0
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    self.assertEqual(self.query.get_results_list("dict"), expected)
-                    self.assertEqual(self.template.get_results_list("dict"), expected)
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+        ]
+        def logic():
+            self.assertEqual(self.query.get_results_list("dict"), expected)
+            self.assertEqual(self.template.get_results_list("dict"), expected)
 
-        do_tests()
+        self.do_unpredictable_test(logic)
 
-class TestTSVResults(WebserviceTest):
+class TestTSVResults(WebserviceTest): # pragma: no cover
 
     model = None
     service = None
@@ -621,26 +640,19 @@ class TestTSVResults(WebserviceTest):
 
     def testResults(self):
         """Should be able to get results as one string per row"""
-        attempts = 0
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    self.assertEqual(self.query.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
-                    self.assertEqual(self.template.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+        def logic():
+            self.assertEqual(self.query.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
+            self.assertEqual(self.template.get_results_list(self.FORMAT), self.EXPECTED_RESULTS)
+        self.do_unpredictable_test(logic)
 
-        do_tests()
 
-class TestCSVResults(TestTSVResults):
+class TestCSVResults(TestTSVResults): # pragma: no cover
 
     PATH = "/testservice/csvservice"
     FORMAT = "csv"
     EXPECTED_RESULTS = ['"foo","bar","baz"', '"123","1.23","-1.23"']
 
-class TestResultObjects(WebserviceTest):
+class TestResultObjects(WebserviceTest): # pragma: no cover
     model = None
     service = None
 
@@ -663,43 +675,35 @@ class TestResultObjects(WebserviceTest):
 
     def testResultObjs(self):
         """Should be able to get results as result objects"""
-        attempts = 0
-        assertEqual = self.assertEqual
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    q_res = self.query.all("jsonobjects")
-                    t_res = self.template.all("jsonobjects")
-                    for departments in [q_res, t_res]:
-                        assertEqual(departments[0].name, 'Sales')
-                        assertEqual(departments[0].company.vatNumber, 665261)
-                        assertEqual(departments[0].employees[2].name, "Tim Canterbury")
-                        assertEqual(departments[0].employees[3].age, 58)
-                        assertEqual(len(departments[0].employees), 6)
+        def logic():
+            assertEqual = self.assertEqual
+            q_res = self.query.all("jsonobjects")
+            t_res = self.template.all("jsonobjects")
+            for departments in [q_res, t_res]:
+                assertEqual(departments[0].name, 'Sales')
+                assertEqual(departments[0].company.vatNumber, 665261)
+                assertEqual(departments[0].employees[2].name, "Tim Canterbury")
+                assertEqual(departments[0].employees[3].age, 58)
+                assertEqual(len(departments[0].employees), 6)
 
-                        assertEqual(departments[-1].name, 'Slashes')
-                        assertEqual(departments[-1].company.vatNumber, 764575)
-                        assertEqual(departments[-1].employees[2].name, "Double forward Slash //")
-                        assertEqual(departments[-1].employees[2].age, 62)
-                        assertEqual(len(departments[-1].employees), 5)
+                assertEqual(departments[-1].name, 'Slashes')
+                assertEqual(departments[-1].company.vatNumber, 764575)
+                assertEqual(departments[-1].employees[2].name, "Double forward Slash //")
+                assertEqual(departments[-1].employees[2].age, 62)
+                assertEqual(len(departments[-1].employees), 5)
 
-                        for idx in [0, -1]:
-                            assertEqual(departments[idx].manager, None) # Unrequested refs are none, even if they would otherwise have had a value
-                            assertEqual(departments[idx].company.name, None) # Unrequested attrs are none
-                            assertEqual(departments[idx].company.contractors, []) # Unrequested collections are empty
-                            self.assertRaises(ModelError, lambda: departments[idx].foo) # Model errors are thrown for illegal field access
-                            self.assertRaises(ModelError, lambda: departments[idx].company.foo)
+                for idx in [0, -1]:
+                    assertEqual(departments[idx].manager, None) # Unrequested refs are none, even if they would otherwise have had a value
+                    assertEqual(departments[idx].company.name, None) # Unrequested attrs are none
+                    assertEqual(departments[idx].company.contractors, []) # Unrequested collections are empty
+                    self.assertRaises(ModelError, lambda: departments[idx].foo) # Model errors are thrown for illegal field access
+                    self.assertRaises(ModelError, lambda: departments[idx].company.foo)
 
-                        assertEqual(len(departments), 8)
+                assertEqual(len(departments), 8)
+        
+        self.do_unpredictable_test(logic)
 
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
-
-        do_tests()
-
-class TestCountResults(TestTSVResults):
+class TestCountResults(TestTSVResults): # pragma: no cover
 
     PATH = "/testservice/countservice"
     FORMAT = "count"
@@ -708,21 +712,12 @@ class TestCountResults(TestTSVResults):
 
     def testCount(self):
         """Should be able to get count as an integer"""
-        attempts = 0
-        def do_tests(error=None):
-            if attempts < 5:
-                try:
-                    self.assertEqual(self.query.count(), self.EXPECTED_COUNT)
-                    self.assertEqual(self.template.count(), self.EXPECTED_COUNT)
-                except IOError, e:
-                    do_tests(e)
-            else:
-                raise RuntimeError("Error connecting to " + self.query.service.root, error)
+        def logic():
+            self.assertEqual(self.query.count(), self.EXPECTED_COUNT)
+            self.assertEqual(self.template.count(), self.EXPECTED_COUNT)
+        self.do_unpredictable_test(logic)
 
-        do_tests()
-
-
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     server = TestServer()
     server.start()
     time.sleep(0.1) # Avoid race conditions with the server
