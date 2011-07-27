@@ -1,3 +1,4 @@
 include COPYING.txt
 recursive-include docs *.html *.css *.png
 recursive-include tests *
+recursive-include intermine *.py
