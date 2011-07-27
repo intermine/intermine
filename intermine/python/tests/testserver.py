@@ -7,7 +7,7 @@ from socket import socket
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
 
-class SilentRequestHandler(SimpleHTTPRequestHandler):
+class SilentRequestHandler(SimpleHTTPRequestHandler): # pragma: no cover
 
     silent = True
 
@@ -35,7 +35,7 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         self.do_GET()
 
-class TestServer( threading.Thread ):
+class TestServer( threading.Thread ): # pragma: no cover
     def __init__(self, daemonise=True, silent=True):
         super(TestServer, self).__init__()
         self.daemon = daemonise
@@ -60,7 +60,7 @@ class TestServer( threading.Thread ):
     def shutdown(self):
         self.join()
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     server = TestServer(silent=False)
     server.start()
     for number in range(1, 20):
