@@ -73,13 +73,13 @@
 
   <c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
   <c:choose>
-  <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
+  <c:when test="${WEB_PROPERTIES['gbrowse.prefx'] != null}">
     <div class="loading" align="center">
       <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750"></html:link>
     </div>
   </c:when>
   <c:otherwise>
-    <p class="gbrowse-not-configured"><i>GBrowse is not configured in web.properties</i></p>
+    <p class="gbrowse-not-configured"><i>GBrowse is not configured in modmine.properties</i></p>
   </c:otherwise>
   </c:choose>
 </div>
