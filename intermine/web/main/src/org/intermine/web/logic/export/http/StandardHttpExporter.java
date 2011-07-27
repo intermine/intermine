@@ -111,6 +111,14 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
     }
 
+    /**
+     * Get headers for the export table. If there is a pathquery, try and use its path descriptions,
+     * otherwise format the columns we do have with the labels configured in the web applications
+     * configurations.
+     * @param pt The paged table we are trying to export
+     * @param webConfig The web application's display configuration.
+     * @return A list of headers.
+     */
     private List<String> getHeaders(final PagedTable pt, final WebConfig webConfig) {
 
         final PathQuery pq = pt.getPathQuery();
