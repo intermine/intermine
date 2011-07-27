@@ -51,9 +51,10 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     Profile profile;
     HttpSession session;
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" +
+        final String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" +
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" +
                 "        <node path=\"Employee\" type=\"Employee\"/>\n" +
                 "        <node path=\"Employee.id\" type=\"Integer\">\n" +
@@ -64,58 +65,59 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
                 "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         context = getActionServlet().getServletContext();
-        TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map tqs = tqb.unmarshal(new StringReader(template), null, 1);
-        TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
+        final TemplateQueryBinding tqb = new TemplateQueryBinding();
+        final Map tqs = tqb.unmarshal(new StringReader(template), null, 1);
+        final TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(tq));
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ProfileManager profileManager = new ProfileManager(os, uosw);
+        final ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        final ProfileManager profileManager = new ProfileManager(os, uosw);
         profile = new Profile(profileManager, "test", new Integer(101), "testpass",
                 new HashMap(), new HashMap(), new HashMap());
         session = getSession();
         session.setAttribute(Constants.PROFILE, profile);
     }
 
+    @Override
     public void tearDown() throws Exception {
         uosw.close();
     }
 
     // this calls getConvertedObjects with a list of Employees and gets back converted Addresses
     public void testGetConvertedObjects() throws Exception {
-        InterMineAPI im = SessionMethods.getInterMineAPI(context);
-        ObjectStore os = im.getObjectStore();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        final ObjectStore os = im.getObjectStore();
 
-        Results r = getEmployeesAndAddresses();
+        final Results r = getEmployeesAndAddresses();
 
         assertEquals("Results: " + r, 2, r.size());
-        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        final InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), false, os, null, uosw, null);
         imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
         imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId(), "Employee");
         profile.saveBag("Fred", imb);
-        List expected = new ArrayList();
+        final List expected = new ArrayList();
         expected.add(((List) r.get(0)).get(1));
         expected.add(((List) r.get(1)).get(1));
 
-        WebResults results = BagConversionHelper.getConvertedObjects(getSession(), conversionTemplates, Employee.class, Address.class, imb);
-        List got = new ArrayList();
-        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : results) {
+        final WebResults results = BagConversionHelper.getConvertedObjects(getSession(), conversionTemplates, Employee.class, Address.class, imb);
+        final List got = new ArrayList();
+        for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : results) {
             got.add(mr.get(0).get(0).getValue().getObject());
         }
         assertEquals(expected, got);
     }
 
     private Results getEmployeesAndAddresses() throws Exception {
-        InterMineAPI im = SessionMethods.getInterMineAPI(context);
-        ObjectStore os = im.getObjectStore();
-        List names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        QueryClass qc2 = new QueryClass(Address.class);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        final ObjectStore os = im.getObjectStore();
+        final List names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
+        final Query q = new Query();
+        final QueryClass qc1 = new QueryClass(Employee.class);
+        final QueryClass qc2 = new QueryClass(Address.class);
         q.addFrom(qc1);
         q.addToSelect(qc1);
         q.addFrom(qc2);
         q.addToSelect(qc2);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        final ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(cs);
         cs.addConstraint(new BagConstraint(new QueryField(qc1, "name"), ConstraintOp.IN, names));
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "address"),
