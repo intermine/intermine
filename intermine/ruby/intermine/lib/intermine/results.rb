@@ -90,10 +90,12 @@ module Results
 
     class ResultsReader
 
-        def initialize(uri, query)
+        def initialize(uri, query, start, size)
             @uri = URI(uri)
             @http = Net::HTTP.new(@uri.host, @uri.port)
             @query = query
+            @start = start
+            @size = size
         end
 
         def get_each_line
@@ -115,7 +117,13 @@ module Results
         end
 
         def get_query_string
-            bits = []
+            bits = [["start", @start]]
+            unless @size.nil?
+                bits << ["size", @size]
+            end
+            unless @query.service.token.nil?
+                bits << ["token", @query.service.token]
+            end
             @query.params.each do |k, v|
                 if v.is_a?(Array)
                     v.each do |x|

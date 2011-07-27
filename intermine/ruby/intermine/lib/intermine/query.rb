@@ -200,7 +200,7 @@ module PathQuery
         HIGHEST_CODE = "Z"
 
         attr_accessor :name, :title, :root
-        attr_reader :model, :joins, :constraints, :views, :sort_order, :logic
+        attr_reader :model, :joins, :constraints, :views, :sort_order, :logic, :service
 
         def initialize(model, root=nil, service=nil)
             @model = model
@@ -259,18 +259,18 @@ module PathQuery
             return doc
         end
 
-        def results_reader
-            return Results::ResultsReader.new(@url, self)
+        def results_reader(start=0, size=nil)
+            return Results::ResultsReader.new(@url, self, start, size)
         end
 
-        def each_row
-            results_reader.each_row {|row|
+        def each_row(start=0, size=nil)
+            results_reader(start, size).each_row {|row|
                 yield row
             }
         end
 
-        def each_result
-            results_reader.each_result {|row|
+        def each_result(start=0, size=nil)
+            results_reader(start, size).each_result {|row|
                 yield row
             }
         end
@@ -279,9 +279,9 @@ module PathQuery
             return results_reader.get_size
         end
 
-        def results
+        def results(start=0, size=nil)
             res = []
-            results_reader.each_row {|row|
+            results_reader(start, size).each_row {|row|
                 res << row
             }
             res
@@ -678,7 +678,7 @@ module PathQuery
             model = @path.model
             cdA = model.get_cd(@path.end_type)
             cdB = model.get_cd(@sub_class.end_type)
-            if !cdB == cdA and !cdB.subclass_of?(cdA)
+            unless ((cdB == cdA) or cdB.subclass_of?(cdA))
                 raise ArgumentError, "The subclass in a #{self.class.name} must be a subclass of its path, but #{cdB} is not a subclass of #{cdA}"
             end
 
@@ -1211,14 +1211,14 @@ module PathQuery
             return p
         end
 
-        def each_row(params = {})
+        def each_row(params = {}, start=0, size=nil)
             runner = (params.empty?) ? self : get_adjusted(params)
-            runner.results_reader.each_row {|r| yield r}
+            runner.results_reader(start, size).each_row {|r| yield r}
         end
 
-        def each_result(params = {}) 
+        def each_result(params = {}, start=0, size=nil) 
             runner = (params.empty?) ? self : get_adjusted(params)
-            runner.results_reader.each_result {|r| yield r}
+            runner.results_reader(start, size).each_result {|r| yield r}
         end
 
         def count(params = {})
