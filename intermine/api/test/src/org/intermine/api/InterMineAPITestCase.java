@@ -54,6 +54,7 @@ public class InterMineAPITestCase extends TestCase {
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
     protected Profile testUser;
+    TrackerDelegate trackerDelegate;
 
     /**
      * @param arg
@@ -70,7 +71,6 @@ public class InterMineAPITestCase extends TestCase {
         clearDatabase();
         clearUserprofile();
 
-        TrackerDelegate trackerDelegate = new TrackerDelegate(new String[0], uosw);
         ObjectStoreSummary oss = new ObjectStoreSummary(new Properties());
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
 
@@ -89,11 +89,20 @@ public class InterMineAPITestCase extends TestCase {
         testUser = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pmTmp.createProfile(testUser);
 
+        String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
+                "org.intermine.api.tracker.ListTracker",
+                "org.intermine.api.tracker.LoginTracker",
+                "org.intermine.api.tracker.KeySearchTracker"};
+        trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
+
+
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
 
     }
 
     public void tearDown() throws Exception {
+        trackerDelegate.close();
+        trackerDelegate.finalize();
         clearDatabase();
         clearUserprofile();
         uosw.close();
