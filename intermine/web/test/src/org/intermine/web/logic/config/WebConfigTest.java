@@ -13,13 +13,12 @@ package org.intermine.web.logic.config;
 import java.io.InputStream;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
+import org.custommonkey.xmlunit.XMLTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.MockServletContext;
 
-public class WebConfigTest extends TestCase
+public class WebConfigTest extends XMLTestCase
 {
 
 	MockServletContext context = new MockServletContext();
@@ -71,7 +70,6 @@ public class WebConfigTest extends TestCase
         final Displayer managerTableDisplayer = new Displayer();
         managerTableDisplayer.setSrc("/model/tableManager.jsp");
         managerType.setTableDisplayer(managerTableDisplayer);
-        managerType.addFieldConfig(age);
 
         final FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
@@ -89,6 +87,7 @@ public class WebConfigTest extends TestCase
         df5.setFieldExpr("title");
         df5.setDoNotTruncate(true);
         managerType.addFieldConfig(df5);
+        managerType.addFieldConfig(age);
 
         final Type contractorType = new Type();
         contractorType.setClassName("org.intermine.model.testmodel.Contractor");
@@ -162,7 +161,9 @@ public class WebConfigTest extends TestCase
         assertEquals(displayerAspects, (wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
                 .getAspectDisplayers());
         */
-        assertEquals(wc2.toString(), wc1.toString());
+        
+        
+        assertXMLEqual(wc2.toString(), wc1.toString());
 
     }
 
