@@ -1,11 +1,11 @@
 use Test::More;
-use Webservice::InterMine::Bio qw/GFF3 FASTA/;
+use Webservice::InterMine::Bio qw/GFF3 FASTA BED/;
 use Webservice::InterMine;
 
 unless ($ENV{RELEASE_TESTING}) {
     plan skip_all => "Live test for release testing only";
 } else {
-    my $service = Webservice::InterMine->get_service('localhost/flymine');
+    my $service = Webservice::InterMine->get_service('flymine');
     my $query = $service->new_query(with => GFF3);
 
     $query->add_sequence_features(qw/Gene Gene.exons Gene.exons.transcripts/);
@@ -36,4 +36,10 @@ unless ($ENV{RELEASE_TESTING}) {
     while (my $seq = $seqio->next_seq() ) {
         $out->write_seq($seq);
     }
+
+    $query = $service->new_query(class => 'Gene', with => BED);
+    $query->add_sequence_features("Gene", "Gene.exons", "Gene.transcripts");
+    $query->add_constraint("symbol" => [qw/h H eve zen/]);
+
+    $query->print_bed;
 }

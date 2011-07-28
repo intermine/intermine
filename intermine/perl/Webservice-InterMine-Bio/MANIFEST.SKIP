@@ -6,3 +6,4 @@ _build
 .*.swp
 ^MYMETA\.yml$
 ^MYMETA\.json$
+.*tar\.gz

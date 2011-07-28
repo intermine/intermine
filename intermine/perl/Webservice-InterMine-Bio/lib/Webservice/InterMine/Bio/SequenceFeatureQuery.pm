@@ -71,7 +71,7 @@ Return a result iterator for a sequence feature query.
 sub get_seq_iterator {
     my $self = shift;
     my $format = shift;
-    my $url = $self->service_root . $self->service->get_resource_path('query.' . $format);
+    my $url  = $self->_get_base_uri($format);
     return $self->service->get_results_iterator(
         $url,
         {$self->get_request_parameters},
@@ -90,10 +90,23 @@ Return the resource uri for a particular kind of sequence feature query.
 
 sub get_sequence_uri {
     my ($self, $format) = @_;
-    my $uri = URI->new(
-        $self->service_root . $self->service->get_resource_path('query.' . $format));
+    my $uri = URI->new($self->_get_base_uri($format));
     $uri->query_form($self->get_request_parameters);
     return "$uri";
+}
+
+# Memoize these lookups
+my %_base_uris;
+
+sub _get_base_uri {
+    my ($self, $format) = @_;
+    my $root = $self->service_root;
+    if (my $uri = $_base_uris{"$root-$format"}) {
+        return $uri;
+    }
+    my $uri = $root . $self->service->get_resource_path("query.$format");
+    $_base_uris{"$root-$format"} = $uri;
+    return $uri;
 }
 
 =head2 get_sequence($format)
