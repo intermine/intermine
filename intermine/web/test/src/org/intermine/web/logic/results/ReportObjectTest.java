@@ -89,15 +89,15 @@ public class ReportObjectTest extends InterMineAPITestCase
         ReportObject reportObject = new ReportObject(company, webConfig, im, null);
 
         List<FieldConfig> fieldConfigs = new ArrayList<FieldConfig>();
+        FieldConfig df3 = new FieldConfig();
+        df3.setFieldExpr("address.address");
+        fieldConfigs.add(df3);
         FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("name");
         fieldConfigs.add(df1);
         FieldConfig df2 = new FieldConfig();
         df2.setFieldExpr("vatNumber");
         fieldConfigs.add(df2);
-        FieldConfig df3 = new FieldConfig();
-        df3.setFieldExpr("address.address");
-        fieldConfigs.add(df3);
 
         // test
         assertEquals(Collections.unmodifiableCollection(new ArrayList()).getClass(), reportObject.getFieldConfigs().getClass());
