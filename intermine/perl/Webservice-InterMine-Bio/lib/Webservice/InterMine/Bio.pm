@@ -9,11 +9,11 @@ Webservice::InterMine::Bio - Access data from InterMine queries in biological fo
 
 =head1 VERSION
 
-Version 0.97
+Version 0.98
 
 =cut
 
-our $VERSION = '0.9701';
+our $VERSION = '0.9800';
 
 
 =head1 SYNOPSIS
@@ -41,7 +41,9 @@ manner expected by C<new_query>. So:
 
 =item * FASTA => ['Webservice::InterMine::Bio::FastaQuery']
 
-=item * BIO_PERL => [ both.. ]
+=item * BED => ['Webservice::InterMine::Bio::BEDQuery']
+
+=item * BIO_PERL => [ all... ]
 
 =back
 
@@ -49,11 +51,12 @@ manner expected by C<new_query>. So:
 
 use Exporter qw/import/;
 
-our @EXPORT_OK = qw/GFF3 BIO_PERL FASTA/;
+our @EXPORT_OK = qw/GFF3 BIO_PERL FASTA BED/;
 
 use constant {
     GFF3 => ['Webservice::InterMine::Bio::GFFQuery'],
     FASTA => ['Webservice::InterMine::Bio::FastaQuery'],
+    BED => ['Webservice::InterMine::Bio::BEDQuery'],
     BIO_PERL => [
         'Webservice::InterMine::Bio::GFFQuery',
         'Webservice::InterMine::Bio::FastaQuery',
