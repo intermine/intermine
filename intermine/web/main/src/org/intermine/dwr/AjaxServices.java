@@ -80,7 +80,6 @@ import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
@@ -286,17 +285,17 @@ public class AjaxServices
      * @throws Exception an exception.
      */
     public String generateApiKey(String username) throws Exception {
-    	try {
-	    	WebContext ctx = WebContextFactory.get();
-	    	HttpSession session = ctx.getSession();
-	    	final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-	    	final ProfileManager pm = im.getProfileManager();
-	    	Profile p = pm.getProfile(username);
-	    	return pm.generateApiKey(p);
-    	} catch (RuntimeException e) {
-    		processException(e);
-    		return null;
-    	}
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            final ProfileManager pm = im.getProfileManager();
+            Profile p = pm.getProfile(username);
+            return pm.generateApiKey(p);
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
     }
 
     /**
@@ -304,21 +303,22 @@ public class AjaxServices
      * is returned to confirm success.
      * @param username The user whose key we should delete.
      * @return A confirmation string.
-     * @throws Exception
+     * @throws Exception if somethign bad happens
      */
-    public String deleteApiKey(String username) throws Exception {
-    	try {
-    		WebContext ctx = WebContextFactory.get();
-	    	HttpSession session = ctx.getSession();
-	    	final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-	    	final ProfileManager pm = im.getProfileManager();
-	    	Profile p = pm.getProfile(username);
-	    	p.setApiKey(null);
-	    	return "deleted";
-    	} catch (RuntimeException e) {
-    		processException(e);
-    		return null;
-    	}
+    public String deleteApiKey(String username)
+        throws Exception {
+        try {
+            WebContext ctx = WebContextFactory.get();
+            HttpSession session = ctx.getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            final ProfileManager pm = im.getProfileManager();
+            Profile p = pm.getProfile(username);
+            p.setApiKey(null);
+            return "deleted";
+        } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        }
     }
 
     /**
