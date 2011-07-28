@@ -455,7 +455,6 @@ public class ProfileManager
     public synchronized String generateApiKey(Profile profile) {
         String newApiKey = generateApiKey();
         profile.setApiKey(newApiKey);
-
         return newApiKey;
     }
 
