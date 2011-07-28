@@ -10,9 +10,13 @@ package org.modmine.web.displayer;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +34,7 @@ import org.intermine.model.bio.Tissue;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.json.JSONArray;
 
 /**
  * Join submission properties to one table.
@@ -40,15 +45,9 @@ import org.intermine.web.logic.results.ReportObject;
  */
 public class SubmissionPropertiesDisplayer extends ReportDisplayer
 {
+    private static String submissionPropertyJSON = null;
 
     protected static final Logger LOG = Logger.getLogger(SubmissionPropertiesDisplayer.class);
-
-//private static final Set<String> PROPERTY_CLASSNAME_SET = new HashSet<String>(
-//new LinkedHashSet<String>(Arrays.asList("Antibody", "CellLine", "DevelopmentalStage",
-//"Strain", "Tissue", "Array", "GrowthTemperature", "SubmissionProperty")));
-
-    /** @var maximum amount of rows to show per table */
-//    private Integer maxCount = 30;
 
     /**
      * @param config ReportDisplayerConfig
@@ -133,276 +132,54 @@ public class SubmissionPropertiesDisplayer extends ReportDisplayer
         request.setAttribute("arrayMap", arrayMap);
 
         //== SubmissionProperty ==
-        Map<String, Map<Integer, String>> submissionPropertyMap =
-            new HashMap<String, Map<Integer, String>>();
-
-        for (SubmissionProperty sp : sub.getProperties()) {
-            if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
-                if (!submissionPropertyMap.containsKey(sp.getType())) {
-                    Map<Integer, String> propertyMap = new HashMap<Integer, String>();
-                    propertyMap.put(sp.getId(), sp.getName());
-                    submissionPropertyMap.put(sp.getType(), propertyMap);
-                } else {
-                    submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
-                }
-            }
-        }
-
-        request.setAttribute("submissionPropertyMap", submissionPropertyMap);
-
-        /*
-        // group properties by class, to display classes and counts
-        Map<String, Integer> propertyCounts = new TreeMap<String, Integer>();
-        Map<String, InlineResultsTable> propertyTables = new TreeMap<String, InlineResultsTable>();
-
-        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(sub, im.getModel());
-
-        // for properties
-        try {
-//            @SuppressWarnings("unchecked")
-            Collection<InterMineObject> properties =
-                (Collection<InterMineObject>) sub.getFieldValue("properties");
-            for (InterMineObject p : properties) {
-                String className = DynamicUtil.getSimpleClass(p).getSimpleName();
-
-                if (!geneModelIds.contains(p.getId())) {
-                    incrementCount(propertyCounts, className);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            LOG.error("Error accessing properties collection for submission: "
-                    + sub.getdCCid() + ", " + sub.getId());
-        }
-        */
-
-        /**
-        // for developmental stage use
-        for (String key : propertyCounts.keySet()) {
-            propertyClassNameSet.add(key.toLowerCase());
-        }
-        **/
-
-        /**
-        // experimentalFactors = submissionProperties
-        try {
-            @SuppressWarnings("unchecked")
-            Collection<InterMineObject> experimentalFactors =
-                (Collection<InterMineObject>) sub.getFieldValue("experimentalFactors");
-            for (InterMineObject ef : experimentalFactors) {
-                if (!geneModelIds.contains(ef.getId())) {
-                    incrementCount(propertyCounts, ef);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            LOG.error("Error accessing properties collection for submission: "
-                    + sub.getdCCid() + ", " + sub.getId());
-        }
-        **/
-
-        /*
-        // resolve Collection from FieldDescriptor
-        for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
-
-            // Case : properties
-            if ("properties".equals(fd.getName()) && fd.isCollection()) {
-                Collection<?> collection = null;
-                try {
-                    collection = (Collection<?>)
-                    reportObject.getObject().getFieldValue("properties");
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                // make collection into a list
-                List<?> collectionList;
-                if (collection instanceof List<?>) {
-                    collectionList = (List<?>) collection;
-                } else {
-                    if (collection instanceof LazyCollection<?>) {
-                        collectionList = ((LazyCollection<?>) collection).asList();
-                    } else {
-                        collectionList = new ArrayList(collection);
-                    }
-                }
-
-                // get the classes
-                List<Class<?>> lt = PathQueryResultHelper.
-                queryForTypesInCollection(reportObject.getObject(), "properties",
-                        im.getObjectStore());
-
-                looptyloop:
-                    for (Class<?> c : lt) {
-                        Iterator<?> resultsIter = collectionList.iterator();
-
-                        // new collection of objects of only type "c"
-                        List<InterMineObject> cl = new ArrayList<InterMineObject>();
-
-                        String className = null;
-                        Integer count = this.maxCount;
-                        // loop through each row object
-                        while (resultsIter.hasNext() && count > 0) {
-                            Object o = resultsIter.next();
-                            if (o instanceof ProxyReference) {
-                                // special case for ProxyReference from DisplayReference objects
-                                o = ((ProxyReference) o).getObject();
-                            }
-                            // cast
-                            InterMineObject imObj = (InterMineObject) o;
-                            // type match?
-                            Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
-                            if (c.equals(imObjClass)) {
-                                count--;
-                                cl.add(imObj);
-                                // determine type
-                                className = DynamicUtil.getSimpleClass(cl.get(0)).getSimpleName();
-
-                                // do we actually want any of this? <-- what's this for?
-                                if (!propertyCounts.containsKey(className)) {
-                                    continue looptyloop;
-                                }
-                            }
-                        }
-
-                        if (cl.size() > 0) {
-                            // one element list
-                            ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
-                            lc.add(c);
-
-                            // create an InlineResultsTable
-                            InlineResultsTable t = new InlineResultsTable(cl, fd
-                                    .getClassDescriptor().getModel(),
-                                    SessionMethods.getWebConfig(request),
-                                    im.getClassKeys(), cl.size(), false, lc);
-
-                            // name the table based on the first element contained
-                            propertyTables.put(className, t);
-                        }
-                    }
-            }
-            */
-
-            /**
-            // Case : experimentalFactors
-            if ("experimentalFactors".equals(fd.getName()) && fd.isCollection()) {
-                Collection<?> collection = null;
-                try {
-                    collection = (Collection<?>)
-                    reportObject.getObject().getFieldValue("experimentalFactors");
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                // make collection into a list
-                List<?> collectionList;
-                if (collection instanceof List<?>) {
-                    collectionList = (List<?>) collection;
-                } else {
-                    if (collection instanceof LazyCollection<?>) {
-                        collectionList = ((LazyCollection<?>) collection).asList();
-                    } else {
-                        collectionList = new ArrayList(collection);
-                    }
-                }
-
-                // get the classes
-                List<Class<?>> lt = PathQueryResultHelper.
-                queryForTypesInCollection(reportObject.getObject(), "experimentalFactors",
-                        im.getObjectStore());
-
-                LOG.info("experimentalFactors size >>>>> " + lt);
-
-                Class<?> c = lt.get(0);
-
-                Iterator<?> resultsIter = collectionList.iterator();
-
-                // new collection of objects of only type "c"
-                List<InterMineObject> cl = new ArrayList<InterMineObject>();
-
-                String className = null;
-                Integer count = this.maxCount;
-                // loop through each row object
-                while (resultsIter.hasNext() && count > 0) {
-                    Object o = resultsIter.next();
-                    if (o instanceof ProxyReference) {
-                        // special case for ProxyReference from DisplayReference objects
-                        o = ((ProxyReference) o).getObject();
-                    }
-                    // cast
-                    InterMineObject imObj = (InterMineObject) o;
-                    // type match?
-                    Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
-                    if (c.equals(imObjClass)) {
-                        count--;
-                        cl.add(imObj);
-                        // determine type
-                        className = DynamicUtil.getSimpleClass(cl.get(0)).getSimpleName();
-                    }
-                }
-
-                if (cl.size() > 0) {
-                    // one element list
-                    ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
-                    lc.add(c);
-
-                    // create an InlineResultsTable
-                    InlineResultsTable t = new InlineResultsTable(cl, fd
-                            .getClassDescriptor().getModel(),
-                            SessionMethods.getWebConfig(request),
-                            im.getClassKeys(), cl.size(), false, lc);
-
-                    // The tricky part, to remove the duplicated items between
-                    // properties and experimentalStage
-                    List<Object> toRemove = new ArrayList<Object>();
-                    for (Object r : t.getResultElementRows()) {
-                            for(Object o : ((InlineResultsTableRow)r).getItems()){
-                            if (propertyClassNameSet.contains(StringUtil.join(
-                                    Arrays.asList(((ResultElement) o)
-                                            .getField().toString().split(" ")),
-                                    "").toLowerCase())) {
-                                    toRemove.add(r);
-                                    break;
-                                }
-                            }
-                    }
-
-                    for (Object r : toRemove) {
-                        t.getResultElementRows().remove(r);
-                    }
-
-                    propertyCounts.put(className, propertyCounts.get(className) - toRemove.size());
-
-                    // name the table based on the first element contained
-                    propertyTables.put(className, t);
-                }
-            }
-            **/
-        /*
-        }
-
-        Map<String, Integer> additionalPropertyFields = new HashMap<String, Integer>();
-        for (String className : PROPERTY_CLASSNAME_SET) {
-            if (!propertyCounts.keySet().contains(className)) {
-                additionalPropertyFields.put(className, 0);
-            }
-        }
-        propertyCounts.putAll(additionalPropertyFields);
-
-
-        request.setAttribute("propertyCounts", propertyCounts);
-
-        request.setAttribute("propertyTables", propertyTables);
-        */
+        request.setAttribute("submissionPropertyJSON", getSubmissionPropertyJSON(sub));
     }
 
-    /*
-    private void incrementCount(Map<String, Integer> propertyCounts, String className) {
+    private static synchronized String getSubmissionPropertyJSON(Submission sub) {
 
-        Integer count = propertyCounts.get(className);
-        if (count == null) {
-            count = new Integer(0);
-            propertyCounts.put(className, count);
+        if (submissionPropertyJSON == null) {
+            Map<String, Map<Integer, String>> submissionPropertyMap =
+                new HashMap<String, Map<Integer, String>>();
+
+            Set<SubmissionProperty> spSet = sub.getProperties();
+
+            if (spSet == null || spSet.size() < 1) {
+                return null;
+            } else {
+                for (SubmissionProperty sp : sub.getProperties()) {
+                    if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
+                        if (!submissionPropertyMap.containsKey(sp.getType())) {
+                            Map<Integer, String> propertyMap = new HashMap<Integer, String>();
+                            propertyMap.put(sp.getId(), sp.getName());
+                            submissionPropertyMap.put(sp.getType(), propertyMap);
+                        } else {
+                            submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
+                        }
+                    }
+                }
+
+                // Parse map to json
+                List<Object> propertiesList = new ArrayList<Object>();
+
+                for (Entry<String, Map<Integer, String>> e : submissionPropertyMap.entrySet()) {
+                    Map<String, Object> propertiesMap = new LinkedHashMap<String, Object>();
+                    propertiesMap.put("type", e.getKey());
+                    List<Object> valueList = new ArrayList<Object>();
+                    for (Entry<Integer, String> en : ((Map<Integer, String>) e
+                            .getValue()).entrySet()) {
+                        Map<String, Object> valueMap = new LinkedHashMap<String, Object>();
+                        valueMap.put("id", en.getKey());
+                        valueMap.put("name", en.getValue());
+                        valueList.add(valueMap);
+                    }
+                    propertiesMap.put("value", valueList);
+                    propertiesList.add(propertiesMap);
+                }
+
+                JSONArray ja = new JSONArray(propertiesList);
+                submissionPropertyJSON = ja.toString();
+            }
         }
-        propertyCounts.put(className, new Integer(count.intValue() + 1));
+        return submissionPropertyJSON;
     }
-    */
 }
