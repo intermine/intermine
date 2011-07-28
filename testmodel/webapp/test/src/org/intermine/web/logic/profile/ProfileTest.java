@@ -108,7 +108,7 @@ public class ProfileTest extends TestCase
         profile.deleteQuery("query1");
         // It isn't possible to delete a bag without a manager but we never do in the code
         //profile.deleteBag("bag1");
-        profile.deleteTemplate("tmpl1", null, );
+        profile.deleteTemplate("tmpl1", null, false);
 
         assertEquals(0, profile.getSavedQueries().size());
         //assertEquals(0, profile.getSavedBags().size());
@@ -155,7 +155,7 @@ public class ProfileTest extends TestCase
 //        }
 
         try {
-            profile.deleteTemplate("tmpl1", null, );
+            profile.deleteTemplate("tmpl1", null, false);
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
