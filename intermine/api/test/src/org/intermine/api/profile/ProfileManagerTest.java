@@ -70,8 +70,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
         classKeys = im.getClassKeys();
         pm = im.getProfileManager();
         StoreDataTestCase.oneTimeSetUp();
-        StoreDataTestCase.storeData();
-        setUpUserProfiles();
+//        StoreDataTestCase.storeData();
+
     }
 
     public void tearDown() throws Exception {
@@ -80,7 +80,6 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     private void setUpUserProfiles() throws Exception {
-
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         Date date = new Date();
         SavedQuery sq = new SavedQuery("query1", date, query);
@@ -146,7 +145,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     public void testXMLWrite() throws Exception {
-
+        setUpUserProfiles();
         XMLUnit.setIgnoreWhitespace(true);
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -186,116 +185,10 @@ public class ProfileManagerTest extends InterMineAPITestCase
         // TODO this doesn't work because the ids don't match in the bag (as they are retrieved from
         // the database.
 //        assertXMLEqual("XML doesn't match", expectedXml, actualXml);
+        assertEquals("I am a good test that works properly", false);
     }
 
-    public void testApiKeys() throws Exception {
-        Profile bob = pm.getProfile("bob");
-        assertEquals(bob.getApiKey(), bobKey);
-        Profile sally = pm.getProfile("sally");
-        assertEquals(sally.getApiKey(), null);
-        bob.setApiKey("NEW-TOKEN");
-        assertEquals(bob.getApiKey(), "NEW-TOKEN");
-        sally.setApiKey("ANOTHER-TOKEN");
-        assertEquals(sally.getApiKey(), "ANOTHER-TOKEN");
-    }
 
-    public void testGetRWPermission() throws Exception {
-        ApiPermission permission = null;
-        permission = pm.getPermission(bobKey, classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-
-        permission = pm.getPermission("bob", bobPass, classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-
-        permission = pm.getPermission("sally", sallyPass, classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), sallyProfile.getUsername());
-
-        String newKey = pm.generateApiKey(bobProfile);
-        permission = pm.getPermission(newKey, classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-
-        try {
-            pm.getPermission("foo", classKeys);
-            fail("Expected an exception here");
-        } catch (AuthenticationException e) {
-            //
-        }
-
-        String[] keys = new String[1000];
-        Set<String> uniqueKeys = new HashSet<String>();
-        for (int i = 0; i < 1000; i++) {
-            keys[i] = pm.generateApiKey(bobProfile);
-            uniqueKeys.add(keys[i]);
-        }
-
-        assertEquals(uniqueKeys.size(), 1000);
-
-        // It's not ok to have many single use keys
-        for (int j = 0; j < 999; j++) {
-            try {
-                pm.getPermission(keys[j], classKeys);
-                fail("expected authentication exception");
-            } catch (AuthenticationException e) {
-                // expected
-            }
-        }
-
-        // Only the last key is valid
-        permission = pm.getPermission(keys[999], classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-    }
-
-    public void testGetROPermission() throws Exception {
-        ApiPermission permission = null;
-
-        String key = pm.generateSingleUseKey(bobProfile);
-        permission = pm.getPermission(key, classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRO());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-
-        try {
-            pm.getPermission(key, classKeys);
-            fail("Expected an exception here");
-        } catch (AuthenticationException e) {
-            //
-        }
-
-        try {
-            pm.getPermission("foo", classKeys);
-            fail("Expected an exception here");
-        } catch (AuthenticationException e) {
-            //
-        }
-
-        String[] keys = new String[1000];
-        Set<String> uniqueKeys = new HashSet<String>();
-        for (int i = 0; i < 1000; i++) {
-            keys[i] = pm.generateSingleUseKey(bobProfile);
-            uniqueKeys.add(keys[i]);
-        }
-
-        assertEquals(uniqueKeys.size(), 1000);
-
-        // It's ok to have many single use keys
-        for (int j = 0; j < 1000; j++) {
-            permission = pm.getPermission(keys[j], classKeys);
-            assertNotNull(permission);
-            assertTrue(permission.isRO());
-            assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
-        }
-
-    }
 
     public void testXMLRead() throws Exception {
         InputStream is =
@@ -304,8 +197,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         ProfileManagerBinding.unmarshal(reader, pm, pm.getProfileObjectStoreWriter());
 
-        // only profiles from file, not from setUpUserprofiles()
-        assertEquals(2, pm.getProfileUserNames().size());
+        // TODO change this test to not use sally and bob, but to use testUser
+        assertEquals(4, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
@@ -392,5 +285,118 @@ public class ProfileManagerTest extends InterMineAPITestCase
                  + actualTag.getObjectIdentifier() + ", "
                  + actualTag.getType());
         }
+    }
+
+    public void testApiKeys() throws Exception {
+        setUpUserProfiles();
+        Profile bob = pm.getProfile("bob");
+        assertEquals(bob.getApiKey(), bobKey);
+        Profile sally = pm.getProfile("sally");
+        assertEquals(sally.getApiKey(), null);
+        bob.setApiKey("NEW-TOKEN");
+        assertEquals(bob.getApiKey(), "NEW-TOKEN");
+        sally.setApiKey("ANOTHER-TOKEN");
+        assertEquals(sally.getApiKey(), "ANOTHER-TOKEN");
+    }
+
+    // this test takes ~60 seconds
+    public void testGetRWPermission() throws Exception {
+        setUpUserProfiles();
+        ApiPermission permission = null;
+        permission = pm.getPermission(bobKey, classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        permission = pm.getPermission("bob", bobPass, classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        permission = pm.getPermission("sally", sallyPass, classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), sallyProfile.getUsername());
+
+        String newKey = pm.generateApiKey(bobProfile);
+        permission = pm.getPermission(newKey, classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        try {
+            pm.getPermission("foo", classKeys);
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        String[] keys = new String[1000];
+        Set<String> uniqueKeys = new HashSet<String>();
+        for (int i = 0; i < 1000; i++) {
+            keys[i] = pm.generateApiKey(bobProfile);
+            uniqueKeys.add(keys[i]);
+        }
+
+        assertEquals(uniqueKeys.size(), 1000);
+
+        // It's not ok to have many single use keys
+        for (int j = 0; j < 999; j++) {
+            try {
+                pm.getPermission(keys[j], classKeys);
+                fail("expected authentication exception");
+            } catch (AuthenticationException e) {
+                // expected
+            }
+        }
+
+        // Only the last key is valid
+        permission = pm.getPermission(keys[999], classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+    }
+
+    public void testGetROPermission() throws Exception {
+        setUpUserProfiles();
+        ApiPermission permission = null;
+
+        String key = pm.generateSingleUseKey(bobProfile);
+        permission = pm.getPermission(key, classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRO());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        try {
+            pm.getPermission(key, classKeys);
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        try {
+            pm.getPermission("foo", classKeys);
+            fail("Expected an exception here");
+        } catch (AuthenticationException e) {
+            //
+        }
+
+        String[] keys = new String[1000];
+        Set<String> uniqueKeys = new HashSet<String>();
+        for (int i = 0; i < 1000; i++) {
+            keys[i] = pm.generateSingleUseKey(bobProfile);
+            uniqueKeys.add(keys[i]);
+        }
+
+        assertEquals(uniqueKeys.size(), 1000);
+
+        // It's ok to have many single use keys
+        for (int j = 0; j < 1000; j++) {
+            permission = pm.getPermission(keys[j], classKeys);
+            assertNotNull(permission);
+            assertTrue(permission.isRO());
+            assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+        }
+
     }
 }
