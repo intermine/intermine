@@ -224,7 +224,22 @@ class List(object):
         return q
     
     def __iter__(self):
-        return self.to_attribute_query().results("jsonobjects")
+        """Return an iterator over the objects in this list, with all attributes selected for output"""
+        return iter(self.to_attribute_query())
+
+    def __getitem__(self, index):
+        """Get a member of this list by index"""
+        if not isinstance(index, int):
+            raise IndexError("Expected an integer key - got %s" % (index))
+        if index < 0: # handle negative indices.
+            i = self.size + index
+        else:
+            i = index
+
+        if i not in range(self.size):
+            raise IndexError("%d is not a valid index for a list of size %d" % (index, self.size))
+
+        return self.to_attribute_query().first(start=i, row="jsonobjects")
 
     def __and__(self, other):
         """
