@@ -1092,7 +1092,7 @@ public class GenomicRegionSearchService
                         + "\");' class='ext_link'> Export to Galaxy <img border='0' "
                         + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
                         + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
-                        + "<a target='_blank' title='' href='" + baseURL + "/" + path
+                        + "<a target='' title='' href='" + baseURL + "/" + path
                         + "/report.do?id=" + firstId + "'>");
 
                 if (firstSymbol == null || "".equals(firstSymbol)) {
@@ -1136,7 +1136,7 @@ public class GenomicRegionSearchService
 
                     String location = chr + ":" + start + ".." + end;
 
-                    sb.append("<tr><td><a target='_blank' title='' href='"
+                    sb.append("<tr><td><a target='' title='' href='"
                             + baseURL + "/" + path + "/report.do?id="  + id + "'>");
 
                     if (symbol == null || "".equals(symbol)) {
