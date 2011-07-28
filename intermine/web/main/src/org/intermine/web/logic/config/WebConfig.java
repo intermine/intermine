@@ -10,8 +10,8 @@ package org.intermine.web.logic.config;
  *
  */
 
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -20,28 +20,27 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.web.logic.session.SessionMethods;
 import org.xml.sax.SAXException;
 
 /**
@@ -52,17 +51,17 @@ import org.xml.sax.SAXException;
 public class WebConfig
 {
     private static final Logger LOG = Logger.getLogger(WebConfig.class);
-    private Map<String, Type> types = new TreeMap<String, Type>();
-    private Map<String, TableExportConfig> tableExportConfigs =
-        new HashMap<String, TableExportConfig>();
-    private Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
-    private List<ReportDisplayerConfig> reportDisplayerConfigs =
+    private final Map<String, Type> types = new TreeMap<String, Type>();
+    private final Map<String, TableExportConfig> tableExportConfigs =
+        new TreeMap<String, TableExportConfig>();
+    private final Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
+    private final List<ReportDisplayerConfig> reportDisplayerConfigs =
         new ArrayList<ReportDisplayerConfig>();
 
     /**
      * Parse a WebConfig XML file
      *
-     * @param is the InputStream to parse
+     * @param context The servlet context we are in.
      * @param model the Model to use when reading - used for checking class names and for finding
      * sub and super classes
      * @return a WebConfig object
@@ -70,16 +69,17 @@ public class WebConfig
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class is mentioned in the XML that isn't in the model
      */
-    public static WebConfig parse(ServletContext context, Model model)
-        throws IOException, SAXException, ClassNotFoundException, FileNotFoundException {
+    public static WebConfig parse(final ServletContext context, final Model model)
+        throws IOException, SAXException, ClassNotFoundException {
 
         BasicConfigurator.configure();
 
-        InputStream webconfXML = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        if (webconfXML == null)
+        final InputStream webconfXML = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        if (webconfXML == null) {
             throw new FileNotFoundException("Could not find webconfig-model.xml");
+        }
 
-        Digester digester = new Digester();
+        final Digester digester = new Digester();
         digester.setValidating(false);
 
         digester.addObjectCreate("webconfig", WebConfig.class);
@@ -182,7 +182,7 @@ public class WebConfig
         digester.addSetProperties("webconfig/reportdisplayers/reportdisplayer");
         digester.addSetNext("webconfig/reportdisplayers/reportdisplayer", "addReportDisplayer");
 
-        WebConfig webConfig = (WebConfig) digester.parse(webconfXML);
+        final WebConfig webConfig = (WebConfig) digester.parse(webconfXML);
 
         webConfig.validate(model);
 
@@ -197,7 +197,7 @@ public class WebConfig
      * Get all the file names of properties files that configure class name mappings.
      * @param props the main configuration to look in.
      */
-    private static List<String> getClassMappingFileNames(Properties props) {
+    private static List<String> getClassMappingFileNames(final Properties props) {
         return getMappingFileNames(props, "web.config.classname.mappings");
     }
 
@@ -205,7 +205,7 @@ public class WebConfig
      * Get all the file names of properties files that configure field name mappings.
      * @param props the main configuration to look in.
      */
-    private static List<String> getFieldMappingFileNames(Properties props) {
+    private static List<String> getFieldMappingFileNames(final Properties props) {
         return getMappingFileNames(props, "web.config.fieldname.mappings");
     }
 
@@ -213,10 +213,11 @@ public class WebConfig
      * Get all the files configured in a properties file with a certain prefix.
      * @param prefix The prefix to use to get the list of values.
      */
-    private static List<String> getMappingFileNames(Properties props, String prefix) {
-        List<String> returnVal = new ArrayList<String>();
-        for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
+    private static List<String> getMappingFileNames(final Properties props, final String prefix) {
+        final List<String> returnVal = new ArrayList<String>();
+        for (@SuppressWarnings("rawtypes")
+        final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+            final String key = (String) e.nextElement();
             if (key.startsWith(prefix)) {
                 returnVal.add(props.getProperty(key));
             }
@@ -233,24 +234,26 @@ public class WebConfig
      * @throws IllegalStateException If two files configure the same key.
      * @throws IOException if the properties cannot be loaded.
      */
-    private static Properties loadMergedProperties(List<String> fileNames,
+    private static Properties loadMergedProperties(final List<String> fileNames,
         final ServletContext context)
-        throws IllegalStateException, FileNotFoundException, IOException {
-        Properties props = new Properties();
-        for ( String fileName : fileNames ) {
+        throws IOException {
+        final Properties props = new Properties();
+        for (final String fileName : fileNames) {
             LOG.info("Loading properties from " + fileName);
-            Properties theseProps = new Properties();
-            InputStream is = context.getResourceAsStream("/WEB-INF/" + fileName);
-            if (is == null)
+            final Properties theseProps = new Properties();
+            final InputStream is = context.getResourceAsStream("/WEB-INF/" + fileName);
+            if (is == null) {
                 throw new FileNotFoundException("Could not find mappings file: " + fileName);
+            }
             try {
                 theseProps.load(is);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new Error("Problem reading from " + fileName, e);
             }
             if (!props.isEmpty()) {
-                for (Enumeration e = props.propertyNames(); e.hasMoreElements();) {
-                    String key = (String) e.nextElement();
+                for (@SuppressWarnings("rawtypes")
+                final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                    final String key = (String) e.nextElement();
                     if (theseProps.containsKey(key)) {
                         throw new IllegalStateException(
                                 "Duplicate label found for " + key + " in " + fileName);
@@ -277,17 +280,17 @@ public class WebConfig
     private void loadLabelsFromMappingsFile(
         final ServletContext context,
         final Model model)
-        throws FileNotFoundException, IOException, IllegalStateException {
+        throws IOException {
 
-        Properties webProperties = SessionMethods.getWebProperties(context);
+        final Properties webProperties = SessionMethods.getWebProperties(context);
 
-        List<String> classFileNames = getClassMappingFileNames(webProperties);
-        List<String> fieldFileNames = getFieldMappingFileNames(webProperties);
+        final List<String> classFileNames = getClassMappingFileNames(webProperties);
+        final List<String> fieldFileNames = getFieldMappingFileNames(webProperties);
 
-        Properties fieldNameProperties = loadMergedProperties(fieldFileNames, context);
-        Properties classNameProperties = loadMergedProperties(classFileNames, context);
+        final Properties fieldNameProperties = loadMergedProperties(fieldFileNames, context);
+        final Properties classNameProperties = loadMergedProperties(classFileNames, context);
 
-        for (ClassDescriptor cd : model.getClassDescriptors()) {
+        for (final ClassDescriptor cd : model.getClassDescriptors()) {
             labelClass(cd, classNameProperties, fieldNameProperties);
         }
     }
@@ -303,7 +306,7 @@ public class WebConfig
             final ClassDescriptor cd,
             final Properties classNameProperties,
             final Properties fieldNameProperties) {
-        String originalName = cd.getUnqualifiedName();
+        final String originalName = cd.getUnqualifiedName();
         if ("InterMineObject".equals(originalName)) {
             return;
         }
@@ -315,17 +318,17 @@ public class WebConfig
         }
 
         if (classNameProperties.containsKey(originalName)) {
-            String classNameLabel = classNameProperties.getProperty(originalName);
-            String label = deSlashify(classNameLabel);
+            final String classNameLabel = classNameProperties.getProperty(originalName);
+            final String label = deSlashify(classNameLabel);
             if (classConfig.getLabel() == null) {
                 LOG.info("Setting label as " + label + " on " + originalName);
                 classConfig.setLabel(label);
             }
         }
-        for (FieldDescriptor fd : cd.getAllFieldDescriptors()) {
+        for (final FieldDescriptor fd : cd.getAllFieldDescriptors()) {
             if (fieldNameProperties.containsKey(fd.getName())) {
-                String fieldNameLabel = fieldNameProperties.getProperty(fd.getName());
-                String label = deSlashify(fieldNameLabel);
+                final String fieldNameLabel = fieldNameProperties.getProperty(fd.getName());
+                final String label = deSlashify(fieldNameLabel);
                 FieldConfig fc = classConfig.getFieldConfigMap().get(fd.getName());
                 if (fc == null) {
                     fc = new FieldConfig();
@@ -351,12 +354,11 @@ public class WebConfig
      * @param input the string to format
      * @return A reformatted version of the string.
      */
-    private static String deSlashify(String input) {
-        String output = "";
-        String[] parts = StringUtils.split(input, "_");
-        String[] outputParts = new String[parts.length];
+    private static String deSlashify(final String input) {
+        final String[] parts = StringUtils.split(input, "_");
+        final String[] outputParts = new String[parts.length];
         for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
+            final String part = parts[i];
             if (part.equals(StringUtils.lowerCase(part))) {
                 outputParts[i] = StringUtils.capitalize(part);
             } else {
@@ -372,40 +374,40 @@ public class WebConfig
      * model and configured fields in web config exist in model.
      * @param model model used for validation
      */
-    private void validate(Model model) {
-        StringBuffer invalidClasses = new StringBuffer();
-        StringBuffer badFieldExpressions = new StringBuffer();
-        for (String typeName : types.keySet()) {
+    void validate(final Model model) {
+        final StringBuffer invalidClasses = new StringBuffer();
+        final StringBuffer badFieldExpressions = new StringBuffer();
+        for (final String typeName : types.keySet()) {
             if (!model.getClassNames().contains(typeName)) {
                 invalidClasses.append(" " + typeName);
                 continue;
             }
-            Type type = types.get(typeName);
-            for (FieldConfig fieldConfig : type.getFieldConfigs()) {
+            final Type type = types.get(typeName);
+            for (final FieldConfig fieldConfig : type.getFieldConfigs()) {
                 String pathString;
                 try {
                     pathString = Class.forName(typeName).getSimpleName()
                         + "." + fieldConfig.getFieldExpr();
-                } catch (ClassNotFoundException e) {
-                    String msg = "Invalid web config. '" + typeName + "' doesn't exist in the "
-                        + "model.";
+                } catch (final ClassNotFoundException e) {
+                    final String msg = "Invalid web config. '"
+                        + typeName + "' doesn't exist in the " + "model.";
                     LOG.warn(msg);
                     continue;
                 }
                 try {
                     new Path(model, pathString);
-                } catch (PathException e) {
+                } catch (final PathException e) {
                     badFieldExpressions.append(" " + pathString);
                     continue;
                 }
             }
         }
         if (invalidClasses.length() > 0 || badFieldExpressions.length() > 0) {
-            String msg = "Invalid web config. "
-                    + ((invalidClasses.length() > 0)
+            final String msg = "Invalid web config. "
+                    + (invalidClasses.length() > 0
                             ? "Classes specified in web config that don't exist in model: "
                                     + invalidClasses.toString() + ". " : "")
-                            + ((badFieldExpressions.length() > 0)
+                            + (badFieldExpressions.length() > 0
                                     ? "Path specified in a fieldExpr does note exist in model: "
                                             + badFieldExpressions + ". " : "");
             LOG.error(msg);
@@ -418,7 +420,7 @@ public class WebConfig
      *
      * @param type the Type to add
      */
-    public void addType(Type type) {
+    public void addType(final Type type) {
         types.put(type.getClassName(), type);
     }
 
@@ -427,7 +429,7 @@ public class WebConfig
      * @return the types
      */
     public Map<String, Type> getTypes() {
-        return this.types;
+        return types;
     }
 
     /**
@@ -440,14 +442,13 @@ public class WebConfig
     /**
      * @param widget the widget
      */
-    public void addWidget(WidgetConfig widget) {
-        // TODO validate each widget?
+    public void addWidget(final WidgetConfig widget) {
         widgets.put(widget.getId(), widget);
-        String[] widgetTypes = widget.getTypeClass().split(",");
-        for (String widgetType: widgetTypes) {
-            Type type = types.get(widgetType);
+        final String[] widgetTypes = widget.getTypeClass().split(",");
+        for (final String widgetType: widgetTypes) {
+            final Type type = types.get(widgetType);
             if (type == null) {
-                String msg = "Invalid web config. " + widgetType + " is not a valid class. "
+                final String msg = "Invalid web config. " + widgetType + " is not a valid class. "
                     + "Please correct the entry in the webconfig-model.xml for the "
                     + widget.getId() + " widget.";
                 LOG.warn(msg);
@@ -462,8 +463,8 @@ public class WebConfig
      * before adding the config.
      * @param reportDisplayerConfig config for an individual report page displayer
      */
-    public void addReportDisplayer(ReportDisplayerConfig reportDisplayerConfig) {
-        Set<String> displayForTypes = reportDisplayerConfig.getConfiguredTypes();
+    public void addReportDisplayer(final ReportDisplayerConfig reportDisplayerConfig) {
+        final Set<String> displayForTypes = reportDisplayerConfig.getConfiguredTypes();
         if (displayForTypes.isEmpty()) {
             LOG.error("Report displayer: " + reportDisplayerConfig.getJavaClass() + "/"
                     + reportDisplayerConfig.getJspName() + " is not configured for any types");
@@ -486,7 +487,7 @@ public class WebConfig
      * tableExportConfig.getId() as the Map key.
      * @param tableExportConfig the TableExportConfig to add
      */
-    public void addTableExportConfig(TableExportConfig tableExportConfig) {
+    public void addTableExportConfig(final TableExportConfig tableExportConfig) {
         tableExportConfigs.put(tableExportConfig.getId(), tableExportConfig);
     }
 
@@ -505,12 +506,12 @@ public class WebConfig
      * @return true if this is equal to obj
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof WebConfig)) {
             return false;
         }
 
-        WebConfig webConfigObj = (WebConfig) obj;
+        final WebConfig webConfigObj = (WebConfig) obj;
 
         return types.equals(webConfigObj.types)
             && tableExportConfigs.equals(webConfigObj.tableExportConfigs);
@@ -535,12 +536,12 @@ public class WebConfig
      * @throws ClassNotFoundException if any of the classes mentioned in the XML file aren't in the
      * Model
      */
-    void setSubClassConfig(Model model) throws ClassNotFoundException {
-        TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
+    void setSubClassConfig(final Model model) throws ClassNotFoundException {
 
-        for (Iterator<ClassDescriptor> modelIter = model.getLevelOrderTraversal().iterator(); modelIter.hasNext();) {
+        for (final Iterator<ClassDescriptor> modelIter
+                = model.getLevelOrderTraversal().iterator(); modelIter.hasNext();) {
 
-            ClassDescriptor cld = modelIter.next();
+            final ClassDescriptor cld = modelIter.next();
             Type thisClassType = types.get(cld.getName());
 
             if (thisClassType == null) {
@@ -549,39 +550,41 @@ public class WebConfig
                 types.put(cld.getName(), thisClassType);
             }
 
-            Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(cld.getName()));
-            for (ClassDescriptor cd : cds) {
+            final Set<ClassDescriptor> cds
+                = model.getClassDescriptorsForClass(Class.forName(cld.getName()));
+            for (final ClassDescriptor cd : cds) {
                 if (cld.getName().equals(cd.getName())) {
                     continue;
                 }
 
-                Type superClassType = types.get(cd.getName());
+                final Type superClassType = types.get(cd.getName());
 
                 if (superClassType != null) {
                     // set title config, the setter itself only adds configs that have not been set
                     // before, see setTitles() in HeaderConfig
-                    HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
+                    final HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
 
                         // set the HeaderConfig titles as HeaderConfig for thisClassType might have
                         //  been configured
-                        HashMap<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
+                        final HashMap<String, LinkedHashMap<String, Object>> titles
+                            = hc.getTitles();
                         if (titles != null) {
 
                             // new childish HeaderConfig
-                            HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
+                            final HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
                             if (newHC != null) {
                                 // type A behavior: inherit titles from the parent and append
                                 if (newHC.getAppendConfig()) {
                                     // copy over main titles
                                     if (titles.get("main") != null) {
-                                        for (Object title : titles.get("main").keySet()) {
+                                        for (final Object title : titles.get("main").keySet()) {
                                             newHC.setMainTitles((String) title);
                                         }
                                     }
                                     // copy over sub titles
                                     if (titles.get("sub") != null) {
-                                        for (Object title : titles.get("sub").keySet()) {
+                                        for (final Object title : titles.get("sub").keySet()) {
                                             newHC.setSubTitles((String) title);
                                         }
                                     }
@@ -596,13 +599,13 @@ public class WebConfig
 
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
-                        for (FieldConfig fc : superClassType.getFieldConfigs()) {
+                        for (final FieldConfig fc : superClassType.getFieldConfigs()) {
                             thisClassType.addFieldConfig(fc);
                         }
                     } else {
                         // Set labels on overridden field-configs without labels
-                        for (FieldConfig superfc : superClassType.getFieldConfigs()) {
-                            for (FieldConfig thisfc : thisClassType.getFieldConfigs()) {
+                        for (final FieldConfig superfc : superClassType.getFieldConfigs()) {
+                            for (final FieldConfig thisfc : thisClassType.getFieldConfigs()) {
                                 if (thisfc.getFieldExpr().equals(superfc.getFieldExpr())) {
                                     if (superfc.getLabel() != null && thisfc.getLabel() == null) {
                                         thisfc.setLabel(superfc.getLabel());
@@ -613,10 +616,12 @@ public class WebConfig
                     }
 
                     if (thisClassType.getLongDisplayers().size() == 0) {
-                        Iterator longDisplayerIter = superClassType.getLongDisplayers().iterator();
+                        @SuppressWarnings("rawtypes")
+                        final Iterator longDisplayerIter
+                            = superClassType.getLongDisplayers().iterator();
 
                         while (longDisplayerIter.hasNext()) {
-                            Displayer ld = (Displayer) longDisplayerIter.next();
+                            final Displayer ld = (Displayer) longDisplayerIter.next();
                             thisClassType.addLongDisplayer(ld);
                         }
                     }
@@ -628,10 +633,11 @@ public class WebConfig
                     if (thisClassType.getWidgets().size() == 0
                                     && superClassType.getWidgets() != null
                                     && superClassType.getWidgets().size() > 0) {
-                        Iterator widgetIter = superClassType.getWidgets().iterator();
+                        @SuppressWarnings("rawtypes")
+                        final Iterator widgetIter = superClassType.getWidgets().iterator();
 
                         while (widgetIter.hasNext()) {
-                            WidgetConfig wi = (WidgetConfig) widgetIter.next();
+                            final WidgetConfig wi = (WidgetConfig) widgetIter.next();
                             thisClassType.addWidget(wi);
                         }
                     }
@@ -647,13 +653,14 @@ public class WebConfig
      */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("<webconfig>");
-        Iterator<Type> typesIter = types.values().iterator();
+        final Iterator<Type> typesIter = types.values().iterator();
         while (typesIter.hasNext()) {
             sb.append(typesIter.next().toString() + "\n");
         }
-        Iterator<TableExportConfig> tableExportConfigIter = tableExportConfigs.values().iterator();
+        final Iterator<TableExportConfig> tableExportConfigIter
+            = tableExportConfigs.values().iterator();
         while (tableExportConfigIter.hasNext()) {
             sb.append(tableExportConfigIter.next().toString());
         }

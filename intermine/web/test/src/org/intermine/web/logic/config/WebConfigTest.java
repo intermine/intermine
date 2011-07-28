@@ -71,6 +71,7 @@ public class WebConfigTest extends TestCase
         final Displayer managerTableDisplayer = new Displayer();
         managerTableDisplayer.setSrc("/model/tableManager.jsp");
         managerType.setTableDisplayer(managerTableDisplayer);
+        managerType.addFieldConfig(age);
 
         final FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
@@ -148,6 +149,8 @@ public class WebConfigTest extends TestCase
         wc2.addType(simpleType);
         wc2.addType(departmentType);
         wc2.addTableExportConfig(tableExportConfig);
+
+        wc2.validate(Model.getInstanceByName("testmodel"));
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
         /*
