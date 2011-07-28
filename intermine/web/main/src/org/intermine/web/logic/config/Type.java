@@ -40,7 +40,7 @@ public class Type
     private String fieldName;
     private String className;
     private Map<String, FieldConfig> fieldConfigMap =
-        new TreeMap<String, FieldConfig>();
+        new LinkedHashMap<String, FieldConfig>(); // Use a linked map to allow users to specify column order in the config.
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
