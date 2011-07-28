@@ -146,28 +146,6 @@
             </div>
             <div class="col3">
                 <!-- Column 3 start -->
-                <h2 align="middle">Database records</h2>
-                <c:choose>
-                    <c:when test="${!empty dbRecords}">
-                         <c:forEach var="db" items="${dbRecords}" varStatus="status">
-                             <p style="padding: 5px 30px;"><b>${db.key}</b></p>
-                             <c:set var="doneLoop" value="false"/>
-                             <c:forEach var="record" items="${db.value}" varStatus="status">
-                                 <c:if test="${not doneLoop}">
-                                    <span style="padding-left:50px;">${record}</span>
-                                    <br>
-                                    <c:if test="${record == 'To be confirmed'}">
-                                        <c:set var="doneLoop" value="true"/>
-                                    </c:if>
-                                 </c:if>
-                             </c:forEach>
-                             <br>
-                         </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <p align="middle"><i>no records available</i></p>
-                    </c:otherwise>
-                </c:choose>
                 <!-- Column 3 end -->
             </div>
         </div>
@@ -175,5 +153,82 @@
 </div>
 
 <div id="foot"></div>
+
+<script type="text/javascript">
+
+     jQuery(".col3").empty();
+     jQuery(".col3").append("<h2 align='middle'>Database records</h2>");
+
+     if ('${dbRecordsJSON}' == "") {
+        jQuery(".col3").append("<p align='middle'><i>no records available</i></p>");
+     } else {
+        var dbRecordsJSON = jQuery.parseJSON('${dbRecordsJSON}');
+
+        for(var i in dbRecordsJSON){
+
+            var size = dbRecordsJSON[i].dbRecords.length;
+            var dbName = dbRecordsJSON[i].dbName;
+            var dbRecords = dbRecordsJSON[i].dbRecords;
+
+            var html = "<p style='padding: 5px 30px;'><b>" + dbName + "</b></p>";
+            html = html + "<span id='" + dbName.replace(/\s+/g, "-") + "-records'>";
+
+            if (size > 3) {
+                for (var j=0;j<3;j++){
+                    html = html + "<span style='padding-left:50px;'>" + dbRecords[j] + "</span><br>";
+                }
+
+                html = html + "<span class='fakelink' style='padding-left:50px;' onclick='expand_external_links(\"" + dbName.replace(/\s+/g, "-") + "-records" + "\");'>... display all " + size + " records</span><br>";
+
+            } else {
+                for (var j in dbRecords){
+                    html = html + "<span style='padding-left:50px;'>" + dbRecords[j] + "</span><br>";
+                }
+            }
+
+            html = html + "</span>";
+            jQuery(".col3").append(html);
+         }
+     }
+
+     function expand_external_links(spanid) {
+        var html = "";
+
+        for (var i in dbRecordsJSON){
+            var size = dbRecordsJSON[i].dbRecords.length;
+            var dbName = dbRecordsJSON[i].dbName;
+            var dbRecords = dbRecordsJSON[i].dbRecords;
+
+            if (dbName.replace(/\s+/g, "-") + "-records" == spanid) {
+              for (var j in dbRecords){
+                html = html + "<span style='padding-left:50px;'>" + dbRecords[j] + "</span><br>";
+              }
+                html = html + "<span class='fakelink' style='padding-left:50px;' onclick='collapse_external_links(\"" + spanid + "\");'>[collapse]</span>";
+            }
+        }
+
+        jQuery("#" + spanid).html(html);
+     }
+
+     function collapse_external_links(spanid) {
+        var html = "";
+
+        for (var i in dbRecordsJSON){
+            var size = dbRecordsJSON[i].dbRecords.length;
+            var dbName = dbRecordsJSON[i].dbName;
+            var dbRecords = dbRecordsJSON[i].dbRecords;
+
+            if (dbName.replace(/\s+/g, "-") + "-records" == spanid) {
+                for (var j=0;j<3;j++){
+                     html = html + "<span style='padding-left:50px;'>" + dbRecords[j] + "</span><br>";
+                }
+                html = html + "<span class='fakelink' style='padding-left:50px;' onclick='expand_external_links(\"" + spanid + "\");'>... display all " + size + " records</span>";
+            }
+        }
+
+        jQuery("#" + spanid).html(html);
+     }
+
+</script>
 
 <!-- /submissionExternalLinksDisplayer.jsp -->

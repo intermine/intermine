@@ -8,9 +8,10 @@
 
 <div class="basic-table" id="submission-properties-div">
 
-<table>
+<table id="submission-properties-table">
+ <tbody>
   <tr>
-    <td style="width:15%;">Organism:</td>
+    <td style="width:17%;">Organism:</td>
     <td>
       <c:forEach var="organism" items="${organismMap}" varStatus="status">
         <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${organism.key}" style="text-decoration: none;"><strong>${organism.value}</strong></a>
@@ -122,50 +123,103 @@
       </c:choose>
     </td>
   </tr>
-  <c:if test="${not empty submissionPropertyMap}">
-    <c:forEach var="submissionproperties" items="${submissionPropertyMap}">
-      <tr>
-        <td valign="top">${submissionproperties.key}:</td>
-        <td id="${submissionproperties.key}Content_${fn:length(submissionproperties.value)}">
-          <c:forEach var="submissionproperty" items="${submissionproperties.value}" varStatus="status">
-            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${submissionproperty.key}" style="text-decoration: none;"><strong>${submissionproperty.value}</strong></a>
-            <c:if test="${!status.last}">,  </c:if>
-          </c:forEach>
-        </td>
-      </tr>
-    </c:forEach>
-  </c:if>
+ </tbody>
 </table>
 
 </div>
 
-<script type="text/javascript" src="model/jquery_expander/jquery.expander.js"></script>
+
 <script type="text/javascript">
 
-        //TODO: concise code
-        for (i=0;i<jQuery('td[id*="Content"]').length;i++)
-        {
-          if (jQuery('td[id*="Content"]').eq(i).attr("id") != "submissionDescriptionContent") {
-            if (jQuery('td[id*="Content"]').eq(i).attr("id").indexOf("primerContent") != -1) {
-                var id = jQuery('td[id*="Content"]').eq(i).attr("id");
-                var count = id.substr(id.indexOf("_")+1);
-                if (count > 15) {
-                  jQuery('td[id*="Content"]').eq(i).expander({
-                    slicePoint: 200,
-                    expandText: 'read all ' + count + ' records'
-                  });
-                } else {
-                  jQuery('td[id*="Content"]').eq(i).expander({
-                    slicePoint: 200
-                  });
+     if ('${submissionPropertyJSON}' != "" || '${submissionPropertyJSON}' != "[]") {
+         var submissionPropertyJSON = jQuery.parseJSON('${submissionPropertyJSON}');
+
+         for(var i in submissionPropertyJSON){
+
+            var size = submissionPropertyJSON[i].value.length;
+            var type = submissionPropertyJSON[i].type;
+            var value = submissionPropertyJSON[i].value;
+
+            var html = "<tr><td valign='top'>" + type + ":</td><td id='" + type.replace(/\s+/g, "-") + "-content'>";
+
+            if (size > 2) {
+                for (var j=0;j<2;j++){
+                    var id = value[j].id;
+                    var name = value[j].name;
+
+                    html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>, ";
                 }
+
+                html = html + "<span class='fakelink' onclick='expand_submission_property(\"" + type.replace(/\s+/g, "-") + "-content" + "\");'>... display all " + size + " records</span>";
+
             } else {
-                  jQuery('td[id*="Content"]').eq(i).expander({
-                    slicePoint: 200
-                  });
+                for (var j in value){
+
+                    var id = value[j].id;
+                    var name = value[j].name;
+
+                    if (j == size-1) {
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>";
+                    } else {
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>, ";
+                    }
+                }
             }
-          }
+
+            html = html + "</td></tr>";
+            jQuery("#submission-properties-table > tbody").append(html);
+         }
+     }
+
+     function expand_submission_property(tdid) {
+        var html = "";
+
+        for (var i in submissionPropertyJSON){
+          var size = submissionPropertyJSON[i].value.length;
+          var type = submissionPropertyJSON[i].type;
+          var value = submissionPropertyJSON[i].value;
+
+            if (type.replace(/\s+/g, "-") + "-content" == tdid) {
+              for (var j in value){
+                  var id = value[j].id;
+                  var name = value[j].name;
+
+                    if (j == size-1) {
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>";
+                    } else {
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>, ";
+                    }
+                 }
+                html = html + "<span class='fakelink' onclick='collapse_submission_property(\"" + tdid + "\");'> [collapse]</span>";
+            }
         }
+
+        jQuery("#" + tdid).html(html);
+     }
+
+
+     function collapse_submission_property(tdid) {
+        var html = "";
+
+        for (var i in submissionPropertyJSON){
+            var size = submissionPropertyJSON[i].value.length;
+            var type = submissionPropertyJSON[i].type;
+            var value = submissionPropertyJSON[i].value;
+
+            if (type.replace(/\s+/g, "-") + "-content" == tdid) {
+                for (var j=0;j<2;j++){
+                    var id = value[j].id;
+                    var name = value[j].name;
+
+                    html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>, ";
+                }
+
+                html = html + "<span class='fakelink' onclick='expand_submission_property(\"" + tdid + "\");'>... display all " + size + " records</span>";
+            }
+        }
+
+        jQuery("#" + tdid).html(html);
+     }
 
 </script>
 
