@@ -1,50 +1,31 @@
 INTERMINE
 
-These Perl modules allow the creation of file in InterMine XML format, 
-as well as directly querying the web API.
+These Perl distributions allow:
+    * Querying of the webservice
+    * Creating of Items XML for building a mine
+    * Inspection of datamodels
+    * Use of biological webservices
 
 SEE ALSO
 
-http://trac.flymine.org/wiki/ItemsAPIPerl
-
-perldoc lib/InterMine/ItemFactory.pm
+http://trac.flymine.org/wiki/PerlClient
 
 INSTALLATION
 
-(You can use the web service sample scripts without installing these modules.
-Please see documentation below)
+Each distribution should be installed separately, and ideally 
+using a CPAN client (cpan or cpanminus are recommended) to manage dependencies.
 
-To install this module, run the following commands 1 - 3:
+View the readme documentation found in each of the modules in this directory.
 
-1) To make:
-    cpan -i XML::Parser::PerlSAX XML::Writer IO::String URI LWP::UserAgent Text::CSV_XS
-    perl Makefile.PL
-    make
+SUPPORT 
 
-2) To run the tests: (optional)
-    cpan -i Test::XML Test::More Test::Exception Test::MockObject Test::Warn
-    make test
-
-3) To install:
-    make install
-
-Don't forget to use elevated permissions (eg sudo) for cpan and step 3.
-
-SUPPORT AND DOCUMENTATION
-
-After installing, you can find documentation for these modules with 
-the perldoc command.
-
-Please read the sample scripts under samples/FlyMine and samples/modMine
-to see ways in which you can use this interface - there are examples for
-queries to the webservice and using these modules to call the API. Installation
-of these modules is not necessary to use the webservice examples.
+Contact:
 
 support@flymine.org
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2006,2007,2010 FlyMine
+Copyright (C) 2006,2007,2010,2011 FlyMine
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
