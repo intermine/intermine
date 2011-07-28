@@ -222,6 +222,9 @@ class List(object):
         q.clear_view()
         q.add_view(map(lambda x: self.list_type + "." + x.name, attributes))
         return q
+    
+    def __iter__(self):
+        return self.to_attribute_query().results("jsonobjects")
 
     def __and__(self, other):
         """
