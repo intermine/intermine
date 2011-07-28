@@ -10,6 +10,7 @@ class TestModel < Test::Unit::TestCase
         file = File.new(
             File.dirname(__FILE__) + "/data/model.json", "r")
         data = file.read
+        file.close
         @model = Model.new(data)
     end
 
