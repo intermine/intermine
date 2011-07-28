@@ -86,20 +86,17 @@ public class InterMineAPI
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.oss = oss;
-        // only null for testing
-        if (userProfileWriter != null) {
-            this.profileManager = new ProfileManager(objectStore, userProfileWriter);
-            Profile superUser = profileManager.getSuperuserProfile(classKeys);
-            this.bagManager = new BagManager(superUser, model);
-            this.templateManager = new TemplateManager(superUser, model,
-                    trackerDelegate.getTemplateTracker());
-            this.templateSummariser = new TemplateSummariser(objectStore,
-                    profileManager.getProfileObjectStoreWriter());
-            this.bagQueryRunner =
-                new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
-            this.trackerDelegate = trackerDelegate;
-            this.linkRedirector = linkRedirector;
-        }
+        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
+        Profile superUser = profileManager.getSuperuserProfile(classKeys);
+        this.bagManager = new BagManager(superUser, model);
+        this.templateManager = new TemplateManager(superUser, model,
+                trackerDelegate.getTemplateTracker());
+        this.templateSummariser = new TemplateSummariser(objectStore,
+                profileManager.getProfileObjectStoreWriter());
+        this.bagQueryRunner =
+            new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+        this.trackerDelegate = trackerDelegate;
+        this.linkRedirector = linkRedirector;
     }
 
     /**
