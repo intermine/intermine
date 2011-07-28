@@ -13,6 +13,7 @@ from testserver import TestServer
 class WebserviceTest(unittest.TestCase): # pragma: no cover
     TEST_PORT = 8000
     MAX_ATTEMPTS = 50
+    maxDiff = None
 
     def get_test_root(self):
         return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/service"
@@ -25,8 +26,8 @@ class WebserviceTest(unittest.TestCase): # pragma: no cover
                 self.do_unpredictable_test(test, attempts + 1, e)
             except:
                 e, t, tb = sys.exc_info()
-                if type(e).__name__ == "type": # Catch old socket.error errors
-                    self.do_unpredictable_test(test, attempts + 1, e)
+                if 104 in t: 
+                    self.do_unpredictable_test(test, attempts + 1, t)
                 else:
                     raise
         else:
@@ -475,7 +476,7 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
                 'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
                 'start': 0
             }, 
-            'rr', 
+            'object', 
             ['Employee.name', 'Employee.age', 'Employee.id'],
             self.model.get_class("Employee")
         )
@@ -486,10 +487,23 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
             '/QUERY-PATH', 
             {
                 'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
+                'start': 0
+            }, 
+            'rr', 
+            ['Employee.name', 'Employee.age', 'Employee.id'],
+            self.model.get_class("Employee")
+        )
+        self.assertEqual(expectedQ, q.rows())
+        self.assertEqual(list(expectedQ), q.get_row_list())
+
+        expectedQ = (
+            '/QUERY-PATH', 
+            {
+                'query': '<query constraintLogic="A and B" longDescription="" model="testmodel" name="" sortOrder="Employee.name asc" view="Employee.name Employee.age Employee.id"><constraint code="A" op="=" path="Employee.name" value="Fred"/><constraint code="B" op="&gt;" path="Employee.age" value="25"/></query>',
                 'start': 10,
                 'size': 200
             }, 
-            'rr', 
+            'object', 
             ['Employee.name', 'Employee.age', 'Employee.id'],
             self.model.get_class("Employee")
         )
@@ -510,12 +524,33 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
              'value2': '25',
              'start': 0
             }, 
-           'rr', 
+           'object', 
            ['Employee.name', 'Employee.age', 'Employee.id'],
            self.model.get_class("Employee")
            )
         self.assertEqual(expected1, t.results())
         self.assertEqual(list(expected1), t.get_results_list())
+
+        expected1 = (
+            '/TEMPLATE-PATH', 
+            {
+             'name': 'TEST-TEMPLATE', 
+             'code1': 'A', 
+             'code2': 'B', 
+             'constraint1': 'Employee.name', 
+             'constraint2': 'Employee.age', 
+             'op1': '=',
+             'op2': '>', 
+             'value1': 'Fred', 
+             'value2': '25',
+             'start': 0
+            }, 
+           'rr', 
+           ['Employee.name', 'Employee.age', 'Employee.id'],
+           self.model.get_class("Employee")
+           )
+        self.assertEqual(expected1, t.rows())
+        self.assertEqual(list(expected1), t.get_row_list())
 
         expected2 = (
             '/TEMPLATE-PATH', 
@@ -531,7 +566,7 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
              'value2': '55',
              'start': 0
             }, 
-           'rr', 
+           'object', 
            ['Employee.name', 'Employee.age', 'Employee.id'],
            self.model.get_class("Employee")
            )
@@ -555,7 +590,7 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
              'start': 10,
              'size': 200
             }, 
-           'rr', 
+           'object', 
            ['Employee.name', 'Employee.age', 'Employee.id'],
            self.model.get_class("Employee")
            )
@@ -571,6 +606,26 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
             A = {"op": "<", "value": "Tom"},
             B = {"value": 55} 
         ))
+        # Check that these contraint values have not been applied to the actual template
+        self.assertEqual(expected1, t.rows()) 
+        expected1 = (
+            '/TEMPLATE-PATH', 
+            {
+             'name': 'TEST-TEMPLATE', 
+             'code1': 'A', 
+             'code2': 'B', 
+             'constraint1': 'Employee.name', 
+             'constraint2': 'Employee.age', 
+             'op1': '=',
+             'op2': '>', 
+             'value1': 'Fred', 
+             'value2': '25',
+             'start': 0
+            }, 
+           'object', 
+           ['Employee.name', 'Employee.age', 'Employee.id'],
+           self.model.get_class("Employee")
+           )
 
         self.assertEqual(expected1, t.results()) 
 
@@ -587,8 +642,8 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
         """Should be able to get results as result rows"""
         def logic():
             assertEqual = self.assertEqual
-            q_res = self.query.all()
-            t_res = self.template.all()
+            q_res = self.query.all("rr")
+            t_res = self.template.all("rr")
             for results in [q_res, t_res]:
                 assertEqual(results[0]["age"], 'bar')
                 assertEqual(results[1]["Employee.age"], 1.23)

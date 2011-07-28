@@ -46,7 +46,7 @@ class Query(object):
        >>>
        >>> query.set_logic("A or B")
        >>>
-       >>> for row in query.results():
+       >>> for row in query.rows():
        ...     handle_row(row)
 
     OR, using an SQL style DSL:
@@ -57,7 +57,7 @@ class Query(object):
         ...           where("symbol", "=", "H").\
         ...           outerjoin("pathways").\
         ...           order_by("symbol")
-        >>> for row in query.results():
+        >>> for row in query.rows(start=10, size=5):
         ...     handle_row(row)
 
     OR, for a more SQL-alchemy, ORM style: 
@@ -331,10 +331,15 @@ class Query(object):
         self.select = self.add_view
         self.order_by = self.add_sort_order
         self.all = self.get_results_list
-        self.rows = self.results
+        self.size = self.count
 
     def __iter__(self):
+        """Return an iterator over all the objects returned by this query"""
         return self.results("jsonobjects")
+
+    def __len__(self):
+        """Return the number of rows this query will return."""
+        return self.count()
 
     @classmethod
     def from_xml(cls, xml, *args, **kwargs):
@@ -459,6 +464,7 @@ class Query(object):
         return obj
 
     def __str__(self):
+        """Return the XML serialisation of this query"""
         return self.to_xml()
 
     def verify(self):
@@ -1021,18 +1027,24 @@ class Query(object):
                 subclass_dict[c.path] = c.subclass
         return subclass_dict
 
-    def results(self, row="rr", start=0, size=None):
+    def results(self, row="object", start=0, size=None):
         """
         Return an iterator over result rows
         ===================================
 
         Usage::
 
-          for row in query.results():
-            do_sth_with(row)
+          >>> for gene in query.results():
+          ...    print gene.symbol
+
+        Note that if your query contains any kind of collection, 
+        it is highly likely that start and size won't do what 
+        you think, as they operate only on the underlying
+        rows used to build up the returned objects. If you want rows
+        back, you are recommeded to use the simpler rows method.
         
-        @param row: the format for the row. Defaults to "rr". Valid options are 
-            "rr", "dict", "list", "jsonrows", "jsonobject", "tsv", "csv". 
+        @param row: the format for the row. Defaults to "object". Valid options are 
+            "rr", "dict", "list", "jsonrows", "object", jsonobjects", "tsv", "csv". 
         @type row: string
 
         @rtype: L{intermine.webservice.ResultIterator}
@@ -1048,15 +1060,46 @@ class Query(object):
         cld = self.root
         return self.service.get_results(path, params, row, view, cld)
 
-    def one(self, row="rr"):
-        """Return one result, and raise an error if the result size is not 1"""
-        c = self.count()
-        if (c != 1):
-            raise "Result size is not one: got " + str(c) + " results"
-        else:
-            return self.first(row)
+    def rows(self, start=0, size=None):
+        """
+        Return the results as rows of data
+        ==================================
 
-    def first(self, row="rr", start=0):
+        This is a shortcut for results("rr")
+
+        Usage::
+
+          >>> for row in query.rows(start=10, size=10):
+          ...     print row["proteins.name"]
+
+        @rtype: iterable<intermine.webservice.ResultRow>
+        """
+        return self.results(row="rr", start=start, size=size)
+
+    def one(self, row="jsonobjects"):
+        """Return one result, and raise an error if the result size is not 1"""
+        if row == "jsonobjects":
+            if self.count() == 1:
+                return self.first(row)
+            else:
+                ret = None
+                for obj in self.results():
+                    if ret is not None:
+                        raise QueryError("More than one result received")
+                    else:
+                        ret = obj
+                if ret is None:
+                    raise QueryError("No results received")
+                
+                return ret
+        else:
+            c = self.count()
+            if (c != 1):
+                raise QueryError("Result size is not one: got %d results" % (c))
+            else:
+                return self.first(row)
+
+    def first(self, row="jsonobjects", start=0):
         """Return the first result, or None if the results are empty"""
         if row == "jsonobjects":
             size = None
@@ -1091,6 +1134,9 @@ class Query(object):
         rows = self.results(*args, **kwargs)
         return [r for r in rows]
 
+    def get_row_list(self, start=0, size=None):
+        return self.get_results_list("rr", start, size)
+
     def count(self):
         """
         Return the total number of rows this query returns
@@ -1100,7 +1146,7 @@ class Query(object):
         return, without having to fetch and parse all the 
         actual data. This method makes a request to the server
         to report the count for the query, and is sugar for a 
-        results call.
+        results call. 
 
         @rtype: int
         @raise WebserviceError: if the request is unsuccessful.
@@ -1427,7 +1473,7 @@ class Template(Query):
                 setattr(con, key, value)
         return clone
 
-    def results(self, row="rr", start=0, size=None, **con_values):
+    def results(self, row="object", start=0, size=None, **con_values):
         """
         Get an iterator over result rows
         ================================
@@ -1457,7 +1503,7 @@ class Template(Query):
         clone = self.get_adjusted_template(con_values)
         return super(Template, clone).results(row, start, size)
 
-    def get_results_list(self, row="rr", start=0, size=None, **con_values):
+    def get_results_list(self, row="object", start=0, size=None, **con_values):
         """
         Get a list of result rows
         =========================
@@ -1474,6 +1520,16 @@ class Template(Query):
         """
         clone = self.get_adjusted_template(con_values)
         return super(Template, clone).get_results_list(row, start, size)
+
+    def get_row_list(self, start=0, size=None, **con_values):
+        """Return a list of the rows returned by this query"""
+        clone = self.get_adjusted_template(con_values)
+        return super(Template, clone).get_row_list(start, size)
+
+    def rows(self, start=0, size=None, **con_values):
+        """Get an iterator over the rows returned by this query"""
+        clone = self.get_adjusted_template(con_values)
+        return super(Template, clone).rows(start, size)
 
     def count(self, **con_values):
         """
