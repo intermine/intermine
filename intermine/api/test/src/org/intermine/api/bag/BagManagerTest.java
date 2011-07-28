@@ -10,14 +10,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
@@ -26,9 +24,7 @@ import org.intermine.model.testmodel.Address;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -38,53 +34,43 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 
-public class BagManagerTest extends TestCase
+public class BagManagerTest extends InterMineAPITestCase
 {
-    private ProfileManager pm;
-    private ObjectStore os;
-    private ObjectStoreWriter uosw;
-    private Profile superUser, testUser, emptyUser;
+
+    //private Profile superUser, testUser, emptyUser;
+    private Profile superUser, emptyUser;
     private BagManager bagManager;
     private TagManager tagManager;
     private InterMineBag globalCompanyBag, globalAddressBag, superPrivateBag, userCompanyBag, userAddressBag;
     private Integer ADDRESS_ID = 1;
     private Integer DUMMY_ID = 2;
 
+    public BagManagerTest(String arg) {
+        super(arg);
+    }
 
     public void setUp() throws Exception {
         super.setUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-
-        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        pm = new ProfileManager(os, uosw);
-
-        superUser = new Profile(pm, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
-        pm.createProfile(superUser);
-        pm.setSuperuser("superUser");
-
-        testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
-        pm.createProfile(testUser);
-
-        emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap());
-        pm.createProfile(emptyUser);
-
-        tagManager = new TagManagerFactory(pm).getTagManager();
-        bagManager = new BagManager(superUser, os.getModel());
-
+        superUser = im.getProfileManager().getSuperuserProfile();
+        emptyUser = im.getProfileManager().getProfile("emptyUser");
+        tagManager = im.getProfileManager().getTagManager();
+        bagManager = im.getBagManager();
         setUpBagsAndTags();
     }
 
     private void setUpBagsAndTags() throws Exception {
-        Properties classKeyProps = new Properties();
-        classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map<String, List<FieldDescriptor>>  classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+
         globalCompanyBag = superUser.createBag("companyBag", "Company", "", classKeys);
         globalAddressBag = superUser.createBag("globalAddressBag", "Address", "", classKeys);
         superPrivateBag = superUser.createBag("superPrivateBag", "Company", "", classKeys);
 
+        if (tagManager == null) {
+            throw new NullPointerException("oops");
+        }
+
         tagManager.addTag(TagNames.IM_PUBLIC, "companyBag", TagTypes.BAG, "superUser");
         tagManager.addTag(TagNames.IM_PUBLIC, "globalAddressBag", TagTypes.BAG, "superUser");
-
         tagManager.addTag(TagNames.IM_FAVOURITE, "companyBag", TagTypes.BAG, "superUser");
         tagManager.addTag(TagNames.IM_FAVOURITE, "superPrivateBag", TagTypes.BAG, "superUser");
 
@@ -92,35 +78,6 @@ public class BagManagerTest extends TestCase
         userAddressBag = testUser.createBag("userAddressBag", "Address", "", classKeys);
     }
 
-
-    public void tearDown() throws Exception {
-        superUser.deleteBag(globalCompanyBag.getName());
-        superUser.deleteBag(globalAddressBag.getName());
-        superUser.deleteBag(superPrivateBag.getName());
-        testUser.deleteBag(userCompanyBag.getName());
-        testUser.deleteBag(userAddressBag.getName());
-        removeUserProfile(superUser.getUsername());
-        removeUserProfile(testUser.getUsername());
-        removeUserProfile(emptyUser.getUsername());
-
-        uosw.close();
-    }
-
-    private void removeUserProfile(String username) throws ObjectStoreException {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(UserProfile.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        QueryField qf = new QueryField(qc, "username");
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
-        q.setConstraint(sc);
-        SingletonResults res = uosw.getObjectStore().executeSingleton(q);
-        Iterator resIter = res.iterator();
-        while (resIter.hasNext()) {
-            InterMineObject o = (InterMineObject) resIter.next();
-            uosw.delete(o);
-        }
-    }
 
     public void testGetBagsWithTag() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalCompanyBag, globalAddressBag);
