@@ -78,8 +78,20 @@ class LiveListTest(unittest.TestCase):
             [68, None, False, u'Frank M\xf6llers'],
         ]
 
-        got = [row[:3] + row[4:] for row in l.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in l.to_attribute_query().rows()]
         self.assertEqual(got, expected)
+        
+
+        # Test iteration:
+        got = [x.age for x in l]
+        self.assertEqual([30, 33, 58, 62, 68], got)
+
+        self.assertEqual(30, l[0].age)
+        self.assertEqual(68, l[-1].age)
+        self.assertEqual(58, l[2].age)
+        self.assertRaises(IndexError, lambda: l[5])
+        self.assertRaises(IndexError, lambda: l[-6])
+        self.assertRaises(IndexError, lambda: l["foo"])
 
         # Test intersections
 
@@ -89,7 +101,7 @@ class LiveListTest(unittest.TestCase):
         intersection = listA & listB
         self.assertEqual(intersection.size, 1)
         expected = [[30, u'6', False, u'Karim']]
-        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         q = s.new_query()
@@ -101,14 +113,14 @@ class LiveListTest(unittest.TestCase):
             [62, None, False,u'David Brent'],
             [68, None, False,u'Frank M\xf6llers'],
         ]
-        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         prev_name = listA.name
         prev_desc = listA.description
         listA &= listB
         self.assertEqual(listA.size, 1)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         expected = [[30, u'6', False, u'Karim']]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
@@ -132,12 +144,12 @@ class LiveListTest(unittest.TestCase):
             [64, u'1', True, u'Brenda'],
             [64, u'7', True, u'Gareth Keenan'],
         ]
-        got = [row[:3] + row[4:] for row in union.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in union.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         union = listA + listB
         self.assertEqual(union.size, 10)
-        got = [row[:3] + row[4:] for row in union.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in union.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         # Test appending
@@ -149,7 +161,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(listA.tags, set(["tagA", "tagB"]))
         fromService = s.get_list(listA.name)
         self.assertEqual(listA.tags, fromService.tags)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -159,7 +171,7 @@ class LiveListTest(unittest.TestCase):
         prev_desc = listA.description
         listA += self.LADIES_NAMES
         self.assertEqual(listA.size, 10)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -181,7 +193,7 @@ class LiveListTest(unittest.TestCase):
             [64, u'7', True, u'Gareth Keenan'],
             [68, None, False, u'Frank M\xf6llers'],
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -210,7 +222,7 @@ class LiveListTest(unittest.TestCase):
             [64, u'7', True, u'Gareth Keenan'],
             [68, None, False, u'Frank M\xf6llers'],
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -243,7 +255,7 @@ class LiveListTest(unittest.TestCase):
             [71, None, False, u'Jennifer Taylor-Clarke'],
             [72, None, False, u'Charles Miner']
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -264,14 +276,14 @@ class LiveListTest(unittest.TestCase):
             [64, u'7', True, u'Gareth Keenan'],
             [68, None, False, u'Frank M\xf6llers'],
         ]
-        got = [row[:3] + row[4:] for row in diff.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in diff.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         prev_name = listA.name
         prev_desc = listA.description
         listA ^= listB
         self.assertEqual(listA.size, 8)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -288,7 +300,7 @@ class LiveListTest(unittest.TestCase):
             [63, u'9', False, u'Alex'],
             [64, u'7', True, u'Gareth Keenan'],
         ]
-        got = [row[:3] + row[4:] for row in subtr.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in subtr.to_attribute_query().rows()]
         self.assertEqual(got, expected)
 
         prev_name = listA.name
@@ -296,7 +308,7 @@ class LiveListTest(unittest.TestCase):
         listA -= listB
         self.assertEqual(listA.size, 4)
         self.assertEqual(listA.tags, set(["subtr-a", "subtr-b"]))
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().results()]
+        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)

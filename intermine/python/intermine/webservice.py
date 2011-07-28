@@ -380,9 +380,9 @@ class ResultObject(object):
     These objects are backed by a row of data and the class descriptor that
     describes the object. They allow access in standard object style:
 
-        for gene in query.results():
-            print gene.symbol
-            print map(lambda x: x.name, gene.pathways)
+        >>> for gene in query.results():
+        ...    print gene.symbol
+        ...    print map(lambda x: x.name, gene.pathways)
 
     """
     
@@ -507,7 +507,7 @@ class ResultIterator(object):
         @type path: string
         @param params: The query parameters for this request
         @type params: dict
-        @param rowformat: One of "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @param rowformat: One of "rr", "object", "count", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
         @type rowformat: string
         @param view: The output columns
         @type view: list
@@ -517,8 +517,10 @@ class ResultIterator(object):
         @raise ValueError: if the row format is incorrect
         @raise WebserviceError: if the request is unsuccessful
         """
+        if rowformat.startswith("object"): # Accept "object", "objects", "objectformat", etc...
+            rowformat = "jsonobjects" # these are synonymous
         if rowformat not in self.ROW_FORMATS:
-            raise ValueError("'" + rowformat + "' is not a valid row format:" + self.ROW_FORMATS)
+            raise ValueError("'%s' is not one of the valid row formats (%s)" % (rowformat, repr(list(self.ROW_FORMATS))))
 
         if rowformat in self.PARSED_FORMATS:
             params.update({"format" : "jsonrows"})
