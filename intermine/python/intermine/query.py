@@ -796,12 +796,16 @@ class Query(object):
 
         example::
             
-            query.add_path_description("Gene.symbol", "The symbol for this gene")
+            query.add_path_description("Gene.proteins.proteinDomains", "Protein Domain")
 
-        If you wish you can add annotations to your query that describe
-        what the component paths are and what they do - this is only really
-        useful if you plan to keep your query (perhaps as xml) or store it
-        as a template.
+        This allows you to alias the components of long paths to 
+        improve the way they display column headers in a variety of circumstances. 
+        In the above example, if the view included the unwieldy path
+        "Gene.proteins.proteinDomains.primaryIdentifier", it would (depending on the 
+        mine) be displayed as "Protein Domain > DB Identifer". These
+        setting are taken into account by the webservice when generating 
+        column headers for flat-file results with the columnheaders parameter given, and
+        always supplied when requesting jsontable results.
 
         @rtype: L{intermine.pathfeatures.PathDescription}
 
