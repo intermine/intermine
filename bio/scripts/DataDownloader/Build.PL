@@ -10,7 +10,7 @@ my $builder = Module::Build->new(
     requires => {
         'Moose' => '2.0',
         'MooseX::ABC' => '0.05',
-        'MooseX::FollowPBP' => '0.5', 
+        'MooseX::FollowPBP' => '0.05', 
         'MooseX::FileAttribute' => 0,
         'Net::FTP' => 0,
     },
