@@ -2,25 +2,37 @@ require 'rubygems'
 require 'rest-open-uri'
 require 'intermine/model'
 require "intermine/query"
+require "intermine/lists"
 require "rexml/document"
+require "forwardable"
 
 class Service
+
+    extend Forwardable
 
     VERSION_PATH = "/version"
     MODEL_PATH = "/model/json"
     TEMPLATES_PATH = "/templates"
     QUERY_RESULTS_PATH = "/query/results"
     TEMPLATE_RESULTS_PATH = "/template/results"
+    LISTS_PATH = "/lists/json"
 
     attr_reader :version, :root, :token, :broken_templates
+
+    def_delegators :@list_manager, :lists, :list
 
     def initialize(root, token=nil, mock_model=nil)
         @root = root
         @token = token
-        @version = fetch(@root + VERSION_PATH).to_i
+        begin
+            @version = fetch(@root + VERSION_PATH).to_i
+        rescue => e
+            raise ServiceError, "Error fetching version at #{@root + VERSION_PATH}: #{e.message}"
+        end
         @model = mock_model
         @_templates = nil
         @broken_templates = []
+        @list_manager = Lists::ListManager.new(self)
     end
 
     def model
@@ -34,6 +46,8 @@ class Service
     def new_query(rootClass=nil)
         return PathQuery::Query.new(self.model, rootClass, self)
     end
+
+    alias query new_query
 
     def template(name) 
         return templates[name]
@@ -61,6 +75,10 @@ class Service
         return templates.keys.sort
     end
 
+    def get_list_data
+        return fetch(@root + LISTS_PATH)
+    end
+
     private
 
     def prepare_uri(url)
@@ -79,4 +97,6 @@ class Service
     end
 end
 
+class ServiceError < RuntimeError
+end
 

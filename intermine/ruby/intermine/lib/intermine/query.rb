@@ -279,12 +279,43 @@ module PathQuery
             return results_reader.get_size
         end
 
-        def results(start=0, size=nil)
+        def rows(start=0, size=nil)
             res = []
             results_reader(start, size).each_row {|row|
                 res << row
             }
             res
+        end
+
+        def results(start=0, size=nil)
+            res = []
+            results_reader(start, size).each_result {|row|
+                res << row
+            }
+            res
+        end
+
+        def all
+            return self.results
+        end
+
+        def all_rows
+            return self.rows
+        end
+        def first(start=0)
+            current_row = 0
+            # Have to iterate as start refers to row count
+            results_reader.each_result { |r|
+                if current_row == start
+                    return r
+                end
+                current_row += 1
+            }
+            return nil
+        end
+
+        def first_row(start = 0)
+            return self.results(start, 1).first
         end
         
         def get_constraint(code)
@@ -398,6 +429,9 @@ module PathQuery
         end
 
         def where(*wheres)
+           if @views.empty?
+               self.select('*')
+           end
            wheres.each do |w|
              w.each do |k,v|
                 if v.is_a?(Hash)
@@ -431,7 +465,7 @@ module PathQuery
                                     parameters[:op] = normalised_k
                                 end
                                 parameters[:values] = subv.to_a
-                            elsif subv.is_a?(List)
+                            elsif subv.is_a?(Lists::List)
                                 if subk == "="
                                     parameters[:op] = "IN"
                                 elsif subk == "!="
@@ -451,7 +485,7 @@ module PathQuery
                     add_constraint(k.to_s, 'ONE OF', v.to_a)
                 elsif v.is_a?(ClassDescriptor)
                     add_constraint(:path => k.to_s, :sub_class => v.name)
-                elsif v.is_a?(List)
+                elsif v.is_a?(Lists::List)
                     add_constraint(k.to_s, 'IN', v.name)
                 elsif v.nil?
                     add_constraint(k.to_s, "IS NULL")
