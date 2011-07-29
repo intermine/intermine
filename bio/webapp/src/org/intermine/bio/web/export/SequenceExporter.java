@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
@@ -115,6 +116,7 @@ public class SequenceExporter implements Exporter
 
                 if (bioSequence == null) {
                     // the object doesn't have a sequence
+                    header.append("no sequence attached.");
                     continue;
                 }
 
@@ -169,7 +171,6 @@ public class SequenceExporter implements Exporter
 
         String primaryIdentifier = feature.getPrimaryIdentifier();
         makeHeader(header, primaryIdentifier, object, row);
-
         return bioSequence;
     }
 
@@ -191,7 +192,6 @@ public class SequenceExporter implements Exporter
 
             // add the sequence location info at the second place in the header
             SequenceFeature feature = (SequenceFeature) object;
-
             Location loc = feature.getChromosomeLocation();
             if (loc == null) {
                 headerBits.add("-");
@@ -204,8 +204,12 @@ public class SequenceExporter implements Exporter
                 String locString = chr + ':' + start + '-' + end;
                 headerBits.add(locString);
             }
-
             for (ResultElement re : row) {
+                // to avoid failure in modmine when no experimental factors (sub 2745)
+                if(re == null) {
+                    continue;
+                }
+                
                 if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
