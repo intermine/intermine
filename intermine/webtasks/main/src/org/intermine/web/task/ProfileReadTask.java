@@ -34,6 +34,7 @@ public class ProfileReadTask extends Task
     private String fileName;
     private String userProfileAlias;
     private String osAlias;
+
     /**
      * Set the name of the file to read from.
      * @param fileName the file name
@@ -56,13 +57,6 @@ public class ProfileReadTask extends Task
      */
     public void setUserProfileAlias(String userProfileAlias) {
         this.userProfileAlias = userProfileAlias;
-    }
-
-    /**
-     * Set a source name (optional - use to find a restricted set of keys)
-     * @param source name of source
-     */
-    public void setSource(String source) {
     }
 
     /**
