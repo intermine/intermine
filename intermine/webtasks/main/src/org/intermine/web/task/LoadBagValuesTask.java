@@ -85,8 +85,10 @@ public class LoadBagValuesTask extends Task
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current", DatabaseUtil.Type.boolean_type);
-                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current", Boolean.TRUE);
+                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current",
+                            DatabaseUtil.Type.boolean_type);
+                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current",
+                            Boolean.TRUE);
                 }
             } catch (SQLException sqle) {
                 throw new BuildException("Problems connecting bagvalues table", sqle);
@@ -113,17 +115,18 @@ public class LoadBagValuesTask extends Task
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             if (StringUtils.isBlank(savedBag.getName())) {
-                System.out.println("Failed to load bag with blank name");
+                System .out.println("Failed to load bag with blank name");
             } else {
                 try {
                     InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
-                    System.out.println("Start loading bag: " + bag.getName() + " - id: " + bag.getSavedBagId());
+                    System .out.println("Start loading bag: " + bag.getName() + " - id: "
+                            + bag.getSavedBagId());
                     Properties classKeyProps = new Properties();
                     try {
                         classKeyProps.load(this.getClass().getClassLoader()
                                 .getResourceAsStream("class_keys.properties"));
                     } catch (Exception e) {
-                        System.out.println("Error loading class descriptions.");
+                        System .out.println("Error loading class descriptions.");
                         e.printStackTrace();
                     }
                     Map<String, List<FieldDescriptor>>  classKeys =
@@ -134,9 +137,10 @@ public class LoadBagValuesTask extends Task
                     bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
                     bag.setCurrent(true);
-                    System.out.println("Loaded bag: " + bag.getName() + " - id: " + bag.getSavedBagId());
+                    System .out.println("Loaded bag: " + bag.getName() + " - id: "
+                            + bag.getSavedBagId());
                 } catch (UnknownBagTypeException e) {
-                    System.out.println("Ignoring a bag '" + savedBag.getName() + " because type: "
+                    System .out.println("Ignoring a bag '" + savedBag.getName() + " because type: "
                              + savedBag.getType() + " is not in the model.");
                     e.printStackTrace();
                 } catch (ObjectStoreException ose) {
