@@ -159,10 +159,11 @@
      jQuery(".col3").empty();
      jQuery(".col3").append("<h2 align='middle'>Database records</h2>");
 
+     var dbRecordsJSON;
      if ('${dbRecordsJSON}' == "") {
         jQuery(".col3").append("<p align='middle'><i>no records available</i></p>");
      } else {
-        var dbRecordsJSON = jQuery.parseJSON('${dbRecordsJSON}');
+        dbRecordsJSON = jQuery.parseJSON('${dbRecordsJSON}');
 
         for(var i in dbRecordsJSON){
 
