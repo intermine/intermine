@@ -22,7 +22,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManagerBinding;
-import org.intermine.web.bag.PkQueryIdUpgrader;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.
@@ -35,8 +34,6 @@ public class ProfileReadTask extends Task
     private String fileName;
     private String userProfileAlias;
     private String osAlias;
-    private String source;
-
     /**
      * Set the name of the file to read from.
      * @param fileName the file name
@@ -66,7 +63,6 @@ public class ProfileReadTask extends Task
      * @param source name of source
      */
     public void setSource(String source) {
-        this.source = source;
     }
 
     /**
