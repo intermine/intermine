@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.tracker.util.TrackerUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -73,15 +72,16 @@ public class UpdateTrackTableTask extends Task
                 stm.executeUpdate(sql3);
                 String sql4 = "ALTER TABLE templatetrack ADD COLUMN timestamp timestamp";
                 stm.executeUpdate(sql4);
-                String sql5= "SELECT timestamp_backup FROM templatetrack";
+                String sql5 = "SELECT timestamp_backup FROM templatetrack";
                 ResultSet rs = stm.executeQuery(sql5);
                 List<Long> timestampList = new ArrayList<Long>();
                 while (rs.next()) {
                     timestampList.add(rs.getLong(1));
                 }
-                for (Long timestamp_long : timestampList) {
-                    Timestamp timestamp = new Timestamp(timestamp_long);
-                    String sql6 = "UPDATE templatetrack SET timestamp='" + timestamp.toString() + "' WHERE timestamp_backup=" + timestamp_long;
+                for (Long timestamplong : timestampList) {
+                    Timestamp timestamp = new Timestamp(timestamplong);
+                    String sql6 = "UPDATE templatetrack SET timestamp='" + timestamp.toString()
+                        + "' WHERE timestamp_backup=" + timestamplong;
                     stm.executeUpdate(sql6);
                 }
                 String sql7 = "UPDATE templatetrack SET timestamp_backup=null";
@@ -89,8 +89,9 @@ public class UpdateTrackTableTask extends Task
                 String sql8 = "ALTER TABLE templatetrack DROP COLUMN timestamp_backup";
                 stm.executeUpdate(sql8);
             }
-            String[] tablesToVerify = {TrackerUtil.LIST_TRACKER_TABLE, TrackerUtil.LOGIN_TRACKER_TABLE,
-                                      TrackerUtil.QUERY_TRACKER_TABLE, TrackerUtil.SEARCH_TRACKER_TABLE};
+            String[] tablesToVerify = {TrackerUtil.LIST_TRACKER_TABLE,
+                TrackerUtil.LOGIN_TRACKER_TABLE, TrackerUtil.QUERY_TRACKER_TABLE,
+                TrackerUtil.SEARCH_TRACKER_TABLE};
 
             for (String tableToVerify : tablesToVerify) {
                 if (!verifyTrackColumnType(connection, tableToVerify)) {
@@ -118,7 +119,7 @@ public class UpdateTrackTableTask extends Task
 
                 while (res.next()) {
                     if (res.getString(3).equals(tableName)
-                        && res.getString(4).equals("timestamp")
+                        && "timestamp".equals(res.getString(4))
                         && res.getInt(5) == Types.TIMESTAMP) {
                         return true;
                     }
