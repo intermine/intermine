@@ -131,8 +131,9 @@
 
 <script type="text/javascript">
 
+     var submissionPropertyJSON;
      if ('${submissionPropertyJSON}' != "" || '${submissionPropertyJSON}' != "[]") {
-         var submissionPropertyJSON = jQuery.parseJSON('${submissionPropertyJSON}');
+         submissionPropertyJSON = jQuery.parseJSON('${submissionPropertyJSON}');
 
          for(var i in submissionPropertyJSON){
 
