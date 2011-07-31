@@ -14,12 +14,24 @@ class Service
     MODEL_PATH = "/model/json"
     TEMPLATES_PATH = "/templates"
     QUERY_RESULTS_PATH = "/query/results"
+    QUERY_TO_LIST_PATH = "/query/tolist/json"
+    QUERY_APPEND_PATH = "/query/append/tolist/json"
     TEMPLATE_RESULTS_PATH = "/template/results"
+    TEMPLATE_TO_LIST_PATH = "/template/tolist/json"
+    TEMPLATE_APPEND_PATH = "/template/append/tolist/json"
     LISTS_PATH = "/lists/json"
+    LIST_APPEND_PATH = "/lists/append/json"
+    LIST_RENAME_PATH = "/lists/rename/json"
+    LIST_UNION_PATH = "/lists/union/json"
+    LIST_DIFFERENCE_PATH = "/lists/diff/json"
+    LIST_INTERSECTION_PATH = "/lists/intersect/json"
+    LIST_SUBTRACTION_PATH = "/lists/subtract/json"
 
     attr_reader :version, :root, :token, :broken_templates
 
-    def_delegators :@list_manager, :lists, :list
+    def_delegators :@list_manager, 
+        :lists, :list, :create_list, :delete_lists, 
+        :union_of, :intersection_of, :symmetric_difference_of, :subtract
 
     def initialize(root, token=nil, mock_model=nil)
         @root = root
@@ -77,6 +89,10 @@ class Service
 
     def get_list_data
         return fetch(@root + LISTS_PATH)
+    end
+
+    def params
+        return @token.nil? ? {} : {"token" => @token}
     end
 
     private

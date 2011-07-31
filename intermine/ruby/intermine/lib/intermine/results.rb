@@ -143,7 +143,7 @@ module Results
             result_set = check_result_set(container)
             return result_set["count"]
         end
-        
+
         def each_line(data)
             Net::HTTP.new(@uri.host, @uri.port).start {|http|
                 http.request_post(@uri.path, data) {|resp|
