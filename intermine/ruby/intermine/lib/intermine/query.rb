@@ -200,12 +200,14 @@ module PathQuery
         HIGHEST_CODE = "Z"
 
         attr_accessor :name, :title, :root
-        attr_reader :model, :joins, :constraints, :views, :sort_order, :logic, :service
+        attr_reader :model, :joins, :constraints, :views, :sort_order, :logic, :service, :list_upload_uri, :list_append_uri
 
         def initialize(model, root=nil, service=nil)
             @model = model
             @service = service
             @url = (@service.nil?) ? nil : @service.root + Service::QUERY_RESULTS_PATH
+            @list_upload_uri = (@service.nil?) ? nil : @service.root + Service::QUERY_TO_LIST_PATH
+            @list_append_uri = (@service.nil?) ? nil : @service.root + Service::QUERY_APPEND_PATH
             if root
                 @root = Path.new(root, model).rootClass
             end
@@ -410,13 +412,8 @@ module PathQuery
             end
         end
 
-        def order_by(*args)
-            return add_sort_order(*args)
-        end
-
-        def order(*args)
-            return add_sort_order(*args)
-        end
+        alias order_by add_sort_order
+        alias order add_sort_order
 
         def add_constraint(*parameters)
             con = @constraint_factory.make_constraint(parameters)
