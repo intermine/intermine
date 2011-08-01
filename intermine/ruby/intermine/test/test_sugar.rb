@@ -21,7 +21,7 @@ class TestQuerySugar < Test::Unit::TestCase
         @model = Model.new(data)
         @service = Service.new("foo", "bar", @model)
         @model.send(:set_service, @service) 
-        @list = List.new("test-list")
+        @list = Lists::List.new({"name" => "test-list"})
     end
 
     def test_select_statement

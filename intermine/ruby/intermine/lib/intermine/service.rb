@@ -30,7 +30,7 @@ class Service
     attr_reader :version, :root, :token, :broken_templates
 
     def_delegators :@list_manager, 
-        :lists, :list, :create_list, :delete_lists, 
+        :lists, :list, :list_names, :create_list, :delete_lists, :get_lists_with_tags,
         :union_of, :intersection_of, :symmetric_difference_of, :subtract
 
     def initialize(root, token=nil, mock_model=nil)
