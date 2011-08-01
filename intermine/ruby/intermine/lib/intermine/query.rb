@@ -6,6 +6,8 @@ require "intermine/results"
 require "intermine/service"
 require "intermine/lists"
 
+include InterMine
+
 unless String.instance_methods.include?(:start_with?)
 
     class String
@@ -36,7 +38,7 @@ class Array
 end
 
 
-module PathQuery
+module InterMine::PathQuery
 
     include REXML
 
@@ -194,14 +196,91 @@ module PathQuery
 
     end
 
+    # == A class representing a structured query against an InterMine Data-Warehouse
+    #
+    # Queries represent structured requests for data from an InterMine data-warehouse. They
+    # consist basically of output columns you select, and a set of constraints on the results 
+    # to return. These are known as the "view" and the "constraints". In a nod to the SQL-origins 
+    # of the queries, and to the syntax of ActiveRecord, there is both a method-chaining SQL-ish
+    # DSL, and a more isolating common InterMine DSL. 
+    #
+    #   query = service.query("Gene").select("*").where("proteins.molecularWeight" => {">" => 10000})
+    #   query.each_result do |gene|
+    #     puts gene.symbol
+    #   end
+    #
+    # OR:
+    #
+    #   query = service.query("Gene")
+    #   query.add_views("*")
+    #   query.add_constraint("proteins.molecularWeight", ">", 10000)
+    #   ...
+    #
+    # The main differences from SQL are that the joining between tables is implicit
+    # and automatic. Simply by naming the column "Gene.proteins.molecularWeight" we have access
+    # to the protein table joined onto the gene table. (A consequence of this is that all queries must have a
+    # unique root that all paths descend from, and we do not permit right outer joins.)
+    #
+    # You can define the following features of a query:
+    #  * The output column
+    #  * The filtering constraints (what values certain columns must or must not have)
+    #  * The sort order of the results
+    #  * The way constraints are combined (AND or OR)
+    #
+    # In processing results, there are two powerful result formats available, depending on
+    # whether you want to process results row by row, or whether you would like the information grouped into
+    # logically coherent records. The latter is more similar to the ORM model, and can be seen above.
+    # The mechanisms we offer for row access allow accessing cell values of the result table
+    # transparently by index or column-name. 
+    #
+    #:include:contact_header.rdoc
+    #
     class Query
 
+        # The first possible constraint code
         LOWEST_CODE = "A"
+
+        # The last possible constraint code
         HIGHEST_CODE = "Z"
 
-        attr_accessor :name, :title, :root
-        attr_reader :model, :joins, :constraints, :views, :sort_order, :logic, :service, :list_upload_uri, :list_append_uri
+        # The (optional) name of the query. Used in automatic access (eg: "query1")
+        attr_accessor :name
+        
+        # A human readable title of the query (eg: "Gene --> Protein Domain")
+        attr_accessor :title
+        
+        # The root class of the query.
+        attr_accessor :root
 
+        # The data model associated with the query
+        attr_reader :model
+        
+        # All the current Join objects on the query
+        attr_reader :joins
+        
+        # All the current constraints on the query
+        attr_reader :constraints
+        
+        # All the columns currently selected for output.
+        attr_reader :views
+        
+        # The current sort-order.
+        attr_reader :sort_order
+        
+        # The current logic (as a LogicGroup)
+        attr_reader :logic
+        
+        # The service this query is associated with
+        attr_reader :service
+        
+        # URLs for internal consumption.
+        attr_reader :list_upload_uri, :list_append_uri
+
+        # Construct a new query object. You should not use this directly.
+        # Instead use the factory methods in Service. 
+        #
+        #   query = service.query("Gene")
+        #
         def initialize(model, root=nil, service=nil)
             @model = model
             @service = service
@@ -209,7 +288,7 @@ module PathQuery
             @list_upload_uri = (@service.nil?) ? nil : @service.root + Service::QUERY_TO_LIST_PATH
             @list_append_uri = (@service.nil?) ? nil : @service.root + Service::QUERY_APPEND_PATH
             if root
-                @root = Path.new(root, model).rootClass
+                @root = InterMine::Metadata::Path.new(root, model).rootClass
             end
             @constraints = []
             @joins = []
@@ -220,18 +299,34 @@ module PathQuery
             @constraint_factory = ConstraintFactory.new(self)
         end
 
+        # Return a parser for deserialising queries. 
+        #
+        #   parser = Query.parser(service.model)
+        #   query = parser.parse(string)
+        #   query.each_row |r|
+        #     puts r.to_h
+        #   end
+        #   
         def self.parser(model)
             return QueryLoader.new(model)
         end
 
+        # Return all the constraints that have codes and can thus
+        # participate in logic.
         def coded_constraints
             return @constraints.select {|x| !x.is_a?(SubClassConstraint)}
         end
         
+        # Return all the constraints that restrict the class of 
+        # paths in the query.
         def subclass_constraints
             return @constraints.select {|x| x.is_a?(SubClassConstraint)}
         end
 
+        # Return an XML document node representing the XML form of the query.
+        #
+        # This is the canonical serialisable form of the query. 
+        #
         def to_xml
             doc = REXML::Document.new
 
@@ -261,26 +356,64 @@ module PathQuery
             return doc
         end
 
+        # Get your own result reader for handling the results at a low level.
         def results_reader(start=0, size=nil)
             return Results::ResultsReader.new(@url, self, start, size)
         end
 
+        # Iterate over the results of this query one row at a time.
+        #
+        # Rows support both array-like index based access as well as 
+        # hash-like key based access. For key based acces you can use
+        # either the full path or the headless short version:
+        #
+        #   query.each_row do |row|
+        #     puts r["Gene.symbol"], r["proteins.primaryIdentifier"]
+        #     puts r[0]
+        #     puts r.to_a # Materialize the row an an Array
+        #     puts r.to_h # Materialize the row an a Hash
+        #   end
+        #
         def each_row(start=0, size=nil)
             results_reader(start, size).each_row {|row|
                 yield row
             }
         end
 
+        # Iterate over the results, one record at a time.
+        #
+        #   query.each_result do |gene|
+        #     puts gene.symbol
+        #     gene.proteins.each do |prot|
+        #       puts prot.primaryIdentifier
+        #     end
+        #   end
+        #
         def each_result(start=0, size=nil)
             results_reader(start, size).each_result {|row|
                 yield row
             }
         end
 
+        # Return the number of result rows this query will return in its current state. 
+        # This makes a very small request to the webservice, and is the most efficient 
+        # method of getting the size of the result set.
         def count
             return results_reader.get_size
         end
 
+        # Returns an Array of ResultRow objects containing the 
+        # data returned by running this query, starting at the given offset and 
+        # containing up to the given maximum size.
+        #
+        # The webservice enforces a maximum page-size of 10,000,000 rows,
+        # independent of any size you specify - this can be obviated with paging
+        # for large result sets.
+        #
+        #   rows = query.rows
+        #   rows.last["symbol"]
+        #   => "eve"
+        #
         def rows(start=0, size=nil)
             res = []
             results_reader(start, size).each_row {|row|
@@ -289,6 +422,13 @@ module PathQuery
             res
         end
 
+        # Return objects corresponding to the type of data requested, starting 
+        # at the given row offset.
+        #
+        #  genes = query.results
+        #  genes.last.symbol
+        #  => "eve"
+        #
         def results(start=0, size=nil)
             res = []
             results_reader(start, size).each_result {|row|
@@ -297,13 +437,20 @@ module PathQuery
             res
         end
 
+        # Return all result record objects returned by running this query.
         def all
             return self.results
         end
 
+        # Return all the rows returned by running the query
         def all_rows
             return self.rows
         end
+
+        # Get the first result record from the query, starting at the 
+        # given offset. If the offset is large, then this is not an efficient
+        # way to retrieve this data, and you may with to consider a looping approach
+        # or row based access instead.
         def first(start=0)
             current_row = 0
             # Have to iterate as start refers to row count
@@ -316,10 +463,13 @@ module PathQuery
             return nil
         end
 
+        # Get the first row of results from the query, starting at the given offset.
         def first_row(start = 0)
             return self.results(start, 1).first
         end
         
+        # Get the constraint on the query with the given code.
+        # Raises an error if there is no such constraint.
         def get_constraint(code)
             @constraints.each do |x|
                 if x.respond_to?(:code) and x.code == code
@@ -329,22 +479,36 @@ module PathQuery
             raise ArgumentError, "#{code} not in query"
         end
 
+
+        # Remove the constraint with the given code from the query.
+        # If no such constraint exists, no error will be raised.
         def remove_constraint(code)
             @constraints.reject! do |x|
                 x.respond_to?(:code) and x.code == code
             end
         end
 
+        # Add the given views (output columns) to the query. 
+        #
+        # Any columns ending in "*" will be interpreted as a request to add
+        # all attribute columns from that table to the query
+        #
+        #   query = service.query("Gene")
+        #   query.add_views("*")
+        #   query.add_to_select("*")
+        #   query.add_views("proteins.*")
+        #   query.add_views("pathways.*", "organism.shortName")
+        #
         def add_views(*views)
             views.flatten.map do |x| 
                 y = add_prefix(x)
                 if y.end_with?("*")
                     prefix = y.chomp(".*")
-                    path = Path.new(prefix, @model, subclasses)
+                    path = InterMine::Metadata::Path.new(prefix, @model, subclasses)
                     attrs = path.end_cd.attributes.map {|x| prefix + "." + x.name}
                     add_views(attrs)
                 else
-                    path = Path.new(y, @model, subclasses)
+                    path = InterMine::Metadata::Path.new(y, @model, subclasses)
                     if @root.nil?
                         @root = path.rootClass
                     end
@@ -354,19 +518,37 @@ module PathQuery
             return self
         end
 
-        def select(*views)
-            return add_views(views)
-        end
+        alias add_to_select add_views
 
-        def view=(view)
-            if view.is_a?(Array)
-                views = view
-            else
-                views = view.split(/(?:,\s*|\s+)/)
+        # Replace any currently existing views with the given view list. 
+        # If the view is not already an Array, it will be split by commas and whitespace.
+        #
+        def view=(*view)
+            @views = []
+            view.each do |v|
+                if v.is_a?(Array)
+                    views = v
+                else
+                    views = v.to_s.split(/(?:,\s*|\s+)/)
+                end
+                add_views(*views)
             end
-            return add_views(*views)
+            return self
         end
 
+        alias select view=
+
+        # Get the current sub-class map for this query. 
+        #
+        # This contains information about which fields of this query have 
+        # been declared to be restricted to contain only a subclass of their 
+        # normal type.
+        #
+        #   > query = service.query("Gene")
+        #   > query.where(:microArrayResults => service.model.table("FlyAtlasResult"))
+        #   > query.subclasses
+        #   => {"Gene.microArrayResults" => "FlyAtlasResult"}
+        #
         def subclasses
             subclasses = {}
             @constraints.each do |con|
@@ -377,8 +559,28 @@ module PathQuery
             return subclasses
         end
 
+        # Declare how a particular join should be treated. 
+        #
+        # The default join style is for an INNER join, but joins can 
+        # optionally be declared to be LEFT OUTER joins. The difference is 
+        # that with an inner join, each join in the query implicitly constrains
+        # the values of that path to be non-null, whereas an outer-join allows
+        # null values in the joined path. If the path passed to the constructor 
+        # has a chain of joins, the last section is the one the join is applied to.
+        #
+        #   query = service.query("Gene")
+        #   # Allow genes without proteins
+        #   query.add_join("proteins") 
+        #   # Demand the results contain only those genes that have interactions that have interactingGenes, 
+        #   # but allow those interactingGenes to not have any proteins.
+        #   query.add_join("interactions.interactingGenes.proteins")
+        #
+        # The valid join styles are OUTER and INNER (case-insensitive). There is never
+        # any need to declare a join to be INNER, as it is inner by default. Consider 
+        # using Query#outerjoin which is more explicitly declarative.
+        #
         def add_join(path, style="OUTER")
-            p = Path.new(add_prefix(path), @model, subclasses)
+            p = InterMine::Metadata::Path.new(add_prefix(path), @model, subclasses)
             if @root.nil?
                 @root = p.rootClass
             end
@@ -388,10 +590,19 @@ module PathQuery
 
         alias join add_join
 
+        # Explicitly declare a join to be an outer join.
         def outerjoin(path)
             return add_join(path)
         end
 
+        # Add a sort order element to sort order information. 
+        # A sort order consists of the name of an output column and 
+        # (optionally) the direction to sort in. The default direction is "ASC".
+        # The valid directions are "ASC" and "DESC" (case-insensitive).
+        #
+        #   query.add_sort_order("length")
+        #   query.add_sort_order("proteins.primaryIdentifier", "desc")
+        #
         def add_sort_order(path, direction="ASC") 
             p = self.path(path)
             if !@views.include? p
@@ -401,6 +612,12 @@ module PathQuery
             return self
         end
 
+        # Set the sort order completely, replacing the current sort order.
+        #
+        #  query.sortOrder = "Gene.length asc Gene.proteins.length desc"
+        #
+        # The sort order expression will be parsed and checked for conformity with the
+        # current state of the query.
         def sortOrder=(so)
             if so.is_a?(Array)
                 sos = so
@@ -415,16 +632,44 @@ module PathQuery
         alias order_by add_sort_order
         alias order add_sort_order
 
+        # Add a constraint to the query matching the given parameters, and 
+        # return the created constraint.
+        #
+        #   con = query.add_constraint("length", ">", 500)
+        #
+        # Note that (at least for now) the style of argument used by where and 
+        # add_constraint is not compatible. This is on the TODO list.
         def add_constraint(*parameters)
             con = @constraint_factory.make_constraint(parameters)
             @constraints << con
             return con
         end
 
+        # Returns a Path object constructed from the given path-string, 
+        # taking the current state of the query into account (its data-model 
+        # and subclass constraints).
         def path(pathstr)
-            return Path.new(add_prefix(pathstr), @model, subclasses)
+            return InterMine::Metadata::Path.new(add_prefix(pathstr), @model, subclasses)
         end
 
+        # Add a constraint clause to the query. 
+        #
+        #   query.where(:symbol => "eve")
+        #   query.where(:symbol => %{eve h bib zen})
+        #   query.where(:length => {:le => 100}, :symbol => "eve*")
+        #
+        # Interprets the arguments in a style similar to that of 
+        # ActiveRecord constraints, and adds them to the query.
+        # If multiple constraints are supplied in a single hash (as
+        # in the third example), then the order in which they are 
+        # applied to the query (and thus the codes they will receive) is
+        # not predictable. To determine the order use chained where clauses
+        # or use multiple hashes:
+        #
+        #   query.where({:length => {:le => 100}}, {:symbol => "eve*"})
+        #
+        # Returns self to support method chaining
+        # 
         def where(*wheres)
            if @views.empty?
                self.select('*')
@@ -480,9 +725,9 @@ module PathQuery
                     add_constraint(parameters)
                 elsif v.is_a?(Range) or v.is_a?(Array)
                     add_constraint(k.to_s, 'ONE OF', v.to_a)
-                elsif v.is_a?(ClassDescriptor)
+                elsif v.is_a?(InterMine::Metadata::ClassDescriptor)
                     add_constraint(:path => k.to_s, :sub_class => v.name)
-                elsif v.is_a?(Lists::List)
+                elsif v.is_a?(InterMine::Lists::List)
                     add_constraint(k.to_s, 'IN', v.name)
                 elsif v.nil?
                     add_constraint(k.to_s, "IS NULL")
@@ -498,6 +743,12 @@ module PathQuery
            return self
         end
 
+        # Set the logic to the given value.
+        #
+        # The value will be parsed for consistency is it is a logic
+        # string. 
+        #
+        # Returns self to support chaining.
         def set_logic(value)
             if value.is_a?(LogicGroup)
                 @logic = value
@@ -509,6 +760,7 @@ module PathQuery
 
         alias constraintLogic= set_logic
 
+        # Get the next available code for the query.
         def next_code
             c = LOWEST_CODE
             while Query.is_valid_code(c)
@@ -518,6 +770,7 @@ module PathQuery
             raise RuntimeError, "Maximum number of codes reached - all 26 have been allocated"
         end
 
+        # Return the list of currently used codes by the query.
         def used_codes
             if @constraints.empty?
                 return []
@@ -526,10 +779,19 @@ module PathQuery
             end
         end
 
+        # Whether or not the argument is a valid constraint code.
+        #
+        # to be valid, it must be a one character string between A and Z inclusive.
         def self.is_valid_code(str)
             return (str.length == 1) && (str >= LOWEST_CODE) && (str <= HIGHEST_CODE)
         end
 
+        # Adds the root prefix to the given string.
+        #
+        # Arguments: 
+        # [+x+] An object with a #to_s method
+        #
+        # Returns the prefixed string.
         def add_prefix(x)
             x = x.to_s
             if @root && !x.start_with?(@root.name)
@@ -539,12 +801,23 @@ module PathQuery
             end
         end
 
+        # Return the parameter hash for running this query in its current state.
         def params
             hash = {"query" => self.to_xml}
             if @service and @service.token
                 hash["token"] = @service.token
             end
             return hash
+        end
+
+        # Return the textual representation of the query. Here it returns the Query XML
+        def to_s
+            return to_xml.to_s
+        end
+
+        # Return an informative textual representation of the query.
+        def inspect
+            return "<#{self.class.name} query=#{self.to_s.inspect}>"
         end
     end
 
@@ -603,7 +876,7 @@ module PathQuery
                     value = @query.path(value)
                 end
                 if key == :sub_class
-                    value = Path.new(value, @query.model)
+                    value = InterMine::Metadata::Path.new(value, @query.model)
                 end
                 con.send(key.to_s + '=', value)
             }
@@ -700,7 +973,7 @@ module PathQuery
         end
 
         def validate 
-            if @path.elements.last.is_a?(AttributeDescriptor)
+            if @path.elements.last.is_a?(InterMine::Metadata::AttributeDescriptor)
                 raise ArgumentError, "#{self.class.name}s must be on objects or references to objects"
             end
             if @sub_class.length > 1
@@ -719,7 +992,7 @@ module PathQuery
 
     module ObjectConstraint
         def validate
-            if @path.elements.last.is_a?(AttributeDescriptor)
+            if @path.elements.last.is_a?(InterMine::Metadata::AttributeDescriptor)
                 raise ArgumentError, "#{self.class.name}s must be on objects or references to objects, got #{@path}"
             end
         end
@@ -727,7 +1000,7 @@ module PathQuery
 
     module AttributeConstraint
         def validate
-            if !@path.elements.last.is_a?(AttributeDescriptor)
+            if !@path.elements.last.is_a?(InterMine::Metadata::AttributeDescriptor)
                 raise ArgumentError, "Attribute constraints must be on attributes, got #{@path}"
             end
         end
@@ -791,8 +1064,18 @@ module PathQuery
         include AttributeConstraint
         attr_accessor :value
 
+        CANONICAL_OPS = {
+            "EQ" => "=",
+            "==" => "=",
+            "NE" => "!=",
+            "LT" => "<",
+            "GT" => ">",
+            "LE" => "<=",
+            "GE" => ">="
+        }
+
         def self.valid_ops 
-            return ["=", ">", "<", ">=", "<=", "!=", "CONTAINS", "LIKE"]
+            return %w{= == > < >= <= != CONTAINS LIKE EQ NE GT LT LE GE}
         end
 
         def to_elem
@@ -804,6 +1087,7 @@ module PathQuery
 
         def validate 
             super
+            @op = SingleValueConstraint::CANONICAL_OPS[@op] || @op
             @value = coerce_value(@value)
             validate_value(@value)
         end
@@ -866,10 +1150,10 @@ module PathQuery
         end
 
         def validate
-            if @path.elements.last.is_a?(AttributeDescriptor)
+            if @path.elements.last.is_a?(InterMine::Metadata::AttributeDescriptor)
                 raise ArgumentError, "#{self.class.name}s must be on objects or references to objects"
             end
-            if @loopPath.elements.last.is_a?(AttributeDescriptor)
+            if @loopPath.elements.last.is_a?(InterMine::Metadata::AttributeDescriptor)
                 raise ArgumentError, "loopPaths on #{self.class.name}s must be on objects or references to objects"
             end
             model = @path.model

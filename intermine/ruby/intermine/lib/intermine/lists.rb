@@ -1,17 +1,19 @@
 require 'rubygems'
-require 'json'
 require 'net/http'
 require 'uri'
 require "stringio"
+require "cgi"
+require 'json'
 require "intermine/service"
-require 'addressable/uri'
+
+include InterMine
 
 # == List Management Tools
 #
 # Classes that deal with the creation and management
 # of a user's saved lists in an individual webservice.
 #
-module Lists
+module InterMine::Lists
 
     #
     # == Synopsis
@@ -39,6 +41,8 @@ module Lists
     # and description, as well as a type. Any changes to the list,
     # either in its contents or by renaming, are reflected in the 
     # stored object.
+    #
+    #:include:contact_header.rdoc
     #
     class List
 
@@ -334,7 +338,7 @@ module Lists
         # Add items defined by ids to this list
         def append_ids(ids)
             uri = URI.parse(@manager.service.root + Service::LIST_APPEND_PATH)
-            params = @manager.service.params.merge("name" => @name)
+            params = {"name" => @name}
             if ids.is_a?(File)
                 f = ids
             elsif ids.is_a?(Array)
@@ -344,7 +348,7 @@ module Lists
             else
                 f = StringIO.new(ids.to_s)
             end
-            req = Net::HTTP::Post.new(uri.path + "?" + Addressable::URI.form_encode(params))
+            req = Net::HTTP::Post.new(uri.path + "?" + @manager.params_to_query_string(params))
             req.body_stream = f
             req.content_type = "text/plain"
             req.content_length = f.size
@@ -358,6 +362,8 @@ module Lists
 
     end
 
+    # == Synopsis 
+    #
     # An internal class for managing lists throughout the lifetime of a program. 
     # The main Service object delegates list functionality to this class.
     # 
@@ -369,6 +375,15 @@ module Lists
     #   intersection = service.intersection_of([list, other_list])
     #   # Deletion
     #   service.delete_lists(list, other_list)
+    #
+    # == Description 
+    #
+    # This class contains logic for reading and updating the lists available 
+    # to a given user at a webservice. This class in particular is responsible for 
+    # parsing list responses, and performing the operations that combine lists into 
+    # new result sets (intersection, union, symmetric difference, subtraction).
+    #
+    #:include:contact_header.rdoc
     #
     class ListManager
 
@@ -501,8 +516,8 @@ module Lists
         def delete_lists(*lists)
             lists.map {|x| x.is_a?(List) ? x.name : x.to_s}.uniq.each do |name|
                 uri = URI.parse(@service.root + Service::LISTS_PATH)
-                params = @service.params.merge({"name" => name})
-                req = Net::HTTP::Delete.new(uri.path + "?" + Addressable::URI.form_encode(params))
+                params = {"name" => name}
+                req = Net::HTTP::Delete.new(uri.path + "?" + params_to_query_string(params))
                 res = Net::HTTP.start(uri.host, uri.port) do |http|
                     http.request(req)
                 end
@@ -563,6 +578,11 @@ module Lists
             ret = list(new_name)
             ret.unmatched_identifiers.replace(failed_matches)
             return ret
+        end
+
+        # only handles single value keys!
+        def params_to_query_string(p)
+            return @service.params.merge(p).map { |k,v| "#{k}=#{CGI::escape(v.to_s)}" }.join('&')
         end
 
         private 
@@ -659,7 +679,6 @@ module Lists
                 "tags" => tags.join(";"),
                 "type" => type
             }
-            params = @service.params.merge(list_params)
             if ids.is_a?(File)
                 f = ids
             elsif ids.is_a?(Array)
@@ -669,7 +688,7 @@ module Lists
             else
                 f = StringIO.new(ids.to_s)
             end
-            req = Net::HTTP::Post.new(uri.path + "?" + Addressable::URI.form_encode(params))
+            req = Net::HTTP::Post.new(uri.path + "?" + params_to_query_string(list_params))
             req.body_stream = f
             req.content_type = "text/plain"
             req.content_length = f.size

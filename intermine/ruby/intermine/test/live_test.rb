@@ -6,7 +6,7 @@ require "intermine/service"
 class LiveTest < Test::Unit::TestCase
 
     def setup
-        @service = Service.new("http://www.flymine.org/query/service")
+        @service = Service.new("www.flymine.org/query")
     end
 
     # Tests a number of integrated features:

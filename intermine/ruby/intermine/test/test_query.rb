@@ -14,21 +14,21 @@ class TestQuery < Test::Unit::TestCase
         file = File.new(
             File.dirname(__FILE__) + "/data/model.json", "r")
         data = file.read
-        @model = Model.new(data)
+        @model = InterMine::Metadata::Model.new(data)
     end
 
     def test_instantiation
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert(query.is_a?(PathQuery::Query))
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_equal(query.root, @model.get_cd("Employee"))
 
-        query = PathQuery::Query.new(@model, "Department.name")
+        query = InterMine::PathQuery::Query.new(@model, "Department.name")
         assert_equal(query.root, @model.get_cd("Department"))
 
-        assert_raise PathException do
-            PathQuery::Query.new(@model, "Foo")
+        assert_raise InterMine::Metadata::PathException do
+            InterMine::PathQuery::Query.new(@model, "Foo")
         end
     end
 
@@ -41,36 +41,36 @@ class TestQuery < Test::Unit::TestCase
         expected = views.to_s
 
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_views("Employee.name", "Employee.age", 
                         "Employee.department.name")
         assert_equal(query.views.to_s, expected)
             
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("Employee.name", "Employee.age", 
                         "Employee.department.name")
         assert_equal(query.views.to_s, expected)
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_views(views)
         assert_equal(query.views.to_s, expected)
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views(views)
         assert_equal(query.views.to_s, expected)
     end
 
     def test_bad_viewpath
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_views("Employee.foo.id")
         end
     end
 
     def test_inconsistent_view_roots
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_views("Employee.name")
             query.add_views("Department.name")
         end
@@ -85,31 +85,31 @@ class TestQuery < Test::Unit::TestCase
         ]
         expected = views.to_s
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("name", "age", "department.name")
         assert_equal(query.views.to_s, expected)
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views(["name", "age", "department.name"])
         assert_equal(query.views.to_s, expected)
     end
 
     def test_bad_unqualified_path
-        query = PathQuery::Query.new(@model, "Employee")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
+        assert_raise InterMine::Metadata::PathException do
             query.add_views("foo.id")
         end
     end
 
     def test_inconsistent_views_with_rooted_query
-        query = PathQuery::Query.new(@model, "Employee")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
+        assert_raise InterMine::Metadata::PathException do
             query.add_views("Department.id")
         end
     end
 
     def test_subclasses
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Department.employees",
             :sub_class => "Manager"
@@ -126,15 +126,15 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_problem_subclasses
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_constraint({
                 :path => "Department.employees",
                 :sub_class => "Foo"
             })
         end
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Department.employees",
@@ -142,7 +142,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Department.manager",
@@ -150,7 +150,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Department.manager",
@@ -160,7 +160,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_subclassed_views
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Department.employees",
             :sub_class => "Manager"
@@ -169,33 +169,33 @@ class TestQuery < Test::Unit::TestCase
         expected = ["Department.employees.seniority"].to_s
         assert_equal(query.views.to_s, expected)
 
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_views("Department.employees.seniority")
         end
     end
 
     def test_joins
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_join("Department.employees", "OUTER")
         join = query.joins.first
         assert_equal(join.path.to_s, "Department.employees")
         assert_equal(join.style, "OUTER")
         assert_equal(query.root.name, "Department")
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_join("Department.employees")
         join = query.joins.first
         assert_equal(join.path.to_s, "Department.employees")
         assert_equal(join.style, "OUTER")
 
-        query = PathQuery::Query.new(@model, "Department")
+        query = InterMine::PathQuery::Query.new(@model, "Department")
         query.add_join("employees")
         join = query.joins.first
         assert_equal(join.path.to_s, "Department.employees")
         assert_equal(join.style, "OUTER")
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_join("Department.employees", "INNER")
         join = query.joins.first
         assert_equal(join.path.to_s, "Department.employees")
@@ -204,7 +204,7 @@ class TestQuery < Test::Unit::TestCase
 
     def test_subclassed_joins
 
-        query = PathQuery::Query.new(@model, "Department")
+        query = InterMine::PathQuery::Query.new(@model, "Department")
 
         query.add_constraint({:path => "employees", :sub_class => "CEO"})
         query.add_join("employees.secretarys")
@@ -212,38 +212,38 @@ class TestQuery < Test::Unit::TestCase
         assert_equal(query.joins.first.path.to_s, "Department.employees.secretarys")
         assert_equal(query.joins.first.style, "OUTER")
 
-        query = PathQuery::Query.new(@model, "Department")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Department")
+        assert_raise InterMine::Metadata::PathException do
             query.add_join("employees.secretarys")
         end
     end
 
     def test_join_problems
 
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_join("Foo.employees")
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
+        assert_raise InterMine::Metadata::PathException do
             query.add_join("Department.employees")
         end
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert_raise ArgumentError do
             query.add_join("Department.employees", "QUIRKY")
         end
 
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_join("Department.employees")
             query.add_join("Company.departments")
         end
     end
 
     def test_unary_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee.name",
             :op => "IS NULL"
@@ -255,7 +255,7 @@ class TestQuery < Test::Unit::TestCase
         conA = query.constraints[0]
         conB = query.constraints[1]
 
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint(
             :path => "Employee.name",
             :op => "IS NULL"
@@ -275,7 +275,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_unary_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint(
             :path => "name",
             :op => "IS NULL"
@@ -288,7 +288,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_unary_constraint
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         assert_raise ArgumentError do
             query.add_constraint(
                 :path => "name",
@@ -296,8 +296,8 @@ class TestQuery < Test::Unit::TestCase
             )
         end
 
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_constraint({
                 :path => "Company.foo",
                 :op => "IS NULL"
@@ -306,7 +306,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_binary_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee.name",
             :op => "=",
@@ -349,7 +349,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_value_coercion
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee.age",
             :op => ">",
@@ -374,7 +374,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_binary_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint({
             :path => "name",
             :op => ">=",
@@ -389,7 +389,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_binary_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -398,7 +398,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "age",
@@ -407,7 +407,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "fullTime",
@@ -416,8 +416,8 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model)
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model)
+        assert_raise InterMine::Metadata::PathException do
             query.add_constraint({
                 :path => "Company.foo",
                 :op => ">=",
@@ -427,7 +427,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_list_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee",
             :op => "IN",
@@ -452,7 +452,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_list_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint({
             :path => "department",
             :op => "IN",
@@ -466,7 +466,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_list_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "department.name",
@@ -477,7 +477,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_lookup_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee",
             :op => "LOOKUP",
@@ -506,7 +506,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_lookup_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint({
             :path => "department",
             :op => "LOOKUP",
@@ -520,7 +520,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_lookup_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "department.name",
@@ -531,7 +531,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_loop_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee",
             :op => "IS",
@@ -557,7 +557,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_loop_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint({
             :path => "department",
             :op => "IS",
@@ -571,7 +571,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_lookup_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -580,7 +580,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Employee",
@@ -589,7 +589,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Employee",
@@ -600,7 +600,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_multi_constraints
-        query = PathQuery::Query.new(@model)
+        query = InterMine::PathQuery::Query.new(@model)
         query.add_constraint({
             :path => "Employee.name",
             :op => "ONE OF",
@@ -627,7 +627,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_unqualified_multi_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_constraint({
             :path => "department.name",
             :op => "ONE OF",
@@ -641,7 +641,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_bad_multi_constraint
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -650,7 +650,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Employee",
@@ -659,7 +659,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "Employee.age",
@@ -670,7 +670,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_codes
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         # Check allocation of default codes
         query.add_constraint({
             :path => "name",
@@ -723,7 +723,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_code_exhaustion
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         # Check we can allocate all 26 default codes
         assert_nothing_raised do
             26.times do
@@ -737,7 +737,7 @@ class TestQuery < Test::Unit::TestCase
         assert_equal(query.constraints.last.code, "Z")
 
         # But 27 is too many
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise RuntimeError do
             27.times do
                 query.add_constraint({
@@ -748,7 +748,7 @@ class TestQuery < Test::Unit::TestCase
         end
 
         # One more tips the balance, even with a custom code
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise RuntimeError do
             26.times do
                 query.add_constraint({
@@ -765,7 +765,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_illegal_codes
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -774,7 +774,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -783,7 +783,7 @@ class TestQuery < Test::Unit::TestCase
             })
         end
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
             query.add_constraint({
                 :path => "name",
@@ -795,7 +795,7 @@ class TestQuery < Test::Unit::TestCase
 
     def test_subclassed_constraints
 
-        query =  PathQuery::Query.new(@model, "Department")
+        query = InterMine::PathQuery::Query.new(@model, "Department")
 
         query.add_constraint({:path => "employees", :sub_class => "Manager"})
         query.add_constraint({:path => "employees.title", :op => "=", :value => "Ms"})
@@ -805,15 +805,15 @@ class TestQuery < Test::Unit::TestCase
         assert_equal(query.constraints.last.value, "Ms")
         assert_equal(query.constraints.last.code, "A")
 
-        query =  PathQuery::Query.new(@model, "Department")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Department")
+        assert_raise InterMine::Metadata::PathException do
             query.add_constraint({:path => "employees.title", :op => "=", :value => "Ms"})
         end
     end
 
     def test_sort_order 
 
-        query =  PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
 
         query.add_views("name", "age", "end")
 
@@ -832,7 +832,7 @@ class TestQuery < Test::Unit::TestCase
         assert_equal(query.sort_order.last.path, "Employee.end")
         assert_equal(query.sort_order.last.direction, "DESC")
 
-        assert_raise PathException do
+        assert_raise InterMine::Metadata::PathException do
             query.add_sort_order("foo")
         end
 
@@ -852,7 +852,7 @@ class TestQuery < Test::Unit::TestCase
 
     def test_subclassed_sort_order
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
 
         query.add_constraint(:path => "Employee", :sub_class => "Manager")
         query.add_views(%w{name age fullTime title})
@@ -860,15 +860,15 @@ class TestQuery < Test::Unit::TestCase
 
         assert_equal(query.sort_order.first.path, "Employee.title")
         
-        query = PathQuery::Query.new(@model, "Employee")
-        assert_raise PathException do
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
+        assert_raise InterMine::Metadata::PathException do
             query.add_sort_order("title")
         end
     end
 
     def test_logic 
 
-        query = PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
 
         5.times do
             query.add_constraint(:path => "name", :op => "=", :value => "foo")
@@ -901,26 +901,26 @@ class TestQuery < Test::Unit::TestCase
         query.set_logic("A or B or (C and D and E)")
         assert_equal("A or B or (C and D and E)", query.logic.to_s)
 
-        assert_raise PathQuery::LogicParseError do
+        assert_raise InterMine::PathQuery::LogicParseError do
             query.set_logic("A B | (C or D) and E")
         end
 
-        assert_raise PathQuery::LogicParseError do
+        assert_raise InterMine::PathQuery::LogicParseError do
             query.set_logic("A ( B and C)")
         end
 
-        assert_raise PathQuery::LogicParseError do
+        assert_raise InterMine::PathQuery::LogicParseError do
             query.set_logic("A or B and C)")
         end
 
-        assert_raise PathQuery::LogicParseError do
+        assert_raise InterMine::PathQuery::LogicParseError do
             query.set_logic("A or (B and C")
         end
     end
 
     def test_query_element_xml
 
-        query =  PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("name", "age", "fullTime", "department.name")
         
         expected = "<query model='testmodel' view='Employee.name Employee.age Employee.fullTime Employee.department.name' sortOrder='Employee.name ASC'/>"
@@ -940,7 +940,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_constraint_xml
-        query =  PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("name", "age", "fullTime", "department.name")
 
         query.add_constraint({:path => "department", :op => "IS NOT NULL"})
@@ -999,7 +999,7 @@ class TestQuery < Test::Unit::TestCase
 
     def test_join_xml
 
-        query =  PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("name", "age", "fullTime", "department.name")
 
         query.add_join("department")
@@ -1016,7 +1016,7 @@ class TestQuery < Test::Unit::TestCase
     end
 
     def test_all_xml
-        query =  PathQuery::Query.new(@model, "Employee")
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
         query.add_views("name", "age", "fullTime", "department.name")
         query.add_constraint({
             :path => "Employee",
@@ -1100,7 +1100,7 @@ class TestQuery < Test::Unit::TestCase
             "<constraint extraValue='zip' op='LOOKUP' code='G' value='zop' path='Employee'/>" + 
         "</query>"
 
-        q = PathQuery::Query.parser(@model).parse(xml)
+        q = InterMine::PathQuery::Query.parser(@model).parse(xml)
 
         compare_xml(xml, q.to_xml)
     end
@@ -1143,7 +1143,7 @@ class TestQuery < Test::Unit::TestCase
             "</query>" + 
             "</template>"
 
-        q = PathQuery::Template.parser(@model).parse(src)
+        q = InterMine::PathQuery::Template.parser(@model).parse(src)
 
         compare_xml expected, q.to_xml
     end
@@ -1169,7 +1169,7 @@ class TestQuery < Test::Unit::TestCase
             "</query>" + 
             "</template>"
 
-        q = PathQuery::Template.parser(@model).parse(src)
+        q = InterMine::PathQuery::Template.parser(@model).parse(src)
 
         expected = {
             "name"=>"unmarshal_template",
