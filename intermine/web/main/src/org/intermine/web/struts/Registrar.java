@@ -189,7 +189,7 @@ public class Registrar extends Thread
             handleProblem("Unanticipated problem encountered registering mine: " + e);
         }
         if (!emailContent.isEmpty()) {
-            String feedbackEmail = props.getProperty("feedback.destination");
+            String feedbackEmail = props.getProperty("superuser.account");
             try {
                 MailUtils.email(feedbackEmail, subject, emailIntro + emailContent, props);
             } catch (MessagingException e) {
