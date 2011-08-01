@@ -2,10 +2,8 @@ require 'rubygems'
 require "json"
 require 'stringio'
 require 'net/http'
-require 'addressable/uri'
-require 'rest-open-uri'
 
-module Results
+module InterMine::Results
 
     class ResultsRow
 
@@ -92,61 +90,34 @@ module Results
 
         def initialize(uri, query, start, size)
             @uri = URI(uri)
-            @http = Net::HTTP.new(@uri.host, @uri.port)
             @query = query
             @start = start
             @size = size
         end
 
-        def get_each_line
-            buffer = StringIO.new
-            last = 0
-            current = nil
-            @http.request_get(@uri.path) do |res|
-                res.read_body do |chunk|
-                buffer << chunk
-                current = buffer.pos
-                buffer.seek(last)
-                while buffer.pos < current
-                    yield buffer.readline
-                end
-                last = buffer.pos
-                buffer.seek(current)
-                end
-            end
-        end
-
-        def get_query_string
-            bits = [["start", @start]]
-            unless @size.nil?
-                bits << ["size", @size]
-            end
-            unless @query.service.token.nil?
-                bits << ["token", @query.service.token]
-            end
-            @query.params.each do |k, v|
-                if v.is_a?(Array)
-                    v.each do |x|
-                        bits << [k, x]
-                    end
-                else
-                    bits << [k, v]
-                end
-            end
-
-            return Addressable::URI.form_encode(bits)
+        def params(format)
+            p = @query.params.merge("start" => @start, "format" => format)
+            p["size"] = @size unless @size.nil?
+            return p
         end
 
         def get_size
-            query = get_query_string + "&format=jsoncount"
-            container = @uri.open(:method => :post, :body => query).read
-            result_set = check_result_set(container)
-            return result_set["count"]
+            query = params("jsoncount")
+            res = Net::HTTP.post_form(@uri, query)
+            case res
+            when Net::HTTPSuccess
+                return check_result_set(res.body)["count"]
+            else
+                check_result_set(res.body)
+                res.error!
+            end
         end
 
         def each_line(data)
+            req = Net::HTTP::Post.new(@uri.path)
+            req.set_form_data(data)
             Net::HTTP.new(@uri.host, @uri.port).start {|http|
-                http.request_post(@uri.path, data) {|resp|
+                http.request(req) {|resp|
                     holdover = ""
                     resp.read_body {|chunk|
                         sock = StringIO.new(holdover + chunk)
@@ -165,9 +136,8 @@ module Results
         end
 
         def each_row
-            query = get_query_string + "&format=jsonrows"
             container = ''
-            self.each_line(query) do |line|
+            self.each_line(params("jsonrows")) do |line|
                 if line.start_with?("[")
                     begin
                         row = ResultsRow.new(line.chomp("," + $/), @query.views)
@@ -183,10 +153,9 @@ module Results
         end
 
         def each_result
-            query = get_query_string + "&format=jsonobjects"
             model = @query.model
             container = ''
-            self.each_line(query) do |line|            
+            self.each_line(params("jsonobjects")) do |line|            
                 line.chomp!("," + $/)
                 if line.start_with?("{") and line.end_with?("}")
                     begin

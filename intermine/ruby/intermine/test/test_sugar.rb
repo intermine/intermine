@@ -18,10 +18,10 @@ class TestQuerySugar < Test::Unit::TestCase
         file = File.new(
             File.dirname(__FILE__) + "/data/model.json", "r")
         data = file.read
-        @model = Model.new(data)
-        @service = Service.new("foo", "bar", @model)
+        @model = InterMine::Metadata::Model.new(data)
+        @service = InterMine::Service.new("foo", "bar", @model)
         @model.send(:set_service, @service) 
-        @list = Lists::List.new({"name" => "test-list"})
+        @list = InterMine::Lists::List.new({"name" => "test-list"})
     end
 
     def test_select_statement
@@ -78,6 +78,31 @@ class TestQuerySugar < Test::Unit::TestCase
         
         compare_xml(expected, q.to_xml)
     end
+
+    def test_sugary_binary_aliases
+        
+        q = @model.table("Employee").
+                   where(:age => {:lt => 100}).
+                   where(:age => {:gt => 200}).
+                   where(:age => {:le => 300}).
+                   where(:age => {:ge => 400}).
+                   where("department.name" => {:eq => "foo"}).
+                   where(:name => {:ne => "bar"}).
+                   where(:name => {:== => "zop"})
+
+        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+                        "<constraint op='&lt;' code='A' value='100' path='Employee.age'/>" + 
+                        "<constraint op='&gt;' code='B' value='200' path='Employee.age'/>" + 
+                        "<constraint op='&lt;=' code='C' value='300' path='Employee.age'/>" + 
+                        "<constraint op='&gt;=' code='D' value='400' path='Employee.age'/>" + 
+                        "<constraint op='=' code='E' value='foo' path='Employee.department.name'/>" +
+                        "<constraint op='!=' code='F' value='bar' path='Employee.name'/>" + 
+                        "<constraint op='=' code='G' value='zop' path='Employee.name'/>" + 
+                "</query>"
+        
+        compare_xml(expected, q.to_xml)
+    end
+
 
     def test_sugary_lookups
 

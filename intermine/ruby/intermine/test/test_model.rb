@@ -11,7 +11,7 @@ class TestModel < Test::Unit::TestCase
             File.dirname(__FILE__) + "/data/model.json", "r")
         data = file.read
         file.close
-        @model = Model.new(data)
+        @model = InterMine::Metadata::Model.new(data)
     end
 
     def test_parse
@@ -32,7 +32,7 @@ class TestModel < Test::Unit::TestCase
         assert(!manager.subclass_of?("Company"))
         assert(manager.subclass_of?("Company.departments.employees"))
         assert(!manager.subclass_of?("Company.name"))
-        assert_raise(PathException) {manager.subclass_of?("Foo")}
+        assert_raise(InterMine::Metadata::PathException) {manager.subclass_of?("Foo")}
     end
 
     def test_attributes
@@ -54,23 +54,23 @@ class TestModel < Test::Unit::TestCase
 
     def test_good_paths
 
-        path = Path.new("Employee.name", @model)
+        path = InterMine::Metadata::Path.new("Employee.name", @model)
         assert_equal(2, path.length)
         assert_equal("java.lang.String", path.end_type)
 
-        path = Path.new("Employee.department.company.departments", @model)
+        path = InterMine::Metadata::Path.new("Employee.department.company.departments", @model)
         assert_equal(4, path.length)
         assert_equal("Department", path.end_type)
 
-        path = Path.new("Employee.department.company.departments.employees.address.address", @model)
+        path = InterMine::Metadata::Path.new("Employee.department.company.departments.employees.address.address", @model)
         assert_equal(7, path.length)
         assert_equal("java.lang.String", path.end_type)
 
-        path = Path.new("Department.employees.seniority", @model, {"Department.employees" => "Manager"})
+        path = InterMine::Metadata::Path.new("Department.employees.seniority", @model, {"Department.employees" => "Manager"})
         assert_equal(3, path.length)
         assert_equal("java.lang.Integer", path.end_type)
 
-        path = Path.new("Department.employees.id", @model)
+        path = InterMine::Metadata::Path.new("Department.employees.id", @model)
         assert_equal(3, path.length)
         assert_equal("java.lang.Integer", path.end_type)
 
@@ -78,20 +78,20 @@ class TestModel < Test::Unit::TestCase
 
     def test_bad_paths
 
-        assert_raise(PathException) do
-            Path.new("Foo.bar", @model)
+        assert_raise(InterMine::Metadata::PathException) do
+            InterMine::Metadata::Path.new("Foo.bar", @model)
         end
 
-        assert_raise(PathException) do
-            Path.new("Department.employees.foo", @model, {"Department.employees" => "Manager"})
+        assert_raise(InterMine::Metadata::PathException) do
+            InterMine::Metadata::Path.new("Department.employees.foo", @model, {"Department.employees" => "Manager"})
         end
 
-        assert_raise(PathException) do
-            Path.new("Department.employees.seniority", @model, {"Department.employees" => "Foo"})
+        assert_raise(InterMine::Metadata::PathException) do
+            InterMine::Metadata::Path.new("Department.employees.seniority", @model, {"Department.employees" => "Foo"})
         end
 
-        assert_raise(PathException) do
-            Path.new("Employee.department.name.departments", @model)
+        assert_raise(InterMine::Metadata::PathException) do
+            InterMine::Metadata::Path.new("Employee.department.name.departments", @model)
         end
 
     end
@@ -386,7 +386,7 @@ class TestModel < Test::Unit::TestCase
         assert_equal(dep._resolve(pathstr), "42 Some st")
 
         # Test resolving using Path objects
-        path = Path.new(pathstr, @model)
+        path = InterMine::Metadata::Path.new(pathstr, @model)
         obj = @model.resolve_path(dep, path)
         assert_equal(obj, "42 Some st")
         assert_equal(dep._resolve(path), "42 Some st")
