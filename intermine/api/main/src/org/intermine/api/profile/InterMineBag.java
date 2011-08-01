@@ -64,6 +64,7 @@ import org.intermine.util.TypeUtil;
 public class InterMineBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
+    /** name of bag values table */
     public static final String BAG_VALUES = "bagvalues";
     private Integer profileId;
     private Integer savedBagId;
@@ -247,7 +248,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                     for (int index = 0; index < keyFieldNames.size(); index++) {
                         value = (String) row.get(index);
                         if (value != null && !"".equals(value)) {
-                            if (! keyFieldValueList.contains(value)) {
+                            if (!keyFieldValueList.contains(value)) {
                                 keyFieldValueList.add(value);
                             }
                             break;
@@ -326,7 +327,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                 for (int index = 0; index < keyFieldNames.size(); index++) {
                     value = (String) row.get(index);
                     if (value != null && !"".equals(value)) {
-                        if (! keyFieldValueList.contains(value)) {
+                        if (!keyFieldValueList.contains(value)) {
                             keyFieldValueList.add(value);
                         }
                         break;
@@ -346,7 +347,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param updateBagValues id true if we upgrade the bagvalues table
      * @throws ObjectStoreException if an error occurs fetching a new ID
      */
-    public void upgradeOsb(Collection<Integer> values, boolean updateBagValues) throws ObjectStoreException {
+    public void upgradeOsb(Collection<Integer> values, boolean updateBagValues)
+        throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         SavedBag savedBag = (SavedBag) uosw.getObjectById(savedBagId, SavedBag.class);
         try {
@@ -725,9 +727,11 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Remove the given ids from the bag, this updates the bag contents in the database
      * @param ids the ids to remove
+     * @param updateBagValues whether or not to update the values
      * @throws ObjectStoreException if problem storing
      */
-    public void removeIdsFromBag(Collection<Integer> ids, boolean updateBagValues) throws ObjectStoreException {
+    public void removeIdsFromBag(Collection<Integer> ids, boolean updateBagValues)
+        throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         try {
             oswProduction = os.getNewWriter();
@@ -787,8 +791,6 @@ public class InterMineBag implements WebSearchable, Cloneable
                 conn.setAutoCommit(true);
             }
         } catch (SQLException sqle) {
-            System.out.println("Exception committing bagValues for bag: " + savedBagId);
-            sqle.printStackTrace();
             LOG.error("Exception committing bagValues for bag: " + savedBagId, sqle);
             try {
                 conn.rollback();
@@ -816,7 +818,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         PreparedStatement stm = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            
+
             Collection<String> placeHolders = CollectionUtils.collect(values,
                                               new ConstantTransformer("?"));
             String valuesList = StringUtils.join(placeHolders, ", ");
@@ -829,7 +831,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
             stm.executeUpdate();
         } catch (SQLException sqle) {
-            throw new RuntimeException("Error deleting the " + values.size() + " bagvalues of bag : " + savedBagId, sqle);
+            throw new RuntimeException("Error deleting the " + values.size()
+                    + " bagvalues of bag : " + savedBagId, sqle);
         } finally {
             if (stm != null) {
                 try {
@@ -842,7 +845,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
-    
+
     public void deleteAllBagValues() {
         Connection conn = null;
         PreparedStatement stm = null;
