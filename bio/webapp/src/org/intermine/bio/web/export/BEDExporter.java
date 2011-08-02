@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.bed.BEDRecord;
 import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
