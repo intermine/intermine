@@ -99,6 +99,12 @@
     </query>
 </template>
 
+    <template name="SortOrderNotInView" title="Convert employees to addresses" longDescription="" comment="" >
+      <query name="SortOrderNotInView" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.department.name">
+        <constraint path="Employee.id" op="=" value="0" description="id" editable="true" code="A"/>
+      </query>
+    </template>
+
   </template-queries>
 
   <tags>
