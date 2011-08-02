@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -66,8 +65,6 @@ public class InlineResultsTable
     private LinkedList<Object> listOfTableRows = null;
 
     protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
-
-    private String parentType = null;
     private FieldDescriptor fieldDescriptor = null;
 
     /**
@@ -86,7 +83,6 @@ public class InlineResultsTable
     public InlineResultsTable(Collection<?> results, Model model,
                               WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
-        BasicConfigurator.configure();
 
         this.listOfTypes = listOfTypes;
 
@@ -143,7 +139,7 @@ public class InlineResultsTable
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes,
                               String parentType, FieldDescriptor fd) {
         this(results, model, webConfig, classKeys, size, ignoreDisplayers, listOfTypes);
-        this.parentType = parentType;
+//        this.parentType = parentType;
         this.fieldDescriptor = fd;
     }
 
