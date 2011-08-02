@@ -10,6 +10,7 @@ my $build = Module::Build->new(
     create_makefile_pl   => 'traditional',
     configure_requires   => { 'Module::Build' => '0.36' },
     requires             => {
+        'Class::InsideOut'              => 1.04,
         'DateTime'                      => 0,
         'DateTime::Format::ISO8601'     => 0,
         'perl'                          => '5.8.3',
