@@ -18,6 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/lucene-queries-3.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/fastutil.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/kamikaze-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/bobo-browse-2.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bobo-browse-2.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
