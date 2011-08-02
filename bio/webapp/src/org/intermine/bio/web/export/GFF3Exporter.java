@@ -41,7 +41,6 @@ import org.intermine.web.logic.export.Exporter;
  */
 public class GFF3Exporter implements Exporter
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
 
 
@@ -234,7 +233,7 @@ public class GFF3Exporter implements Exporter
                         parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
 //                        LOG.info("PAR: " + parentClass);
                         if (cNames.contains(parentClass.toLowerCase())) {
-                            parent = (String) el.getField();
+                            parent = el.getField().toString();
 //                            LOG.info("PARent: " + parent);
                         }
                     }
@@ -296,6 +295,7 @@ public class GFF3Exporter implements Exporter
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
+                LOG.error("Exception: " + ex);
                 continue;
             }
         }
