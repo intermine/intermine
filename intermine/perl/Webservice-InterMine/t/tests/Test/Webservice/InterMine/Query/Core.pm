@@ -26,8 +26,7 @@ sub startup : Test(startup => 3) {
     my $test = shift;
     use_ok($test->class);
     my $q;
-    lives_ok {$q = $test->class->new($test->args)} "Can make a query"
-        or diag(explain [$test->args]);
+    lives_ok {$q = $test->class->new($test->args)} "Can make a query";
     isa_ok($q, $test->class);
 }
 
