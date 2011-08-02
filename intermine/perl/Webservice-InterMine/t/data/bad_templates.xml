@@ -76,15 +76,6 @@
       </query>
     </template>
 
-    <template name="SortOrderNotInView" title="Convert employees to addresses" longDescription="" comment="" >
-      <query name="SortOrderNotInView" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.department.name">
-        <node path="Employee" type="Employee"/>
-        <node path="Employee.id" type="Integer">
-          <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
-        </node>
-        <node path="Employee.address.id" type="Integer"/>
-      </query>
-    </template>
 
 <template name="DescriptionAndTitle" title="Search for Managers" description="Use a LOOKUP constraint to search for Managers." comment="">
   <query name="DescriptionAndTitle" model="testmodel" view="Manager.name Manager.title">
