@@ -69,6 +69,7 @@ my @sort_order = (
     'Company.name',  'Company.name',
     'Company.name',  'Employee.name',
     'Company.departments.employees.name',
+    'Employee.name',
 );
 
 ############################################################
@@ -95,7 +96,6 @@ my @baddies_names = (
       unfinished
       empty_view
       no_constraints
-      sort_order_not_in_query
       descr_and_title
       no_name
       names_differ
@@ -113,7 +113,6 @@ my @baddies_errors = (
     'mismatched tag',
     'No view in query',
     'Invalid template: no editable constraints',
-    '.* is not in the view',
     'both description and title',
     'No name attribute on template node',
     'We have two names and they differ',
@@ -147,8 +146,7 @@ for my $xmlstring (@goodies) {
         $parser->parse($xmlstring),
         "Successfully parses good template: " . ++$c . ' of ' . @goodies
       )
-      or diag explain( $parser->parse( $t->to_xml ) ),
-      explain( $parser->parse($xmlstring) );
+      or diag explain($parser->parse( $t->to_xml )), explain($parser->parse($xmlstring));
     is(
         $t->sort_order,
         $sort_order[ $c - 1 ] . ' asc',
