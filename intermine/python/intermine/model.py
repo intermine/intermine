@@ -339,8 +339,8 @@ class Path(object):
         You will not need to use this constructor directly. Instead,
         use the "make_path" method on the model to construct paths for you.
         
-        @param path_string: the dotted path string (eg: Gene.proteins.name)
-        @type path_string: str
+        @param path: the dotted path string (eg: Gene.proteins.name)
+        @type path: str
         @param model: the model to validate the path against
         @type model: L{Model}
         @param subclasses: a dict which maps subclasses (defaults to an empty dict)
