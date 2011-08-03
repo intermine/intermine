@@ -21,9 +21,9 @@ Get all sequences for proteins on "h", "r", "eve", "bib" and "zen":
 
 Process the locations of these genes one at a time:
 
-    s.query.select(:Gene).where(:symbol => syms).bed do |line|
-      process line
-    end
+    for line in q.select_sequence("Gene").where(s.model.Gene.symbol == syms).bed():
+        process(line)
+
 
 == Who is this for?
 
