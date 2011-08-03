@@ -711,7 +711,7 @@ class Query(object):
 
         Also available as Query.c
         """
-        return self.model.column(self.prefix_path(string), self.model, self.get_subclass_dict(), self)
+        return self.model.column(self.prefix_path(string), self.get_subclass_dict(), self)
 
     def verify_constraint_paths(self, cons=None):
         """
