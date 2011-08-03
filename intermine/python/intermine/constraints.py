@@ -586,7 +586,7 @@ class LoopConstraint(CodedConstraint):
         @type op: string
 
         @param loopPath: The path to check for identity against
-        @type value: string
+        @type loopPath: string
 
         @param code: The code for this constraint (default = "A")
         @type code: string
@@ -643,7 +643,7 @@ class TernaryConstraint(BinaryConstraint):
         @param extra_value: A further value for disambiguation. The meaning of this value varies by class
                             and configuration. For example, if the class of the object is Gene, then
                             extra_value will refer to the Organism. 
-        @type value: string
+        @type extra_value: string
 
         @param code: The code for this constraint (default = "A")
         @type code: string
@@ -704,7 +704,7 @@ class MultiConstraint(CodedConstraint):
         @type op: string
 
         @param values: The set of values which the object of the constraint either must or must not belong to.
-        @type value: string
+        @type values: set or list
 
         @param code: The code for this constraint (default = "A")
         @type code: string
@@ -885,7 +885,7 @@ class TemplateConstraint(object):
     def separate_arg_sets(self, args):
         """
         A static function to use when building template constraints. 
-        ------------------------------------------------------------
+        ============================================================
 
         dict -> (dict, dict)
 
@@ -1012,7 +1012,7 @@ class ConstraintFactory(object):
     def __init__(self):
         """
         Constructor
-        -----------
+        ===========
 
         Creates a new ConstraintFactory
         """
@@ -1030,7 +1030,7 @@ class ConstraintFactory(object):
     def make_constraint(self, *args, **kwargs):
         """
         Create a constraint from a set of arguments.
-        --------------------------------------------
+        ============================================
 
         Finds a suitable constraint class, and instantiates it.
 
