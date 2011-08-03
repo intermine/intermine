@@ -225,6 +225,7 @@ class Service(object):
             except ValueError, e:
                 raise ServiceError("Could not parse a valid webservice version: " + str(e))
         return self._version
+    
     @property
     def release(self):
         """
@@ -423,11 +424,11 @@ class ResultRow(object):
     for convenience both list indexes and dictionary keys can be used. So the 
     following all work:
 
-       # view is "Gene.symbol", "Gene.organism.name"
-       row["symbol"]
-       row["Gene.symbol"]
-       row[0]
-       row[:1]
+       >>> # view is "Gene.symbol", "Gene.organism.name"
+       >>> row["symbol"]
+       >>> row["Gene.symbol"]
+       >>> row[0]
+       >>> row[:1]
 
     """
 
@@ -487,6 +488,16 @@ class ResultRow(object):
        return d
 
 class ResultIterator(object):
+    """
+    A facade over the internal iterator object
+    ==========================================
+
+    These objects handle the iteration over results
+    in the formats requested by the user. They are responsible
+    for generating an appropriate parser, 
+    connecting the parser to the results, and delegating
+    iteration appropriately.
+    """
     
     PARSED_FORMATS = frozenset(["rr", "list", "dict"])
     STRING_FORMATS = frozenset(["tsv", "csv", "count"])
@@ -542,6 +553,12 @@ class ResultIterator(object):
         }.get(rowformat)()
 
     def __iter__(self):
+        """
+        Return an iterator over the results
+        ===================================
+
+        Returns the internal iterator object.
+        """
         return self.reader
 
     def next(self):
