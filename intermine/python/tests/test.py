@@ -25,8 +25,8 @@ class WebserviceTest(unittest.TestCase): # pragma: no cover
             except IOError, e:
                 self.do_unpredictable_test(test, attempts + 1, e)
             except:
-                e, t, tb = sys.exc_info()
-                if 104 in t: 
+                e, t = sys.exc_info()[:2] 
+                if 104 in t: # Handle connection reset errors
                     self.do_unpredictable_test(test, attempts + 1, t)
                 else:
                     raise
@@ -157,17 +157,38 @@ class TestQuery(WebserviceTest): # pragma: no cover
         self.q.add_view("Employee.department.name Employee.department.company.vatNumber")
         self.q.add_view("Employee.department.manager.name,Employee.department.company.CEO.name")
         self.q.add_view("Employee.department.manager.name, Employee.department.company.CEO.name")
+        self.q.add_view("department.*")
         expected = [
             "Employee.age", "Employee.name", "Employee.department.company.name", 
             "Employee.department.name", "Employee.department.company.vatNumber",
             "Employee.department.manager.name", "Employee.department.company.CEO.name", 
-            "Employee.department.manager.name", "Employee.department.company.CEO.name"]
+            "Employee.department.manager.name", "Employee.department.company.CEO.name", 
+            "Employee.department.id", "Employee.department.name"]
         self.assertEqual(self.q.views, expected)
         try: 
             self.q.add_view("Employee.name", "Employee.age", "Employee.department")
             self.fail("No ConstraintError thrown at non attribute view")
         except ConstraintError, ex:
             self.assertEqual(ex.message, "'Employee.department' does not represent an attribute")
+
+    def testViewAlias(self):
+        """The aliases for add_view should work as well"""
+        self.q.select("Employee.age")
+        self.q.add_to_select("name")
+        self.q.add_column("department.name")
+        self.q.add_columns("department.manager.name")
+        self.q.add_views("department.company.CEO.name")
+        expected = [
+            "Employee.age", "Employee.name",
+            "Employee.department.name", 
+            "Employee.department.manager.name", "Employee.department.company.CEO.name"]
+        self.assertEqual(self.q.views, expected)
+        self.q.add_sort_order("name")
+        self.q.add_sort_order("department.name")
+        self.q.select("department.*")
+        expected = ["Employee.department.id", "Employee.department.name"]
+        self.assertEqual(self.q.views, expected)
+        self.assertEqual(len(self.q._sort_order_list), 1)
 
     def testSortOrder(self):
         """Queries should be able to add sort orders, and complain appropriately"""
