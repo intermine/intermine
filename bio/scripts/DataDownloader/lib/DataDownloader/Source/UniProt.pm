@@ -1,4 +1,4 @@
-package DataDownloader::Source::Uniprot;
+package DataDownloader::Source::UniProt;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
@@ -8,7 +8,7 @@ use Ouch qw(:traditional);
 
 use constant {
     TITLE => 'UniProt',
-    DESCRIPTION => 'Proteins from Uniprot (TRembl and SwissProt)',
+    DESCRIPTION => 'Proteins from UniProt (TREmbl and SwissProt)',
     SOURCE_LINK => 'http://www.ebi.uniprot.org/index.shmtl',
     SOURCE_DIR => 'uniprot', 
     # For retrieving version info.

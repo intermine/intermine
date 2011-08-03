@@ -1,4 +1,4 @@
-package DataDownloader::Source::Biogrid;
+package DataDownloader::Source::BioGRID;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';

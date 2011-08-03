@@ -1,11 +1,11 @@
-package DataDownloader::Source::InterproGo;
+package DataDownloader::Source::InterProGO;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';
 
 use constant {
-    TITLE => "Interpro Go",
-    DESCRIPTION => "Gene Annotation from Interpro",
+    TITLE => "InterPro GO",
+    DESCRIPTION => "Gene Annotation from InterPro",
     SOURCE_LINK => "http://www.geneontology.org",
     SOURCE_DIR => "interpro/ontology",
     SOURCES => [

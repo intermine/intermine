@@ -1,4 +1,4 @@
-package DataDownloader::Source::FlyBaseOrthologs;
+package DataDownloader::Source::FlyBaseOrthologues;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';

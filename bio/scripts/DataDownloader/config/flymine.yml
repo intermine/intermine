@@ -10,13 +10,13 @@ default_sources:
   - "FlyBaseFasta"
   - "FlyBaseOrthologues"
   - "FlyOntologies"
-  - "GoAnnotation"
+  - "GOAnnotation"
   - "Intact"
   - "IntactVocabulary"
   - "Interpro"
   - "InterproGO"
   - "PDB"
-  - "PsiOntology"
+  - "PSIOntology"
   - "PubMed"
   - "Reactome"
   - "RedFly"
@@ -24,7 +24,7 @@ default_sources:
   - "WormbaseRNAi"
   - "WormIdentifiers"
 
-Uniprot:
+UniProt:
     organisms:
         - 6239 
         - 7165 

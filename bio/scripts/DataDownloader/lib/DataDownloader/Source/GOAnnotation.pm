@@ -1,4 +1,4 @@
-package DataDownloader::Source::GoAnnotation;
+package DataDownloader::Source::GOAnnotation;
 
 =head1 NAME
 
