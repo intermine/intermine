@@ -34,7 +34,7 @@ import org.intermine.util.DynamicUtil;
 
 /**
  * Create features to represent flanking regions of configurable distance either side of gene
- * featues.  These will be used in overlap queries.
+ * features.  These will be used in overlap queries.
  * @author rns
  *
  */
@@ -82,9 +82,7 @@ public class CreateFlankingRegions
 
     /**
      * Iterate over genes in database and create flanking regions.
-     *
-     * @throws ObjectStoreException
-     *             if there is an ObjectStore problem
+     * @throws ObjectStoreException if something goes wrong
      */
     public void createFlankingFeatures() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os,
