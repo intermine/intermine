@@ -61,11 +61,27 @@ class SortOrder(PathFeature):
         return self.path + " " + self.order
     def to_string(self):
         return str(self)
+
 class SortOrderList(object):
+    """
+    A container implementation for holding sort orders
+    ==================================================
+
+    This class exists to hold the sort order information for a 
+    query. It handles appending elements, and the stringification 
+    of the sort order.
+    """
     def __init__(self, *sos):
         self.sort_orders = []
         self.append(*sos)
     def append(self, *sos):
+        """
+        Add sort order elements to the sort order list. 
+        ===============================================
+
+        Elements can be provided as a SortOrder object or 
+        as a tuple of arguments (path, direction).
+        """
         for so in sos:
             if isinstance(so, SortOrder):
                 self.sort_orders.append(so)
@@ -83,6 +99,8 @@ class SortOrderList(object):
         self.sort_orders = []
     def is_empty(self):
         return len(self.sort_orders) == 0
+    def __len__(self):
+        return len(self.sort_orders)
     def next(self):
         return self.sort_orders.next()
     def __iter__(self):
