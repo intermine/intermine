@@ -114,6 +114,7 @@ class Service(object):
     VERSION_PATH           = '/version/ws'
     RELEASE_PATH           = '/version/release'
     SCHEME                 = 'http://'
+    SERVICE_RESOLUTION_PATH = "/check/"
 
     def __init__(self, root, username=None, password=None, token=None):
         """
@@ -225,6 +226,11 @@ class Service(object):
             except ValueError, e:
                 raise ServiceError("Could not parse a valid webservice version: " + str(e))
         return self._version
+
+    def resolve_service_path(self, variant):
+        """Resolve the path to optional services"""
+        url = self.root + self.SERVICE_RESOLUTION_PATH + variant
+        return self.opener.open(url).read()
     
     @property
     def release(self):
