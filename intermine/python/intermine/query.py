@@ -35,34 +35,33 @@ class Query(object):
 
     example:
 
-       >>> service = Service("http://www.flymine.org/query/service")
-       >>> query = service.new_query()
-       >>>
-       >>> query.add_view("Gene.symbol", "Gene.pathways.name", "Gene.proteins.symbol")
-       >>> query.add_sort_order("Gene.pathways.name")
-       >>>
-       >>> query.add_constraint("Gene", "LOOKUP", "eve")
-       >>> query.add_constraint("Gene.pathways.name", "=", "Phosphate*")
-       >>>
-       >>> query.set_logic("A or B")
-       >>>
-       >>> for row in query.rows():
-       ...     handle_row(row)
+        >>> service = Service("http://www.flymine.org/query/service")
+        >>> query = service.new_query()
+        >>>
+        >>> query.add_view("Gene.symbol", "Gene.pathways.name", "Gene.proteins.symbol")
+        >>> query.add_sort_order("Gene.pathways.name")
+        >>>
+        >>> query.add_constraint("Gene", "LOOKUP", "eve")
+        >>> query.add_constraint("Gene.pathways.name", "=", "Phosphate*")
+        >>>
+        >>> query.set_logic("A or B")
+        >>>
+        >>> for row in query.rows():
+        ...     handle_row(row)
 
     OR, using an SQL style DSL:
 
         >>> s = Service("www.flymine.org/query") 
-        >>> query = s.query("Gene").\
-        ...           select("*", "pathways.*").\
-        ...           where("symbol", "=", "H").\
-        ...           outerjoin("pathways").\
+        >>> query = s.query("Gene").\\
+        ...           select("*", "pathways.*").\\
+        ...           where("symbol", "=", "H").\\
+        ...           outerjoin("pathways").\\
         ...           order_by("symbol")
         >>> for row in query.rows(start=10, size=5):
         ...     handle_row(row)
 
-    OR, for a more SQL-alchemy, ORM style: 
+    OR, for a more SQL-alchemy, ORM style:
 
-        >>>
         >>> for gene in s.query(s.model.Gene).filter(s.model.Gene.symbol == ["zen", "H", "eve"]).add_columns(s.model.Gene.alleles):
         ...    handle(gene)
     
@@ -214,26 +213,26 @@ class Query(object):
 
     And the query is defined.
 
-    Result Processing
-    -----------------
+    Result Processing: Rows
+    -----------------------
 
-    calling ".results()" on a query will return an iterator of rows, where each row 
+    calling ".rows()" on a query will return an iterator of rows, where each row 
     is a ResultRow object, which can be treated as both a list and a dictionary.
 
     Which means you can refer to columns by name:
         
-        >>> for row in query.results():
+        >>> for row in query.rows():
         ...     print "name is %s" % (row["name"])
         ...     print "length is %d" % (row["length"])
 
     As well as using list indices:
 
-        >>> for row in query.results():
+        >>> for row in query.rows():
         ...     print "The first column is %s" % (row[0])
 
     Iterating over a row iterates over the cell values as a list:
 
-        >>> for row in query.results():
+        >>> for row in query.rows():
         ...     for column in row:
         ...         do_something(column)
 
@@ -244,7 +243,7 @@ class Query(object):
 
     To make that clearer, you can ask for a dictionary instead of a list:
 
-        >>> for row in query.result()
+        >>> for row in query.rows()
         ...       print row.to_d
         {"Gene.name":"even skipped","Gene.length":"1359","Gene.proteins.sequence.length":"376"}
 
@@ -255,7 +254,28 @@ class Query(object):
         >>> for row in query.result("string")
         ...     print(row)
 
+    Result Processing: Results
+    --------------------------
 
+    Results can also be processing on a record by record basis. If you have a query that 
+    has output columns of "Gene.symbol", "Gene.pathways.name" and "Gene.proteins.proteinDomains.primaryIdentifier", 
+    than processing it by records will return one object per gene, and that gene will have a property
+    named "pathways" which contains objects which have a name property. Likewise there will be a
+    proteins property which holds a list of proteinDomains which all have a primaryIdentifier property, and so on.
+    This allows a more object orientated approach to database records, familiar to users of
+    other ORMs.
+
+    This is the format used when you choose to iterate over a query directly, or can be explicitly 
+    chosen by invoking L{intermine.query.Query.results}:
+
+        >>> for gene in query:
+        ...    print gene.name, map(lambda x: x.name, gene.pathways)
+
+    The structure of the object and the information it contains depends entirely 
+    on the output columns selected. The values may be None, of course, but also any valid values of an object
+    (according to the data model) will also be None if they were not selected for output. Attempts 
+    to access invalid properties (such as gene.favourite_colour) will cause exceptions to be thrown.
+    
     Getting us to Generate your Code 
     --------------------------------
 
@@ -328,7 +348,7 @@ class Query(object):
         self.add_column = self.add_view
         self.add_columns = self.add_view
         self.add_views = self.add_view
-        self.select = self.add_view
+        self.add_to_select = self.add_view
         self.order_by = self.add_sort_order
         self.all = self.get_results_list
         self.size = self.count
@@ -492,6 +512,35 @@ class Query(object):
         self.validate_sort_order()
         self.do_verification = True
 
+    def select(self, *paths):
+        """
+        Replace the current selection of output columns with this one
+        =============================================================
+
+        example::
+
+           query.select("*", "proteins.name")
+
+        This method is intended to provide an API familiar to those
+        with experience of SQL or other ORM layers. This method, in
+        contrast to other view manipulation methods, replaces
+        the selection of output columns, rather than appending to it.
+
+        Note that any sort orders that are no longer in the view will
+        be removed.
+
+        @param paths: The output columns to add
+        """
+        self.views = []
+        self.add_view(*paths)
+        so_elems = self._sort_order_list
+        self._sort_order_list = SortOrderList()
+        
+        for so in so_elems:
+            if so.path in self.views:
+                self._sort_order_list.append(so)
+        return self
+
     def add_view(self, *paths):
         """
         Add one or more views to the list of output columns
@@ -510,6 +559,12 @@ class Query(object):
 
         Output columns must be valid paths according to the 
         data model, and they must represent attributes of tables
+
+        Also available as:
+         - add_views
+         - add_column
+         - add_columns
+         - add_to_select
 
         @see: intermine.model.Model 
         @see: intermine.model.Path 
@@ -638,6 +693,8 @@ class Query(object):
 
         In contrast to add_constraint, this method also adds all attributes to the query 
         if no view has been set, and returns self to support method chaining.
+
+        Also available as Query.filter
         """
         if len(self.views) == 0:
             self.add_view(self.root)
@@ -646,6 +703,14 @@ class Query(object):
         return self
 
     def column(self, string):
+        """
+        Return a Column object suitable for using to construct constraints with
+        =======================================================================
+        
+        This method is part of the SQLAlchemy compatible API.
+
+        Also available as Query.c
+        """
         return self.model.column(self.prefix_path(string), self.model, self.get_subclass_dict(), self)
 
     def verify_constraint_paths(self, cons=None):
@@ -974,6 +1039,8 @@ class Query(object):
 
         This method will try to validate the sort order
         by calling validate_sort_order()
+
+        Also available as Query.order_by
         """
         so = SortOrder(str(path), direction)
         so.path = self.prefix_path(so.path)
@@ -1126,9 +1193,9 @@ class Query(object):
 
         It takes all the same arguments and parameters as Query.results
 
-        aliased as 'all'
+        Also available as Query.all
 
-        @see: L{intermine.query.results}
+        @see: L{intermine.query.Query.results}
 
         """
         rows = self.results(*args, **kwargs)
@@ -1147,6 +1214,8 @@ class Query(object):
         actual data. This method makes a request to the server
         to report the count for the query, and is sugar for a 
         results call. 
+
+        Also available as Query.size
 
         @rtype: int
         @raise WebserviceError: if the request is unsuccessful.
