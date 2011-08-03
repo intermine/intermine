@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
@@ -76,6 +77,8 @@ public class BioGridConverter extends BioFileConverter
     private Set<String> taxonIds = null;
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private Map<MultiKey, Item> idsToExperiments;
+    private Map<String, String> strains = new HashMap<String, String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -168,9 +171,12 @@ public class BioGridConverter extends BioFileConverter
             if ("xref".equals(attributes[1])) {
                 config.get(taxonId).put(attributes[2], value.toLowerCase());
             } else {
-                // attributes[1] is the identifierType, eg. primaryIdentifier
-                // value = 'shortLabel'
-                config.get(taxonId).put(attributes[1], value);
+                String attribute = attributes[1];
+                if ("strain".equals(attribute)) {
+                    strains.put(value, taxonId);
+                } else {
+                    config.get(taxonId).put(attribute, value);
+                }
             }
         }
     }
@@ -282,7 +288,7 @@ public class BioGridConverter extends BioFileConverter
            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if ("organism".equals(qName) && "interactor".equals(stack.peek())) {
                 String taxId = attrs.getValue("ncbiTaxId");
-
+                taxId = replaceStrain(taxId);
                 if ((taxonIds == null || taxonIds.isEmpty()) || taxonIds.contains(taxId))  {
                     try {
                         interactorHolder.organismRefId = getOrganism(taxId);
@@ -596,6 +602,14 @@ public class BioGridConverter extends BioFileConverter
                 throw new ObjectStoreException(e);
             }
             return item.getIdentifier();
+        }
+
+        private String replaceStrain(String id) {
+            String mainTaxonId = strains.get(id);
+            if (StringUtils.isNotEmpty(mainTaxonId)) {
+                return mainTaxonId;
+            }
+            return id;
         }
 
         private String getTerm(String identifier)
