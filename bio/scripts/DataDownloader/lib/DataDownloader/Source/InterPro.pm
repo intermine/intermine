@@ -1,4 +1,4 @@
-package DataDownloader::Source::Interpro;
+package DataDownloader::Source::InterPro;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
