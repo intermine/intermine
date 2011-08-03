@@ -17,48 +17,48 @@ class List(object):
 
     example::
         
-        from intermine.webservice import Service
-
-        flymine = Service("www.flymine.org/query", "SOMETOKEN")
-        new_list = flymine.create_list(["h", "zen", "eve", "bib"], "Gene", name="My New List")
-
-        another_list = flymine.get_list("Some other list")
-        combined_list = new_list | another_list # Same syntax as for sets
-        combined_list.name = "Union of the other lists"
-
-        print "The combination of the two lists has %d elements" % combined_list.size
-        print "The combination of the two lists has %d elements" % len(combined_list)
-
-        for row in combined_list.to_attribute_query().results():
-            print row
+        >>> from intermine.webservice import Service
+        >>>
+        >>> flymine = Service("www.flymine.org/query", "SOMETOKEN")
+        >>> new_list = flymine.create_list(["h", "zen", "eve", "bib"], "Gene", name="My New List")
+        >>>
+        >>> another_list = flymine.get_list("Some other list")
+        >>> combined_list = new_list | another_list # Same syntax as for sets
+        >>> combined_list.name = "Union of the other lists"
+        >>>
+        >>> print "The combination of the two lists has %d elements" % combined_list.size
+        >>> print "The combination of the two lists has %d elements" % len(combined_list)
+        >>>
+        >>> for row in combined_list.to_attribute_query().results():
+        ...     print row
 
     OVERVIEW
     --------
 
     Lists are created from a webservice, and can be manipulated in various ways. 
-    The operations are:
+    The operations are::
         * Union: this | that
         * Intersection: this & that
         * Symmetric Difference: this ^ that
         * Asymmetric Difference (subtraction): this - that
         * Appending: this += that
 
-    Lists can be created from a list of identifiers that could be:
+    Lists can be created from a list of identifiers that could be::
         * stored in a file
         * held in a list or set
         * contained in a string
     In all these cases the syntax is the same:
 
-        new_list = service.create_list(content, type, name="Some name", description="Some description", tags=["some", "tags"])
+        >>> new_list = service.create_list(content, type, name="Some name", description="Some description", tags=["some", "tags"])
 
     Lists can also be created from a query's result with the exact 
     same syntax. In the case of queries, the type is not required,
     but the query should have just one view, and it should be an id.
 
-        query = service.new_query()
-        query.add_view("Gene.id")
-        query.add_constraint("Gene.length", "<", 100)
-        new_list = service.create_list(query, name="Short Genes")
+        >>> query = service.new_query()
+        >>> query.add_view("Gene.id")
+        >>> query.add_constraint("Gene.length", "<", 100)
+        >>> new_list = service.create_list(query, name="Short Genes")
 
     """
 
