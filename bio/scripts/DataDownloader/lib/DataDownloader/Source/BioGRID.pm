@@ -6,7 +6,7 @@ use LWP;
 use Web::Scraper;
 
 use constant {
-    TITLE => 'Biogrid',
+    TITLE => 'BioGRID',
     DESCRIPTION => 'Biological General Repository for Interaction Datasets',
     SOURCE_LINK => 'http://thebiogrid.org',
     SOURCE_DIR => 'biogrid',

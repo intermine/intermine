@@ -7,8 +7,8 @@ use URI;
 use Ouch qw(:traditional);
 
 use constant {
-    TITLE => 'Uniprot',
-    DESCRIPTION => 'Proteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae from Uniprot (trembl and swissprot)',
+    TITLE => 'UniProt',
+    DESCRIPTION => 'Proteins from Uniprot (TRembl and SwissProt)',
     SOURCE_LINK => 'http://www.ebi.uniprot.org/index.shmtl',
     SOURCE_DIR => 'uniprot', 
     # For retrieving version info.
