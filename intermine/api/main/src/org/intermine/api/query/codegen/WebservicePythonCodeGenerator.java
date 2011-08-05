@@ -72,8 +72,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if (info.isPublic()) {
             sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")" + ENDL + ENDL);
         } else {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\""
-                    + ", \"" + info.getUserName() + "\", \"YOUR-PASSWORD\")" +  ENDL + ENDL);
+            sb.append("service = Service(\"" + info.getServiceBaseURL() + "\", \"YOUR-API-KEY\")" +  ENDL + ENDL);
         }
 
 
@@ -168,7 +167,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                         + "\")" + ENDL);
                 }
             }
-            sb.append("for row in query.results(\"tsv\"):" + ENDL);
+            sb.append("for row in query.rows():" + ENDL);
             sb.append(INDENT + "print row" + ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -218,9 +217,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             }
             sb.append("template = service.get_template('" + templateName + "')" + ENDL + ENDL);
             sb.append(constraintComments.toString() + ENDL);
-            sb.append("results = template.results( \"tsv\"," + ENDL);
+            sb.append("rows = template.rows(" + ENDL);
             sb.append(constraints.toString() + ")" + ENDL);
-            sb.append("for row in results:" + ENDL);
+            sb.append("for row in rows:" + ENDL);
             sb.append(INDENT + "print row" + ENDL);
         }
 
