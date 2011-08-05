@@ -38,7 +38,7 @@ override fetch_all_data => sub {
 
 sub fetch_screen_details {
     my $self = shift;
-    my $out = $self->get_destination_dir->file("RNAi_screen_details.tsv")->openw();
+    my $out = $self->get_destination_dir->file("RNAi_screen_details")->openw();
     binmode $out, ':encoding(utf8)';
     my $citations = scraper {
         # Parse all <p> elements with the class 'cite'
@@ -71,7 +71,7 @@ sub fetch_screen_details {
             }
         }
         next unless (@cols == 3);
-        my $line = join("\t", map {'"' . $_ . '"'} @cols) . "\n";
+        my $line = join("\t", map {$_} @cols) . "\n";
         $self->debug($line);
         print $out $line;
     }
