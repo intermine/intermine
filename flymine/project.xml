@@ -39,17 +39,17 @@
       <property name="src.data.dir" location="/micklem/data/wormbase/current"/>
     </source>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-ids/current"/>
+     <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
     </source> 
    <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/metabolic/ncbi/current/"/>
+     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
     </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/mgi/current"/>
+      <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
    <source name="rgd-identifiers" type="rgd-identifiers">
-      <property name="src.data.dir" location="/micklem/data/metabolic/rgd-identifiers/current"/>
+      <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current"/>
     </source>
 
     <!-- uniprot must be processed immediately after chado -->
