@@ -2,31 +2,59 @@ package DataDownloader::Source::WormIdentifiers;
 
 use Moose;
 use MooseX::FollowPBP;
-with 'DataDownloader::Role::Source';
-
-use Webservice::InterMine 0.9700;
-use File::Path qw(mkpath);
+extends 'DataDownloader::Source::ABC';
+use URI;
+use autodie qw(open close);
+use Ouch;
 
 use constant {
     TITLE       => 'Worm Identifiers',
     DESCRIPTION => 'Wormbase identifiers from modMine',
     SOURCE_LINK => 'http://intermine.modencode.org',
     SOURCE_DIR  => 'worm-identifiers',
-    SERVICE_URL => 'http://intermine.modencode.org/query',
+    BIOMART_SERVER => 'http://www.biomart.org/biomart/martservice',
     COMPARE     => 1,
 };
 
-sub fetch_all_data {
+use constant BIOMART_QUERY => q{<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Query>
+<Query virtualSchemaName="default" 
+       formatter="TSV" 
+       header="0" 
+       uniqueRows="0" 
+       count="" 
+       datasetConfigVersion="0.6" >
+    <Dataset name="wormbase_gene" interface="default" >
+        <Filter name = "species_selection" value = "Caenorhabditis elegans"/>
+        <Filter name = "identity_status" value = "Live"/>
+        <Attribute name="gene" />
+        <Attribute name="cgc_name" />
+        <Attribute name="sequence_name" />
+    </Dataset>
+</Query>
+};
+
+sub BUILD {
     my $self = shift;
-
-    my $query = Webservice::InterMine->new_query( class => "Gene", from => [SERVICE_URL] );
-    $query->add_view(qw/primaryIdentifier secondaryIdentifier symbol ncbiGeneNumber/);
-    $query->add_constraint(path => 'source', op => '=', value => 'WormBase');
-
-    my $dest = $self->get_destination_dir->file("wormbase-identifers.tsv");
-    $self->debug("Downloading wormbase identifiers from modMine to $dest");
-
-    $query->print_results( to => "$dest" );
+    my $uri = URI->new(BIOMART_SERVER);
+    $uri->query_form(query => BIOMART_QUERY);
+    $self->set_sources([
+        { 
+            URI => "$uri", 
+            FILE => 'wormidentifiers.tsv',
+            POST_PROCESSOR => sub {
+                my ($self, $temp, $destination) = @_;
+                open(my $in, '<:utf8', $temp);
+                open(my $out, '>:utf8', $destination);
+                while (my $content = <$in>) {
+                    if ($content =~ /^Query ERROR:/) {
+                        ouch DownloadError => "BioMart failed us: " . $content;
+                    }
+                    $out->print($content);
+                }
+            },
+        }
+    ]);
 }
 
 1;
