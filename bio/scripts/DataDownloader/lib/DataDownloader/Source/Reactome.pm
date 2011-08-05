@@ -23,8 +23,8 @@ use constant ORGANISMS => (
     "Drosophila melanogaster", 
     "Saccharomyces cerevisiae",
     "Caenorhabditis elegans",
-    "Mus_musculus",
-    "Homo_sapiens",
+    "Mus musculus",
+    "Homo sapiens",
 );
 
 override clean_up => sub {

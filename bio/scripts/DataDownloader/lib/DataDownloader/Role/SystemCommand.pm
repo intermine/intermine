@@ -15,6 +15,9 @@ sub execute_system_command {
     close $process;
     if ($?) {
         my $exit_code = $? >> 8;
+        if ($args[0] eq "unzip" && $exit_code == 11) {
+            $self->debug("Unzip failed to find some of the requested files");
+        }
         my $signal    = $? & 127;
         $self->die("'$command' failed: exit code=$exit_code, signal=$signal");
     }
