@@ -128,7 +128,7 @@ public class PsiConverter extends BioFileConverter
                 config.get(organism)[1] = value.toLowerCase();
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
-                    + ".  This line has not been processed.";
+                + ".  This line has not been processed.";
                 LOG.error(msg);
             }
         }
