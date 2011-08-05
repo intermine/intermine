@@ -29,4 +29,8 @@ use constant {
     }],
 };
 
+sub generate_version {
+    return "2009-05-19";
+}
+
 1;
