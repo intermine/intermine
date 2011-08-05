@@ -18,8 +18,8 @@ template = service.get_template('TEMP_NAME')
 # You can edit the constraint values below
 # A    Employee
 
-results = template.results( "tsv",
+rows = template.rows(
     A = {"op": "LOOKUP", "value": "EmployeeA1", "extra_value": "null"}
 )
-for row in results:
+for row in rows:
     print row

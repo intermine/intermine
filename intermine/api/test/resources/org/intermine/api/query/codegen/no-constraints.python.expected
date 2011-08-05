@@ -25,5 +25,5 @@ query.add_view(
 # Uncomment and edit the line below (the default) to select a custom sort order:
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
-for row in query.results("tsv"):
+for row in query.rows():
     print row

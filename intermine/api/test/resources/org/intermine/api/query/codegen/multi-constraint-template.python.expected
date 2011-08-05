@@ -20,10 +20,10 @@ template = service.get_template('TEMP_NAME')
 # B    Employee.name
 # D    Employee
 
-results = template.results( "tsv",
+rows = template.rows(
     A = {"op": "IS NULL"},
     B = {"op": "=", "value": "Foo"},
     D = {"op": "LOOKUP", "value": "EmployeeA1", "extra_value": "DepartmentA"}
 )
-for row in results:
+for row in rows:
     print row

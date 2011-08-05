@@ -31,5 +31,5 @@ query.add_constraint("Gene.organism.commonName", "NONE OF", ["fruit fly", "honey
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")
 
-for row in query.results("tsv"):
+for row in query.rows():
     print row
