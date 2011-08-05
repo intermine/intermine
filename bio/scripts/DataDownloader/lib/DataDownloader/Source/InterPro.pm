@@ -57,24 +57,26 @@ override generate_version => sub {
 
 sub BUILD {
     my $self = shift;
-    $self->set_sources(
-        [
-            {
-                SUBTITLE   => "Protein domain data",
-                HOST       => "ftp.ebi.ac.uk",
-                REMOTE_DIR => "pub/databases/interpro",
-                FILE       => 'interpro.xml.gz',
-                EXTRACT    => 1,
-            },
-            {
+    my $get_match_complete = $self->get_options->{get_match_complete};
+    my $sources =  [
+        {
+            SUBTITLE   => "Protein domain data",
+            HOST       => "ftp.ebi.ac.uk",
+            REMOTE_DIR => "pub/databases/interpro",
+            FILE       => 'interpro.xml.gz',
+            EXTRACT    => 1,
+        },
+    ];
+    if ($get_match_complete) {
+        push(@$sources, {
                 SUBTITLE       => "Domain annotation",
                 HOST           => "ftp.ebi.ac.uk",
                 REMOTE_DIR     => "pub/databases/interpro",
                 FILE           => 'match_complete.xml.gz',
                 POST_PROCESSOR => $match_complete_post_processor,
-            }
-        ]
-    );
+            });
+    }
+    $self->set_sources($sources);
 }
 
 1;
