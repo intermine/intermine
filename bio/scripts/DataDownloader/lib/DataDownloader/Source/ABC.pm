@@ -96,6 +96,9 @@ sub make_source {
 
 sub fetch_all_data {
     my $self = shift;
+    unless ($self->get_all_sources) {
+        confess "This source has no resources configured";
+    }
     for my $source ($self->get_all_sources) {
         $source->fetch();
     }
