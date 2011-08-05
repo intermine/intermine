@@ -8,7 +8,6 @@ default_sources:
   - "Intact"
   - "IntactVocabulary"
   - "Interpro"
-  - "PSIOntology"
   - "PubMed"
   - "Reactome"
   - "RGDIdentifiers"
