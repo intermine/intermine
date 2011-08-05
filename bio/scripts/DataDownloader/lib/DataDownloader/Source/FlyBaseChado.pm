@@ -4,7 +4,7 @@ use Moose;
 extends 'DataDownloader::Source::FtpBase';
 
 use constant {
-    TITLE       => "FlyBase Sequence data",
+    TITLE       => "FlyBase genomic data",
     DESCRIPTION => "Chado dumps from FlyBase",
     SOURCE_LINK => 'http://flybase.org',
     HOST        => "ftp.flybase.net",
