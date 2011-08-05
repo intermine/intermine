@@ -32,6 +32,10 @@ sub fetch {
     if ($bytes and $dl_size != $bytes) {
         throw "Download Error" => "$file is wrong size ($dl_size != $bytes)";
     }
+    unless ($dl_size) {
+        $self->debug("Not creating " . $self->get_destination . " as the downloaded file is empty");
+        return;
+    }
 
     $self->make_destination(
         $self->get_temp_file => $self->get_destination
