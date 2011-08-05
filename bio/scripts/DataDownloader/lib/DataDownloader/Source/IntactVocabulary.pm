@@ -10,7 +10,7 @@ use constant {
         "A structured controlled vocabulary for the annotation of experiments concerned with protein-protein interactions.",
     SOURCE_LINK => 
         "http://obofoundry.org/cgi-bin/detail.cgi?id=psi-mi&title=Protein-protein%20interaction",
-    SOURCE_DIR => "psi/intact/ontology",
+    SOURCE_DIR => "psi/ontology",
     SOURCES => [
         {
             FILE   => "psi-mi.obo",
