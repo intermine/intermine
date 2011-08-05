@@ -411,8 +411,7 @@
     </action>
     <action path="/initHtmlHead" type="org.intermine.web.struts.HtmlHeadController">
     </action>
-    <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
-    </action>
+
     <action path="/initReport" type="org.intermine.web.struts.ReportController">
     </action>
     <action path="/initReportAspect" type="org.intermine.web.struts.ReportAspectController">
@@ -449,7 +448,7 @@
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
-    <action path="/initResultsTable" type="org.intermine.web.struts.TableController"/>
+    <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController"/>
     <action path="/initReportInList" type="org.intermine.web.struts.ReportInListController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
