@@ -49,7 +49,10 @@ has header_checker => (
 sub default_error_checker {
     my $self = shift;
     my $response = shift or confess "No response";
-    if ($response->content) {
+    if ($response->filename && $response->filename =~ /(error|nosuchfile|filenotfound|404)/i) {
+        # Some services (PDB for example) provide 200 ok and some HTML for missing files
+        return;
+    } elsif ($response->content) {
         return 1;
     } else {
         $self->debug("Successful request, but No content received - skipping");
@@ -77,6 +80,12 @@ sub fetch {
             $fh->print($response->content);
         }
     }
+
+    unless (-s $self->get_temp_file) {
+        $self->debug("Not creating " . $self->get_destination . " as the downloaded file is empty");
+        return;
+    }
+
     $self->make_destination(
         $self->get_temp_file => $self->get_destination);
     $self->clean_up();
