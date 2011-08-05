@@ -30,6 +30,7 @@ extends 'DataDownloader::Source::FtpBase';
 use PerlIO::gzip;
 use File::Basename;
 use autodie qw(open close);
+use DataDownloader::Util 'get_ymd';
 
 use constant {
     TITLE => "GO Annotation",
@@ -118,6 +119,17 @@ sub BUILD {
           };
     }
     $self->set_sources( [@sources] );
+}
+
+sub generate_version_string {
+    my $self = shift;
+    my $string = "Version: " . $self->get_version;
+    for my $source ($self->get_all_sources) {
+        my $ftp = $source->connect;
+        my $mod_time = $ftp->mdtm($source->get_file);
+        $string .= "\n" . $source->get_file . ": " . get_ymd($mod_time);
+    }
+    return $string;
 }
 
 1;
