@@ -5,7 +5,7 @@ extends 'DataDownloader::Source::FtpBase';
 
 use constant {
     TITLE => "PubMed",
-    DESCRIPTION => "Gene information from PubMed and publications which mention them for D. melanogaster, C. elegans and S. cervisiae from NCBI",
+    DESCRIPTION => "Gene information from PubMed and publications which mention them from NCBI",
     SOURCE_LINK => "http://www.ncbi.nlm.nih.gov/",
     SOURCE_DIR => 'pubmed',
     SOURCES => [
@@ -14,7 +14,6 @@ use constant {
             HOST => "ftp.ncbi.nlm.nih.gov",
             REMOTE_DIR => "gene/DATA",
             FILE => "gene_info.gz",
-            SUB_DIR => ['gene_info'],
             EXTRACT => 1,
         },
         {
@@ -22,7 +21,6 @@ use constant {
             HOST => "ftp.ncbi.nlm.nih.gov",
             REMOTE_DIR => "gene/DATA",
             FILE => "gene2pubmed.gz",
-            SUB_DIR => ['publications'],
             EXTRACT => 1,
         },
     ],
