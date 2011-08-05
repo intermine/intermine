@@ -22,5 +22,5 @@ query.add_view("Employee.name", "Employee.age")
 # You can edit the constraint values below
 query.add_constraint("Employee", "Manager")
 
-for row in query.results("tsv"):
+for row in query.rows():
     print row

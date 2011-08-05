@@ -33,5 +33,5 @@ query.add_constraint("Gene.organism.commonName", "ONE OF", ["fruit fly", "honey 
 # Your custom constraint logic is specified with the code below:
 query.set_logic("(A or B) and C")
 
-for row in query.results("tsv"):
+for row in query.rows():
     print row

@@ -21,8 +21,8 @@ template = service.get_template('im_available_organisms')
 # You can edit the constraint values below
 # A    Gene.primaryIdentifier
 
-results = template.results( "tsv",
+rows = template.rows(
     A = {"op": "=", "value": "zen"}
 )
-for row in results:
+for row in rows:
     print row

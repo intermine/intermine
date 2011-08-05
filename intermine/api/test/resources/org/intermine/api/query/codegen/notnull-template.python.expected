@@ -18,8 +18,8 @@ template = service.get_template('TEMP_NAME')
 # You can edit the constraint values below
 # A    Employee.department
 
-results = template.results( "tsv",
+rows = template.rows(
     A = {"op": "IS NOT NULL"}
 )
-for row in results:
+for row in rows:
     print row

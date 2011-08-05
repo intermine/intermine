@@ -22,5 +22,5 @@ query.add_view(
     "Gene.name", "Gene.organism.shortName"
 )
 
-for row in query.results("tsv"):
+for row in query.rows():
     print row
