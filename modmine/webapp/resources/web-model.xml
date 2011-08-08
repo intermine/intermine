@@ -55,3 +55,17 @@
   <servlet-name>bed-query</servlet-name>
   <url-pattern>/service/query/results/bed</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>modmine-metadata-cache-query</servlet-name>
+  <servlet-class>org.modmine.webservice.MetadataCacheQueryServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>modmine-metadata-cache-query</servlet-name>
+  <url-pattern>/service/query/metadatacache/*</url-pattern>
+</servlet-mapping>
