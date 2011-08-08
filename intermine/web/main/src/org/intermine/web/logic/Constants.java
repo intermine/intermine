@@ -214,4 +214,14 @@ public interface Constants
     String NOT_CURRENT_BAG = "NOT_CURRENT";
     String BAG_TO_UPGRADE = "TO_UPGRADE";
     String UPGRADING_BAG = "UPGRADING";
+
+    /** The replay-attack prevention nonces **/
+    String NONCES = "NONCES";
+
+    /** The display name of the current user **/
+    String USERNAME = "USERNAME";
+    /** The name of the current open-id provider **/
+    String PROVIDER = "PROVIDER";
+
+	String OPENID_PROVIDERS = "OPENID_PROVIDERS";
 }
