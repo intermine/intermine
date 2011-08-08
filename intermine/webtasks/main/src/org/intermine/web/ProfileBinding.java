@@ -93,6 +93,7 @@ public final class ProfileBinding
                 if (profile.getApiKey() != null) {
                 	writer.writeAttribute("apikey", profile.getApiKey());
             	}
+                writer.writeAttribute("localAccount", String.valueOf(profile.isLocal()));
             }
 
             if (writeBags) {

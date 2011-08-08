@@ -48,6 +48,7 @@ class ProfileHandler extends DefaultHandler
     private ObjectStoreWriter osw;
     private int version;
     private String apiKey = null;
+    private boolean isLocal = true;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -101,7 +102,7 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, savedTemplates, apiKey);
+                                     savedBags, savedTemplates, apiKey, isLocal);
         return retval;
     }
 
@@ -135,6 +136,9 @@ class ProfileHandler extends DefaultHandler
             }
             if (attrs.getValue("apikey") != null) {
                 apiKey = attrs.getValue("apikey");
+            }
+            if (attrs.getValue("localAccount") != null) {
+            	isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
             }
         }
         if ("bags".equals(qName)) {
