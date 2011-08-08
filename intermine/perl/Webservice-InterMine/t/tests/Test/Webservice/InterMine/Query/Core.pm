@@ -635,7 +635,7 @@ sub short_views : Test(4) {
     dies_ok {$obj->add_view('Department.name')} "Dies adding incompatible views";
 }
 
-sub select : Test(6) {
+sub testSelect : Test(6) {
     my $test = shift;
     my $obj  = $test->{object};
     $obj->_set_root('Employee');
@@ -645,6 +645,16 @@ sub select : Test(6) {
     is_deeply(
         [$obj->views],
         [qw/Employee.name Employee.age Employee.fullTime Employee.department.name/]
+    );
+    lives_ok  {$obj->add_to_select(qw/address.address/);} "Can use add_to_select";
+    is_deeply(
+        [$obj->views],
+        [qw/Employee.name Employee.age Employee.fullTime Employee.department.name Employee.address.address/]
+    );
+    lives_ok  {$obj->select(qw/name department.*/);} "using select again replaces the view";
+    is_deeply(
+        [$obj->views],
+        [qw/Employee.name Employee.department.name/]
     );
 }
 

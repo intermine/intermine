@@ -18,6 +18,7 @@ my $build = Module::Build->new(
         'IO::Handle'                    => 0,
         'IO::File'                      => 0,
         'JSON'                          => 0,
+        'JSON::XS'                      => 0,
         'List::MoreUtils'               => 0.22,
         'LWP'                           => 5.8,
         'HTTP::Request::Common'         => 0,
@@ -41,6 +42,7 @@ my $build = Module::Build->new(
         'YAML::Syck'              => 1.07,
         'Spreadsheet::WriteExcel' => 0,
         'Perl::Tidy'                => 20070801,
+        'Test::Warn'              => 0,
     },
     build_requires => {
         'Module::Build'             => '0.36',

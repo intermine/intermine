@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = "0.9802";
+our $VERSION = "0.9808";
 
 =head1 NAME
 
@@ -14,18 +14,37 @@ Webservice::InterMine - modules for interacting with InterMine datawarehouse web
 
     use Webservice::InterMine;
 
-    my $service  = Webservice::InterMine->new_service($url, $user, $pass);
+    my $service  = get_service($url, $user, $pass);
     my $template = $service->template($name);
     my $results  = $template->results_with(valueA => 'x', valueB => 'y');
 
-  OR
+OR:
 
     use Webservice::InterMine 'flymine', 'SOMETOKEN';
 
-    my $query    = Webservice::InterMine->new_query(class => 'Gene');
-    my $results  = $query->select('symbol', 'primaryIdentifier', 'pathways.*')
-                         ->where(symbol => [qw/H bib eve zen/])
-                         ->all();
+    my $results = new_query(class => 'Gene')
+                    ->select('symbol', 'primaryIdentifier', 'pathways.*')
+                    ->where(symbol => [qw/H bib eve zen/])
+                    ->all();
+
+OR:
+
+    use Webservice::InterMine 'flymine', 'SOMETOKEN', ':no-import';
+
+    my $results = Webservice::InterMine->new_query(class => 'Gene')
+                    ->select('symbol', 'primaryIdentifier', 'pathways.*')
+                    ->where(symbol => [qw/H bib eve zen/])
+                    ->all();
+
+OR: 
+
+    use WebService::InterMine 'flymine';
+
+    my $query = load_query(source_file => "my_query.xml");
+
+    while (my $result = <$query>) {
+        process($result);
+    }
 
 =head1 DESCRIPTION
 
@@ -88,11 +107,86 @@ If you pass parameters to import, a default service will be set
 meaning method calls will not require the webservice url. Unless you are
 intending to access multiple services, this form is recommended.
 
+If you do not wish to import the standard functions into your namespace, instead
+choosing to call them as class methods, but still wish to set a default service, 
+you can use the following syntax:
+
+    use Webservice::InterMine "flymine", "TOKEN", ':no-import';
+
+=head2 Using Queries
+
+The main reason to access the InterMine webservices is to query for data. 
+The most flexible way to do this is by using Queries:
+
+    my $query = resultset("Gene")->select("*", "proteins.*")->where(symbol => [qw/h r eve zen bib/]);
+
+    while (my $gene = <$query>) {
+        print $gene->symbol, map {$_->name} $gene->proteins, "\n";
+    }
+
+As you can see, queries can be concisely defined, and their results easily 
+accessed. You can process a query's results all at once, or using iteration, as in
+the example above. Iteration is less memory hungry, as only the current row of 
+data needs to be held in memory at once, which can be important when dealing
+with large data sets.
+
+=head2 Using Templates
+
+Templates are predefined queries that make running queries easier, as you don't
+have to define the logic yourself. Every mine comes with many predefined
+searches, and you just have to enter a few parameters:
+
+    my $results = $service->template("Gene_Proteins")->results_with(valueA => "eve");
+
+These templates are simple to use, and they have all the power of full queries 
+as well. You can process results just as powerfully with them.
+
+=head2 Using Lists
+
+Lists are saved result sets in a webservice you can access, create, modify and delete
+(provided you are logged in):
+
+    my $service = Webservice::InterMine->get_service("flymine", "MYTOKEN");
+    my $list = $service->list("MyAwesomeList");
+    my $new_list = $service->new_list(content => "some_file.text", type => "Gene");
+    my $intersection = $list & $new_list;
+    $intersection->rename("GenesInCommon");
+    $new_list->delete; # Not actually necessary - it had no name so would have been automatically deleted anyway.
+
+Lists enable you to collect and manage results and lists of items of interest to you.
+You can use them in queries, and display their contents, as well as perforing
+set-logic operations on them. When you are done, you can view the lists in the webservice, 
+where you can use the analysis widgets to assess the data you have processed.
+
+=head1 IMPORTS
+
+The following functions are imported into the callers namespace. This can be prevented by "require"-ing 
+the module instead.
+
+=over
+
+=item * get_service
+
+=item * new_query
+
+=item * resultset
+
+=item * get_template
+ 
+=item * get_list
+
+=item * new_list
+
+=item * load_query
+
+=back
+
 =head1 METHODS
 
 =cut
 
 use Webservice::InterMine::Service;
+use base "Exporter";
 
 our $CLEAN_UP = 1;
 
@@ -104,13 +198,17 @@ my %services;
 my %pass_for;
 my %user_for;
 
+our @EXPORT_OK = ("get_service", "new_query", "get_template", "get_list", "new_list", "resultset", "load_query");
+
 sub import {
     my $class = shift;
-    my @args = @_;
+    my @args = grep {$_ ne ':no-import'} @_;
     if (@args) {
         my $service = $class->get_service(@args);
         $service_url = $service->root;
-        return $service;
+    }
+    if (@args == @_) { # ie. the ':no-import' flag was not passed.
+        Webservice::InterMine->export_to_level(1, $class, @EXPORT_OK);
     }
 }
 
@@ -142,8 +240,17 @@ Please see L<Webservice::InterMine::Query>, L<Webservice::InterMine::Service>.
 =cut
 
 sub new_query {
-    my $class = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
     my %args = @_;
+    my $service_args = delete($args{from}) || [];
+    return $class->get_service(@$service_args)->new_query(%args);
+}
+
+sub resultset {
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
+    my $root = shift;
+    my %args = @_;
+    $args{class} = $root;
     my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->new_query(%args);
 }
@@ -175,7 +282,7 @@ factory method in that class.
 =cut
 
 sub new_list {
-    my $class = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
     my %args = @_;
     my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->new_list(%args);
@@ -189,14 +296,14 @@ details are supplied.
 =cut
 
 sub get_list {
-    my $class = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
     my $list_name = shift;
     my %args = @_;
     my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->list($list_name);
 }
 
-=head2 load_query([\@service_args], source_file|source_string => $source, %opts )
+=head2 load_query(source_file|source_string => $source, %opts, [from => [\@service_args]])
 
 Returns a query object based on xml you have previously saved,
 either as a string or as a file. For a file pass:
@@ -220,7 +327,7 @@ Please see L<Webservice::InterMine::Query::Saved>
 =cut
 
 sub load_query {
-    my $class = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
     my %args = @_;
     my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->new_from_xml(%args);
@@ -236,12 +343,20 @@ Please see L<Webservice::InterMine::Query::Template>
 =cut
 
 sub template {
-    my $class        = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
     my $name         = shift;
     my %args         = @_;
     my $service_args = delete($args{from}) || [];
     return $class->get_service(@$service_args)->template( $name, @_ );
 }
+
+=head2 get_template 
+
+Alias for C<template>
+
+=cut
+
+sub get_template { goto &template }
 
 =head2 saved_query( $name, [from => \@service_args], %options ) B<NOT IMPLEMENTED YET>
 
@@ -325,7 +440,7 @@ Please see: L<Webservice::InterMine::Service>
 =cut
 
 sub get_service {
-    my $class = shift;
+    my $class = ($_[0] and $_[0] eq "Webservice::InterMine") ? shift : "Webservice::InterMine";
 
     my @args = (@_ == 1 and ref $_[0] eq 'HASH') ? %{$_[0]} : @_;
     my $url;

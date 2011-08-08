@@ -157,7 +157,7 @@ sub service_methods : Test(2) {
                 query => '<query view="Employee.name Employee.address.address Employee.department.name" name="" model="testmodel" sortOrder="Employee.name asc" constraintLogic="A and B and C"><pathDescription pathString="Employee.name" description="The name of the employee"/><join style="OUTER" path="Employee.name"/><constraint value="Sandwich Distribution" path="Employee.department.name" code="A" op="="/><constraint value="18" path="Employee.age" code="B" op="&lt;"/><constraint path="Employee.name" code="C" op="ONE OF"><value>Tom</value><value>Dick</value><value>Harry</value></constraint><constraint type="Manager" path="Employee"/></query>'
             },
             [$test->def_view],
-            'arrayrefs',
+            'rr',
             'perl',
             undef,
         ],
@@ -171,7 +171,7 @@ sub service_methods : Test(2) {
                 query => '<query view="Employee.name Employee.address.address Employee.department.name" name="" model="testmodel" sortOrder="Employee.name asc" constraintLogic="A and B and C"><pathDescription pathString="Employee.name" description="The name of the employee"/><join style="OUTER" path="Employee.name"/><constraint value="Sandwich Distribution" path="Employee.department.name" code="A" op="="/><constraint value="18" path="Employee.age" code="B" op="&lt;"/><constraint path="Employee.name" code="C" op="ONE OF"><value>Tom</value><value>Dick</value><value>Harry</value></constraint><constraint type="Manager" path="Employee"/></query>'
             },
             [$test->def_view],
-            'arrayrefs',
+            'rr',
             'perl',
             ['a', 'b', 'c'],
         ],
@@ -254,11 +254,11 @@ sub results : Test(4) {
                 query => '<query view="Employee.name Employee.address.address Employee.department.name" name="" model="testmodel" sortOrder="Employee.name asc" constraintLogic="A and B and C"><pathDescription pathString="Employee.name" description="The name of the employee"/><join style="OUTER" path="Employee.name"/><constraint value="Sandwich Distribution" path="Employee.department.name" code="A" op="="/><constraint value="18" path="Employee.age" code="B" op="&lt;"/><constraint path="Employee.name" code="C" op="ONE OF"><value>Tom</value><value>Dick</value><value>Harry</value></constraint><constraint type="Manager" path="Employee"/></query>'
             },
             [$test->def_view],
-            'arrayrefs',
+            'rr',
             'perl',
             undef,
         ],
-        "Default as per arrayref",
+        "Defaults to result-row"
     );
 }
 

@@ -117,7 +117,7 @@ sub results_iterator {
 
     $self->validate;
 
-    my $row_format  = delete($args{as})   || "arrayrefs";
+    my $row_format  = delete($args{as})   || "rr";
     $row_format = 'tab' if ($row_format eq 'string' || $row_format eq 'tsv');
     my $json_format = delete($args{json}) || "perl";
     my $roles       = delete $args{with};
@@ -191,7 +191,8 @@ sub results {
 
 Return all rows of results.
 This method takes the same options as C<results>, but any start and size 
-arguments given are ignored.
+arguments given are ignored. Note that the server code limits result-sets
+to 10,000,000 rows in size, no matter what.
 
 =cut
 

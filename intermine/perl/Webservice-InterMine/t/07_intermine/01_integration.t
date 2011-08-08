@@ -173,7 +173,7 @@ lives_ok(
 
 is(ref $res, 'ARRAY', "And it is an arrayref");
 
-is(ref $res->[0], 'ARRAY', "An array of arrays in fact");
+is(ref $res->[0], 'Webservice::InterMine::ResultRow', "An array of result-rows in fact");
 
 is($res->[1][2], -1.23, "With the right fields")
     or diag(explain $res);
@@ -257,6 +257,7 @@ SKIP: {
         "Lives loading yaml",
     ) or diag(join "\n", map {$i++ . $_} split("\n", $out_buffer));
 
+    my $res = $t->results(as => "arrayrefs");
     is_deeply($data, $res, "Yamlises, and back, ok");
 }
 

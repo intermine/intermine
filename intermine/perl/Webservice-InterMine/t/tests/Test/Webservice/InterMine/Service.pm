@@ -157,10 +157,11 @@ sub basic_service : Test(3) {
 
 }
 
-sub auth_service : Test(2) {
+sub auth_service : Test(1) {
     my $test = shift;
     my @args = ( root => $test->fake_queryurl, user => 'Foo', pass => 'Bar' );
-    my $service = new_ok( $test->class, [@args] );
+    $SIG{__WARN__} = sub {};
+    my $service = eval {$test->class->new(@args)};
     isnt($service->get_authstring, undef, "With a user, there is authentication");
 }
     

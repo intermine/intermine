@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl -X
 
 use strict;
 use warnings;
@@ -7,8 +7,6 @@ use Test::More;
 use Test::Exception;
 require Carp;
 use List::Util qw(reduce);
-
-$SIG{__WARN__} = \&Carp::cluck;
 
 my $do_live_tests = $ENV{RELEASE_TESTING};
 
@@ -24,8 +22,11 @@ my $id_file = 't/data/test-identifiers.list';
 
 use_ok($module);
 
-$service = Webservice::InterMine->get_service(
-    'squirrel.flymine.org/intermine-test', 'intermine-test-user', 'intermine-test-user-password');
+GET_SERVICE: {
+    no warnings "deprecated";
+    $service = eval {Webservice::InterMine->get_service(
+        'squirrel.flymine.org/intermine-test', 'intermine-test-user', 'intermine-test-user-password');};
+}
 
 $initial_list_count = $service->list_count;
 

@@ -183,6 +183,7 @@ has lists => (
     traits => ['Hash'],
     default => sub { {} },
     clearer => '_clear_lists',
+    reader => '_lists',
     handles => {
         _set_list => 'set',
         get_list => 'get',
@@ -201,6 +202,11 @@ has _temporary_list_names => (
     },
     default => sub { Set::Object->new() },
 );
+
+before qr/^get_list/ => sub {
+    my $self = shift;
+    $self->refresh_lists;
+};
 
 sub clean_up {
     my $self = shift;
@@ -270,7 +276,8 @@ sub get_unused_list_name {
     my $base = shift || DEFAULT_LIST_NAME;
     my $name;
     my $counter = 1;
-    do {$name = $base . $counter++} while ($self->get_list($name));
+    my $lists = $self->_lists;
+    do {$name = $base . $counter++} while ($lists->{$name});
     $self->add_temporary_list($name);
     return $name;
 }

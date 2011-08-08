@@ -109,6 +109,7 @@ has _sort_order => (
         joined_so      => 'join',
         clear_sort_order => 'clear',
         sort_order_is_empty =>  'is_empty',
+        filter_sort_order => 'grep',
     },
 );
 
@@ -122,6 +123,8 @@ sub sort_order {
         if shift;
     if (grep {not defined} $self->sort_orders) {
         return '';
+    } elsif ($self->sort_orders == 0) {
+        return $self->get_view(0) . ' asc';
     } else {
         return $self->joined_so(' ');
     } 
@@ -259,18 +262,22 @@ Clear the current view
 
 Get the number of output columns
 
-=head2 add_view
-
-alias for add_views
-
-=head2 select
-
-alias for add_view
-
 =head2 add_views(@views)
 
 Add the given views to the view list, first preprending
 the query's root, and checking for validity.
+
+=head2 add_view
+
+alias for add_views
+
+=head2 add_to_select(@columns)
+
+Alias for add_views
+
+=head2 select(@columns)
+
+Clear the current view and replace it with the given columns.
 
 =cut
 
@@ -278,8 +285,14 @@ sub add_view {
     goto &add_views;
 }
 
-sub select {
+sub add_to_select {
     goto &add_views;
+}
+
+sub select {
+    my $self = shift;
+    $self->clear_view;
+    $self->add_views(@_);
 }
 
 sub add_views {
@@ -794,6 +807,9 @@ sub search {
     my $self = shift;
     my $constraints = shift;
     my $results_args = shift || {as => 'jsonobjects', json => 'instantiate'};
+    if ($self->view_is_empty and $self->has_root_path) {
+        $self->select("*");
+    }
     if (ref $constraints eq 'HASH') {
         while (my ($path, $con) = each(%$constraints)) {
             $self->add_constraint($path, $con);
@@ -1028,6 +1044,25 @@ sub validate_consistency {
           . join( ', ', map { $_->name } uniq @roots ) . "\n";
     }
     return undef;
+}
+
+sub is_in_view {
+    my ($self, $path) = @_;
+    return if $self->view_is_empty;
+    return grep {$path eq $_} $self->views;
+}
+
+sub clean_out_irrelevant_sort_orders {
+    my $self = shift;
+    return if $self->view_is_empty;
+    return if (not $self->has_sort_order or $self->sort_order_is_empty);
+    my @relevant_sos = $self->filter_sort_order(sub {$self->is_in_view($_->path)});
+    if (@relevant_sos) {
+        $self->_set_sort_order(\@relevant_sos);
+    } else {
+        $self->clear_sort_order;
+    }
+    return;
 }
 
 sub validate_sort_order {
