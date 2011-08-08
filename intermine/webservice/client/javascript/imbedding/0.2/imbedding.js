@@ -39,14 +39,57 @@ IMBedding = (function() {
         return x1 + x2;
     }
 
+    var decamelise = function(str) {
+        if (str == null) {
+            return "";
+        }
+        var chrs = str.split("");
+        var newStr = "";
+        var lastChrWasLower = false;
+        var noOfChrs = chrs.length;
+        for (var i = 0; i < noOfChrs; i++) {
+            var ch = chrs[i];
+            if (ch == null) {
+                continue;
+            }
+            var thisIsUpper = (ch.match(/[A-Z]/) != null);
+            if (lastChrWasLower && thisIsUpper) {
+                newStr += " ";
+                newStr += ch.toLowerCase();
+            } else {
+                newStr += ch;
+            }
+            lastChrWasLower = !thisIsUpper;
+        }
+        return newStr;
+    };
+
+    // Defines a pattern to assess what kinds of attributes we don't want to see.
+    var uglyAttributes = /^primaryIdentifier$/;
+
     var mungeHeader = function(header) {
         var parts = header.split(" > ");
-        if (parts.length == 1) {
-            return parts[0];
+        var partsLen = parts.length;
+        var retParts = [];
+        if (partsLen == 1) {
+            return retParts = parts;
+        } else if (partsLen == 2) {
+            var lastPart = parts.pop();
+            if (uglyAttributes.test(lastPart)) {
+                retParts.push(parts[0]);
+            } else {
+                retParts.push(lastPart);
+            }
         } else {
-            var ret = parts.slice(parts.length - 2, parts.length).join(" ");
-            return ret;
+            if (uglyAttributes.test(parts[partsLen - 1])) {
+                retParts = parts.slice(partsLen - 2, partsLen - 1);
+            } else {
+                retParts = parts.slice(partsLen - 2, partsLen);
+            }
         }
+
+        var ret = jQuery.map(retParts, function(elem) {return decamelise(elem)}).join(" ");
+        return ret;
     };
 
     var cellCreater = function(cell, localiser) {
@@ -578,8 +621,9 @@ IMBedding = (function() {
                         errorHandler(data.error, data.statusCode);
                     }
                 } else {
-                    errorHandler = options.errorHandler || defaultOptions.errorHandler;
-                    errorHandler("Incorrect data format returned from server", 500);
+                  buildTable(data, target, options);
+                  //  errorHandler = options.errorHandler || defaultOptions.errorHandler;
+                  //  errorHandler("Incorrect data format returned from server", 500);
                 }
             }
         }
@@ -598,7 +642,6 @@ IMBedding = (function() {
     };
 
     var getResults = function(url, data, target, options) {
-        var callback = getCallback(target, options);
         var errorHandler = getErrorHandler(options);
         if (! data.format) {
             data.format = "jsonptable";
@@ -607,31 +650,61 @@ IMBedding = (function() {
             data.size = defaultTableSize;
         }
         if (!target instanceof Function) {
+            if (!jQuery(target).length) {
+                console.log("Aborting query - target '" + target + "'not found in DOM");
+                return;
+            }
             var throbber = document.createElement("img");
             throbber.src = defaultOptions.throbberSrc;
             jQuery(target).empty().append(throbber);
         }
 
-        jQuery.jsonp({
-            url: url, 
-            data: data, 
-            success: callback, 
-            callbackParameter: "callback",
-            error: errorHandler,
-            traditional: true
-        });
+        if (data.format == "jsonobjects" || data.format == "jsonrows" || data.format == "jsoncount") {
+            // The user expects us to make a same-domain request.
+            var callback = target;
+            jQuery.getJSON(url, data, target);
+        } else {
+            var callback = getCallback(target, options);
+            jQuery.jsonp({
+                url: url, 
+                data: data, 
+                success: callback, 
+                callbackParameter: "callback",
+                error: errorHandler,
+                traditional: true
+            });
+        }
     };
 
-    var getConstraints = function(constraints) {
-        var constraintsString = "";
-        for (var i = 0; i < constraints.length; i++) {
-            var whereClause = constraints[i];
-            var whereString = "<constraint ";
-            for (attr in whereClause) {
+    var makeConstraint = function(whereClause) {
+        var i = 0, len = 0, whereString = "<constraint ", attr = null, values = null;
+        console.log(whereClause);
+        for (attr in whereClause) {
+            if (attr === "values") {
+                values = whereClause[attr];
+            } else {
                 whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
             }
+        }
+        if (values) {
+            whereString += ">";
+            len = values.length;
+            for (i = 0;i < len;i++) {
+                whereString += "<value>" + values[i] + "</value>";
+            }
+            whereString += "</constraint>";
+        } else {
             whereString += "/>";
-            constraintsString += whereString;
+        }
+        return whereString;
+    }
+
+
+    var getConstraints = function(constraints) {
+        var constraintsString = "", cl = constraints.length, i = 0;
+        console.log(constraints);
+        for (i = 0; i < cl; i++) {
+            constraintsString += makeConstraint(constraints[i]);
         }
         return constraintsString;
     };
