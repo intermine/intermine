@@ -14,8 +14,8 @@ class TestResults < Test::Unit::TestCase
             File.dirname(__FILE__) + "/data/resultrow.json", "r")
         @data = file.read
         @json = JSON.parse(@data)
-        @view = ["Company.departments.name","Company.departments.manager.name"]
-        @bad_view = ["Company.departments.name","Company.departments.manager.name", "Comany.name"]
+        @view = ["Company.departments.name","Company.departments.manager.name", "Company.departments.manager.age"]
+        @bad_view = ["Company.departments.name","Company.departments.manager.name"]
     end
 
     def test_initialize
@@ -54,12 +54,35 @@ class TestResults < Test::Unit::TestCase
         assert_equal(rr[0], "DepartmentA1")
         assert_equal(rr[1], "EmployeeA1")
 
-        rr = ResultsRow.new(@json, @view)
+        assert_equal(rr[1..2], ["EmployeeA1", 33])
+        assert_equal(rr[0, 2], ["DepartmentA1", "EmployeeA1"])
+
+        assert_equal(rr.first, "DepartmentA1")
+        assert_equal(rr.last, 33)
 
         assert_raise IndexError do
             rr[3]
         end
 
+    end
+
+    def test_each
+
+        rr = ResultsRow.new(@data, @view)
+        expected =  %w{DepartmentA1 EmployeeA1} << 33
+
+        c = 0
+        rr.each do |val|
+            assert_equal(expected[c], val)
+            c += 1
+        end
+
+        c = 0
+        rr.each do |key, val|
+            assert_equal(@view[c], key)
+            assert_equal(expected[c], val)
+            c += 1
+        end
     end
 
     def test_hash_access
@@ -76,7 +99,7 @@ class TestResults < Test::Unit::TestCase
 
         rr = ResultsRow.new(@json, @view)
 
-        assert_raise IndexError do
+        assert_raise ArgumentError do
             rr["foo"]
         end
 
@@ -84,7 +107,7 @@ class TestResults < Test::Unit::TestCase
 
     def test_to_a
 
-        expected =  %w{DepartmentA1 EmployeeA1}
+        expected =  %w{DepartmentA1 EmployeeA1} << 33
 
         rr = ResultsRow.new(@data, @view)
 
@@ -101,7 +124,8 @@ class TestResults < Test::Unit::TestCase
 
         expected = {
             "Company.departments.name" => "DepartmentA1",
-            "Company.departments.manager.name" => "EmployeeA1"
+            "Company.departments.manager.name" => "EmployeeA1",
+            "Company.departments.manager.age" => 33
         }
         assert_equal(expected, rr.to_h)
 

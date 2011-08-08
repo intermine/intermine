@@ -3,7 +3,28 @@ require File.dirname(__FILE__) + "/test_helper.rb"
 require "test/unit"
 require "intermine/service"
 
-class LiveTest < Test::Unit::TestCase
+class LiveDemoTest <  Test::Unit::TestCase
+
+    def setup
+        @service = Service.new("http://localhost:8080/intermine-test")
+    end
+
+    def testVersion
+        assert(@service.version >= 6)
+    end
+
+    def testRelease
+        assert_match(/test/i, @service.release)
+    end
+
+    def testCount
+        assert_equal(7, @service.query("Company").count)
+        assert_equal(3, @service.query("Department").where(:name => "Sales").count)
+    end
+
+end
+
+class LiveFlyMineTest < Test::Unit::TestCase
 
     def setup
         @service = Service.new("www.flymine.org/query")

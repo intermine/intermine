@@ -3,10 +3,52 @@ require "json"
 require 'stringio'
 require 'net/http'
 
+# == Code for handling results
+#
+# The classes in this module are used to process
+# the results of queries. They include mechanisms 
+# for reading from the connection in a record 
+# orientated format, and for interpreting the values 
+# received.
+#
 module InterMine::Results
 
+    # == Synopsis
+    #
+    #   query.each_row do |row|
+    #     puts row[0], row[1], row[2]
+    #     puts row["symbol"], row["proteins.name"]
+    #   end
+    #
+    # == Description
+    #
+    # A dual-faced object, these representations of rows 
+    # of results are intended to provide a single object that 
+    # allows Array-like and Hash-like access to an individual
+    # row of data. The primary means of access for this is
+    # the use of item access with ResultsRow#[], which accepts
+    # Array like index arguments, as well as Hash like key arguments.
+    #
+    # As well as value retrieval via indices and keys, iteration is also supported
+    # with ResultsRow#each and the aliases each_pair and each_value. If
+    # one parameter is requested the iteration will be by value, if 
+    # two are requested it will be by pair. 
+    #
+    # There is no attempt to fully emulate the complete Hash and Array 
+    # interfaces - that would make little sense as it does not make any 
+    # sense to insert values into a row, or to re-sort it in place. If you 
+    # want to do such things, call ResultsRow#to_a or ResultsRow#to_h to
+    # get real Hash or Array values you are free to manipulate.
+    #
+    #:include:contact_header.rdoc
+    #
     class ResultsRow
 
+        # Construct a new result row. 
+        #
+        # You will not need to do this - ResultsRow objects are created for
+        # you when the results are parsed.
+        #
         def initialize(results, columns)
             @results = results.is_a?(Array) ? results : JSON.parse(results)
             unless @results.is_a?(Array)
@@ -19,27 +61,104 @@ module InterMine::Results
             @columns = columns
         end
 
-        def [](key)
-            if key.is_a?(Integer)
-                idx = key
+        # == Retrieve values from the row
+        #
+        #   row[0]              # first element
+        #   row[-1]             # last element
+        #   row[2, 3]           # Slice of three cells, starting at cell no. 3 (index 2)
+        #   row[1..3]           # Slice of three cells, starting at cell no. 2 (index 1)
+        #   row["length"]       # Get a cell's value by column name
+        #   row["Gene.length"]  # Use of the root class is optional
+        #   row[:length]        # For bare attributes, a symbol may be used.
+        #
+        # This method emulated both the array and hash style of access, based
+        # on argument type. Passing in integer indexes or ranges retrieves
+        # values in a manner that treats the row as a list of values. Passing in 
+        # string or symbols retrieves values in a manner that treates the 
+        # row as a Hash. It is possible to access the values in the row by using 
+        # either the short or long forms of the column name.
+        #
+        # Unlike the corresponding method in either Hash or Array, this method
+        # throws errors when trying to access single elements (not when requesting
+        # array slices) and the result cannot be found.
+        #
+        def [](arg, length=nil)
+            unless length.nil?
+                raise ArgumentError, "when providing a length, the first argument must be an Integer" unless arg.is_a? Integer
+                return @results[arg, length].map {|x| x["value"]}
+            end
+
+            case arg
+            when Range
+                return @results[arg].map {|x| x["value"]}
+            when Integer
+                idx = arg
             else
-                idx = index_for(key)
+                idx = index_for(arg)
             end
-            if idx.nil?
-                raise IndexError, "Bad key: #{key}"
-            end
-            begin
-                result = @results[idx]["value"]
-            rescue NoMethodError
-                raise IndexError, "Bad key: #{key}"
-            end
-            return result
+
+            raise ArgumentError, "Bad argument: #{arg}" if idx.nil?
+
+            cell = @results[idx]
+
+            raise IndexError, "Argument out of range" if cell.nil?
+
+            return cell["value"]
         end
 
+        # Returns the first value in this row
+        def first
+            return @results[0]["value"]
+        end
+
+        # Returns the last value in this row
+        def last
+            return @results.last["value"]
+        end
+
+        # Iterate over the values in this row in the
+        # order specified by the query's view.
+        # 
+        #   row.each do |value|
+        #     puts value
+        #   end
+        #
+        #   row.each do |column, value|
+        #     puts "#{column} is #{value}"
+        #   end
+        #
+        # If one parameter is specified, then the iteration 
+        # simply includes values, if more than one is specified,
+        # then it will be by column/value pairs.
+        #
+        def each(&block) 
+            if block
+                if block.arity == 1
+                    @results.each {|x| block.call(x["value"])}
+                else block.arity == 2
+                    (0 ... @results.size).to_a.each {|i| block.call(@columns[i], @results[i]["value"])}
+                end
+            end
+            return self
+        end
+
+        alias each_value each
+        alias each_pair each
+
+        # Return the number of cells in this row.
+        def size
+            return @results.size
+        end
+
+        alias length size
+
+        # Return an Array version of the row.
         def to_a
             return @results.map {|x| x["value"]}
         end
 
+        # Return a Hash version of the row. All keys in this
+        # hash will be full length column headers.
         def to_h
             hash = {}
             @results.each_index do |x|
@@ -49,6 +168,7 @@ module InterMine::Results
             return hash
         end
 
+        # Return a readable representation of the information in this row
         def to_s 
             bufs = []
             @results.each_index do |idx|
@@ -61,12 +181,16 @@ module InterMine::Results
             return @columns.first.rootClass.name + ": " + bufs.join(",\t")
         end
 
-        def to_csv
-            return @results.map {|x| x["value"].to_s}.join("\t")
+        # Return the information in this row as a line suitable for prining in a 
+        # CSV or TSV file. The optional separator argument will be used to delimit
+        # columns
+        def to_csv(sep="\t")
+            return @results.map {|x| x["value"].inspect}.join(sep)
         end
 
         private
 
+        # Return the index for a string or symbol key.
         def index_for(key)
             if @indexes.nil?
                 @indexes = {}
@@ -81,13 +205,30 @@ module InterMine::Results
                     end
                 end
             end
-            return @indexes[key]
+            return @indexes[key.to_s]
         end
     end
 
 
+    # The class responsible for retrieving results and processing them
+    #
+    #   query.each_row do |row|
+    #     puts row[2..3]
+    #   end
+    #
+    # Queries delegate their handling of results to these objects, which
+    # are responsible for creating the ResultsRow objects or model objects 
+    # that the results represent.
+    #
+    #:include:contact_header.rdoc
+    #
     class ResultsReader
 
+        # Construct a new ResultsReader.
+        #
+        # You will not need to do this yourself. It is handled by 
+        # queries themselves.
+        #
         def initialize(uri, query, start, size)
             @uri = URI(uri)
             @query = query
@@ -95,12 +236,7 @@ module InterMine::Results
             @size = size
         end
 
-        def params(format)
-            p = @query.params.merge("start" => @start, "format" => format)
-            p["size"] = @size unless @size.nil?
-            return p
-        end
-
+        # Run a request to get the size of the result set.
         def get_size
             query = params("jsoncount")
             res = Net::HTTP.post_form(@uri, query)
@@ -113,6 +249,66 @@ module InterMine::Results
             end
         end
 
+        # Iterate over the result set one ResultsRow at a time
+        def each_row
+            container = ''
+            each_line(params("jsonrows")) do |line|
+                if line.start_with?("[")
+                    begin
+                        row = ResultsRow.new(line.chomp("," + $/), @query.views)
+                    rescue => e
+                        raise ServiceError, "Error parsing #{line}: #{e.message}"
+                    end
+                    yield row
+                else
+                    container << line
+                end
+            end
+            check_result_set(container)
+        end
+
+        # Iterate over the resultset, one object at a time, where the
+        # object is the instantiation of the type of object specified as the 
+        # query's root type. The actual type returned depends on the query
+        # itself, and any subclass information returned by the webservice.
+        #
+        #   query = service.query("Gene").select("*")
+        #   query.each_result do |gene|
+        #     puts gene.symbol, gene.length
+        #   end
+        #
+        #   query = service.query("Organism").select("*")
+        #   query.each_result do |organism|
+        #     puts organism.shortName, organism.taxonId
+        #   end
+        #
+        def each_result
+            model = @query.model
+            container = ''
+            each_line(params("jsonobjects")) do |line|            
+                line.chomp!("," + $/)
+                if line.start_with?("{") and line.end_with?("}")
+                    begin
+                        data = JSON.parse(line)
+                        result = model.make_new(data)
+                    rescue JSON::ParserError => e
+                        raise ServiceError, "Error parsing #{line}: #{e.message}"
+                    rescue => e
+                        raise ServiceError, "Could not instantiate this result object: #{e.message}"
+                    end
+                    yield result
+                else
+                    container << line
+                end
+            end
+            check_result_set(container)
+        end
+
+        private
+
+        # Retrieve the results from the webservice, one line at a time. 
+        # This method has responsibility for ensuring that the lines are 
+        # complete, and not split over two or more chunks.
         def each_line(data)
             req = Net::HTTP::Post.new(@uri.path)
             req.set_form_data(data)
@@ -135,47 +331,16 @@ module InterMine::Results
             }
         end
 
-        def each_row
-            container = ''
-            self.each_line(params("jsonrows")) do |line|
-                if line.start_with?("[")
-                    begin
-                        row = ResultsRow.new(line.chomp("," + $/), @query.views)
-                    rescue => e
-                        raise ServiceError, "Error parsing #{line}: #{e.message}"
-                    end
-                    yield row
-                else
-                    container << line
-                end
-            end
-            check_result_set(container)
+
+        # Get the parameters for this request, given the specified format.
+        def params(format="tab")
+            p = @query.params.merge("start" => @start, "format" => format)
+            p["size"] = @size unless @size.nil?
+            return p
         end
 
-        def each_result
-            model = @query.model
-            container = ''
-            self.each_line(params("jsonobjects")) do |line|            
-                line.chomp!("," + $/)
-                if line.start_with?("{") and line.end_with?("}")
-                    begin
-                        data = JSON.parse(line)
-                        result = model.make_new(data)
-                    rescue JSON::ParserError => e
-                        raise ServiceError, "Error parsing #{line}: #{e.message}"
-                    rescue => e
-                        raise ServiceError, "Could not instantiate this result object: #{e.message}"
-                    end
-                    yield result
-                else
-                    container << line
-                end
-            end
-            check_result_set(container)
-        end
-
-        private
-
+        # Check that the request was successful according the metadata
+        # passed with the result.
         def check_result_set(container)
             begin
                 result_set = JSON.parse(container)
@@ -189,6 +354,7 @@ module InterMine::Results
         end
     end
 
+    # Errors if there are problems retrieving results from the webservice.
     class ServiceError < RuntimeError
     end
 

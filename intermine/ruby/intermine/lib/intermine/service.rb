@@ -84,11 +84,15 @@ module InterMine
     # is fully introspectible and queriable. This allows for sophisticated meta-programming
     # and dynamic query generation. 
     #
+    #
+    #:include:contact_header.rdoc
+    #
     class Service
 
         extend Forwardable
 
         VERSION_PATH = "/version"
+        RELEASE_PATH = "/version/release"
         MODEL_PATH = "/model/json"
         TEMPLATES_PATH = "/templates"
         QUERY_RESULTS_PATH = "/query/results"
@@ -159,6 +163,11 @@ module InterMine
             @list_manager = InterMine::Lists::ListManager.new(self)
         end
 
+        # Return the release string
+        def release
+            return @release ||= fetch(@root + RELEASE_PATH)
+        end
+
         # call-seq:
         #   model() => Model
         #
@@ -181,6 +190,14 @@ module InterMine
         # Create a new query against the data at this webservice
         def query(rootClass=nil)
             return InterMine::PathQuery::Query.new(self.model, rootClass, self)
+        end
+
+        # call-seq:
+        #   select(*columns) => PathQuery::Query
+        #
+        # Create a new query with the given view.
+        def select(*columns)
+            return InterMine::PathQuery::Query.new(self.model, nil, self).select(*columns)
         end
 
         alias new_query query
