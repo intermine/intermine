@@ -10,7 +10,7 @@ default_sources:
   - "FlyBaseOrthologues"
   - "FlyOntologies"
   - "GOAnnotation"
-  - "Intact"
+  - "IntAct"
   - "IntactVocabulary"
   - "Interpro"
   - "InterproGO"
