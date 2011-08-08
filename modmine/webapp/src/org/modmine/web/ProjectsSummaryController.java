@@ -27,20 +27,26 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
-
+/**
+ * Controller for projectSummary.jsp
+ *
+ * @author Sergio
+ *
+ */
 public class ProjectsSummaryController extends TilesAction
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            HttpServletResponse response)
+        throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
