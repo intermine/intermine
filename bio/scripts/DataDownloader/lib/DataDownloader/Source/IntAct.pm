@@ -1,4 +1,4 @@
-package DataDownloader::Source::Intact;
+package DataDownloader::Source::IntAct;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
@@ -7,7 +7,7 @@ use Carp "confess";
 use Perl6::Junction qw(any);
 
 use constant {
-    TITLE => 'Intact',
+    TITLE => 'IntAct',
     DESCRIPTION => "All protein-protein interaction data from IntAct . See Protein Interactions aspect to retrieve full list of publcationsProtein interaction database",
     SOURCE_LINK => "http://www.ebi.ac.uk/intact",
     SOURCE_DIR => 'psi/intact',
