@@ -310,7 +310,7 @@ public abstract class WebService
         }
 
         final HttpSession session = request.getSession();
-        LoginHandler.setUpProfile(session, pm, permission.getProfile());
+        LoginHandler.setUpProfile(session, permission.getProfile());
     }
 
     private void sendError(Throwable t, HttpServletResponse response) {
