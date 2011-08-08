@@ -87,10 +87,7 @@ public class MetadataCacheQueryServlet extends HttpServlet
                         resourceURI.length() - 1) : resourceURI;
                 resourcePath = resourceURI.replaceAll("/", ".");
             }
-
-
         }
-
         new MetadataCacheQueryService().service(request, response, resourcePath);
     }
 }
