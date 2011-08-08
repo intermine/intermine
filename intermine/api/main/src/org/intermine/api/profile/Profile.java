@@ -55,6 +55,12 @@ public class Profile
     private String token;
 
     /**
+     * True if this account is purely local. False if it was created
+     * in reference to another authenticator, such as an OpenID provider.
+     */
+    private final boolean isLocal;
+
+    /**
      * Construct a Profile
      * @param manager the manager for this profile
      * @param username the username for this profile
@@ -67,11 +73,12 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, TemplateQuery> savedTemplates, String token) {
+                   Map<String, TemplateQuery> savedTemplates, String token, boolean isLocal) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
         this.password = password;
+        this.isLocal = isLocal;
         if (savedQueries != null) {
             this.savedQueries.putAll(savedQueries);
         }
@@ -97,9 +104,9 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-            Map<String, TemplateQuery> savedTemplates) {
+            Map<String, TemplateQuery> savedTemplates, boolean isLocal) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
-                null);
+                null, isLocal);
     }
 
     /**
@@ -517,6 +524,15 @@ public class Profile
     public void setApiKey(String token) {
         this.token = token;
         manager.saveProfile(this);
+    }
+
+    /**
+     * Returns true if this is a local account, and not, for
+     * example, an OpenID account.
+     * @return Whether or not this is a local account.
+     */
+    public boolean isLocal() {
+    	return this.isLocal;
     }
 
 }
