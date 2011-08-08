@@ -13,6 +13,7 @@ package org.intermine.webservice.client.services;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
@@ -24,6 +25,7 @@ import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.core.XMLTableResult;
+import org.intermine.webservice.client.core.RowResultSet;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 import org.json.JSONException;
@@ -131,7 +133,8 @@ public class QueryService extends Service
     /**
      * Constructs a PathQuery from its XML representation. You can use this method
      * for creating a PathQuery, modifying it a bit and then executing it afterwards.
-     * This might be useful if you have saved some useful queries as XML to local files.
+     * This might be useful if you have saved some useful queries as XML to local files
+     * and wish to adjust some of their parameters in Java code.
      *
      * @param queryXml PathQuery represented as a XML string
      * @return created PathQuery
@@ -163,6 +166,7 @@ public class QueryService extends Service
     public int getCount(String queryXml) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.TEXT_COUNT);
         request.setQueryXml(queryXml);
+        request.setCountFormat();
         String body = getResponseString(request);
         if (body.length() == 0) {
             throw new ServiceException("The server didn't return any results");
@@ -407,6 +411,337 @@ public class QueryService extends Service
     protected XMLTableResult getResponseTable(QueryRequest request) {
         HttpConnection connection = executeRequest(request);
         return new XMLTableResult(connection);
+    }
+
+    /**
+     * Get results for a query as rows of objects. 
+     *
+     * @param query The query to run.
+     * @param start The first index to run.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(String query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getRowsAsLists();
+    }
+
+    /**
+     * Get results for a query as rows of objects. 
+     *
+     * @param query The query to run.
+     * @param start The first index to run.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(PathQuery query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getRowsAsLists();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Retrieve up to 10,000,000 result from the given starting point.
+     *
+     * @param query The query to run.
+     * @param start The first index to run.
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(String query, int start) {
+        return getRows(query, start, null).getRowsAsLists();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Retrieve up to 10,000,000 result from the given starting point.
+     *
+     * @param query The query to run.
+     * @param start The index of the first result to include.
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(PathQuery query, int start) {
+        return getRows(query, start, null).getRowsAsLists();
+    }
+    
+    /**
+     * Get results for a query as rows of objects. Retrieve up to 10,000,000 results from the beginning.
+     *
+     * @param query The query to run.
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(String query) {
+        return getRows(query, 0, null).getRowsAsLists();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Retrieve up to 10,000,000 results from the beginning.
+     *
+     * @param query The query to run.
+     *
+     * @return a list of rows, which are each a list of cells.
+     */
+    public List<List<Object>> getRowsAsLists(PathQuery query) {
+        return getRows(query, 0, null).getRowsAsLists();
+    }
+
+    /**
+     * Get results for a query as rows of objects. 
+     *
+     * @param query The query to run.
+     * @param start The index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(String query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getRowsAsMaps();
+    }
+
+    /**
+     * Get results for a query as rows of objects. 
+     *
+     * @param query The query to run.
+     * @param start The index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(PathQuery query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getRowsAsMaps();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows.
+     *
+     * @param query The query to run.
+     * @param start The index of the first result to include.
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(String query, int start) {
+        return getRows(query, start, null).getRowsAsMaps();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows.
+     *
+     * @param query The query to run.
+     * @param start The index of the first result to include.
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(PathQuery query, int start) {
+        return getRows(query, start, null).getRowsAsMaps();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows from the beginning.
+     *
+     * @param query The query to run.
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(String query) {
+        return getRows(query, 0, null).getRowsAsMaps();
+    }
+
+    /**
+     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows from the beginning.
+     *
+     * @param query The query to run.
+     *
+     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     */
+    public List<Map<String, Object>> getRowsAsMaps(PathQuery query) {
+        return getRows(query, 0, null).getRowsAsMaps();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(String query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(PathQuery query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
+     * result size of 10,000,000 rows from the given starting point.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(String query, int start) {
+        return getRows(query, start, null).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
+     * result size of 10,000,000 rows from the given starting point.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(PathQuery query, int start) {
+        return getRows(query, start, null).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
+     * result size of 10,000,000 rows from the beginning.
+     *
+     * @param query the query to run.
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(String query) {
+        return getRows(query, 0, null).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
+     * result size of 10,000,000 rows from the beginning.
+     *
+     * @param query the query to run.
+     *
+     * @return an iterator over the rows, where each row is a list of objects.
+     */
+    public Iterator<List<Object>> getRowListIterator(PathQuery query) {
+        return getRows(query, 0, null).getListIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(String query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getMapIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query, int start, Integer maxCount) {
+        return getRows(query, start, maxCount).getMapIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection, up to the maximum result size
+     * of 10,000,000 rows from the given starting point.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(String query, int start) {
+        return getRows(query, start, null).getMapIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection, up to the maximum result size
+     * of 10,000,000 rows from the given starting point.
+     *
+     * @param query the query to run.
+     * @param start the index of the first result to include.
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query, int start) {
+        return getRows(query, start, null).getMapIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection, up to the maximum result size
+     * of 10,000,000 rows from the beginning.
+     *
+     * @param query the query to run.
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(String query) {
+        return getRows(query, 0, null).getMapIterator();
+    }
+
+    /**
+     * Get an iterator over the results of a query. The iterator returns a representation 
+     * of one row at a time, in the order received over the connection, up to the maximum result size
+     * of 10,000,000 rows from the beginning.
+     *
+     * @param query the query to run.
+     *
+     * @return an iterator over the rows, where each row is a mapping from output column to value.
+     */
+    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query) {
+        return getRows(query, 0, null).getMapIterator();
+    }
+
+    private RowResultSet getRows(String query, int start, Integer maxCount) {
+        PathQuery pq = createPathQuery(query);
+        return getRows(pq, start, maxCount);
+    }
+
+    private RowResultSet getRows(PathQuery query, int start, Integer maxCount) {
+        List<String> views = query.getView();
+        String queryXml = query.toXml(PathQuery.USERPROFILE_VERSION);
+        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON);
+        if (maxCount != null) {
+            request.setMaxCount(maxCount);
+        }
+        request.setStart(start);
+        request.setQueryXml(queryXml);
+        return getRows(request, views);
+    }
+
+    private RowResultSet getRows(QueryRequest request, List<String> views) {
+        request.setJSONRowsFormat();
+        HttpConnection connection = executeRequest(request);
+        return new RowResultSet(connection, views);
     }
 
     /**

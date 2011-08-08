@@ -127,7 +127,7 @@ public class TabTableResult extends ResultSet
     }
 
     /**
-     * {@inheritDoc}
+     * Get a memory efficient iterator over the result rows as lists
      */
     public Iterator<List<String>> getIterator() {
         return new TableIterator();

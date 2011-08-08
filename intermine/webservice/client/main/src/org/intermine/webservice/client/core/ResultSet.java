@@ -11,6 +11,7 @@ package org.intermine.webservice.client.core;
  */
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -23,6 +24,7 @@ public abstract class ResultSet
 
     private HttpConnection connection = null;
     private String stringResults = null;
+    private InputStream streamResults = null;
     private BufferedReader reader = null;
 
     /**
@@ -43,6 +45,12 @@ public abstract class ResultSet
         this.stringResults = stringResults;
         init();
     }
+    
+    // For testing
+    ResultSet(InputStream is) {
+        this.streamResults = is;
+        init();
+    }
 
     private void init() {
         reader = getNewReader();
@@ -56,6 +64,8 @@ public abstract class ResultSet
         if (connection != null) {
             return new BufferedReader(new InputStreamReader(connection
                         .getResponseBodyAsStream()));
+        } else if (streamResults != null) {
+            return new BufferedReader(new InputStreamReader(streamResults));
         } else {
             return new BufferedReader(new StringReader(stringResults));
         }
