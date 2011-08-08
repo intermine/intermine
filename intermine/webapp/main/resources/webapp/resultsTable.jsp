@@ -51,7 +51,7 @@
         </c:otherwise>
       </c:choose>
 
-      <th id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}">
+      <th id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}" title="${column.columnIdentifier}">
         <%-- summary --%>
         <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
           <fmt:message key="columnsummary.getsummary" var="summaryTitle" />

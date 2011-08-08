@@ -353,8 +353,9 @@
             <tiles:put name="bag" beanName="bag" />
         </tiles:insert>
       </div>
-	  <div class="clear"></div>
-	  <div class="collection-table nowrap nomargin results">
+      <div class="clear"></div>
+	  
+	  <div id="list-table" class="collection-table nowrap nomargin results">
 		  <div style="overflow-x:auto;">
 		      <tiles:insert name="resultsTable.tile">
 		        <tiles:put name="pagedResults" beanName="pagedResults" />
@@ -369,6 +370,53 @@
 	        <span id="selectedIdFields"></span>
 	      </div>
       </div>
+      
+      <div class="clear"></div>
+      
+      <div id="preview-table" class="collection-table nowrap nomargin results">
+      	<table>
+      		<tbody></tbody>
+      	</table>
+      </div>
+      <script type="text/javascript">
+      	(function() {
+      		<%-- give me the columns in the table in order --%>
+      		var columns = Array();
+      		jQuery("#list-table table thead th").each(function(index) {
+      			columns.push(jQuery(this).attr('title'));
+      		});
+      		
+      		<%-- only valid columns --%>
+      		var previewColumns = Array();
+      		jQuery.each('${showInPreviewTable}'.replace(/\[|\]/g, '').split(', '), function(index, value) { 
+      		  if (jQuery("#list-table table thead th[title='"+value+"']").exists()) {
+      			previewColumns.push(value);
+      		  }
+      		});
+      		if (previewColumns.length > 0) {
+      			var limit = 3;
+      			jQuery("#list-table table tbody tr").each(function(index) {
+      				limit--;
+      				var sourceTr = this;
+      				<%-- copy over the relevant row columns --%>
+      				jQuery('<tr/>', {
+      					html: function() {
+      						var tr = this;
+      	      				jQuery.each(previewColumns, function(index, value) {
+      	      					jQuery('<td/>', {
+      	      						text: function() {
+      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
+      	      						}
+      	      					}).appendTo(tr);
+      	      				});
+      					}
+      				}).appendTo("#preview-table table tbody");
+      				
+      				if (limit <= 0) return false;
+      			});
+      		}
+      	})();
+      </script>
     </div>
 
     <script type="text/javascript">

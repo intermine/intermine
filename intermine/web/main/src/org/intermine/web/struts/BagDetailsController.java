@@ -10,11 +10,13 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +44,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.PagedTable;
@@ -198,6 +201,15 @@ public class BagDetailsController extends TilesAction
             }
         }
 
+        // which fields shall we show in preview?
+        List<String> showInPreviewTable = new ArrayList<String>();
+        for (Entry<String, FieldConfig> entry : type.getFieldConfigMap().entrySet()) {
+        	if (entry.getValue().getShowInListAnalysisPreviewTable()) {
+        		showInPreviewTable.add(type.getDisplayName() + "." + entry.getKey());
+        	}
+        }
+        request.setAttribute("showInPreviewTable", showInPreviewTable);
+        
         request.setAttribute("firstSelectedFields",
                              pagedResults.getFirstSelectedFields(os, classKeys));
         if (page == -1) {
