@@ -267,6 +267,16 @@ class Service(object):
         """
         return Query(self.model, self, root=root)
 
+    def select(self, *columns):
+        """
+        Construct a new Query object with the given columns selected.
+        =============================================================
+
+        As new_query, except that instead of a root class, a list of 
+        output column expressions are passed instead.
+        """
+        return Query(self.model, self).select(*columns)
+
     def get_template(self, name):
         """
         Returns a template of the given name
