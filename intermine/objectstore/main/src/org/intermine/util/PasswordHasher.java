@@ -61,6 +61,9 @@ public final class PasswordHasher
      * @return true if the password matches
      */
     public static boolean checkPassword(String password, String hash) {
+    	if (password == null && hash == null) {
+    		return true;
+    	}
         try {
             if ((hash.length() == 88) && (hash.charAt(43) == '=') && (hash.charAt(87) == '=')) {
                 String saltString = hash.substring(0, 44);
