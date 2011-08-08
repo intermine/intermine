@@ -47,6 +47,7 @@ public class MetadataCacheQueryService
     static {
         Map<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("catexp", "getCatExpJsonString");
+        tempMap.put("webapp_path", "getWebappPath");
         tempMap.put("test", "testWebservice");
         tempMap.put("catexp.test", "testWebservice");
         RESOURCE_METHOD_MAP = Collections.unmodifiableMap(tempMap);
@@ -54,6 +55,7 @@ public class MetadataCacheQueryService
 
     private ObjectStore os;
     private String resourcePath;
+    private HttpServletRequest request;
 
     private static final String NO_DATA_RETURN = "No data return";
 
@@ -72,6 +74,7 @@ public class MetadataCacheQueryService
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         this.os = im.getObjectStore();
         this.resourcePath = resourcePath;
+        this.request = request;
 
         if (RESOURCE_METHOD_MAP.keySet().contains(resourcePath)) {
             String methodName = RESOURCE_METHOD_MAP.get(resourcePath);
@@ -266,5 +269,20 @@ public class MetadataCacheQueryService
     @SuppressWarnings("unused")
     private String testWebservice() {
         return "Resource available: /" + this.resourcePath.replaceAll("\\.", "/");
+    }
+
+    @SuppressWarnings("unused")
+    private String getWebappPath() {
+        String requestURI = request.getRequestURI();
+        int index = nthOccurrence(requestURI, '/', 1);
+        return requestURI.substring(0, index);
+    }
+
+    private static int nthOccurrence(String str, char c, int n) {
+        int pos = str.indexOf(c, 0);
+        while (n-- > 0 && pos != -1) {
+            pos = str.indexOf(c, pos + 1);
+        }
+        return pos;
     }
 }
