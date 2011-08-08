@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="src" path="/intermine-web"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/json20110106.jar"/>
+	<classpathentry exported="true" kind="lib" path="/intermine-integrate-main/lib/json20110106.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
