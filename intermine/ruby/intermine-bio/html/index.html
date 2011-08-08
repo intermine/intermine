@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Bio Extensions to the InterMine Webservice Client</title>
+
+	<link type="text/css" media="screen" href="rdoc.css" rel="stylesheet" />
+
+	<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/thickbox.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+	</script>
+
+</head>
+<body class="indexpage">
+
+	
+	<h1>Bio Extensions to the InterMine Webservice Client</h1>
+
+	
+    <div id="main">
+        
+<p>
+This library is a set of extensions to the <a
+href="../classes/InterMine.html">InterMine</a> Webservices client,
+providing access for data in biological formats. It directly extends the <a
+href="../classes/InterMine.html">InterMine</a> classes, providing extra
+methods to the Query class.
+</p>
+<h2>Example</h2>
+<p>
+Get all sequences for proteins on "h", "r", "eve", "bib" and "zen":
+</p>
+<pre>
+    require &quot;rubygems&quot;
+    require &quot;intermine/service&quot;
+    require &quot;intermine/bio&quot;
+
+    s = Service.new(&quot;www.flymine.org/query&quot;)
+    syms = %w{h r eve bib zen}
+
+    puts s.query(:Gene).select(:proteins).where(:symbol =&gt; syms).fasta
+</pre>
+<p>
+Process the locations of these genes one at a time:
+</p>
+<pre>
+    s.query.select(:Gene).where(:symbol =&gt; syms).bed do |line|
+      process line
+    end
+</pre>
+<h2>Who is this for?</h2>
+<p>
+<a href="../classes/InterMine.html">InterMine</a> data warehouses are
+typically constructed to hold Biological data, and as this library
+facilitates programmatic access to these data, this install is primarily
+aimed at bioinformaticians. In particular, users of the following services
+may find it especially useful:
+</p>
+<pre>
+ * FlyMine (http://www.flymine.org/query)
+ * YeastMine (http://yeastmine.yeastgenome.org/yeastmine)
+ * RatMine (http://ratmine.mcw.edu/ratmine)
+ * modMine (http://intermine.modencode.org/release-23)
+ * metabolicMine (http://www.metabolicmine.org/beta)
+</pre>
+<p>
+These extensions are aimed at bioinformaticians looking to integrate these
+sources of data into other workflows.
+</p>
+<p>
+For details on constructing queries, see the intermine documentation.
+</p>
+<h2>Support</h2>
+<p>
+Support is available on our development mailing list: dev@intermine.org
+</p>
+<h2>License</h2>
+<p>
+This code is Open Source under the LGPL. Source code for all <a
+href="../classes/InterMine.html">InterMine</a> code can be checked out from
+svn://subversion.flymine.org/flymine
+</p>
+
+    </div>
+	
+
+	<h2>Classes/Modules</h2>
+	<ul>
+		
+		
+		<li class="module"><a 
+			href="InterMine.html">InterMine</a></li>
+		
+		
+		<li class="module"><a 
+			href="InterMine/Bio.html">InterMine::Bio</a></li>
+		
+		
+		<li class="module"><a 
+			href="InterMine/PathQuery.html">InterMine::PathQuery</a></li>
+		
+		
+		<li class="class"><a 
+			href="InterMine/PathQuery/BioError.html">InterMine::PathQuery::BioError</a></li>
+		
+		
+		<li class="class"><a 
+			href="InterMine/PathQuery/Query.html">InterMine::PathQuery::Query</a></li>
+		
+		
+		<li class="module"><a 
+			href="InterMine/Results.html">InterMine::Results</a></li>
+		
+		
+		<li class="class"><a 
+			href="InterMine/Results/ResultsReader.html">InterMine::Results::ResultsReader</a></li>
+		
+	</ul>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+</body>
+</html>

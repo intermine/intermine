@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+	<title>Class: InterMine::Results::ResultsReader</title>
+
+	<link rel="stylesheet" href="../../rdoc.css" type="text/css" media="screen" />
+
+	<script src="../../js/jquery.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../../js/thickbox-compressed.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../../js/quicksearch.js" type="text/javascript" 
+		charset="utf-8"></script>
+	<script src="../../js/darkfish.js" type="text/javascript" 
+		charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready( function() {
+			hookSourceViews();
+			hookQuickSearch();
+			highlightLocationTarget();
+
+			$('ul.link-list a').bind( "click", highlightClickTarget );
+		});
+	</script>
+
+</head>
+<body class="class">
+	
+	<div id="metadata">
+		<div id="file-metadata">
+			<div id="file-list-section" class="section">
+				<h3 class="section-header">In Files</h3>
+				<div class="section-body">
+					<ul>
+					
+						<li><a href="../../lib/intermine/bio.rb.html?TB_iframe=true&height=400&width=600"
+							class="thickbox" title="lib/intermine/bio.rb">lib/intermine/bio.rb</a></li>
+					
+					</ul>
+				</div>
+			</div>
+			
+			
+		</div>
+
+		<div id="class-metadata">
+
+			<!-- Parent Class -->
+			
+			<div id="parent-class-section" class="section">
+				<h3 class="section-header">Parent</h3>
+				
+				<p class="link">Object</p>
+				
+			</div>
+			
+
+			<!-- Namespace Contents -->
+			
+
+			<!-- Method Quickref -->
+			
+			<div id="method-list-section" class="section">
+				<h3 class="section-header">Methods</h3>
+				<ul class="link-list">
+					
+					<li><a href="#adjust_path">adjust_path</a></li>
+					
+					<li><a href="#each_bed">each_bed</a></li>
+					
+					<li><a href="#each_fasta">each_fasta</a></li>
+					
+					<li><a href="#each_gff3">each_gff3</a></li>
+					
+				</ul>
+			</div>
+			
+
+			<!-- Included Modules -->
+			
+		</div>
+	
+		<div id="project-metadata">
+			<div id="classindex-section" class="section project-section">
+				<h3 class="section-header">Class Index</h3>
+				<ul class="link-list">
+				
+				
+					<li><a href="../../InterMine.html">InterMine</a></li>
+				
+				
+					<li><a href="../../InterMine/Bio.html">InterMine::Bio</a></li>
+				
+				
+					<li><a href="../../InterMine/PathQuery.html">InterMine::PathQuery</a></li>
+				
+				
+					<li><a href="../../InterMine/PathQuery/BioError.html">InterMine::PathQuery::BioError</a></li>
+				
+				
+					<li><a href="../../InterMine/PathQuery/Query.html">InterMine::PathQuery::Query</a></li>
+				
+				
+					<li><a href="../../InterMine/Results.html">InterMine::Results</a></li>
+				
+				
+					<li><a href="../../InterMine/Results/ResultsReader.html">InterMine::Results::ResultsReader</a></li>
+				
+				</ul>
+				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
+				
+				<form action="#" method="get" accept-charset="utf-8">
+				<fieldset>
+					<legend>Quicksearch</legend>
+					<input type="text" name="quicksearch" value="" 
+						class="quicksearch-field" />
+				</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="documentation">
+		
+		<h1 class="class">InterMine::Results::ResultsReader</h1>
+		
+
+		<div id="description">
+			<p>
+Extensions to the <a href="ResultsReader.html">ResultsReader</a> object
+</p>
+<p>
+These methods provide mechanisms for accessing the results in raw format,
+and iterating over them line by line in a memory efficient manner. They are
+in no way content aware.
+</p>
+<dl>
+<dt>author</dt><dd>Alex Kalderimis dev@intermine.org
+
+</dd>
+<dt>homepage</dt><dd><a href="http://www.intermine.org">www.intermine.org</a>
+
+</dd>
+<dt>Licence</dt><dd>Copyright (C) 2002-2011 FlyMine
+
+<p>
+This code may be freely distributed and modified under the terms of the GNU
+Lesser General Public Licence. This should be distributed with the code.
+See the LICENSE file for more information or <a
+href="http://www.gnu.org/copyleft/lesser.html">www.gnu.org/copyleft/lesser.html</a>.
+</p>
+</dd>
+</dl>
+
+		</div>
+
+
+		<!-- Constants -->
+		
+		<div id="constants-list" class="section">
+			<h3 class="section-header">Constants</h3>
+			<dl>
+			
+				<dt><a name="RESOURCE_PATH">RESOURCE_PATH</a></dt>
+				
+				<dd class="description">The path to use to get the resource paths for the query variants</dd>
+				
+			
+			</dl>
+		</div>
+		
+
+		<!-- Attributes -->
+		
+
+		<!-- Methods -->
+		
+		
+		<div id="public-instance-method-details" class="method-section section">
+			<h3 class="section-header">Public Instance Methods</h3>
+
+		
+
+		
+			
+			<div id="adjust-path-method" class="method-detail">
+			
+				<a name="adjust_path"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">adjust_path</span><span 
+						class="method-args">(variant)</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p><p>
+Adjust the path of this query to suit the currently selected format.
+</p></p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="adjust-path-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/bio.rb, line 209</span>
+209:             <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">adjust_path</span>(<span class="ruby-identifier">variant</span>)
+210:                 <span class="ruby-ivar">@resources</span> <span class="ruby-operator">||=</span> {}
+211:                 <span class="ruby-identifier">root</span> = <span class="ruby-ivar">@query</span>.<span class="ruby-identifier">service</span>.<span class="ruby-identifier">root</span>
+212:                 <span class="ruby-identifier">uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-constant">RESOURCE_PATH</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;query.&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">to_s</span>)
+213:                 <span class="ruby-ivar">@resources</span>[<span class="ruby-identifier">variant</span>] = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">path</span>)
+214:                 <span class="ruby-identifier">path</span> = <span class="ruby-ivar">@resources</span>[<span class="ruby-identifier">variant</span>]
+215:                 <span class="ruby-ivar">@uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">root</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">path</span>)
+216:             <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="each-bed-method" class="method-detail">
+			
+				<a name="each_bed"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">each_bed</span><span 
+						class="method-args">(ucscCompatible=true) {|line| ...}</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p><p>
+Yield results as UCSC-BED
+</p></p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="each-bed-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/bio.rb, line 199</span>
+199:             <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_bed</span>(<span class="ruby-identifier">ucscCompatible</span>=<span class="ruby-keyword kw">true</span>)
+200:                 <span class="ruby-identifier">adjust_path</span>(<span class="ruby-identifier">:bed</span>)
+201:                 <span class="ruby-identifier">p</span> = <span class="ruby-identifier">params</span>(<span class="ruby-value str">&quot;bed&quot;</span>)
+202:                 <span class="ruby-identifier">p</span>[<span class="ruby-value str">&quot;ucscCompatible&quot;</span>] = <span class="ruby-value str">&quot;no&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">ucscCompatible</span>
+203:                 <span class="ruby-identifier">each_line</span>(<span class="ruby-identifier">p</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+204:                     <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">line</span>
+205:                 <span class="ruby-keyword kw">end</span>
+206:             <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="each-fasta-method" class="method-detail">
+			
+				<a name="each_fasta"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">each_fasta</span><span 
+						class="method-args">() {|line| ...}</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p><p>
+Yield results as fasta
+</p></p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="each-fasta-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/bio.rb, line 191</span>
+191:             <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_fasta</span>
+192:                 <span class="ruby-identifier">adjust_path</span>(<span class="ruby-identifier">:fasta</span>)
+193:                 <span class="ruby-identifier">each_line</span>(<span class="ruby-identifier">params</span>(<span class="ruby-value str">&quot;fasta&quot;</span>)) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+194:                     <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">line</span>
+195:                 <span class="ruby-keyword kw">end</span>
+196:             <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+
+		
+			
+			<div id="each-gff--method" class="method-detail">
+			
+				<a name="each_gff3"></a>
+
+				<div class="method-heading">
+				
+					<span class="method-name">each_gff3</span><span 
+						class="method-args">() {|line| ...}</span>
+					<span class="method-click-advice">click to toggle source</span>
+				
+				</div>
+
+				<div class="method-description">
+					
+	          		<p><p>
+Yield results as GFF3
+</p></p>
+					
+					
+					
+	          		<div class="method-source-code" 
+						id="each-gff--source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/intermine/bio.rb, line 183</span>
+183:             <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_gff3</span>
+184:                 <span class="ruby-identifier">adjust_path</span>(<span class="ruby-identifier">:gff3</span>)
+185:                 <span class="ruby-identifier">each_line</span>(<span class="ruby-identifier">params</span>(<span class="ruby-value str">&quot;gff3&quot;</span>)) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+186:                     <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">line</span>
+187:                 <span class="ruby-keyword kw">end</span>
+188:             <span class="ruby-keyword kw">end</span></pre>
+	          		</div>
+					
+				</div>
+
+				
+			</div>
+
+		
+		</div>
+	
+	
+
+	  </div>
+	</div>
+
+
+	<div id="rdoc-debugging-section-dump">
+	
+		<div class="section">
+		<h2 class="section-header">secsequence</h2>
+	
+		<pre>--- SEC00009
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">seccomment</h2>
+	
+		<pre>--- &quot;&quot;
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">method_list</h2>
+	
+		<pre>--- 
+- methods: 
+  - aref: M000004
+    name: adjust_path
+    m_desc: |-
+      &lt;p&gt;
+      Adjust the path of this query to suit the currently selected format.
+      &lt;/p&gt;
+    params: (variant)
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/bio.rb, line 209&lt;/span&gt;\n\
+      209:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;adjust_path&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;variant&lt;/span&gt;)\n\
+      210:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@resources&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;||=&lt;/span&gt; {}\n\
+      211:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@query&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;service&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt;\n\
+      212:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;uri&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;URI&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;parse&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-constant\&quot;&gt;RESOURCE_PATH&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;query.&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;variant&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;to_s&lt;/span&gt;)\n\
+      213:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@resources&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;variant&lt;/span&gt;] = &lt;span class=\&quot;ruby-constant\&quot;&gt;Net&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;::&lt;/span&gt;&lt;span class=\&quot;ruby-constant\&quot;&gt;HTTP&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;get&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;uri&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;host&lt;/span&gt;, &lt;span class=\&quot;ruby-identifier\&quot;&gt;uri&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;)\n\
+      214:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt; = &lt;span class=\&quot;ruby-ivar\&quot;&gt;@resources&lt;/span&gt;[&lt;span class=\&quot;ruby-identifier\&quot;&gt;variant&lt;/span&gt;]\n\
+      215:                 &lt;span class=\&quot;ruby-ivar\&quot;&gt;@uri&lt;/span&gt; = &lt;span class=\&quot;ruby-constant\&quot;&gt;URI&lt;/span&gt;.&lt;span class=\&quot;ruby-identifier\&quot;&gt;parse&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;root&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;+&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;path&lt;/span&gt;)\n\
+      216:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000003
+    name: each_bed
+    m_desc: |-
+      &lt;p&gt;
+      Yield results as UCSC-BED
+      &lt;/p&gt;
+    params: (ucscCompatible=true) {|line| ...}
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/bio.rb, line 199&lt;/span&gt;\n\
+      199:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_bed&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;ucscCompatible&lt;/span&gt;=&lt;span class=\&quot;ruby-keyword kw\&quot;&gt;true&lt;/span&gt;)\n\
+      200:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;adjust_path&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;:bed&lt;/span&gt;)\n\
+      201:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt; = &lt;span class=\&quot;ruby-identifier\&quot;&gt;params&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;bed&amp;quot;&lt;/span&gt;)\n\
+      202:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;[&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;ucscCompatible&amp;quot;&lt;/span&gt;] = &lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;no&amp;quot;&lt;/span&gt; &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;unless&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;ucscCompatible&lt;/span&gt;\n\
+      203:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_line&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;p&lt;/span&gt;) &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      204:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;yield&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;\n\
+      205:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      206:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000002
+    name: each_fasta
+    m_desc: |-
+      &lt;p&gt;
+      Yield results as fasta
+      &lt;/p&gt;
+    params: () {|line| ...}
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/bio.rb, line 191&lt;/span&gt;\n\
+      191:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_fasta&lt;/span&gt;\n\
+      192:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;adjust_path&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;:fasta&lt;/span&gt;)\n\
+      193:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_line&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;params&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;fasta&amp;quot;&lt;/span&gt;)) &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      194:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;yield&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;\n\
+      195:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      196:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  - aref: M000001
+    name: each_gff3
+    m_desc: |-
+      &lt;p&gt;
+      Yield results as GFF3
+      &lt;/p&gt;
+    params: () {|line| ...}
+    visibility: public
+    sourcecode: &quot;     &lt;span class=\&quot;ruby-comment cmt\&quot;&gt;# File lib/intermine/bio.rb, line 183&lt;/span&gt;\n\
+      183:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;def&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_gff3&lt;/span&gt;\n\
+      184:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;adjust_path&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;:gff3&lt;/span&gt;)\n\
+      185:                 &lt;span class=\&quot;ruby-identifier\&quot;&gt;each_line&lt;/span&gt;(&lt;span class=\&quot;ruby-identifier\&quot;&gt;params&lt;/span&gt;(&lt;span class=\&quot;ruby-value str\&quot;&gt;&amp;quot;gff3&amp;quot;&lt;/span&gt;)) &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;do&lt;/span&gt; &lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;&lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;&lt;span class=\&quot;ruby-operator\&quot;&gt;|&lt;/span&gt;\n\
+      186:                     &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;yield&lt;/span&gt; &lt;span class=\&quot;ruby-identifier\&quot;&gt;line&lt;/span&gt;\n\
+      187:                 &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;\n\
+      188:             &lt;span class=\&quot;ruby-keyword kw\&quot;&gt;end&lt;/span&gt;&quot;
+  category: Instance
+  type: Public
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">constants</h2>
+	
+		<pre>--- 
+- name: RESOURCE_PATH
+  value: &quot;&amp;quot;/check/&amp;quot;&quot;
+  desc: |+
+    
+    The path to use to get the resource paths for the query variants
+    
+</pre>
+		</div>
+	
+		<div class="section">
+		<h2 class="section-header">sectitle</h2>
+	
+		<pre>--- 
+</pre>
+		</div>
+	
+	</div>
+
+	<div id="validator-badges">
+	  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+	  <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish 
+		Rdoc Generator</a></small>.</p>
+	</div>
+
+</body>
+</html>
+
