@@ -100,8 +100,23 @@ Revision history for Webservice-InterMine
         Hid internal methods, such as Query::push_constraints (and others)
         Changed logic behaviour on adding constraint (don't discard current logic completely)
 0.9802: Sun Jul 24 23:38:52 BST 2011
-        Added all, first and one to runnable queries.
-        Add Query::path method for making Path objects
-        Allowed loop constraints to be built with Path objects.
+        * Added all, first and one to runnable queries.
+        * Add Query::path method for making Path objects
+        * Allowed loop constraints to be built with Path objects.
+0.9802: Tue Jul 26 16:31:59 BST 2011
+        * Aligned handling of parsed sortorders with webserver code (tolerates broken sort-orders)
+0.9804: Tue Aug  2 20:49:40 BST 2011
+        * Added ResultRow objects to simplify API (one object for hash and array access). Using Class::InsideOut
+        for memory reasons over MooseX::InsideOut, which leaks.
+        * search and where imply select("*") if the view is empty
+        * Made results default to ResultRows
+0.9805: Tue Aug  2 22:12:57 BST 2011
+        * Switched to JSON::XS for result parsing for performance reasons.
+0.9806: Tue Aug  2 23:41:12 BST 2011
+        * Made select and add_to_select conform accross clients - select now replaces the view
+0.9808: Fri Aug  5 12:21:23 BST 2011
+        * Export Webservice::InterMine methods by default (with options to exclude them) 
+        * Deprecated username and password authentication on services that support tokens
+
         
 

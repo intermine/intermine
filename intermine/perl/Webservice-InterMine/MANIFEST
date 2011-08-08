@@ -41,6 +41,7 @@ lib/Webservice/InterMine/Parser/FlatFile.pm
 lib/Webservice/InterMine/Parser/JSON.pm
 lib/Webservice/InterMine/Parser/JSON/ArrayRefs.pm
 lib/Webservice/InterMine/Parser/JSON/HashRefs.pm
+lib/Webservice/InterMine/Parser/JSON/ResultRows.pm
 lib/Webservice/InterMine/Path.pm
 lib/Webservice/InterMine/PathDescription.pm
 lib/Webservice/InterMine/PathFeature.pm
@@ -72,6 +73,7 @@ lib/Webservice/InterMine/Query/TemplateHandler.pm
 lib/Webservice/InterMine/ResultIterator.pm
 lib/Webservice/InterMine/ResultIterator/Role/HTMLTableRow.pm
 lib/Webservice/InterMine/ResultObject.pm
+lib/Webservice/InterMine/ResultRow.pm
 lib/Webservice/InterMine/Role/Described.pm
 lib/Webservice/InterMine/Role/HasQuery.pm
 lib/Webservice/InterMine/Role/KnowsJSON.pm
@@ -113,6 +115,9 @@ t/06_service/01_service.t
 t/06_service/02_result_iterator.t
 t/06_service/03_result_objects.t
 t/06_service/04_serviced_queries.t
+t/06_service/05_result_row.t
+t/06_service/06_test_export_exclusion.t
+t/06_service/07_test_inclusion.t
 t/07_intermine/01_integration.t
 t/10_acceptance/01_live_test.t
 t/10_acceptance/02_lists.t

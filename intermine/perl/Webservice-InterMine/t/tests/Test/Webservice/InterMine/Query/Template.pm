@@ -236,9 +236,9 @@ sub results : Test(4) {
                 op1 => '=',
                 code1 => 'B',
             },
-            $obj->view, 'arrayrefs', 'perl', undef
+            $obj->view, 'rr', 'perl', undef
         ],
-        "Default as per arrayref",
+        "Defaults to result-row"
     );
 }
 

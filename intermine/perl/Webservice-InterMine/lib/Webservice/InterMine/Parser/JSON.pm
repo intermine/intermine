@@ -13,9 +13,8 @@ the webservice.
 
 use Moose;
 with 'Webservice::InterMine::Parser';
-with 'Webservice::InterMine::Role::KnowsJSON';
 
-use JSON -support_by_pp, -no_export;
+use JSON::XS;
 use MooseX::Types::Moose qw(Str);
 use InterMine::Model::Types qw(Model);
 
@@ -43,6 +42,13 @@ This implementation checks for headers reported in the footer.
 =back
 
 =cut
+
+has json_decoder => (
+    default => sub {JSON::XS->new},
+    handles => {
+        decode => 'decode'
+    }
+);
 
 has model => (
     is => 'ro',

@@ -241,6 +241,7 @@ sub end_document {
     my $self = shift;
     unless ($self->query->is_dubious) {
         $self->query->clean_out_SCCs;
+        $self->query->clean_out_irrelevant_sort_orders;
         $self->query->resume_validation;
     }
     $self->query->set_logic( $self->logic_string ) if $self->logic_string;

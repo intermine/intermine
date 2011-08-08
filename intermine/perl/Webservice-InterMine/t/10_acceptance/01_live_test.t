@@ -10,14 +10,12 @@ use Test::Exception;
 
 use MooseX::Types::Moose qw(Bool);
 
-$SIG{__WARN__} = \&Carp::cluck;
-
 my $do_live_tests = $ENV{RELEASE_TESTING};
 
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 73 );
+    plan( tests => 94 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -145,7 +143,7 @@ lives_ok(
 
 is(ref $res, 'ARRAY', "And it is an arrayref");
 
-is(ref $res->[0], 'ARRAY', "An array of arrays in fact");
+is(ref $res->[0], 'Webservice::InterMine::ResultRow', "An array of result-rows in fact");
 
 is($res->[1][1], "20", "With the right fields - Int") or diag(explain $res);;
 is($res->[1][3], "Employee Street, AVille", "With the right fields - Str") or diag(explain $res);;
@@ -160,7 +158,7 @@ my $res_slice = [
   'EmployeeA1'
 ];
 
-is_deeply($q->results(size => 1, start => 1), $res_slice, "Can handle start and size");
+is_deeply($q->results(size => 1, start => 1)->[0]->to_aref, $res_slice, "Can handle start and size");
 
 $q->add_constraint(
     path  => 'Employee.age',
@@ -282,8 +280,11 @@ my $exp_res = [
     ['EmployeeB3', '60']
 ];
 
-is_deeply($res, $exp_res, "With the right fields")
-    or diag($t->url, explain $res), diag $t->show_constraints;
+for my $row (0, 1, 2) {
+    for my $col (0, 1) {
+        is($res->[$row][$col], $exp_res->[$row][$col]);
+    }
+}
 
 $exp_res = [
     ['EmployeeA1','10'],
@@ -293,11 +294,15 @@ $exp_res = [
 
 $res = $t->results;
 
-is_deeply($res,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
+for my $row (0, 1, 2) {
+    for my $col (0, 1) {
+        is($res->[$col][$row], $exp_res->[$col][$row]);
+    }
+}
 
 $exp_res = ['EmployeeA2',20];
 
-is_deeply($t->results(size => 1, start => 1), $exp_res, "And it handles start and size");
+is_deeply($t->results(size => 1, start => 1)->[0]->to_aref, $exp_res, "And it handles start and size");
 
 $exp_res = [
     {
@@ -377,12 +382,24 @@ lives_ok {$loaded = $module->load_query(source_file => "t/data/loadable_query.xm
 $exp_res = [ ['EmployeeA1','DepartmentA1'] ];
 
 $res = $loaded->results;
-is_deeply($res, $exp_res, "Can get results for queries loaded from xml")
-    or diag(explain $res);
+is($res->[0][0], $exp_res->[0][0], "Can get results for queries loaded from xml");
+is($res->[0][1], $exp_res->[0][1], "Can get results for queries loaded from xml");
 
 AUTHENTICATION: {
     require Webservice::InterMine::Service;
-    my $authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");
+    my $authenticated_service;
+    
+    SKIP: {
+        unless (eval "require Test::Warn;") {
+            eval {no warnings; $authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");};
+            skip "Test Warn not installed", 1;
+        } else {
+            Test::Warn::warning_like(
+                sub {$authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");},
+                qr/API token/, "Warns people who are not careful with their passwords"
+            );
+        }
+    }
 
     my $template = $authenticated_service->template("private-template-1");
 
@@ -415,6 +432,28 @@ DBIX_SUGAR: {
     is(@results, 3);
     is_deeply([map {$_->getName} @results], ['Michael Scott', 'Gilles Triquet', 'David Brent'])
         or diag explain(\@results);
+
+}
+
+TEST_IMPORTED_FNS: {
+    my @results = resultset("Manager")->search({"department.name" => 'Sales'});
+    is(@results, 3);
+    is_deeply([map {$_->getName} @results], ['Michael Scott', 'Gilles Triquet', 'David Brent'])
+        or diag explain(\@results);
+    
+    my $res = get_template('employeesFromCompanyAndDepartment')->results_with(valueA => "CompanyB");
+    my $exp_res = [
+        ['EmployeeB1','40'],
+        ['EmployeeB2','50'],
+        ['EmployeeB3', '60']
+    ];
+    for my $row (0, 1, 2) {
+        for my $col (0, 1) {
+            is($res->[$row][$col], $exp_res->[$row][$col]);
+        }
+    }
+
+    is ($module->get_service->version, get_service()->version);
 
 }
 

@@ -177,6 +177,56 @@ sub get_count_with {
     return $clone->get_count;
 }
 
+=head2 all_with(%template_values, %result_options);
+
+Get all the rows of results for a query, given the specified 
+options. This method explicitly removes any offset given and 
+removes any size limit. Note that the server code limits result-sets
+to 10,000,000 rows in size, no matter what.
+
+=cut
+
+sub all_with {
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/as size start columnheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    $clone->all(zip(@keys, @values));
+}
+
+=head2 first_with(%template_values, %result_options);
+
+Return the first result (row or object). Any size options are ignored. May 
+return undef if there are no results.
+
+=cut
+
+sub first_with {
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/as size start columnheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    $clone->first(zip(@keys, @values));
+}
+
+=head2 one_with(%template_values, %result_options);
+
+Return one result (row or object), throwing an error if none or more than
+one is received.
+
+=cut
+
+sub one_with {
+    my $self = shift;
+    my %args = @_;
+    my @keys = qw/as size start columnheaders json/;
+    my @values = delete(@args{@keys});
+    my $clone = $self->get_adjusted_template(%args);
+    $clone->one(zip(@keys, @values));
+}
+
 =head2 get_adjusted_template(%parameters)
 
 Returns a clone of the current template with the values adjusted
