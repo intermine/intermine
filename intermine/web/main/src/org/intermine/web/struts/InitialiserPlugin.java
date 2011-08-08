@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -121,6 +122,8 @@ public class InitialiserPlugin implements PlugIn
         // initialise properties
         Properties webProperties = loadWebProperties(servletContext);
         SessionMethods.setWebProperties(servletContext, webProperties);
+
+        loadOpenIDProviders(servletContext);
 
         // get link redirector
         LinkRedirectManager redirect = getLinkRedirector(webProperties);
@@ -361,6 +364,36 @@ public class InitialiserPlugin implements PlugIn
         return webProperties;
     }
 
+    private void loadOpenIDProviders(ServletContext context) throws ServletException {
+    	Set<String> providers = new HashSet<String>();
+    	Properties providerProps = new Properties();
+
+    	InputStream is = getClass().getClassLoader().getResourceAsStream("openid-providers.properties");
+    	if (is == null) {
+    		LOG.info("couldn't find openid providers, using system class-loader");
+    		is = ClassLoader.getSystemClassLoader().getResourceAsStream("openid-properties.properties");
+    	}
+    	if (is != null) {
+	    	try {
+				providerProps.load(is);
+			} catch (IOException e) {
+				throw new ServletException(e);
+			}
+    	} else {
+    		LOG.error("Could not find openid-providers.properties");
+    	}
+
+    	for (Object key: providerProps.keySet()) {
+    		String keyString = (String) key;
+    		if (!keyString.endsWith(".alias")) {
+    			providers.add(keyString);
+    			LOG.info("Added " + keyString);
+    		}
+    	}
+
+    	SessionMethods.setOpenIdProviders(context, providers);
+    }
+
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";
@@ -482,6 +515,8 @@ public class InitialiserPlugin implements PlugIn
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
+            DatabaseUtil.addColumn(con, "userprofile", "localaccount", DatabaseUtil.Type.boolean_type);
+            DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
         	throw new ServletException("Unable to upgrade UserProfile DB");

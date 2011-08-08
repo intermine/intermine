@@ -94,11 +94,26 @@
             <li>
               <!-- display (optionally trimmed) username -->
               <c:choose>
-                <c:when test="${fn:length(PROFILE.username) > 20}">
-                  <c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
+              	<c:when test="${! empty PROVIDER}">
+              		<c:choose>
+              			<c:when test="${empty USERNAME || USERNAME == 'nullnull'}">
+              				<c:set var="displayUserName" value="logged in with OpenID"/>
+              			</c:when>
+						<c:otherwise>
+							<c:set var="displayUserName" value="${USERNAME}"/>
+						</c:otherwise>
+              		</c:choose>
+				</c:when>
+				<c:otherwise>
+					<c:set var="displayUserName" value="${PROFILE.username}"/>
+				</c:otherwise>
+			  </c:choose>
+			  <c:choose>
+                <c:when test="${fn:length(displayUserName) > 25}">
+                  <c:out value="${fn:substring(displayUserName,0,25)}"/>&hellip;
                 </c:when>
                 <c:otherwise>
-                  ${PROFILE.username}
+                  <c:out value="${displayUserName}"/>
                 </c:otherwise>
               </c:choose>
             </li>
@@ -115,7 +130,10 @@
    <c:if test="${PROFILE.superuser}">
        <c:set var="itemList" value="${itemList} mymine:mymine.tracks.tab.title:tracks:1 mymine:mymine.labels.tab.title:labels:0"></c:set>
    </c:if>
-    <c:set var="itemList" value="${itemList} mymine:mymine.password.tab.title:password:1 mymine:mymine.apikey.tab.title:apikey:1"/>
+   <c:if test="${PROFILE.local}">
+   		<c:set var="itemList" value="${itemList} mymine:mymine.password.tab.title:password:1"/>
+   </c:if>
+    <c:set var="itemList" value="${itemList} mymine:mymine.apikey.tab.title:apikey:1"/>
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:choose>
     <c:when test="${tab == 'mymine'}">
