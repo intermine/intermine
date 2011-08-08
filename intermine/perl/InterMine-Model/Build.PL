@@ -16,6 +16,7 @@ my $build = Module::Build->new(
         'Moose'                         => 2.0,
         'Scalar::Util'                  => 0,
         'XML::Parser::PerlSAX'          => 0.08,
+        'XML::Parser::Expat'            => 0,
         'Time::HiRes'                   => 0,
     },
     build_requires => {
