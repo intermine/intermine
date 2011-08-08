@@ -453,7 +453,7 @@ public final class SessionMethods
         ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                    new HashMap<String, TemplateQuery>(), null));
+                    new HashMap<String, TemplateQuery>(), null, true));
         session.setAttribute(Constants.REPORT_OBJECT_CACHE, new ReportObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
@@ -1114,10 +1114,10 @@ public final class SessionMethods
     }
 
     /**
-     * Sets in the session the map containing the status of the bags not current. 
+     * Sets in the session the map containing the status of the bags not current.
      * A bag not current could be:
      * not current (= the upgrading process has not started upgrading it yet),
-     * upgrading...(= the upgrading process is upgrading it), 
+     * upgrading...(= the upgrading process is upgrading it),
      * to upgrade (= the upgrading process has not been able to upgrade it because there are some
      * conflicts that the user has to resolve manually ).
      * @param session the session
@@ -1134,4 +1134,14 @@ public final class SessionMethods
         }
         session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
+
+	public static void setOpenIdProviders(ServletContext ctx, Set<String> providers) {
+		ctx.setAttribute(Constants.OPENID_PROVIDERS, providers);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Set<String> getOpenIdProviders(HttpSession session) {
+		ServletContext ctx = session.getServletContext();
+		return (Set<String>) ctx.getAttribute(Constants.OPENID_PROVIDERS);
+	}
 }
