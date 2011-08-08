@@ -118,8 +118,9 @@ class CleanCommand(Command):
 setup(
         name = "intermine",
         packages = ["intermine", "intermine.lists"],
+        provides = ["intermine"],
         cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.98.08",
+        version = "0.98.09",
         description = "InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
