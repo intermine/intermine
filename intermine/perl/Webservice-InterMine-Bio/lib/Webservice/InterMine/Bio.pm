@@ -13,7 +13,7 @@ Version 0.98
 
 =cut
 
-our $VERSION = '0.9800';
+our $VERSION = '0.9801';
 
 
 =head1 SYNOPSIS
@@ -21,10 +21,10 @@ our $VERSION = '0.9800';
 This module provides roles that can be used to access data in standard biological formats,
 and even interface directly with BioPerl classes.
 
-    use Webservice::InterMine::Bio qw/BIO_PERL/;
+    use Webservice::InterMine::Bio qw/GFF3/;
     use Webservice::InterMine 'flymine';
 
-    my $query = Webservice::InterMine->new_query(with => BIO_PERL);
+    my $query = Webservice::InterMine->new_query(with => GFF3);
     $query->add_sequence_features("Gene", "Gene.exons", "Gene.transcripts");
     my $feature_store = $query->get_feature_store(); # Get a Bio::DB::SeqFeature::Store
     ...
@@ -43,8 +43,6 @@ manner expected by C<new_query>. So:
 
 =item * BED => ['Webservice::InterMine::Bio::BEDQuery']
 
-=item * BIO_PERL => [ all... ]
-
 =back
 
 =cut
@@ -57,10 +55,6 @@ use constant {
     GFF3 => ['Webservice::InterMine::Bio::GFFQuery'],
     FASTA => ['Webservice::InterMine::Bio::FastaQuery'],
     BED => ['Webservice::InterMine::Bio::BEDQuery'],
-    BIO_PERL => [
-        'Webservice::InterMine::Bio::GFFQuery',
-        'Webservice::InterMine::Bio::FastaQuery',
-    ],
 };
 
 =head1 AUTHOR

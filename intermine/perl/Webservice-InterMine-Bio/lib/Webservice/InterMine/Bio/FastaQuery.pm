@@ -28,6 +28,7 @@ This module extends InterMine queries with GFF3 specific functionality.
 
 
 use Moose::Role;
+use namespace::autoclean;
 with 'Webservice::InterMine::Bio::SequenceFeatureQuery';
 
 use Carp qw/confess carp/;

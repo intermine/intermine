@@ -29,7 +29,7 @@ use strict;
 use warnings;
 
 use Moose::Role;
-requires 'model', 'add_view';
+requires 'model', 'add_view', 'where', 'view_is_empty', 'has_root_path';
 
 use autodie qw(open);
 use IO::Handle;
@@ -161,6 +161,13 @@ sub print_seq {
         }
     }
 }
+
+before where => sub {
+    my $self = shift;
+    if ($self->view_is_empty and $self->has_root_path) {
+        $self->add_view("id");
+    }
+};
 
 1;
 
