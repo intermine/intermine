@@ -15,7 +15,8 @@ my $builder = Module::Build->new(
         'File::Temp'            => 0,
         'URI'                   => 0,
         'IO::Handle'            => 0,
-        'Webservice::InterMine' => '0.97',
+        'namespace::autoclean'  => 0,
+        'Webservice::InterMine' => '0.9807',
     },
     recommends => {
         'Bio::SeqIO'                 => 0,
