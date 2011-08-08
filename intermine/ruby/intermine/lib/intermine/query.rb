@@ -356,8 +356,24 @@ module InterMine::PathQuery
             return doc
         end
 
+        # Return true if the other query has exactly
+        # the same configuration, and belongs to the same
+        # service.
+        def eql?(other)
+            if other.is_a? Query
+                return self.service == other.service && self.to_xml_to_s == other.to_xml.to_s
+            else
+                return false
+            end
+        end
+
         # Get your own result reader for handling the results at a low level.
+        # If no columns have been selected for output before requesting results, 
+        # all attribute columns will be selected.
         def results_reader(start=0, size=nil)
+            if @views.empty?
+                select("*")
+            end
             return Results::ResultsReader.new(@url, self, start, size)
         end
 
@@ -493,11 +509,16 @@ module InterMine::PathQuery
         # Any columns ending in "*" will be interpreted as a request to add
         # all attribute columns from that table to the query
         #
+        # Any columns that name a class or reference will add the id of that
+        # object to the query. This is helpful for creating lists and other 
+        # specialist services.
+        #
         #   query = service.query("Gene")
         #   query.add_views("*")
         #   query.add_to_select("*")
         #   query.add_views("proteins.*")
         #   query.add_views("pathways.*", "organism.shortName")
+        #   query.add_views("proteins", "exons")
         #
         def add_views(*views)
             views.flatten.map do |x| 
@@ -509,6 +530,7 @@ module InterMine::PathQuery
                     add_views(attrs)
                 else
                     path = InterMine::Metadata::Path.new(y, @model, subclasses)
+                    path = InterMine::Metadata::Path.new(y.to_s + ".id", @model, subclasses) unless path.is_attribute?
                     if @root.nil?
                         @root = path.rootClass
                     end

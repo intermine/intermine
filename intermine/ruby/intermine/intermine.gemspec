@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib"]
   s.test_file     = "test/unit_tests.rb"
-  s.files         = `git ls-files -- lib/*`.split("\n") + `git ls-files -- test/*`.split("\n") + Dir['[A-Z]*']
-  s.rdoc_options << '--title' << 'InterMine Webservice Client' << '--main' << 'README' << '--line-numbers'
+  s.files         = `git ls-files -- lib/*`.split("\n") + `git ls-files -- test/*`.split("\n") + Dir['[A-Z]*'] + ["contact_header.rdoc"]
+  s.rdoc_options << '--title' << 'InterMine Webservice Client' << '--main' << 'README.rdoc' << '--line-numbers'
   s.license       = 'LGPL'
   s.has_rdoc      = true
 end
