@@ -79,6 +79,7 @@ public class QueryServiceTest extends TestCase
         service.setFakeResponse("<ResultSet><Result><i>EmployeeA1</i><i>10</i><i>1.1</i><i>true</i></Result><Result><i>EmployeeA2</i><i>20</i><i>2.2</i><i>false</i></Result></ResultSet>");
         service.setExpectedRequest("http://localhost:8080/intermine-test/service/query/results?start=0&query=%3Cquery+name%3D%22%22+model%3D%22testmodel%22+view%3D%22Employee.name+Employee.department.name+Employee.department.company.name+Employee.fullTime+Employee.address.address%22+sortOrder%3D%22Employee.name+ASC%22%3E%3Cnode+path%3D%22Employee%22+type%3D%22Employee%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Employee.address%22+type%3D%22Address%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Employee.address.address%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22CONTAINS%22+value%3D%22AVille%22+description%3D%22%22+identifier%3D%22%22+code%3D%22A%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3C%2Fquery%3E&format=xml");
         List<List<String>> result = service.getAllResults(getSimpleXml());
+        TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1.1", "true");
     }
 
     public void testParseProblemValues() throws IOException {
