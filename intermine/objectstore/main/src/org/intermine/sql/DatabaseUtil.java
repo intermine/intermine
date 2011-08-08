@@ -951,7 +951,7 @@ public final class DatabaseUtil
     }
 
     /**
-     * Add the column intermine_current (type boolean) in the savedbag table and set it to true
+     * Set the default value in a column for all values where the current value is null.
      * @param database the database to use
      * @param tableName the table where update the column
      * @param columnName the column to Update
@@ -962,17 +962,32 @@ public final class DatabaseUtil
                                          Object newValue)
         throws SQLException {
         Connection connection = database.getConnection();
-        if (DatabaseUtil.columnExists(connection, tableName, columnName)) {
-            try {
-                String sql = "UPDATE " + tableName + " SET " + columnName + " = ?";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setObject(1, newValue);
-                LOG.info(stmt.toString());
-                stmt.executeUpdate();
-            } finally {
-                connection.close();
-            }
+        try {
+        	updateColumnValue(connection, tableName, columnName, newValue);
+        } finally {
+            connection.close();
         }
+    }
+
+    /**
+     * Set the default value in a column for all values where the current value is null.
+     * @param con A connection to the database to use
+     * @param tableName the table where update the column
+     * @param columnName the column to Update
+     * @param newValue the value to update
+     * @throws SQLException if there is a database problem
+     *
+     * Note, it is the user's responsibility to ensure the connection given is closed.
+     */
+    public static void updateColumnValue(Connection con, String tableName, String columnName,
+            Object newValue) throws SQLException {
+    	if (DatabaseUtil.columnExists(con, tableName, columnName)) {
+    		String sql = "UPDATE " + tableName + " SET " + columnName + " = ? WHERE " + columnName + " IS NULL";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setObject(1, newValue);
+            LOG.info(stmt.toString());
+            stmt.executeUpdate();
+    	}
     }
 }
 
