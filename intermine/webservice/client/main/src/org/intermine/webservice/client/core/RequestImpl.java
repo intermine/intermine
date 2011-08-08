@@ -31,7 +31,9 @@ public class RequestImpl implements Request
 {
 
     protected static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
+    protected static final String FORMAT_PARAMETER_JSON_ROWS = "jsonrows";
     protected static final String FORMAT_PARAMETER_XML = "xml";
+    protected static final String FORMAT_PARAMETER_COUNT = "count";
 
     private RequestType type;
 
@@ -183,8 +185,16 @@ public class RequestImpl implements Request
         setFormat(FORMAT_PARAMETER_JSON_OBJ);
     }
 
+    public void setJSONRowsFormat() {
+        setFormat(FORMAT_PARAMETER_JSON_ROWS);
+    }
+
     public void setXMLFormat() {
         setFormat(FORMAT_PARAMETER_XML);
+    }
+
+    public void setCountFormat() {
+        setFormat(FORMAT_PARAMETER_COUNT);
     }
 
     /**
