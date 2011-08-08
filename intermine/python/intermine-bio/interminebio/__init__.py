@@ -13,20 +13,31 @@ class SequenceQuery(object):
 
     """
 
-    def __init__(self, service, root=None):
+    def __init__(self, service_or_query, root=None):
         """
         Constructor
         ===========
+         
+          >>> s = Service("www.flymine.org/query")
+          >>> bio_query = SequenceQuery(s, "Gene")
+          <interminebio.SequenceQuery xxx>
+          >>> q = s.new_query("Gene").where(s.model.Gene.symbol == ["h", "r", "eve", "zen"])
+          >>> bio_query = SequenceQuery(q)
+          <interminebio.SequenceQuery yyy>
 
-        @param service: The service to connect to.
-        @type service: intermine.webservice.Service
+        @param service_or_query: The service to connect to, or a query to wrap.
+        @type service_or_query: intermine.webservice.Service or intermine.query.Query
 
         @param root: The root class of the query
         @type root: str
 
         """
-        self.service = service
-        self.query = query.Query(service.model, service, root=root)
+        if isinstance(service_or_query, query.Query):
+            self.service = service_or_query.service
+            self.query = service_or_query
+        else:
+            self.service = service
+            self.query = query.Query(service.model, service, root=root)
 
         # Set up delegations
         self.add_constraint = self.query.add_constraint
@@ -60,6 +71,9 @@ class SequenceQuery(object):
         return self
 
     def where(self, *args, **kwargs):
+        """
+        Add a constraint to the query, and return self for chaining.
+        """
         self.query.where(*args, **kwargs)
         return self
 
@@ -102,6 +116,9 @@ class SequenceQuery(object):
 
         Return a FastaIterator object, which stringifies to the Fasta results, 
         and works as an iterator over the records (not the lines).
+
+        When attempting to get results as FASTA the query may only have a single
+        output column. Errors will be raised otherwise.
         """
         return FastaIterator(self.service, self.query)
 
