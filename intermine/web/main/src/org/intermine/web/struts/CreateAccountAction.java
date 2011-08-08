@@ -50,7 +50,7 @@ public class CreateAccountAction extends LoginHandler
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
-                new HashMap(), null));
+                new HashMap(), null, true));
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
             MailUtils.email(username, webProperties);
@@ -75,7 +75,7 @@ public class CreateAccountAction extends LoginHandler
          * md5.digest(); String encoded = HexBin.encode(array); } catch
          * (NoSuchAlgorithmException e) { }
          */
-        doLogin(request, response, session, pm, username, password);
+        doLogin(request, username, password);
         return mapping.findForward("mymine");
     }
 }
