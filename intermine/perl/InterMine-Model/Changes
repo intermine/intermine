@@ -43,3 +43,4 @@ Revision history for InterMine-Model
 0.9701  Bug fix
 0.9702  Declared required version of MooseX::Role::WithOverloading
 0.9801  Finally got boolean fields to get readers prefixed with 'is'. Also, unprefixed accessors for convenience.
+0.9802  Dependency bug fix in response to cpantesters report
