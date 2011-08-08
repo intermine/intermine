@@ -27,6 +27,7 @@ public class Column
     private Path path;
     protected String name;
     protected String columnId;
+    private Boolean showInListAnalysisPreviewTable;
 
     /**
      * @return the columnId
@@ -92,7 +93,7 @@ public class Column
         this.path = null;
         setColumnId(name + "_" + TypeUtil.unqualifiedName(type.getName()));
     }
-
+    
     /**
      * Gets the value of selectable
      * @return a boolean
@@ -153,6 +154,14 @@ public class Column
         return type;
     }
 
+    /**
+     * Used in the view to match this element
+     * @return
+     */
+    public String getColumnIdentifier() {
+    	return getName().replace(" > ", ".");
+    }
+    
     /**
      * Get the column type unqualified as a String
      * @return the column type

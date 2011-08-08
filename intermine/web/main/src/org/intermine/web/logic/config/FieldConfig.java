@@ -32,7 +32,24 @@ public class FieldConfig
     private String displayer;
     private String label = null;
     private Type parent = null;
+    private Boolean showInListAnalysisPreviewTable = false;
 
+    /**
+     * Specify if we want to show this field for an object in list analysis page table preview
+     * @param showInListAnalysisPreviewTable
+     */
+    public void setShowInListAnalysisPreviewTable(Boolean showInListAnalysisPreviewTable) {
+    	this.showInListAnalysisPreviewTable = showInListAnalysisPreviewTable;
+    }
+    
+    /**
+     * -||-
+     * @return
+     */
+    public Boolean getShowInListAnalysisPreviewTable() {
+    	return this.showInListAnalysisPreviewTable;
+    }
+    
     /**
      * Get the label to display in the webapp for this field. If there is
      * no label, returns the name of the field instead.
