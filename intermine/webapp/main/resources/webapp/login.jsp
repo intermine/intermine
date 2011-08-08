@@ -2,14 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- login.jsp -->
 <html:xhtml/>
 <div class="body" align="center">
+
 <im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
-    <fmt:message key="login.haspassword"/><br/><br/>
+    <h3><fmt:message key="login.haspassword"/></h3>
     <html:hidden property="returnToString"/>
     <table>
       <tr>
@@ -26,6 +27,7 @@
     </table>
   </html:form>
 
+
 <script language="javascript">
   var visibility = 'block';
   function toggleDiv(){
@@ -37,7 +39,7 @@
   <br/>
 <a href="javascript:toggleDiv();" >Forgotten password</a>
 <div id="passwordDiv" style="display:none;padding-top:20px">
-  <html:form action="/requestPasswordAction">  
+  <html:form action="/requestPasswordAction">
     <fmt:message key="login.needspassword"/><br/><br/>
     <table>
       <tr>
@@ -48,7 +50,19 @@
     </table>
   </html:form>
   <br/>
-  
+
 </div>
 </im:boxarea>
+
+<c:if test="${!empty OPENID_PROVIDERS}">
+  <im:debug message="${OPENID_PROVIDERS}"/>
+  <im:boxarea stylename="plainbox" fixedWidth="60%">
+	<h3><fmt:message key="login.openid"/></h3>
+	<ul>
+		<c:forEach var="provider" items="${OPENID_PROVIDERS}">
+			<li><a href="/${WEB_PROPERTIES['webapp.path']}/openid?provider=${provider}">Log in with ${provider}</a></li>
+		</c:forEach>
+	</ul>
+  </im:boxarea>
+</c:if>
 <!-- /login.jsp -->
