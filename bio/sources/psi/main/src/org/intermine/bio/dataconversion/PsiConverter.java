@@ -9,6 +9,8 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -827,11 +829,11 @@ public class PsiConverter extends BioFileConverter
              * @param confidence confidence score for interaction
              */
             protected void setConfidence(String confidence) {
-                if (Character.isDigit(confidence.charAt(0))) {
+                try {
                     this.confidence = new Double(confidence);
-                } else {
+                } catch (NumberFormatException e) {
                     confidenceText = (confidenceText != null
-                                    ? confidenceText + confidence : confidence);
+                                    ? confidenceText + ' ' + confidence : confidence);
                 }
             }
 
