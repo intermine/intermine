@@ -226,8 +226,14 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username, String password) {
-        if (hasProfile(username) && validPassword(username, password)) {
-            return getProfile(username);
+        if (hasProfile(username)) {
+        	if (getUserProfile(username).getLocalAccount()) {
+        		if (validPassword(username, password)) {
+                    return getProfile(username);
+        		}
+        	} else {
+        		return getProfile(username);
+        	}
         }
         return null;
     }
@@ -342,7 +348,8 @@ public class ProfileManager
             }
         }
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
-                savedQueries, savedBags, savedTemplates, userProfile.getApiKey());
+                savedQueries, savedBags, savedTemplates, userProfile.getApiKey(),
+                userProfile.getLocalAccount());
         profileCache.put(username, profile);
         return profile;
     }
@@ -365,8 +372,9 @@ public class ProfileManager
         Integer userId = profile.getUserId();
         try {
             UserProfile userProfile = getUserProfile(userId);
-            userProfile.setApiKey(profile.getApiKey());
+
             if (userProfile != null) {
+            	userProfile.setApiKey(profile.getApiKey());
                 for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                     uosw.delete((InterMineObject) i.next());
                 }
@@ -433,7 +441,11 @@ public class ProfileManager
     public synchronized void createProfile(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
-        userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        userProfile.setLocalAccount(profile.isLocal());
+
+        if (profile.isLocal()) {
+        	userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        }
 
         try {
             uosw.store(userProfile);
