@@ -51,7 +51,7 @@ public class RowResultSetTest extends TestCase {
         assertEquals(rows.get(1).get(2), "EmployeeA2");
         assertEquals(rows.get(2).get(1), false);
         assertEquals(rows.get(3).get(4), null);
-        assertEquals(rows.get(14).get(2), "Stéphane");
+        assertEquals(rows.get(14).get(2), "Stephane");
         assertEquals(rows.size(), 15);
     }
 
@@ -61,7 +61,7 @@ public class RowResultSetTest extends TestCase {
         assertEquals(rows.get(1).get(2), "EmployeeA2");
         assertEquals(rows.get(2).get(1), "false");
         assertEquals(rows.get(3).get(4), "null");
-        assertEquals(rows.get(14).get(2), "Stéphane");
+        assertEquals(rows.get(14).get(2), "Stephane");
         assertEquals(rows.size(), 15);
     }
 
@@ -71,7 +71,7 @@ public class RowResultSetTest extends TestCase {
         assertEquals(rows.get(1).get("name"), "EmployeeA2");
         assertEquals(rows.get(2).get("fullTime"), false);
         assertEquals(rows.get(3).get("manager.end"), null);
-        assertEquals(rows.get(14).get("Employee.name"), "Stéphane");
+        assertEquals(rows.get(14).get("Employee.name"), "Stephane");
         assertEquals(rows.size(), 15);
     }
 
