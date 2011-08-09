@@ -40,9 +40,11 @@ public final class OrganismRepository
     private static final String GENUS = "genus";
     private static final String SPECIES = "species";
     private static final String STRAINS = "strains";
+    private static final String ENSEMBL = "ensemblPrefix";
 
     private static final String REGULAR_EXPRESSION =
-        PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS + ")";
+        PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS
+        + "|" + ENSEMBL + ")";
 
     private OrganismRepository() {
       //disable external instantiation
@@ -95,6 +97,8 @@ public final class OrganismRepository
                                     throw new NumberFormatException("taxon ID must be a number");
                                 }
                             }
+                        } else if (fieldName.equals(ENSEMBL)) {
+                            od.setEnsemblPrefix(attributeValue);
                         } else {
                             if (fieldName.equals(SPECIES)) {
                                 od.setSpecies(attributeValue);
