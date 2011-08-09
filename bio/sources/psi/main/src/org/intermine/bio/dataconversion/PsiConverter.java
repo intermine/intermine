@@ -26,6 +26,8 @@ import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -58,6 +60,7 @@ public class PsiConverter extends BioFileConverter
     private String termId = null;
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
+    private static final String ENSEMBL = "ensembl";
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet<String>();
@@ -66,6 +69,7 @@ public class PsiConverter extends BioFileConverter
     // different files.  if a duplicate interaction is found, just skip it, we already have the
     // info. See #2136
     private Set<String> interactions = new HashSet<String>();
+    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     /**
      * Constructor
@@ -621,7 +625,8 @@ public class PsiConverter extends BioFileConverter
             }
 
             for (String identifier : identifiers) {
-                String newIdentifier = resolveGene(taxonId, identifier);
+                // validate ensembl, look up dmel
+                String newIdentifier = resolveGeneIdentifier(taxonId, datasource, identifier);
                 if (StringUtils.isNotEmpty(newIdentifier)) {
                     String refId = storeGene(field, newIdentifier, taxonId);
                     refIds.add(refId);
@@ -643,7 +648,7 @@ public class PsiConverter extends BioFileConverter
             }
         }
 
-        private String resolveGene(String taxonId, String id) {
+        private String resolveGeneIdentifier(String taxonId, String datasource, String id) {
             if ("7227".equals(taxonId)) {
                 IdResolver resolver = resolverFactory.getIdResolver(false);
                 if (resolver != null) {
@@ -657,6 +662,30 @@ public class PsiConverter extends BioFileConverter
                     }
                     identifier = resolver.resolveId(taxonId, identifier).iterator().next();
                     return identifier;
+                }
+            }
+            if (ENSEMBL.equals(datasource)) {
+                Integer taxonInt = null;
+                try {
+                    taxonInt = Integer.valueOf(taxonId);
+                } catch (NumberFormatException e) {
+                    throw new NumberFormatException("invalid taxon ID " + taxonId);
+                }
+                OrganismData od = OR.getOrganismDataByTaxon(taxonInt);
+                if (od == null) {
+                    throw new RuntimeException("Add taxon ID " + taxonId
+                            + " to organism repository");
+                }
+                final String ensemblPrefix = od.getEnsemblPrefix();
+                if (ensemblPrefix == null) {
+                    throw new RuntimeException("Add ensemblPrefix for " + taxonId
+                            + " to organism repository");
+                }
+                if (id.startsWith(ensemblPrefix)) {
+                    return id;
+                } else {
+                    LOG.info("gene for taxon ID had invalid ensembl identifier:" + id
+                            + ", was expecting prefix of " + ensemblPrefix);
                 }
             }
             // everyone not using the resolver should have an identifier
