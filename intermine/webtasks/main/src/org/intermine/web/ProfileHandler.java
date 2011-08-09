@@ -102,7 +102,7 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, savedTemplates, apiKey, isLocal);
+                                     savedBags, savedTemplates);
         return retval;
     }
 
@@ -138,7 +138,7 @@ class ProfileHandler extends DefaultHandler
                 apiKey = attrs.getValue("apikey");
             }
             if (attrs.getValue("localAccount") != null) {
-            	isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
+                isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
             }
         }
         if ("bags".equals(qName)) {

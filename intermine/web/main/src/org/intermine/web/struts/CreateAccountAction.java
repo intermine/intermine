@@ -50,7 +50,7 @@ public class CreateAccountAction extends LoginHandler
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
-                new HashMap(), null, true));
+                new HashMap()));
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
             MailUtils.email(username, webProperties);
