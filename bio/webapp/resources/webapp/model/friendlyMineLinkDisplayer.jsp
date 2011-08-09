@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!-- friendlyMineLinkDisplayer.jsp -->
 
@@ -13,6 +14,15 @@
 <c:set var="interMineObject" value="${object}"/>
 
 <script type="text/javascript" charset="utf-8">
+// Java HashMap to JavaScript Dictionary
+var minePortals = {};
+<c:forEach var="portal" items="${mines}">
+    var mineDetails = {};
+    <c:forEach var="portalDetail" items="${portal.value}">
+        mineDetails["<c:out value='${portalDetail.key}'/>"] = "<c:out value='${portalDetail.value}'/>";
+    </c:forEach>
+    minePortals["<c:out value='${fn:toLowerCase(portal.key)}'/>"] = mineDetails;
+</c:forEach>
 
 function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 
@@ -62,7 +72,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
     <b>${entry.key}</b>
     <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
     <script type="text/javascript" charset="utf-8">
-      getFriendlyMineLinks('${entry.key}', '${entry.value}', '${organisms}', '${identifierList}');
+      getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
     </script>
   </c:forEach>
 </div>

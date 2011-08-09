@@ -13,6 +13,7 @@ package org.intermine.bio.web;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -67,17 +68,30 @@ public class FriendlyMineLinkController  extends TilesAction
         Properties props = PropertiesUtil.stripStart("intermines",
                 PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
         Enumeration<?> propNames = props.propertyNames();
-        Map<String, String> mines = new HashMap<String, String>();
+        HashMap<String, LinkedHashMap<String, String>> minePortals =
+                new HashMap<String, LinkedHashMap<String, String>>();
         while (propNames.hasMoreElements()) {
-            String mineId =  (String) propNames.nextElement();
+            String mineId = (String) propNames.nextElement();
             mineId = mineId.substring(0, mineId.indexOf("."));
             Properties mineProps = PropertiesUtil.stripStart(mineId,
                     PropertiesUtil.getPropertiesStartingWith(mineId, props));
+            
+            // get name and url
             String mineName = mineProps.getProperty("name");
             String mineURL = mineProps.getProperty("url");
             if (StringUtils.isNotEmpty(mineName) && StringUtils.isNotEmpty(mineURL)
                     && !mineName.equals(localMineName)) {
-                mines.put(mineName, mineURL);
+                LinkedHashMap<String, String> mineDetails = new LinkedHashMap<String, String>();
+                // colors for the mines
+                String mineBgColor = mineProps.getProperty("bgcolor");
+                String mineFrontColor = mineProps.getProperty("frontcolor");
+                if (StringUtils.isNotEmpty(mineBgColor)
+                        && StringUtils.isNotEmpty(mineFrontColor)) {
+                    mineDetails.put("bgcolor", mineBgColor);
+                    mineDetails.put("frontcolor", mineFrontColor);
+                }
+                mineDetails.put("url", mineURL);
+                minePortals.put(mineName, mineDetails);
             }
         }
 
@@ -96,8 +110,8 @@ public class FriendlyMineLinkController  extends TilesAction
         String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifierList", identifierList);
 
-        if (!mines.isEmpty() && StringUtils.isNotEmpty(organisms)) {
-            request.setAttribute("mines", mines);
+        if (!minePortals.isEmpty() && StringUtils.isNotEmpty(organisms)) {
+            request.setAttribute("mines", minePortals);
             request.setAttribute("organisms", organisms);
         }
         return null;
