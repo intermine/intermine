@@ -34,8 +34,7 @@ public class MetadataCacheQueryServlet extends HttpServlet
             .getLogger(MetadataCacheQueryServlet.class);
 
     private static final String URL_PATTERN = "/service/query/metadatacache";
-    private static final int URL_PATTERN_LENGTH = URL_PATTERN.length(); // length
-                                                                        // = 28
+    private static final int URL_PATTERN_LENGTH = URL_PATTERN.length(); // length = 28
 
     /**
      * {@inheritDoc}

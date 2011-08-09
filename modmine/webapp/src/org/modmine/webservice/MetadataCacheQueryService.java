@@ -254,8 +254,6 @@ public class MetadataCacheQueryService
             String subTrack = gt.getSubTrack();
             trackSet.add(track + "/" + subTrack);
         }
-
         return prefix + StringUtil.join(trackSet, "-");
-
     }
 }
