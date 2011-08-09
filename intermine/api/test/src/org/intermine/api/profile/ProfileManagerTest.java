@@ -106,7 +106,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap(), bobKey);
+                                 new HashMap(), new HashMap(), new HashMap(), bobKey, true);
         pm.createProfile(bobProfile);
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -136,7 +136,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         template = new TemplateQuery("template", "ttitle", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")));
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
-                                   new HashMap(), new HashMap(), new HashMap());
+                                   new HashMap(), new HashMap(), new HashMap(), true);
         pm.createProfile(sallyProfile);
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", objectBag);
