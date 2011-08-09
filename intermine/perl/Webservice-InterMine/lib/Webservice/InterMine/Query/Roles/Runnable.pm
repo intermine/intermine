@@ -139,6 +139,10 @@ sub results_iterator {
     );
 }
 
+sub iterator {
+    goto &results_iterator;
+}
+
 =head2 results( %options )
 
 returns the results from a query in the result format
