@@ -34,6 +34,10 @@ public class OrganismRepositoryTest extends TestCase
         assertEquals("elegans", celegansData.getSpecies());
         assertEquals("Caenorhabditis", celegansData.getGenus());
         assertEquals("C.elegans", celegansData.getAbbreviation());
+
+        OrganismData peopleData = organismRepository.getOrganismDataByTaxon(9606);
+        assertEquals("ENSG", peopleData.getEnsemblPrefix());
+
     }
 
     // fetching by abbreviation should be case insensitive

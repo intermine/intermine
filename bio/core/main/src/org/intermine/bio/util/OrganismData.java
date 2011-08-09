@@ -21,6 +21,7 @@ public class OrganismData
     private String genus;
     private String abbreviation;
     private int taxonId;
+    private String ensemblPrefix;
 
     /**
      * Create a new OrganismData object.  Not public because these are created only by
@@ -103,10 +104,24 @@ public class OrganismData
     }
 
     /**
+     * @param ensemblPrefix prefix for Ensembl genes, eg. ENSMUSG for this organism
+     */
+    public void setEnsemblPrefix(String ensemblPrefix) {
+        this.ensemblPrefix = ensemblPrefix;
+    }
+
+    /**
+     * @return prefix for Ensembl genes, eg. ENSMUSG for this organism
+     */
+    public String getEnsemblPrefix() {
+        return ensemblPrefix;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String toString() {
-        return genus + " " + species + ", " + abbreviation + ", " + taxonId;
+        return genus + " " + species + ", " + abbreviation + ", " + taxonId + ", " + ensemblPrefix;
     }
 
     /**
