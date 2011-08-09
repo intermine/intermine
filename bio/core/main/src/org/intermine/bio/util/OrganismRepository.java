@@ -10,15 +10,14 @@ package org.intermine.bio.util;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 
@@ -32,6 +31,7 @@ public final class OrganismRepository
     private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
+    private Map<Integer, OrganismData> strainMap = new HashMap<Integer, OrganismData>();
 
     private static final String PROP_FILE = "organism_config.properties";
     private static final String PREFIX = "taxon";
@@ -39,9 +39,10 @@ public final class OrganismRepository
     private static final String ABBREVIATION = "abbreviation";
     private static final String GENUS = "genus";
     private static final String SPECIES = "species";
+    private static final String STRAINS = "strains";
 
     private static final String REGULAR_EXPRESSION =
-        PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + ")";
+        PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS + ")";
 
     private OrganismRepository() {
       //disable external instantiation
@@ -80,18 +81,26 @@ public final class OrganismRepository
                         String taxonIdString = matcher.group(1);
                         int taxonId = Integer.valueOf(taxonIdString).intValue();
                         String fieldName = matcher.group(2);
-
                         OrganismData od = or.getOrganismDataByTaxonInternal(taxonId);
-                        final String abbreviation = props.getProperty(name);
+                        final String attributeValue = props.getProperty(name);
                         if (fieldName.equals(ABBREVIATION)) {
-                            od.setAbbreviation(abbreviation);
-                            or.abbreviationMap.put(abbreviation.toLowerCase(), od);
+                            od.setAbbreviation(attributeValue);
+                            or.abbreviationMap.put(attributeValue.toLowerCase(), od);
+                        } else if (fieldName.equals(STRAINS)) {
+                            String[] strains = attributeValue.split(" ");
+                            for (String strain : strains) {
+                                try {
+                                    or.strainMap.put(Integer.valueOf(strain), od);
+                                } catch (NumberFormatException e) {
+                                    throw new NumberFormatException("taxon ID must be a number");
+                                }
+                            }
                         } else {
                             if (fieldName.equals(SPECIES)) {
-                                od.setSpecies(abbreviation);
+                                od.setSpecies(attributeValue);
                             } else {
                                 if (fieldName.equals(GENUS)) {
-                                    od.setGenus(abbreviation);
+                                    od.setGenus(attributeValue);
                                 } else {
                                     throw new RuntimeException("internal error didn't match: "
                                                                + fieldName);
@@ -133,12 +142,18 @@ public final class OrganismRepository
     }
 
     /**
-     * Look up OrganismData objects by taxon id.  Return null if there is no such organism.
+     * Look up OrganismData objects by taxon id.  If there is no taxon, look in strains.  Return
+     * null if there is no such organism.
+     *
      * @param taxonId the taxon id
      * @return the OrganismData
      */
-    public OrganismData getOrganismDataByTaxon(Integer taxonId) {
-        return taxonMap.get(taxonId);
+    public OrganismData getOrganismDataByTaxon(int taxonId) {
+        OrganismData od = taxonMap.get(new Integer(taxonId));
+        if (od == null) {
+            od = strainMap.get(taxonId);
+        }
+        return od;
     }
 
     /**
@@ -180,4 +195,5 @@ public final class OrganismRepository
         String species = fullName.split(" ", 2)[1];
         return getOrganismDataByGenusSpecies(genus, species);
     }
+
 }
