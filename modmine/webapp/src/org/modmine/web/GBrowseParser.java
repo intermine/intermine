@@ -27,7 +27,7 @@ import org.intermine.util.PropertiesUtil;
  * @author contrino
  *
  */
-public class GBrowseParser
+public final class GBrowseParser
 {
     private static final Logger LOG = Logger.getLogger(GBrowseParser.class);
 
@@ -38,6 +38,11 @@ public class GBrowseParser
     private static final String GBROWSE_DEFAULT_URL =
         "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
     private static final String DCC_PREFIX = "modENCODE_";
+    private static final String SEPARATOR = ";";
+
+    private GBrowseParser() {
+
+    }
 
     /**
      * A GBrowse track, identified by
@@ -51,7 +56,7 @@ public class GBrowseParser
         private String organism; // {fly,worm}
         private String track;    // e.g. Snyder_PHA4_GFP_COMB
         private String subTrack; // e.g. PHA4_L2_GFP
-        private String DCCid;
+        private String dCCid;
 
         /**
          * Instantiates a GBrowseTrack only to track level.
@@ -71,13 +76,13 @@ public class GBrowseParser
          * @param organism     e.g. fly, worm
          * @param track        e.g. Snyder_PHA4_GFP_COMB
          * @param subTrack     e.g. PHA4_L2_GFP
-         * @param DCCid
+         * @param dCCid DCC id
          */
-        public GBrowseTrack(String organism, String track, String subTrack, String DCCid) {
+        public GBrowseTrack(String organism, String track, String subTrack, String dCCid) {
             this.organism  = organism;
             this.track = track;
             this.subTrack = subTrack;
-            this.DCCid = DCCid;
+            this.dCCid = dCCid;
         }
 
         /**
@@ -105,7 +110,7 @@ public class GBrowseParser
          * @return the DCCid
          */
         public String getDCCid() {
-            return DCCid;
+            return dCCid;
         }
     }
 
@@ -122,8 +127,6 @@ public class GBrowseParser
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
-
-            final String SEPARATOR = ";";
 
             // examples of lines:
             //
@@ -226,7 +229,7 @@ public class GBrowseParser
         }
     }
 
-    
+
     /**
      * This method get the GBrowse base URL from the properties
      * or default to one
