@@ -113,7 +113,7 @@ public class TemplatePopulatorTest extends TestCase
         ProfileManager pm = new ProfileManager(os, uosw);
 
         Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(),
-                new HashMap(), new HashMap());
+                new HashMap(), new HashMap(), true);
         pm.createProfile(profile);
         return profile;
     }

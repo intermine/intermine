@@ -42,7 +42,7 @@ public class TagManagerTest extends InterMineAPITestCase
     public void setUp() throws Exception {
         super.setUp();
         pm = im.getProfileManager();
-        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(), new HashMap());
+        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(), new HashMap(), true);
         pm.createProfile(bobProfile);
         manager = im.getTagManager();
     }
