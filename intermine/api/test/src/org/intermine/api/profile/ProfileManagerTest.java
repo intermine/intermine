@@ -106,7 +106,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap(), bobKey);
+                                 new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(bobProfile);
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
