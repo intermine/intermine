@@ -126,3 +126,4 @@ div.template.table div.templateDetails { margin:0 !important; width:100%; }
 #friendlyMines ul li { display:inline-block; margin:0 10px 0 0; }
 #friendlyMines ul li a { background:url("../images/icons/external_link.png") no-repeat right; padding-right:10px;
   white-space:nowrap; }
+#friendlyMines ul li.toggler a { background:none; text-decoration:underline; }
