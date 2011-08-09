@@ -392,7 +392,6 @@ public class Item implements Comparable<Item>
         if (item == null) {
             throw new IllegalArgumentException("Attempt to set reference '" + name + "' to null"
                     + " in '" + className + "' item with identifier: " + identifier);
-            
         }
         addReference(new Reference(name, item.getIdentifier()));
     }
