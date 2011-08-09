@@ -117,6 +117,8 @@ Revision history for Webservice-InterMine
 0.9808: Fri Aug  5 12:21:23 BST 2011
         * Export Webservice::InterMine methods by default (with options to exclude them) 
         * Deprecated username and password authentication on services that support tokens
+0.9809: Mon Aug  8 17:59:19 BST 2011
+        * Backwards compatibility through to version 3 regarding JSON container formats
 
         
 

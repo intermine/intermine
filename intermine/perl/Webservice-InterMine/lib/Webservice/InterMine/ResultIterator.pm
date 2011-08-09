@@ -463,7 +463,7 @@ sub read_line {
     if ( defined $line ) {
         $line = trim_and_decode($line);
     }
-    warn "RETURNING LINE: $line\n" if $ENV{DEBUG};
+    warn "RETURNING LINE: " . ($line || "") if $ENV{DEBUG};
 
     return $line;
 }

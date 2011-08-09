@@ -90,7 +90,7 @@ sub parse_header {
 
 sub header_is_parsed {
     my $self = shift;
-    return $self->header =~ /"results":\[$/;
+    return $self->header =~ /results["']:\[$/;
 }
 
 has completeness => (
@@ -109,10 +109,13 @@ sub is_complete {
 sub check_status {
     my $self = shift;
     my $container_text = $self->header . $self->footer;
+    $container_text =~ s/'/"/g; # Fix bad quotes.
+    warn $container_text if $ENV{DEBUG};
     my $container = eval {$self->decode($container_text)};
     unless ($container) {
         confess "Problem decoding container", $@, $container_text;
     }
+    return unless (exists $container->{wasSuccessful});
     confess "Results returned error: ", $container->{statusCode}, " - ", $container->{error}
         unless ($container->{wasSuccessful});
 }
