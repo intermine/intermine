@@ -71,6 +71,7 @@ public class PubMedGeneConverter extends FileConverter
         datasetRefId = dataset.getIdentifier();
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
+
     /**
      * Sets the list of taxonIds that should be imported
      *
