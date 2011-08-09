@@ -348,7 +348,8 @@ public class ProfileManager
             }
         }
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
-                savedQueries, savedBags, savedTemplates);
+                savedQueries, savedBags, savedTemplates, userProfile.getApiKey(),
+                userProfile.getLocalAccount());
         profileCache.put(username, profile);
         return profile;
     }
