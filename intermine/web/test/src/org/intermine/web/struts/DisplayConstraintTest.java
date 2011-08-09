@@ -80,16 +80,16 @@ public class DisplayConstraintTest extends TestCase
 
         pm = new ProfileManager(os, uosw);
         superUser = new Profile(pm, "superUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap());
+            new HashMap(), new HashMap(), new HashMap(), true);
         pm.createProfile(superUser);
         pm.setSuperuser("superUser");
 
         testUser = new Profile(pm, "testUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap());
+            new HashMap(), new HashMap(), new HashMap(), true);
         pm.createProfile(testUser);
 
         emptyUser = new Profile(pm, "emptyUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap());
+            new HashMap(), new HashMap(), new HashMap(), true);
         pm.createProfile(emptyUser);
 
         initializeDisplayConstraints();
