@@ -638,6 +638,9 @@ public class PsiConverter extends BioFileConverter
                     }
                 }
             }
+            if (sb == null) {
+                return;
+            }
             InteractorHolder ih = intactIdToHolder.get(intactId);
             if (ih == null) {
                 ih = new InteractorHolder(refIds);
@@ -686,6 +689,7 @@ public class PsiConverter extends BioFileConverter
                 } else {
                     LOG.info("gene for taxon ID had invalid ensembl identifier:" + id
                             + ", was expecting prefix of " + ensemblPrefix);
+                    return null;
                 }
             }
             // everyone not using the resolver should have an identifier
