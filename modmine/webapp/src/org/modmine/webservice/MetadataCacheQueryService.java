@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +29,17 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
 import org.modmine.web.DisplayExperiment;
+import org.modmine.web.FeatureCountsRecord;
+import org.modmine.web.GBrowseParser;
 import org.modmine.web.MetadataCache;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
- * A modMine specific webservice for modENCODE home page data presentation purpose.
+ * A modMine specific webservice for modENCODE home page data display purpose.
  *
  * @author Fengyuan Hu
  *
@@ -48,10 +54,14 @@ public class MetadataCacheQueryService
         Map<String, String> tempMap = new HashMap<String, String>();
         tempMap.put("catexp", "getCatExpJsonString");
         tempMap.put("webapp_path", "getWebappPath");
+        tempMap.put("gbrowse_base_url", "getGBrowseBaseURL");
         tempMap.put("test", "testWebservice");
         tempMap.put("catexp.test", "testWebservice");
         RESOURCE_METHOD_MAP = Collections.unmodifiableMap(tempMap);
     }
+
+    private static final String GBROWSE_DEFAULT_URL =
+        "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
 
     private ObjectStore os;
     private String resourcePath;
@@ -111,38 +121,10 @@ public class MetadataCacheQueryService
     private String getCatExpJsonString() {
 
         Map<String, List<DisplayExperiment>> ceMap = MetadataCache.getCategoryExperiments(os);
+        Map<String, List<GBrowseTrack>> gBrowseTracks =
+            MetadataCache.getExperimentGBrowseTracks(os);
 
         // Step One, create a new map: categories -> organsims -> experiments
-        // TODO move this to MetadataCache
-//        Map<String, List<DisplayExperiment>> ceFlyMap =
-//            new LinkedHashMap<String, List<DisplayExperiment>>();
-//
-//        Map<String, List<DisplayExperiment>> ceWormMap =
-//            new LinkedHashMap<String, List<DisplayExperiment>>();
-//
-//        for (String cat : ceMap.keySet()) {
-//            List<DisplayExperiment> flyExpList = new ArrayList<DisplayExperiment>();
-//            List<DisplayExperiment> wormExpList = new ArrayList<DisplayExperiment>();
-//
-//            for (DisplayExperiment de : ceMap.get(cat)) {
-//                if (de.getOrganisms().contains("D. melanogaster")) {
-//                    flyExpList.add(de);
-//                }
-//
-//                if (de.getOrganisms().contains("C. elegans")) {
-//                    wormExpList.add(de);
-//                }
-//            }
-//
-//            if (flyExpList.size() > 0) {
-//                ceFlyMap.put(cat, flyExpList);
-//            }
-//
-//            if (wormExpList.size() > 0) {
-//                ceWormMap.put(cat, wormExpList);
-//            }
-//        }
-
         Map<String, Map<String, List<DisplayExperiment>>> newCEMap =
             new LinkedHashMap<String, Map<String, List<DisplayExperiment>>>();
 
@@ -169,66 +151,6 @@ public class MetadataCacheQueryService
         }
 
         // Step Two, create JSON from newCEMap
-//        Map<String, Object> orgMap = new LinkedHashMap<String, Object>();
-//        List<Object> orgList = new ArrayList<Object>();
-//
-//        Map<String, Object> flyMap = new LinkedHashMap<String, Object>();
-//        List<Object> flyList = new ArrayList<Object>();
-//
-//        for (String cat : ceFlyMap.keySet()) {
-//            Map<String, Object> catExpMap = new LinkedHashMap<String, Object>();
-//
-//            List<Object> expList = new ArrayList<Object>();
-//
-//            for (DisplayExperiment de : ceFlyMap.get(cat)) {
-//                Map<String, Object> expDetailMap = new LinkedHashMap<String, Object>();
-//                expDetailMap.put("experiment_title", de.getName());
-//                expDetailMap.put("pi", de.getPi());
-//                expDetailMap.put("labs", de.getLabs());
-//                // could add more information here
-//
-//                expList.add(expDetailMap);
-//            }
-//
-//            catExpMap.put("category_title", cat);
-//            catExpMap.put("experiments", expList);
-//            flyList.add(catExpMap);
-//        }
-//        flyMap.put("categories", flyList);
-//        flyMap.put("org_name", "D. melanogaster");
-//
-//        Map<String, Object> wormMap = new LinkedHashMap<String, Object>();
-//        List<Object> wormList = new ArrayList<Object>();
-//
-//        for (String cat : ceWormMap.keySet()) {
-//            Map<String, Object> catExpMap = new LinkedHashMap<String, Object>();
-//
-//            List<Object> expList = new ArrayList<Object>();
-//
-//            for (DisplayExperiment de : ceWormMap.get(cat)) {
-//                Map<String, Object> expDetailMap = new LinkedHashMap<String, Object>();
-//                expDetailMap.put("experiment_title", de.getName());
-//                expDetailMap.put("pi", de.getPi());
-//                expDetailMap.put("labs", de.getLabs());
-//                // could add more information here
-//
-//                expList.add(expDetailMap);
-//            }
-//
-//            catExpMap.put("category_title", cat);
-//            catExpMap.put("experiments", expList);
-//            wormList.add(catExpMap);
-//        }
-//        wormMap.put("categories", wormList);
-//        wormMap.put("org_name", "C. elegans");
-//
-//        orgList.add(flyMap);
-//        orgList.add(wormMap);
-//
-//        orgMap.put("organisms", orgList);
-//
-//        JSONObject jo = new JSONObject(orgMap);
-
         Map<String, Object> catMap = new LinkedHashMap<String, Object>();
         List<Object> catList = new ArrayList<Object>();
 
@@ -243,10 +165,34 @@ public class MetadataCacheQueryService
 
                 for (DisplayExperiment de : newCEMap.get(cat).get(org)) {
                     Map<String, Object> expDetailMap = new LinkedHashMap<String, Object>();
-                    expDetailMap.put("experiment_title", de.getName());
+                    expDetailMap.put("experiment_name", de.getName());
+                    expDetailMap.put("project_name", de.getProjectName());
                     expDetailMap.put("pi", de.getPi());
                     expDetailMap.put("labs", de.getLabs());
-                    // could add more information here
+                    expDetailMap.put("submission_count", de.getSubmissionCount());
+                    expDetailMap.put("factor_types", de.getFactorTypes());
+
+                    // Features, could be null
+                    Set<Object> featureSet = new LinkedHashSet<Object>();
+                    if (de.getFeatureCountsRecords() != null) {
+                        for (FeatureCountsRecord fcr : de.getFeatureCountsRecords()) {
+                            Map<String, Object> featureMap = new LinkedHashMap<String, Object>();
+                            featureMap.put("feature_type", fcr.getFeatureType());
+                            featureMap.put("feature_counts", fcr.getFeatureCounts());
+                            featureSet.add(featureMap);
+                        }
+                    }
+                    expDetailMap.put("features", featureSet);
+
+                    // GBrowse, could be null
+                    Map<String, Object> gbrowseMap = new HashMap<String, Object>();
+                    if (!gBrowseTracks.get(de.getName()).isEmpty()) {
+                        gbrowseMap.put("track_counts", gBrowseTracks.get(de.getName()).size());
+                        gbrowseMap.put("track_link",
+                                generateGBrowseTrackLink(gBrowseTracks.get(de
+                                        .getName())));
+                    }
+                    expDetailMap.put("gbrowse_tracks", gbrowseMap);
 
                     expList.add(expDetailMap);
                 }
@@ -272,17 +218,44 @@ public class MetadataCacheQueryService
     }
 
     @SuppressWarnings("unused")
+    /**
+     * return webapp path, e.g. modminepreview
+     */
     private String getWebappPath() {
-        String requestURI = request.getRequestURI();
-        int index = nthOccurrence(requestURI, '/', 1);
-        return requestURI.substring(0, index);
+        return SessionMethods.getWebProperties(
+                request.getSession().getServletContext()).getProperty("webapp.path");
     }
 
-    private static int nthOccurrence(String str, char c, int n) {
-        int pos = str.indexOf(c, 0);
-        while (n-- > 0 && pos != -1) {
-            pos = str.indexOf(c, pos + 1);
+    @SuppressWarnings("unused")
+    private String getGBrowseBaseURL() {
+        String gbrowseBaseUrl = null;
+
+        gbrowseBaseUrl = GBrowseParser.getGBrowsePrefix();
+
+        if (gbrowseBaseUrl == null || gbrowseBaseUrl.isEmpty()) {
+            gbrowseBaseUrl = GBROWSE_DEFAULT_URL;
         }
-        return pos;
+
+        return gbrowseBaseUrl;
+    }
+
+    private String generateGBrowseTrackLink(List<GBrowseTrack> tracks) {
+        String prefix = null;
+        String org = tracks.get(0).getOrganism();
+        if ("fly".equals(org)) {
+            prefix = "fly/?label=";
+        } else {
+            prefix = "worm/?label=";
+        }
+
+        Set<String> trackSet = new LinkedHashSet<String>();
+        for (GBrowseTrack gt : tracks) {
+            String track = gt.getTrack();
+            String subTrack = gt.getSubTrack();
+            trackSet.add(track + "/" + subTrack);
+        }
+
+        return prefix + StringUtil.join(trackSet, "-");
+
     }
 }
