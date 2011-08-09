@@ -250,58 +250,18 @@
 
     <div id="ListCategory" class="aspectBlock">
     <div class="box grid_4">
-        <a name="list"><h2>List of ${bag.size}&nbsp;${bag.type}<c:if test="${bag.size != 1}">s</c:if>&nbsp;<div
-        class="button">
-            <div class="left"></div>
-            <input type="button" value="+ Show">
-            <div class="right"></div>
-        </div>
+        <a name="list"><h2>List of ${bag.size}&nbsp;${bag.type}<c:if test="${bag.size != 1}">s</c:if>
     </h2></a>
     </div>
 
     <div class="clear"></div>
 
-    <%-- convert to a different type & orthologues --%>
-    <div class="box grid_4" id="convertList">
-      <div class="feature convert">
-        <h3 class="goog">Convert to a different type</h3>
-        <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
-        <html:hidden property="bagName" value="${bag.name}"/>
-          <tiles:insert name="convertBag.tile">
-            <tiles:put name="bag" beanName="bag" />
-            <tiles:put name="idname" value="cp" />
-            <tiles:put name="orientation" value="h" />
-          </tiles:insert>
-        </html:form>
-      </div>
-    </div>
+	<%-- show expanded table immediately? --%>
+	<c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
+		<c:set var="showTable" value="true" />
+	</c:if>
 
-    <%-- download list --%>
-    <div class="box grid_4" id="download">
-      <div class="feature">
-        <h3 class="goog">Download</h3>
-        <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
-        <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
-        <tiles:get name="export.tile"/>
-      </div>
-    </div>
-
-    <%-- external links --%>
-    <div class="box grid_4" id="externalLinks">
-      <div class="feature">
-      <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
-        <html:hidden property="bagName" value="${bag.name}"/>
-        <tiles:insert page="/bagDisplayers.jsp">
-          <tiles:put name="bag" beanName="bag"/>
-          <tiles:put name="showOnLeft" value="false"/>
-        </tiles:insert>
-      </html:form>
-      </div>
-    </div>
-
-    <div class="clear"></div>
-
-    <div id="ListArea" style="display:none;">
+    <div id="ListArea" <c:if test="${not showTable}">style="display:none;"</c:if>>
 
     <%-- list table --%>
     <div id="results" class="box grid_12">
@@ -355,7 +315,7 @@
       </div>
       <div class="clear"></div>
 	  
-	  <div id="list-table" class="collection-table nowrap nomargin results">
+	  <div id="list-table" class="collection-table nowrap results">
 		  <div style="overflow-x:auto;">
 		      <tiles:insert name="resultsTable.tile">
 		        <tiles:put name="pagedResults" beanName="pagedResults" />
@@ -370,74 +330,69 @@
 	        <span id="selectedIdFields"></span>
 	      </div>
       </div>
-      
-      <div class="clear"></div>
-      
-      <div id="preview-table" class="collection-table nowrap nomargin results">
-      	<table>
-      		<tbody></tbody>
-      	</table>
-      </div>
-      <script type="text/javascript">
-      	(function() {
-      		<%-- give me the columns in the table in order --%>
-      		var columns = Array();
-      		jQuery("#list-table table thead th").each(function(index) {
-      			columns.push(jQuery(this).attr('title'));
-      		});
-      		
-      		<%-- only valid columns --%>
-      		var previewColumns = Array();
-      		jQuery.each('${showInPreviewTable}'.replace(/\[|\]/g, '').split(', '), function(index, value) { 
-      		  if (jQuery("#list-table table thead th[title='"+value+"']").exists()) {
-      			previewColumns.push(value);
-      		  }
-      		});
-      		if (previewColumns.length > 0) {
-      			var limit = 3;
-      			jQuery("#list-table table tbody tr").each(function(index) {
-      				limit--;
-      				var sourceTr = this;
-      				<%-- copy over the relevant row columns --%>
-      				jQuery('<tr/>', {
-      					html: function() {
-      						var tr = this;
-      	      				jQuery.each(previewColumns, function(index, value) {
-      	      					jQuery('<td/>', {
-      	      						text: function() {
-      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
-      	      						}
-      	      					}).appendTo(tr);
-      	      				});
-      					}
-      				}).appendTo("#preview-table table tbody");
-      				
-      				if (limit <= 0) return false;
-      			});
-      		}
-      	})();
-      </script>
     </div>
 
-    <script type="text/javascript">
-    	(function() {
+    <div class="clear"></div>
+
+    </div>
+
+	<div class="clear"></div>
+
+	<div class="grid_8">
+	
+	    <%-- preview table will be populated by JS here --%>
+		<div id="preview-table" <c:if test="${showTable}">style="display:none;"</c:if> class="box grid_12 last collection-table nowrap nomargin results">
+	      <table>
+	        <tbody></tbody>
+	      </table>
+	      <div class="toggle">
+	      	<a class="more" title="Show the results list">Show the list</a>
+	      </div>
+	    </div>	
+	
+	      <script type="text/javascript">
+	      	(function() {
+	      		<%-- give me the columns in the table in order --%>
+	      		var columns = Array();
+	      		jQuery("#list-table table thead th").each(function(index) {
+	      			columns.push(jQuery(this).attr('title'));
+	      		});
+	      		
+	      		<%-- only valid columns --%>
+	      		var previewColumns = Array();
+	      		jQuery.each('${showInPreviewTable}'.replace(/\[|\]/g, '').split(', '), function(index, value) { 
+	      		  if (jQuery("#list-table table thead th[title='"+value+"']").exists()) {
+	      			previewColumns.push(value);
+	      		  }
+	      		});
+	      		if (previewColumns.length > 0) {
+	      			var limit = 3;
+	      			jQuery("#list-table table tbody tr").each(function(index) {
+	      				limit--;
+	      				var sourceTr = this;
+	      				<%-- copy over the relevant row columns --%>
+	      				jQuery('<tr/>', {
+	      					html: function() {
+	      						var tr = this;
+	      	      				jQuery.each(previewColumns, function(index, value) {
+	      	      					jQuery('<td/>', {
+	      	      						text: function() {
+	      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
+	      	      						}
+	      	      					}).appendTo(tr);
+	      	      				});
+	      					}
+	      				}).appendTo("#preview-table table tbody");
+	      				
+	      				if (limit <= 0) return false;
+	      			});
+	      		}
+	      		
 		      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
 		      function toggleResults() {
-		        // expanding or contracting?
-		        jQuery('#ListArea').toggle();
-
-		        if (jQuery("#ListCategory h2 div.button").hasClass('active')) {
-		          jQuery("#ListCategory h2 div.button input").attr('value', '+ Show');
-		        } else {
-		          jQuery("#ListCategory h2 div.button input").attr('value', '- Hide');
-		        }
-
-		        jQuery("#ListCategory h2 div.button").toggleClass('active');
+		    	jQuery('#preview-table').toggle();
+		        jQuery('#ListArea').slideDown().scrollTo('slow', 'linear', -25);
 		      }
-		      // let us not forget that results will be shown on successful search and when paginating that requires synchronous call
-		      <c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
-		        jQuery(document).ready(function() { toggleResults(); });
-		      </c:if>
 
 		      // shuffle "selected" around:
 		      jQuery("#results b").not("table.results b").remove();
@@ -470,14 +425,49 @@
 		      });
 
 		      // toggler event
-		      jQuery('#ListCategory h2 div.button').click(function() {
+		      jQuery('#preview-table').click(function() {
 		        toggleResults();
 		      });
-    	})();
-    </script>
+	      	})();
+	      </script>	
+	
+	    <%-- convert to a different type & orthologues --%>
+	    <div class="box grid_6" id="convertList">
+	      <div class="feature convert">
+	        <h3 class="goog">Convert to a different type</h3>
+	        <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+	        <html:hidden property="bagName" value="${bag.name}"/>
+	          <tiles:insert name="convertBag.tile">
+	            <tiles:put name="bag" beanName="bag" />
+	            <tiles:put name="idname" value="cp" />
+	            <tiles:put name="orientation" value="h" />
+	          </tiles:insert>
+	        </html:form>
+	      </div>
+	    </div>
+	
+	    <%-- download list --%>
+	    <div class="box grid_6" id="download">
+	      <div class="feature">
+	        <h3 class="goog">Download</h3>
+	        <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
+	        <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
+	        <tiles:get name="export.tile"/>
+	      </div>
+	    </div>
+    </div>
 
-    <div class="clear"></div>
-
+    <%-- external links --%>
+    <div class="box grid_4" id="externalLinks">
+      <div class="feature">
+      <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+        <html:hidden property="bagName" value="${bag.name}"/>
+        <tiles:insert page="/bagDisplayers.jsp">
+          <tiles:put name="bag" beanName="bag"/>
+          <tiles:put name="showOnLeft" value="false"/>
+        </tiles:insert>
+      </html:form>
+      </div>
     </div>
 
     </div>
