@@ -55,6 +55,12 @@ public class Profile
     private String token;
 
     /**
+     * True if this account is purely local. False if it was created
+     * in reference to another authenticator, such as an OpenID provider.
+     */
+    private final boolean isLocal;
+
+    /**
      * Construct a Profile
      * @param manager the manager for this profile
      * @param username the username for this profile
@@ -63,14 +69,16 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
+     * @param token The token to use as an API key
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, TemplateQuery> savedTemplates) {
+                   Map<String, TemplateQuery> savedTemplates, String token, boolean isLocal) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
         this.password = password;
+        this.isLocal = isLocal;
         if (savedQueries != null) {
             this.savedQueries.putAll(savedQueries);
         }
@@ -84,7 +92,22 @@ public class Profile
         this.token = token;
     }
 
-
+    /**
+     * Construct a profile without an API key
+     * @param manager the manager for this profile
+     * @param username the username for this profile
+     * @param userId the id of this user
+     * @param password the password for this profile
+     * @param savedQueries the saved queries for this profile
+     * @param savedBags the saved bags for this profile
+     * @param savedTemplates the saved templates for this profile
+     */
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+            Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
+            Map<String, TemplateQuery> savedTemplates, boolean isLocal) {
+        this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
+                null, isLocal);
+    }
 
     /**
      * Return the ProfileManager that was passed to the constructor.
@@ -509,7 +532,7 @@ public class Profile
      * @return Whether or not this is a local account.
      */
     public boolean isLocal() {
-    	return false;
+    	return this.isLocal;
     }
 
 }
