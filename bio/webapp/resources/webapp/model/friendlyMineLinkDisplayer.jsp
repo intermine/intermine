@@ -6,23 +6,9 @@
 
 <!-- friendlyMineLinkDisplayer.jsp -->
 
-<style>
-#friendlyMines b { display:block; clear:both; }
-#friendlyMines div.feature ul li:nth-child(2n) { border-left:1px solid #AFAFAF; }
-</style>
-
 <c:set var="interMineObject" value="${object}"/>
 
 <script type="text/javascript" charset="utf-8">
-// Java HashMap to JavaScript Dictionary
-var minePortals = {};
-<c:forEach var="portal" items="${mines}">
-    var mineDetails = {};
-    <c:forEach var="portalDetail" items="${portal.value}">
-        mineDetails["<c:out value='${portalDetail.key}'/>"] = "<c:out value='${portalDetail.value}'/>";
-    </c:forEach>
-    minePortals["<c:out value='${fn:toLowerCase(portal.key)}'/>"] = mineDetails;
-</c:forEach>
 
 function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 
@@ -69,11 +55,13 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 <tiles:importAttribute />
 <div id="friendlyMines">
   <c:forEach items="${mines}" var="entry">
-    <b>${entry.key}</b>
-    <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
-    <script type="text/javascript" charset="utf-8">
-      getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
-    </script>
+  	<div class="mine">
+	    <span style="background:${entry.value.bgcolor};color:${entry.value.frontcolor};">${entry.key}</span>
+	    <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
+	    <script type="text/javascript" charset="utf-8">
+	      getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
+	    </script>
+    </div>
   </c:forEach>
 </div>
 <!-- /friendlyMineLinkDisplayer.jsp -->
