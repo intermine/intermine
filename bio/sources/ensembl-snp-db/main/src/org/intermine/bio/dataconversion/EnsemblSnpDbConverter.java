@@ -47,7 +47,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     // TODO move this to a parser argument
     int taxonId = 9606;
     // Edit to restrict to loading fewer chromosomes
-    private static final int MIN_CHROMOSOME = 21;
+    private static final int MIN_CHROMOSOME = 1;
 
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
