@@ -57,7 +57,7 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
             Set<Integer> idSet = new LinkedHashSet<Integer>();
             for (String id : idArray) {
-                idSet.add(Integer.valueOf(id));
+                idSet.add(Integer.valueOf(id.trim()));
             }
 
             String bagName = request.getParameter("newBagName");
@@ -84,8 +84,11 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 ActionForward actionForward = mapping.findForward("bagDetails");
                 ActionForward newActionForward = new ActionForward(
                         actionForward);
-                newActionForward.setPath("/" + source + ".do?"
-                        + request.getQueryString());
+                if (request.getQueryString() == null) {
+                    newActionForward.setPath("/" + source + ".do");
+                } else {
+                    newActionForward.setPath("/" + source + ".do?" + request.getQueryString());
+                }
 
                 return newActionForward;
             } catch (Exception ex) {
