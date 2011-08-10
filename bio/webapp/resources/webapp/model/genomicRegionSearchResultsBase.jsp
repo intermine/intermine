@@ -11,7 +11,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<!--  genomicRegionSearchOptionsBase.jsp -->
+<!--  genomicRegionSearchResultsBase.jsp -->
 
 <link href="model/jquery_contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="model/jquery_superfish/css/superfish.css" media="screen">
@@ -101,7 +101,7 @@
 
     function disableExportAll() {
         jQuery("#exportAll").empty();
-        jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
+        jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
     }
 
     function enableExportAll() {
@@ -109,9 +109,11 @@
 
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', isEmptyFeature: "true" }, function(isEmptyFeature){
             if (isEmptyFeature.trim() == "hasFeature") {
-                jQuery("#exportAll").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>');
+                jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', generateCreateListHtml: "true" }, function(createListHtml){
+                    jQuery("#exportAll").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>' + createListHtml);
+                });
             } else {
-                jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span>');
+                jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
             }
          });
     }
@@ -120,8 +122,11 @@
         jQuery.download("genomicRegionSearchAjax.do", "exportFeatures=true&spanUUIDString=${spanUUIDString}&criteria=" + criteria + "&facet=" + facet + "&format=" + format);
     }
 
-    function createList(criteria, facet) {
-        jQuery.post("genomicRegionSearchAjax.do", { createList: "true", criteria: criteria, facet: facet });
+    function createList(criteria, id) { // id e.g. I-100-200
+        var facet = jQuery("#"+id).val();
+        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', createList: "true", criteria: criteria, facet: facet }, function(bagName){
+            window.location.href = "/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?bagName=" + bagName;
+        }, "text");
     }
 
     function exportToGalaxy(genomicRegion, orgName) {
@@ -510,4 +515,4 @@ img.tinyQuestionMark {
 
 </div>
 
-<!--  /genomicRegionSearchOptionsBase.jsp -->
+<!--  /genomicRegionSearchResultsBase.jsp -->
