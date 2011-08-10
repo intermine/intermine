@@ -17,8 +17,6 @@ import java.util.Iterator;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -76,7 +74,8 @@ public final class BioUtil
         } catch (ClassNotFoundException e) {
             return null;
         }
-        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcOrganism
+            = new QueryClass(model.getClassDescriptorByName("Organism").getType());
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
 
@@ -137,7 +136,7 @@ public final class BioUtil
     @SuppressWarnings("unchecked")
     public static Collection<String> getChromosomes(ObjectStore os, Collection<String> organisms,
             boolean lowercase) {
-
+        Model model = os.getModel();
 
         final String dmel = "drosophila melanogaster";
         ArrayList<String> chromosomes = new ArrayList();
@@ -205,8 +204,10 @@ public final class BioUtil
 
         Query q = new Query();
 
-        QueryClass qcChromosome = new QueryClass(Chromosome.class);
-        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcChromosome
+            = new QueryClass(model.getClassDescriptorByName("Chromosome").getType());
+        QueryClass qcOrganism
+            = new QueryClass(model.getClassDescriptorByName("Organism").getType());
         QueryField qfChromosome = new QueryField(qcChromosome, "primaryIdentifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         q.addFrom(qcChromosome);
