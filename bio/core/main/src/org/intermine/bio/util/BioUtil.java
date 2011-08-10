@@ -31,13 +31,12 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.widget.WidgetHelper;
 
 /**
  * Utility methods for the flymine package.
  * @author Julie Sullivan
  */
-public class BioUtil implements WidgetHelper
+public class BioUtil
 {
 
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
