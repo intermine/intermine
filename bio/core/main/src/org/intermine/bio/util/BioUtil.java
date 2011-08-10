@@ -36,16 +36,13 @@ import org.intermine.objectstore.query.ResultsRow;
  * Utility methods for the flymine package.
  * @author Julie Sullivan
  */
-public class BioUtil
+public final class BioUtil
 {
 
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
-    /**
-     * Constructor (required for widgets)
-     */
-    public BioUtil() {
-        super();
+    private BioUtil() {
+        // don't
     }
 
     /**
@@ -260,7 +257,7 @@ public class BioUtil
      * @param taxonId original taxon ID
      * @return taxonId for organism, not the strain
      */
-    public Integer replaceStrain(Integer taxonId) {
+    public static Integer replaceStrain(Integer taxonId) {
         OrganismData od = OR.getOrganismDataByTaxon(taxonId);
         if (od == null) {
             return taxonId;
