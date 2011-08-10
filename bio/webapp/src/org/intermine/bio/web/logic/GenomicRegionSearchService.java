@@ -314,7 +314,7 @@ public class GenomicRegionSearchService
         JSONObject jo = new JSONObject(ma);
 
         // Note: JSONObject toString will replace \' to \\', so don't convert it before the method
-        //       was called.
+        //       was called. Replace "\" in java -> "\\\\"
 
         String preDataStr = jo.toString();
         preDataStr = preDataStr.replaceAll("'", "\\\\'");
@@ -925,7 +925,7 @@ public class GenomicRegionSearchService
     }
 
     /**
-     * Get a comma separated string of a span's overlap features. for
+     * Get a set of ids of a span's overlap features. for
      * GenomicRegionSearchAjaxAction use.
      *
      * @param grString a genomic region in string
@@ -936,7 +936,7 @@ public class GenomicRegionSearchService
     public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String grString, int flankingSize,
             Map<GenomicRegion, List<List<String>>> resultMap) {
 
-        Set<Integer> featureSet = new HashSet<Integer>();
+        Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
         GenomicRegion spanToExport = new GenomicRegion();
 
@@ -951,12 +951,75 @@ public class GenomicRegionSearchService
                 + spanToExport.getExtendedRegionSize());
         spanToExport.setEnd(spanToExport.getExtendedEnd() - spanToExport.getExtendedRegionSize());
 
-        for (List<String> r : resultMap.get(spanToExport)) {
+        for (List<String> sf : resultMap.get(spanToExport)) {
             // the first element (0) is InterMine Id, second (1) is PID
-            featureSet.add(Integer.valueOf(r.get(0)));
+            featureIdSet.add(Integer.valueOf(sf.get(0)));
         }
 
-        return featureSet;
+        return featureIdSet;
+    }
+
+    /**
+     * Get a set of ids of a span's overlap features by given feature type. for
+     * GenomicRegionSearchAjaxAction use.
+     *
+     * @param grString a genomic region in string
+     * @param flankingSize int value of extended genomic region size
+     * @param resultMap map of search results
+     * @param featureType e.g. Gene
+     * @return String feature ids joined by comma
+     */
+    public Set<Integer> getGenomicRegionOverlapFeaturesByType(String grString, int flankingSize,
+            Map<GenomicRegion, List<List<String>>> resultMap, String featureType) {
+
+        Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
+
+        GenomicRegion spanToExport = new GenomicRegion();
+
+        // spanString is extended span
+        String[] temp = grString.split(":");
+        spanToExport.setChr(temp[0]);
+        temp = temp[1].split("\\.\\.");
+        spanToExport.setExtendedStart(Integer.parseInt(temp[0]));
+        spanToExport.setExtendedEnd(Integer.parseInt(temp[1]));
+        spanToExport.setExtendedRegionSize(flankingSize);
+        spanToExport.setStart(spanToExport.getExtendedStart()
+                + spanToExport.getExtendedRegionSize());
+        spanToExport.setEnd(spanToExport.getExtendedEnd() - spanToExport.getExtendedRegionSize());
+
+        for (List<String> sf : resultMap.get(spanToExport)) {
+            // the first element (0) is InterMine Id, second (1) is PID, 4 featureType
+            if (sf.get(3).equals(featureType)) {
+                featureIdSet.add(Integer.valueOf(sf.get(0)));
+            }
+        }
+
+        return featureIdSet;
+    }
+
+    /**
+     * Get a set of ids of all span's overlap features by given feature type. for
+     * GenomicRegionSearchAjaxAction use.
+     *
+     * @param resultMap map of search results
+     * @param featureType e.g. Gene
+     * @return String feature ids joined by comma
+     */
+    public Set<Integer> getAllGenomicRegionOverlapFeaturesByType(
+            Map<GenomicRegion, List<List<String>>> resultMap, String featureType) {
+
+        Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
+
+        for (Entry<GenomicRegion, List<List<String>>> e : resultMap.entrySet()) {
+
+            for (List<String> sf : e.getValue()) {
+                if (sf.get(3).equals(featureType)) { // 3 featureType
+                    featureIdSet.add(Integer.valueOf(sf.get(0))); // 0 id
+                }
+            }
+        }
+
+        return featureIdSet;
     }
 
     /**
@@ -995,10 +1058,41 @@ public class GenomicRegionSearchService
     }
 
     /**
+     * Generate a html string with all feature type for list creation.
+     *
+     * @param resultMap map of search results
+     * @return a html string
+     */
+    public String generateCreateListHtml(Map<GenomicRegion, List<List<String>>> resultMap) {
+
+        Set<String> ftSet = new TreeSet<String>();
+
+        for (List<List<String>> l : resultMap.values()) {
+            for (List<String> feature : l) {
+                ftSet.add(feature.get(3)); // the 3rd is feature type
+            }
+        }
+
+        String clHtml = " or <a href=\"javascript: createList('all','all-regions');\">"
+            + "Create List by feature type:</a>"
+            + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
+
+        for (String ft : ftSet) {
+            clHtml += "<option value=\"" + ft + "\">"
+                    + WebUtil.formatPath(ft, interMineAPI, webConfig)
+                    + "</option>";
+        }
+
+        clHtml += "</select>";
+
+        return clHtml;
+    }
+
+    /**
      * Convert result map to HTML string.
      *
      * @param resultMap resultMap
-     * @param spanList spanList
+     * @param genomicRegionList spanList
      * @param fromIdx offsetStart
      * @param toIdx offsetEnd
      * @param session the current session
@@ -1007,13 +1101,13 @@ public class GenomicRegionSearchService
      */
     public String convertResultMapToHTML(
             Map<GenomicRegion, List<List<String>>> resultMap,
-            List<GenomicRegion> spanList, int fromIdx, int toIdx,
+            List<GenomicRegion> genomicRegionList, int fromIdx, int toIdx,
             HttpSession session, String orgName) {
 
         String baseURL = webProperties.getProperty("webapp.baseurl");
         String path = webProperties.getProperty("webapp.path");
 
-        List<GenomicRegion> subSpanList = spanList.subList(fromIdx, toIdx + 1);
+        List<GenomicRegion> subGenomicRegionList = genomicRegionList.subList(fromIdx, toIdx + 1);
 
         // start to build the html for results table
         StringBuffer sb = new StringBuffer();
@@ -1027,10 +1121,13 @@ public class GenomicRegionSearchService
         sb.append("</tr></thead>");
         sb.append("<tbody>");
 
-        for (GenomicRegion s : subSpanList) {
+        for (GenomicRegion s : subGenomicRegionList) {
 
             String span = s.getExtendedRegion();
             List<List<String>> features = resultMap.get(s);
+
+            // get list of featureTypes
+            String ftHtml = categorizeFeatureTypes(features, s);
 
             /*
              * order: 0.id
@@ -1091,8 +1188,8 @@ public class GenomicRegionSearchService
                         + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
                         + "\");' class='ext_link'> Export to Galaxy <img border='0' "
                         + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
-                        + "class='arrow' style='height:5%; width:5%'></a></div></td><td>"
-                        + "<a target='' title='' href='" + baseURL + "/" + path
+                        + "class='arrow' style='height:5%; width:5%'></a></div>" + ftHtml
+                        + "</td><td><a target='' title='' href='" + baseURL + "/" + path
                         + "/report.do?id=" + firstId + "'>");
 
                 if (firstSymbol == null || "".equals(firstSymbol)) {
@@ -1174,6 +1271,35 @@ public class GenomicRegionSearchService
         sb.append("</tbody>");
 
         return sb.toString();
+    }
+
+    /**
+     * Get all feature types from a list of sequence features
+     * @param features list of sequence features
+     * @param s GenomicRegion
+     * @return A html string with a dropdown list of feature types
+     */
+    public String categorizeFeatureTypes(List<List<String>> features, GenomicRegion s) {
+        String id = s.getChr() + "-" + s.getStart() + "-" + s.getEnd();
+        Set<String> ftSet = new TreeSet<String>();
+        for (List<String> feature : features) {
+            ftSet.add(feature.get(3)); // the 3rd is feature type
+        }
+
+        String ftHtml = "<div>"
+            + "<a href=\"javascript: createList('" + s.getExtendedRegion() + "', '" + id + "');\">"
+            + "Create List by</a>"
+            + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
+
+        for (String ft : ftSet) {
+            ftHtml += "<option value=\"" + ft + "\">"
+                    + WebUtil.formatPath(ft, interMineAPI, webConfig)
+                    + "</option>";
+        }
+
+        ftHtml += "</select></div>";
+
+        return ftHtml;
     }
 
     /**

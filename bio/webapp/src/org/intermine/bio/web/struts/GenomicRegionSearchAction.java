@@ -50,6 +50,11 @@ public class GenomicRegionSearchAction extends InterMineAction
 
         GenomicRegionSearchForm grsForm = (GenomicRegionSearchForm) form;
 
+        if ("".equals(((String) grsForm.get("organism")))) {
+            // TODO No action message
+            return mapping.findForward("genomicRegionSearch");
+        }
+
         // UUID
         String spanUUIDString = UUID.randomUUID().toString();
         request.setAttribute("spanUUIDString", spanUUIDString);
