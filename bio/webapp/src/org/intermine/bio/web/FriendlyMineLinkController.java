@@ -28,7 +28,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;

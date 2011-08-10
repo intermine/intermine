@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;

@@ -1,4 +1,4 @@
-package org.intermine.bio.web.logic;
+package org.intermine.bio.util;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -39,6 +39,9 @@ import org.intermine.web.logic.widget.WidgetHelper;
  */
 public class BioUtil implements WidgetHelper
 {
+
+    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
+
     /**
      * Constructor (required for widgets)
      */
@@ -53,7 +56,6 @@ public class BioUtil implements WidgetHelper
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
             boolean lowercase) {
         return getOrganisms(os, bag, lowercase, "name");
@@ -249,5 +251,21 @@ public class BioUtil implements WidgetHelper
      */
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
         return getOrganisms(os, bag, false);
+    }
+
+    /**
+     * Looks in the organism repo for the taxon ID provided.  If the taxon ID is not there, it looks
+     * for strains that use that ID.  Will return NULL if there is no strain and no taxon ID in
+     * the organism data.
+     *
+     * @param taxonId original taxon ID
+     * @return taxonId for organism, not the strain
+     */
+    public Integer replaceStrain(Integer taxonId) {
+        OrganismData od = OR.getOrganismDataByTaxon(taxonId);
+        if (od == null) {
+            return taxonId;
+        }
+        return new Integer(od.getTaxonId());
     }
 }
