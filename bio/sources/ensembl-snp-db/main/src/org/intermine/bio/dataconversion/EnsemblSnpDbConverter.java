@@ -92,7 +92,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     @Override
     public void close() throws Exception {
         LOG.info("CLOSE pendingConsequences.size(): " + pendingSnpConsequences.size());
-        LOG.info("CLOSE storeSnpIds.size(): " + storedSnpIds.size());
+        LOG.info("CLOSE storedSnpIds.size(): " + storedSnpIds.size());
         for (String rsNumber : pendingSnpConsequences.keySet()) {
             Integer storedSnpId = storedSnpIds.get(rsNumber);
             Set<String> consequenceIdentifiers = pendingSnpConsequences.get(rsNumber);
@@ -124,24 +124,31 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Set<String> snpSynonyms = new HashSet<String>();
 
 
+        // This code is complicated because not all SNPs map to a unique location and often have
+        // locations on multiple chromosomes - we're processing one chromosome at a time for faster
+        // queries to mySQL.
         while (res.next()) {
             counter++;
             String rsNumber = res.getString("variation_name");
             boolean newSnp = rsNumber.equals(previousRsNumber) ? false : true;
 
             if (newSnp) {
-                // starting a new SNP, store the previous one
+                // starting a new SNP, store the one just finished - previousRsNumber
 
                 Integer storedSnpId = storedSnpIds.get(previousRsNumber);
 
+                // if we didn't get back a storedSnpId this was the first time we found this SNP,
+                // so store it now
                 if (storeSnp && storedSnpId == null) {
                     storedSnpId = storeSnp(currentSnp, snpSynonyms);
                     snpCounter++;
                 }
 
                 if (previousUniqueLocation) {
+                    // the SNP we just stored has only one location so we won't see it again
                     storeSnpCollections(storedSnpId, consequenceIdentifiers);
                 } else {
+                    // we'll see this SNP multiple times so hang onto data
                     Set<String> snpConsequences = pendingSnpConsequences.get(previousRsNumber);
                     if (snpConsequences == null) {
                         snpConsequences = new HashSet<String>();
@@ -169,13 +176,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
                 // if not a unique location and we've seen the SNP before, don't store
                 if (!uniqueLocation && pendingSnpConsequences.containsKey(rsNumber)) {
-                    LOG.info("Not storing SNP second time: " + rsNumber);
                     storeSnp = false;
                     currentSnpIdentifier = storedSnpItemIdentifiers.get(rsNumber);
-                }
-
-                if (!uniqueLocation) {
-                    LOG.info("Not a unique location: " + rsNumber + " storeSnp = " + storeSnp);
                 }
 
                 if (storeSnp) {
@@ -298,13 +300,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             if (!StringUtils.isBlank(synonym)) {
                 snpSynonyms.add(synonym);
             }
-            if (counter % 1000 == 0) {
+            if (counter % 100000 == 0) {
                 LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
                         + chrName);
             }
         }
 
-        if (currentSnp != null) {
+        if (currentSnp != null && storeSnp) {
             Integer storedSnpId = storeSnp(currentSnp, snpSynonyms);
             if (!storedSnpIds.containsKey(storedSnpId)) {
                 storeSnpCollections(storedSnpId, consequenceIdentifiers);
