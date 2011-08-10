@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.model.bio.Ontology;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Organism;

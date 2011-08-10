@@ -33,7 +33,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
-import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
