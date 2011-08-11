@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,7 +36,7 @@ public class GFF3RecordHandler
     protected Map<String, Item> items = new LinkedHashMap<String, Item>();
     protected List<Item> earlyItems = new ArrayList<Item>();
     protected List<String> parents = new ArrayList<String>();
-    protected Map<String, String> refsAndCollections;
+    protected Map<String, String> refsAndCollections = new HashMap<String, String>();
     private Item sequence;
     private Model tgtModel;
     protected GFF3Converter converter;
