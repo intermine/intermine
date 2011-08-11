@@ -257,11 +257,19 @@
     <div class="clear"></div>
 
 	<%-- show expanded table immediately? --%>
-	<c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
-		<c:set var="showTable" value="true" />
-	</c:if>
+	<c:choose>
+		<c:when test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
+			<script type="text/javascript">var showTable = true;</script>
+		</c:when>
+		<c:otherwise>
+			<script type="text/javascript">
+				if (window.location.hash == '#hasHighlighted') var showTable = true;
+			</script>
+		</c:otherwise>
+	</c:choose>
 
-    <div id="ListArea" <c:if test="${not showTable}">style="display:none;"</c:if>>
+	<div id="ListArea">
+	<script type="text/javascript">if (!showTable) jQuery("#ListArea").hide();</script>
 
     <%-- list table --%>
     <div id="results" class="box grid_12">
@@ -341,7 +349,8 @@
 	<div class="grid_8">
 	
 	    <%-- preview table will be populated by JS here --%>
-		<div id="preview-table" <c:if test="${showTable}">style="display:none;"</c:if> class="box grid_12 last collection-table nowrap nomargin results">
+		<div id="preview-table" class="box grid_12 last collection-table nowrap nomargin results">
+		  <script type="text/javascript">if (showTable) jQuery("#preview-table").hide();</script>
 		  <div class="gradient-wrap">
 		      <table>
 		        <tbody></tbody>
@@ -413,11 +422,14 @@
 		          if (jQuery('#results div.selected span.desc').is(':visible')) {
 		            if (jQuery('#results div.selected #selectedIdFields').html().length == 0) {
 		                jQuery('#results div.selected span.desc').hide();
+		                window.location.hash = '';
 		            }
 		          } else {
 		            if (jQuery('#results div.selected #selectedIdFields').html().length > 0) {
 		                jQuery('#results div.selected span.desc').show();
 		            }
+		            // append a param so that we keep table expanded upon reload
+		            window.location.hash = 'hasHighlighted';
 		          }
 		        });
 		      });
