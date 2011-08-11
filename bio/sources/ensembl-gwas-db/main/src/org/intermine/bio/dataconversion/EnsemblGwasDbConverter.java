@@ -93,8 +93,9 @@ public class EnsemblGwasDbConverter extends BioDBConverter
             result.setReference("SNP", snpIdentifier);
 
             // STUDY
-            String study = res.getString("study");
-            String studyIdentifier = getStudyIdentifier(study);
+            String study = res.getString("st.external_reference");
+            String studyDesc = res.getString("st.description");
+            String studyIdentifier = getStudyIdentifier(study, studyDesc);
             if (studyIdentifier != null) {
                 result.setReference("study", studyIdentifier);
             }
@@ -190,20 +191,24 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         return snpIdentifier;
     }
 
-    private String getStudyIdentifier(String study) throws ObjectStoreException {
+    private String getStudyIdentifier(String studyPubmed, String description)
+        throws ObjectStoreException {
         String studyIdentifier = null;
-        if (!StringUtils.isBlank(study)) {
-            studyIdentifier = studies.get(study);
+        if (!StringUtils.isBlank(studyPubmed)) {
+            studyIdentifier = studies.get(studyPubmed);
             if (studyIdentifier == null) {
-                String pubmedId = study.substring("pubmed/".length());
+                String pubmedId = studyPubmed.substring("pubmed/".length());
                 Item pub = createItem("Publication");
                 pub.setAttribute("pubMedId", pubmedId);
                 store(pub);
                 Item gwas = createItem("GWAS");
                 gwas.setReference("publication", pub);
+                if (!StringUtils.isBlank(description)) {
+                    gwas.setAttribute("name", description);
+                }
                 store(gwas);
                 studyIdentifier = gwas.getIdentifier();
-                studies.put(study, studyIdentifier);
+                studies.put(studyPubmed, studyIdentifier);
             }
         }
         return studyIdentifier;
@@ -265,14 +270,16 @@ public class EnsemblGwasDbConverter extends BioDBConverter
 
     private ResultSet queryVariationAnnotation(Connection connection) throws SQLException {
         String query = "SELECT vf.variation_name, "
-            + " va.study, va.study_type, va.local_stable_id, va.associated_gene, "
+            + " st.description, st.study_type, st.external_reference,"
+            + " va.associated_gene, "
             + " va.associated_variant_risk_allele, va.risk_allele_freq_in_controls, va.p_value, "
             + " p.description,"
             + " s.name"
-            + " FROM variation_annotation va, variation_feature vf, phenotype p, source s"
+            + " FROM variation_annotation va, variation_feature vf, phenotype p, source s, study st"
             + " WHERE va.variation_id = vf.variation_id"
-            + " AND va.source_id = s.source_id"
+            + " AND st.source_id = s.source_id"
             + " AND va.phenotype_id = p.phenotype_id"
+            + " AND va.study_id = st.study_id"
             + " ORDER BY va.variation_id";
 
         Statement stmt = connection.createStatement();
