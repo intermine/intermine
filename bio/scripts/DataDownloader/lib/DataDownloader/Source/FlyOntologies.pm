@@ -16,7 +16,6 @@ use constant {
             REMOTE_DIR => "releases/current/precomputed_files/ontologies",
             FILE => 'fly_development.obo.zip',
             EXTRACT => 1,
-            SUB_DIR => ['fly-development'],
         },
         {
             SUBTITLE => 'Controlled Vocabulary',
@@ -24,7 +23,6 @@ use constant {
             REMOTE_DIR => "releases/current/precomputed_files/ontologies",
             FILE => 'flybase_controlled_vocabulary.obo.zip',
             EXTRACT => 1,
-            SUB_DIR => ['fly-cv'],
         },
     ],
 };
