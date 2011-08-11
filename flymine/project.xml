@@ -106,7 +106,7 @@
     </source>
 
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/micklem/data/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/test/interpro/current"/>
     </source>
 
     <source name="omim" type="omim">
@@ -562,13 +562,13 @@
       <property name="src.data.dir" location="/micklem/data/old_shared_data/bdgp-insitu/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-      <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/current/flybase_controlled_vocabulary.obo"/>
     </source>
 
     <source name="drosdel-gff" type="drosdel-gff">
