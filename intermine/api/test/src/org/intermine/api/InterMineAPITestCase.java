@@ -25,7 +25,6 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.DeletingProfileManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -54,7 +53,7 @@ public class InterMineAPITestCase extends TestCase {
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
     protected Profile testUser;
-    TrackerDelegate trackerDelegate;
+    protected TrackerDelegate trackerDelegate;
 
     /**
      * @param arg

@@ -37,7 +37,6 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         // TODO Auto-generated constructor stub
     }
 
-    TrackerDelegate trackerDelegate;
     Profile superUser, testUser;
     ProfileManager pm;
     Connection conn;
