@@ -532,7 +532,7 @@
     </source>
 
     <source name="interpro-go" type="interpro-go">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/go-annotation/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
 
 <!-- text files, didn't see a gain from BioPAX 
