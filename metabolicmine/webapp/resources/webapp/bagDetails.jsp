@@ -342,9 +342,12 @@
 	
 	    <%-- preview table will be populated by JS here --%>
 		<div id="preview-table" <c:if test="${showTable}">style="display:none;"</c:if> class="box grid_12 last collection-table nowrap nomargin results">
-	      <table>
-	        <tbody></tbody>
-	      </table>
+		  <div class="gradient-wrap">
+		      <table>
+		        <tbody></tbody>
+		      </table>
+		      <div class="gradient"></div>
+	      </div>
 	      <div class="toggle">
 	      	<a class="more" title="Show the results list">Show the list</a>
 	      </div>

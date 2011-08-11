@@ -96,6 +96,9 @@ div.feature.convert form h3 { margin-top:10px; }
 
 /* results table preview */
 #preview-table { cursor:pointer; }
+#preview-table div.gradient-wrap { position:relative; }
+#preview-table div.gradient { display:block; height:20px; position:absolute; bottom:0; left:0; width:100%;
+	background:url('../model/images/white-to-transparent-gradient-20px.png') repeat-x top left; z-index:2; }
 
 /* results table */
 #ListCategory h2 div.button { display:inline-block; vertical-align:bottom; }
