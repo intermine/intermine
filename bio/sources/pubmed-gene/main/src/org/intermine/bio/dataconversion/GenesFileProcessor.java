@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -47,14 +48,12 @@ public class GenesFileProcessor
     private Map<String, Item> genes = new HashMap<String, Item>();
     private String lastLine = null;
     private DataConverter converter;
-    private Integer checkOrganismId = null;
-    private Set<Integer> alreadyProcessedGenes = new  HashSet<Integer>();
     private Set<String> genesToRemove = new TreeSet<String>();
     private IdResolver resolver;
     private static final Logger LOG = Logger.getLogger(GenesFileProcessor.class);
     private String datasetRefId;
-    private static final Integer YEAST_STRAIN = new Integer(559292);
-    private static final Integer YEAST_TAXONID = new Integer(4932);
+    private static final String DUMMY = "NEWENTRY";
+    private Set<Integer> alreadyProcessedGenes = new  HashSet<Integer>();
 
     /**
      * Constructor.
@@ -72,6 +71,7 @@ public class GenesFileProcessor
         this.datasetRefId = datasetRefId;
         initReader(fileReader);
         resolver = resolverFactory.getIdResolver(false);
+
     }
 
     private void initReader(Reader fileReader) {
@@ -79,20 +79,19 @@ public class GenesFileProcessor
     }
 
     /**
-     *
      * @param geneToPub map between gene and list of publication that mentions this gene
-     * @param orgToProcessId organism to be processed id
-     * @param orgToProcess organism to be processed
+     * @param orgToProcessId taxonID for organism of this gene
+     * @param organismRefId ID representing the organism object
+     * @param taxonIds list of taxons from config file, if empty all processed
      * @throws IOException when error happens during reading from file
      */
     public void processGenes(Map<Integer, List<String>> geneToPub, Integer orgToProcessId,
-                             Item orgToProcess) throws IOException {
+            String organismRefId, Set<String> taxonIds)
+        throws IOException {
         String line;
-        // use taxonID to get correct type of data where available
         while ((line = getLine()) != null) {
             lineCounter++;
             line = line.trim();
-
             if (line.startsWith("#") || line.length() == 0) {
                 continue;
             }
@@ -101,31 +100,41 @@ public class GenesFileProcessor
                 throw new GenesProcessorException("Invalid line - line " + lineCounter
                         + ". There are " + parts.length + " bits but there should be more than 6");
             }
+            if (DUMMY.equals(parts[2])) {
+                /* dummy lines in file,
+                 4932 "Record to support submission of GeneRIFs for a gene not in Gene "
+                (Candida robusta; Saccaromyces cerevisiae; Saccharomyces capensis; Saccharomyces
+                italicus; Saccharomyces oviformis; Saccharomyces uvarum var. melibiosus;
+                Saccharomyes cerevisiae; Sccharomyces cerevisiae; baker's yeast; brewer's yeast;
+                lager beer yeast; yeast). other   -       -       -       -     */
+                continue;
+            }
             Integer organismId, ncbiGeneId;
             try {
                 organismId = new Integer(parts[0].trim());
-                if (YEAST_STRAIN.equals(organismId)) {
-                    organismId = YEAST_TAXONID;
-                }
+                ncbiGeneId = new Integer(parts[1].trim());
                 ncbiGeneId = new Integer(parts[1].trim());
             } catch (NumberFormatException ex) {
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
             }
-            checkFileIsSorted(organismId);
+
+            if (!taxonIds.isEmpty() && !taxonIds.contains(organismId.toString())) {
+                // this isn't an organism of interest, keep going
+                continue;
+            }
 
             //String identifier = parts[3].trim();
             String pubMedId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
                 processGeneInfo(ncbiGeneId, organismId, pubMedId, geneToPub.get(ncbiGeneId),
-                                orgToProcess);
+                        organismRefId);
                 geneToPub.remove(ncbiGeneId);
-            } else if (organismId.intValue() > orgToProcessId.intValue()) {
+            } else {
+                // new organism found, we're done processing, store all
                 lastLine = line;
                 storeGenes();
                 checkGenesProcessed(geneToPub);
                 return;
-            } else {
-                continue;
             }
         }
         storeGenes();
@@ -135,20 +144,9 @@ public class GenesFileProcessor
     private void checkGenesProcessed(Map<Integer, List<String>> geneToPub) {
         if (geneToPub.size() != 0) {
             throw new GenesProcessorException("These " + geneToPub.size() + " genes were in the "
-                                              + "PubMed2Gene file but not in the gene info file: "
-                                              + formatGeneNames(geneToPub.keySet()));
+                    + "PubMed2Gene file but not in the gene info file: "
+                    + formatGeneNames(geneToPub.keySet()));
         }
-    }
-
-    private void checkFileIsSorted(Integer organismId) {
-        if (checkOrganismId != null) {
-            if (organismId.intValue() < checkOrganismId.intValue()) {
-                throw new GenesProcessorException("This file processor expects that "
-                            + "file is sorted according to the organism id else the "
-                            + "behaviour is undefined.");
-            }
-        }
-        checkOrganismId = organismId;
     }
 
     private String formatGeneNames(Set<Integer> keySet) {
@@ -188,17 +186,19 @@ public class GenesFileProcessor
         converter.store(genes2);
     }
 
-    private void processGeneInfo(Integer ncbiGeneId, Integer organismId, String primaryIdentifier,
-                                 List<String> publications, Item organism) {
+    private void processGeneInfo(Integer ncbiGeneId, Integer taxonId, String primaryIdentifier,
+                                 List<String> publications, String organismRefId) {
 
         String primIdentifier = primaryIdentifier;
+        Integer organismId = BioUtil.replaceStrain(taxonId);
 
         // If gene was already mentioned in gene info file then is skipped
         if (alreadyProcessedGenes.contains(ncbiGeneId)) {
             return;
         }
+
         // If there is a gene in gene information file that doesn't have
-        // any publication then the gene is skipped
+        // any publications then the gene is skipped
         // if there isn't primary identifier gene is skipped
         if (publications != null) {
 
@@ -222,7 +222,7 @@ public class GenesFileProcessor
                 primIdentifier = null;
             }
 
-            Item gene = createGene(ncbiGeneId, primIdentifier, organism);
+            Item gene = createGene(ncbiGeneId, primIdentifier, organismRefId);
             for (String writerPubId : publications) {
                 gene.addToCollection("publications", writerPubId);
             }
@@ -273,13 +273,13 @@ public class GenesFileProcessor
         return "10090".equals(taxonId);
     }
 
-    private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
+    private Item createGene(Integer ncbiGeneId, String primaryIdentifier, String organismRefId) {
         Item gene = createItem("Gene");
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
         if (primaryIdentifier != null) {
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
         }
-        gene.setReference("organism", organism);
+        gene.setReference("organism", organismRefId);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
         return gene;
     }

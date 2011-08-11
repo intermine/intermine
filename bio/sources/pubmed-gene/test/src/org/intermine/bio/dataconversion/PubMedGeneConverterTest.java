@@ -60,8 +60,8 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     public void testSimpleFiles() throws Exception {
         process("gene2pubmed", "gene_info");
 
-        // 3 organisms, 9 genes, 9 publications, 1 dataset
-        assertEquals(31, itemWriter.getItems().size());
+        // 4 organisms, 9 genes, 16 publications, 1 dataset, 1 datasource, 1 so term, 1 ontology
+        assertEquals(33, itemWriter.getItems().size());
         // uncomment to write out a new target items file
         // Set<org.intermine.xml.full.Item> expected = readItemSet("PubMedGeneConverterTest_tgt.xml");
         checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
@@ -115,6 +115,23 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     public void testTwoPrimaryIdentifiers() throws Exception {
         process("gene2pubmedTwoPrimaryIdentifiers", "gene_infoTwoPrimaryIdentifiers");
         assertEquals(4, getGenes().size());
+    }
+
+    /**
+     * Test case when there is a strain in the file.  Should be changed to be the taxonID of
+     * main organism
+     * @throws Exception
+     */
+    public void testStrain() throws Exception {
+        process("gene2pubmed_strain", "gene_info_strain");
+        System.out.println(getGenes().toString());
+        assertEquals(6, getGenes().size());
+
+        checkGene("3111", "FBgn3111", "4932", new String[]{"2"}, new String[]{DATASET});
+        checkGene("3222", "FBgn3222", "4932", new String[]{"1"}, new String[]{DATASET});
+        checkGene("2222", "FBgn2222", "7237", new String[]{"2"}, new String[]{DATASET});
+        checkGene("2111", "FBgn2111", "7237", new String[]{"1"}, new String[]{DATASET});
+
     }
 
     /**
@@ -174,7 +191,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
         converter.setInfoFile(geneInfo);
         converter.setCurrentFile(gene2pubmed);
-        converter.setPubmedOrganisms("34 6239 7227 10090");
+        converter.setPubmedOrganisms("34 6239 7227 10090 7237 4932 9606 46245 559292");
         converter.process(new FileReader(gene2pubmed));
         storedItems = itemWriter.getItems();
     }

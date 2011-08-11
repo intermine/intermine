@@ -14,16 +14,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
-import org.apache.commons.lang.StringUtils;
 
-import org.intermine.dataconversion.FileConverter;
+import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -42,7 +42,7 @@ import org.intermine.xml.full.Item;
  *
  * @author Jakub Kulaviak
  */
-public class PubMedGeneConverter extends FileConverter
+public class PubMedGeneConverter extends BioFileConverter
 {
     private String referencesFileName;
     private File infoFile;
@@ -51,6 +51,8 @@ public class PubMedGeneConverter extends FileConverter
     private String datasetRefId;
     private String datasourceRefId;
     protected IdResolverFactory resolverFactory;
+    private Map<Integer, String> organisms = new HashMap<Integer, String>();
+
     /**
      * @param writer item writer
      * @param model model
@@ -114,9 +116,8 @@ public class PubMedGeneConverter extends FileConverter
                     continue;
                 }
                 Map<Integer, List<String>> geneToPub = convertAndStorePubs(ref.getReferences());
-                Item organism = createOrganism(organismId);
-                geneConverter.processGenes(geneToPub, organismId, organism);
-
+                geneConverter.processGenes(geneToPub, organismId, createOrganism(organismId),
+                        taxonIds);
             }
         } catch (ReferencesProcessorException ex) {
             throw new RuntimeException("Conversion failed. File: " + getReferencesFileName(), ex);
@@ -161,17 +162,6 @@ public class PubMedGeneConverter extends FileConverter
         return pub;
     }
 
-    private Item createOrganism(Integer organismId) {
-        Item organism = createItem("Organism");
-        organism.setAttribute("taxonId", organismId.toString());
-        try {
-            store(organism);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("storing organism failed", e);
-        }
-        return organism;
-    }
-
     /**
      * @return file name of file with references between gene ids and publication ids
      */
@@ -200,6 +190,22 @@ public class PubMedGeneConverter extends FileConverter
      */
     public void setInfoFile(File infoFile) {
         this.infoFile = infoFile;
+    }
+
+    private String createOrganism(Integer organismId) {
+        Integer taxonId = BioUtil.replaceStrain(organismId);
+        String refId = organisms.get(taxonId);
+        if (refId != null) {
+            return refId;
+        }
+        Item organism = createItem("Organism");
+        organism.setAttribute("taxonId", taxonId.toString());
+        try {
+            store(organism);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("storing organism failed", e);
+        }
+        return organism.getIdentifier();
     }
 }
 

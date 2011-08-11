@@ -526,7 +526,7 @@
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
-      <property name="pubmed.organisms" value="7227 7165 4932 6239 7237 7240 7244 7245 7217 7220 7222 7234 7237 7238"/>
+      <property name="pubmed.organisms" value="7227 7165 6239 7237 7240 7244 7245 7217 7220 7222 7234 7238 46245 559292"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
     </source>
