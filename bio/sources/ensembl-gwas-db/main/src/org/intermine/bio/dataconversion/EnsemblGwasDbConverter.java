@@ -191,24 +191,37 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         return snpIdentifier;
     }
 
-    private String getStudyIdentifier(String studyPubmed, String description)
+    // We need either a pubmed id or a description to create a GWAS study object
+    private String getStudyIdentifier(String pubmedId, String description)
         throws ObjectStoreException {
         String studyIdentifier = null;
-        if (!StringUtils.isBlank(studyPubmed)) {
-            studyIdentifier = studies.get(studyPubmed);
+
+        String key = null;
+        if (!StringUtils.isBlank(pubmedId) && pubmedId.startsWith("pubmed/")) {
+            pubmedId = pubmedId.substring("pubmed/".length());
+            key = pubmedId;
+        } else if (!StringUtils.isBlank(description)) {
+            key = description;
+        }
+
+        if (key != null) {
+            studyIdentifier = studies.get(key);
             if (studyIdentifier == null) {
-                String pubmedId = studyPubmed.substring("pubmed/".length());
-                Item pub = createItem("Publication");
-                pub.setAttribute("pubMedId", pubmedId);
-                store(pub);
                 Item gwas = createItem("GWAS");
-                gwas.setReference("publication", pub);
+
+                if (!StringUtils.isBlank(pubmedId)) {
+                    Item pub = createItem("Publication");
+                    pub.setAttribute("pubMedId", pubmedId);
+                    store(pub);
+                    gwas.setReference("publication", pub);
+                }
+
                 if (!StringUtils.isBlank(description)) {
                     gwas.setAttribute("name", description);
                 }
                 store(gwas);
                 studyIdentifier = gwas.getIdentifier();
-                studies.put(studyPubmed, studyIdentifier);
+                studies.put(key, studyIdentifier);
             }
         }
         return studyIdentifier;
