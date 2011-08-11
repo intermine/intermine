@@ -363,8 +363,12 @@
       <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
     </td>
     <td>
-      <div id="permalink">
-        <a href="#" title="Get a URL to run this template from the command line or a script">web service URL</a>
+      <c:set var="permalink" value="permalink"/>
+      <c:if test="${!empty builder && builder=='yes'}">
+        <c:set var="permalink" value="permalinkpreview"/>
+      </c:if>
+      <div id="${permalink}">
+        <a href="javascript:;" title="Get a URL to run this template from the command line or a script">web service URL</a>
         <div class="popup" style="display:none;">
           <span class="close"></span>
           <p style="width:95%;">
