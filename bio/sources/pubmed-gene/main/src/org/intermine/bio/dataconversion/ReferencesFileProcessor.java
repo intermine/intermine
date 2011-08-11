@@ -77,6 +77,7 @@ public class ReferencesFileProcessor
             while ((line = getLine()) != null) {
                 line = line.trim();
                 lineCounter++;
+
                 if (line.startsWith("#") || line.length() == 0) {
                     continue;
                 }
@@ -100,15 +101,11 @@ public class ReferencesFileProcessor
                 }
                 if (organismId.intValue() == processedOrganism.intValue()) {
                     processReference(geneId, pubId, references);
-                } else if (organismId.intValue() > processedOrganism.intValue()) {
+                } else {
                     lastLine = line;
                     Integer retOrganism = processedOrganism;
                     processedOrganism = organismId;
                     return new PubMedReference(retOrganism, references);
-                } else {
-                    throw new ReferencesProcessorException("This file processor expects that "
-                            + "file is sorted according to the organism id else the "
-                            + "behaviour is undefined.");
                 }
             }
             reader = null;
