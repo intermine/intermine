@@ -970,7 +970,7 @@ public final class DatabaseUtil
     }
 
     /**
-     * Set the default value in a column for all values where the current value is null.
+     * Set the default value in a column for all values.
      * @param con A connection to the database to use
      * @param tableName the table where update the column
      * @param columnName the column to Update
@@ -981,8 +981,8 @@ public final class DatabaseUtil
      */
     public static void updateColumnValue(Connection con, String tableName, String columnName,
             Object newValue) throws SQLException {
-    	if (DatabaseUtil.columnExists(con, tableName, columnName)) {
-    		String sql = "UPDATE " + tableName + " SET " + columnName + " = ? WHERE " + columnName + " IS NULL";
+        if (DatabaseUtil.columnExists(con, tableName, columnName)) {
+            String sql = "UPDATE " + tableName + " SET " + columnName + " = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setObject(1, newValue);
             LOG.info(stmt.toString());
