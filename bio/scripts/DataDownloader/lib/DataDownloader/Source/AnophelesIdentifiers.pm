@@ -18,8 +18,10 @@ use constant {
 "Gene Stable ID mappings from geneset AgamP3.3 to AgamP3.4",
     SOURCE_LINK => 'http://agambiae.vectorbase.org/GetData/Downloads/',
     SOURCE_DIR  => 'anopheles-identifiers',
-    HOST        => "ftp.vectorbase.org",
-    REMOTE_DIR  => "public_data/organism_data/agambiae/Other",
-    REF_FILE    => 'AgamP3.3-to-AgamP3.4-Identifiers.tgz',
+   SOURCES => [{
+        FILE => "AgamP3.3-to-AgamP3.4-Identifiers.tgz", 
+        HOST        => "ftp.vectorbase.org",
+        REMOTE_DIR  => "public_data/organism_data/agambiae/Other",
+    }],
 };
 
