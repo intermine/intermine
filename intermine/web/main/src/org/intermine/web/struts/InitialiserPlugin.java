@@ -515,11 +515,13 @@ public class InitialiserPlugin implements PlugIn
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
-            DatabaseUtil.addColumn(con, "userprofile", "localaccount", DatabaseUtil.Type.boolean_type);
-            DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
+            if (DatabaseUtil.columnExists(con, "userprofile", "localaccount")) {
+                DatabaseUtil.addColumn(con, "userprofile", "localaccount", DatabaseUtil.Type.boolean_type);
+                DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
+            }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
-        	throw new ServletException("Unable to upgrade UserProfile DB");
+            throw new ServletException("Unable to upgrade UserProfile DB");
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
