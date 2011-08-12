@@ -991,7 +991,7 @@ public final class DatabaseUtil
         }
     }
 
-    public boolean verifyColumnType (Connection con, String tableName, String columnName, int columnType) {
+    public static boolean verifyColumnType (Connection con, String tableName, String columnName, int columnType) {
         try {
             if (DatabaseUtil.tableExists(con, tableName)) {
                 ResultSet res = con.getMetaData().getColumns(null, null,
