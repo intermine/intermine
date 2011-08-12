@@ -119,9 +119,12 @@ public class TrackerDelegateTest extends InterMineAPITestCase
     }
     public void testGetAccessCounter() throws SQLException, InterruptedException {
         //template1 is public, template2 not
-        assertEquals(4, trackerDelegate.getAccessCounter().get("template1").intValue());
-        assertNull(trackerDelegate.getAccessCounter().get("template2"));
-        deleteTrack(TrackerUtil.TEMPLATE_TRACKER_TABLE);
+        try {
+            assertEquals(4, trackerDelegate.getAccessCounter().get("template1").intValue());
+            assertNull(trackerDelegate.getAccessCounter().get("template2"));
+        } finally {
+            deleteTrack(TrackerUtil.TEMPLATE_TRACKER_TABLE);
+        }
     }
 
     public void testGetRank() {
@@ -178,8 +181,11 @@ public class TrackerDelegateTest extends InterMineAPITestCase
     }
 
     public void testGetListOperations() throws SQLException {
-        assertEquals(5, trackerDelegate.getListOperations().size());
-        deleteTrack(TrackerUtil.LIST_TRACKER_TABLE);
+        try {
+            assertEquals(5, trackerDelegate.getListOperations().size());
+        } finally {
+            deleteTrack(TrackerUtil.LIST_TRACKER_TABLE);
+        }
     }
 
     public void testTrackLogin() throws SQLException, InterruptedException {
@@ -206,8 +212,11 @@ public class TrackerDelegateTest extends InterMineAPITestCase
     }
 
     public void testGetUserLogin() throws SQLException{
-        assertEquals(20, trackerDelegate.getUserLogin().size());
-        deleteTrack(TrackerUtil.LOGIN_TRACKER_TABLE);
+        try {
+            assertEquals(20, trackerDelegate.getUserLogin().size());
+        } finally {
+            deleteTrack(TrackerUtil.LOGIN_TRACKER_TABLE);
+        }
     }
 
     public void testTrackKeywordSearch() throws SQLException, InterruptedException {
@@ -233,9 +242,12 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         }
     }
 
-    public void testGetKeywordSearches() throws SQLException{
-        assertEquals(20, trackerDelegate.getKeywordSearches().size());
-        deleteTrack(TrackerUtil.SEARCH_TRACKER_TABLE);
+    public void testGetKeywordSearches() throws SQLException {
+        try {
+            assertEquals(20, trackerDelegate.getKeywordSearches().size());
+        } finally {
+            deleteTrack(TrackerUtil.SEARCH_TRACKER_TABLE);
+        }
     }
 }
 
