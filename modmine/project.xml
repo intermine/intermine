@@ -43,7 +43,7 @@
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="7227 6239 7237 7230 7244 7245"/>
-      <property name="src.data.dir" location="/micklem/data/uniprot/current/split"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
@@ -80,35 +80,24 @@
 <!--  <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/> -->
     </source>
     <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/current/not-curated"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/current"/>
       <property name="biopax.organisms" value="7227 6239"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
       <property name="biopax.curated" value="false"/>
     </source>
     <source name="reactome-curated" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/current/curated"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/curated"/>
       <property name="biopax.organisms" value="7227 6239"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="FlyReactome data set"/>
       <property name="biopax.curated" value="true"/>
     </source>
-<!-- NEEDS MODIFICATION TO ACCEPT LIST OF TAXIDS
-    <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/micklem/data/flybase/current/homology"/>
-      <property name="src.data.dir.includes" value="*.tsv"/>
-    </source>
--->
 <!-- END -->
 
     <source name="interpro" type="interpro" dump="true">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
-<!-- REMOVED FOR treefam
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/micklem/data/modmine/sources/orthologues/inparanoid/current/"/>
-    </source>
--->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
         <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
@@ -133,10 +122,10 @@
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/current/flybase_controlled_vocabulary.obo"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -438,7 +427,7 @@
       <property name="src.data.dir" location="/micklem/data/wormbase/ws220/fasta"/>
     </source>
     <source name="interpro-go" type="interpro-go">
-        <property name="src.data.dir" location="/micklem/data/old_shared_data/go-annotation/interpro/current"/>
+        <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
         <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
@@ -447,7 +436,7 @@
         <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-        <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
+        <property name="src.data.file" location="/micklem/data/ontologies/current/fly_development.obo"/>
     </source>
     <source name="worm-development-ontology" type="worm-development-ontology">
         <property name="src.data.file" location="/micklem/data/wormbase/worm-development-ontology/current/worm_development.obo"/>

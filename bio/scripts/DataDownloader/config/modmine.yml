@@ -2,9 +2,7 @@ log_dir: "/micklem/data/download_logs"
 data_dir: "/micklem/data/test"
 
 default_sources:
-  - "AffyProbes"
   - "BioGRID"
-  - "EnsemblCompara"
   - "FlyBaseFasta"
   - "FlyBaseOrthologues"
   - "FlyOntologies"
@@ -13,16 +11,14 @@ default_sources:
   - "IntactVocabulary"
   - "Interpro"
   - "InterproGO"
-  - "MGIIdentifiers"
-  - "NCBIGene"
   - "PDB"
   - "PubMed"
   - "Reactome"
-  - "RedFly"
   - "RNAiScreens"
   - "UniProt"
   - "WormbaseRNAi"
   - "WormIdentifiers"
+
 
 UniProt:
     organisms:
