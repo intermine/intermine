@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -987,7 +988,28 @@ public final class DatabaseUtil
             stmt.setObject(1, newValue);
             LOG.info(stmt.toString());
             stmt.executeUpdate();
-    	}
+        }
+    }
+
+    public boolean verifyColumnType (Connection con, String tableName, String columnName, int columnType) {
+        try {
+            if (DatabaseUtil.tableExists(con, tableName)) {
+                ResultSet res = con.getMetaData().getColumns(null, null,
+                                                            tableName, columnName);
+
+                while (res.next()) {
+                    if (res.getString(3).equals(tableName)
+                        && columnName.equals(res.getString(4))
+                        && res.getInt(5) == columnType) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return true;
     }
 }
 
