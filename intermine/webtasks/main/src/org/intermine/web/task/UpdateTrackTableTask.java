@@ -28,8 +28,8 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.DatabaseUtil;
 
 /**
- * Task to read an templatetrack XML file of a webapp and saved into the userprofile database.
- *
+ * Task to modify the type of the column 'timestamp' in the templatetrack table in the userprofile database.
+ * (from bigint to timestamp)
  * @author dbutano
  */
 
