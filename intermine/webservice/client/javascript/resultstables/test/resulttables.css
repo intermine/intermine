@@ -1,5 +1,6 @@
 .table-container {
-    margin: 25px;
+    margin: 0.7em;
+    margin-left: 0.3em;
 }
 .results-box {
     width: 50%;
@@ -111,9 +112,9 @@ table.col-summary td, table.col-summary th {
 }
 
 .summary-table-scrollcontainer {
-    -moz-box-shadow: inset 0px -5px 5px #888;
-    -webkit-box-shadow: inset 0px -5px 5px #888;
-    box-shadow: inset 0px -5px 5px #ccc;
+    -moz-box-shadow: inset 0px -10px 5px -2px #ccc;
+    -webkit-box-shadow: inset 0px -10px 5px -2px #ccc;
+    box-shadow: inset 0px -10px 5px -2px #ccc;
     border-top: 1px solid #ccc;
 }
 
@@ -207,8 +208,12 @@ div.summary-header, div.summary-popup table thead {
 
 .summary-table-scrollcontainer {
     overflow-y: auto;
-    height: 400px;
+    height: 100%;
     width: 100%;
+}
+
+.centre-box {
+    height: 250px;
 }
 
 button.constraint-deleter {
@@ -255,15 +260,17 @@ table.inner-table tr td {
     padding-left: 10px;
     padding-right: 10px;
     display: inline-block;
-    text-align: center;
+    text-align: left;
     vertical-align: middle;
-    text-size: 1.5em;
+    font-size: 0.8em;
     line-height: 200%;
 }
 
 .xml {
     font-size: 0.8em;
     margin: 2em;
+    color: #555;
+    background-color: #e2e4ff;
 }
 pre {
     white-space: pre-wrap;       /* css-3 */
@@ -271,6 +278,12 @@ pre {
     white-space: -pre-wrap;      /* Opera 4-6 */
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
- }
+}
+
+input[type="text"]:disabled {
+    background-color: #ccc;
+    color: #aaa;
+}
+
 
 

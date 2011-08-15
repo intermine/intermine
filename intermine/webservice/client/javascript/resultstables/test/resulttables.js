@@ -249,13 +249,16 @@ var ESCAPE_DICT = {
     ">=": '&gt;='
 };
 
-var constraintOps = {
+var binaryOps = {
     "=": "=",
     "!=": "!=",
     "<": "<",
     ">": ">",
     "<=": "<=",
-    ">=": ">=",
+    ">=": ">="
+};
+
+var nullOps = {
     "IS NULL": "is null",
     "IS NOT NULL": "is not null"
 };
@@ -276,18 +279,26 @@ var escapeOperator = function(operator) {
 var getAdder = function(pq, button, path, dataTable, clicked) { return function() {
     var $new_constraint = jQuery('<span class="constraint">');
     var $select = jQuery('<select>').appendTo($new_constraint);
-    var ops = ["=", "!=", "<", "<=", ">", ">="];
+    var ops = ["=", "!=", "<", "<=", ">", ">=", "IS NULL", "IS NOT NULL"];
     for (var i = 0, l = ops.length; i < l; i++) {
         jQuery('<option>' + ops[i] + '</option>').appendTo($select);
     }
     var $input = jQuery('<input type="text" size="10">').appendTo($new_constraint);
+    $select.change(function() {
+        var chosen = $(this).val();
+        $input.attr("disabled", !!chosen.match(/NULL$/));
+    });
     var $save_button = newButton();            
     jQuery('<span>').addClass('ui-icon').addClass('ui-icon-circle-check').css("float", "left").appendTo($save_button);
     
     $save_button.appendTo($new_constraint);
     $new_constraint.insertBefore(button);
     $save_button.click(function() {
-        var con = {path: path, op: $select.val(), value: $input.val()};
+        var op = $select.val();
+        var con = {path: path, op: op};
+        if (!op.match(/NULL$/)) {
+            con["value"] = $input.val();
+        }
         if (typeof pq["where"] == "undefined") {
             pq["where"] = [];
         }
@@ -296,6 +307,12 @@ var getAdder = function(pq, button, path, dataTable, clicked) { return function(
         dataTable.fnDraw(false); 
         $(clicked).click()
         return false;
+    });
+
+    var $cancelButton = newButton();
+    newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($cancelButton);
+    $cancelButton.appendTo($new_constraint).click(function() {
+        $new_constraint.remove();
     });
     return false;
 }};
@@ -331,7 +348,22 @@ var itemState = {
 var getSelectorFn = function($conBox, item, state, selector, pq, clicked, dataTable, path) { return function() {
     var $span = $(this).find('span');
     $span.removeClass("ui-icon-bullet ui-icon-radio-off ui-icon-circle-close");
-    var newState = (state + 1) % 3;
+    var newState;
+    if (state == itemState.nothing) {
+        if ($conBox.find(".one-of").length) {
+            newState = itemState.pinned;
+        } else if ($conBox.find('.none-of').length) {
+            newState = itemState.excluded;
+        } 
+    } else {
+        if (($conBox.find(".one-of").length || $conBox.find(".none-of").length) && $conBox.find('.values .value').length > 1 ) {
+            newState = itemState.nothing; 
+        }
+    }
+    if (typeof newState == "undefined") {
+        newState = (state + 1) % 3;
+    }
+
     if (newState == itemState.pinned) {
         $span.addClass("ui-icon-bullet");
     } else if (newState == itemState.excluded) {
@@ -343,9 +375,9 @@ var getSelectorFn = function($conBox, item, state, selector, pq, clicked, dataTa
     $(selector).unbind('click').click(getSelectorFn($conBox, item, newState, selector, pq, clicked, dataTable, path));
 
     if (state == itemState.pinned) {
-        removeItemFromMultiValue($conBox, "ONE OF", item);
+        removeItemFromMultiValue($conBox, "ONE OF", item, path, pq, dataTable, clicked);
     } else if (state == itemState.excluded) {
-        removeItemFromMultiValue($conBox, "NONE OF", item);
+        removeItemFromMultiValue($conBox, "NONE OF", item, path, pq, dataTable, clicked);
     } 
     
     if (newState == itemState.excluded) {
@@ -355,8 +387,7 @@ var getSelectorFn = function($conBox, item, state, selector, pq, clicked, dataTa
     }
 }};
 
-var removeItemFromMultiValue =  function($conBox, op, item) {
-    console.log(arguments);
+var removeItemFromMultiValue =  function($conBox, op, item, path, pq, $dataTable, clicked) {
     var cssClass = op.toLowerCase().replace(" ", "-");
     var $con = $conBox.find("." + cssClass);
     $con.find('.value').each(function(val) {
@@ -365,11 +396,36 @@ var removeItemFromMultiValue =  function($conBox, op, item) {
             $span.remove();
         }
     });
-    var left = $con.find('.value').length;
-    console.log(left + " values left");
-    if (left < 1) {
-        $con.remove();
+    var $button = $con.find('button.delete-confirm');
+    if ($button.length < 1) {
+        $button = jQuery('<button class="delete-confirm ui-state-default ui-corner-all constraint-deleter"><span class="ui-icon"></span></button>').appendTo($con);
     }
+    $button.find('span').removeClass('ui-icon-circle-close').addClass('ui-icon-circle-check');
+    $button.unbind('click').click(function() {
+        var con = {path: path, op: op, values: $con.find('.value').map(function(i, e) { return $(e).text()}).get()};
+        if (typeof pq["where"] == "undefined") {
+            pq["where"] = [];
+        }
+
+        var needsInserting = con.values.length > 0;
+        for (var i = 0, l = pq.where.length; i < l; i++) {
+            var iterCon = pq.where[i];
+            if (iterCon.path == path && iterCon.op == op) {
+                if (con.values > 0) {
+                    pq.where[i] = con;
+                    needsInserting = false;
+                } else {
+                    pq.where.splice(i, 1);
+                }
+            }
+        }
+        if (needsInserting) {
+            pq.where.push(con);
+        }
+        $dataTable.fnDraw(false); 
+        $(clicked).click()
+        return false;
+    });
 };
 
 var formatItemForNewState = function(path, op, item, pq, $dataTable, $conBox, clicked) {
@@ -381,9 +437,9 @@ var formatItemForNewState = function(path, op, item, pq, $dataTable, $conBox, cl
     }
     var $new_con_value = jQuery('<span class="value">').text(item);
     $con.find(".values").append($new_con_value);
-    var $button = $con.find('button');
+    var $button = $con.find('button.delete-confirm');
     if ($button.length < 1) {
-        $button = jQuery('<button class="ui-state-default ui-corner-all constraint-deleter"><span class="ui-icon"></span></button>').appendTo($con);
+        $button = jQuery('<button class="delete-confirm ui-state-default ui-corner-all constraint-deleter"><span class="ui-icon"></span></button>').appendTo($con);
     }
     $button.find('span').removeClass('ui-icon-circle-close').addClass('ui-icon-circle-check');
     $button.unbind('click').click(function() {
@@ -491,20 +547,46 @@ function serializeQuery(query) {
     return xmlString;
 };
 
+var getValueAdder = function($con, con, $dataTable, clicked) {
+    return function() {
+        var $button = $(this);
+        $button.find("span").removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-check");
+        var $input = jQuery('<input type="text">').insertBefore($button);
+        $button.unbind("click").click(function() {
+            var newValue = $.trim($input.val());
+            if (newValue.length > 0) {
+                con.values.push(newValue);
+                $dataTable.fnDraw(false);
+                $(clicked).click();
+            }
+            $input.remove();
+            $button.click(getValueAdder($con, con, $dataTable, clicked)).find("span").removeClass("ui-icon-circle-check").addClass("ui-icon-circle-plus");
+            return false;
+        });
+        return false;
+    };
+};
+
+
 var getOpChanger = function(con, $dataTable, clicked) {
     return function(value, settings) {
-        con.op = value;
-        $dataTable.fnDraw(false);
-        $(clicked).click();
+        if (con.op != value) {
+            con.op = value;
+            $dataTable.fnDraw(false);
+            $(clicked).click();
+        }
         return value;
     };
 };
 
-var getValueChanger = function(con, $dataTable, clicked) {
+var getValueChanger = function(con, $dataTable, clicked, isNumeric) {
     return function(value) {
-        con.value = value;
-        $dataTable.fnDraw(false);
-        $(clicked).click();
+        var internalValue = isNumeric ? value.replace(",", "") : value;
+        if (con.value != internalValue) {
+            con.value = internalValue;
+            $dataTable.fnDraw(false);
+            $(clicked).click();
+        }
         return value;
     };
 };
@@ -581,6 +663,7 @@ function initTable(pq, id, base, bkg) {
                     var summaryPath = pq.select[col];
                     var $popup = jQuery('<div class="summary-popup"></div>');
                     var $h3 = jQuery('<h3>').addClass("main-heading").text("Summary for " + colTitle);
+                    var $topRightCloser = newSpan('ui-icon ui-icon-squaresmall-minus').css("float", "right");
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
                     var $conBox = jQuery('<div>').appendTo($popup).append("<h4>Constraints</h4>");
                     var constraintsOnThisField = [];
@@ -595,7 +678,14 @@ function initTable(pq, id, base, bkg) {
                             var con = constraintsOnThisField[i];
                             var $con = jQuery('<span class="constraint">');
 
-                            var opDict = (con.op.match(/ OF/)) ? multiOps : constraintOps;
+                            var opDict;
+                            if (con.op.match(/ OF/)) {
+                                opDict = jQuery.extend({}, multiOps, true);
+                            } else if (con.op.match(/NULL$/)) {
+                                opDict = jQuery.extend({}, nullOps, true);
+                            } else {
+                                opDict = jQuery.extend({}, binaryOps, true);
+                            }
                             opDict.selected = con.op;
 
                             newSpan("op", con.op).appendTo($con).editable(getOpChanger(con, $dataTable, clicked), 
@@ -603,7 +693,8 @@ function initTable(pq, id, base, bkg) {
                             );
                             $con.addClass(con.op.toLowerCase().replace(" ", "-")); // "NONE OF" becomes "none-of"
                             if (con.value) {
-                                newSpan("value", con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked), {onblur: "submit", submit: "OK"});
+                                var valIsNumber = (typeof con.value == "number");
+                                newSpan("value", valIsNumber ? num_to_string(con.value, ",", 3) : con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked, valIsNumber), {onblur: "submit", submit: "OK"});
                             }
                             if (con.values) {
                                 var $values = newSpan("values").appendTo($con);
@@ -613,10 +704,13 @@ function initTable(pq, id, base, bkg) {
                                         pinned.push(con.values[j]);
                                     }
                                 }
+                                var $addValueButton = newButton();
+                                newSpan('ui-icon ui-icon-circle-plus').css("float", "left").appendTo($addValueButton);
+                                $addValueButton.click(getValueAdder($con, con, $dataTable, clicked)).appendTo($con);
                             }
                             var remover = getConstraintRemover(con, pq, $dataTable, clicked);
 
-                            var $buttonContainer = newButton().click(remover).appendTo($con);
+                            var $buttonContainer = newButton().click(remover).appendTo($con).addClass("delete-confirm");
                             newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($buttonContainer);
                             $conBox.append($con);
                         }
@@ -634,10 +728,12 @@ function initTable(pq, id, base, bkg) {
                     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
                     $removeButton.appendTo($popup);
                     $removeButton.click(function() {$popup.remove()});
+                    $topRightCloser.click(function() {$popup.remove()});
                     var $datatable = $('#' + id + '_wrapper')   
                     $datatable.append($popup);
                     $popup.click(function() {return false;});
-                    $popup.draggable({handle: ".main-heading"}).resizable({minHeight: $popup.height(), minWidth: $popup.width()});
+                    $popup.draggable({handle: ".main-heading"}).resizable({minHeight: $popup.height(), minWidth: $popup.width(), alsoResize: $centreBox});
+                    $centreBox.resizable();
 
                     $.ajax({
                         type: "POST",
@@ -666,6 +762,7 @@ function initTable(pq, id, base, bkg) {
                                     $table.append($row);
                                 }
                             } else {
+                                $centreBox.addClass("centre-box");
                                 var $thead = jQuery('<thead>');
                                 var $thRank  = jQuery("<th>").text("Rank");
                                 var $thLeft  = jQuery("<th>").text("Item");
@@ -699,7 +796,7 @@ function initTable(pq, id, base, bkg) {
                                     + totalSize + " unique values");
                                 $topBox.after($subHeading);
                             }
-                            if (isNumeric || sliceSize <= 10) {
+                            if (isNumeric) {
                                 $centreBox.empty().append($table);
                             } else {
                                 var $tableBox = jQuery('<div class="summary-table-scrollcontainer"></div>');
@@ -739,6 +836,17 @@ function initTable(pq, id, base, bkg) {
                     return false;
                 });
                 $dt.find('div.toolbar').append($xmlButton);
+
+                var $tsvButton = jQuery('<button>').text("Download As TSV").click(function() {
+                    var params = [
+                        {name: "query", value: serializeQuery(pq)},
+                        {name: "format", value: "tab"}
+                    ];
+                    var tsvUrl = url + "?" + jQuery.param(params);
+                    window.location = tsvUrl;
+                    return false;
+                });
+                $dt.find('div.toolbar').append($tsvButton);
 
                 $dt.find('div.title').append('<span class="query-summary">' + pq.title + '</span>');
 
