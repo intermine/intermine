@@ -1,6 +1,7 @@
 var test_base = "http://squirrel.flymine.org/intermine-test";
 var fly_base = "http://squirrel.flymine.org/flymine";
 var query_path = "/service/query/results";
+var modelPath = "/service/model/json";
 
 var test_query = {
     title: "Middle-Aged Employees",
@@ -35,6 +36,8 @@ var moderate_query = {
     where: [{path: "Gene.symbol", op: "ONE OF", values: ["eve", "zen", "bib", "r", "h"]}]
 };
 
+var models = {};
+
 function num_to_string(num, sep, every) {
     var num_as_string = num + "";
     var chars = num_as_string.split("");
@@ -47,6 +50,69 @@ function num_to_string(num, sep, every) {
         }
     }
     return ret;
+}
+
+function loadModel(base, continuation) {
+    if (models[base]) {
+        if (continuation) {
+            return continuation();
+        } else {
+            return false;
+        }
+    } else {
+        $.getJSON(base + modelPath, function(result) {
+            models[base] = result.model;
+            if (continuation) {
+                return continuation();
+            } else {
+                return false;
+            }
+        });
+        return false;
+    }
+}
+
+function addAttributesToQuery(model, pq) {
+    var pathsToClasses = [];
+    var selectNo = pq.select.length;
+    for (var i = 0; i < selectNo; i++) {
+        var classPath = pq.select[i].substring(0, pq.select[i].lastIndexOf("."));
+        if (jQuery.inArray(classPath, pathsToClasses) < 0) {
+            pathsToClasses.push(classPath);
+        }
+    }
+    for (var i = 0, l = pathsToClasses.length; i < l; i++) {
+        var cd = getCdForPath(model, pathsToClasses[i]);
+        for (var attrName in cd.attributes) {
+            if (attrName == "id") continue;
+            var newPath = pathsToClasses[i] + "." + attrName;
+            if (jQuery.inArray(newPath, pq.select) < 0) {
+                pq.select.push(newPath);
+            }
+        }
+    }
+}
+
+function getCdForPath(model, path) {
+    var parts = path.split(".");
+    var cd = model.classes[parts.shift()];
+    for (var i = 0, l = parts.length; i < l; i++) {
+        var fieldName = parts[i];
+        var potentialFields = jQuery.extend(true, {}, cd.attributes, cd.references, cd.collections);
+        var fd = potentialFields[fieldName];
+        if ("referencedType" in fd) {
+            cd = model.classes[fd.referencedType];
+        } else {
+            cd = null;
+        }
+    }
+    return cd;
+}
+
+function loadQuery(pq, base, id) {
+    loadModel(base, function() {
+        loadBox(pq, base, id);
+    });
 }
 
 function loadBox(pq, base, id) {
@@ -78,12 +144,11 @@ function loadBox(pq, base, id) {
     });
 }
 
-
 $(function(){
-    loadBox(test_query, test_base, "testtable");
-    loadBox(massive_query, fly_base, "flytable");
-    loadBox(moderate_query, fly_base, "flytable2");
-    loadBox(long_genes, fly_base, "flytable3");
+    loadQuery(test_query, test_base, "testtable");
+    loadQuery(massive_query, fly_base, "flytable");
+    loadQuery(moderate_query, fly_base, "flytable2");
+    loadQuery(long_genes, fly_base, "flytable3");
 });
 
 /**
@@ -120,7 +185,7 @@ var cache = {};
 * Function to manage data caching
 */
 function getDataFromCache(url, params, callback, id, pathquery) {
-    var pipe_factor = 100;
+    var pipe_factor = 10;
 
     var query = jQuery.extend(true, {}, pathquery);
     var echo = getParameter(params, "sEcho");
@@ -592,9 +657,12 @@ var getValueChanger = function(con, $dataTable, clicked, isNumeric) {
 };
 
 tableInitialised = {};
+var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
 
 function initTable(pq, id, base, bkg) {
-    var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
+    var initialViewLength = pq.select.length;
+    var model = models[base];
+    addAttributesToQuery(model, pq);
     var setup_params = {format: "jsontable", query: serializeQuery(pq)};
     var url = base + query_path; 
     if (tableInitialised[id]) {
@@ -620,6 +688,7 @@ function initTable(pq, id, base, bkg) {
                     "sPaginationType": "full_numbers",
                     "aoColumns": jQuery.map(pq.select, function(elem, idx) { 
                         var ret = {
+                            "bVisible": idx < initialViewLength,
                             "fnRender": function(obj) {
                                 var col = obj.iDataColumn; 
                                 if (typeof obj.aData[col] === "string") {
@@ -838,8 +907,21 @@ function initTable(pq, id, base, bkg) {
                 $dt.find('div.toolbar').append($xmlButton);
 
                 var $tsvButton = jQuery('<button>').text("Download As TSV").click(function() {
+                    var tsvQuery = jQuery.extend(true, {}, pq);
+                    var settings = $dataTable.fnSettings();
+                    var new_view = [];
+                    for (var i = 0; i < settings.aoColumns.length; i++) {
+                        var col = settings.aoColumns[i];
+                        var path = col.sName;
+                        var isVisible = col.bVisible;
+                        if (isVisible) {
+                            new_view.push(path);
+                        }
+                    }
+                    tsvQuery.select = new_view;
+
                     var params = [
-                        {name: "query", value: serializeQuery(pq)},
+                        {name: "query", value: serializeQuery(tsvQuery)},
                         {name: "format", value: "tab"}
                     ];
                     var tsvUrl = url + "?" + jQuery.param(params);
