@@ -244,9 +244,12 @@ public final class BioUtil
     }
 
     /**
-     * {@inheritDoc}
+     * Get the extra attributes needed for the DataSetLoader
+     * @param os the objectstore
+     * @param bag the bag
+     * @return a collection of strings to pass to the datasetloader
      */
-    public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
+    public static Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
         return getOrganisms(os, bag, false);
     }
 
