@@ -1,0 +1,276 @@
+.table-container {
+    margin: 25px;
+}
+.results-box {
+    width: 50%;
+    height: 50px;
+    border-radius: 3px;
+    background: url("css/smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png") repeat-x scroll 50% 50% #CCCCCC;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+    overflow: visible;
+}
+
+.DataTables_sort_icon {
+    float: left;
+}
+
+.dataTables_paginate .ui-button {
+    margin-right: -0.1em !important;
+}
+.paging_full_numbers .ui-button {
+    padding: 2px 6px;
+    margin: 0;
+    cursor: pointer;
+}
+.dataTables_wrapper .ui-toolbar {
+    padding: 5px;
+}
+.dataTables_paginate {
+    float: right;
+    text-align: right;
+}
+    .paging_full_numbers {
+        width: 400px !important;
+    }
+
+div.count {
+    text-align: right;
+    margin-left: 25px;
+    display: inline;
+    float: right;
+}
+
+div.title {
+    float: left;
+}
+
+div.toolbar {
+    float: right;
+}
+
+
+.query-summary {
+    /*display: table-cell;*/
+    padding-left: 20px;
+    padding-right: 20px;
+    line-height: 48px;
+    cursor: pointer;
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.throbber {
+    width: 55px;
+    height: 50px;
+    background: url("ajax-loader.gif") no-repeat;
+    background-position: center;
+    float: right;
+}
+
+.query-summary, .dataTables_info, .dataTables_length, .dataTables_filter, .dataTables_paginate, .summary-popup h3, h4, table, .constraint {
+    font-family: "Droid Sans", "Ubuntu", "Lucida Grande", "Helvetica", "Arial";
+}
+
+.ColVis_title {
+    font-size: 80% ! important;
+    padding: 20px;
+}
+
+.ColVis_Button {
+}
+
+.query-summary:hover {
+    text-decoration: underline;
+}
+
+.dataTables_scrollBody {
+    overflow-y: scroll !important;
+}
+
+.ui-icon {
+    overflow: none !important;
+}
+
+table.col-summary {
+    margin: 3em;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+table.col-summary td, table.col-summary th {
+    border: 1px solid #AAA;
+    font-size: 0.9em;
+}
+
+.summary-remover {
+    float: right;
+    margin: 0.8em;
+    padding: 0.8em;
+}
+
+.summary-table-scrollcontainer {
+    -moz-box-shadow: inset 0px -5px 5px #888;
+    -webkit-box-shadow: inset 0px -5px 5px #888;
+    box-shadow: inset 0px -5px 5px #ccc;
+    border-top: 1px solid #ccc;
+}
+
+td.summary-number {
+    text-align: right;
+}
+
+div.summary-popup {
+    position: absolute;
+    left: 25%; 
+    top: 5%; 
+    background: white;
+    width: 50%;
+    border: 1px solid #AAA;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+    box-shadow: 5px 5px 5px #ccc;
+}
+
+div.summary-popup h3 {
+    text-align: center;
+    font-size: 18px;
+    margin: 0px;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 0.4em;
+}
+
+h3.main-heading {
+    cursor: move;
+    line-height: 64px;
+}
+
+h3.sub-heading {
+    line-height: 1.5em;
+}
+
+div.summary-header, div.summary-popup table thead {
+    width: 100%;
+    height: 4em;
+    background: #AAA;
+}
+
+.null-value, .xml {
+    font-family: "Droid sans mono", "Consolas", monospace;
+    color: #888;
+    background: #EEE;
+    border: 1px solid #BBB;
+    padding: 3px;
+    margin: 2px;
+}
+
+.null-value a {
+    color: #888;
+    text-decoration: none;
+}
+
+.null-value a:active {
+    font-weight: bold;
+}
+
+.null-value a:visited {
+    color: #AAA;
+}
+
+.constraint .value, .constraint .op {
+    border: 1px solid #AAA;
+    background: #C5C9F1;
+    margin: 0.2em;
+    padding: 0.2em;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.constraint .value {
+    border-radius: 0.2em;
+    min-width: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.constraint .op {
+    min-width: 2em;
+    height: 2em;
+    border-radius: 1em;
+    font-weight: bold;
+}
+
+.summary-table-scrollcontainer {
+    overflow-y: auto;
+    height: 400px;
+    width: 100%;
+}
+
+button.constraint-deleter {
+    position: relative; 
+    /*top: 7px;*/
+    margin: 3px; 
+    display: inline; 
+    list-style: none;
+}
+
+.icon-cell {
+    padding-left: 0px;
+    padding-right: 0px;
+    width: 5%;
+}
+
+.rank-cell {
+    width: 10%;
+}
+
+table.inner-table tr td {
+    border: none;
+}
+
+.wait-text {
+    margin: 10%;
+    border: 1px solid #AAA;
+    width: 80%;
+    padding: 15px;
+    color: #AAA;
+}
+
+.summary_img {
+    float: right;
+    position: relative;
+}
+
+.summary-popup .constraint {
+    min-height: 45px;
+    position: relative;
+    margin: 5px;
+    border: 1px solid #AAA;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    text-size: 1.5em;
+    line-height: 200%;
+}
+
+.xml {
+    font-size: 0.8em;
+    margin: 2em;
+}
+pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ }
+
+
