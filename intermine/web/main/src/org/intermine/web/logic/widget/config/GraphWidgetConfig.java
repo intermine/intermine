@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +24,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.WidgetHelper;
 
 /**
  * Configuration object describing details of a graph displayer
@@ -153,14 +152,15 @@ public class GraphWidgetConfig extends WidgetConfig
      */
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
         throws Exception {
-        Collection<String> extraAttributes = new ArrayList();
-        Map<String, Collection<String>> returnMap = new HashMap();
+        Collection<String> extraAttributes = new ArrayList<String>();
+        Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
-                Constructor<?> constr = clazz.getConstructor(new Class[]{});
-                WidgetHelper widgetHelper = (WidgetHelper) constr.newInstance(new Object[] {});
-                extraAttributes = widgetHelper.getExtraAttributes(os, imBag);
+                Method extraAttributeMethod = clazz.getMethod("getExtraAttributes",
+                            new Class[] {ObjectStore.class, InterMineBag.class});
+                // invoking a static method the first argument is ignored
+                extraAttributes = (Collection<String>) extraAttributeMethod.invoke(null, os, imBag);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
                 return returnMap;
