@@ -154,6 +154,20 @@
       }
     });
   }
+
+  $MODEL_TRANSLATION_TABLE = {
+    <c:forEach var="cd" items="${INTERMINE_API.model.classDescriptors}" varStatus="cdStat">
+        "${cd.unqualifiedName}": {
+            displayName: "${imf:formatPathStr(cd.unqualifiedName, INTERMINE_API, WEBCONFIG)}",
+            fields: {
+                <c:forEach var="fd" items="${cd.allFieldDescriptors}" varStatus="fdStat">
+                    <c:set var="fdPath" value="${cd.unqualifiedName}.${fd.name}"/>
+                    "${fd.name}": "${imf:formatFieldStr(fdPath, INTERMINE_API, WEBCONFIG)}"<c:if test="${!fdStat.last}">,</c:if>
+                </c:forEach>
+            }
+        }<c:if test="${!cdStat.last}">,</c:if>
+    </c:forEach>
+};
 </script>
 
 <!-- /layout.jsp -->
