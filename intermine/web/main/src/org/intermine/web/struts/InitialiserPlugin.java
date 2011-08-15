@@ -511,12 +511,13 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void applyUserProfileUpgrades(ObjectStoreWriter osw) throws ServletException {
-    	Connection con = null;
+        Connection con = null;
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
-            if (DatabaseUtil.columnExists(con, "userprofile", "localaccount")) {
-                DatabaseUtil.addColumn(con, "userprofile", "localaccount", DatabaseUtil.Type.boolean_type);
+            if (!DatabaseUtil.columnExists(con, "userprofile", "localaccount")) {
+                DatabaseUtil.addColumn(con, "userprofile", "localaccount",
+                        DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
             }
         } catch (SQLException sqle) {
