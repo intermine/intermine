@@ -7,7 +7,7 @@
   #gene-expression-atlas div.chart { float:left; }
   #gene-expression-atlas h3 { background-image:url("images/icons/ebi.gif"); background-position:6px 2px; background-repeat:no-repeat;
     line-height:20px; padding-left:28px; }
-  #gene-expression-atlas div.sidebar { float:left; width:35%; }
+  #gene-expression-atlas div.sidebar { float:right; width:35%; }
   #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; }
   #gene-expression-atlas div.sidebar div.legend ul { margin-top:4px; }
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
@@ -40,6 +40,137 @@
     <%-- stuff this goodie bag --%>
     var geneExpressionAtlasDisplayer = {};
 
+     <%-- load Goog and create the initial bag from Java --%>
+    (function() {
+      google.load("visualization", "1", {packages:["corechart"]});
+
+      <%-- Java to JavaScript --%>
+      geneExpressionAtlasDisplayer.originalList =
+          {"byName": new Array(), "byTStatistic": new Array(), "byPValue": new Array()};
+      geneExpressionAtlasDisplayer.peaks = {"up": 0, "down": 0};
+
+      <%-- ordered by organ part --%>
+      <c:forEach var="cellType" items="${expressions.byName}">
+        var expressions = new Array();
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
+          var tStatistic = ${expression.tStatistic};
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': tStatistic
+          };
+          expressions.push(expression);
+
+          <%-- figure out min/max scale --%>
+          if (tStatistic > 0) {
+            if (tStatistic > geneExpressionAtlasDisplayer.peaks.up) {
+                geneExpressionAtlasDisplayer.peaks.up = tStatistic;
+            }
+          } else {
+            if (tStatistic < geneExpressionAtlasDisplayer.peaks.down) {
+                geneExpressionAtlasDisplayer.peaks.down = tStatistic;
+            }
+          }
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.byName.push(expression);
+      </c:forEach>
+
+      <%-- ordered by t-statistic --%>
+      <c:forEach var="cellType" items="${expressions.byTStatistic}">
+        var expressions = new Array();
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.byTStatistic.push(expression);
+      </c:forEach>
+
+      <%-- ordered by p-value --%>
+      <c:forEach var="cellType" items="${expressions.byPValue}">
+        var expressions = new Array();
+        <c:set var="cell" value="${cellType.value}"/>
+        <c:forEach var="expression" items="${cell.values}">
+          var expression = {
+            'pValue': ${expression.pValue},
+            'tStatistic': ${expression.tStatistic}
+          };
+          expressions.push(expression);
+        </c:forEach>
+
+        var expression = {
+          'condition': '${cellType.key}',
+          'expressions': expressions
+        };
+        geneExpressionAtlasDisplayer.originalList.byPValue.push(expression);
+      </c:forEach>
+    })();
+  </script>
+
+  <%-- sidebar --%>
+  <div class="sidebar">
+    <div class="legend">
+      <strong>Expression</strong>*
+      <ul class="expression">
+        <li><span class="up"></span> Upregulation</li>
+        <li><span class="down"></span> Downregulation</li>
+      </ul>
+      <p class="small">* Provide displayer description please.</p>
+    </div>
+
+    <div class="settings">
+      <strong>Sort</strong>
+      <ul class="sort">
+        <li title="byName">By tissue name</li>
+        <li class="active" title="byTStatistic">By t-statistic</li>
+        <li title="byPValue">By p-value</li>
+      </ul>
+
+      <strong>1) Show regulation type</strong>
+      <fieldset class="regulation-type">
+        <label for="upregulation-check">Upregulation:</label>
+        <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
+        <label for="downregulation-check">Downregulation:</label>
+        <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
+      </fieldset>
+
+      <strong>2) Adjust the p value</strong>
+      <fieldset class="p-value">
+        <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
+          <tiles:put name="sliderIdentifier" value="p-value" />
+          <tiles:put name="defaultValue" value="${defaultPValue}" />
+        </tiles:insert>
+      </fieldset>
+
+      <strong>3) Adjust the t-statistic</strong>
+      <fieldset class="t-statistic">
+        <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
+          <tiles:put name="sliderIdentifier" value="t-statistic" />
+          <tiles:put name="defaultValue" value="${defaultTValue}" />
+        </tiles:insert>
+      </fieldset>
+
+      <strong>4)</strong>
+      <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
+    </div>
+    
+    <input class="toggle-table" type="button" value="Toggle table">
+  </div>
+
+  <script type="text/javascript">
     <%-- call me to tell me settings have updated --%>
     geneExpressionAtlasDisplayer.settingsUpdated = function() {
       jQuery("#gene-expression-atlas div.settings input.update").removeClass('inactive');
@@ -252,84 +383,8 @@
       jQuery("#gene-expression-atlas-chart-organism_part.chart").empty();
     }
 
-    <%-- load the Goog and create the initial bag from Java --%>
+    <%-- initial call on page load --%>
     (function() {
-      google.load("visualization", "1", {packages:["corechart"]});
-
-      <%-- Java to JavaScript --%>
-      geneExpressionAtlasDisplayer.originalList =
-          {"byName": new Array(), "byTStatistic": new Array(), "byPValue": new Array()};
-      geneExpressionAtlasDisplayer.peaks = {"up": 0, "down": 0};
-
-      <%-- ordered by organ part --%>
-      <c:forEach var="cellType" items="${expressions.byName}">
-        var expressions = new Array();
-        <c:set var="cell" value="${cellType.value}"/>
-        <c:forEach var="expression" items="${cell.values}">
-          var tStatistic = ${expression.tStatistic};
-          var expression = {
-            'pValue': ${expression.pValue},
-            'tStatistic': tStatistic
-          };
-          expressions.push(expression);
-
-          <%-- figure out min/max scale --%>
-          if (tStatistic > 0) {
-            if (tStatistic > geneExpressionAtlasDisplayer.peaks.up) {
-                geneExpressionAtlasDisplayer.peaks.up = tStatistic;
-            }
-          } else {
-            if (tStatistic < geneExpressionAtlasDisplayer.peaks.down) {
-                geneExpressionAtlasDisplayer.peaks.down = tStatistic;
-            }
-          }
-        </c:forEach>
-
-        var expression = {
-          'condition': '${cellType.key}',
-          'expressions': expressions
-        };
-        geneExpressionAtlasDisplayer.originalList.byName.push(expression);
-      </c:forEach>
-
-      <%-- ordered by t-statistic --%>
-      <c:forEach var="cellType" items="${expressions.byTStatistic}">
-        var expressions = new Array();
-        <c:set var="cell" value="${cellType.value}"/>
-        <c:forEach var="expression" items="${cell.values}">
-          var expression = {
-            'pValue': ${expression.pValue},
-            'tStatistic': ${expression.tStatistic}
-          };
-          expressions.push(expression);
-        </c:forEach>
-
-        var expression = {
-          'condition': '${cellType.key}',
-          'expressions': expressions
-        };
-        geneExpressionAtlasDisplayer.originalList.byTStatistic.push(expression);
-      </c:forEach>
-
-      <%-- ordered by p-value --%>
-      <c:forEach var="cellType" items="${expressions.byPValue}">
-        var expressions = new Array();
-        <c:set var="cell" value="${cellType.value}"/>
-        <c:forEach var="expression" items="${cell.values}">
-          var expression = {
-            'pValue': ${expression.pValue},
-            'tStatistic': ${expression.tStatistic}
-          };
-          expressions.push(expression);
-        </c:forEach>
-
-        var expression = {
-          'condition': '${cellType.key}',
-          'expressions': expressions
-        };
-        geneExpressionAtlasDisplayer.originalList.byPValue.push(expression);
-      </c:forEach>
-
       <%-- create an initial filter --%>
       geneExpressionAtlasDisplayer.currentFilter = {};
       initFilter();
@@ -362,90 +417,37 @@
     }
 
     <%-- resize chart on browser window resize --%>
-    (function() {
-      jQuery(window).resize(function() {
-        if (this.resz) clearTimeout(this.resz);
-        this.resz = setTimeout(function() {
-          filterAndDrawChart(true);
-        }, 500);
-      });
-    })();
-  </script>
-
-<%-- sidebar --%>
-<div class="sidebar">
-  <div class="legend">
-    <strong>Expression</strong>*
-    <ul class="expression">
-      <li><span class="up"></span> Upregulation</li>
-      <li><span class="down"></span> Downregulation</li>
-    </ul>
-    <p class="small">* Provide displayer description please.</p>
-  </div>
-
-  <div class="settings">
-    <strong>Sort</strong>
-    <ul class="sort">
-      <li class="active" title="byName">By tissue name</li>
-      <li title="byTStatistic">By t-statistic</li>
-      <li title="byPValue">By p-value</li>
-    </ul>
-
-    <strong>1) Show regulation type</strong>
-    <fieldset class="regulation-type">
-      <label for="upregulation-check">Upregulation:</label>
-      <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
-      <label for="downregulation-check">Downregulation:</label>
-      <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
-    </fieldset>
-
-    <strong>2) Adjust the p value</strong>
-    <fieldset class="p-value">
-      <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
-        <tiles:put name="sliderIdentifier" value="p-value" />
-        <tiles:put name="defaultValue" value="${defaultPValue}" />
-      </tiles:insert>
-    </fieldset>
-
-    <strong>3) Adjust the t-statistic</strong>
-    <fieldset class="t-statistic">
-      <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
-        <tiles:put name="sliderIdentifier" value="t-statistic" />
-        <tiles:put name="defaultValue" value="${defaultTValue}" />
-      </tiles:insert>
-    </fieldset>
-
-    <strong>4)</strong>
-    <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
-  </div>
-
-  <script type="text/javascript">
-      <%-- attache events to the sidebar settings, set as filters and redraw --%>
-      jQuery("#gene-expression-atlas div.settings input.update").click(function() {
-        updateCurrentFilter();
-        <%-- redraw --%>
+    jQuery(window).resize(function() {
+      if (this.resz) clearTimeout(this.resz);
+      this.resz = setTimeout(function() {
         filterAndDrawChart(true);
-        <%-- update button not highlighted --%>
-        jQuery(this).addClass('inactive');
+      }, 500);
+    });
 
-      <%-- attache switcher for sort order --%>
-      jQuery("#gene-expression-atlas div.settings ul.sort li").click(function() {
-        jQuery("#gene-expression-atlas div.settings ul.sort li.active").removeClass('active');
-        jQuery(this).addClass('active');
-        updateCurrentFilter();
-        filterAndDrawChart(true);
-      });
+    <%-- attache events to the sidebar settings, set as filters and redraw --%>
+    jQuery("#gene-expression-atlas div.settings input.update").click(function() {
+      updateCurrentFilter();
+      <%-- redraw --%>
+      filterAndDrawChart(true);
+      <%-- update button not highlighted --%>
+      jQuery(this).addClass('inactive');
+    });
 
-      <%-- attache monitoring for regulation type checkbox change --%>
-      jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
-        if (typeof geneExpressionAtlasDisplayer == 'object') {
-          geneExpressionAtlasDisplayer.settingsUpdated();
-        }
-      });
+    <%-- attache switcher for sort order --%>
+    jQuery("#gene-expression-atlas div.settings ul.sort li").click(function() {
+      jQuery("#gene-expression-atlas div.settings ul.sort li.active").removeClass('active');
+      jQuery(this).addClass('active');
+      updateCurrentFilter();
+      filterAndDrawChart(true);
+    });
+
+    <%-- attache monitoring for regulation type checkbox change --%>
+    jQuery("#gene-expression-atlas div.settings fieldset.regulation-type input").click(function() {
+      if (typeof geneExpressionAtlasDisplayer == 'object') {
+        geneExpressionAtlasDisplayer.settingsUpdated();
+      }
+    });
   </script>
-  
-  <input class="toggle-table" type="button" value="Toggle table">
-</div>
 
 <div style="clear:both;"></div>
 
