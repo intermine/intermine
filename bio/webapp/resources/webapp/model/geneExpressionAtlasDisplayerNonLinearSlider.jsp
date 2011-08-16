@@ -15,8 +15,7 @@
 #${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; margin-top:20px; }
 #${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/non-linear-scale.png') repeat-y top left; position:relative; }
 #${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:12px; height:23px; background-repeat:no-repeat; background-position:top left; }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle.blue { background-image:url('model/images/slider-blue.gif'); }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle.green { background-image:url('model/images/slider-green.gif'); }
+#${sliderIdentifier}.slider-wrap .dragdealer .handle.gray { background-image:url('model/images/slider-gray.gif'); }
 </style>
 
 <div id="${sliderIdentifier}" class="slider-wrap">
@@ -32,7 +31,7 @@
     <a style="margin-left:11px;" title="1e-9"><span>10<sup>-9</sup></span>|</a>
     <div style="clear:both;"></div>
     <div id="${sliderIdentifier}-slider" class="dragdealer">
-      <div class="handle green"></div>
+      <div class="handle gray"></div>
     </div>
   </div>
   <input type="text" class="value" value="${defaultValue}" autocomplete="off">
@@ -57,12 +56,8 @@
 
       var value = 1 - ((total - distance - width) / (total - width));
 
-      // linear
-      // return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
-
       // non linear
       var p = new Number((1/Math.pow(10, value * 10)).toPrecision(21)).toExponential(2);
-      //im.log("slider: " + value + ", p: " + p);
       return p;
     });
   }
@@ -83,20 +78,12 @@
           geneExpressionAtlasDisplayer.settingsUpdated();
         }
 
-        //updateSliderColor();
-
         var width = jQuery("#${sliderIdentifier}-slider div.handle").css('width').replace(/[^0-9]/g, '');
         var total = jQuery("#${sliderIdentifier}-slider").css('width').replace(/[^0-9]/g, '');
 
-        // linear
-        // return (pValue * (total - width)) + "px";
-
         // non linear (http://www.wolframalpha.com/input/?i=p+%3D+10^%28-10x%29)
         var value = new Number(pValue).toExponential().toString();
-        //var a = value.substring(0, value.indexOf("e"));
-        //var b = Math.abs(value.substring(value.indexOf("e") + 1));
         var x = - (Math.log(pValue)) / (10 * Math.log(10));
-        //im.log("p: " + value + " slider: " + x);
 
         if (x > 1) x = 1;
 

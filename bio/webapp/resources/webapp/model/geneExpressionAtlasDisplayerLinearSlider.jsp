@@ -15,8 +15,7 @@
 #${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; margin-top:20px; }
 #${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/linear-scale.png') repeat-y top left; position:relative; }
 #${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:12px; height:23px; background-repeat:no-repeat; background-position:top left; }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle.blue { background-image:url('model/images/slider-blue.gif'); }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle.green { background-image:url('model/images/slider-green.gif'); }
+#${sliderIdentifier}.slider-wrap .dragdealer .handle.gray { background-image:url('model/images/slider-gray.gif'); }
 </style>
 
 <div id="${sliderIdentifier}" class="slider-wrap">
@@ -33,7 +32,7 @@
     <a style="margin-left:11px;" title="-80"><span>-80</span>|</a>
     <div style="clear:both;"></div>
     <div id="${sliderIdentifier}-slider" class="dragdealer">
-      <div class="handle green"></div>
+      <div class="handle gray"></div>
     </div>
   </div>
   <input type="text" class="value" value="${defaultValue}" autocomplete="off">
@@ -41,7 +40,7 @@
 </div>
 
 <script type="text/javascript">
-(function() {
+(function() {	
   <%-- init the slider --%>
   new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
     <%-- derive value from slider --%>
@@ -93,12 +92,6 @@
           }
         }
         pValue = pValue / 200;
-
-        if (pValue < 0.5) {
-          jQuery(this).removeClass('green').addClass('blue');
-        } else {
-          jQuery(this).removeClass('blue').addClass('green');
-        }
 
         // linear
         return ((1 - pValue) * (total - width)) + "px";
