@@ -101,8 +101,10 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Cell type');
 
+        data.addColumn('number', 'Downregulation, high p-value');
         data.addColumn('number', 'Downregulation');
         data.addColumn('number', 'Upregulation');
+        data.addColumn('number', 'Upregulation, high p-value');
 
         var chartDirections = {'up': false, 'down':false};
 
@@ -121,17 +123,41 @@
             var formattedString = tStatistic + ' (t-statistic), ' + expression.pValue + ' (p-value)';
 
             if (tStatistic > 0) { <%-- UP --%>
-              data.setValue(n, 1, 0);
-              data.setValue(n, 2, tStatistic);
-
-              data.setFormattedValue(n, 2, formattedString);
+              <%-- low confidence? --%>
+              if (geneExpressionAtlasDisplayer.currentFilter.pValue < expression.pValue) {
+	              data.setValue(n, 1, 0);
+	              data.setValue(n, 2, 0);
+	              data.setValue(n, 3, 0);
+	              data.setValue(n, 4, tStatistic);
+	
+	              data.setFormattedValue(n, 4, formattedString);
+              } else {
+	              data.setValue(n, 1, 0);
+	              data.setValue(n, 2, 0);
+	              data.setValue(n, 3, tStatistic);
+	              data.setValue(n, 4, 0);
+	
+	              data.setFormattedValue(n, 3, formattedString);
+              }
 
               chartDirections.up = true;
             } else {  <%-- DOWN --%>
-              data.setValue(n, 1, tStatistic);
-              data.setValue(n, 2, 0);
+              <%-- low confidence? --%>
+              if (geneExpressionAtlasDisplayer.currentFilter.pValue < expression.pValue) {
+                  data.setValue(n, 1, tStatistic);
+                  data.setValue(n, 2, 0);
+                  data.setValue(n, 3, 0);
+                  data.setValue(n, 4, 0);
 
-              data.setFormattedValue(n, 1, formattedString);
+                  data.setFormattedValue(n, 1, formattedString);
+              } else {
+            	  data.setValue(n, 1, 0);
+                  data.setValue(n, 2, tStatistic);
+                  data.setValue(n, 3, 0);
+                  data.setValue(n, 4, 0);
+
+                  data.setFormattedValue(n, 2, formattedString);
+              }
 
               chartDirections.down = true;
             }
@@ -147,7 +173,7 @@
           height:			(9 * n) + 50,
           chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
-          colors: 			['#0000FF', '#59BB14'],
+          colors: 			['#C9C9FF', '#0000FF', '#59BB14', '#B5E196'],
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
           fontSize: 		11,
           vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
@@ -185,13 +211,6 @@
             } else {
               if (filters.regulationType.indexOf("NONE") < 0) return false;
             }
-          }
-        }
-
-        <%-- p-value --%>
-        if ("pValue" in filters) {
-          if (expression.pValue > filters.pValue) {
-            return false;
           }
         }
 
