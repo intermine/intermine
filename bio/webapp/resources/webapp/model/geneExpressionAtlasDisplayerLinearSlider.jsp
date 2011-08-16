@@ -40,7 +40,7 @@
 </div>
 
 <script type="text/javascript">
-(function() {	
+(function() {
   <%-- init the slider --%>
   new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
     <%-- derive value from slider --%>
