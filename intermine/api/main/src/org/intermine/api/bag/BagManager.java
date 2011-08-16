@@ -126,7 +126,7 @@ public class BagManager
     }
 
     /**
-     * Return true if the bags for the given profile are current.
+     * Return true if the bags for the given profile are all current.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
