@@ -427,7 +427,7 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasDisplayer"
                      jspName="model/geneExpressionAtlasDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="atlasExpression"
                      placement="summary"
                      types="Gene"/>
 </reportdisplayers>
