@@ -24,6 +24,10 @@
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
   #gene-expression-atlas div.collection-table { display:none; }
   #gene-expression-atlas input.toggle-table { margin-bottom:20px; }
+  
+  #gene-expression-atlas-chart span { text-align:center; display:block; margin-left:50%; color:#1F7492; font-size:11px;
+  	font-style:italic; margin-bottom:20px; }
+  #gene-expression-atlas-chart iframe { display:block; clear:both; }
 </style>
 
 <div id="gene-expression-atlas">
@@ -175,14 +179,14 @@
         var options = {
           isStacked:		true,
           width:			windowSize()/2,
-          height:			(9 * n) + 50,
+          height:			(9 * n) + 30,
           chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: 			['#C9C9FF', '#0000FF', '#59BB14', '#B5E196'],
           fontName: 		"Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
           fontSize: 		11,
           vAxis: 			{title: 'Condition', titleTextStyle: {color: '#1F7492'}},
-          hAxis:			{title: 'Expression Value', titleTextStyle: {color: '#1F7492'}},
+          hAxis:			'none',
           legend: 			'none',
           hAxis:			{minValue: geneExpressionAtlasDisplayer.peaks.down - 2, maxValue: geneExpressionAtlasDisplayer.peaks.up + 2}
         };
@@ -191,6 +195,11 @@
 
         var chart = new google.visualization.BarChart(document.getElementById("gene-expression-atlas-chart"));
         chart.draw(data, options);
+        
+        // attach the hAxis as it does not work natively
+        jQuery('<span/>', {
+        	text: 't-statistic'
+        }).appendTo('#gene-expression-atlas-chart');
       }
     }
 
