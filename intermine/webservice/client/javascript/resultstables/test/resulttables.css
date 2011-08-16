@@ -167,6 +167,7 @@ div.summary-header, div.summary-popup table thead {
     border: 1px solid #BBB;
     padding: 3px;
     margin: 2px;
+    white-space: nowrap;
 }
 
 .null-value a {
@@ -271,6 +272,7 @@ table.inner-table tr td {
     margin: 2em;
     color: #555;
     background-color: #e2e4ff;
+    white-space: pre-wrap;
 }
 pre {
     white-space: pre-wrap;       /* css-3 */
