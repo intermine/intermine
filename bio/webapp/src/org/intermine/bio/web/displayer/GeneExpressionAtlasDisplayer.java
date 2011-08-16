@@ -11,6 +11,9 @@ package org.intermine.bio.web.displayer;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,14 +23,20 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.model.GeneExpressionAtlasExpressions;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -79,6 +88,34 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer {
             request.setAttribute("url", "http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62/" + genePrimaryID);
             request.setAttribute("defaultPValue", "5e-2");
             request.setAttribute("defaultTValue", "10");
+            
+            // get the corresponding collection
+	        for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
+	            if ("atlasExpression".equals(fd.getName()) && fd.isCollection()) {
+	                // fetch the collection
+	                Collection<?> collection = null;
+	                try {
+	                    collection = (Collection<?>)
+	                        reportObject.getObject().getFieldValue("atlasExpression");
+	                } catch (IllegalAccessException e) {
+	                    e.printStackTrace();
+	                }
+	                
+	                List<Class<?>> lc = PathQueryResultHelper.
+	                        queryForTypesInCollection(reportObject.getObject(), "atlasExpression",
+	                                im.getObjectStore());
+	                
+                    // create an InlineResultsTable
+                    InlineResultsTable t = new InlineResultsTable(collection,
+                            fd.getClassDescriptor().getModel(),
+                            SessionMethods.getWebConfig(request), im.getClassKeys(), collection.size(),
+                            false, lc);
+	                
+	                request.setAttribute("collection", t);
+	                break;
+	            }
+	        }
+
         }
     }
 

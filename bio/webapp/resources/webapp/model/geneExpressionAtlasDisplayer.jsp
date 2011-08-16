@@ -15,12 +15,15 @@
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
   #gene-expression-atlas div.sidebar input.update { font-weight:bold; }
   #gene-expression-atlas div.sidebar input.update.inactive { font-weight:normal; }
+  #gene-expression-atlas div.sidebar div.settings { margin-bottom:20px; }
   #gene-expression-atlas div.settings ul.sort { margin-bottom:10px; }
   #gene-expression-atlas div.settings ul.sort li { margin-left:10px !important; background:url('images/icons/sort-up.gif') no-repeat center left;
     padding-left:16px; cursor:pointer; }
   #gene-expression-atlas div.settings ul.sort li.active { background:url('images/icons/sort.gif') no-repeat center left; font-weight:bold; }
   #gene-expression-atlas fieldset { border:0; }
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
+  #gene-expression-atlas div.collection-table { display:none; }
+  #gene-expression-atlas input.toggle-table { margin-bottom:20px; }
 </style>
 
 <div id="gene-expression-atlas">
@@ -71,6 +74,8 @@
     <strong>4)</strong>
     <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
   </div>
+  
+  <input class="toggle-table" type="button" value="Toggle table">
 </div>
 
 <div class="chart" id="gene-expression-atlas-chart"></div>
@@ -422,4 +427,72 @@
   </script>
 
 <div style="clear:both;"></div>
+
+<%-- collection table --%>
+<div class="collection-table">
+	<h3>Table</h3>
+	<c:set var="inlineResultsTable" value="${collection}" />
+	<tiles:insert page="/reportCollectionTable.jsp">
+	<tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
+	<tiles:put name="object" beanName="reportObject.object" />
+	<tiles:put name="fieldName" value="atlasExpression" />
+	</tiles:insert>
+	<div class="toggle">
+	    <a class="less" style="float:right; display:none; margin-left:20px;"><span>Collapse</span></a>
+	    <a class="more" style="float:right;"><span>Show more rows</span></a>
+	</div>
+	<div class="show-in-table">
+	  <html:link action="/collectionDetails?id=${object.id}&amp;field=atlasExpression&amp;trail=${param.trail}">
+			Show all in a table &raquo;
+	  </html:link>
+	</div>
+</div>
+
+<script type="text/javascript">
+(function() {
+    <%-- hide more than 10 rows --%>
+    var bodyRows = jQuery("#gene-expression-atlas div.collection-table table tbody tr");
+    if (bodyRows.length > 10) {
+      bodyRows.each(function(i) {
+        if (i > 9) {
+          jQuery(this).hide();
+        }
+      });
+      <%-- 'provide' toggler --%>
+      jQuery("#gene-expression-atlas div.collection-table div.toggle").show();
+      <%-- attach toggler event --%>
+      jQuery('#gene-expression-atlas div.collection-table div.toggle a.more').click(function(e) {
+        jQuery("#gene-expression-atlas div.collection-table table tbody tr:hidden").each(function(i) {
+          if (i < 10) {
+            jQuery(this).show();
+          }
+        });
+        jQuery("#gene-expression-atlas div.collection-table div.toggle a.less").show();
+        if (jQuery("#gene-expression-atlas div.collection-table table tbody tr:hidden").length == 0) {
+          jQuery('#gene-expression-atlas div.collection-table div.toggle a.more').hide();
+        }
+      });
+      <%-- attach collapser event --%>
+      jQuery('#gene-expression-atlas div.collection-table div.toggle a.less').click(function(e) {
+        var that = this;
+        bodyRows.each(function(i) {
+          if (i > 9) {
+            jQuery(this).hide();
+            jQuery(that).hide();
+          }
+        });
+        jQuery('#gene-expression-atlas div.collection-table div.toggle a.more').show();
+        jQuery("#gene-expression-atlas div.collection-table").scrollTo('fast', 'swing', -20);
+      });
+    }
+    
+    jQuery('input.toggle-table').click(function() {
+    	jQuery('#gene-expression-atlas div.collection-table').toggle();
+    	if (jQuery('#gene-expression-atlas div.collection-table:visible')) {
+    		jQuery("#gene-expression-atlas div.collection-table").scrollTo('fast', 'swing', -20);
+    	}
+    });
+})();
+</script>
+
 </div>

@@ -65,7 +65,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
         // TODO check if type is a gene model type
 
-        long startTime = System.currentTimeMillis();
         // group other overlapping features by type, to display types and counts
         Map<String, Integer> featureCounts = new TreeMap<String, Integer>();
         Map<String, InlineResultsTable> featureTables = new TreeMap<String, InlineResultsTable>();
@@ -86,9 +85,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                     + startFeature.getPrimaryIdentifier() + ", " + startFeature.getId());
         }
         request.setAttribute("featureCounts", featureCounts);
-
-        long stepTime = System.currentTimeMillis();
-        startTime = stepTime;
 
         // resolve Collection from FieldDescriptor
         for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
@@ -175,9 +171,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                 }
             }
         }
-
-        stepTime = System.currentTimeMillis();
-        startTime = stepTime;
 
         request.setAttribute("featureTables", featureTables);
     }
