@@ -327,9 +327,9 @@ public class WebSearchableListController extends TilesAction
     
     private Map<String, ? extends WebSearchable> filterByCurrent(
             Map<String, ? extends WebSearchable> filteredWebSearchables) {
-    	Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
+        Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
-    	for (Object o : filteredWebSearchables.values()) {
+        for (Object o : filteredWebSearchables.values()) {
             InterMineBag bag = (InterMineBag) o;
             if (!bag.isCurrent()) {
                 clone.remove(bag.getName());
