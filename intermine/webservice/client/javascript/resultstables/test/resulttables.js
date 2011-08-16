@@ -656,6 +656,163 @@ var getValueChanger = function(con, $dataTable, clicked, isNumeric) {
     };
 };
 
+function getColumnSummariser(id, pq, url) { return function() {
+    $('#' + id + '_wrapper').find('.summary-popup').remove();
+    var buttonId = this.id
+    var clicked = this;
+    var parts = this.id.split("_", 3);
+    var col = parts[1].split("-").pop();
+    var colTitle = $('#' + buttonId).parent().text(); 
+    var summaryPath = pq.select[col];
+    var $popup = jQuery('<div class="summary-popup"></div>');
+    var $h3 = jQuery('<h3>').addClass("main-heading").text("Summary for " + colTitle);
+    var $topRightCloser = newSpan('ui-icon ui-icon-squaresmall-minus').css("float", "right");
+    var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
+    var $conBox = jQuery('<div>').appendTo($popup).append("<h4>Constraints</h4>");
+    var constraintsOnThisField = [];
+    var pinned = [];
+    $dataTable = $('#' + id).dataTable();
+    if (pq["where"]) {
+        for (var i = 0, l = pq.where.length; i < l; i++) {
+            if (pq.where[i].path == summaryPath) {
+                constraintsOnThisField.push(pq.where[i]);
+            }
+        }
+        for (var i = 0, l = constraintsOnThisField.length; i < l; i++) {
+            var con = constraintsOnThisField[i];
+            var $con = jQuery('<span class="constraint">');
+
+            var opDict;
+            if (con.op.match(/ OF/)) {
+                opDict = jQuery.extend({}, multiOps, true);
+            } else if (con.op.match(/NULL$/)) {
+                opDict = jQuery.extend({}, nullOps, true);
+            } else {
+                opDict = jQuery.extend({}, binaryOps, true);
+            }
+            opDict.selected = con.op;
+
+            newSpan("op", con.op).appendTo($con).editable(getOpChanger(con, $dataTable, clicked), 
+                {onblur: "submit", indicator: "Saving...", tooltip: "Click to edit", type: "select", data: opDict, submit: "OK"}
+            );
+            $con.addClass(con.op.toLowerCase().replace(" ", "-")); // "NONE OF" becomes "none-of"
+            if (con.value) {
+                var valIsNumber = (typeof con.value == "number");
+                newSpan("value", valIsNumber ? num_to_string(con.value, ",", 3) : con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked, valIsNumber), {onblur: "submit", submit: "OK"});
+            }
+            if (con.values) {
+                var $values = newSpan("values").appendTo($con);
+                for (var j = 0; j < con.values.length; j++) {
+                    newSpan("value", con.values[j]).appendTo($values);
+                    if (con.op === "ONE OF") {
+                        pinned.push(con.values[j]);
+                    }
+                }
+                var $addValueButton = newButton();
+                newSpan('ui-icon ui-icon-circle-plus').css("float", "left").appendTo($addValueButton);
+                $addValueButton.click(getValueAdder($con, con, $dataTable, clicked)).appendTo($con);
+            }
+            var remover = getConstraintRemover(con, pq, $dataTable, clicked);
+
+            var $buttonContainer = newButton().click(remover).appendTo($con).addClass("delete-confirm");
+            newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($buttonContainer);
+            $conBox.append($con);
+        }
+    }
+
+    var $adder = newButton().appendTo($conBox);
+    var addFn = getAdder(pq, $adder, summaryPath, $dataTable, clicked);
+    $adder.click(addFn);
+
+    newSpan('ui-icon ui-icon-circle-plus').css("float", "right").appendTo($adder);
+
+    $centreBox = jQuery('<div>');
+    $centreBox.append('<p class="wait-text">Summarising...</p>');
+    $popup.append($centreBox);
+    var $removeButton = jQuery('<button class="summary-remover">Close</button>');
+    $removeButton.appendTo($popup);
+    $removeButton.click(function() {$popup.remove()});
+    $topRightCloser.click(function() {$popup.remove()});
+    var $datatable = $('#' + id + '_wrapper')   
+    $datatable.append($popup);
+    $popup.click(function() {return false;});
+    $popup.draggable({handle: ".main-heading"}).resizable({minHeight: $popup.height(), minWidth: $popup.width(), alsoResize: $centreBox});
+    $centreBox.resizable();
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        data: {format: "jsonrows", query: serializeQuery(pq), summaryPath: summaryPath, size: 100},
+        url: url,
+        success: function(results) {
+            var $table = jQuery('<table class="col-summary"></table>');
+            var propNames = [];
+            var isNumeric = false;
+            var top100 = results.results.slice();
+            var sliceSize = top100.length, totalSize = results.uniqueValues;
+            if (totalSize == 1 && typeof top100[0]["min"] != 'undefined') { 
+                // we have numeric summary results.
+                isNumeric = true;
+                propNames = ["min", "max", "average", "stdev"];
+                for (var i = 0, l = propNames.length; i < l; i++) {
+                    var $row = jQuery('<tr></tr>');
+                    var $left = jQuery('<td></td>');
+                    $left.text(propNames[i]);
+                    var $right = jQuery('<td class="summary-number"></td>');
+                    var value = parseFloat(results.results[0][propNames[i]]).toPrecision(2);
+                    $right.text(value);
+                    $row.append($left);
+                    $row.append($right);
+                    $table.append($row);
+                }
+            } else {
+                $centreBox.addClass("centre-box");
+                var $thead = jQuery('<thead>');
+                var $thRank  = jQuery("<th>").text("Rank");
+                var $thLeft  = jQuery("<th>").text("Item");
+                var $thRight = jQuery("<th>").text("Count");
+                $thead.append($thRank).append($thLeft).append($thRight);
+                $table.append($thead);
+                
+                for (var i = 0; i < sliceSize; i++) {
+                    var $row = jQuery('<tr></tr>');
+                    var $rank = jQuery('<td class="rank-cell">').text(i + 1);
+                    $row.append($rank);
+                    var $left = jQuery('<td><table class="inner-table"><tr></tr></table></td>');
+                    var item = top100[i].item;
+                    var isPinned = (jQuery.inArray(item, pinned) >= 0);
+                    var icon = isPinned ? "bullet" : "radio-off" ;
+                    var state = isPinned ? itemState.pinned : itemState.nothing;
+                    var $selector = jQuery('<td class="icon-cell"><span class="ui-icon ui-icon-' + icon + '"></span></td>').appendTo($left.find('tr'));
+                    var selectorFn = getSelectorFn($conBox, item, state, $selector, pq, clicked, $dataTable, summaryPath);
+                    $selector.click(selectorFn);
+                    jQuery('<td></td>').append((item == null) ? '<span class="null-value">no value</span>' : '<span class="item-value">' + item + '</span>').appendTo($left.find('tr'));
+                    $row.append($left);
+                    var $right = jQuery('<td class="summary-number"></td>');
+                    $right.text(top100[i].count);
+                    $row.append($right);
+                    $table.append($row);
+                }
+            }
+            var $subHeading = jQuery('<h3 class="sub-heading">');
+            if (! isNumeric && sliceSize < totalSize ) {
+                $subHeading.text("Showing the " + sliceSize + " most frequently occuring values of " 
+                    + totalSize + " unique values");
+                $topBox.after($subHeading);
+            }
+            if (isNumeric) {
+                $centreBox.empty().append($table);
+            } else {
+                var $tableBox = jQuery('<div class="summary-table-scrollcontainer"></div>');
+                $centreBox.empty().append($tableBox);
+                $tableBox.append($table);
+            }
+            $popup.resizable("option", "minHeight", $popup.height());
+        }   
+    });
+    return false;
+}};
+
 tableInitialised = {};
 var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
 
@@ -686,6 +843,9 @@ function initTable(pq, id, base, bkg) {
                     "sAjaxSource": url,
                     "sAjaxDataProp": "results",
                     "sPaginationType": "full_numbers",
+                    "fnDrawCallback": function() {
+                        $('#' + id + '_wrapper').find('.summary_img').unbind("click").click(getColumnSummariser(id, pq, url));
+                    },
                     "aoColumns": jQuery.map(pq.select, function(elem, idx) { 
                         var ret = {
                             "bVisible": idx < initialViewLength,
@@ -720,163 +880,6 @@ function initTable(pq, id, base, bkg) {
                     "fnServerData": function(src, data, callback) { getDataFromCache(src, data, callback, id, pq);}
                 });
 
-                $('#' + id + '_wrapper').find('.summary_img').click(function() {
-
-                    console.log("Removing old popups");
-                    $('#' + id + '_wrapper').find('.summary-popup').remove();
-                    var buttonId = this.id
-                    var clicked = this;
-                    var parts = this.id.split("_", 3);
-                    var col = parts[1].split("-").pop();
-                    var colTitle = $('#' + buttonId).parent().text(); 
-                    var summaryPath = pq.select[col];
-                    var $popup = jQuery('<div class="summary-popup"></div>');
-                    var $h3 = jQuery('<h3>').addClass("main-heading").text("Summary for " + colTitle);
-                    var $topRightCloser = newSpan('ui-icon ui-icon-squaresmall-minus').css("float", "right");
-                    var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
-                    var $conBox = jQuery('<div>').appendTo($popup).append("<h4>Constraints</h4>");
-                    var constraintsOnThisField = [];
-                    var pinned = [];
-                    if (pq["where"]) {
-                        for (var i = 0, l = pq.where.length; i < l; i++) {
-                            if (pq.where[i].path == summaryPath) {
-                                constraintsOnThisField.push(pq.where[i]);
-                            }
-                        }
-                        for (var i = 0, l = constraintsOnThisField.length; i < l; i++) {
-                            var con = constraintsOnThisField[i];
-                            var $con = jQuery('<span class="constraint">');
-
-                            var opDict;
-                            if (con.op.match(/ OF/)) {
-                                opDict = jQuery.extend({}, multiOps, true);
-                            } else if (con.op.match(/NULL$/)) {
-                                opDict = jQuery.extend({}, nullOps, true);
-                            } else {
-                                opDict = jQuery.extend({}, binaryOps, true);
-                            }
-                            opDict.selected = con.op;
-
-                            newSpan("op", con.op).appendTo($con).editable(getOpChanger(con, $dataTable, clicked), 
-                                {onblur: "submit", indicator: "Saving...", tooltip: "Click to edit", type: "select", data: opDict, submit: "OK"}
-                            );
-                            $con.addClass(con.op.toLowerCase().replace(" ", "-")); // "NONE OF" becomes "none-of"
-                            if (con.value) {
-                                var valIsNumber = (typeof con.value == "number");
-                                newSpan("value", valIsNumber ? num_to_string(con.value, ",", 3) : con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked, valIsNumber), {onblur: "submit", submit: "OK"});
-                            }
-                            if (con.values) {
-                                var $values = newSpan("values").appendTo($con);
-                                for (var j = 0; j < con.values.length; j++) {
-                                    newSpan("value", con.values[j]).appendTo($values);
-                                    if (con.op === "ONE OF") {
-                                        pinned.push(con.values[j]);
-                                    }
-                                }
-                                var $addValueButton = newButton();
-                                newSpan('ui-icon ui-icon-circle-plus').css("float", "left").appendTo($addValueButton);
-                                $addValueButton.click(getValueAdder($con, con, $dataTable, clicked)).appendTo($con);
-                            }
-                            var remover = getConstraintRemover(con, pq, $dataTable, clicked);
-
-                            var $buttonContainer = newButton().click(remover).appendTo($con).addClass("delete-confirm");
-                            newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($buttonContainer);
-                            $conBox.append($con);
-                        }
-                    }
-
-                    var $adder = newButton().appendTo($conBox);
-                    var addFn = getAdder(pq, $adder, summaryPath, $dataTable, clicked);
-                    $adder.click(addFn);
-
-                    newSpan('ui-icon ui-icon-circle-plus').css("float", "right").appendTo($adder);
-
-                    $centreBox = jQuery('<div>');
-                    $centreBox.append('<p class="wait-text">Summarising...</p>');
-                    $popup.append($centreBox);
-                    var $removeButton = jQuery('<button class="summary-remover">Close</button>');
-                    $removeButton.appendTo($popup);
-                    $removeButton.click(function() {$popup.remove()});
-                    $topRightCloser.click(function() {$popup.remove()});
-                    var $datatable = $('#' + id + '_wrapper')   
-                    $datatable.append($popup);
-                    $popup.click(function() {return false;});
-                    $popup.draggable({handle: ".main-heading"}).resizable({minHeight: $popup.height(), minWidth: $popup.width(), alsoResize: $centreBox});
-                    $centreBox.resizable();
-
-                    $.ajax({
-                        type: "POST",
-                        dataType: "json",
-                        data: {format: "jsonrows", query: serializeQuery(pq), summaryPath: summaryPath, size: 100},
-                        url: url,
-                        success: function(results) {
-                            var $table = jQuery('<table class="col-summary"></table>');
-                            var propNames = [];
-                            var isNumeric = false;
-                            var top100 = results.results.slice();
-                            var sliceSize = top100.length, totalSize = results.uniqueValues;
-                            if (totalSize == 1 && typeof top100[0]["min"] != 'undefined') { 
-                                // we have numeric summary results.
-                                isNumeric = true;
-                                propNames = ["min", "max", "average", "stdev"];
-                                for (var i = 0, l = propNames.length; i < l; i++) {
-                                    var $row = jQuery('<tr></tr>');
-                                    var $left = jQuery('<td></td>');
-                                    $left.text(propNames[i]);
-                                    var $right = jQuery('<td class="summary-number"></td>');
-                                    var value = parseFloat(results.results[0][propNames[i]]).toPrecision(2);
-                                    $right.text(value);
-                                    $row.append($left);
-                                    $row.append($right);
-                                    $table.append($row);
-                                }
-                            } else {
-                                $centreBox.addClass("centre-box");
-                                var $thead = jQuery('<thead>');
-                                var $thRank  = jQuery("<th>").text("Rank");
-                                var $thLeft  = jQuery("<th>").text("Item");
-                                var $thRight = jQuery("<th>").text("Count");
-                                $thead.append($thRank).append($thLeft).append($thRight);
-                                $table.append($thead);
-                                
-                                for (var i = 0; i < sliceSize; i++) {
-                                    var $row = jQuery('<tr></tr>');
-                                    var $rank = jQuery('<td class="rank-cell">').text(i + 1);
-                                    $row.append($rank);
-                                    var $left = jQuery('<td><table class="inner-table"><tr></tr></table></td>');
-                                    var item = top100[i].item;
-                                    var isPinned = (jQuery.inArray(item, pinned) >= 0);
-                                    var icon = isPinned ? "bullet" : "radio-off" ;
-                                    var state = isPinned ? itemState.pinned : itemState.nothing;
-                                    var $selector = jQuery('<td class="icon-cell"><span class="ui-icon ui-icon-' + icon + '"></span></td>').appendTo($left.find('tr'));
-                                    var selectorFn = getSelectorFn($conBox, item, state, $selector, pq, clicked, $dataTable, summaryPath);
-                                    $selector.click(selectorFn);
-                                    jQuery('<td></td>').append((item == null) ? '<span class="null-value">no value</span>' : '<span class="item-value">' + item + '</span>').appendTo($left.find('tr'));
-                                    $row.append($left);
-                                    var $right = jQuery('<td class="summary-number"></td>');
-                                    $right.text(top100[i].count);
-                                    $row.append($right);
-                                    $table.append($row);
-                                }
-                            }
-                            var $subHeading = jQuery('<h3 class="sub-heading">');
-                            if (! isNumeric && sliceSize < totalSize ) {
-                                $subHeading.text("Showing the " + sliceSize + " most frequently occuring values of " 
-                                    + totalSize + " unique values");
-                                $topBox.after($subHeading);
-                            }
-                            if (isNumeric) {
-                                $centreBox.empty().append($table);
-                            } else {
-                                var $tableBox = jQuery('<div class="summary-table-scrollcontainer"></div>');
-                                $centreBox.empty().append($tableBox);
-                                $tableBox.append($table);
-                            }
-                            $popup.resizable("option", "minHeight", $popup.height());
-                        }
-                    });
-                    return false;
-                });
                 var $button = jQuery('<button>Hide table</button>');
                 $button.click(function() {
                     var $datatable = $('#' + id + '_wrapper').hide();
@@ -890,9 +893,10 @@ function initTable(pq, id, base, bkg) {
                 $dt.find('div.toolbar').append($button);
 
                 var $xmlButton = jQuery('<button>').text("View as XML").click(function() {
-                    var xml = serializeQuery(pq);
+                    var visibleQuery = getVisibleQuery(pq, $dataTable);
+                    var xml = serializeQuery(visibleQuery);
                     var $popup = jQuery('<div class="summary-popup"></div>');
-                    var $h3 = jQuery('<h3>').addClass("main-heading").text("XML for " + pq.title);
+                    var $h3 = jQuery('<h3>').addClass("main-heading").text("XML for " + visibleQuery.title);
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
                     var $centreBox = jQuery('<div>').appendTo($popup);
                     var $pre = jQuery('<pre>').addClass("xml").text(xml).appendTo($centreBox);
@@ -907,19 +911,7 @@ function initTable(pq, id, base, bkg) {
                 $dt.find('div.toolbar').append($xmlButton);
 
                 var $tsvButton = jQuery('<button>').text("Download As TSV").click(function() {
-                    var tsvQuery = jQuery.extend(true, {}, pq);
-                    var settings = $dataTable.fnSettings();
-                    var new_view = [];
-                    for (var i = 0; i < settings.aoColumns.length; i++) {
-                        var col = settings.aoColumns[i];
-                        var path = col.sName;
-                        var isVisible = col.bVisible;
-                        if (isVisible) {
-                            new_view.push(path);
-                        }
-                    }
-                    tsvQuery.select = new_view;
-
+                    var tsvQuery = getVisibleQuery(pq, $dataTable);
                     var params = [
                         {name: "query", value: serializeQuery(tsvQuery)},
                         {name: "format", value: "tab"}
@@ -941,3 +933,20 @@ function initTable(pq, id, base, bkg) {
         });
     }
 };
+
+function getVisibleQuery(pq, $dataTable) {
+    var visibleQuery = jQuery.extend(true, {}, pq);
+    var settings = $dataTable.fnSettings();
+    var new_view = [];
+    for (var i = 0; i < settings.aoColumns.length; i++) {
+        var col = settings.aoColumns[i];
+        var path = col.sName;
+        var isVisible = col.bVisible;
+        if (isVisible) {
+            new_view.push(path);
+        }
+    }
+    visibleQuery.select = new_view;
+    return visibleQuery;
+}
+
