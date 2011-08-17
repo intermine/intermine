@@ -73,7 +73,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private String description;
     private Date dateCreated;
     private List<String> keyFieldNames = new ArrayList<String>();
-    private boolean isCurrent;
+    private BagState state;
     private ObjectStoreBag osb;
     private ObjectStore os;
     private ObjectStoreWriter uosw;
@@ -87,17 +87,17 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
-     * @param isCurrent the status of this bag
+     * @param state the state of this bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-            boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+        BagState status, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
         throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
+        init(name, description, dateCreated, status, os, profileId, uosw);
     }
 
     /**
@@ -107,7 +107,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
-     * @param isCurrent the current state of the bag
+     * @param state the state of the bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
@@ -115,19 +115,19 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-        boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
+        BagState status, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
         List<String> keyFieldNames) throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
+        init(name, description, dateCreated, status, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
     }
 
-    private void init(String name, String description, Date dateCreated, boolean isCurrent,
+    private void init(String name, String description, Date dateCreated, BagState state,
         ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
         checkAndSetName(name);
         this.description = description;
         this.dateCreated = dateCreated;
-        this.isCurrent = isCurrent;
+        this.state = state;
         this.os = os;
         this.profileId = profileId;
         this.osb = os.createObjectStoreBag();
@@ -158,7 +158,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.description = savedBag.getDescription();
         this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
-        this.isCurrent = savedBag.getCurrent();
+        setState(savedBag.getState());
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
         setClassDescriptors();
     }
@@ -172,6 +172,16 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
+    private void setState(String savedBagStatus) {
+        if (BagState.CURRENT.toString().equals(savedBagStatus)) {
+            state = BagState.CURRENT;
+        } else if (BagState.NOT_CURRENT.toString().equals(savedBagStatus)) {
+            state = BagState.NOT_CURRENT;
+        } else {
+            state = BagState.TO_UPGRADE;
+        }
+    }
+
     private SavedBag store() throws ObjectStoreException {
         SavedBag savedBag = new SavedBag();
         savedBag.setId(savedBagId);
@@ -182,7 +192,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             savedBag.setDateCreated(dateCreated);
             savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
             savedBag.setOsbId(osb.getBagId());
-            savedBag.setCurrent(isCurrent);
+            savedBag.setState(state.toString());
             uosw.store(savedBag);
         }
         return savedBag;
@@ -225,7 +235,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public List<String> getContentsASKeyFieldValues() {
         List<String> keyFieldValueList = new ArrayList<String>();
-        if (isCurrent) {
+        if (isCurrent()) {
             Query q = new Query();
             q.setDistinct(false);
             try {
@@ -356,8 +366,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             osb = oswProduction.createObjectStoreBag();
             oswProduction.addAllToBag(osb, values);
             savedBag.setOsbId(osb.getBagId());
-            savedBag.setCurrent(true);
-            isCurrent = true;
+            savedBag.setState(BagState.CURRENT.toString());
+            state = BagState.CURRENT;
             uosw.store(savedBag);
             if (updateBagValues) {
                 deleteAllBagValues();
@@ -422,7 +432,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.profileId = profileId;
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
-        isCurrent = savedBag.getCurrent();
         addBagValues();
     }
 
@@ -438,7 +447,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.profileId = profileId;
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
-        isCurrent = savedBag.getCurrent();
         addBagValues(bagValues);
     }
 
@@ -554,19 +562,33 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Return true if the bag isCurrent
+     * Return true if the status bag is current, otherwise false (status is not current
+     * or to upgrade)
      * @return isCurrent
      */
     public boolean isCurrent() {
-        return isCurrent;
+        if (BagState.CURRENT.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Set if the bag is current
-     * @param isCurrent the value to set
+     * Return the bag state: current, not current, to upgrade
+     * @return the status
      */
-    public void setCurrent(boolean isCurrent) {
-        this.isCurrent = isCurrent;
+    public BagState getState() {
+        return state;
+    }
+
+    /**
+     * Set bag state
+     * @param state the state to set
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void setState(BagState state) throws ObjectStoreException {
+        this.state = state;
+        store();
     }
 
     /**

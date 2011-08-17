@@ -28,6 +28,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
@@ -73,7 +75,12 @@ public class WebSearchableListController extends TilesAction
         String templatesPublicPage = (String) context.getAttribute("templatesPublicPage");
         Map filteredWebSearchables;
         HttpSession session = request.getSession();
-
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        if (type.equals(TagTypes.BAG) && im.getBagManager().isOneBagToUpgrade(SessionMethods.getProfile(session))) {
+            ActionMessages actionMessages = getMessages(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            saveMessages(request, actionMessages);
+        }
         if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
             filteredWebSearchables = getFilterWebSearchables(request, type,
@@ -96,7 +103,7 @@ public class WebSearchableListController extends TilesAction
         }
         
         if (type.equals(TagTypes.BAG)) {
-        	filteredWebSearchables = filterByCurrent(filteredWebSearchables);
+            filteredWebSearchables = filterByCurrent(filteredWebSearchables);
         }
 
         // shorten list to be < limit

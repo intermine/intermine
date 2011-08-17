@@ -87,7 +87,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         // bob's details
         String bobName = "bob";
         InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
-                new Date(), true, os, bobId, uosw);
+                new Date(), BagState.CURRENT, os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
@@ -130,7 +130,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
-                new Date(), true, os, sallyId, uosw);
+                new Date(), BagState.CURRENT, os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
         template = new TemplateQuery("template", "ttitle", "tcomment",

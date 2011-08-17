@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -109,8 +110,8 @@ public class InterMineBagHandler extends DefaultHandler
                 String bagClsName = model.getPackageName() + "." + bagType;
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
-                            dateCreated, false, osw.getObjectStore(), userId, uosw,
-                            ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
+                            dateCreated, BagState.NOT_CURRENT, osw.getObjectStore(),
+                            userId, uosw, ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
                 } else {
                     LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
                             + " - " + bagType + " no longer in model.");

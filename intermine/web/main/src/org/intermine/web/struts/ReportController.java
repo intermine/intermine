@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
@@ -75,6 +76,9 @@ public class ReportController extends InterMineAction
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
+        if (im.getBagManager().isOneBagToUpgrade(SessionMethods.getProfile(session))) {
+            recordMessage(new ActionMessage("login.upgradeListManually"), request);
+        }
         // fetch & set requested object
         InterMineObject requestedObject = getRequestedObject(im, request);
 

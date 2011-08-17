@@ -26,4 +26,7 @@
     <typedef
         name="update-templatetrack-table"
         classname="org.intermine.web.task.UpdateTrackTableTask"/>
+    <typedef
+        name="update-savedbag-table"
+        classname="org.intermine.web.task.UpdateSavedBagTableTask"/>
 </antlib>

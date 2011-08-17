@@ -47,6 +47,7 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
@@ -1385,7 +1386,7 @@ public class AjaxServices
                 jsonSavedBag.put("bagName", bagName);
                 jsonSavedBag.put("status", status);
                 try {
-                    if (status.equals(Constants.CURRENT_BAG)) {
+                    if (status.equals(BagState.CURRENT.toString())) {
                         jsonSavedBag.put("size", profile.getSavedBags().get(bagName).getSize());
                     } else {
                         jsonSavedBag.put("size", 0);

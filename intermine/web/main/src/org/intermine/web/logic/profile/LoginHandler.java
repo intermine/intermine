@@ -50,19 +50,21 @@ public abstract class LoginHandler extends InterMineAction
      * @return the map containing the renamed bags the user created before they were logged in
      */
     public Map<String, String> doLogin(HttpServletRequest request, String username, String password) {
-    	Map<String, String> renamedBags = doStaticLogin(request, username, password);
-    	HttpSession session = request.getSession();
+        Map<String, String> renamedBags = doStaticLogin(request, username, password);
+        HttpSession session = request.getSession();
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
-    	Profile profile = pm.getProfile(username);
+        Profile profile = pm.getProfile(username);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (!im.getBagManager().isUserBagsCurrent(profile)) {
-            recordMessage(new ActionMessage("login.upgradeListStarted"), request);
+        if (im.getBagManager().isOneBagNotCurrent(profile)) {
+                recordMessage(new ActionMessage("login.upgradeListStarted"), request);
+        } else if (im.getBagManager().isOneBagToUpgrade(profile)) {
+                recordMessage(new ActionMessage("login.upgradeListManually"), request);
         }
-    	return renamedBags;
+        return renamedBags;
     }
 
     public static Map<String, String> mergeProfiles(Profile fromProfile, Profile toProfile) {
-    	Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
+        Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
         if (fromProfile != null) {
             mergeQueries = fromProfile.getHistory();
@@ -104,12 +106,12 @@ public abstract class LoginHandler extends InterMineAction
         Map<String, String> renamedBags = new HashMap<String, String>();
 
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
-        	// The current profile was for an anonymous guest.
-        	renamedBags = mergeProfiles(currentProfile, profile);
+            // The current profile was for an anonymous guest.
+            renamedBags = mergeProfiles(currentProfile, profile);
         }
-
+        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (!im.getBagManager().isUserBagsCurrent(profile)) {
+        if (im.getBagManager().isOneBagNotCurrent(profile)) {
             new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
         }
 

@@ -26,6 +26,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.util.StringUtil;
@@ -100,7 +101,7 @@ public class BagUploadConfirmAction extends InterMineAction
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
-            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, Constants.CURRENT_BAG);
+            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, BagState.CURRENT.toString());
         }
 
         ForwardParameters forwardParameters

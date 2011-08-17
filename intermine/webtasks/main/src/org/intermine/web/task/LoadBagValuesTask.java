@@ -23,6 +23,7 @@ import org.apache.tools.ant.Task;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
@@ -39,7 +40,7 @@ import org.intermine.sql.DatabaseUtil;
 
 /**
  * Task to load bagvalues table in the userprofile database.
- * If in the table savedbag, the column 'intermine_current' doesn't exist , add it.
+ * If in the table savedbag, the column 'intermine_state' doesn't exist , add it.
  *
  * @author dbutano
  */
@@ -84,11 +85,16 @@ public class LoadBagValuesTask extends Task
             Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
-                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                    DatabaseUtil.addColumn(db, "savedbag", "intermine_current",
-                            DatabaseUtil.Type.boolean_type);
-                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_current",
-                            Boolean.TRUE);
+                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")){
+                    if(!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                        DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
+                            DatabaseUtil.Type.text);
+                        DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_state",
+                            BagState.CURRENT);
+                    } else {
+                        System .out.println("You must not execute the task load-bagvalues-table. Run the task update-savedbag-table task.");
+                        return;
+                    }
                 }
             } catch (SQLException sqle) {
                 throw new BuildException("Problems connecting bagvalues table", sqle);
@@ -136,7 +142,6 @@ public class LoadBagValuesTask extends Task
                             classKeys, bag.getType());
                     bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
-                    bag.setCurrent(true);
                     System .out.println("Loaded bag: " + bag.getName() + " - id: "
                             + bag.getSavedBagId());
                 } catch (UnknownBagTypeException e) {

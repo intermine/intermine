@@ -62,7 +62,8 @@ public class UpdateTrackTableTask extends Task
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             connection = ((ObjectStoreInterMineImpl) userProfileOS).getDatabase().getConnection();
             Statement stm = null;
-            if (!verifyTrackColumnType(connection, TrackerUtil.TEMPLATE_TRACKER_TABLE)) {
+            if (!DatabaseUtil.verifyColumnType(connection, TrackerUtil.TEMPLATE_TRACKER_TABLE,
+                                              "timestamp", Types.TIMESTAMP)) {
                 stm = connection.createStatement();
                 String sql1 = "ALTER TABLE templatetrack ADD COLUMN timestamp_backup bigint";
                 stm.executeUpdate(sql1);
@@ -94,7 +95,7 @@ public class UpdateTrackTableTask extends Task
                 TrackerUtil.SEARCH_TRACKER_TABLE};
 
             for (String tableToVerify : tablesToVerify) {
-                if (!verifyTrackColumnType(connection, tableToVerify)) {
+                if (!DatabaseUtil.verifyColumnType(connection, tableToVerify, "timestamp", Types.TIMESTAMP)) {
                     String sql = "DROP TABLE " + tableToVerify;
                     if (stm == null) {
                         stm = connection.createStatement();
@@ -109,26 +110,5 @@ public class UpdateTrackTableTask extends Task
         }  finally {
             ((ObjectStoreInterMineImpl) userProfileOS).releaseConnection(connection);
         }
-    }
-
-    private boolean verifyTrackColumnType (Connection con, String tableName) {
-        try {
-            if (DatabaseUtil.tableExists(con, tableName)) {
-                ResultSet res = con.getMetaData().getColumns(null, null,
-                                                            tableName, "timestamp");
-
-                while (res.next()) {
-                    if (res.getString(3).equals(tableName)
-                        && "timestamp".equals(res.getString(4))
-                        && res.getInt(5) == Types.TIMESTAMP) {
-                        return true;
-                    }
-                    return false;
-                }
-            }
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
-        return true;
     }
 }
