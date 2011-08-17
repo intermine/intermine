@@ -964,7 +964,7 @@ public final class DatabaseUtil
         throws SQLException {
         Connection connection = database.getConnection();
         try {
-        	updateColumnValue(connection, tableName, columnName, newValue);
+            updateColumnValue(connection, tableName, columnName, newValue);
         } finally {
             connection.close();
         }
