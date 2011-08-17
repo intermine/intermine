@@ -41,11 +41,11 @@ public class OtherMinesLinkController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
 
         // we only want to display the links on a Gene Report Page
         InterMineObject imObj = (InterMineObject) request.getAttribute("object");
