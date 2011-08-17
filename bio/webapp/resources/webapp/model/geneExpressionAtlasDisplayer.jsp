@@ -266,7 +266,7 @@
         var options = {
           isStacked:		true,
           width:			windowSize()/2,
-          height:			(9 * n) + 30,
+          height:			(9 * n) + 50,
           chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
           colors: 			['#C9C9FF', '#0000FF', '#59BB14', '#B5E196'],
