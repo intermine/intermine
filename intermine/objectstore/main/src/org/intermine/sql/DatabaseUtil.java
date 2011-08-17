@@ -871,13 +871,13 @@ public final class DatabaseUtil
 
     /**
      * Create the table 'bagvalues' containing the values of the key field objects
-     * contained in a bag
+     * contained in a bag and an extra values
      * @param con the Connection to use
      * @throws SQLException if there is a database problem
      */
     public static void createBagValuesTables(Connection con)
         throws SQLException {
-        String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text)";
+        String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text, extra text)";
         String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value)";
         con.createStatement().execute(sqlTable);
         con.createStatement().execute(sqlIndex);
