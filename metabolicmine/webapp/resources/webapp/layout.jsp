@@ -29,7 +29,9 @@
 <!-- for microsoft -->
 <meta name="msvalidate.01" content="${WEB_PROPERTIES['searchengines.msn']}" />
 
-<html:base/>
+<c:if test="${pageName == 'begin'}">
+  <html:base/>
+</c:if>
 
 <fmt:message key="${pageName}.noFollow" var="noFollow" />
 
