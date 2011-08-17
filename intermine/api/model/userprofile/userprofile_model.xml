@@ -15,7 +15,7 @@
     <attribute name="description" type="java.lang.String"/>
     <attribute name="dateCreated" type="java.util.Date"/>
     <attribute name="osbId" type="int"/>
-    <attribute name="current" type="boolean"/>
+    <attribute name="state" type="java.lang.String"/>
     <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedBags"/>
   </class>
   <class name="SavedQuery" is-interface="false">

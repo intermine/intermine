@@ -33,6 +33,7 @@ import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
@@ -1129,7 +1130,7 @@ public final class SessionMethods
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
-                savedBagsStatus.put(bag.getName(), Constants.NOT_CURRENT_BAG);
+                savedBagsStatus.put(bag.getName(), bag.getState().toString());
             }
         }
         session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);

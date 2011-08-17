@@ -47,6 +47,7 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -133,9 +134,8 @@ public class InitialiserPlugin implements PlugIn
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
-        //verify if intermine_current exists in the savedbag table
-        if (!validateUserProfileDatabase(userprofileOSW)) {
-            blockingErrorKeys.add("errors.savedbagtable.runAnt");
+        //verify if intermine_state exists in the savedbag table and if it has the right type
+        if (!verifySavedBagTable(userprofileOSW)) {
             return;
         }
         //verify if we the webapp needs to upgrade the lists
@@ -637,19 +637,24 @@ public class InitialiserPlugin implements PlugIn
         return null;
     }
 
-    private boolean validateUserProfileDatabase(ObjectStore uos) {
+    private boolean verifySavedBagTable(ObjectStore uos) {
         Connection con = null;
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
-            if (DatabaseUtil.tableExists(con, "savedbag")
-            		&& DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
-                return true;
+            if (DatabaseUtil.tableExists(con, "savedbag")) {
+                if (DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
+                    blockingErrorKeys.add("errors.savedbagtable.runUpdateSavedBagTableAnt");
+                    return false;
+                } else if (DatabaseUtil.columnExists(con, "savedbag", "intermine_state")) {
+                    return true;
+                }
             }
         } catch (SQLException sqle) {
             LOG.error("Probelm retrieving connection", sqle);
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
+        blockingErrorKeys.add("errors.savedbagtable.runLoadBagValuesTableAnt");
         return false;
     }
 
@@ -680,10 +685,10 @@ public class InitialiserPlugin implements PlugIn
                     Connection conn = null;
                     try {
                         conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
-                        if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                        if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")) {
                             DatabaseUtil.updateColumnValue(
                                          ((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                                         "savedbag", "intermine_current", Boolean.FALSE);
+                                         "savedbag", "intermine_state", BagState.NOT_CURRENT.toString());
                         }
                     } catch (SQLException sqle) {
                         throw new BuildException("Problems connecting bagvalues table", sqle);

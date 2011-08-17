@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
@@ -135,7 +136,7 @@ public class PathQueryResultsHelperTest extends TestCase
 
     // This test expects the references from the the configuration to be excluded.
     public void testMakePathQueryForBag() throws Exception {
-        InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), true, os, null, uosw);
+        InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), BagState.CURRENT, os, null, uosw);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os.getModel());
         String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
             + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"

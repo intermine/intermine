@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -126,18 +127,33 @@ public class BagManager
     }
 
     /**
-     * Return true if the bags for the given profile are all current.
+     * Return true if there is at least one bag for the given profile in the 'not_current' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
-    public boolean isUserBagsCurrent(Profile profile) {
+    public boolean isOneBagNotCurrent(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-            if (!bag.isCurrent()) {
-                return false;
+            if (bag.getState().equals(BagState.NOT_CURRENT)) {
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * Return true if there is at least one bag for the given profile in the 'to_upgrade' state.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public boolean isOneBagToUpgrade(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (bag.getState().equals(BagState.TO_UPGRADE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

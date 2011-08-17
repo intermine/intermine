@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
@@ -106,6 +108,16 @@ public class MyMineController extends TilesAction
                         && "templates".equals(webState.getSubtab("subtabmymine")))) {
             session.removeAttribute(Constants.NEW_TEMPLATE);
             getPrecomputedSummarisedInfo(profile, session, request);
+        }
+        if ((request.getParameter("subtab") != null && "lists".equals(request
+                .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
+                        && "lists".equals(webState.getSubtab("subtabmymine")))) {
+            if (im.getBagManager().isOneBagToUpgrade(profile)) {
+                ActionMessages actionMessages = getMessages(request);
+                actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                                   new ActionMessage("login.upgradeListManually"));
+                saveMessages(request, actionMessages);
+            }
         }
         return null;
     }

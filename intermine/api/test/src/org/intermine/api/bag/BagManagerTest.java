@@ -4,34 +4,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 
 public class BagManagerTest extends InterMineAPITestCase
@@ -153,7 +140,7 @@ public class BagManagerTest extends InterMineAPITestCase
     public void testGetCurrentUserOrGlobalBagsOfType() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalAddressBag, userAddressBag);
         assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
-        globalAddressBag.setCurrent(false);
+        globalAddressBag.setState(BagState.NOT_CURRENT);
         expected = createExpectedCurrent(globalAddressBag, userAddressBag);
         assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsOfType(testUser, "Address"));
     }
@@ -188,7 +175,7 @@ public class BagManagerTest extends InterMineAPITestCase
         storeAddress();
         globalAddressBag.addIdToBag(ADDRESS_ID, "Address");
         userAddressBag.addIdToBag(ADDRESS_ID, "Address");
-        userAddressBag.setCurrent(false);
+        userAddressBag.setState(BagState.NOT_CURRENT);
 
         Set<InterMineBag> expected = new HashSet<InterMineBag>(Arrays.asList(globalAddressBag));
         try {
@@ -222,7 +209,6 @@ public class BagManagerTest extends InterMineAPITestCase
         }
         return expected;
     }
-
 
     private void storeAddress() throws ObjectStoreException {
         ObjectStoreWriter osw = os.getNewWriter();

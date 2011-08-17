@@ -24,9 +24,12 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
@@ -58,6 +61,14 @@ public class QueryBuilderController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        Profile profile = SessionMethods.getProfile(session);
+        if (im.getBagManager().isOneBagToUpgrade(profile)) {
+            ActionMessages actionMessages = getMessages(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            saveMessages(request, actionMessages);
+        }
         populateRequest(request, response);
         return null;
     }

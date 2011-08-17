@@ -210,9 +210,6 @@ public interface Constants
      * key for the map saved in the session containing the status of saved bags
      */
     String SAVED_BAG_STATUS = "SAVED_BAG_STATUS";
-    String CURRENT_BAG = "CURRENT";
-    String NOT_CURRENT_BAG = "NOT_CURRENT";
-    String BAG_TO_UPGRADE = "TO_UPGRADE";
     String UPGRADING_BAG = "UPGRADING";
 
     /** The replay-attack prevention nonces **/

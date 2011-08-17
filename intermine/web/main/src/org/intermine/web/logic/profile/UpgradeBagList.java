@@ -19,6 +19,7 @@ import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
@@ -43,11 +44,10 @@ public class UpgradeBagList implements Runnable
     }
 
     public void run() {
-        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
         Map<String, String> savedBagsStatus = SessionMethods.getNotCurrentSavedBagsStatus(session);
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-            if (!bag.isCurrent()) {
+            if (bag.getState().equals(BagState.NOT_CURRENT)) {
                 savedBagsStatus.put(bag.getName(), Constants.UPGRADING_BAG);
                 List<String> primaryIdentifiersList =
                     bag.getContentsASKeyFieldValues();
@@ -57,10 +57,11 @@ public class UpgradeBagList implements Runnable
                     if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                         Map<Integer, List> matches = result.getMatches();
                         bag.upgradeOsb(matches.keySet(), false);
-                        savedBagsStatus.put(bag.getName(), Constants.CURRENT_BAG);
+                        savedBagsStatus.put(bag.getName(), BagState.CURRENT.toString());
                     } else {
                         session.setAttribute("bagQueryResult_" + bag.getName(), result);
-                        savedBagsStatus.put(bag.getName(), Constants.BAG_TO_UPGRADE);
+                        bag.setState(BagState.TO_UPGRADE);
+                        savedBagsStatus.put(bag.getName(), BagState.TO_UPGRADE.toString());
                     }
                 } catch (ClassNotFoundException cnfe) {
                     LOG.warn("The type " + bag.getType() + "isn't in the model."

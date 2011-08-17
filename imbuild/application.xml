@@ -124,6 +124,11 @@
                         userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
+  <target name="update-savedbag-table" depends="-init-properties, -init-build-db">
+    <update-savedbag-table
+                        userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
   <!-- RELEASE / REMOVE FROM TOMCAT -->
 
   <target name="release-webapp" depends="-init-properties, init">
