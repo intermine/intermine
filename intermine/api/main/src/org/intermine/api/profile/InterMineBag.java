@@ -797,9 +797,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         Batch batch = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
-                DatabaseUtil.createBagValuesTables(conn);
-            }
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
                 batch = new Batch(new BatchWriterPostgresCopyImpl());

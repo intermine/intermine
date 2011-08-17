@@ -520,6 +520,14 @@ public class InitialiserPlugin implements PlugIn
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
             }
+            if (!DatabaseUtil.tableExists(con, "bagvalues")) {
+                DatabaseUtil.createBagValuesTables(con);
+            } else {
+                if(!DatabaseUtil.columnExists(con, "bagvalues", "extra")) {
+                    DatabaseUtil.addColumn(con, "bagvalues", "extra",
+                            DatabaseUtil.Type.text);
+                }
+            }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
             throw new ServletException("Unable to upgrade UserProfile DB");
