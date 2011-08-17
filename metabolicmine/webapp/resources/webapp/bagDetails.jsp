@@ -332,6 +332,9 @@
 		          <tiles:put name="highlightId" value="${highlightId}"/>
 		      </tiles:insert>
 	      </div>
+	      <div class="toggle">
+	      	<a class="less" title="Hide the list">Hide the list</a>
+	      </div>
 
 	      <div class="selected">
 	        <span class="desc">Selected:</span>
@@ -402,8 +405,16 @@
 	      		
 		      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
 		      function toggleResults() {
-		    	jQuery('#preview-table').toggle();
-		        jQuery('#ListArea').slideDown().scrollTo('slow', 'linear', -25);
+		    	if (jQuery('#preview-table:visible').length > 0) {
+		    		// show the full list, hide preview table
+			    	jQuery('#preview-table').hide();
+			        jQuery('#ListArea').slideDown().scrollTo('slow', 'linear', -25);
+		    	} else {
+		    		// hide the full list, show preview table
+		    		jQuery('#ListArea').slideUp();
+		    		jQuery('#preview-table').show();
+		    		jQuery('#ListCategory').scrollTo('slow', 'linear', -15);
+		    	}
 		      }
 
 		      // shuffle "selected" around:
@@ -439,10 +450,13 @@
 		        jQuery(this).parent().parent().find('td').not('th td').addClass('highlightCell');
 		      });
 
-		      // toggler event
+		      // toggler events
 		      jQuery('#preview-table').click(function() {
 		        toggleResults();
 		      });
+		      jQuery('#list-table div.toggle a.less').click(function() {
+			    toggleResults();
+			  });
 	      	})();
 	      </script>	
 	
