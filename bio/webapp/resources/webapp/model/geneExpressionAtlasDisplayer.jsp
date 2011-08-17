@@ -509,7 +509,8 @@
           }
         });
         jQuery('#gene-expression-atlas div.collection-table div.toggle a.more').show();
-        jQuery("#gene-expression-atlas div.collection-table").scrollTo('fast', 'swing', -20);
+        jQuery('#gene-expression-atlas div.collection-table').hide();
+        jQuery('input.toggle-table').show();
       });
     }
     
@@ -517,6 +518,7 @@
     	jQuery('#gene-expression-atlas div.collection-table').toggle();
     	if (jQuery('#gene-expression-atlas div.collection-table:visible')) {
     		jQuery("#gene-expression-atlas div.collection-table").scrollTo('fast', 'swing', -20);
+        jQuery(this).hide();
     	}
     });
 })();
