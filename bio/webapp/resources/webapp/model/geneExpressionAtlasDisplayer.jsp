@@ -317,7 +317,7 @@
 
         <%-- t-statistic --%>
         if ("tStatistic" in filters) {
-          if (expression.tStatistic > filters.tStatistic) {
+          if (Math.abs(expression.tStatistic) < filters.tStatistic) {
             return false;
           }
         }
