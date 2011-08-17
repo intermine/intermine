@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,10 +49,10 @@ public class FriendlyMineLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, false,
@@ -75,7 +74,7 @@ public class FriendlyMineLinkController  extends TilesAction
             mineId = mineId.substring(0, mineId.indexOf("."));
             Properties mineProps = PropertiesUtil.stripStart(mineId,
                     PropertiesUtil.getPropertiesStartingWith(mineId, props));
-            
+
             // get name and url
             String mineName = mineProps.getProperty("name");
             String mineURL = mineProps.getProperty("url");
@@ -95,6 +94,7 @@ public class FriendlyMineLinkController  extends TilesAction
             }
         }
 
+        @SuppressWarnings("rawtypes")
         Class c = null;
         try {
             c = Class.forName(bag.getQualifiedType());
