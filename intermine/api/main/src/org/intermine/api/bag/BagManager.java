@@ -134,7 +134,7 @@ public class BagManager
     public boolean isOneBagNotCurrent(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-            if (bag.getState().equals(BagState.NOT_CURRENT)) {
+            if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 return true;
             }
         }
@@ -149,7 +149,7 @@ public class BagManager
     public boolean isOneBagToUpgrade(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-            if (bag.getState().equals(BagState.TO_UPGRADE)) {
+            if (bag.getState().equals(BagState.TO_UPGRADE.toString())) {
                 return true;
             }
         }

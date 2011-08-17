@@ -577,8 +577,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Return the bag state: current, not current, to upgrade
      * @return the status
      */
-    public BagState getState() {
-        return state;
+    public String getState() {
+        return state.toString();
     }
 
     /**

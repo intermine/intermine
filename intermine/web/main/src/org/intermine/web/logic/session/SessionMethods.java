@@ -1130,7 +1130,7 @@ public final class SessionMethods
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
-                savedBagsStatus.put(bag.getName(), bag.getState().toString());
+                savedBagsStatus.put(bag.getName(), bag.getState());
             }
         }
         session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);

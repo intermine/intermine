@@ -47,7 +47,7 @@ public class UpgradeBagList implements Runnable
         Map<String, String> savedBagsStatus = SessionMethods.getNotCurrentSavedBagsStatus(session);
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-            if (bag.getState().equals(BagState.NOT_CURRENT)) {
+            if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 savedBagsStatus.put(bag.getName(), Constants.UPGRADING_BAG);
                 List<String> primaryIdentifiersList =
                     bag.getContentsASKeyFieldValues();
