@@ -20,16 +20,17 @@
 
 <div id="${sliderIdentifier}" class="slider-wrap">
   <div class="slider">
-    <a style="margin-left:3px;" title="100"><span>100</span>|</a>
-    <a style="margin-left:11px;" title="80"><span>80</span>|</a>
-    <a style="margin-left:11px;" title="60"><span>60</span>|</a>
-    <a style="margin-left:10px;" title="40"><span>40</span>|</a>
-    <a style="margin-left:11px;" title="20"><span>20</span>|</a>
-    <a style="margin-left:11px;" title="0"><span>0</span>|</a>
-    <a style="margin-left:11px;" title="-20"><span>-20</span>|</a>
-    <a style="margin-left:11px;" title="-40"><span>-40</span>|</a>
-    <a style="margin-left:10px;" title="-60"><span>-60</span>|</a>
-    <a style="margin-left:11px;" title="-80"><span>-80</span>|</a>
+    <a style="margin-left:3px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:10px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:10px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
     <div style="clear:both;"></div>
     <div id="${sliderIdentifier}-slider" class="dragdealer">
       <div class="handle gray"></div>
@@ -40,78 +41,77 @@
 </div>
 
 <script type="text/javascript">
-(function() {
-  <%-- init the slider --%>
-  new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
-    <%-- derive value from slider --%>
-    var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
-    jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
-      <%-- call a log that something has updated --%>
-      if (typeof geneExpressionAtlasDisplayer == 'object') {
-        geneExpressionAtlasDisplayer.settingsUpdated();
-      }
-
-      var distance = handle.css('left').replace(/[^0-9.]/g, '');
-      var width = handle.css('width').replace(/[^0-9.]/g, '');
-      var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
-
-      var value = (((total - distance - width) / (total - width)) * 200) - 100;
-
-      if (value < 0) {
-          jQuery("#${sliderIdentifier}-slider div.handle").removeClass('green').addClass('blue');
-        } else {
-          jQuery("#${sliderIdentifier}-slider div.handle").removeClass('blue').addClass('green');
-      }
-
-      // linear
-      return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
+  (function() {
+    <%-- fill in the t-stat values based on the absolute maximum of the source expressions --%>
+    var maxValue = geneExpressionAtlasDisplayer.peaks.global += 10 - (geneExpressionAtlasDisplayer.peaks.global % 10),
+        piece = maxValue / 10;
+    jQuery('#${sliderIdentifier} div.slider a').each(function() {
+      jQuery(this).attr('title', maxValue).find('span').text(maxValue);
+      maxValue -= piece;
     });
-  }
-  });
+    maxValue = 10 * piece;
 
-  adjustSliderPosition();
-  <%-- derive slider position from value --%>
-  function adjustSliderPosition() {
-    jQuery("#${sliderIdentifier}-slider div.handle").css('left', function() {
-      var pValue = jQuery("#${sliderIdentifier}.slider-wrap input.value").val();
-      if (!isNaN(parseFloat(pValue)) && isFinite(pValue)) {
+    <%-- init the slider --%>
+    new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
+      <%-- derive value from slider --%>
+      var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
+      jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
         <%-- call a log that something has updated --%>
         if (typeof geneExpressionAtlasDisplayer == 'object') {
           geneExpressionAtlasDisplayer.settingsUpdated();
         }
 
-        var width = jQuery("#${sliderIdentifier}-slider div.handle").css('width').replace(/[^0-9]/g, '');
-        var total = jQuery("#${sliderIdentifier}-slider").css('width').replace(/[^0-9]/g, '');
+        var distance = handle.css('left').replace(/[^0-9.]/g, '');
+        var width = handle.css('width').replace(/[^0-9.]/g, '');
+        var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
 
-        pValue = parseFloat(pValue) + 100;
-        if (pValue < 0)  {
-            pValue = 0;
-        } else {
-          if (pValue > 200)  {
-              pValue = 200;
-          }
+        var value = (total - distance - width) / (total - width) * maxValue;
+
+        if (value < 0) {
+            jQuery("#${sliderIdentifier}-slider div.handle").removeClass('green').addClass('blue');
+          } else {
+            jQuery("#${sliderIdentifier}-slider div.handle").removeClass('blue').addClass('green');
         }
-        pValue = pValue / 200;
 
         // linear
-        return ((1 - pValue) * (total - width)) + "px";
-      } else {
-        alert('The ${sliderIdentifier} needs to be between -100 and 100');
-      }
+        return new Number(value).toFixed(parseInt(2)); // rounded value to 2 decimal places
+      });
+    }
     });
-  }
 
-  <%-- update the slider on input manual change --%>
-  jQuery("#${sliderIdentifier}.slider-wrap input.value")
-  .focusout(adjustSliderPosition)
-  .bind('keypress', function(e) {
-    if (e.keyCode == 13) adjustSliderPosition();
-  });
-
-  <%-- key points on the scale --%>
-  jQuery("#${sliderIdentifier}.slider-wrap div.slider a").click(function() {
-    jQuery("#${sliderIdentifier}.slider-wrap input.value").val(jQuery(this).attr('title'));
     adjustSliderPosition();
-  });
-})();
+    <%-- derive slider position from value --%>
+    function adjustSliderPosition() {
+      jQuery("#${sliderIdentifier}-slider div.handle").css('left', function() {
+        var pValue = jQuery("#${sliderIdentifier}.slider-wrap input.value").val();
+        if (!isNaN(parseFloat(pValue)) && isFinite(pValue) && pValue <= maxValue && pValue >= 0) {
+          <%-- call a log that something has updated --%>
+          if (typeof geneExpressionAtlasDisplayer == 'object') {
+            geneExpressionAtlasDisplayer.settingsUpdated();
+          }
+
+          var width = jQuery("#${sliderIdentifier}-slider div.handle").css('width').replace(/[^0-9]/g, '');
+          var total = jQuery("#${sliderIdentifier}-slider").css('width').replace(/[^0-9]/g, '');
+
+          // linear
+          return ((1 - (parseFloat(pValue) / maxValue)) * (total - width) + "px");
+        } else {
+          alert('The ${sliderIdentifier} needs to be between 0 and ' + maxValue);
+        }
+      });
+    }
+
+    <%-- update the slider on input manual change --%>
+    jQuery("#${sliderIdentifier}.slider-wrap input.value")
+    .focusout(adjustSliderPosition)
+    .bind('keypress', function(e) {
+      if (e.keyCode == 13) adjustSliderPosition();
+    });
+
+    <%-- key points on the scale --%>
+    jQuery("#${sliderIdentifier}.slider-wrap div.slider a").click(function() {
+      jQuery("#${sliderIdentifier}.slider-wrap input.value").val(jQuery(this).attr('title'));
+      adjustSliderPosition();
+    });
+  })();
 </script>

@@ -44,7 +44,7 @@
       jQuery("#gene-expression-atlas div.settings input.update").removeClass('inactive');
     };
 
-     <%-- load Goog and create the initial bag from Java --%>
+     <%-- load Goog, create the initial bag from Java, determine max t-stat peak --%>
     (function() {
       google.load("visualization", "1", {packages:["corechart"]});
 
@@ -121,6 +121,11 @@
         };
         geneExpressionAtlasDisplayer.originalList.byPValue.push(expression);
       </c:forEach>
+
+      <%-- set global t-stat peak for slider --%>
+      geneExpressionAtlasDisplayer.peaks.global =
+      (geneExpressionAtlasDisplayer.peaks.up > Math.abs(geneExpressionAtlasDisplayer.peaks.down)) ?
+      geneExpressionAtlasDisplayer.peaks.up : Math.abs(geneExpressionAtlasDisplayer.peaks.down);
     })();
   </script>
 
