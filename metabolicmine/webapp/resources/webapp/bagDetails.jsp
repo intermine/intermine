@@ -147,15 +147,29 @@
 		          function moreDescription() {
 		            var t = jQuery('table.fields td.description div.text span.text').html();
 		            if (t.length > 120) {
-		                jQuery('table.fields td.description div.text p').html(
-		                    '<span class="text">' + t.substring(0, 100) + '</span>' +
-		                    '<span class="ellipsis">&hellip;</span> ' +
-		                    '<span class="hidden">' + t.substring(100, t.length) + '</span>'
-		                );
-		                // toggler
-		                jQuery('table.fields td.description div.text p').append('<a class="more">more</a>');
+		                jQuery('table.fields td.description div.text p').html('')
+		                .append(jQuery('<span/>', {
+		                    className: 'text',
+		                    text: t.substring(0, 100)
+		                }))
+		                .append(jQuery('<span/>', {
+		                    className: 'ellipsis',
+		                    html: '&hellip;'
+		                }))
+		                .append(jQuery('<span/>', {
+		                    className: 'hidden',
+		                    text: t.substring(100, t.length)
+		                }))
+		                .append(jQuery('<a/>', {
+		                    className: 'more',
+		                    text: 'more'
+		                }));
 		            } else {
-		                jQuery('table.fields td.description div.text p').html('<span class="text">' + t + '</span>');
+		            	jQuery('<span/>', {
+		            	    className: 'text',
+		            	    text: t
+		            	}).appendTo('table.fields td.description div.text p');
+		            	
 		                // toggler
 		                jQuery('table.fields td.description div.text a.more').remove();
 		            }
