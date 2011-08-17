@@ -69,7 +69,7 @@ public class InterMineBagBinding
             if (bag.getDescription() != null) {
                 writer.writeAttribute("description", bag.getDescription());
             }
-            writer.writeAttribute("status", bag.getState().toString());
+            writer.writeAttribute("status", bag.getState());
             List<String> keyFieldValues = bag.getContentsASKeyFieldValues();
             for (String keyFieldValue : keyFieldValues) {
                 writer.writeEmptyElement("bagValue");

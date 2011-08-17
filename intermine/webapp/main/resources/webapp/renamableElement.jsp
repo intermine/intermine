@@ -6,7 +6,7 @@
 
 <tiles:useAttribute id="name" name="name"/>
 <tiles:useAttribute id="type" name="type"/>
-<tiles:useAttribute id="current" name="current" ignore="true"/>
+<tiles:useAttribute id="state" name="state" ignore="true"/>
 <tiles:useAttribute id="index" name="index"/>
 
 <!-- renamableElement.jsp -->
@@ -20,19 +20,28 @@
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
   <span id="linkBag_${name}">
   <c:choose>
-         <c:when test="${type == 'bag' && current}">
+         <c:when test="${type == 'bag' && state == 'CURRENT'}">
            <html:link action="/bagDetails?bagName=${nameForURL}">
              <c:out value="${name}"/>
            </html:link>
          </c:when>
          <c:otherwise>
-           <c:out value="${name}"/>
+           <c:choose>
+              <c:when test="${type == 'bag' && state =='TO_UPGRADE'}">
+              <html:link action="/bagUpgrade?bagName=${nameForURL}" styleClass="bagToUpgrade">
+                 <c:out value="${name}"/>
+              </html:link>
+              </c:when>
+              <c:otherwise>
+                  <c:out value="${name}"/>
+              </c:otherwise>
+           </c:choose>
       </c:otherwise>
   </c:choose>
   </span>
  </span>
  <span id="editName_${name}">
- <c:if test="${(type != 'bag' || (type == 'bag' && current))}">
+ <c:if test="${(type != 'bag' || (type == 'bag' && state == 'CURRENT'))}">
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
   </a>

@@ -621,7 +621,7 @@ a.constraintId {
 }
 
 /* ???? */
-a.brokenTmplLink {
+a.brokenTmplLink, a.bagToUpgrade {
     color: #d00;
 }
 

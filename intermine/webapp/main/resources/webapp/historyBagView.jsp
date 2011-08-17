@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 
 <!-- historyBagView.jsp -->
@@ -61,7 +62,7 @@
                     <tiles:insert name="renamableElement.jsp">
                       <tiles:put name="name" value="${savedBag.value.name}"/>
                       <tiles:put name="type" value="${type}"/>
-                      <tiles:put name="current" value="${savedBag.value.current}"/>
+                      <tiles:put name="state" value="${savedBag.value.state}"/>
                       <tiles:put name="index" value="${status.count-1}"/>
                     </tiles:insert>
 
@@ -103,11 +104,18 @@
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
               <td id="status_${savedBag.value.name}" class="sorting" align="right">
                 <c:choose>
-                <c:when test="${savedBag.value.current}"><fmt:message key="history.currentBag"/></c:when>
+                <c:when test="${savedBag.value.state == 'CURRENT'}"><fmt:message key="history.currentBag"/></c:when>
                 <c:otherwise>
-                    <fmt:message key="history.notCurrentBag"/>
-                    <input id="notCurrent" type="hidden" name="notCurrent" value="true"/>
-                    </c:otherwise>
+                    <c:choose>
+                      <c:when test="${savedBag.value.state == 'NOT_CURRENT'}"><fmt:message key="history.notCurrentBag"/>
+                      <input id="notCurrent" type="hidden" name="notCurrent" value="true"/>
+                      </c:when>
+                      <c:otherwise>
+                       <str:encodeUrl var="nameForURL">${savedBag.value.name}</str:encodeUrl>
+                       <html:link action="/bagUpgrade?bagName=${nameForURL}" styleClass="bagToUpgrade"><fmt:message key="history.bagToUpgrade"/></html:link>
+                     </c:otherwise>
+                    </c:choose>
+                </c:otherwise>
                 </c:choose>
               </td>
             </tr>

@@ -815,6 +815,9 @@ function refreshSavedBagStatus() {
                     hrefEdit='<a href="javascript:editName(\'' + bagName + '\');"><img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/></a>';
                     document.getElementById("editName_" + bagName).innerHTML = hrefEdit;
                 }
+                if (status == 'TO_UPGRADE') {
+                    document.getElementById("linkBag_" + bagName).innerHTML = '<a href="bagUpgrade.do?bagName=' + bagName + '" class="bagToUpgrade">' + bagName + '</html:link>';
+                }
             })
             if (!allCurrent) {
                 setTimeout('refreshSavedBagStatus()', 1000);
@@ -831,6 +834,6 @@ function getHTML(status, bagName) {
     else if (status == 'UPGRADING')
       return "Upgrading...";
     else if (status == 'TO_UPGRADE')
-      return "<a href='bagUpgrade.do?bagName=" + bagName + "'>Upgrade</html:link>";
+      return "<a href='bagUpgrade.do?bagName=" + bagName + "' class='bagToUpgrade'>Upgrade</html:link>";
 }
 
