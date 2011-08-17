@@ -39,6 +39,10 @@
   <script type="text/javascript">
     <%-- stuff this goodie bag --%>
     var geneExpressionAtlasDisplayer = {};
+    <%-- call me to tell me settings have updated --%>
+    geneExpressionAtlasDisplayer.settingsUpdated = function() {
+      jQuery("#gene-expression-atlas div.settings input.update").removeClass('inactive');
+    };
 
      <%-- load Goog and create the initial bag from Java --%>
     (function() {
@@ -171,11 +175,6 @@
   </div>
 
   <script type="text/javascript">
-    <%-- call me to tell me settings have updated --%>
-    geneExpressionAtlasDisplayer.settingsUpdated = function() {
-      jQuery("#gene-expression-atlas div.settings input.update").removeClass('inactive');
-    };
-
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
       if (liszt.length > 0) {
