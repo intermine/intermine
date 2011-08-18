@@ -12,9 +12,10 @@ LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
-#PRO="celniker waterston"
-PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
-#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="oliver snyder"
+#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
+#PRO="lieb oliver snyder karpen white celniker waterstonpiano"
+PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 #PRO="lai lieb henikoff macalpine oliver snyder karpen piano white"
 
 progname=$0
@@ -92,6 +93,34 @@ echo
 fi
 }
 
+function prepare_production {
+#mv dump to archive
+echo
+# use the build dump (from modfast)
+mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
+
+#alt
+#echo "Dumping current release $REL ..."
+#pg_dump -F c -i -h modprod0 -f $ARKDIR/r$REL/modmine-r$REL modmine-r$REL -U modmine
+
+#echo "Dumping modmine-build in modfast..."
+#pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
+
+#create release on archive server
+echo
+echo "Creating new production modmine-r$REL on modprod0..."
+createdb -E SQL_ASCII -h modprod0 -U modmine modmine-r$REL
+echo
+echo "Restoring build modmine-r$REL on modprod0..."
+pg_restore -h modprod0 -U modmine -d modmine-r$REL $ARKDIR/r$REL/modmine-r$REL
+
+echo "done"
+echo
+}
+
+
+
+
 function dump_chadoes {
 echo "========================================================"
 echo "       DUMPING modchado INTO ARCHIVE DIRECTORY "
@@ -142,14 +171,13 @@ echo
 }
 
 function archive_mine {
-#dump release
-echo
+#dump release: this is obsolete now
 #echo "Dumping current release $REL ..."
 #pg_dump -F c -i -h modprod0 -f $ARKDIR/r$REL/modmine-r$REL modmine-r$REL -U modmine
 # use the build dump (from modfast)
 # mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
-echo "Dumping modmine-build in modfast..."
-pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
+#echo "Dumping modmine-build in modfast..."
+#pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
 
 #create release on archive server
 echo
@@ -170,7 +198,7 @@ function do_branch {
 # do branch 
 RETURNDIR=$PWD
 svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL -m "modmine $REL branch"
-cd /home/modmine/svn
+cd /data/code/modmine/
 svn co svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL modmine-$REL
 cd $RETURNDIR
 echo "done"
@@ -236,6 +264,12 @@ fi
 ########################################
 
 check_user
+
+interact "Preparing production database modmine-r$REL on modprod0"
+if [ "$DOIT" != "n" ]
+then
+prepare_production
+fi
 
 interact "Archiving xml files for all the projects:"
 if [ "$DOIT" != "n" ]
