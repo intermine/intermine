@@ -106,6 +106,8 @@ public class TemplatePopulatorTest extends TestCase
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         Connection con = ((ObjectStoreWriterInterMineImpl) uosw).getDatabase().getConnection();
         if (!DatabaseUtil.tableExists(con, "bagvalues")) {
             DatabaseUtil.createBagValuesTables(con);
@@ -118,8 +120,6 @@ public class TemplatePopulatorTest extends TestCase
 
     private Profile setUpProfile() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-
-        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
 
         Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(),
