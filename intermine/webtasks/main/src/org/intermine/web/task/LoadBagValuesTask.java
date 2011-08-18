@@ -85,6 +85,9 @@ public class LoadBagValuesTask extends Task
             Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
+                if (!DatabaseUtil.tableExists(conn, "bagvalues")) {
+                    DatabaseUtil.createBagValuesTables(conn);
+                }
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")){
                     if(!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
                         DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
