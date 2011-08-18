@@ -10,6 +10,7 @@ package org.intermine.api.template;
  *
  */
 
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -48,6 +50,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
 
 public class TemplatePopulatorTest extends TestCase
@@ -103,6 +106,13 @@ public class TemplatePopulatorTest extends TestCase
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+        Connection con = ((ObjectStoreWriterInterMineImpl) uosw).getDatabase().getConnection();
+        if (!DatabaseUtil.tableExists(con, "bagvalues")) {
+            DatabaseUtil.createBagValuesTables(con);
+        }
+        if (con != null) {
+            con.close();
+        }
     }
 
 
