@@ -14,4 +14,7 @@
   <form-property name="whichInput" type="java.lang.String"/>
   <form-property name="dataFormat" type="java.lang.String" initial="isNotInterBaseCoordinate"/>
   <form-property name="extendedRegionSize" type="java.lang.String"/>
+  <form-property name="liftover-genome-version-source" type="java.lang.String"/>
+  <form-property name="liftover-genome-version-target" type="java.lang.String"/>
+  <form-property name="liftover-service-available" type="java.lang.String"/>
 </form-bean>

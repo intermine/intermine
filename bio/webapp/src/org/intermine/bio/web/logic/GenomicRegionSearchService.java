@@ -1385,4 +1385,8 @@ public class GenomicRegionSearchService
 
         return taxIds;
     }
+
+    public void serveLiftOver() {
+
+    }
 }
