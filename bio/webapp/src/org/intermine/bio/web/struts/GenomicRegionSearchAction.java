@@ -12,6 +12,7 @@ package org.intermine.bio.web.struts;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +26,11 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.bio.web.logic.GenomicRegionSearchQueryRunner;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
+import org.intermine.bio.web.logic.LiftOverService;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.query.Query;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 
 /**
@@ -50,22 +53,63 @@ public class GenomicRegionSearchAction extends InterMineAction
 
         GenomicRegionSearchForm grsForm = (GenomicRegionSearchForm) form;
 
-        if ("".equals(((String) grsForm.get("organism")))) {
+        String organism = (String) grsForm.get("organism");
+
+        if ("".equals(organism)) {
             // TODO No action message
             return mapping.findForward("genomicRegionSearch");
         }
 
-        // UUID
-        String spanUUIDString = UUID.randomUUID().toString();
+        String spanUUIDString = UUID.randomUUID().toString(); // Generate UUID
         request.setAttribute("spanUUIDString", spanUUIDString);
 
         GenomicRegionSearchService grsService = GenomicRegionSearchUtil
                 .getGenomicRegionSearchService(request);
 
+        // Parse form
         ActionMessage actmsg = grsService.parseGenomicRegionSearchForm(grsForm);
         if (actmsg != null) {
             recordError(actmsg, request);
             return mapping.findForward("genomicRegionSearch");
+        }
+
+        // LiftOver
+        // TODO move to GenomicRegionSearchService, return liftedGenomicRegionMap
+        Properties webProperties = SessionMethods.getWebProperties(
+                request.getSession().getServletContext());
+        String liftOver = webProperties.getProperty("genomicRegionSearch.liftOver");
+        String url = webProperties.getProperty("genomicRegionSearch.liftOver.url");
+
+        String liftOverServiceAvailable = (String) grsForm.get("liftover-service-available");
+        String genomeVersionSource = (String) grsForm.get("liftover-genome-version-source");
+        String genomeVersionTarget = (String) grsForm.get("liftover-genome-version-target");
+
+        // liftOverServiceAvailable == true
+        // liftOver == true
+        // url != null or empty
+        // genomeVersionSource != null or empty
+        // genomeVersionTarget != null or empty
+        // genomeVersionSource != genomeVersionTarget
+        if ("true".equals(liftOverServiceAvailable) && "true".equals(liftOver) && url.length() > 0
+                && !genomeVersionSource.equals(genomeVersionTarget)) {
+
+            LiftOverService los = new LiftOverService();
+            Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
+                    grsService.getConstraint().getGenomicRegionList(),
+                    organism, genomeVersionSource, genomeVersionTarget, url);
+
+            // TODO verbose
+            if (liftedGenomicRegionMap == null) {
+                // 1.service unavailable
+                // 2.fail to convert
+                request.setAttribute(
+                        "liftOverStatus",
+                        "<i>liftOver service is temporarily inaccessible, "
+                        + "genomic region coordinates are not converted</i>");
+            } else {
+                grsService.getConstraint().setGenomicRegionList(
+                        liftedGenomicRegionMap.get("lifedGenomicRegions"));
+            }
         }
 
         // Span validation
@@ -100,6 +144,7 @@ public class GenomicRegionSearchAction extends InterMineAction
             request.setAttribute("errorMsg", errorMsg);
         }
 
+        // regions will be extended in this step
         Map<GenomicRegion, Query> queryMap = grsService.createQueryList();
 
         GenomicRegionSearchQueryRunner grsqRunner = new GenomicRegionSearchQueryRunner(

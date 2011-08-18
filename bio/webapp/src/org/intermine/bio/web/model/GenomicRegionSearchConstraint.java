@@ -26,6 +26,8 @@ public class GenomicRegionSearchConstraint
     private List<GenomicRegion> genomicRegionList = null;
     private int extendedRegionSize = 0;
 
+    // TODO add liftOver contraints: org, source, target
+
     /**
      * @return the orgName
      */

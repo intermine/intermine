@@ -80,7 +80,7 @@
    function appendGenomeBuild(org) {
        for(i in webDataJSON.genomeBuilds){
            if (webDataJSON.genomeBuilds[i].organism == org) {
-               jQuery("#genomeBuild").html("<i>genome build: " + webDataJSON.genomeBuilds[i].genomeBuild + "</i>");
+               jQuery("#genomeBuild").html("<i>genome build: <span id='current-genome-version'>" + webDataJSON.genomeBuilds[i].genomeBuild + "</span></i>");
            }
        }
 

@@ -437,6 +437,14 @@ img.tinyQuestionMark {
     </div>
 </c:if>
 
+<%-- liftOver status Messages --%>
+<c:if test="${!empty liftOverStatus}">
+    <div id="liftOverStatus" class="topBar errors" style="padding-left:34px;">
+        <a href="#" onclick="javascript:jQuery('#liftOverStatus').hide('slow');return false">Hide</a>
+        ${liftOverStatus}<br>
+    </div>
+</c:if>
+
 <%-- User selections information --%>
 <c:if test="${!empty selectionInfo}">
     <div id="selectionInfo" class="information">
