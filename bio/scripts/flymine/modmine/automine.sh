@@ -901,14 +901,14 @@ then
 
 if [ "$FULL" = "y" ]
 then
-loadChadoSubs henikoff
-loadChadoSubs karpen
 loadChadoSubs lai
-loadChadoSubs lieb
-loadChadoSubs macalpine
 loadChadoSubs piano
+loadChadoSubs henikoff
+loadChadoSubs lieb
 loadChadoSubs oliver
+loadChadoSubs macalpine
 loadChadoSubs snyder
+loadChadoSubs karpen
 loadChadoSubs white
 loadChadoSubs celniker
 loadChadoSubs waterston
