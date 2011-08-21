@@ -953,7 +953,37 @@ function getItemChooser(id, base) { return function() {
         }
         $thisCheckbox.attr("disabled", !commonType);
     });
-
+    if (itemCount > 0) {
+        var query = {
+            // Don't include any references in the default view: they may be null and return no row
+            select: _(defaultViews[type]).select(function(v) { return !v.match(/\.[^\.]+\./); }),
+            from: model.name,
+            where: [
+                {path: type + ".id", op: "ONE OF", values: chosenListIds[id].slice()}
+            ]
+        };
+        if (query.select.length == 0) {
+            query.select = [type + ".id"];
+        }
+        $.ajax({
+            url: base + query_path,
+            type: "POST",
+            dataType: "json",
+            data: {query: serializeQuery(query), format: "jsonrows"},
+            success: function(resultset) {
+                $ul = $wrapper.find('.list-items').empty();
+                _(resultset.results).each(function(row) {
+                    var $li = $('<li>').appendTo($ul);
+                    __(row).keys().each(function(idx) {
+                        $li.append($('<span>').attr("title", resultset.columnHeaders[idx]).text(row[idx].value));
+                        $li.append(" ");
+                    });
+                });
+            }
+        });
+    } else {
+        $wrapper.find(".list-items").empty();
+    }
 }};
 
 /**
