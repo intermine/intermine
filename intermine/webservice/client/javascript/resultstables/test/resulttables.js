@@ -2,8 +2,23 @@ var test_base = "http://squirrel.flymine.org/intermine-test";
 var fly_base = "http://squirrel.flymine.org/flymine";
 var query_path = "/service/query/results";
 var modelPath = "/service/model/json";
+var fieldPath = "/service/summaryfields";
 
 //if (typeof console == "undefined") { window.console = {"log": function() {}} };
+//
+
+/**
+ * Shortcut for _(sth).chain()
+ */
+function __(sth) {
+    return _(sth).chain();
+}
+
+function returnFalse() {
+    return false;
+}
+
+function tapper(x) {console.log(x)}
 
 var test_query = {
     title: "Middle-Aged Employees",
@@ -39,6 +54,7 @@ var moderate_query = {
 };
 
 var models = {};
+var summaryFields = {};
 
 function num_to_string(num, sep, every) {
     var num_as_string = num + "";
@@ -55,21 +71,34 @@ function num_to_string(num, sep, every) {
 }
 
 function loadModel(base, continuation) {
-    if (models[base]) {
+    return loadResource(base, modelPath, "model", models, continuation);
+}
+
+function loadSummaryFields(base, continuation) {
+    return loadResource(base, fieldPath, "classes", summaryFields, continuation);
+}
+
+function getStorer(storage, base, key, continuation) {
+    return function(result) {
+        storage[base] = result[key];
+        if (continuation) {
+            return continuation();
+        } else {
+            return false;
+        }
+    };
+}
+
+function loadResource(base, path, key, storage, continuation) {
+    if (storage[base]) {
         if (continuation) {
             return continuation();
         } else {
             return false;
         }
     } else {
-        $.getJSON(base + modelPath, function(result) {
-            models[base] = result.model;
-            if (continuation) {
-                return continuation();
-            } else {
-                return false;
-            }
-        });
+        var storer = getStorer(storage, base, key, continuation);
+        $.getJSON(base + path, storer);
         return false;
     }
 }
@@ -80,10 +109,10 @@ function loadModel(base, continuation) {
  * view list.
  */
 function addAttributesToQuery(model, pq) {
-    pq.select = _.union(pq.select, _(pq.select).chain()
+    pq.select = _.union(pq.select, __(pq.select)
         .map(function(p) {return p.substring(0, p.lastIndexOf("."))}).uniq()
         .map(function(p) {
-            return _(getCdForPath(model, p).attributes).chain()
+            return __(getCdForPath(model, p).attributes)
                 .keys().without("id")
                 .map(function(attr) {return p + "." + attr})
                 .value();
@@ -112,7 +141,9 @@ function getCdForPath(model, path) {
  */
 function loadQuery(pq, base, id, token) {
     loadModel(base, function() {
-        loadBox(pq, base, id, token);
+        loadSummaryFields(base, function() {
+            loadBox(pq, base, id, token);
+        });
     });
 }
 
@@ -161,12 +192,7 @@ $(function(){
  * Function to work around the decision to use the list of pairs format...
  */
 function getParameter( params, name) {
-    for ( var i = 0, l = params.length; i < l; i++ ) {
-        if ( params[i].name == name ) {
-            return params[i].value;
-        }
-    }
-    return null;
+    return __(params).select(function(p) {return p.name == name}).pluck('value').first().value();
 }
 
 /**
@@ -700,8 +726,55 @@ var getValueChanger = function(con, $dataTable, clicked, isNumeric) {
     };
 };
 
+/**
+ * Build a constraint display box
+ */
+function constructConstraintElem(con, pq, $dataTable, clicked, pinned) {
+    pinned = pinned || [];
+    var $con = jQuery('<span class="constraint">');
+    var remover = getConstraintRemover(con, pq, $dataTable, clicked);
+    var $buttonContainer = newButton().click(remover).appendTo($con).addClass("delete-confirm");
+    newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($buttonContainer);
+    if (con.values) {
+        var $addValueButton = newButton();
+        newSpan('ui-icon ui-icon-circle-plus').css("float", "left").appendTo($addValueButton);
+        $addValueButton.click(getValueAdder($con, con, $dataTable, clicked)).appendTo($con);
+    }
+
+    var opDict;
+    if (con.op.match(/ OF/)) {
+        opDict = jQuery.extend({}, multiOps, true);
+    } else if (con.op.match(/NULL$/)) {
+        opDict = jQuery.extend({}, nullOps, true);
+    } else {
+        opDict = jQuery.extend({}, binaryOps, true);
+    }
+    opDict.selected = con.op;
+
+    newSpan("op", con.op).appendTo($con).editable(getOpChanger(con, $dataTable, clicked), 
+        {onblur: "submit", indicator: "Saving...", tooltip: "Click to edit", type: "select", data: opDict, submit: "OK"}
+    );
+    $con.addClass(con.op.toLowerCase().replace(" ", "-")); // "NONE OF" becomes "none-of"
+    if (con.value) {
+        var valIsNumber = (typeof con.value == "number");
+        newSpan("value", valIsNumber ? num_to_string(con.value, ",", 3) : con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked, valIsNumber), {onblur: "submit", submit: "OK"});
+    }
+    if (con.values) {
+        var $values = newSpan("values").appendTo($con);
+        _(con.values).each(function(val) {
+            newSpan("value", val).appendTo($values);
+            if (con.op === "ONE OF") {
+                pinned.push(val);
+            }
+        });
+    }
+    return $con;
+}
+
+/**
+ * Return the callback for the (i) button on the column headers.
+ */
 function getColumnSummariser(id, pq, url) { return function(ev) {
-    console.log(ev);
     var $wrapper = $('#' + id + '_wrapper');
     var currentSummaryTitle = $wrapper.find(".column-name").text(); 
 
@@ -724,55 +797,11 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     var pinned = [];
     $dataTable = $('#' + id).dataTable();
     if (pq["where"]) {
-        for (var i = 0, l = pq.where.length; i < l; i++) {
-            if (pq.where[i].path == summaryPath) {
-                constraintsOnThisField.push(pq.where[i]);
-            }
-        }
-        var l = constraintsOnThisField.length;
-        if (l > 0) {
-            $conBox.find("h4").text(l + " Constraint" + ((l > 1) ? "s" : "") + " on this Column");
-        }
-        for (var i = 0; i < l; i++) {
-            var con = constraintsOnThisField[i];
-            var $con = jQuery('<span class="constraint">');
-            var remover = getConstraintRemover(con, pq, $dataTable, clicked);
-            var $buttonContainer = newButton().click(remover).appendTo($con).addClass("delete-confirm");
-            newSpan('ui-icon ui-icon-circle-close').css("float", "left").appendTo($buttonContainer);
-            if (con.values) {
-                var $addValueButton = newButton();
-                newSpan('ui-icon ui-icon-circle-plus').css("float", "left").appendTo($addValueButton);
-                $addValueButton.click(getValueAdder($con, con, $dataTable, clicked)).appendTo($con);
-            }
-
-            var opDict;
-            if (con.op.match(/ OF/)) {
-                opDict = jQuery.extend({}, multiOps, true);
-            } else if (con.op.match(/NULL$/)) {
-                opDict = jQuery.extend({}, nullOps, true);
-            } else {
-                opDict = jQuery.extend({}, binaryOps, true);
-            }
-            opDict.selected = con.op;
-
-            newSpan("op", con.op).appendTo($con).editable(getOpChanger(con, $dataTable, clicked), 
-                {onblur: "submit", indicator: "Saving...", tooltip: "Click to edit", type: "select", data: opDict, submit: "OK"}
-            );
-            $con.addClass(con.op.toLowerCase().replace(" ", "-")); // "NONE OF" becomes "none-of"
-            if (con.value) {
-                var valIsNumber = (typeof con.value == "number");
-                newSpan("value", valIsNumber ? num_to_string(con.value, ",", 3) : con.value).appendTo($con).editable(getValueChanger(con, $dataTable, clicked, valIsNumber), {onblur: "submit", submit: "OK"});
-            }
-            if (con.values) {
-                var $values = newSpan("values").appendTo($con);
-                for (var j = 0; j < con.values.length; j++) {
-                    newSpan("value", con.values[j]).appendTo($values);
-                    if (con.op === "ONE OF") {
-                        pinned.push(con.values[j]);
-                    }
-                }
-            }
-            $conBox.append($con);
+        var size = __(pq.where).select(function(con) {return con.path == summaryPath})
+                               .map(function(con) {$conBox.append(constructConstraintElem(con, pq, $dataTable, clicked, pinned)); return con;})
+                               .size().value();
+        if (size > 0) {
+            $conBox.find("h4").text(size + " Constraint" + ((size > 1) ? "s" : "") + " on this Column");
         }
     }
 
@@ -886,31 +915,111 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     return false;
 }};
 
-function getItemChooser(id) { return function() {
+/**
+ * Get the callback for each checkbox in the table
+ *
+ * @param {String} id The id of the datatable this checkbox is within
+ * @param {String} base the base url of the service this table belongs to.
+ */
+function getItemChooser(id, base) { return function() {
     var $checkbox = $(this);
     var $wrapper = $('#' + id + '_wrapper');
     var checked = !!$checkbox.attr("checked");
+    var model = models[base];
+    var defaultViews = summaryFields[base];
     if (!chosenListIds[id]) {
         chosenListIds[id] = [];
+        typeOfObj[id] = {};
     }
     if (checked) {
         chosenListIds[id] = _.union(chosenListIds[id], [$checkbox.attr("obj_id")]);
+        typeOfObj[id][$checkbox.attr("obj_id")] = $checkbox.attr("obj_class");
     } else {
         chosenListIds[id] = _(chosenListIds[id]).without($checkbox.attr("obj_id"));
+        delete typeOfObj[id][$checkbox.attr("obj_id")];
     }
-    $wrapper.find('.list-creation-info').children('.selected-count').text(chosenListIds[id].length);
+    var itemCount = chosenListIds[id].length;
+    $wrapper.find('.list-creation-info').children('.selected-count').text(itemCount);
+    var types = __(typeOfObj[id]).values().compact().uniq().value();
+    var type = (types.length) ? findCommonTypeOfMultipleClasses(model, types) : "item";
+    $wrapper.find('.list-creation-info').children('.selected-types').text(pluralise(type, itemCount));
+    $wrapper.find('button.list-maker').attr("disabled", chosenListIds[id].length < 1);
     $wrapper.find('.list-chooser').each(function(elem) {
         var $thisCheckbox = $(this);
+        var thisType = $thisCheckbox.attr("obj_class");
+        var commonType = findCommonTypeOfMultipleClasses(model, __(typeOfObj[id]).values().compact().uniq().union([thisType]).value());
         if ($thisCheckbox.attr("obj_id") == $checkbox.attr("obj_id")) {
             $thisCheckbox.attr("checked", checked);
         }
+        $thisCheckbox.attr("disabled", !commonType);
     });
+
 }};
+
+/**
+ * Very naïve English word pluralisation algorithm
+ *
+ * @param {String} word The word to pluralise.
+ * @param {Number} count The number of items this word represents.
+ */
+function pluralise(word, count) {
+    return (count == 1) 
+        ? word 
+        : ((word.match(/(s|x|ch)$/)) 
+                ? word + "es" 
+                : (word.match(/y$/) 
+                    ? word.replace(/y$/, 'ies')
+                    : word + "s"));
+}
+
+/**
+ * Return the common type of 0 or more model classes, or null if there is none.
+ *
+ * @param model The data model for this service.
+ * @classes {String[]} classes the model classes to try and get a common type of.
+ */
+function findCommonTypeOfMultipleClasses(model, classes) {
+    return _.reduce(classes, function(memo, x) {return findCommonTypeOf(model, memo, x)}, classes.pop());
+}
+
+/**
+ * Return the common type of two model classes, or null if there isn't one.
+ */
+function findCommonTypeOf(model, classA, classB) {
+    if (classB == null || classA == null || classA == classB) {
+        return classA;
+    }
+    var allAncestorsOfA = getAncestorsOf(model, classA);
+    var allAncestorsOfB = getAncestorsOf(model, classB);
+    // If one is a superclass of the other, return it.
+    if (_(allAncestorsOfA).include(classB)) {
+        return classB;
+    }
+    if (_(allAncestorsOfB).include(classA)) {
+        return classA;
+    }
+    // Return the first common ancestor
+    return _.intersection(allAncestorsOfA, allAncestorsOfB).shift();
+}
+
+/**
+ * Get the full ancestry of a particular class.
+ */
+function getAncestorsOf(model, className) {
+    var ancestors = model.classes[className]["extends"].slice();
+    _(ancestors).each(function(a) {
+        if (!a.match(/InterMineObject$/)) {
+            ancestors = _.union(ancestors, getAncestorsOf(model, a));
+        }
+    });
+    return ancestors;
+}
 
 tableInitialised = {};
 var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
 var listCreationState = {};
 var chosenListIds = {};
+var typeOfObj = {};
 
 function initTable(pq, id, base, bkg) {
     var initialViewLength = pq.select.length;
@@ -919,7 +1028,7 @@ function initTable(pq, id, base, bkg) {
     var setup_params = {format: "jsontable", query: serializeQuery(pq)};
     var url = base + query_path; 
     if (tableInitialised[id]) {
-        $('#' + id + '_wrapper').show();
+        $('#' + id + '_wrapper').show().parent().parent().find('.constraints-hider').slideDown();
     } else {
         $.ajax( {
             dataType: "json",
@@ -940,12 +1049,32 @@ function initTable(pq, id, base, bkg) {
                     "sAjaxDataProp": "results",
                     "sPaginationType": "full_numbers",
                     "fnDrawCallback": function() {
-                        $('#' + id + '_wrapper').find('.summary_img').unbind("click").click(getColumnSummariser(id, pq, url));
-                        $('#' + id + '_wrapper').find('.list-chooser').unbind("click").click(getItemChooser(id));
+                        var $dataTable = $('#' + id + '_wrapper');
+                        var $constraints = $('#' + id + '_constraints').empty();
+                        $dataTable.find('.summary_img').unbind("click").click(getColumnSummariser(id, pq, url));
+                        $dataTable.find('.list-chooser').unbind("click").click(getItemChooser(id, base));
                         if (listCreationState[id]) {
-                            $('#' + id + '_wrapper').find('.list-chooser').show().each(function(idx, elem) {
+                            $dataTable.find('.list-chooser').show().each(function(idx, elem) {
                                 $(elem).attr("checked", _(chosenListIds[id]).include($(elem).attr("obj_id")));
                             });
+                        }
+                        __(pq.where).groupBy(function(con) {return con.path}).each(function(constraints, path) {
+                            var title = result.columnHeaders[_(pq.select).indexOf(path)];
+                            console.log(path, title, constraints);
+                            $("<h4>").text(title).appendTo($constraints);
+                            var $groupBox = $('<div>').appendTo($constraints);
+                            _(constraints).each(function(con) {
+                                $groupBox.append(constructConstraintElem(con, pq, $('#' + id).dataTable(), $dataTable));
+                            });
+                        });
+                        if (typeof pq.where == "undefined") {
+                            pq.where = [];
+                        }
+                        $constraints.parent().find(".constraint-count").text(pq.where.length);
+                        if (pq.where.length != 1) {
+                            $constraints.parent().find(".plural-s").show();
+                        } else {
+                            $constraints.parent().find(".plural-s").hide();
                         }
                     },
                     "aoColumns": jQuery.map(pq.select, function(elem, idx) { 
@@ -985,6 +1114,7 @@ function initTable(pq, id, base, bkg) {
                 var $button = jQuery('<button>Hide table</button>');
                 $button.click(function() {
                     var $datatable = $('#' + id + '_wrapper').hide();
+                    $datatable.parent().parent().find('.constraints-hider').slideUp();
                     var $box = $datatable.parent().addClass("ui-widget-header");
                     $box.children(".query-summary").show();
                     var borderStyle = "1px solid #AAAAAA";
@@ -1007,7 +1137,7 @@ function initTable(pq, id, base, bkg) {
                     $removeButton.click(function() {$popup.remove()});
                     $dt.append($popup);
                     $popup.click(function() {return false;});
-                    $popup.draggable({handle: ".main-heading"});
+                    $popup.draggable({handle: ".main-heading"}).resizable({minWidth: $popup.width(), minHeight: $popup.height(), alsoResize: $popup.find("pre")});
                     return false;
                 });
                 $dt.find('div.toolbar').append($xmlButton);
@@ -1026,24 +1156,56 @@ function initTable(pq, id, base, bkg) {
 
                 var $listButton = jQuery('<button>').text("Create List").click(function() {
                     chosenListIds[id] = [];
-                    if ($(this).text() == "Create List") {
-                        $(this).text("Cancel List Creation");
-                        listCreationState[id] = true;
-                    } else {
-                        $(this).text("Create List");
+                    typeOfObj[id] = {};
+                    var $that = $(this).attr("disabled", true);
+                    listCreationState[id] = true;
+                    $dt.find('td input').attr("checked", false);
+                    var $popup = jQuery('<div class="summary-popup list-popup"></div>');
+                    var $h3 = jQuery('<h3>').addClass("main-heading");
+                    $('<span class="list-creation-info"><span class="new-list-name">New List</span> (<span class="selected-count">0</span> <span class="selected-types"></span> selected) </span>').appendTo($h3);
+                    $h3.find('.new-list-name').editable(function(value, settings) {return value}, {submit: "OK", tooltip: "Click to edit"});
+                    var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
+                    var $centreBox = jQuery('<div>').appendTo($popup);
+                    var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
+                    var $makerButton = $('<button class="list-maker" disabled>Make List</button>').addClass("summary-remover").appendTo($popup);
+                    var $removeButton = jQuery('<button class="summary-remover">Close</button>');
+                    $removeButton.appendTo($popup);
+                    var remover = function() {
+                        $popup.remove(); 
                         listCreationState[id] = false;
-                        $dt.find('td input').attr("checked", false);
-                    }
-                    $dt.find('.list-creation-info').toggle().children(".selected-count").text(chosenListIds[id].length);
-                    $dt.find('td input').toggle();
+                        $dt.find('td input').hide();
+                        $that.attr("disabled", false);
+                    };
+                    $dt.unbind("click");
+                    $removeButton.click(remover);
+                    $dt.append($popup);
+                    $popup.click(returnFalse).draggable({handle: ".summary-header"}).resizable({
+                        minWidth: $popup.width(), 
+                        minHeight: $popup.height(), 
+                        alsoResize: $centreBox
+                    });
+                    
+                    $dt.find('td input').show();
+                    return false;
                 });
                 $dt.find('div.toolbar').append($listButton);
-
-                $dt.find(".dataTables_info").after('<span class="list-creation-info" style="display: none;">(<span class="selected-count">0</span> selected)</span>');
 
                 $dt.find('div.title').append('<span class="query-summary">' + pq.title + '</span>');
 
                 $dt.click(function() {$dt.find('.summary-popup').remove(); $dt.find('th').removeClass("ui-state-hover").removeClass("border-collapse-fix");});
+
+                $originalDiv = $dt.parent().parent();
+                $('<div class="constraints-hider"><h3 style="display: inline; cursor: pointer;"><span class="constraint-count"></span> Constraint<span class="plural-s">s</span> on ' + pq.title + '</h3><div id="' + id + '_constraints" style="display:none;">Loading...</div></div>').prependTo($originalDiv);
+                $originalDiv.find('.constraints-hider h3').unbind('click').before('<span class="ui-icon ui-icon-triangle-1-e" style="display: inline-block;">').click(function() { 
+                    $(this).next().slideToggle('fast', function() {
+                        console.log(this);
+                        if ($(this).is(':hidden')) {
+                            $(this).parent().find('.ui-icon').removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
+                        } else {
+                            $(this).parent().find('.ui-icon').removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
+                        }
+                    });
+                });
 
                 tableInitialised[id] = true;
             }
@@ -1051,6 +1213,10 @@ function initTable(pq, id, base, bkg) {
     }
 };
 
+/**
+ * Get the representation of the query that is currently being 
+ * displayed in the datatable (ie, with the right view and sort-order).
+ */
 function getVisibleQuery(pq, $dataTable, id) {
     var visibleQuery = jQuery.extend(true, {}, pq);
     var settings = $dataTable.fnSettings();
