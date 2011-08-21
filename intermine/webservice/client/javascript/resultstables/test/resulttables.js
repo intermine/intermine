@@ -1,6 +1,7 @@
 var test_base = "http://squirrel.flymine.org/intermine-test";
 var fly_base = "http://squirrel.flymine.org/flymine";
 var query_path = "/service/query/results";
+var query_to_list_path = "/service/query/tolist/json";
 var modelPath = "/service/model/json";
 var fieldPath = "/service/summaryfields";
 
@@ -147,7 +148,7 @@ function loadQuery(pq, base, id, token) {
     });
 }
 
-function loadBox(pq, base, id) {
+function loadBox(pq, base, id, token) {
     var params = {format: "jsoncount", query: serializeQuery(pq)};
     var $tableContainer = $('#' + id).addClass("table-container");
     var $box = jQuery('<div class="results-box ui-widget-header ui-corner-all">').appendTo($tableContainer);
@@ -171,7 +172,7 @@ function loadBox(pq, base, id) {
                         $box.append('<table id="' + dt_id + '"></table>');
                     }
                     $box.children('.query-summary').hide();
-                    initTable(pq, dt_id, base, oldBackground);
+                    initTable(pq, dt_id, base, oldBackground, token);
                 });
             });
         }
@@ -182,7 +183,7 @@ function loadBox(pq, base, id) {
  * Load the queries on page load.
  */
 $(function(){
-    loadQuery(test_query, test_base, "testtable");
+    loadQuery(test_query, test_base, "testtable", "a1v3V1X0f3hdmaybq0l6b7Z4eVG");
     loadQuery(massive_query, fly_base, "flytable");
     loadQuery(moderate_query, fly_base, "flytable2");
     loadQuery(long_genes, fly_base, "flytable3");
@@ -1051,7 +1052,7 @@ var listCreationState = {};
 var chosenListIds = {};
 var typeOfObj = {};
 
-function initTable(pq, id, base, bkg) {
+function initTable(pq, id, base, bkg, token) {
     var initialViewLength = pq.select.length;
     var model = models[base];
     addAttributesToQuery(model, pq);
@@ -1206,6 +1207,36 @@ function initTable(pq, id, base, bkg) {
                         $dt.find('td input').hide();
                         $that.attr("disabled", false);
                     };
+                    $makerButton.click(function() {
+                        var model = models[base];
+                        var ids = chosenListIds[id].slice();
+                        var types = __(typeOfObj[id]).values().compact().uniq().value();
+                        var type = findCommonTypeOfMultipleClasses(model, types);
+                        var query = {
+                            select: [type + ".id"],
+                            from: model.name, 
+                            where: [
+                                { path: type + ".id", op: "ONE OF", values: ids }
+                            ]
+                        };
+                        var listUploadUrl = base + query_to_list_path;
+                        var data = {
+                            query: serializeQuery(query),
+                            listName: $h3.find('.new-list-name').text(),
+                            format: "json",
+                            token: token
+                        };
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: data,
+                            url: listUploadUrl,
+                            success: function(result) {
+                                alert("Created new list named " + result.listName + " with " + result.listSize + " items");
+                                remover();
+                            }
+                        });
+                    });
                     $dt.unbind("click");
                     $removeButton.click(remover);
                     $dt.append($popup);
