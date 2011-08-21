@@ -183,10 +183,11 @@ function loadBox(pq, base, id, token) {
  * Load the queries on page load.
  */
 $(function(){
+    var flykey = "C1o3t1e0d4V06ep8xb47DdlFVMr";
     loadQuery(test_query, test_base, "testtable", "a1v3V1X0f3hdmaybq0l6b7Z4eVG");
-    loadQuery(massive_query, fly_base, "flytable");
-    loadQuery(moderate_query, fly_base, "flytable2");
-    loadQuery(long_genes, fly_base, "flytable3");
+    loadQuery(massive_query, fly_base, "flytable", flykey);
+    loadQuery(moderate_query, fly_base, "flytable2", flykey);
+    loadQuery(long_genes, fly_base, "flytable3", flykey);
 });
 
 /**
@@ -1193,8 +1194,8 @@ function initTable(pq, id, base, bkg, token) {
                     $dt.find('td input').attr("checked", false);
                     var $popup = jQuery('<div class="summary-popup list-popup"></div>');
                     var $h3 = jQuery('<h3>').addClass("main-heading");
-                    $('<span class="list-creation-info"><span class="new-list-name">New List</span> (<span class="selected-count">0</span> <span class="selected-types"></span> selected) </span>').appendTo($h3);
-                    $h3.find('.new-list-name').editable(function(value, settings) {return value}, {submit: "OK", tooltip: "Click to edit"});
+                    $('<span class="list-creation-info"><span class="new-list-name">New List</span> (<span class="selected-count">0</span> <span class="selected-types">items</span> selected) </span>').appendTo($h3);
+                    $h3.find('.new-list-name').editable(function(value, settings) {return value}, {onblur: "submit", submit: "OK", tooltip: "Click to edit"});
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
                     var $centreBox = jQuery('<div>').appendTo($popup);
                     var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
