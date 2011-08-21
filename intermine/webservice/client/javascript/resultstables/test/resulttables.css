@@ -124,6 +124,8 @@ table.col-summary td, table.col-summary th {
 .summary-remover {
     float: right;
     margin: 0.4em;
+    margin-bottom: 12px;
+    margin-right: 12px;
     padding: 0.2em;
 }
 
@@ -161,6 +163,7 @@ div.summary-popup h3 {
     text-align: center;
     font-size: 18px;
     margin: 0px;
+    padding-top: 1em;
 }
 
 h4 {
@@ -170,7 +173,6 @@ h4 {
 
 h3.main-heading {
     cursor: move;
-    line-height: 64px;
 }
 
 h3.sub-heading {
@@ -187,7 +189,14 @@ div.summary-header, div.summary-popup table thead {
 }
 
 div.summary-header {
-    height: 4em;
+    min-height: 4em;
+    cursor: move;
+}
+
+.list-creation-info {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .null-value, .xml {
@@ -286,7 +295,7 @@ table.inner-table tr td {
     position: relative;
 }
 
-.summary-popup .constraint {
+.constraint {
     min-height: 45px;
     position: relative;
     margin: 0.15em 0.3em;
@@ -300,7 +309,7 @@ table.inner-table tr td {
 }
 
 .xml {
-    font-size: 0.8em;
+    font-size: 1em;
     margin: 2em;
     color: #555;
     background-color: #e2e4ff;
@@ -330,4 +339,14 @@ th.border-collapse-fix {
     bottom: 1px;
 }
 
+.constraints-hider {
+    margin: 0.5em;
+}
+
+.new-list-name form {
+    display: inline;
+}
+
+.list-popup .main-heading {
+}
 
