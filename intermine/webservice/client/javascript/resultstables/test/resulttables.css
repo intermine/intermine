@@ -350,3 +350,14 @@ th.border-collapse-fix {
 .list-popup .main-heading {
 }
 
+.list-items li {
+    line-height: 1.9em;
+}
+
+.list-items li span {
+    border: 1px solid #999;
+    padding: 0.2em;
+    margin: 0.1em;
+    background: #E2E4FF;
+}
+
