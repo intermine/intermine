@@ -361,3 +361,19 @@ th.border-collapse-fix {
     background: #E2E4FF;
 }
 
+.column-list-adder {
+    list-style-type: none;
+    cursor: pointer;
+}
+
+.column-list-adder span:hover {
+    background: #FFF3E2;
+}
+
+.list-items-scroller {
+    max-height: 400px;
+    overflow: auto;
+}
+    
+
+
