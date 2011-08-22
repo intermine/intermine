@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -30,9 +31,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -169,6 +172,10 @@ public class BeginAction extends InterMineAction
         Collections.sort(preferredBags);
         request.setAttribute("preferredBags", preferredBags);
 
+        // frontpage bags/lists
+        BagManager bm = im.getBagManager();
+        request.setAttribute("frontpageBags", bm.getGlobalBagsWithTag("im:frontpage"));
+        
         // organism dropdown on list upload
         // only implemented in metabolicMine right now
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();

@@ -76,6 +76,15 @@ public class BagManager
     }
 
     /**
+     * Get global bags/lists that have a specific tag
+     * @param tag
+     * @return
+     */
+	public Map<String, InterMineBag> getGlobalBagsWithTag(String tag) {
+		return getBagsWithTag(superProfile, tag);
+	}
+    
+    /**
      * Fetch bags from given protocol with a particular tag assigned to them.
      * @param profile the user to fetch bags from
      * @param tag the tag to filter
