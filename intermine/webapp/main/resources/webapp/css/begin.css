@@ -747,3 +747,60 @@ html, body {
     padding: 0 18px 25px 18px;
     margin-top: 10px !important;
 }
+
+/* im:frontpage tagged lists */
+#lists {
+	border-top: 1px solid #EFEFEF;
+	background: url("../themes/purple/homepage/bochs-bottom-grad.png") repeat-x bottom;
+	padding: 14px 14px 0 14px;
+	margin-bottom: 10px;
+}
+
+#lists h4 {
+	color: #5C0075;
+	font-size: 14px;
+	margin-bottom: 8px;
+}
+
+#lists h5 {
+	font-weight: normal;
+	font-size: 13px;
+	display: inline;
+	color: #535353;
+}
+
+#lists ul {
+	color: #292727;
+	font-size: 13px;
+	line-height: 16px;
+	margin-top: 10px;
+}
+
+#lists ul li:not(:first-child) {
+	margin-top: 6px;
+}
+
+#lists ul p, #lists ul span, #lists a {
+	color: #535353;
+}
+
+#lists ul li a {
+	text-decoration: underline;
+}
+
+#lists p.more {
+	background: url("../themes/purple/homepage/full-divider.png") repeat-x top;
+	padding: 4px 0;
+	margin-top: 20px;
+	line-height: 28px;
+}
+
+#lists p.more a {
+	background: url("../themes/purple/homepage/more-pitchurka.png") no-repeat left;
+	text-decoration: underline;
+	padding-left: 16px;
+}
+
+#lists a:hover {
+	color: #000;
+}
