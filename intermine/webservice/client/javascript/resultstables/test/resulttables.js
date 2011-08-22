@@ -1258,7 +1258,7 @@ function initTable(pq, id, base, bkg, token) {
                     var $centreBox = jQuery('<div>').addClass("list-items-scroller").appendTo($popup);
                     var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
                     var $makerButton = $('<button class="list-maker" disabled>Make List</button>').addClass("summary-remover").appendTo($popup);
-                    var $removeButton = jQuery('<button class="summary-remover">Close</button>');
+                    var $removeButton = jQuery('<button class="summary-remover">Cancel</button>');
                     $removeButton.appendTo($popup);
                     var remover = getListPopupRemover($popup, $dt, id, $that);
                     $makerButton.click(getListMaker(base, id, $h3, token, remover));
@@ -1289,7 +1289,7 @@ function initTable(pq, id, base, bkg, token) {
                                  .uniq()
                                  .map(function(p) {return {path: p, type: InterMine.models[base].getCdForPath(p).name}})
                                  .each(function(o) {
-                        $('<li>').append("<span>Add all " + pluralise(o.type, 2) + "</span>").appendTo($ul).addClass("column-list-adder").click(function() {
+                        $('<li>').append("<button>Add all " + pluralise(o.type, 2) + "</button>").appendTo($ul).addClass("column-list-adder").click(function() {
                             var query = $.extend(true, {}, pq);
                             query.select = [o.path + ".id"];
                             $ul.empty().append($('<span class="throbber"></span>').css("float", "left"));

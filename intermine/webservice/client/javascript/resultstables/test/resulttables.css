@@ -363,7 +363,10 @@ th.border-collapse-fix {
 
 .column-list-adder {
     list-style-type: none;
-    cursor: pointer;
+}
+
+.column-list-adder button {
+    min-width: 50%;
 }
 
 .column-list-adder span:hover {
