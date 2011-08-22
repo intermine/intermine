@@ -187,8 +187,7 @@
 	<c:if test="${fn:length(frontpageBags) > 0}">
 		<div id="lists">
 			<h4>Lists</h4>
-			<p>You can run queries on whole lists of data. Create lists from the results of a query or by uploading identifiers.
-			Click on a list to view graphs and summaries in a list analysis page, if you log in you can save lists permanently.</p>
+			<p><c:out value="${WEB_PROPERTIES['begin.listsBox.description']}" /></p>
 			<ul>
 				<c:forEach var="bag" items="${frontpageBags}">
 				<li>
