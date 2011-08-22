@@ -2,6 +2,7 @@ var test_base = "http://squirrel.flymine.org/intermine-test";
 var fly_base = "http://squirrel.flymine.org/flymine";
 var query_path = "/service/query/results";
 var query_to_list_path = "/service/query/tolist/json";
+var list_path = "/service/lists/json";
 var modelPath = "/service/model/json";
 var fieldPath = "/service/summaryfields";
 
@@ -1047,6 +1048,44 @@ function getAncestorsOf(model, className) {
     return ancestors;
 }
 
+function getListMaker(base, id, $h3, token, remover) { return function() {
+    var model = models[base];
+    var ids = chosenListIds[id].slice();
+    var types = __(typeOfObj[id]).values().compact().uniq().value();
+    var type = findCommonTypeOfMultipleClasses(model, types);
+    var query = {
+        select: [type + ".id"],
+        from: model.name, 
+        where: [
+            { path: type + ".id", op: "ONE OF", values: ids }
+        ]
+    };
+    var listUploadUrl = base + query_to_list_path;
+    var data = {
+        query: serializeQuery(query),
+        listName: $h3.find('.new-list-name').text(),
+        format: "json",
+        token: token
+    };
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        data: data,
+        url: listUploadUrl,
+        success: function(result) {
+            alert("Created new list named " + result.listName + " with " + result.listSize + " items");
+            remover();
+        }
+    });
+}}
+
+function getListPopupRemover($popup, $dt, id, $button) {return function() {
+    $popup.remove(); 
+    listCreationState[id] = false;
+    $dt.find('td input').hide();
+    $button.attr("disabled", false);
+}};
+
 tableInitialised = {};
 var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
 var listCreationState = {};
@@ -1092,7 +1131,6 @@ function initTable(pq, id, base, bkg, token) {
                         }
                         __(pq.where).groupBy(function(con) {return con.path}).each(function(constraints, path) {
                             var title = result.columnHeaders[_(pq.select).indexOf(path)];
-                            console.log(path, title, constraints);
                             $("<h4>").text(title).appendTo($constraints);
                             var $groupBox = $('<div>').appendTo($constraints);
                             _(constraints).each(function(con) {
@@ -1202,42 +1240,8 @@ function initTable(pq, id, base, bkg, token) {
                     var $makerButton = $('<button class="list-maker" disabled>Make List</button>').addClass("summary-remover").appendTo($popup);
                     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
                     $removeButton.appendTo($popup);
-                    var remover = function() {
-                        $popup.remove(); 
-                        listCreationState[id] = false;
-                        $dt.find('td input').hide();
-                        $that.attr("disabled", false);
-                    };
-                    $makerButton.click(function() {
-                        var model = models[base];
-                        var ids = chosenListIds[id].slice();
-                        var types = __(typeOfObj[id]).values().compact().uniq().value();
-                        var type = findCommonTypeOfMultipleClasses(model, types);
-                        var query = {
-                            select: [type + ".id"],
-                            from: model.name, 
-                            where: [
-                                { path: type + ".id", op: "ONE OF", values: ids }
-                            ]
-                        };
-                        var listUploadUrl = base + query_to_list_path;
-                        var data = {
-                            query: serializeQuery(query),
-                            listName: $h3.find('.new-list-name').text(),
-                            format: "json",
-                            token: token
-                        };
-                        $.ajax({
-                            type: "POST",
-                            dataType: "json",
-                            data: data,
-                            url: listUploadUrl,
-                            success: function(result) {
-                                alert("Created new list named " + result.listName + " with " + result.listSize + " items");
-                                remover();
-                            }
-                        });
-                    });
+                    var remover = getListPopupRemover($popup, $dt, id, $that);
+                    $makerButton.click(getListMaker(base, id, $h3, token, remover));
                     $dt.unbind("click");
                     $removeButton.click(remover);
                     $dt.append($popup);
@@ -1245,6 +1249,21 @@ function initTable(pq, id, base, bkg, token) {
                         minWidth: $popup.width(), 
                         minHeight: $popup.height(), 
                         alsoResize: $centreBox
+                    });
+
+                    // Get an unused name if the default is already taken.
+                    $.getJSON(base + list_path, {token: token}, function(result) {
+                        var listNames =_(result.lists).pluck('name');
+                        var origName = $h3.find('.new-list-name').text();
+                        var currentName = origName;
+                        var counter = 2;
+                        while (_(listNames).include(currentName)) {
+                            currentName = origName + " " + counter;
+                            counter++;
+                        }
+                        if (currentName != origName) {
+                            $h3.find('.new-list-name').text(currentName);
+                        }
                     });
                     
                     $dt.find('td input').show();
