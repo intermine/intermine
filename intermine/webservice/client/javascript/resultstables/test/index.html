@@ -7,6 +7,7 @@
         <script src="lib/DataTables-1.8.1/extras/ColReorder/media/js/ColReorder.js" type="text/javascript"></script>
         <script src="lib/js/jquery-ui-1.8.15.custom.min.js" type="text/javascript"></script>
         <script src="lib/js/jquery.jeditable.js" type="text/javascript"></script>
+        <script src="lib/js/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
 
         <link rel="stylesheet" type="text/css" href="lib/DataTables-1.8.1/media/css/demo_table.css"/>
         <link rel="stylesheet" type="text/css" href="lib/DataTables-1.8.1/extras/ColVis/media/css/ColVis.css">
@@ -26,5 +27,60 @@
 
         <div id="flytable"></div>
 
+        <div id="flytable4"></div>
+
     </body>
+    <script type="text/javascript">
+        var test_query = {
+            title: "Middle-Aged Employees",
+            select: ["Employee.name", "Employee.age", "Employee.address.address", "Employee.department.manager.name"],
+            from: "testmodel",
+            where: [
+                {path: "Employee.age", op: ">", value: 30},
+                {path: "Employee.age", op: "<", value: 60},
+                {path: "Employee.department.manager.name", op: "<", value: "M"}
+            ]
+        };
+
+        var massive_query = {
+            title: "All Genes",
+            select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.length", "Gene.chromosomeLocation.start", "Gene.chromosomeLocation.end", "Gene.chromosomeLocation.strand"],
+            from: "genomic"
+        };
+
+        var pw_genes = {
+            title: "Pathway Genes",
+            select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.pathways.name", "Gene.pathways.identifier"],
+            from: "genomic"
+        };
+
+        var long_genes = {
+            title: "Long Genes",
+            select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.length", "Gene.chromosomeLocation.start", "Gene.chromosomeLocation.end", "Gene.chromosomeLocation.strand"],
+            where: [
+                {path: "Gene.length", op: ">", value: 25000},
+                {path: "Gene.chromosomeLocation.start", op: "<", value: 10000000},
+            ],
+            from: "genomic"
+        };
+        var moderate_query = {
+            title: "Moderate Query",
+            select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.alleles.symbol", "Gene.alleles.alleleClass", "Gene.proteins.name"],
+            from: "genomic",
+            where: [{path: "Gene.symbol", op: "ONE OF", values: ["eve", "zen", "bib", "r", "h"]}]
+        };
+
+        /**
+        * Load the queries on page load.
+        */
+        $(function(){
+            var testkey = "a1v3V1X0f3hdmaybq0l6b7Z4eVG";
+            var flykey = "C1o3t1e0d4V06ep8xb47DdlFVMr";
+            t1 = new InterMine.ResultTable(test_query, test_base, "testtable", testkey); 
+            t2 = new InterMine.ResultTable(massive_query, fly_base, "flytable", flykey);
+            t3 = new InterMine.ResultTable(moderate_query, fly_base, "flytable2", flykey);
+            t4 = new InterMine.ResultTable(long_genes, fly_base, "flytable3", flykey);
+            t5 = new InterMine.ResultTable(pw_genes, fly_base, "flytable4", flykey);
+        });
+    </script>
 </html>
