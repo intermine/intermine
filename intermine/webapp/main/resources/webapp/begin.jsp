@@ -191,8 +191,7 @@
 			<ul>
 				<c:forEach var="bag" items="${frontpageBags}">
 				<li>
-					<h5><a href="bagDetails.do?scope=all&bagName=
-					<c:out value="${fn:replace(bag.value.title, ' ', '+')}"/>">${bag.value.title}</a></h5>
+					<h5><a href="bagDetails.do?scope=all&bagName=<c:out value="${fn:replace(bag.value.title, ' ', '+')}"/>">${bag.value.title}</a></h5>
 					<span>(${bag.value.size}&nbsp;<b>${bag.value.type}<c:if test="${bag.value.size > 1}">s</c:if></b>)</span>
 					<c:if test="${!empty(bag.value.description)}">
 						<p>${bag.value.description}</p>
