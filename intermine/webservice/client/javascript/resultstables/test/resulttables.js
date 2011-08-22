@@ -6,6 +6,254 @@ var list_path = "/service/lists/json";
 var modelPath = "/service/model/json";
 var fieldPath = "/service/summaryfields";
 
+var Query = function(query) {
+
+    /** PRIVATE VARIABLES AND FUNCTIONS **/
+
+    var escapeOperator = function(operator) {
+        if (operator in ESCAPE_DICT) {
+            return ESCAPE_DICT[operator];
+        } else {
+            return operator;
+        }
+    };
+
+    var getConstraints = function(constraints) {
+        var constraintsString = "", cl = constraints.length, i = 0;
+        for (i = 0; i < cl; i++) {
+            constraintsString += "  " +  makeConstraint(constraints[i]) + "\n";
+        }
+        return constraintsString;
+    };
+
+    var makeConstraint = function(whereClause) {
+        var i = 0, len = 0, whereString = "<constraint ", attr = null, values = null;
+        for (attr in whereClause) {
+            if (attr === "values") {
+                values = whereClause[attr];
+            } else {
+                whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
+            }
+        }
+        if (values) {
+            whereString += ">\n";
+            len = values.length;
+            for (i = 0;i < len;i++) {
+                whereString += "    <value>" + values[i] + "</value>\n";
+            }
+            whereString += "  </constraint>";
+        } else {
+            whereString += "/>";
+        }
+        return whereString;
+    };
+
+    var serializeQuery = function(query) {
+        var xmlString = '<query '
+
+        if ("title" in query) {
+            xmlString += 'title="' + query.title + '" ';
+        }
+
+        xmlString += 'model="';
+        if ("model" in query) {
+            xmlString += query.model;
+        } else if ("from" in query) {
+            xmlString += query.from;
+        } else {
+            throw("No model in query");
+        }
+
+        xmlString += '" view="';
+        if ("view" in query) {
+            xmlString += query.view.join(" ");
+        } else if ("select" in query) {
+            xmlString += query.select.join(" ");
+        } else {
+            throw("No view in query");
+        }
+        xmlString += '" ';
+        if ("constraintLogic" in query) {
+            xmlString += 'constraintLogic="' + query.constraintLogic + '" ';
+        }
+        if ("sortOrder" in query) {
+            xmlString += 'sortOrder="' + query.sortOrder + '" ';
+        }
+        xmlString += ">\n";
+        if ("joins" in query) {
+            for (var i = 0; i < query.joins.length; i++) {
+                var join = query.joins[i];
+                var joinString = '  <join ';
+                
+                for (attr in join) {
+                    joinString += (attr + '="' + join[attr] + '" ');
+                }
+                joinString += "/>\n";
+                xmlString += joinString;
+            }
+        }
+        if ("where" in query) {
+            xmlString += getConstraints(query.where);
+        }
+        if ("constraints" in query) {
+            xmlString += getConstraints(query.constraints);
+        }
+        xmlString += '</query>';
+        return xmlString;
+    };
+
+
+    /**
+    * Dictionary for escaping illegal XML entities
+    */
+    var ESCAPE_DICT = {
+        "<": '&lt;',
+        ">": '&gt;',
+        "<=": '&lt;=',
+        ">=": '&gt;='
+    };
+
+    /** CONSTRUCTION **/
+
+    _(this).extend(query);
+    this.serialise = function() { return serializeQuery(this) };
+    this.removeConstraint = function(con) { this.where = _(this.where).select(function(inQuestion) {return JSON.stringify(con) != JSON.stringify(inQuestion);});}; 
+};
+
+var Model = function(model) {
+
+    /**
+    * Get the ClassDescriptor for a path. If the path is a root-path, it 
+    * returns the class descriptor for the class named, otherwise it returns 
+    * the class the last part resolves to. If the last part is an attribute, this
+    * function returns "undefined".
+    */
+    var _getCdForPath = function(model, path) {
+        var parts = path.split(".");
+        var cd = model.classes[parts.shift()];
+        return _(parts).reduce(function (memo, fieldName) {
+            var allFields = $.extend(true, {}, memo.attributes, memo.references, memo.collections);
+            return model.classes[allFields[fieldName]["referencedType"]];
+        }, cd);
+    }
+
+
+    /**
+    * Get the full ancestry of a particular class.
+    */
+    var _getAncestorsOf = function(model, className) {
+        var ancestors = model.classes[className]["extends"].slice();
+        _(ancestors).each(function(a) {
+            if (!a.match(/InterMineObject$/)) {
+                ancestors = _.union(ancestors, model.getAncestorsOf(a));
+            }
+        });
+        return ancestors;
+    }
+
+    _(this).extend(model);
+    this.getCdForPath = function(path) { return _getCdForPath(this, path); };
+
+    /**
+     * Get the full ancestry for a given class name, from closest to most distant ancestor.
+     */
+    this.getAncestorsOf = function(className) { return _getAncestorsOf(this, className) };
+
+    /**
+    * Return the common type of two model classes, or null if there isn't one.
+    */
+    this.findCommonTypeOf = function(classA, classB) {
+        if (classB == null || classA == null || classA == classB) {
+            return classA;
+        }
+        var allAncestorsOfA = this.getAncestorsOf(classA);
+        var allAncestorsOfB = this.getAncestorsOf(classB);
+        // If one is a superclass of the other, return it.
+        if (_(allAncestorsOfA).include(classB)) {
+            return classB;
+        }
+        if (_(allAncestorsOfB).include(classA)) {
+            return classA;
+        }
+        // Return the first common ancestor
+        return _.intersection(allAncestorsOfA, allAncestorsOfB).shift();
+    };
+
+    /**
+    * Return the common type of 0 or more model classes, or null if there is none.
+    *
+    * @param model The data model for this service.
+    * @classes {String[]} classes the model classes to try and get a common type of.
+    */
+    this.findCommonTypeOfMultipleClasses = function(classes) {
+        return _.reduce(classes, _.bind(this.findCommonTypeOf, this), classes.pop());
+    };
+};
+
+var ResultTable = function(query, base, id, key) {
+
+    var loadModel = function(base, continuation) {
+        return loadResource(base, modelPath, "model", InterMine.models, Model, continuation);
+    };
+
+    var loadSummaryFields = function(base, continuation) {
+        return loadResource(base, fieldPath, "classes", InterMine.summaryFields, null, continuation);
+    };
+
+    var getStorer = function(storage, base, key, cls, continuation) {
+        return function(result) {
+            var toStore = (cls) ? new cls(result[key]) : result[key];
+            storage[base] = toStore;
+            if (continuation) {
+                return continuation();
+            } else {
+                return false;
+            }
+        };
+    };
+
+    var loadResource = function(base, path, key, storage, cls, continuation) {
+        if (storage[base]) {
+            if (continuation) {
+                return continuation();
+            } else {
+                return false;
+            }
+        } else {
+            var storer = getStorer(storage, base, key, cls, continuation);
+            $.getJSON(base + path, storer);
+            return false;
+        }
+    }
+
+    /**
+    * Load a table for displaying a query into an element with the given id.
+    */
+    var loadQuery = function(pq, base, id, token) {
+        loadModel(base, function() {
+            loadSummaryFields(base, function() {
+                loadBox(new Query(pq), base, id, token);
+            });
+        });
+    };
+
+    loadQuery(query, base, id, key);
+
+    this.id = id;
+    this.getTable = function() { return $('#' + id).dataTable() };
+    this.close = function() { $('#' + this.id + "_datatable_wrapper").find('.hide-button').click(); };
+    this.open = function() { $('#' + this.id).find(".query-summary").click(); };
+
+};
+
+InterMine = {
+    "ResultTable": ResultTable,
+    "Model": Model,
+    "Query": Query,
+    "models": {},
+    "summaryFields": {}
+};
+
 //if (typeof console == "undefined") { window.console = {"log": function() {}} };
 //
 
@@ -22,42 +270,6 @@ function returnFalse() {
 
 function tapper(x) {console.log(x)}
 
-var test_query = {
-    title: "Middle-Aged Employees",
-    select: ["Employee.name", "Employee.age", "Employee.address.address", "Employee.department.manager.name"],
-    from: "testmodel",
-    where: [
-        {path: "Employee.age", op: ">", value: 30},
-        {path: "Employee.age", op: "<", value: 60},
-        {path: "Employee.department.manager.name", op: "<", value: "M"}
-    ]
-};
-
-var massive_query = {
-    title: "All Genes",
-    select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.length", "Gene.chromosomeLocation.start", "Gene.chromosomeLocation.end", "Gene.chromosomeLocation.strand"],
-    from: "genomic"
-};
-
-var long_genes = {
-    title: "Long Genes",
-    select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.length", "Gene.chromosomeLocation.start", "Gene.chromosomeLocation.end", "Gene.chromosomeLocation.strand"],
-    where: [
-        {path: "Gene.length", op: ">", value: 25000},
-        {path: "Gene.chromosomeLocation.start", op: "<", value: 10000000},
-    ],
-    from: "genomic"
-};
-var moderate_query = {
-    title: "Moderate Query",
-    select: ["Gene.symbol", "Gene.primaryIdentifier", "Gene.alleles.symbol", "Gene.alleles.alleleClass", "Gene.proteins.name"],
-    from: "genomic",
-    where: [{path: "Gene.symbol", op: "ONE OF", values: ["eve", "zen", "bib", "r", "h"]}]
-};
-
-var models = {};
-var summaryFields = {};
-
 function num_to_string(num, sep, every) {
     var num_as_string = num + "";
     var chars = num_as_string.split("");
@@ -72,38 +284,6 @@ function num_to_string(num, sep, every) {
     return ret;
 }
 
-function loadModel(base, continuation) {
-    return loadResource(base, modelPath, "model", models, continuation);
-}
-
-function loadSummaryFields(base, continuation) {
-    return loadResource(base, fieldPath, "classes", summaryFields, continuation);
-}
-
-function getStorer(storage, base, key, continuation) {
-    return function(result) {
-        storage[base] = result[key];
-        if (continuation) {
-            return continuation();
-        } else {
-            return false;
-        }
-    };
-}
-
-function loadResource(base, path, key, storage, continuation) {
-    if (storage[base]) {
-        if (continuation) {
-            return continuation();
-        } else {
-            return false;
-        }
-    } else {
-        var storer = getStorer(storage, base, key, continuation);
-        $.getJSON(base + path, storer);
-        return false;
-    }
-}
 
 /**
  * Adjust the view of the query by adding all the non-selected
@@ -114,7 +294,7 @@ function addAttributesToQuery(model, pq) {
     pq.select = _.union(pq.select, __(pq.select)
         .map(function(p) {return p.substring(0, p.lastIndexOf("."))}).uniq()
         .map(function(p) {
-            return __(getCdForPath(model, p).attributes)
+            return __(model.getCdForPath(p).attributes)
                 .keys().without("id")
                 .map(function(attr) {return p + "." + attr})
                 .value();
@@ -123,34 +303,8 @@ function addAttributesToQuery(model, pq) {
         .value());
 }
 
-/**
- * Get the ClassDescriptor for a path. If the path is a root-path, it 
- * returns the class descriptor for the class named, otherwise it returns 
- * the class the last part resolves to. If the last part is an attribute, this
- * function returns "undefined".
- */
-function getCdForPath(model, path) {
-    var parts = path.split(".");
-    var cd = model.classes[parts.shift()];
-    return _(parts).reduce(function (memo, fieldName) {
-        var allFields = $.extend(true, {}, memo.attributes, memo.references, memo.collections);
-        return model.classes[allFields[fieldName]["referencedType"]];
-    }, cd);
-}
-
-/**
- * Load a table for displaying a query into an element with the given id.
- */
-function loadQuery(pq, base, id, token) {
-    loadModel(base, function() {
-        loadSummaryFields(base, function() {
-            loadBox(pq, base, id, token);
-        });
-    });
-}
-
 function loadBox(pq, base, id, token) {
-    var params = {format: "jsoncount", query: serializeQuery(pq)};
+    var params = {format: "jsoncount", query: pq.serialise()};
     var $tableContainer = $('#' + id).addClass("table-container");
     var $box = jQuery('<div class="results-box ui-widget-header ui-corner-all">').appendTo($tableContainer);
     jQuery('<span class="throbber"></span><span class="query-summary">' + pq.title + ':</span>').appendTo($box);
@@ -179,17 +333,6 @@ function loadBox(pq, base, id, token) {
         }
     });
 }
-
-/**
- * Load the queries on page load.
- */
-$(function(){
-    var flykey = "C1o3t1e0d4V06ep8xb47DdlFVMr";
-    loadQuery(test_query, test_base, "testtable", "a1v3V1X0f3hdmaybq0l6b7Z4eVG");
-    loadQuery(massive_query, fly_base, "flytable", flykey);
-    loadQuery(moderate_query, fly_base, "flytable2", flykey);
-    loadQuery(long_genes, fly_base, "flytable3", flykey);
-});
 
 /**
  * Function to work around the decision to use the list of pairs format...
@@ -292,7 +435,7 @@ function getDataFromCache(url, params, callback, id, pathquery) {
         */
     }
 
-    params.push({name: "query", value: serializeQuery(query)});
+    params.push({name: "query", value: query.serialise()});
     cache[id].lastRequest = params.slice(); // Copy, don't alias.
     cache[id].lastQuery = jQuery.extend(true, {}, query); // Copy, don't alias.
 
@@ -313,7 +456,6 @@ function getDataFromCache(url, params, callback, id, pathquery) {
         } else {
             setParameter(params, "size", "");// All
         }
-
 
         $.ajax({
             type: "POST", 
@@ -346,23 +488,23 @@ function getDataFromCache(url, params, callback, id, pathquery) {
     return;
 }
 
+/** 
+ * Get a function that will remove a constraint from a pathquery.
+ *
+ * @param con The constraint to remove
+ * @param pq The Query to remove it from
+ * @param pq.where The set of constraints on the query.
+ * @param dataTable The data table this all belongs to
+ * @param [clicked] The (i) button that opened the popup.
+ */
 var getConstraintRemover = function(con, pq, dataTable, clicked) {
     return function() {
-        pq.where = jQuery.grep(pq.where, function(inQuestion) {return JSON.stringify(con) != JSON.stringify(inQuestion);}); 
+        pq.removeConstraint(con);
         refreshPopup(dataTable, clicked);
         return false;
     };
 };
 
-/**
- * Dictionary for escaping illegal XML entities
- */
-var ESCAPE_DICT = {
-    "<": '&lt;',
-    ">": '&gt;',
-    "<=": '&lt;=',
-    ">=": '&gt;='
-};
 
 /**
  * Binary attribute constraint operators
@@ -390,14 +532,6 @@ var nullOps = {
 var multiOps = {
     "ONE OF": "one of", 
     "NONE OF": "none of"
-};
-
-var escapeOperator = function(operator) {
-    if (operator in ESCAPE_DICT) {
-        return ESCAPE_DICT[operator];
-    } else {
-        return operator;
-    }
 };
 
 /**
@@ -448,28 +582,6 @@ var getAdder = function(pq, box, path, dataTable, clicked) { return function() {
 
     return false;
 }};
-
-var makeConstraint = function(whereClause) {
-    var i = 0, len = 0, whereString = "<constraint ", attr = null, values = null;
-    for (attr in whereClause) {
-        if (attr === "values") {
-            values = whereClause[attr];
-        } else {
-            whereString += attr + '="' + escapeOperator(whereClause[attr]) + '" ';
-        }
-    }
-    if (values) {
-        whereString += ">\n";
-        len = values.length;
-        for (i = 0;i < len;i++) {
-            whereString += "    <value>" + values[i] + "</value>\n";
-        }
-        whereString += "  </constraint>";
-    } else {
-        whereString += "/>";
-    }
-    return whereString;
-}
 
 var itemState = {
     "pinned": 0, 
@@ -610,14 +722,6 @@ function refreshPopup($dataTable, clicked) {
     $(clicked).click()
 }
 
-var getConstraints = function(constraints) {
-    var constraintsString = "", cl = constraints.length, i = 0;
-    for (i = 0; i < cl; i++) {
-        constraintsString += "  " +  makeConstraint(constraints[i]) + "\n";
-    }
-    return constraintsString;
-};
-
 var newButton = function() {
     return jQuery('<button class="ui-state-default ui-corner-all constraint-deleter">')
                 .bind('mouseover', function() {$(this).addClass('ui-state-hover');})
@@ -631,61 +735,6 @@ var newSpan = function(cls, text) {
         return jQuery('<span>').addClass(cls);
     }
         
-};
-
-function serializeQuery(query) {
-
-    var xmlString = '<query '
-
-    if ("title" in query) {
-        xmlString += 'title="' + query.title + '" ';
-    }
-
-    xmlString += 'model="';
-    if ("model" in query) {
-        xmlString += query.model;
-    } else if ("from" in query) {
-        xmlString += query.from;
-    } else {
-        throw("No model in query");
-    }
-
-    xmlString += '" view="';
-    if ("view" in query) {
-        xmlString += query.view.join(" ");
-    } else if ("select" in query) {
-        xmlString += query.select.join(" ");
-    } else {
-        throw("No view in query");
-    }
-    xmlString += '" ';
-    if ("constraintLogic" in query) {
-        xmlString += 'constraintLogic="' + query.constraintLogic + '" ';
-    }
-    if ("sortOrder" in query) {
-        xmlString += 'sortOrder="' + query.sortOrder + '" ';
-    }
-    xmlString += ">\n";
-    if ("joins" in query) {
-        for (var i = 0; i < query.joins.length; i++) {
-            var join = query.joins[i];
-            var joinString = '  <join ';
-            
-            for (attr in join) {
-                joinString += (attr + '="' + join[attr] + '" ');
-            }
-            joinString += "/>\n";
-            xmlString += joinString;
-        }
-    }
-    if ("where" in query) {
-        xmlString += getConstraints(query.where);
-    }
-    if ("constraints" in query) {
-        xmlString += getConstraints(query.constraints);
-    }
-    xmlString += '</query>';
-    return xmlString;
 };
 
 var getValueAdder = function($con, con, $dataTable, clicked) {
@@ -846,7 +895,7 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     $.ajax({
         type: "POST",
         dataType: "json",
-        data: {format: "jsonrows", query: serializeQuery(pq), summaryPath: summaryPath, size: 100},
+        data: {format: "jsonrows", query: pq.serialise(), summaryPath: summaryPath, size: 100},
         url: url,
         success: function(results) {
             var $table = jQuery('<table class="col-summary"></table>');
@@ -928,8 +977,7 @@ function getItemChooser(id, base) { return function() {
     var $checkbox = $(this);
     var $wrapper = $('#' + id + '_wrapper');
     var checked = !!$checkbox.attr("checked");
-    var model = models[base];
-    var defaultViews = summaryFields[base];
+    var model = InterMine.models[base];
     if (!chosenListIds[id]) {
         chosenListIds[id] = [];
         typeOfObj[id] = {};
@@ -944,27 +992,38 @@ function getItemChooser(id, base) { return function() {
     var itemCount = chosenListIds[id].length;
     $wrapper.find('.list-creation-info').children('.selected-count').text(itemCount);
     var types = __(typeOfObj[id]).values().compact().uniq().value();
-    var type = (types.length) ? findCommonTypeOfMultipleClasses(model, types) : "item";
+    var type = (types.length) ? model.findCommonTypeOfMultipleClasses(types) : "item";
     $wrapper.find('.list-creation-info').children('.selected-types').text(pluralise(type, itemCount));
     $wrapper.find('button.list-maker').attr("disabled", chosenListIds[id].length < 1);
     $wrapper.find('.list-chooser').each(function(elem) {
         var $thisCheckbox = $(this);
         var thisType = $thisCheckbox.attr("obj_class");
-        var commonType = findCommonTypeOfMultipleClasses(model, __(typeOfObj[id]).values().compact().uniq().union([thisType]).value());
+        var commonType = model.findCommonTypeOfMultipleClasses(__(typeOfObj[id]).values().compact().uniq().union([thisType]).value());
         if ($thisCheckbox.attr("obj_id") == $checkbox.attr("obj_id")) {
             $thisCheckbox.attr("checked", checked);
         }
         $thisCheckbox.attr("disabled", !commonType);
     });
+    updateListPreview(id, base);
+}};
+
+function updateListPreview(id, base) {
+    var itemCount = chosenListIds[id].length;
+    var model = InterMine.models[base];
+    var defaultViews = InterMine.summaryFields[base];
+    var types = __(typeOfObj[id]).values().compact().uniq().value();
+    var type = (types.length) ? model.findCommonTypeOfMultipleClasses(types) : "item";
+    var $wrapper = $('#' + id + "_wrapper");
+
     if (itemCount > 0) {
-        var query = {
+        var query = new Query({
             // Don't include any references in the default view: they may be null and return no row
             select: _(defaultViews[type]).select(function(v) { return !v.match(/\.[^\.]+\./); }),
             from: model.name,
             where: [
                 {path: type + ".id", op: "ONE OF", values: chosenListIds[id].slice()}
             ]
-        };
+        });
         if (query.select.length == 0) {
             query.select = [type + ".id"];
         }
@@ -972,7 +1031,7 @@ function getItemChooser(id, base) { return function() {
             url: base + query_path,
             type: "POST",
             dataType: "json",
-            data: {query: serializeQuery(query), format: "jsonrows"},
+            data: {query: query.serialise(), format: "jsonrows"},
             success: function(resultset) {
                 $ul = $wrapper.find('.list-items').empty();
                 _(resultset.results).each(function(row) {
@@ -987,7 +1046,9 @@ function getItemChooser(id, base) { return function() {
     } else {
         $wrapper.find(".list-items").empty();
     }
-}};
+}
+
+
 
 /**
  * Very naïve English word pluralisation algorithm
@@ -1000,69 +1061,28 @@ function pluralise(word, count) {
         ? word 
         : ((word.match(/(s|x|ch)$/)) 
                 ? word + "es" 
-                : (word.match(/y$/) 
+                : (word.match(/[^aeiou]y$/) 
                     ? word.replace(/y$/, 'ies')
                     : word + "s"));
 }
 
-/**
- * Return the common type of 0 or more model classes, or null if there is none.
- *
- * @param model The data model for this service.
- * @classes {String[]} classes the model classes to try and get a common type of.
- */
-function findCommonTypeOfMultipleClasses(model, classes) {
-    return _.reduce(classes, function(memo, x) {return findCommonTypeOf(model, memo, x)}, classes.pop());
-}
-
-/**
- * Return the common type of two model classes, or null if there isn't one.
- */
-function findCommonTypeOf(model, classA, classB) {
-    if (classB == null || classA == null || classA == classB) {
-        return classA;
-    }
-    var allAncestorsOfA = getAncestorsOf(model, classA);
-    var allAncestorsOfB = getAncestorsOf(model, classB);
-    // If one is a superclass of the other, return it.
-    if (_(allAncestorsOfA).include(classB)) {
-        return classB;
-    }
-    if (_(allAncestorsOfB).include(classA)) {
-        return classA;
-    }
-    // Return the first common ancestor
-    return _.intersection(allAncestorsOfA, allAncestorsOfB).shift();
-}
-
-/**
- * Get the full ancestry of a particular class.
- */
-function getAncestorsOf(model, className) {
-    var ancestors = model.classes[className]["extends"].slice();
-    _(ancestors).each(function(a) {
-        if (!a.match(/InterMineObject$/)) {
-            ancestors = _.union(ancestors, getAncestorsOf(model, a));
-        }
-    });
-    return ancestors;
-}
 
 function getListMaker(base, id, $h3, token, remover) { return function() {
-    var model = models[base];
+    var model = InterMine.models[base];
     var ids = chosenListIds[id].slice();
     var types = __(typeOfObj[id]).values().compact().uniq().value();
-    var type = findCommonTypeOfMultipleClasses(model, types);
-    var query = {
-        select: [type + ".id"],
+    var type = model.findCommonTypeOfMultipleClasses(types);
+    var typePath = type + ".id";
+    var query = new Query({
+        select: [typePath],
         from: model.name, 
         where: [
-            { path: type + ".id", op: "ONE OF", values: ids }
+            { path: typePath, op: "ONE OF", values: ids }
         ]
-    };
+    });
     var listUploadUrl = base + query_to_list_path;
     var data = {
-        query: serializeQuery(query),
+        query: query.serialise(),
         listName: $h3.find('.new-list-name').text(),
         format: "json",
         token: token
@@ -1094,9 +1114,9 @@ var typeOfObj = {};
 
 function initTable(pq, id, base, bkg, token) {
     var initialViewLength = pq.select.length;
-    var model = models[base];
+    var model = InterMine.models[base];
     addAttributesToQuery(model, pq);
-    var setup_params = {format: "jsontable", query: serializeQuery(pq)};
+    var setup_params = {format: "jsontable", query: pq.serialise()};
     var url = base + query_path; 
     if (tableInitialised[id]) {
         $('#' + id + '_wrapper').show().parent().parent().find('.constraints-hider').slideDown();
@@ -1181,7 +1201,7 @@ function initTable(pq, id, base, bkg, token) {
                     "fnServerData": function(src, data, callback) { getDataFromCache(src, data, callback, id, pq);}
                 });
 
-                var $button = jQuery('<button>Hide table</button>');
+                var $button = jQuery('<button class="hide-button">Hide table</button>');
                 $button.click(function() {
                     var $datatable = $('#' + id + '_wrapper').hide();
                     $datatable.parent().parent().find('.constraints-hider').slideUp();
@@ -1196,7 +1216,7 @@ function initTable(pq, id, base, bkg, token) {
 
                 var $xmlButton = jQuery('<button>').text("View as XML").click(function() {
                     var visibleQuery = getVisibleQuery(pq, $dataTable, id);
-                    var xml = serializeQuery(visibleQuery);
+                    var xml = visibleQuery.serialise();
                     var $popup = jQuery('<div class="summary-popup"></div>');
                     var $h3 = jQuery('<h3>').addClass("main-heading").text("XML for " + visibleQuery.title);
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
@@ -1215,7 +1235,7 @@ function initTable(pq, id, base, bkg, token) {
                 var $tsvButton = jQuery('<button>').text("Download As TSV").click(function() {
                     var tsvQuery = getVisibleQuery(pq, $dataTable, id);
                     var params = [
-                        {name: "query", value: serializeQuery(tsvQuery)},
+                        {name: "query", value: tsvQuery.serialise()},
                         {name: "format", value: "tab"}
                     ];
                     var tsvUrl = url + "?" + jQuery.param(params);
@@ -1235,7 +1255,7 @@ function initTable(pq, id, base, bkg, token) {
                     $('<span class="list-creation-info"><span class="new-list-name">New List</span> (<span class="selected-count">0</span> <span class="selected-types">items</span> selected) </span>').appendTo($h3);
                     $h3.find('.new-list-name').editable(function(value, settings) {return value}, {onblur: "submit", submit: "OK", tooltip: "Click to edit"});
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
-                    var $centreBox = jQuery('<div>').appendTo($popup);
+                    var $centreBox = jQuery('<div>').addClass("list-items-scroller").appendTo($popup);
                     var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
                     var $makerButton = $('<button class="list-maker" disabled>Make List</button>').addClass("summary-remover").appendTo($popup);
                     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
@@ -1265,6 +1285,39 @@ function initTable(pq, id, base, bkg, token) {
                             $h3.find('.new-list-name').text(currentName);
                         }
                     });
+                    __(pq.select).map(function(p) {return p.substring(0, p.lastIndexOf("."))})
+                                 .uniq()
+                                 .map(function(p) {return {path: p, type: InterMine.models[base].getCdForPath(p).name}})
+                                 .each(function(o) {
+                        $('<li>').append("<span>Add all " + pluralise(o.type, 2) + "</span>").appendTo($ul).addClass("column-list-adder").click(function() {
+                            var query = $.extend(true, {}, pq);
+                            query.select = [o.path + ".id"];
+                            $ul.empty().append($('<span class="throbber"></span>').css("float", "left"));
+
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: base + query_path,
+                                data: {token: token, format: "jsonrows", query: query.serialise()},
+                                success: function(result) {
+                                    var typeMap = {};
+                                    var idSet = [];
+                                    _(result.results).each(function(row) {
+                                        idSet.push(row[0].value);
+                                        typeMap[row[0].value] = o.type;
+                                    });
+                                    console.log(typeMap);
+                                    chosenListIds[id] = idSet;;
+                                    typeOfObj[id] = typeMap;
+                                    $h3.find('.selected-count').text(idSet.length);
+                                    $h3.find('.selected-types').text(pluralise(o.type, idSet.length));
+                                    $makerButton.attr("disabled", idSet.length < 1);
+                                    updateListPreview(id, base);
+                                }
+                            });
+                        });
+                    });
+                    $ul.append('<span>Or choose individual items by selecting them from the table</span>');
                     
                     $dt.find('td input').show();
                     return false;
