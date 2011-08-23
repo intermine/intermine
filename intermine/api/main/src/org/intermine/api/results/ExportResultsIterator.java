@@ -37,20 +37,19 @@ import org.intermine.pathquery.PathQuery;
  *
  * @author Matthew Wakeling
  */
-public class ExportResultsIterator extends QueryExecutor implements Iterator<List<ResultElement>>
+public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
     private static final Logger LOG = Logger.getLogger(ExportResultsIterator.class);
 
     private Iterator<List> osIter;
-    private Iterator<List<ResultElement>> subIter;
+    protected Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
     private final List<Path> paths = new ArrayList<Path>();
     private int columnCount;
-    private final Results results;
+    protected final Results results;
     private boolean isGoingFaster = false;
-    private final PathQuery originatingQuery;
-
+    protected final PathQuery originatingQuery;
 
      /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
@@ -79,6 +78,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
 
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
+      
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
         for (String pathString : pq.getView()) {
