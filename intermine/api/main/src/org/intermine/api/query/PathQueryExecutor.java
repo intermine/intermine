@@ -67,8 +67,9 @@ public class PathQueryExecutor extends QueryExecutor
         this.bagQueryRunner = bagQueryRunner;
         this.bagManager = bagManager;
         this.profile = profile;
+        this.summaryBatchSize = DEFAULT_BATCH_SIZE;
     }
-    
+
 
     /**
      * Executes object store query and returns results as iterator over rows.
@@ -98,8 +99,8 @@ public class PathQueryExecutor extends QueryExecutor
             throw new RuntimeException("Creating export results iterator failed", e);
         }
     }
-    
-    
+
+
     /**
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
@@ -144,9 +145,9 @@ public class PathQueryExecutor extends QueryExecutor
                 pathToBagQueryResult);
         return q;
     }
-    
+
     public Query makeQuery(PathQuery pq) throws ObjectStoreException {
-    	Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map<String, BagQueryResult> returnBagQueryResults =
             new HashMap<String, BagQueryResult>();
         return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
@@ -188,7 +189,7 @@ class ResultIterator extends ExportResultsIterator
         this.limit = limit;
         this.start = start;
     }
-    
+
     /**
      * {@inheritDoc}
      */

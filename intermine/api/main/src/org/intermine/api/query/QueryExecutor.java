@@ -37,32 +37,33 @@ import org.intermine.pathquery.PathQuery;
  */
 public abstract class QueryExecutor
 {
-	/**
+    /**
      * A cache of pathToQueryNode maps that is shared between subclasses of QueryExecutor. The
      * maps are needed to link paths in path queries to objects in the underlying ObjectStore
      * results.
      */
     protected static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode =
-    	Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
-    
+        Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
+    protected int summaryBatchSize;
+
     /**
      * The profile to use to find bags from.
      */
     protected Profile profile;
-    
+
     protected BagManager bagManager;
     protected BagQueryRunner bagQueryRunner;
     protected ObjectStore os;
-    
+
 
     /**
      * Creates a query that returns the summary for a column in a PathQuery.
-     ** 
+     **
      * The format of the results is as follows:
      * <ul>
      *  <li> For non-numeric types:</li>
      *    <ol>
-     * 	    <li>The item</li>
+     *      <li>The item</li>
      *      <li>The count of occurrences of this item</li>
      *    </ol>
      *   </li>
@@ -90,15 +91,15 @@ public abstract class QueryExecutor
                 bagQueryRunner);
         return q;
     }
-    
+
     /**
      * Returns the results for a summary for a column in a PathQuery.
-     * 
+     *
      * The format of the results is as follows:
      * <ul>
      *  <li> For non-numeric types:</li>
      *    <ol>
-     * 	    <li>The item</li>
+     *      <li>The item</li>
      *      <li>The count of occurrences of this item</li>
      *    </ol>
      *   </li>
@@ -119,9 +120,10 @@ public abstract class QueryExecutor
      */
     public Results summariseQuery(PathQuery pathQuery,
             String summaryPath) throws ObjectStoreException {
-        return os.execute(makeSummaryQuery(pathQuery, summaryPath));
+        return os.execute(makeSummaryQuery(pathQuery, summaryPath), summaryBatchSize,
+                true, true, true);
     }
-    
+
     /**
      * Take a query and return the results row count.
      *
@@ -133,32 +135,32 @@ public abstract class QueryExecutor
         Query q = makeQuery(pathQuery);
         return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
-    
+
     /**
-     * Get the the total number of unique column values for a given path in the 
+     * Get the the total number of unique column values for a given path in the
      * context of a given query.
-     * 
-     * eg: 
+     *
+     * eg:
      * <pre>
      *   int count = ex.uniqueColumnValues(pq, "Gene.symbol");
      * </pre>
-     * 
+     *
      * @param pq The query to execute.
      * @param path The path whose unique column value count we want.
      * @return The number of different values this path can have.
      * @throws ObjectStoreException If there is a problem making the query.
      */
     public int uniqueColumnValues(PathQuery pq, String path) throws ObjectStoreException {
-    	Query q = makeSummaryQuery(pq, path);
-    	return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+        Query q = makeSummaryQuery(pq, path);
+        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
-    
+
     /**
      * Make an InterMine Query object from a PathQuery.
-     * 
+     *
      * @param pathQuery The path query.
      * @return The internal Query representation.
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException
      */
     public abstract Query makeQuery(PathQuery pathQuery) throws ObjectStoreException;
 
