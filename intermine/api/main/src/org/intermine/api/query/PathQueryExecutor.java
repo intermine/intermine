@@ -34,16 +34,12 @@ import org.intermine.pathquery.PathQuery;
  * services.
  *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  */
 public class PathQueryExecutor extends QueryExecutor
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
-
-    private final BagManager bagManager;
-    private final BagQueryRunner bagQueryRunner;
-    private final ObjectStore os;
-    private final Profile profile;
     private int batchSize = DEFAULT_BATCH_SIZE;
 
     /**
@@ -72,6 +68,7 @@ public class PathQueryExecutor extends QueryExecutor
         this.bagManager = bagManager;
         this.profile = profile;
     }
+    
 
     /**
      * Executes object store query and returns results as iterator over rows.
@@ -101,16 +98,8 @@ public class PathQueryExecutor extends QueryExecutor
             throw new RuntimeException("Creating export results iterator failed", e);
         }
     }
-
-    public int count(PathQuery pq) throws ObjectStoreException {
-        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-        Map<String, BagQueryResult> returnBagQueryResults =
-            new HashMap<String, BagQueryResult>();
-        Query q;
-        q = makeQuery(pq, returnBagQueryResults, pathToQueryNode);
-        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
-    }
-
+    
+    
     /**
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
@@ -155,6 +144,14 @@ public class PathQueryExecutor extends QueryExecutor
                 pathToBagQueryResult);
         return q;
     }
+    
+    public Query makeQuery(PathQuery pq) throws ObjectStoreException {
+    	Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Map<String, BagQueryResult> returnBagQueryResults =
+            new HashMap<String, BagQueryResult>();
+        return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
+    }
+
 }
 
 /**
@@ -191,7 +188,7 @@ class ResultIterator extends ExportResultsIterator
         this.limit = limit;
         this.start = start;
     }
-
+    
     /**
      * {@inheritDoc}
      */
