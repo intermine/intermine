@@ -10,9 +10,12 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
@@ -31,6 +34,8 @@ public class QueryResultRequestParser extends WebServiceRequestParser
 
     /** Layout parameter name. **/
     public static final String LAYOUT_PARAMETER = "layout";
+    
+    private static final Logger logger = Logger.getLogger(QueryResultRequestParser.class);
 
     private HttpServletRequest request;
 
@@ -58,6 +63,11 @@ public class QueryResultRequestParser extends WebServiceRequestParser
         super.parseRequest(req, input);
 
         String xmlQuery = req.getParameter(QUERY_PARAMETER);
+        try {
+        	xmlQuery = new String(xmlQuery.getBytes("ISO-8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+		}
         if (StringUtils.isEmpty(xmlQuery)) {
             throw new BadRequestException("invalid " + QUERY_PARAMETER
                     + " parameter (empty or missing)");
