@@ -226,6 +226,7 @@ public abstract class WebService
             this.request = request;
             this.response = response;
             initOutput(response);
+            response.setHeader("Access-Control-Allow-Origin", "*"); // Allow cross domain requests.
 
             Properties webProperties = SessionMethods.getWebProperties(request
                     .getSession().getServletContext());
