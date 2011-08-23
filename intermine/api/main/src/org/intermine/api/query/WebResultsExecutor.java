@@ -18,18 +18,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.LinkRedirectManager;
-import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.config.Constants;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -49,7 +44,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class WebResultsExecutor extends QueryExecutor
 {
-	
+
     private Map<PathQuery, ResultsInfo> infoCache = Collections.synchronizedMap(
             new IdentityHashMap<PathQuery, ResultsInfo>());
     private InterMineAPI im;
@@ -67,6 +62,7 @@ public class WebResultsExecutor extends QueryExecutor
         this.profile = profile;
         this.im = im;
         bagManager = im.getBagManager();
+        this.summaryBatchSize = Constants.BATCH_SIZE;
     }
 
     /**
