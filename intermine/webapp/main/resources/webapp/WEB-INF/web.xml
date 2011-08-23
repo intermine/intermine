@@ -398,6 +398,20 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>ws-summary-fields</servlet-name>
+    <servlet-class>org.intermine.webservice.server.SummaryServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-summary-fields</servlet-name>
+    <url-pattern>/service/summaryfields</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>ws-service-listing</servlet-name>
     <servlet-class>org.intermine.webservice.server.ServicesListingsServlet</servlet-class>
     <init-param>
