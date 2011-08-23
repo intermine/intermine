@@ -11,7 +11,9 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.Iterator;
+import java.util.List;
 
+import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.ExportResultsIterator;
 
 /**
@@ -29,8 +31,8 @@ public class JSONObjResultProcessor extends JSONResultProcessor
     }
 
     @Override
-    protected Iterator<? extends Object> getResultsIterator(ExportResultsIterator it) {
-        JSONResultsIterator jsonIter = new JSONResultsIterator(it);
+    protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
+        JSONResultsIterator jsonIter = new JSONResultsIterator((ExportResultsIterator) it);
         return jsonIter;
     }
 

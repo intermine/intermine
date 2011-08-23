@@ -12,9 +12,11 @@ package org.intermine.webservice.server.output;
 
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
 
 /**
  * A result processor for result rows.
@@ -33,8 +35,8 @@ public class JSONRowResultProcessor extends JSONResultProcessor
     }
 
     @Override
-    protected Iterator<? extends Object> getResultsIterator(ExportResultsIterator it) {
-        JSONRowIterator jsonIter = new JSONRowIterator(it, im);
+    protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
+        JSONRowIterator jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
         return jsonIter;
     }
 
