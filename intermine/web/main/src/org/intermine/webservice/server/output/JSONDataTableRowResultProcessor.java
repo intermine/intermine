@@ -12,8 +12,9 @@ package org.intermine.webservice.server.output;
 
 
 import java.util.Iterator;
+import java.util.List;
 
-import org.intermine.api.InterMineAPI;
+import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.ExportResultsIterator;
 
 /**
@@ -31,9 +32,9 @@ public class JSONDataTableRowResultProcessor extends JSONResultProcessor
     }
 
     @Override
-    protected Iterator<? extends Object> getResultsIterator(ExportResultsIterator it) {
+    protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
         Iterator<? extends Object> jsonIter 
-            = new JSONDataTableRowIterator(it);
+            = new JSONDataTableRowIterator((ExportResultsIterator) it);
         return jsonIter;
     }
 

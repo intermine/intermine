@@ -41,16 +41,12 @@ public abstract class JSONResultProcessor extends ResultProcessor
      * @param it The ExportResultsIterator this iterator will use to process its data.
      * @return An iterator of objects.
      */
-    protected abstract Iterator<? extends Object> getResultsIterator(ExportResultsIterator it);
+    protected abstract Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it);
 
     @SuppressWarnings("unchecked")
     @Override
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
-        if (!(resultIt instanceof ExportResultsIterator)) {
-            throw new IllegalArgumentException("The iterator must be an ExportResultsIterator");
-        }
-        ExportResultsIterator exportIter = (ExportResultsIterator) resultIt;
-        Iterator<? extends Object> objIter = getResultsIterator(exportIter);
+        Iterator<? extends Object> objIter = getResultsIterator(resultIt);
         if (!objIter.hasNext()) { // address bug which means json results with < 1 results fail
             output.addResultItem(Collections.EMPTY_LIST);
         }
