@@ -56,7 +56,7 @@ public final class GeneModelCache
     protected static final Logger LOG = Logger.getLogger(GeneModelCache.class);
     private static Map<String, GeneModelSettings> organismSettings =
         new HashMap<String, GeneModelSettings>();
-    
+
     private GeneModelCache() {
     }
 
@@ -131,7 +131,7 @@ public final class GeneModelCache
         return organismSettings.get(organismName);
 
     }
-    
+
     private static GeneModelSettings determineOrganismSettings(String organism, ObjectStore os) {
         GeneModelSettings settings = new GeneModelSettings(organism);
 
@@ -147,11 +147,11 @@ public final class GeneModelCache
         cs.addConstraint(new SimpleConstraint(qfOrgName, ConstraintOp.EQUALS,
                 new QueryValue(organism)));
         cs.addConstraint(new ContainsConstraint(orgRef, ConstraintOp.CONTAINS, qcOrganism));
-        
+
         query.addToSelect(new QueryValue("1"));
-        
+
         settings.hasGenes = returnsResults(query, os);
-        
+
         Model model = os.getModel();
         QueryClass qcTranscript =
             new QueryClass(model.getClassDescriptorByName("Transcript").getType());
@@ -160,9 +160,9 @@ public final class GeneModelCache
             new QueryCollectionReference(qcGene, "transcripts");
         cs.addConstraint(new ContainsConstraint(transcriptsCol,
                 ConstraintOp.CONTAINS, qcTranscript));
-        
+
         settings.hasTranscripts = returnsResults(query, os);
-        
+
         // each call modifies the main query then returns it to the original state
         settings.hasExons = doesTranscriptHave("Exon", "exons", qcTranscript, query, os);
         settings.hasIntrons = doesTranscriptHave("Intron", "introns", qcTranscript, query, os);
@@ -171,10 +171,10 @@ public final class GeneModelCache
         settings.hasFivePrimeUTRs = doesTranscriptHave("FivePrimeUTR", "fivePrimeUTR",
                 qcTranscript, query, os);
         settings.hasCDSs = doesTranscriptHave("CDS", "CDSs", qcTranscript, query, os);
-        
+
         return settings;
     }
-    
+
     private static boolean doesTranscriptHave(String clsName, String fieldName,
             QueryClass qcTranscript, Query q, ObjectStore os) {
         Model model = os.getModel();
@@ -200,23 +200,23 @@ public final class GeneModelCache
                 }
 
                 boolean hasResults = returnsResults(q, os);
-                
+
                 // clean up the query again
                 q.setConstraint(cs.removeConstraint(cc));
                 q.deleteFrom(qcTarget);
-                
+
                 return hasResults;
             }
         }
         return false;
     }
-    
+
     private static boolean returnsResults(Query q, ObjectStore os) {
         Results res = os.execute(q,1, true, false, false);
         return res.iterator().hasNext();
     }
-    
-    
+
+
     /**
      * Look up the gene models for a given gene or gene model component and return the ids of all
      * objects involved.  If no gene model is found or object is not a gene model component and
