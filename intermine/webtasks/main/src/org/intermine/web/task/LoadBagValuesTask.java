@@ -93,7 +93,7 @@ public class LoadBagValuesTask extends Task
                         DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
                             DatabaseUtil.Type.text);
                         DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_state",
-                            BagState.CURRENT);
+                            BagState.CURRENT.toString());
                     } else {
                         System .out.println("You must not execute the task load-bagvalues-table. Run the task update-savedbag-table task.");
                         return;
