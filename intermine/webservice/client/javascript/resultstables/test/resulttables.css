@@ -86,8 +86,12 @@ div.toolbar {
     float: right;
 }
 
-.query-summary, .dataTables_info, .dataTables_length, .dataTables_filter, .dataTables_paginate, .summary-popup h3, h4, table, .constraint, body {
+.query-summary, .dataTables_info, .dataTables_length, .dataTables_filter, .dataTables_paginate, .summary-popup h3, h4, table, .constraint, body, .ui-widget, button.ui-button {
     font-family: "Droid Sans", "Ubuntu", "Lucida Grande", "Helvetica", "Arial";
+}
+
+button.ui-widget {
+    font-size: 0.85em;
 }
 
 .ColVis_title {
@@ -96,6 +100,20 @@ div.toolbar {
 }
 
 .ColVis_Button {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin: 2px;
+}
+
+.ColVis_Button span {
+    padding: 0.4em 1em;
+}
+
+span.ColVis_title span.ui-icon {
+    display: none;
 }
 
 .query-summary:hover {
@@ -111,7 +129,7 @@ div.toolbar {
 }
 
 table.col-summary {
-    margin: 2em;
+    margin: 0.5em 2em;
     border-collapse: collapse;
     width: 80%;
 }
@@ -239,15 +257,25 @@ div.summary-header {
 .constraint .value {
     border-radius: 0.2em;
     min-width: 2em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+.constraint select {
+    font-weight: bold;
+    font-family: "Droid Sans Mono", "DejaVu Sans Mono", "Monospace", monospace;
 }
 
 .constraint .op {
     min-width: 2em;
-    height: 2em;
+    height: 1em;
     border-radius: 1em;
     font-weight: bold;
+}
+
+.constraint .op select {
+    font-size: 0.9em;
+    width: 8em;
 }
 
 .summary-table-scrollcontainer {
@@ -257,7 +285,7 @@ div.summary-header {
 }
 
 .centre-box {
-    height: 18em;
+    height: 24em;
 }
 
 button.constraint-deleter {
@@ -296,7 +324,6 @@ table.inner-table tr td {
 }
 
 .constraint {
-    min-height: 45px;
     position: relative;
     margin: 0.15em 0.3em;
     border: 1px solid #AAA;
@@ -305,7 +332,7 @@ table.inner-table tr td {
     text-align: left;
     vertical-align: middle;
     font-size: 1em;
-    line-height: 200%;
+    line-height: 100%;
 }
 
 .xml {
@@ -347,7 +374,8 @@ th.border-collapse-fix {
     display: inline;
 }
 
-.list-popup .main-heading {
+.list-popup {
+    z-index: 10;
 }
 
 .list-items li {
@@ -361,12 +389,22 @@ th.border-collapse-fix {
     background: #E2E4FF;
 }
 
-.column-list-adder {
+.column-list-adder, .lang-selector {
     list-style-type: none;
 }
 
 .column-list-adder button {
     min-width: 50%;
+}
+
+.lang-selector button {
+    width: 98%;
+}
+
+.tabletools_collection ul {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
 }
 
 .column-list-adder span:hover {
@@ -377,6 +415,10 @@ th.border-collapse-fix {
     max-height: 400px;
     overflow: auto;
 }
-    
+
+.lang-popup {
+    left: 10% !important;
+    min-width: 55em;
+}
 
 
