@@ -4,6 +4,7 @@ var query_path = "/service/query/results";
 var query_to_list_path = "/service/query/tolist/json";
 var list_path = "/service/lists/json";
 var modelPath = "/service/model/json";
+var code_path = "/service/query/code";
 var fieldPath = "/service/summaryfields";
 
 var Query = function(query) {
@@ -254,8 +255,7 @@ InterMine = {
     "summaryFields": {}
 };
 
-//if (typeof console == "undefined") { window.console = {"log": function() {}} };
-//
+if (typeof console == "undefined") { window.console = {"log": function() {}} };
 
 /**
  * Shortcut for _(sth).chain()
@@ -510,6 +510,8 @@ var getConstraintRemover = function(con, pq, dataTable, clicked) {
  * Binary attribute constraint operators
  */
 var binaryOps = {
+    "CONTAINS": "contains",
+    "DOES NOT CONTAIN": "does not contain",
     "=": "=",
     "!=": "!=",
     "<": "<",
@@ -534,22 +536,171 @@ var multiOps = {
     "NONE OF": "none of"
 };
 
+function summariseQuery($popup, url, pq, pinned, clicked, summaryPath, filterTerm) {
+    var $centreBox = $popup.find('.summary-box').empty().append('<p class="wait-text">Summarising...</p>');
+    var origHeading = $popup.find('.sub-heading').text();
+    var $conBox = $popup.find('.con-box');
+    filterTerm = filterTerm || "";
+    var query = $.extend(true, {}, pq);
+    if (filterTerm) {
+        if (typeof query.where == "undefined") {
+            query.where = [];
+        }
+        query.where.push({path: summaryPath, op: "CONTAINS", value: filterTerm});
+    }
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        data: {
+            format: "jsonrows", 
+            query: query.serialise(), 
+            summaryPath: summaryPath, 
+            size: 1000,
+        },
+        url: url,
+        success: function(results) {
+            var $table = jQuery('<table class="col-summary"></table>');
+            var propNames = [];
+            var isNumeric = false;
+            var top100 = results.results.slice();
+            var sliceSize = top100.length, totalSize = results.uniqueValues;
+            if (totalSize == 1 && typeof top100[0]["min"] != 'undefined') { 
+                // we have numeric summary results.
+                isNumeric = true;
+                $conBox.find('option').each(function(i, e) {
+                    var nonNumericOptions = ["CONTAINS", "DOES NOT CONTAIN"];
+                    if (_(nonNumericOptions).include($(e).text())) {
+                        $(e).remove();
+                    }
+                });
+                propNames = ["min", "max", "average", "stdev"];
+                for (var i = 0, l = propNames.length; i < l; i++) {
+                    var $row = jQuery('<tr></tr>');
+                    var $left = jQuery('<td></td>');
+                    $left.text(propNames[i]);
+                    var $right = jQuery('<td class="summary-number"></td>');
+                    var value = parseFloat(results.results[0][propNames[i]]).toPrecision(2);
+                    $right.text(value);
+                    $row.append($left);
+                    $row.append($right);
+                    $table.append($row);
+                }
+            } else {
+                $conBox.find('.con-heading').text("Filter Values");
+                $centreBox.addClass("centre-box");
+                var $thead = jQuery('<thead>');
+                var $thRank  = jQuery("<th>").text("Rank");
+                var $thLeft  = jQuery("<th>").text("Value");
+                var $thRight = jQuery("<th>").text("Count");
+                $thead.append($thRank).append($thLeft).append($thRight);
+                $table.append($thead);
+                
+                for (var i = 0; i < sliceSize; i++) {
+                    var $row = jQuery('<tr></tr>');
+                    var $rank = jQuery('<td class="rank-cell">').text(i + 1);
+                    $row.append($rank);
+                    var $left = jQuery('<td><table class="inner-table"><tr></tr></table></td>');
+                    var item = top100[i].item;
+                    var isPinned = (jQuery.inArray(item, pinned) >= 0);
+                    var icon = isPinned ? "bullet" : "radio-off" ;
+                    var state = isPinned ? itemState.pinned : itemState.nothing;
+                    var $selector = jQuery('<td class="icon-cell"><span class="ui-icon ui-icon-' + icon + '"></span></td>').appendTo($left.find('tr'));
+                    var selectorFn = getSelectorFn($conBox, item, state, $selector, pq, clicked, $dataTable, summaryPath);
+                    $selector.click(selectorFn);
+                    jQuery('<td></td>').append((item == null) ? '<span class="null-value item-value">no value</span>' : '<span class="item-value">' + item + '</span>').appendTo($left.find('tr'));
+                    $row.append($left);
+                    var $right = jQuery('<td class="summary-number"></td>');
+                    $right.text(top100[i].count);
+                    $row.append($right);
+                    $table.append($row);
+                }
+            }
+            var $subHeading = $popup.find('.sub-heading');
+            if ($subHeading.length < 1) {
+                $subHeading = jQuery('<h4 class="sub-heading">').insertBefore($conBox);
+            }
+            if (isNumeric) {
+                $centreBox.empty().append($table);
+            } else {
+                if (origHeading) {
+                    $subHeading.text(origHeading);
+                } else if (sliceSize < totalSize) {
+                    $subHeading.text("The " + sliceSize + " most frequently occuring of " 
+                        + totalSize + " unique values");
+                } else {
+                    $subHeading.text(sliceSize + " unique values");
+                }
+                var $tableBox = jQuery('<div class="summary-table-scrollcontainer"></div>');
+                $centreBox.empty().append($tableBox);
+                $tableBox.append($table);
+            }
+            $popup.resizable("option", "minHeight", $popup.height());
+        }   
+    });
+}
+
 /**
  * Get a function that adds a form for adding a new constraint to a query to a constraint box
  */
-var getAdder = function(pq, box, path, dataTable, clicked) { return function() {
+var getAdder = function(pq, box, path, dataTable, clicked, url, pinned) { return function() {
     var $new_constraint = jQuery('<span class="constraint">');
-    var $select = jQuery('<select style="width: 4em">').appendTo($new_constraint);
-    var ops = ["=", "!=", "<", "<=", ">", ">=", "IS NULL", "IS NOT NULL"];
+    var $select = jQuery('<select style="width: 7em">').appendTo($new_constraint);
+    var ops = __(binaryOps).extend(nullOps).keys().value();
     for (var i = 0, l = ops.length; i < l; i++) {
         jQuery('<option>' + ops[i] + '</option>').appendTo($select);
     }
     var $input = jQuery('<input type="text">').appendTo($new_constraint);
+    var filterer = _.throttle(function() { // Throttle to no more than 4 iterations per sec
+        var val = $input.val().toLowerCase();
+        var op = $select.val();
+        var $popup = $(box).parent();
+        var truther;
+        if ($popup.find('.sub-heading').text().match(/occuring of/)) {
+            // Too many to hold in memory - use server side call.
+            summariseQuery($popup, url, pq, pinned, clicked, path, val);
+        } else {
+            if (op == "IS NULL") {
+                truther = function(x) {return x == "no value"};
+            } else if (op == "IS NOT NULL") {
+                truther = function(x) {return x != "no value"};
+            } else if (! val || ! val.length ) {
+                truther = function(x) {return true; };
+            } else if (op == "CONTAINS") {
+                truther = function(x) {return x.toLowerCase().indexOf(val) >= 0;};
+            } else if (op == "DOES NOT CONTAIN") {
+                truther = function(x) {return x.toLowerCase().indexOf(val) < 0;};
+            } else if (op == "=") {
+                truther = function(x) {return val == x};
+            } else if (op == "!=") {
+                truther = function(x) {return val != x};
+            } else {
+                return function() {return true;};
+            }
+
+            $popup.find('.col-summary tbody tr').each(function(idx, elem) {
+                var $tr = $(this);
+                var itemValue = $tr.find('.item-value').text();
+                if (truther(itemValue)) {
+                    $tr.show(); 
+                } else {
+                    $tr.hide();
+                }
+            });
+        }
+    }, 300);
+    $input.bind("keyup", filterer);
+    $select.change(filterer);
     $select.change(function() {
         var chosen = $(this).val();
         if (chosen.match(/NULL$/)) {
             $(this).css({width: "10em"});
             $input.hide();
+        } else if (chosen == "CONTAINS") {
+            $(this).css({width: "7em"});
+            $input.show();
+        } else if (chosen == "DOES NOT CONTAIN") {
+            $(this).css({width: "12em"});
+            $input.show();
         } else {
             $(this).css({width: "4em"});
             $input.show();
@@ -830,8 +981,11 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     var $wrapper = $('#' + id + '_wrapper');
     var currentSummaryTitle = $wrapper.find(".column-name").text(); 
 
-    $wrapper.find('.summary-popup').remove();
-    $wrapper.find('th').removeClass("ui-state-hover").removeClass("border-collapse-fix");
+    $wrapper.find('.column-summary').remove();
+    var headerCleaner = function() {
+        $wrapper.find('th').removeClass("ui-state-hover").removeClass("border-collapse-fix");
+    };
+    headerCleaner();
 
     var buttonId = this.id
     var clicked = this;
@@ -839,12 +993,14 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     var col = parts[1].split("-").pop();
     var colTitle = $('#' + buttonId).parent().text(); 
     var summaryPath = pq.select[col];
-    var $popup = jQuery('<div class="summary-popup"></div>');
+    var $popup = jQuery('<div class="summary-popup column-summary"></div>');
     var $colname = jQuery('<div>').addClass("column-name").text(colTitle).appendTo($popup);
     if ($colname.text() == currentSummaryTitle) {
         return false;
     }
-    var $conBox = jQuery('<div>').appendTo($popup).append("<h4>Constrain this Column</h4>");
+    var $conBox = jQuery('<div class="con-box">')
+                    .appendTo($popup)
+                    .append("<h4 class='con-heading'>Constrain this Column</h4>");
     var constraintsOnThisField = [];
     var pinned = [];
     $dataTable = $('#' + id).dataTable();
@@ -857,19 +1013,18 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
         }
     }
 
-    var addFn = getAdder(pq, $conBox, summaryPath, $dataTable, clicked);
+    var addFn = getAdder(pq, $conBox, summaryPath, $dataTable, clicked, url, pinned);
     addFn();
 
-    $centreBox = jQuery('<div>');
-    $centreBox.append('<p class="wait-text">Summarising...</p>');
+    $centreBox = jQuery('<div class="summary-box">');
     $popup.append($centreBox);
     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
     $removeButton.appendTo($popup);
-    $removeButton.click(function() {$popup.remove()});
     var $datatable = $('#' + id + '_wrapper')   
+    $removeButton.click(function() {$popup.remove(); headerCleaner()});
     $datatable.append($popup);
     $popup.click(function() {return false;});
-    var handles = "s, se, e";
+    var handles = "s, se, e"; // The default, but its nice to be explicit
 
     var pos = $datatable.position();
     var pos2 = $(ev.currentTarget.parentNode).position();
@@ -892,78 +1047,8 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     }
     $centreBox.resizable();
 
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        data: {format: "jsonrows", query: pq.serialise(), summaryPath: summaryPath, size: 100},
-        url: url,
-        success: function(results) {
-            var $table = jQuery('<table class="col-summary"></table>');
-            var propNames = [];
-            var isNumeric = false;
-            var top100 = results.results.slice();
-            var sliceSize = top100.length, totalSize = results.uniqueValues;
-            if (totalSize == 1 && typeof top100[0]["min"] != 'undefined') { 
-                // we have numeric summary results.
-                isNumeric = true;
-                propNames = ["min", "max", "average", "stdev"];
-                for (var i = 0, l = propNames.length; i < l; i++) {
-                    var $row = jQuery('<tr></tr>');
-                    var $left = jQuery('<td></td>');
-                    $left.text(propNames[i]);
-                    var $right = jQuery('<td class="summary-number"></td>');
-                    var value = parseFloat(results.results[0][propNames[i]]).toPrecision(2);
-                    $right.text(value);
-                    $row.append($left);
-                    $row.append($right);
-                    $table.append($row);
-                }
-            } else {
-                $centreBox.addClass("centre-box");
-                var $thead = jQuery('<thead>');
-                var $thRank  = jQuery("<th>").text("Rank");
-                var $thLeft  = jQuery("<th>").text("Value");
-                var $thRight = jQuery("<th>").text("Count");
-                $thead.append($thRank).append($thLeft).append($thRight);
-                $table.append($thead);
-                
-                for (var i = 0; i < sliceSize; i++) {
-                    var $row = jQuery('<tr></tr>');
-                    var $rank = jQuery('<td class="rank-cell">').text(i + 1);
-                    $row.append($rank);
-                    var $left = jQuery('<td><table class="inner-table"><tr></tr></table></td>');
-                    var item = top100[i].item;
-                    var isPinned = (jQuery.inArray(item, pinned) >= 0);
-                    var icon = isPinned ? "bullet" : "radio-off" ;
-                    var state = isPinned ? itemState.pinned : itemState.nothing;
-                    var $selector = jQuery('<td class="icon-cell"><span class="ui-icon ui-icon-' + icon + '"></span></td>').appendTo($left.find('tr'));
-                    var selectorFn = getSelectorFn($conBox, item, state, $selector, pq, clicked, $dataTable, summaryPath);
-                    $selector.click(selectorFn);
-                    jQuery('<td></td>').append((item == null) ? '<span class="null-value">no value</span>' : '<span class="item-value">' + item + '</span>').appendTo($left.find('tr'));
-                    $row.append($left);
-                    var $right = jQuery('<td class="summary-number"></td>');
-                    $right.text(top100[i].count);
-                    $row.append($right);
-                    $table.append($row);
-                }
-            }
-            var $subHeading = jQuery('<h4 class="sub-heading">').insertBefore($centreBox);
-            if (isNumeric) {
-                $centreBox.empty().append($table);
-            } else {
-                if (sliceSize < totalSize) {
-                    $subHeading.text("The " + sliceSize + " most frequently occuring of " 
-                        + totalSize + " unique values");
-                } else {
-                    $subHeading.text(sliceSize + " unique values");
-                }
-                var $tableBox = jQuery('<div class="summary-table-scrollcontainer"></div>');
-                $centreBox.empty().append($tableBox);
-                $tableBox.append($table);
-            }
-            $popup.resizable("option", "minHeight", $popup.height());
-        }   
-    });
+    summariseQuery($popup, url, pq, pinned, clicked, summaryPath);
+
     return false;
 }};
 
@@ -995,17 +1080,24 @@ function getItemChooser(id, base) { return function() {
     var type = (types.length) ? model.findCommonTypeOfMultipleClasses(types) : "item";
     $wrapper.find('.list-creation-info').children('.selected-types').text(pluralise(type, itemCount));
     $wrapper.find('button.list-maker').attr("disabled", chosenListIds[id].length < 1);
+    updateCheckBoxes(id, base);
+    updateListPreview(id, base);
+}};
+
+function updateCheckBoxes(id, base) {
+    var $wrapper = $('#' + id + '_wrapper');
+    var model = InterMine.models[base];
+    var ids = chosenListIds[id];
+    var types = __(typeOfObj[id]).values().compact().uniq().value();
     $wrapper.find('.list-chooser').each(function(elem) {
         var $thisCheckbox = $(this);
         var thisType = $thisCheckbox.attr("obj_class");
-        var commonType = model.findCommonTypeOfMultipleClasses(__(typeOfObj[id]).values().compact().uniq().union([thisType]).value());
-        if ($thisCheckbox.attr("obj_id") == $checkbox.attr("obj_id")) {
-            $thisCheckbox.attr("checked", checked);
-        }
+        var thisId = $thisCheckbox.attr("obj_id");
+        var commonType = model.findCommonTypeOfMultipleClasses(_.union(types, [thisType]));
+        $thisCheckbox.attr("checked", _(ids).include(thisId));
         $thisCheckbox.attr("disabled", !commonType);
     });
-    updateListPreview(id, base);
-}};
+}
 
 function updateListPreview(id, base) {
     var itemCount = chosenListIds[id].length;
@@ -1044,10 +1136,52 @@ function updateListPreview(id, base) {
             }
         });
     } else {
-        $wrapper.find(".list-items").empty();
+        insertColumnChooser(id, base);
     }
 }
 
+function insertColumnChooser(id, base) {
+    var $wrapper = $('#' + id + "_wrapper");
+    var $ul = $wrapper.find(".list-items").empty();
+    var $h3 = $wrapper.find('.list-popup').find('.main-heading');
+    var $makerButton = $wrapper.find('.list-popup').find('.list-maker');
+    var pq = queries[id];
+
+    __(pq.select).map(function(p) {return p.substring(0, p.lastIndexOf("."))})
+                    .uniq()
+                    .map(function(p) {return {path: p, type: InterMine.models[base].getCdForPath(p).name}})
+                    .each(function(o) {
+        $('<li>').append("<button>Add all " + pluralise(o.type, 2) + "</button>").appendTo($ul).addClass("column-list-adder").click(function() {
+            var query = $.extend(true, {}, pq);
+            query.select = [o.path + ".id"];
+            $ul.empty().append($('<span class="throbber"></span>').css("float", "left"));
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: base + query_path,
+                data: {token: tokens[id], format: "jsonrows", query: query.serialise()},
+                success: function(result) {
+                    var typeMap = {};
+                    var idSet = [];
+                    _(result.results).each(function(row) {
+                        // Stringify, because the checkboxes have this information in string form
+                        idSet.push(row[0].value + ""); 
+                        typeMap[row[0].value + ""] = o.type;
+                    });
+                    chosenListIds[id] = idSet;
+                    typeOfObj[id] = typeMap;
+                    $h3.find('.selected-count').text(idSet.length);
+                    $h3.find('.selected-types').text(pluralise(o.type, idSet.length));
+                    $makerButton.attr("disabled", idSet.length < 1);
+                    updateCheckBoxes(id, base);
+                    updateListPreview(id, base);
+                }
+            });
+        });
+    });
+    $ul.append('<span>Or choose individual items by selecting them from the table</span>');
+}
 
 
 /**
@@ -1068,6 +1202,7 @@ function pluralise(word, count) {
 
 
 function getListMaker(base, id, $h3, token, remover) { return function() {
+    $(this).attr("disabled", true).text("Making list...");
     var model = InterMine.models[base];
     var ids = chosenListIds[id].slice();
     var types = __(typeOfObj[id]).values().compact().uniq().value();
@@ -1111,8 +1246,12 @@ var numericTypes = ["int", "Integer", "double", "Double", "float", "Float"];
 var listCreationState = {};
 var chosenListIds = {};
 var typeOfObj = {};
+var queries = {};
+var tokens = {};
 
 function initTable(pq, id, base, bkg, token) {
+    queries[id] = pq;
+    tokens[id] = token;
     var initialViewLength = pq.select.length;
     var model = InterMine.models[base];
     addAttributesToQuery(model, pq);
@@ -1190,7 +1329,7 @@ function initTable(pq, id, base, bkg, token) {
                             },
                             "sTitle": result.columnHeaders[idx].split(" > ").slice(1).join(" > ") 
                                 + "<span id='summary_col-" + idx + "_" + id 
-                                + "' class='summary_img ui-icon ui-icon-info' title='Get column summary'></span>",
+                                + "' class='summary_img ui-icon ui-icon-wrench' title='Get column summary'></span>",
                             "sName": elem,
                             "bUseRendered": false,
                             "sType": (jQuery.inArray(result.viewTypes[idx], numericTypes) >= 0) ? "numeric" : "string",
@@ -1210,14 +1349,26 @@ function initTable(pq, id, base, bkg, token) {
                     var borderStyle = "1px solid #AAAAAA";
                     $box.css({"border-left": borderStyle, "border-top": borderStyle, "border-right": borderStyle, "border-bottom": borderStyle, background: bkg});
                     $box.animate({width: "50%", height: "50px"});
-                });
+                }).button();
                 var $dt = $('#' + id + '_wrapper');
                 $dt.find('div.toolbar').append($button);
 
-                var $xmlButton = jQuery('<button>').text("View as XML").click(function() {
+                var $buttonset = jQuery('<span>');
+                var $coder = jQuery('<button>').text("API");
+                var $codeSelector = jQuery('<button>').text("Select a format");
+                $buttonset.append($coder).append($codeSelector);
+                $dt.find('div.toolbar').append($buttonset);
+
+                $coder.button().next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
+                $buttonset.buttonset().addClass("TableTools");
+
+                var langs = ["XML", "Perl", "Python", "Java", "JavaScript"];
+                var showXML = function() {
+                    $coder.button("option", "label", "XML");
+                    $('body .lang-menu').remove();
                     var visibleQuery = getVisibleQuery(pq, $dataTable, id);
                     var xml = visibleQuery.serialise();
-                    var $popup = jQuery('<div class="summary-popup"></div>');
+                    var $popup = jQuery('<div class="summary-popup lang-popup"></div>');
                     var $h3 = jQuery('<h3>').addClass("main-heading").text("XML for " + visibleQuery.title);
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
                     var $centreBox = jQuery('<div>').appendTo($popup);
@@ -1229,20 +1380,101 @@ function initTable(pq, id, base, bkg, token) {
                     $popup.click(function() {return false;});
                     $popup.draggable({handle: ".main-heading"}).resizable({minWidth: $popup.width(), minHeight: $popup.height(), alsoResize: $popup.find("pre")});
                     return false;
-                });
-                $dt.find('div.toolbar').append($xmlButton);
+                };
 
-                var $tsvButton = jQuery('<button>').text("Download As TSV").click(function() {
-                    var tsvQuery = getVisibleQuery(pq, $dataTable, id);
-                    var params = [
-                        {name: "query", value: tsvQuery.serialise()},
-                        {name: "format", value: "tab"}
-                    ];
-                    var tsvUrl = url + "?" + jQuery.param(params);
-                    window.location = tsvUrl;
+                var getCodeShower = function(lang) { return function() {
+                    $coder.button("option", "label", lang);
+                    $('body .lang-menu').remove();
+                    var visibleQuery = getVisibleQuery(pq, $dataTable, id);
+                    $.get(base + code_path, {query: visibleQuery.serialise(), lang: lang}, function(res) {
+                        var $popup = jQuery('<div class="summary-popup lang-popup"></div>');
+                        var $h3 = jQuery('<h3>').addClass("main-heading").text("Code for " + visibleQuery.title);
+                        var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
+                        var $centreBox = jQuery('<div>').appendTo($popup).addClass("list-items-scroller");
+                        var $pre = jQuery('<pre>').addClass("xml").text(res).appendTo($centreBox);
+                        var $removeButton = jQuery('<button class="summary-remover">Close</button>');
+                        $removeButton.appendTo($popup);
+                        $removeButton.click(function() {$popup.remove()});
+                        $dt.append($popup);
+                        $popup.click(returnFalse);
+                        $popup.draggable({handle: ".main-heading"}).resizable({minWidth: $popup.width(), minHeight: $popup.height(), alsoResize: $popup.find("pre")});
+                    });
                     return false;
-                });
-                $dt.find('div.toolbar').append($tsvButton);
+                }};
+                var displayLangMenu = function() {
+                    if ($('body .lang-menu').length) {
+                        $('body .lang-menu').remove();
+                        return false;
+                    }
+
+                    var pos = $coder.offset();
+                    var x = parseInt(pos.left, 10);
+                    var y = parseInt(pos.top + $codeSelector.outerHeight(), 10);
+                    var $menu = $('<div class="lang-menu">').css({opacity: 1, display: "block", position: "absolute", top: y, left: x}).addClass("ColVis_collection TableTools_collection ui-buttonset ui-buttonset-multi");
+                    $ul = $('<ul>').appendTo($menu);
+                    _(langs).each(function(l) {
+                        var $li = $('<li>').addClass("lang-selector").appendTo($ul);
+                        var $button = $('<button>').text(l).button().appendTo($li);
+                        if (l == "XML") {
+                            $button.click(function() {showXML(); $coder.unbind("click").click(showXML);});
+                        } else {
+                            var shower = getCodeShower(l);
+                            $button.click(function() {shower(); $coder.unbind("click").click(shower)});
+                        }
+                    });
+                    $('body').append($menu);
+                };
+
+                $codeSelector.click(displayLangMenu);
+                $coder.click(displayLangMenu);
+
+                var $dls = jQuery('<span>');
+                var $downloader = jQuery('<button>').text("Download");
+                var $dlSelector = jQuery('<button>').text("Select a format");
+                $dls.append($downloader).append($dlSelector);
+                $dt.find('div.toolbar').append($dls);
+
+                $downloader.button().next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
+                $dls.buttonset().addClass("TableTools");
+
+                var formats = ["TSV", "CSV", "XML", "JSONROWS"];
+
+                var getDownloader = function(format) { return function() {
+                    $('body .lang-menu').remove();
+                    $downloader.button("option", "label", format);
+
+                    var vq = getVisibleQuery(pq, $dataTable, id);
+                    var params = [
+                        {name: "query", value: vq.serialise()},
+                        {name: "format", value: format.toLowerCase()}
+                    ];
+                    var dlUrl = url + "?" + jQuery.param(params);
+                    window.open(dlUrl);
+                    return false;
+                }};
+
+                var displayDLMenu = function() {
+                    if ($('body .lang-menu').length) {
+                        $('body .lang-menu').remove();
+                        return false;
+                    }
+
+                    var pos = $downloader.offset();
+                    var x = parseInt(pos.left, 10);
+                    var y = parseInt(pos.top + $dlSelector.outerHeight(), 10);
+                    var $menu = $('<div class="lang-menu">').css({opacity: 1, display: "block", position: "absolute", top: y, left: x}).addClass("ColVis_collection TableTools_collection ui-buttonset ui-buttonset-multi");
+                    $ul = $('<ul>').appendTo($menu);
+                    _(formats).each(function(f) {
+                        var $li = $('<li>').addClass("lang-selector").appendTo($ul);
+                        var $button = $('<button>').text(f).button().appendTo($li);
+                        var downloader = getDownloader(f);
+                        $button.click(function() {downloader(); $downloader.unbind("click").click(downloader)});
+                    });
+                    $('body').append($menu);
+                };
+
+                $downloader.click(displayDLMenu);
+                $dlSelector.click(displayDLMenu);
 
                 var $listButton = jQuery('<button>').text("Create List").click(function() {
                     chosenListIds[id] = [];
@@ -1285,43 +1517,10 @@ function initTable(pq, id, base, bkg, token) {
                             $h3.find('.new-list-name').text(currentName);
                         }
                     });
-                    __(pq.select).map(function(p) {return p.substring(0, p.lastIndexOf("."))})
-                                 .uniq()
-                                 .map(function(p) {return {path: p, type: InterMine.models[base].getCdForPath(p).name}})
-                                 .each(function(o) {
-                        $('<li>').append("<button>Add all " + pluralise(o.type, 2) + "</button>").appendTo($ul).addClass("column-list-adder").click(function() {
-                            var query = $.extend(true, {}, pq);
-                            query.select = [o.path + ".id"];
-                            $ul.empty().append($('<span class="throbber"></span>').css("float", "left"));
-
-                            $.ajax({
-                                type: "POST",
-                                dataType: "json",
-                                url: base + query_path,
-                                data: {token: token, format: "jsonrows", query: query.serialise()},
-                                success: function(result) {
-                                    var typeMap = {};
-                                    var idSet = [];
-                                    _(result.results).each(function(row) {
-                                        idSet.push(row[0].value);
-                                        typeMap[row[0].value] = o.type;
-                                    });
-                                    console.log(typeMap);
-                                    chosenListIds[id] = idSet;;
-                                    typeOfObj[id] = typeMap;
-                                    $h3.find('.selected-count').text(idSet.length);
-                                    $h3.find('.selected-types').text(pluralise(o.type, idSet.length));
-                                    $makerButton.attr("disabled", idSet.length < 1);
-                                    updateListPreview(id, base);
-                                }
-                            });
-                        });
-                    });
-                    $ul.append('<span>Or choose individual items by selecting them from the table</span>');
-                    
+                    insertColumnChooser(id, base);
                     $dt.find('td input').show();
                     return false;
-                });
+                }).button();
                 $dt.find('div.toolbar').append($listButton);
 
                 $dt.find('div.title').append('<span class="query-summary">' + pq.title + '</span>');
@@ -1340,6 +1539,8 @@ function initTable(pq, id, base, bkg, token) {
                         }
                     });
                 });
+
+                $dt.find('.colvis_button').mouseover(function() {$(this).addClass("ui-state-hover");}).mouseout(function() {$(this).removeClass("ui-state-hover")});
 
                 tableInitialised[id] = true;
             }
