@@ -1359,7 +1359,7 @@ function initTable(pq, id, base, bkg, token) {
                 $buttonset.append($coder).append($codeSelector);
                 $dt.find('div.toolbar').append($buttonset);
 
-                $coder.button().next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
+                $coder.button({icons: {primary: "ui-icon-script"}}).next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
                 $buttonset.buttonset().addClass("TableTools");
 
                 var langs = ["XML", "Perl", "Python", "Java", "JavaScript"];
@@ -1434,7 +1434,7 @@ function initTable(pq, id, base, bkg, token) {
                 $dls.append($downloader).append($dlSelector);
                 $dt.find('div.toolbar').append($dls);
 
-                $downloader.button().next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
+                $downloader.button({icons: {primary: "ui-icon-disk"}}).next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
                 $dls.buttonset().addClass("TableTools");
 
                 var formats = ["TSV", "CSV", "XML", "JSONROWS"];
@@ -1449,7 +1449,11 @@ function initTable(pq, id, base, bkg, token) {
                         {name: "format", value: format.toLowerCase()}
                     ];
                     var dlUrl = url + "?" + jQuery.param(params);
-                    window.open(dlUrl);
+                    if (format == "XML" || format == "JSONROWS") {
+                        window.open(dlUrl);
+                    } else {
+                        window.location = dlUrl;
+                    }
                     return false;
                 }};
 
@@ -1520,7 +1524,7 @@ function initTable(pq, id, base, bkg, token) {
                     insertColumnChooser(id, base);
                     $dt.find('td input').show();
                     return false;
-                }).button();
+                }).button({icons: {primary: "ui-icon-note"}});
                 $dt.find('div.toolbar').append($listButton);
 
                 $dt.find('div.title').append('<span class="query-summary">' + pq.title + '</span>');
