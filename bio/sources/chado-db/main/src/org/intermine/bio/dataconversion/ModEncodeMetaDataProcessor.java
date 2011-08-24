@@ -76,6 +76,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // subId to dcc id
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
 
+    // superseded/deleted subId to dcc id: to be checked in case we need to skip 
+    // loading a sub
+    private Map<Integer, String> deletedSubMap = new HashMap<Integer, String>();
+
+    
     // applied_protocol/data/attribute maps
     // -------------------
     // chado submission id to chado data_id
@@ -83,6 +88,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // chado data id to chado submission id
     private Map<Integer, Integer> dataSubmissionMap = new HashMap<Integer, Integer>();
 
+    // to store protocol data until we create applied protocols
+    private Map<Integer, Protocol> protocolMap =
+        new HashMap<Integer, Protocol>();
+    
     // used when traversing dag of applied protocols
     private Map<Integer, AppliedProtocol> appliedProtocolMap =
         new HashMap<Integer, AppliedProtocol>();
@@ -195,6 +204,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
+     * Protocol class to store protocol data 
+     */
+    private static final class Protocol
+    {
+        private Integer protocolId;  // possibly we don't need this (map)
+        private String name;
+        private String description;
+        private String wikiLink;
+        private Integer version;       // the level in the dag for the AP
+
+        private Protocol() {
+            // don't instantiate
+        }
+    }
+
+    /**
      * AppliedData class
      * to reconstruct the flow of submission data
      *
@@ -247,20 +272,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     @Override
     public void process(Connection connection) throws Exception {
+
+        processDeleted(connection);
+
         processProjectTable(connection);
         processLabTable(connection);
-        //processLabAttributes(connection);
 
         processSubmissionOrganism(connection);
         processSubmission(connection);
         processSubmissionAttributes(connection);
+        
         processProtocolTable(connection);
-        processProtocolAttributes(connection);
+        // processProtocolAttributes(connection);
         processAppliedProtocolTable(connection);
+        processProtocolAttributes(connection);
+
+        processDag(connection);
         processAppliedData(connection);
         processAppliedDataAttributes(connection);
         processExperiment(connection);
-        processDag(connection);
+        // processDag(connection);
         findScoreProtocols();
 
         processFeatures(connection, submissionMap);
@@ -281,15 +312,63 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
         wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
-
+        
         processSubmissionProperties(connection);
         createRelatedSubmissions(connection);
-
+        
         setSubmissionProtocolsRefs(connection);
         setSubmissionEFactorsRefs(connection);
         setSubmissionPublicationRefs(connection);
     }
 
+    
+    /**
+     * =========================
+     *    DELETED SUBS in CHADO
+     * =========================
+     * To build a map of deleted subs (submissionId, dcc)
+     *
+     * @param connection
+     * @throws SQLException
+     * @throws ObjectStoreException
+     */
+    private void processDeleted(Connection connection)
+        throws SQLException, ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
+
+        ResultSet res = getDeleted(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer submissionId = new Integer(res.getInt("experiment_id"));
+            String value = res.getString("value");
+            deletedSubMap.put(submissionId, value);
+            count++;
+        }
+        res.close();
+
+        LOG.info("found " + deletedSubMap.size() + " deleted submissions to skip in the build.");
+        LOG.info("PROCESS TIME deleted subs: " + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+    /**
+     * Return deleted subs in the chado db.
+     * This is a protected method so that it can be overridden for testing
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getDeleted(Connection connection)
+        throws SQLException {
+        String query =
+            "SELECT distinct a.experiment_id, a.value "
+            + " FROM experiment_prop a "
+            + " where a.name = 'deleted' ";
+        return doQuery(connection, query, "getDeleted");
+    }
+
+    
+    
 
     /**
      *
@@ -316,13 +395,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
 
-            Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
             Integer chadoExperimentId = entry.getKey();
+            if (deletedSubMap.containsKey(chadoExperimentId)) continue;
+            
+            Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
             SubmissionDetails submissionDetails = entry.getValue();
             String submissionItemIdentifier = submissionDetails.itemIdentifier;
             String labItemIdentifier = submissionDetails.labItemIdentifier;
             String submissionTitle = submissionDetails.title;
 
+            
 
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.debug("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
@@ -361,7 +443,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             dropDataIdsTempTable(connection, dataIdsTempTable);
 
             // read any genes that have been created so we can re-use the same item identifiers
-            // when creating antibody/strain target genes later
+            // when creating antibody/strain target genes later               
             extractGenesFromSubFeatureMap(processor, subFeatureMap);
         }
 
@@ -520,12 +602,29 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Integer actualSubmissionId = new Integer(0);  // to store the experiment id (see below)
 
         Integer previousAppliedProtocolId = new Integer(0);
+        boolean isADeletedSub = false;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             Integer protocolId = new Integer(res.getInt("protocol_id"));
             Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
             Integer dataId = new Integer(res.getInt("data_id"));
             String direction = res.getString("direction");
+
+            
+            // the results are ordered, first ap have a subId
+            // if we find a deleted sub, we know that subsequent records with null
+            // subId belongs to the deleted sub
+            if (submissionId == null ) {
+                if (isADeletedSub == true) continue;
+            } else {
+                if (deletedSubMap.containsKey(submissionId)) {
+                    isADeletedSub = true;
+                    continue;
+                } else {
+                    isADeletedSub = false;
+                }
+            }
+
 
             // build a data node for each iteration
             if (appliedDataMap.containsKey(dataId)) {
@@ -752,7 +851,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         // this is a leaf!!
                     }
                 }
-                
+
                 // to fill submission-dataId map
                 // this is needed, otherwise inputs to AP that are not outputs
                 // of a previous protocol are not considered
@@ -773,9 +872,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // and the DAG level
                     appliedProtocolMap.get(currentAPId).submissionId = submissionId;
                     appliedProtocolMap.get(currentAPId).step = step + 1;
-
+                    
                     nextIterationProtocols.add(currentAPId);
-
+                    
                     // and set the reference from applied protocol to the submission
                     Reference reference = new Reference();
                     reference.setName("submission");
@@ -808,6 +907,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            if (deletedSubMap.containsKey(submissionId)) continue;
+
             String value = res.getString("value");
             submissionOrganismMap.put(submissionId, value);
             LOG.debug("TAXID " + submissionId + "|" + value);
@@ -861,6 +962,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
+            if (deletedSubMap.containsKey(submissionId)) continue;
+//            if (deletedSubMap.containsKey(submissionId)) {
+//                continue;
+//            }
             submissionProjectMap.put(submissionId, value);
             count++;
         }
@@ -926,6 +1031,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
+            if (deletedSubMap.containsKey(submissionId)) continue;
             submissionLabMap.put(submissionId, value);
             count++;
         }
@@ -990,6 +1096,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<String, String> expProMap = new HashMap<String, String>();
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            if (deletedSubMap.containsKey(submissionId)) continue;
+
             String name = cleanWikiLinks(res.getString("name"));
 
             Util.addToListMap(expSubMap, name, submissionId);
@@ -1090,6 +1198,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            if (deletedSubMap.containsKey(submissionId)) continue;
+            
             String name = res.getString("uniquename");
             Item submission = getChadoDBConverter().createItem("Submission");
             submission.setAttribute("title", name);
@@ -1164,6 +1274,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            if (deletedSubMap.containsKey(submissionId)) continue;
+            
             String heading = res.getString("name");
             String value = res.getString("value");
 
@@ -1268,6 +1380,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            if (deletedSubMap.containsKey(submissionId)) continue;
+
             Integer rank = new Integer(res.getInt("rank"));
             String  value    = res.getString("value");
 
@@ -1345,18 +1459,28 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (description.length() == 0) {
                 description = "N/A";
             }
-            createProtocol(protocolChadoId, name, description, wikiLink, version);
+            Protocol thisProt = new Protocol();
+            thisProt.protocolId = protocolChadoId; // rm?
+            thisProt.name = name;
+            thisProt.description = description;
+            thisProt.wikiLink = wikiLink;
+            thisProt.version = version;
+            
+            protocolMap.put(protocolChadoId, thisProt);
+            
+            // we'll do it when creating AP
+            //createProtocol(protocolChadoId, name, description, wikiLink, version);
             count++;
         }
         res.close();
-        LOG.info("created " + count + " protocols");
+        LOG.info("found " + count + " protocols");
         LOG.info("PROCESS TIME protocols: " + (System.currentTimeMillis() - bT) + " ms");
     }
 
-
+    // now doing it with applied protocol (to avoid creating it for delete subs)
     private String createProtocol(Integer chadoId, String name, String description, String wikiLink,
             Integer version) throws ObjectStoreException {
-        String protocolItemId = protocolsMap.get(wikiLink);
+        String protocolItemId = protocolsMap.get(wikiLink); // rename?
         if (protocolItemId == null) {
             Item protocol = getChadoDBConverter().createItem("Protocol");
             protocol.setAttribute("name", name);
@@ -1412,11 +1536,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else if (fieldName == NOT_TO_BE_LOADED) {
                 continue;
             }
+            if (getProtocolInterMineId(protocolId) != null) { // in case of deleted sub
             setAttribute(getProtocolInterMineId(protocolId), fieldName, value);
             if ("type".equals(fieldName)) {
                 protocolTypesMap.put(protocolId, value);
             }
             count++;
+            }
         }
         LOG.info("created " + count + " protocol attributes");
         res.close();
@@ -1450,14 +1576,32 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         ResultSet res = getAppliedProtocols(connection);
         int count = 0;
+        boolean isADeletedSub = false;
         while (res.next()) {
             Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
             Integer protocolId = new Integer(res.getInt("protocol_id"));
             Integer submissionId = new Integer(res.getInt("experiment_id"));
+            
+            // the results are ordered, first ap have a subId
+            // if we find a deleted sub, we know that subsequent records with null
+            // subId belongs to the deleted sub
+            if (submissionId == null ) {
+                if (isADeletedSub == true) continue;
+            } else {
+                if (deletedSubMap.containsKey(submissionId)) {
+                    isADeletedSub = true;
+                    continue;
+                } else {
+                    isADeletedSub = false;
+                }
+            }
             Item appliedProtocol = getChadoDBConverter().createItem("AppliedProtocol");
-            // setting references to protocols
-            String protocolItemId = protocolItemIds.get(protocolId);
+
+            // creating and setting references to protocols
+//            String protocolItemId = protocolItemIds.get(protocolId);
             if (protocolId != null) {
+                Protocol qq = protocolMap.get(protocolId);
+                String protocolItemId = createProtocol(qq);
                 appliedProtocol.setReference("protocol", protocolItemId);
             }
             if (submissionId > 0) {
@@ -1476,7 +1620,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
         LOG.info("PROCESS TIME applied protocols: " + (System.currentTimeMillis() - bT) + " ms");
     }
+    
+    private String createProtocol(Protocol p) 
+    throws ObjectStoreException {
+        String protocolItemId = protocolsMap.get(p.wikiLink); // rename map?
+        if (protocolItemId == null) {
+            Item protocol = getChadoDBConverter().createItem("Protocol");
+            protocol.setAttribute("name", p.name);
+            protocol.setAttribute("description", p.description);
+            protocol.setAttribute("wikiLink", p.wikiLink);
+            protocol.setAttribute("version", "" + p.version);
+            Integer intermineObjectId = getChadoDBConverter().store(protocol);
+            protocolItemId = protocol.getIdentifier();
+            protocolItemToObjectId.put(protocolItemId, intermineObjectId);
+            protocolsMap.put(p.wikiLink, protocolItemId);
+        }
+        protocolItemIds.put(p.protocolId, protocolItemId);
+        return protocolItemId;
+    }
 
+    
+    
     /**
      * Return the rows needed from the appliedProtocol table.
      * This is a protected method so that it can be overridden for testing
@@ -1508,6 +1672,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
+            
+            // check if not belonging to a deleted sub
+            Integer submissionId = dataSubmissionMap.get(dataId);
+            if (submissionId == null || deletedSubMap.containsKey(submissionId)) continue;
+            
             String name = res.getString("name");
             String heading = res.getString("heading");
             String value = res.getString("value");
@@ -1651,6 +1820,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
+
+            // check if not belonging to a deleted sub
+            // better way?
+            Integer submissionId = dataSubmissionMap.get(dataId);
+            if (submissionId == null || deletedSubMap.containsKey(submissionId)) continue;
+            
             String name  = res.getString("heading");
             String value = res.getString("value");
             String type  = res.getString("name");
@@ -1836,6 +2011,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
+
+            if (deletedSubMap.containsKey(submissionId)) continue;
 
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
 
@@ -2944,7 +3121,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void setSubmissionRefs(Connection connection)
         throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
-
+        
+        // note: the map should contain only live submissions
         for (Integer submissionId : submissionDataMap.keySet()) {
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 if (appliedDataMap.get(dataId).intermineObjectId == null) {
@@ -3390,6 +3568,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
+        // the map should contain only live submissions
         Iterator<String> exp = expSubMap.keySet().iterator();
         while (exp.hasNext()) {
             String thisExp = exp.next();
