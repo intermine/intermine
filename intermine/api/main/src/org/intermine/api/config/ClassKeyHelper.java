@@ -51,7 +51,7 @@ public final class ClassKeyHelper
      */
     public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
         Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
-        for (ClassDescriptor cld : model.getLevelOrderTraversal()) {
+        for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
             String clsName = cld.getUnqualifiedName();
             if (props.containsKey(cld.getUnqualifiedName())) {
                 String keys = (String) props.get(clsName);
