@@ -122,20 +122,4 @@ public class JSONObjResultProcessorTest extends TestCase {
 
     }
 
-    public void testBadArgument() {
-        Output out  = new MemoryOutput();
-        JSONObjResultProcessor processor = new JSONObjResultProcessor();
-        try {
-            processor.write(null, out);
-            fail("Expected an IllegalArgumentException");
-        } catch (AssertionFailedError e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
-            assertEquals("The iterator must be an ExportResultsIterator", e.getMessage());
-        } catch (Throwable t) {
-            fail("Unexpected exception: " + t.getMessage());
-        }
-
-    }
-
 }
