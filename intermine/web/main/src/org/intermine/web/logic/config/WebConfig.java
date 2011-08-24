@@ -540,7 +540,7 @@ public class WebConfig
     void setSubClassConfig(final Model model) throws ClassNotFoundException {
 
         for (final Iterator<ClassDescriptor> modelIter
-                = model.getLevelOrderTraversal().iterator(); modelIter.hasNext();) {
+                = model.getTopDownLevelTraversal().iterator(); modelIter.hasNext();) {
 
             final ClassDescriptor cld = modelIter.next();
             Type thisClassType = types.get(cld.getName());
