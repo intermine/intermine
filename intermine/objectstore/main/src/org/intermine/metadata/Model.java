@@ -53,7 +53,8 @@ public class Model
     private final Map<Class<?>, Map<String, Class<?>>> classToCollectionsMap
         = new HashMap<Class<?>, Map<String, Class<?>>>();
     private final ClassDescriptor rootCld;
-    private List<ClassDescriptor> levelOrderClasses = null;
+    private List<ClassDescriptor> topDownOrderClasses = null;
+    private List<ClassDescriptor> bottomUpOrderClasses = null;
 
     private boolean generatedClassesAvailable = true;
 
@@ -464,17 +465,17 @@ public class Model
      * at any given level is undefined.  The list does not include InterMineObject.
      * @return ClassDescriptors from the model in depth order
      */
-    public synchronized List<ClassDescriptor> getLevelOrderTraversal() {
-        if (levelOrderClasses == null) {
-            levelOrderClasses = new ArrayList<ClassDescriptor>();
+    public synchronized List<ClassDescriptor> getTopDownLevelTraversal() {
+        if (topDownOrderClasses == null) {
+            topDownOrderClasses = new ArrayList<ClassDescriptor>();
 
             // start from InterMineObject which is the root
             LinkedList<ClassDescriptor> queue = new LinkedList<ClassDescriptor>();
             queue.add(rootCld);
             while (!queue.isEmpty()) {
                 ClassDescriptor node = queue.remove();
-                if (!node.equals(rootCld) && !levelOrderClasses.contains(node)) {
-                    levelOrderClasses.add(node);
+                if (!node.equals(rootCld) && !topDownOrderClasses.contains(node)) {
+                    topDownOrderClasses.add(node);
                 }
                 // add direct subclasses to the queue
                 if (node.getSubDescriptors() != null) {
@@ -482,7 +483,26 @@ public class Model
                 }
             }
         }
-        return levelOrderClasses;
+        return topDownOrderClasses;
+    }
+
+
+    /**
+     * Return the classes in the model in level order from deepest to shallowest, the order of nodes
+     * at any given level is undefined.  The list does not include InterMineObject.
+     * @return ClassDescriptors from the model in reverse depth order
+     */
+    public synchronized List<ClassDescriptor> getBottomUpLevelTraversal() {
+        if (bottomUpOrderClasses == null) {
+            bottomUpOrderClasses = new ArrayList<ClassDescriptor>();
+
+            List<ClassDescriptor> topDown = getTopDownLevelTraversal();
+
+            for (int i = topDown.size() - 1; i >= 0; i--) {
+                bottomUpOrderClasses.add(topDown.get(i));
+            }
+        }
+        return bottomUpOrderClasses;
     }
 
     /**
