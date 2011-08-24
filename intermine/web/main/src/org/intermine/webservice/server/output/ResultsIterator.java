@@ -31,7 +31,8 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
 		this.subIter = res.iterator();
 		this.start = start;
 		this.end = start + size;
-        this.filterTerm = StringUtils.lowerCase(filterTerm);
+        this.filterTerm = ObjectUtils.toString(filterTerm).toLowerCase();
+        logger.info("START: "  + start + ", END: " + (start + size) + ", FILTER: " + this.filterTerm);
 	}
 	
 	@Override
@@ -68,39 +69,45 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
                 } 
                 if (contained) {
                     counter++;
-                }
+                } 
             }
 		}
 	}
+
+    private List<Object> getNextInternal() {
+		List<Object> l = (List<Object>) subIter.next();
+        if (StringUtils.isBlank(filterTerm)) {
+            return l;
+        } else {
+            Object o = l.get(0);
+            String n = (o == null) ? "" : o.toString().toLowerCase();
+            if (n.indexOf(filterTerm) >= 0) {
+                return l;
+            } else {
+                return null;
+            }
+        }
+    }
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ResultElement> next() {
-		scrollToStart();
-		if (counter >= end) {
-			throw new NoSuchElementException();
-		}
-        if (nextRow != null) {
+		if (nextRow != null) {
             List<ResultElement> ret = nextRow;
             nextRow = null;
             return ret;
         }
-		List<Object> l = (List<Object>) subIter.next();
-        if (StringUtils.isBlank(filterTerm)) {
-            counter++;
-        } else {
-            boolean contained = false;
-            for (Object o: l) {
-                String n = ObjectUtils.toString(o).toLowerCase();
-                if (StringUtils.contains(n, filterTerm)) {
-                    contained = true;
-                }
-            } 
-            if (contained) {
-                counter++;
-            } else {
-                return next();
-            }
+		scrollToStart();
+		if (counter >= end) {
+			throw new NoSuchElementException();
+		}
+        
+        List<Object> l = null;
+        while (l == null) {
+            l = getNextInternal();
         }
+        counter++;
+
 		List<ResultElement> ret = new ArrayList<ResultElement>();
 		for (Object o: l) {
 			ResultElement re = new ResultElement(o);
