@@ -19,14 +19,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -40,12 +42,12 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
-import org.intermine.util.CombinedIterator;
 import org.intermine.util.StringUtil;
 
 /**
  * A summary of the data in an ObjectStore
  *
+ * @author Richard Smith
  * @author Kim Rutherford
  * @author Mark Woodbridge
  */
@@ -56,8 +58,8 @@ public class ObjectStoreSummary
     private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> emptyAttributesMap = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
-    private Set<String> ignoreFields = new HashSet<String>();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -66,7 +68,13 @@ public class ObjectStoreSummary
     static final String FIELD_DELIM = "$_^";
 
     /**
-     * Construct a summary from an objectstore.
+     * The default number of values to make available for UI dropdowns - attributes with more values
+     * will not become dropdowns.
+     */
+    public static final int DEFAULT_MAX_VALUES = 200;
+
+    /**
+     * Construct a summary from by runnung queries in the ObjectStore.
      *
      * @param os the objectstore
      * @param configuration the configuration for summarization
@@ -75,62 +83,159 @@ public class ObjectStoreSummary
      */
     public ObjectStoreSummary(ObjectStore os, Properties configuration)
         throws ClassNotFoundException, ObjectStoreException {
-        //classCounts
+
+        // 1. get counts of each class
+        // 2. count unique values for each field of each class
+        //    - avoid counting unique fields where class count is less than cutoff
+        // 3. for fields with fewer unique values than cutoff, create dropdowns
+        // 4. Always empty refs/cols per class
+        // 5. Always empty attributes per class
+
+        Model model = os.getModel();
+
+        //classCounts - number of objects of each type in the database
         LOG.info("Collecting class counts...");
-        for (Iterator<ClassDescriptor> i =
-                os.getModel().getClassDescriptors().iterator(); i.hasNext();) {
-            ClassDescriptor cld = i.next();
+        for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
             nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
-            Query q = new Query();
-            QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-            q.addToSelect(qc);
-            q.addFrom(qc);
-            classCountsMap.put(cld.getName(), new Integer(os.count(q,
-                            ObjectStore.SEQUENCE_IGNORE)));
+            emptyAttributesMap.put(cld.getName(), new HashSet<String>());
+
+            if (!classCountsMap.containsKey(cld.getName())) {
+                int classCount = countClass(os, cld.getType());
+                classCountsMap.put(cld.getName(), new Integer(classCount));
+
+                // if this class is empty all subclasses MUST be empty as well
+                if (classCount == 0) {
+                    for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                        if (!classCountsMap.containsKey(subCld.getName())) {
+                            classCountsMap.put(subCld.getName(), new Integer(classCount));
+                        }
+                    }
+                }
+            }
         }
-        //fieldValues
+
+        // fieldValues - find all attributes with few unique values for populating dropdowns,
+        // also look for any attributes that are empty.
         LOG.info("Summarising field values...");
         String maxValuesString = (String) configuration.get("max.field.values");
         int maxValues =
-            (maxValuesString == null ? Integer.MAX_VALUE : Integer.parseInt(maxValuesString));
-        for (Map.Entry<Object, Object> entry: configuration.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-            if (!key.endsWith(".fields")) {
+            (maxValuesString == null ? DEFAULT_MAX_VALUES : Integer.parseInt(maxValuesString));
+
+        Set<String> doneFields = new HashSet<String>();
+        for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
+
+            int classCount = classCountsMap.get(cld.getName()).intValue();
+            if (classCount == 0) {
                 continue;
             }
-            String className = key.substring(0, key.lastIndexOf("."));
-            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-            if (cld == null) {
-                throw new RuntimeException("a class mentioned in ObjectStore summary properties "
-                        + "file (" + className + ") is not in the model");
-            }
-            List<String> fieldNames = Arrays.asList(value.split(" "));
-            summariseField(cld, fieldNames, os, maxValues);
-            for (ClassDescriptor cd: os.getModel().getAllSubs(cld)) {
-                summariseField(cd, fieldNames, os, maxValues);
+
+            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+                String fieldName = att.getName();
+                if ("id".equals(fieldName)) {
+                    continue;
+                }
+
+                String clsFieldName = cld.getName() + "." + fieldName;
+                if (doneFields.contains(clsFieldName)) {
+                    continue;
+                }
+
+                Results results = getFieldSummary(cld, fieldName, os);
+                if (results.size() <= maxValues) {
+                    List<Object> fieldValues = new ArrayList<Object>();
+                    for (Object resRow: results) {
+                        Object fieldValue = ((ResultsRow<?>) resRow).get(0);
+                        fieldValues.add(fieldValue == null ? null : fieldValue.toString());
+                    }
+                    if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
+                        Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
+                        emptyAttributes.add(fieldName);
+                    }
+                    fieldValuesMap.put(clsFieldName, fieldValues);
+                    LOG.info("Adding " + fieldValues.size() + " values for "
+                            + cld.getUnqualifiedName() + "." + fieldName);
+
+                } else {
+                    LOG.info("Too many values for " + cld.getUnqualifiedName() + "." + fieldName);
+                    // all superclasses must also have too many values for this field
+                    for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
+                        if (cld.equals(superCld)
+                                || superCld.getType().equals(InterMineObject.class)) {
+                            continue;
+                        }
+                        String superClsField = superCld.getName() + "." + fieldName;
+                        if (!doneFields.contains(superClsField)
+                                && (superCld.getAttributeDescriptorByName(fieldName,
+                                        true) != null)) {
+                            LOG.info("Pushing too many values from " + cld.getUnqualifiedName()
+                                    + "." + fieldName + " to " + superCld.getUnqualifiedName());
+                            doneFields.add(superClsField);
+                        }
+                    }
+                }
             }
         }
+
         // always empty references and collections
         LOG.info("Looking for empty collections and references...");
-        this.ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
-        LOG.warn("Not counting ignored fields: " + ignoreFields);
-        Model model = os.getModel();
-        for (ClassDescriptor cld: model.getClassDescriptors()) {
-            lookForEmptyThings(cld, os);
+        Set<String> ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
+        if (ignoreFields.size() > 0) {
+            LOG.warn("Not counting ignored fields: " + ignoreFields);
+        }
+
+        // This is faster as a bottom up traversal, though this may save fewer queres the saved
+        // queries would take longer. If a ref/col is not empty it must not be empty in all parents.
+        Set<String> notEmptyFields = new HashSet<String>();
+        for (ClassDescriptor cld: model.getBottomUpLevelTraversal()) {
+            int classCount = classCountsMap.get(cld.getName()).intValue();
+            if (classCount == 0) {
+                continue;
+            }
+
+            Set<ReferenceDescriptor> refsAndCols = new HashSet<ReferenceDescriptor>();
+            refsAndCols.addAll(cld.getAllReferenceDescriptors());
+            refsAndCols.addAll(cld.getAllCollectionDescriptors());
+            for (ReferenceDescriptor ref : refsAndCols) {
+                String fieldName = ref.getName();
+                String clsFieldName = cld.getName() + "." + fieldName;
+
+                if (ignoreFields.contains(fieldName)) {
+                    continue;
+                }
+
+                if (notEmptyFields.contains(clsFieldName)) {
+                    LOG.info("Skipping " + clsFieldName + " - already know it's not empty");
+                    continue;
+                }
+
+                boolean refIsEmpty = isReferenceEmpty(cld, ref, os);
+                if (refIsEmpty) {
+                    addToEmptyFields(cld.getName(), ref.getName());
+                    LOG.info("Adding empty field " + cld.getUnqualifiedName() + "." + fieldName);
+                } else {
+                    // this isn't empty, so CAN'T be empty for any super classes
+                    for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
+                        if (cld.equals(superCld)
+                                || superCld.getType().equals(InterMineObject.class)) {
+                            continue;
+                        }
+                        String superClsField = superCld.getName() + "." + fieldName;
+
+                        if (!notEmptyFields.contains(superClsField)) {
+                            if ((superCld.getReferenceDescriptorByName(fieldName, true) != null)
+                                    || (superCld.getCollectionDescriptorByName(fieldName,
+                                            true) != null)) {
+                                LOG.info("Pushing empty ref/col from " + cld.getUnqualifiedName()
+                                        + "." + fieldName + " to " + superCld.getUnqualifiedName());
+                                notEmptyFields.add(superClsField);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private static Set<String> getIgnoreFields(String config) {
-        Set<String> retval = new HashSet<String>();
-        if (config != null) {
-            config = config.trim();
-            for (String field :config.split(" ")) {
-                retval.add(field);
-            }
-        }
-        return retval;
-    }
 
     /**
      * Construct a summary from a properties object.
@@ -238,142 +343,96 @@ public class ObjectStoreSummary
         return properties;
     }
 
-    /**
-     * Get the possible field values all instances of a specified class.
-     *
-     * @param cld the class descriptor for the class
-     * @param fieldNames the fields to consider
-     * @param os the object store to retrieve data from
-     * @param maxValues only store information for fields with fewer than maxValues values
-     * @throws ClassNotFoundException if the class cannot be found
-     */
-    protected void summariseField(ClassDescriptor cld, List<String> fieldNames, ObjectStore os,
-                                 int maxValues)
-        throws ClassNotFoundException {
-        for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
-            String fieldName = i.next();
-            Query q = new Query();
-            q.setDistinct(true);
-            QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-            q.addToSelect(new QueryField(qc, fieldName));
-            q.addFrom(qc);
-            Results results = os.execute(q);
-            if (results.size() > maxValues) {
-                continue;
-            }
-            List<Object> fieldValues = new ArrayList<Object>();
-            for (Object resRow: results) {
-                Object fieldValue = ((ResultsRow<?>) resRow).get(0);
-                fieldValues.add(fieldValue == null ? null : fieldValue.toString());
-            }
-            fieldValuesMap.put(cld.getName() + "." + fieldName, fieldValues);
-        }
-    }
-
-    /**
-     * Look for empty fields and collections on all instanceof of a particular class. This method
-     * will recurse into subclasses in order to improve performance.
-     *
-     * @param cld the class of objects to be examined
-     * @param os the ObjectStore
-     * @throws ObjectStoreException if an error occurs retrieving data
-     * @throws ClassNotFoundException if the class cannot be found
-     */
-    protected void lookForEmptyThings(ClassDescriptor cld, ObjectStore os)
-        throws ObjectStoreException, ClassNotFoundException {
-        Set<String> emptyFields = emptyFieldsMap.get(cld.getName());
-        if (emptyFields == null) {
-            for (ClassDescriptor sub: cld.getSubDescriptors()) {
-                lookForEmptyThings(sub, os);
-            }
-            emptyFields = new TreeSet<String>();
-            emptyFieldsMap.put(cld.getName(), emptyFields);
-            lookForEmptyThings(cld, emptyFields, nonEmptyFieldsMap.get(cld.getName()), os);
-        }
+    private Results getFieldSummary(ClassDescriptor cld, String fieldName, ObjectStore os) {
+        Query q = new Query();
+        q.setDistinct(true);
+        QueryClass qc = new QueryClass(cld.getType());
+        q.addToSelect(new QueryField(qc, fieldName));
+        q.addFrom(qc);
+        Results results = os.execute(q);
+        return results;
     }
 
     /**
      * Look for empty fields and collections on all instances of a particular class.
      *
      * @param cld the class of objects to be examined
-     * @param nullFieldNames output set of null/empty references/collections
-     * @param nonNullFieldNames set of non-null/empty references/collections
+     * @param ref a reference or collection descriptor for the the class under cld
      * @param os the objectstore
-     * @throws ClassNotFoundException if the class cannot be found
+     * @return true if the reference or collection is empty
      */
-    protected void lookForEmptyThings(ClassDescriptor cld, Set<String> nullFieldNames,
-            Set<String> nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
+    private boolean isReferenceEmpty(ClassDescriptor cld, ReferenceDescriptor ref,
+            ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        int skipped = 0;
-        List<Iterator<? extends ReferenceDescriptor>> its
-            = new ArrayList<Iterator<? extends ReferenceDescriptor>>();
-        its.add(cld.getAllCollectionDescriptors().iterator());
-        its.add(cld.getAllReferenceDescriptors().iterator());
-        Iterator<ReferenceDescriptor> iter = new CombinedIterator<ReferenceDescriptor>(its);
-        while (iter.hasNext()) {
-            ReferenceDescriptor desc = iter.next();
 
-            if (nonNullFieldNames.contains(desc.getName())) {
-                skipped++;
-            } else if (ignoreFields.contains(desc.getName())) {
-                skipped++;
-                LOG.warn("Ignoring configured field: " + cld.getUnqualifiedName() + "."
-                        + desc.getName());
-            } else {
+        // This is much faster using a sub query and SubQueryExistsConstraint than just selecting
+        // one row from the joined tables.  Probably because all queries have to be ordered for
+        // batching to work.
+        Query q = new Query();
+        q.setDistinct(false);
 
-                Query q = new Query();
-                q.setDistinct(false);
+        QueryClass qc1 = new QueryClass(cld.getType());
+        QueryClass qc2 = new QueryClass(ref.getReferencedClassDescriptor().getType());
 
-                QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
-                QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
+        q.addFrom(qc1);
+        q.addFrom(qc2);
 
-                q.addFrom(qc1);
-                q.addFrom(qc2);
+        q.addToSelect(qc2);
 
-                q.addToSelect(qc2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryReference qd;
+        if (ref instanceof CollectionDescriptor) {
+            qd = new QueryCollectionReference(qc1, ref.getName());
+        } else {
+            qd = new QueryObjectReference(qc1, ref.getName());
+        }
+        ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
+        cs.addConstraint(gdc);
 
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                QueryReference qd;
-                if (desc instanceof CollectionDescriptor) {
-                    qd = new QueryCollectionReference(qc1, desc.getName());
-                } else {
-                    qd = new QueryObjectReference(qc1, desc.getName());
-                }
-                ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
-                cs.addConstraint(gdc);
+        q.setConstraint(cs);
 
-                q.setConstraint(cs);
+        Query q2 = new Query();
+        q2.setDistinct(false);
+        q2.addToSelect(new QueryValue(new Integer(1)));
 
-                Query q2 = new Query();
-                q2.setDistinct(false);
-                q2.addToSelect(new QueryValue(new Integer(1)));
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+        cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
+        q2.setConstraint(cs2);
 
-                ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-                cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
-                q2.setConstraint(cs2);
+        Results results = os.execute(q2, 1, false, false, false);
+        boolean empty = !results.iterator().hasNext();
 
-                Results results = os.execute(q2, 1, false, false, false);
-                if (results.iterator().hasNext()) {
-                    LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
-                    Stack<ClassDescriptor> s = new Stack<ClassDescriptor>();
-                    s.push(cld);
-                    while (!s.empty()) {
-                        ClassDescriptor c = s.pop();
-                        Set<String> nonNull = nonEmptyFieldsMap.get(c.getName());
-                        nonNull.add(desc.getName());
-                        Iterator<ClassDescriptor> superIter = c.getSuperDescriptors().iterator();
-                        while (superIter.hasNext()) {
-                            s.push(superIter.next());
-                        }
-                    }
-                } else {
-                    LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + " - EMPTY");
-                    nullFieldNames.add(desc.getName());
-                }
+        LOG.debug("Query for empty " + cld.getUnqualifiedName() + "." + ref.getName() + " took "
+                + (System.currentTimeMillis() - startTime) + "ms.");
+        return empty;
+    }
+    private void addToEmptyFields(String clsName, String fieldName) {
+        Set<String> emptyFields = emptyFieldsMap.get(clsName);
+        if (emptyFields == null) {
+            emptyFields = new HashSet<String>();
+            emptyFieldsMap.put(clsName, emptyFields);
+        }
+        emptyFields.add(fieldName);
+    }
+
+    private int countClass(ObjectStore os, Class<? extends FastPathObject> cls)
+        throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+    }
+
+    private static Set<String> getIgnoreFields(String config) {
+        Set<String> retval = new HashSet<String>();
+        if (config != null) {
+            config = config.trim();
+            for (String field :config.split(" ")) {
+                retval.add(field);
             }
         }
-        LOG.info(cld.getName() + " skipped " + skipped + " fields, took "
-                + (System.currentTimeMillis() - startTime) + " ms");
+        return retval;
     }
 
 }
