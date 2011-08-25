@@ -27,8 +27,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
-import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 
 /**
