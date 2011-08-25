@@ -12,7 +12,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.objectstore.query.Results;
 
 public class ResultsIterator implements Iterator<List<ResultElement>> {
-
+	
 	private static Logger logger = Logger.getLogger(ResultsIterator.class);
 	
 	private int counter = 0;
@@ -24,20 +24,23 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
 	private final Iterator<Object> subIter;
 	
 	public ResultsIterator(Results res) {
-		this.subIter = res.iterator();
+	    this.subIter = res.iterator();
 	}
 	
 	public ResultsIterator(Results res, int start, int size, String filterTerm) {
-		this.subIter = res.iterator();
+		this(res);
 		this.start = start;
 		this.end = start + size;
         this.filterTerm = ObjectUtils.toString(filterTerm).toLowerCase();
-        logger.info("START: "  + start + ", END: " + (start + size) + ", FILTER: " + this.filterTerm);
+        logger.debug("START: "  + start + ", END: " + (start + size) + ", FILTER: " + this.filterTerm);
 	}
 	
 	@Override
 	public boolean hasNext() {
 		scrollToStart();
+        if (nextRow != null) {
+            return true;
+        }
 		if (counter >= start && (end == null || counter < end)) {
             if (StringUtils.isBlank(filterTerm)) {
                 return subIter.hasNext();
@@ -52,10 +55,38 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
 		}
 		return false;
 	}
+
+    @Override
+    public List<ResultElement> next() {
+        if (nextRow != null) {
+            List<ResultElement> ret = nextRow;
+            nextRow = null;
+            return ret;
+        }
+        scrollToStart();
+        if (end != null && counter > end) {
+            throw new NoSuchElementException();
+        }
+        
+        List<Object> l = null;
+        while (l == null) {
+            l = getNextInternal();
+        }
+        counter++;
+
+        List<ResultElement> ret = new ArrayList<ResultElement>();
+        for (Object o: l) {
+            ResultElement re = new ResultElement(o);
+            ret.add(re);
+        }
+        return ret;
+    }
+
 	
-	private void scrollToStart() {
+	@SuppressWarnings("unchecked")
+    private void scrollToStart() {
 		while (counter < start && subIter.hasNext()) {
-			// throw away values we are not interested in.
+		    // throw away values we are not interested in.
             List<Object> l = (List<Object>) subIter.next();
             if (StringUtils.isBlank(filterTerm)) {
                 counter++;
@@ -74,6 +105,7 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
 		}
 	}
 
+    @SuppressWarnings("unchecked")
     private List<Object> getNextInternal() {
 		List<Object> l = (List<Object>) subIter.next();
         if (StringUtils.isBlank(filterTerm)) {
@@ -88,33 +120,6 @@ public class ResultsIterator implements Iterator<List<ResultElement>> {
             }
         }
     }
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ResultElement> next() {
-		if (nextRow != null) {
-            List<ResultElement> ret = nextRow;
-            nextRow = null;
-            return ret;
-        }
-		scrollToStart();
-		if (counter >= end) {
-			throw new NoSuchElementException();
-		}
-        
-        List<Object> l = null;
-        while (l == null) {
-            l = getNextInternal();
-        }
-        counter++;
-
-		List<ResultElement> ret = new ArrayList<ResultElement>();
-		for (Object o: l) {
-			ResultElement re = new ResultElement(o);
-			ret.add(re);
-		}
-		return ret;
-	}
 
 	@Override
 	public void remove() {
