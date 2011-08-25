@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateResultInput;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
-import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 /**
  * Processes service request. Evaluates parameters and validates them and check if
