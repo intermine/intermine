@@ -11,13 +11,9 @@ package org.intermine.objectstore;
  */
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.Test;
-
-import org.intermine.metadata.ClassDescriptor;
 
 public class ObjectStoreSummaryTest extends StoreDataTestCase
 {
@@ -69,28 +65,6 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         // null because max.field.values exceeded
         assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
         assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
-    }
-
-    public void testLookForEmptyThings() throws Exception {
-        Properties config = new Properties();
-        config.put("max.field.value", "10");
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
-        ClassDescriptor cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.CEO");
-
-        oss.lookForEmptyThings(cld, os);
-
-        HashSet expected = new HashSet();
-        expected.add("secretarys");
-        expected.add("address");
-        expected.add("departmentThatRejectedMe");
-        expected.add("simpleObjects");
-
-        assertEquals(expected, (Set) oss.emptyFieldsMap.get(cld.getName()));
-
-        cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        oss.lookForEmptyThings(cld, os);
-        assertEquals(new HashSet(), (Set) oss.emptyFieldsMap.get(cld.getName()));
     }
 
     public void testToProperties() throws Exception {
