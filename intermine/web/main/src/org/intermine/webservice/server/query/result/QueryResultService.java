@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -41,6 +42,7 @@ import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -92,13 +94,9 @@ public class QueryResultService extends AbstractQueryService
      * @param response response
      */
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
-
+    protected void execute(HttpServletRequest request, HttpServletResponse response) {
         QueryResultInput input = getInput();
-
         PathQueryBuilder builder = getQueryBuilder(input.getXml(), request);
-
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getMaxCount());
         runPathQuery(query, input.getStart(), input.getMaxCount(), null, null,
@@ -223,7 +221,8 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
         }
-        if (!StringUtils.isBlank(request.getParameter("summaryPath"))) {
+        // Only do the count for JSON summary requests…
+        if (formatIsJSON() && !isBlank(request.getParameter("summaryPath"))) {
         	PathQueryExecutor executor = getPathQueryExecutor();
             int count;
             try {
@@ -353,8 +352,9 @@ public class QueryResultService extends AbstractQueryService
         	String summaryPath = request.getParameter("summaryPath");
         	if (!StringUtils.isBlank(summaryPath)) {
         		try {
-    				Results r = executor.summariseQuery(pathQuery, summaryPath);
-    				it = new ResultsIterator(r, firstResult, maxResults, request.getParameter("filterTerm"));
+        		    String filterTerm = request.getParameter("filterTerm");
+    				Results r = executor.summariseQuery(pathQuery, summaryPath,filterTerm);
+    				it = new ResultsIterator(r, firstResult, maxResults, filterTerm);
     			} catch (ObjectStoreException e) {
     				throw new ServiceException("Problem getting summary.", e);
     			}
