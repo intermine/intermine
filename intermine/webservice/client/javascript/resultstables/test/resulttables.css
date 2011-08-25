@@ -3,11 +3,20 @@
     margin-left: 0.3em;
 }
 .results-box {
-    width: 50%;
-    height: 50px;
+    width: 50em;
+    height: 4em;
     overflow: visible;
 }
 
+.open-results-box {
+    width: 62.5em;
+    height: 640px;
+}
+
+.no-background-or-border {
+    border: none;
+    background: none;
+}
 .DataTables_sort_icon {
     float: left;
 }
@@ -69,13 +78,19 @@ div.toolbar {
 
 .query-summary {
     /*display: table-cell;*/
-    padding-left: 20px;
-    padding-right: 20px;
-    line-height: 48px;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+    line-height: 1.8em;
     cursor: pointer;
     color: #333;
     font-size: 28px;
     font-weight: bold;
+}
+
+.open-results-box .query-summary {
+    cursor: normal;
+    padding-left: 0em;
+    padding-right: 0.2em;
 }
 
 .throbber {
@@ -106,6 +121,7 @@ button.ui-widget {
     border-radius: 4px;
     font-size: 0.85em;
     margin: 2px;
+    margin-top: 0px;
 }
 
 .ColVis_Button span {
@@ -375,7 +391,7 @@ th.border-collapse-fix {
 }
 
 .list-popup {
-    z-index: 10;
+    z-index: 2000;
 }
 
 .list-items li {
@@ -417,8 +433,33 @@ th.border-collapse-fix {
 }
 
 .lang-popup {
+    z-index: 1000;
     left: 10% !important;
     min-width: 55em;
+}
+
+.colvis_button, button.ui-widget {
+    height: 2.25em;
+}
+
+@media only screen and (max-width: 1024px) {
+    body { font-size: 0.85em }
+    .results-box {width: 90%}
+    .open-results-box {width: 950px;}
+}
+
+@media only screen and (max-width: 800px) {
+    body { font-size: 0.85em }
+    .results-box {width: 90%}
+    .open-results-box .query-summary { font-size: 1.8em }
+    .open-results-box {width: 770px; height: 500px;}
+}
+
+@media only screen and (max-width: 640px) {
+    body { font-size: 0.70em }
+    .datatables_scrollhead table thead tr th { font-size: 0.68em; }
+    .dataTables_scrollBody table tbody tr td { font-size: 0.65em; }
+    .open-results-box {width: 600px; height: 360px;}
 }
 
 
