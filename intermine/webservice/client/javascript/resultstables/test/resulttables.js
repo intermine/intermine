@@ -318,17 +318,17 @@ function loadBox(pq, base, id, token) {
             jQuery("<div class='count query-summary'>" + num_to_string(json.count, ",", 3) + "</div>").prependTo($box);
             $box.find('.query-summary').click(function() {
                 var $box = jQuery('#' + id + ' div.results-box');
-                $box.animate({"width": "62.5em", "height": "600px"}, function() {
-                    var oldBackground = $box.css("background");
-                    $box.removeClass("ui-widget-header");
-                    $box.css({"border-left": "0", "border-top": "0", "border-right": "0", "border-bottom": "0", background: "none"});
+                $box.toggleClass("open-results-box", 500);
+                _.delay(function() {
+                    $box.toggleClass("ui-widget-header no-background-or-border");
                     var dt_id = id + '_datatable';
                     if ($('#' + dt_id).length == 0) {
                         $box.append('<table id="' + dt_id + '"></table>');
                     }
                     $box.children('.query-summary').hide();
-                    initTable(pq, dt_id, base, oldBackground, token);
-                });
+                    initTable(pq, dt_id, base, token);
+                }, 500);
+                return false;
             });
         }
     });
@@ -536,18 +536,19 @@ var multiOps = {
     "NONE OF": "none of"
 };
 
+var rawSummaryTimes = {};
+
 function summariseQuery($popup, url, pq, pinned, clicked, summaryPath, filterTerm) {
     var $centreBox = $popup.find('.summary-box').empty().append('<p class="wait-text">Summarising...</p>');
     var origHeading = $popup.find('.sub-heading').text();
     var $conBox = $popup.find('.con-box');
     filterTerm = filterTerm || "";
     var query = $.extend(true, {}, pq);
-    if (filterTerm) {
-        if (typeof query.where == "undefined") {
-            query.where = [];
-        }
-        query.where.push({path: summaryPath, op: "CONTAINS", value: filterTerm});
+    if (!rawSummaryTimes[pq.title]) {
+        rawSummaryTimes[pq.title] = {};
     }
+    // Time the initial summarising to get a measure of query complexity.
+    var summaryStart = new Date().getTime();
     $.ajax({
         type: "POST",
         dataType: "json",
@@ -555,15 +556,22 @@ function summariseQuery($popup, url, pq, pinned, clicked, summaryPath, filterTer
             format: "jsonrows", 
             query: query.serialise(), 
             summaryPath: summaryPath, 
+            filterTerm: filterTerm,
             size: 1000,
         },
         url: url,
+        error: function() {console.log(arguments)},
         success: function(results) {
+            var summaryStop = new Date().getTime();
+            if (!filterTerm && !rawSummaryTimes[pq.title][summaryPath]) {
+                rawSummaryTimes[pq.title][summaryPath] = summaryStop - summaryStart;
+            }
             var $table = jQuery('<table class="col-summary"></table>');
             var propNames = [];
             var isNumeric = false;
             var top100 = results.results.slice();
-            var sliceSize = top100.length, totalSize = results.uniqueValues;
+            var sliceSize = top100.length;
+            var totalSize = results.uniqueValues || sliceSize;;
             if (totalSize == 1 && typeof top100[0]["min"] != 'undefined') { 
                 // we have numeric summary results.
                 isNumeric = true;
@@ -1222,6 +1230,10 @@ function getListMaker(base, id, $h3, token, remover) { return function() {
         format: "json",
         token: token
     };
+    var description = $h3.find(".new-list-description").text();
+    if (description != "No description") {
+        data.description = description;
+    }
     $.ajax({
         type: "POST",
         dataType: "json",
@@ -1249,7 +1261,7 @@ var typeOfObj = {};
 var queries = {};
 var tokens = {};
 
-function initTable(pq, id, base, bkg, token) {
+function initTable(pq, id, base, token) {
     queries[id] = pq;
     tokens[id] = token;
     var initialViewLength = pq.select.length;
@@ -1260,6 +1272,8 @@ function initTable(pq, id, base, bkg, token) {
     if (tableInitialised[id]) {
         $('#' + id + '_wrapper').show().parent().parent().find('.constraints-hider').slideDown();
     } else {
+        var scrollY = $('#' + id).parent().outerHeight() - 210;
+        console.log(scrollY);
         $.ajax( {
             dataType: "json",
             type: "POST",
@@ -1273,7 +1287,7 @@ function initTable(pq, id, base, bkg, token) {
                     "oLanguage": {sProcessing: 'Loading data...'},
                     "bJQueryUI": true,
                     "sDom": '<"H"<"title"><"toolbar">RC<"clear">lfr>t<"F"ip>',
-                    "sScrollY": "450px",
+                    "sScrollY": scrollY + "px",
                     "bServerSide": true,
                     "sAjaxSource": url,
                     "sAjaxDataProp": "results",
@@ -1344,11 +1358,11 @@ function initTable(pq, id, base, bkg, token) {
                 $button.click(function() {
                     var $datatable = $('#' + id + '_wrapper').hide();
                     $datatable.parent().parent().find('.constraints-hider').slideUp();
-                    var $box = $datatable.parent().addClass("ui-widget-header");
+                    var $box = $datatable.parent();
+                    $box.toggleClass("open-results-box", 500);
+                    $box.toggleClass("ui-widget-header no-background-or-border");
                     $box.children(".query-summary").show();
-                    var borderStyle = "1px solid #AAAAAA";
-                    $box.css({"border-left": borderStyle, "border-top": borderStyle, "border-right": borderStyle, "border-bottom": borderStyle, background: bkg});
-                    $box.animate({width: "50%", height: "50px"});
+                    return false;
                 }).button();
                 var $dt = $('#' + id + '_wrapper');
                 $dt.find('div.toolbar').append($button);
@@ -1362,7 +1376,7 @@ function initTable(pq, id, base, bkg, token) {
                 $coder.button({icons: {primary: "ui-icon-script"}}).next().button({text: false, icons: {primary: "ui-icon-triangle-1-s"}});
                 $buttonset.buttonset().addClass("TableTools");
 
-                var langs = ["XML", "Perl", "Python", "Java", "JavaScript"];
+                var langs = ["XML", "URL", "Perl", "Python", "Java", "JavaScript"];
                 var showXML = function() {
                     $coder.button("option", "label", "XML");
                     $('body .lang-menu').remove();
@@ -1373,6 +1387,28 @@ function initTable(pq, id, base, bkg, token) {
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
                     var $centreBox = jQuery('<div>').appendTo($popup);
                     var $pre = jQuery('<pre>').addClass("xml").text(xml).appendTo($centreBox);
+                    var $removeButton = jQuery('<button class="summary-remover">Close</button>');
+                    $removeButton.appendTo($popup);
+                    $removeButton.click(function() {$popup.remove()});
+                    $dt.append($popup);
+                    $popup.click(function() {return false;});
+                    $popup.draggable({handle: ".main-heading"}).resizable({minWidth: $popup.width(), minHeight: $popup.height(), alsoResize: $popup.find("pre")});
+                    return false;
+                };
+
+                var showURL = function() {
+                    $coder.button("option", "label", "URL");
+                    $('body .lang-menu').remove();
+                    var visibleQuery = getVisibleQuery(pq, $dataTable, id);
+                    var params = [
+                        {name: "query", value: visibleQuery.serialise()}
+                    ];
+                    var url = base + query_path + "?" + $.param(params);
+                    var $popup = jQuery('<div class="summary-popup lang-popup"></div>');
+                    var $h3 = jQuery('<h3>').addClass("main-heading").text("URL for " + visibleQuery.title);
+                    var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
+                    var $centreBox = jQuery('<div>').appendTo($popup);
+                    var $pre = jQuery('<pre>').addClass("xml").text(url).appendTo($centreBox);
                     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
                     $removeButton.appendTo($popup);
                     $removeButton.click(function() {$popup.remove()});
@@ -1417,6 +1453,8 @@ function initTable(pq, id, base, bkg, token) {
                         var $button = $('<button>').text(l).button().appendTo($li);
                         if (l == "XML") {
                             $button.click(function() {showXML(); $coder.unbind("click").click(showXML);});
+                        } else if (l == "URL") {
+                            $button.click(function() {showURL(); $coder.unbind("click").click(showURL);});
                         } else {
                             var shower = getCodeShower(l);
                             $button.click(function() {shower(); $coder.unbind("click").click(shower)});
@@ -1488,16 +1526,18 @@ function initTable(pq, id, base, bkg, token) {
                     $dt.find('td input').attr("checked", false);
                     var $popup = jQuery('<div class="summary-popup list-popup"></div>');
                     var $h3 = jQuery('<h3>').addClass("main-heading");
-                    $('<span class="list-creation-info"><span class="new-list-name">New List</span> (<span class="selected-count">0</span> <span class="selected-types">items</span> selected) </span>').appendTo($h3);
-                    $h3.find('.new-list-name').editable(function(value, settings) {return value}, {onblur: "submit", submit: "OK", tooltip: "Click to edit"});
+                    $('<span class="list-creation-info">List Preview (<span class="selected-count">0</span> <span class="selected-types">items</span> selected) </span>').appendTo($h3);
+
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
+                    $('<div><table><tr><td>Name:</td><td><span class="new-list-name list-editable">New List</span></td></tr><tr><td>Description:</td><td><span class="new-list-description list-editable">No description</span></td></tr></table></div>').appendTo($popup);
+                    $popup.find('.list-editable').editable(function(value, settings) {return value}, {onblur: "submit", submit: "OK", tooltip: "Click to edit"});
                     var $centreBox = jQuery('<div>').addClass("list-items-scroller").appendTo($popup);
                     var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
                     var $makerButton = $('<button class="list-maker" disabled>Make List</button>').addClass("summary-remover").appendTo($popup);
                     var $removeButton = jQuery('<button class="summary-remover">Cancel</button>');
                     $removeButton.appendTo($popup);
                     var remover = getListPopupRemover($popup, $dt, id, $that);
-                    $makerButton.click(getListMaker(base, id, $h3, token, remover));
+                    $makerButton.click(getListMaker(base, id, $popup, token, remover));
                     $dt.unbind("click");
                     $removeButton.click(remover);
                     $dt.append($popup);
@@ -1510,7 +1550,7 @@ function initTable(pq, id, base, bkg, token) {
                     // Get an unused name if the default is already taken.
                     $.getJSON(base + list_path, {token: token}, function(result) {
                         var listNames =_(result.lists).pluck('name');
-                        var origName = $h3.find('.new-list-name').text();
+                        var origName = $popup.find('.new-list-name').text();
                         var currentName = origName;
                         var counter = 2;
                         while (_(listNames).include(currentName)) {
@@ -1518,7 +1558,7 @@ function initTable(pq, id, base, bkg, token) {
                             counter++;
                         }
                         if (currentName != origName) {
-                            $h3.find('.new-list-name').text(currentName);
+                            $popup.find('.new-list-name').text(currentName);
                         }
                     });
                     insertColumnChooser(id, base);
