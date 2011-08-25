@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.webservice.server.output.Output;
@@ -40,6 +41,8 @@ public class ResultProcessor
     public ResultProcessor() {
         // don't instantiate
     }
+    
+    private static final Logger LOG = Logger.getLogger(ResultProcessor.class);
 
     /**
      * Writes results to output.
