@@ -12,6 +12,7 @@ package org.intermine.webservice.server.query.result;
 
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
+import org.intermine.webservice.server.WebServiceRequestParser;
 
 /**
  * Class that implements generating links for QueryResultService web service.
