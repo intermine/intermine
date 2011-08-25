@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
 import org.intermine.util.TypeUtil;
@@ -43,6 +44,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     // supers set after redundant super classes have been removed
     private final Set<String> superNames = new LinkedHashSet<String>();
     private final Set<ClassDescriptor> superDescriptors = new LinkedHashSet<ClassDescriptor>();
+    private Set<ClassDescriptor> allSuperDescriptors = null;
     private ClassDescriptor superclassDescriptor;
 
     private final boolean isInterface;
@@ -921,5 +923,29 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             classNames.addAll(superCd.getAllSuperclassNames());
         }
         return classNames;
+    }
+
+    /**
+     * Get the full inheritance list for this class. This set includes not just this classes'
+     * immediate ancestors, but all their ancestors as well BUT NOT a class descriptor for
+     * InterMineObject.
+     * @return ClassDescriptors for all ancestors of this class
+     */
+    public Set<ClassDescriptor> getAllSuperDescriptors() {
+        if (allSuperDescriptors == null) {
+            allSuperDescriptors = findAllSuperDescriptors();
+        }
+        return allSuperDescriptors;
+    }
+
+    private Set<ClassDescriptor> findAllSuperDescriptors() {
+        Set<ClassDescriptor> supers = new LinkedHashSet<ClassDescriptor>();
+        for (ClassDescriptor superCld : this.getSuperDescriptors()) {
+            if (!superCld.getName().equals(INTERMINEOBJECT_NAME)) {
+                supers.add(superCld);
+                supers.addAll(superCld.getAllSuperDescriptors());
+            }
+        }
+        return supers;
     }
 }

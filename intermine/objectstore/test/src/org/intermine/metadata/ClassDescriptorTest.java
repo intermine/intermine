@@ -22,7 +22,7 @@ public class ClassDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
     private static final String ENDL = System.getProperty("line.separator");
-    
+
     public ClassDescriptorTest(String arg) {
         super(arg);
     }
@@ -174,6 +174,25 @@ public class ClassDescriptorTest extends TestCase
         Set subs = new HashSet(Arrays.asList(new Object[] {cld2, cld3}));
 
         assertEquals(subs, cld1.getSubDescriptors());
+    }
+
+    public void testGetAllSuperDescriptors() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld4 = new ClassDescriptor("package.name.Class4", "package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
+
+        Model model2 = new Model("test2", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
+
+        // getAllSuperDescriptors of Class4 should be Class2 and Class1
+        Set supers = new HashSet(Arrays.asList(new Object[] {cld2, cld1}));
+        assertEquals(supers, cld4.getAllSuperDescriptors());
+
+        supers = new HashSet();
+        assertEquals(supers, cld1.getAllSuperDescriptors());
+
+        supers = new HashSet(Arrays.asList(new Object[] {cld1}));
+        assertEquals(supers, cld2.getAllSuperDescriptors());
     }
 
     public void testGetImplementorDescriptors() throws Exception {
