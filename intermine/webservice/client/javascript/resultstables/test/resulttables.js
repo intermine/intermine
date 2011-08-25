@@ -316,7 +316,7 @@ function loadBox(pq, base, id, token) {
         success: function(json) {
             $box.find('.throbber').remove();
             jQuery("<div class='count query-summary'>" + num_to_string(json.count, ",", 3) + "</div>").prependTo($box);
-            $box.find('.query-summary').click(function() {
+            $box.find('.query-summary').attr("title", "Open Table").click(function() {
                 var $box = jQuery('#' + id + ' div.results-box');
                 $box.toggleClass("open-results-box", 500);
                 _.delay(function() {
@@ -472,7 +472,7 @@ function getDataFromCache(url, params, callback, id, pathquery) {
                 }
                 result.aaData = result.results;
                 var box_id = id.substring(0, id.lastIndexOf("_"));
-                $('#' + box_id).find('.query-summary.count').text(result.iTotalDisplayRecords);
+                $('#' + box_id).find('.query-summary.count').text(num_to_string(result.iTotalDisplayRecords, ",", 3));
 
                 callback(result);
             }
@@ -1028,6 +1028,24 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
     $popup.append($centreBox);
     var $removeButton = jQuery('<button class="summary-remover">Close</button>');
     $removeButton.appendTo($popup);
+    var $exportButton  = jQuery('<button class="summary-remover">Export</button>');
+    $exportButton.click(function() {
+        var clone = $.extend(true, {}, pq);
+        var exportParams = [
+            {name: "query", value: clone.serialise()},
+            {name: "summaryPath", value: summaryPath},
+            {name: "format", value: "tab"},
+            {name: "columnheaders", value: "1"}
+        ];
+        var filterTerm = $conBox.find('input').val();
+        if (filterTerm) {
+            exportParams.push({name: "filterTerm", value: filterTerm});
+        }
+        window.location = url + "?" + $.param(exportParams);
+        return false;
+    });
+    $exportButton.appendTo($popup);
+
     var $datatable = $('#' + id + '_wrapper')   
     $removeButton.click(function() {$popup.remove(); headerCleaner()});
     $datatable.append($popup);
@@ -1273,7 +1291,6 @@ function initTable(pq, id, base, token) {
         $('#' + id + '_wrapper').show().parent().parent().find('.constraints-hider').slideDown();
     } else {
         var scrollY = $('#' + id).parent().outerHeight() - 210;
-        console.log(scrollY);
         $.ajax( {
             dataType: "json",
             type: "POST",
@@ -1354,18 +1371,7 @@ function initTable(pq, id, base, token) {
                     "fnServerData": function(src, data, callback) { getDataFromCache(src, data, callback, id, pq);}
                 });
 
-                var $button = jQuery('<button class="hide-button">Hide table</button>');
-                $button.click(function() {
-                    var $datatable = $('#' + id + '_wrapper').hide();
-                    $datatable.parent().parent().find('.constraints-hider').slideUp();
-                    var $box = $datatable.parent();
-                    $box.toggleClass("open-results-box", 500);
-                    $box.toggleClass("ui-widget-header no-background-or-border");
-                    $box.children(".query-summary").show();
-                    return false;
-                }).button();
                 var $dt = $('#' + id + '_wrapper');
-                $dt.find('div.toolbar').append($button);
 
                 var $buttonset = jQuery('<span>');
                 var $coder = jQuery('<button>').text("API");
@@ -1463,8 +1469,8 @@ function initTable(pq, id, base, token) {
                     $('body').append($menu);
                 };
 
-                $codeSelector.click(displayLangMenu);
-                $coder.click(displayLangMenu);
+                $codeSelector.click(displayLangMenu).attr("title", "Choose API access method");
+                $coder.click(displayLangMenu).attr("title", "Access this data using the API");
 
                 var $dls = jQuery('<span>');
                 var $downloader = jQuery('<button>').text("Download");
@@ -1515,8 +1521,8 @@ function initTable(pq, id, base, token) {
                     $('body').append($menu);
                 };
 
-                $downloader.click(displayDLMenu);
-                $dlSelector.click(displayDLMenu);
+                $downloader.click(displayDLMenu).attr("title", "Download the complete result set");
+                $dlSelector.click(displayDLMenu).attr("title", "Choose format to download results in");
 
                 var $listButton = jQuery('<button>').text("Create List").click(function() {
                     chosenListIds[id] = [];
@@ -1564,8 +1570,23 @@ function initTable(pq, id, base, token) {
                     insertColumnChooser(id, base);
                     $dt.find('td input').show();
                     return false;
-                }).button({icons: {primary: "ui-icon-note"}});
+                }).attr("title", "Create a list of items that appear in these results").button({icons: {primary: "ui-icon-note"}});
                 $dt.find('div.toolbar').append($listButton);
+
+                var $button = jQuery('<button class="hide-button">Hide table</button>');
+                $button
+                    .attr("title", "Collapse table to original summary")
+                    .click(function() {
+                        var $datatable = $('#' + id + '_wrapper').hide();
+                        $datatable.parent().parent().find('.constraints-hider').slideUp();
+                        var $box = $datatable.parent();
+                        $box.toggleClass("open-results-box", 500);
+                        $box.toggleClass("ui-widget-header no-background-or-border");
+                        $box.children(".query-summary").show();
+                        return false;
+                    })
+                    .button({icons: {primary: "ui-icon-circle-minus"}});
+                $dt.find('div.toolbar').append($button);
 
                 $dt.find('div.title').append('<span class="query-summary">' + pq.title + '</span>');
 
