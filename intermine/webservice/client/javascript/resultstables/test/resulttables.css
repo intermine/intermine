@@ -88,7 +88,7 @@ div.toolbar {
 }
 
 .open-results-box .query-summary {
-    cursor: normal;
+    cursor: default;
     padding-left: 0em;
     padding-right: 0.2em;
 }
@@ -134,6 +134,10 @@ span.ColVis_title span.ui-icon {
 
 .query-summary:hover {
     text-decoration: underline;
+}
+
+.open-results-box .query-summary:hover {
+    text-decoration: none;
 }
 
 .dataTables_scrollBody {
@@ -414,7 +418,8 @@ th.border-collapse-fix {
 }
 
 .lang-selector button {
-    width: 98%;
+    width: 100%;
+    margin-bottom: 3px;
 }
 
 .tabletools_collection ul {
