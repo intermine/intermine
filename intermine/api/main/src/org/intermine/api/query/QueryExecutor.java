@@ -15,16 +15,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.CacheMap;
 
 /**
  * Common superclass of query executors that holds cache of pathToQueryNode maps per query. This
@@ -46,6 +51,7 @@ public abstract class QueryExecutor
         Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
     protected int summaryBatchSize;
 
+    private static final Logger LOG = Logger.getLogger(QueryExecutor.class); 
     /**
      * The profile to use to find bags from.
      */
@@ -91,6 +97,22 @@ public abstract class QueryExecutor
                 bagQueryRunner);
         return q;
     }
+    
+    /**
+     * Creates a query that returns the summary for a column in a PathQuery, applying a filter at 
+     * the database level.
+     * 
+     * @param pathQuery the query to convert
+     * @param summaryPath the column to summarise
+     * @return an IQL Query object
+     * @throws ObjectStoreException if there is a problem creating the query
+     */    
+    public Query makeSummaryQuery(PathQuery pq, String summaryPath, String filterTerm) throws ObjectStoreException {
+        PathQuery clone = pq.clone();
+        clone.addConstraint(Constraints.contains(summaryPath, filterTerm));
+        Query q = makeSummaryQuery(clone, summaryPath);
+        return q;
+    }
 
     /**
      * Returns the results for a summary for a column in a PathQuery.
@@ -123,6 +145,19 @@ public abstract class QueryExecutor
         return os.execute(makeSummaryQuery(pathQuery, summaryPath), summaryBatchSize,
                 true, true, true);
     }
+    
+    public Results summariseQuery(PathQuery pq, String summaryPath, String filterTerm) throws ObjectStoreException {
+        if (filterTerm == null || filterTerm.isEmpty()) {
+            return summariseQuery(pq, summaryPath);
+        }
+        int uniqValues = uniqueColumnValues(pq, summaryPath);
+        if (uniqValues > summaryBatchSize) {
+            return os.execute(makeSummaryQuery(pq, summaryPath, filterTerm), summaryBatchSize,
+                    true, true, true);
+        } else {
+            return summariseQuery(pq, summaryPath);
+        }
+    }
 
     /**
      * Take a query and return the results row count.
@@ -136,6 +171,7 @@ public abstract class QueryExecutor
         return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
 
+    private static final Map<String, Integer> countCache = new CacheMap<String, Integer>();
     /**
      * Get the the total number of unique column values for a given path in the
      * context of a given query.
@@ -152,7 +188,17 @@ public abstract class QueryExecutor
      */
     public int uniqueColumnValues(PathQuery pq, String path) throws ObjectStoreException {
         Query q = makeSummaryQuery(pq, path);
-        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+        String cacheKey = q.toString() + "summary-path: " + path;
+        if (countCache.containsKey(cacheKey)) {
+            LOG.debug("Count cache hit");
+            return countCache.get(cacheKey);
+        } else {
+            LOG.debug("Count cache miss");
+            Results res = os.execute(q, summaryBatchSize, true, true, true);
+            int c = res.size();
+            countCache.put(cacheKey, c);
+            return c;
+        }
     }
 
     /**
