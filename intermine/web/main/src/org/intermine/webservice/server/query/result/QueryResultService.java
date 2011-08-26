@@ -13,6 +13,7 @@ package org.intermine.webservice.server.query.result;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
@@ -103,6 +105,10 @@ public class QueryResultService extends AbstractQueryService
                 input, null, input.getLayout());
     }
 
+    @Override
+    protected int getDefaultFormat() {
+        return TSV_FORMAT;
+    }
 
     /**
      * Returns the path portion of a link to the results for
@@ -144,6 +150,7 @@ public class QueryResultService extends AbstractQueryService
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
             attributes.put(JSONResultFormatter.KEY_VIEWS, pq.getView());
+            
             attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, 
                     WebUtil.formatPathQueryView(pq, request));
             attributes.put("start", String.valueOf(start));
@@ -151,6 +158,18 @@ public class QueryResultService extends AbstractQueryService
                 attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
             } catch (PathException e) {
                 throw new RuntimeException(e);
+            }
+            if (!isBlank(request.getParameter("summaryPath"))) {
+                String summaryPath = request.getParameter("summaryPath");
+                PathQueryExecutor executor = getPathQueryExecutor();
+                int count;
+                try {
+                    count = executor.uniqueColumnValues(pq, request.getParameter("summaryPath"));
+                } catch (ObjectStoreException e) {
+                    throw new ServiceException("Problem getting unique column value count.", e);
+                }
+                attributes.put("uniqueValues", count);
+                
             }
         }
         int f = getFormat();
@@ -221,17 +240,38 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
         }
-        // Only do the count for JSON summary requests…
-        if (formatIsJSON() && !isBlank(request.getParameter("summaryPath"))) {
-        	PathQueryExecutor executor = getPathQueryExecutor();
-            int count;
+
+        if (!isBlank(request.getParameter("summaryPath"))) {
+            String summaryPath = request.getParameter("summaryPath");
+            Path p;
             try {
-                count = executor.uniqueColumnValues(pq, request.getParameter("summaryPath"));
-            } catch (ObjectStoreException e) {
-                throw new ServiceException("Problem getting unique column value count.", e);
+                p = pq.makePath(summaryPath);
+            } catch (PathException e) {
+                throw new BadRequestException("Summary path is invalid");
             }
-            attributes.put("uniqueValues", count);
+            if (!p.endIsAttribute()) {
+                throw new BadRequestException("Summary path is invalid");
+            }
+            AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
+            String type = ad.getType();
+            List<String> colHeaders = new ArrayList<String>();
+            if ("int".equals(type) || "Integer".equals(type) || "Float".equals(type)
+                    || "float".equals(type) || "Double".equals(type) 
+                    || "double".equals(type) || "long".equals(type)
+                    || "Long".equals(type) || "Math.BigDecimal".equals(type)) {
+                colHeaders.addAll(Arrays.asList("min", "max", "average", "standard-dev"));
+            } else {
+                colHeaders.addAll(Arrays.asList("item", "count"));
+            }
+            if (formatIsJSON()) {
+                attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, colHeaders);
+            } else {
+                if (formatIsFlatFile() && wantsColumnHeaders()) {
+                    attributes.put(FlatFileFormatter.COLUMN_HEADERS, colHeaders);
+                }
+            }
         }
+        
         output.setHeaderAttributes(attributes);
     }
 
