@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +56,6 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
-import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 /**
  *
@@ -227,7 +227,11 @@ public abstract class WebService
             this.response = response;
             initOutput(response);
             response.setHeader("Access-Control-Allow-Origin", "*"); // Allow cross domain requests.
-
+            try {
+                request.setCharacterEncoding("UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                logger.error(ex);
+            }
             Properties webProperties = SessionMethods.getWebProperties(request
                     .getSession().getServletContext());
             if ("true".equalsIgnoreCase(webProperties
@@ -727,7 +731,7 @@ public abstract class WebService
                 .equalsIgnoreCase(format)) {
             return JSON_COUNT_FORMAT;
         }
-        return UNKNOWN_FORMAT;
+        return getDefaultFormat();
     }
 
     /**
