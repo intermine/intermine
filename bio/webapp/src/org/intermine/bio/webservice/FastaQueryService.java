@@ -33,6 +33,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.Output;
@@ -40,7 +41,6 @@ import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.query.AbstractQueryService;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
-import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 /**
  * A service for exporting query results as fasta.
