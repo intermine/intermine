@@ -89,7 +89,7 @@ public class InitialiserPluginTest extends TestCase
         String bobName = "bob";
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap());
+                                 new HashMap(), new HashMap(), new HashMap(), true);
 
         pm.createProfile(bobProfile);
     }
