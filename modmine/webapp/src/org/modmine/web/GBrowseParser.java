@@ -39,6 +39,7 @@ public final class GBrowseParser
         "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
     private static final String DCC_PREFIX = "modENCODE_";
     private static final String SEPARATOR = ";";
+    // private static final String TRACK_SEPARATOR = "%1E";
 
     private GBrowseParser() {
 
@@ -141,19 +142,36 @@ public final class GBrowseParser
             // citation = <h1> Chromosome-Nuclear Envelope Interaction proteins...
             //
             // note: subtracks have also names with spaces
-
+            //
+            // entries with only tracks (no subtrack)
+            //
+            // [marco1_G_sorted]
+            // key      = small RACE products -pool G
+            // citation = ...
+            // data source = 2482 2501
+            // track source = 3355
+            //
+            // TODO
+            // in this case we should link only to the first data source
+            // (nr of sources = nr of tracks according to peter ...)
+            // wait for document on parsing and news about fgb2
+            
+            
             StringBuffer trackName = new StringBuffer();
             StringBuffer toAppend = new StringBuffer();
-
+            boolean hasSelected = false;
             while ((line = reader.readLine()) != null) {
-                LOG.debug("SUBTRACK LINE: " + line);
                 if (line.startsWith("[")) {
+                    LOG.debug("GB: " + line);
                     // this is a track
+                    hasSelected = false;
                     trackName.setLength(0);
                     trackName.append(line.substring(1, line.indexOf(']')));
                 }
                 if (line.startsWith("select")) {
+                    LOG.debug("GB: " + line);
                     // here subtracks are listed
+                    hasSelected = true;
                     String data = line.replace("select   = ", "");
                     String[] result = data.split("\\s");
                     for (String token : result) {
@@ -179,6 +197,20 @@ public final class GBrowseParser
                             addToGBMap(submissionsToTracks, dccId, newTrack);
                         }
                     }
+                }
+                // added for tracks without subtrack
+                if (line.startsWith("data source") && hasSelected == false) {
+                    LOG.debug("GB: " + line);
+                    String data = line.replace("data source = ", "");
+                    String[] result = data.split("\\s");
+                    for (String token : result) {
+                        String dccId = DCC_PREFIX + token;
+                        GBrowseTrack newTrack =
+                            new GBrowseTrack(organism, trackName.toString(), trackName.toString(),
+                                    dccId);
+                        addToGBMap(submissionsToTracks, dccId, newTrack);                       
+                    }
+                    
                 }
             }
             reader.close();
