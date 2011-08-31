@@ -228,21 +228,20 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
- <query name="" model="genomic"
-   view="Submission.title Submission.DCCid Submission.experimentType "
-   sortOrder="Submission.experimentType asc">
-  <constraint path="Submission.organism.shortName" op="=" value="D. melanogaster"/>
+<query name="" model="genomic" 
+   view="Submission.title Submission.DCCid Submission.experimentType Submission.organism.shortName "
+   sortOrder="Submission.organism.shortName asc">
+<constraint path="Submission.organism.genus" op="=" value="Drosophila"/>
 </query>
-
 </im:querylink>
     </td>
 
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
- <query name="" model="genomic"
-   view="Submission.title Submission.DCCid Submission.experimentType "
-   sortOrder="Submission.experimentType asc">
-  <constraint path="Submission.organism.shortName" op="=" value="C. elegans"/>
+<query name="" model="genomic" 
+   view="Submission.title Submission.DCCid Submission.experimentType Submission.organism.shortName "
+   sortOrder="Submission.organism.shortName asc">
+<constraint path="Submission.organism.genus" op="=" value="Caenorhabditis"/>
 </query>
 </im:querylink>
 </td>
@@ -250,7 +249,7 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 <td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
  <query name="" model="genomic"
-   view="Submission.title Submission.DCCid Submission.experimentType "
+   view="Submission.title Submission.DCCid Submission.experimentType Submission.organism.shortName "
    sortOrder="Submission.experimentType asc">
 </query>
 </im:querylink>
