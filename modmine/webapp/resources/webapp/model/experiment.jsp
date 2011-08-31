@@ -898,24 +898,24 @@ Expression Levels:&nbsp;
 
 <%-- GBROWSE --%>
 
-          <c:forEach items="${subTracks}" var="subTracks" varStatus="subt_status">
-            <c:if test="${subTracks.key == sub.dCCid}">
-          <table cellpadding="0" cellspacing="0" border="0" class="internal" >
-    <tr>
-    <td valign="top">GBrowse tracks: </td>
-    <td valign="top">
+<c:forEach items="${subTracks}" var="subTracks" varStatus="subt_status">
+   <c:if test="${subTracks.key == sub.dCCid}">
+      <table cellpadding="0" cellspacing="0" border="0" class="internal" >
+      <tr>
+      <td valign="top">GBrowse tracks: </td>
+      <td valign="top">
          <c:forEach items="${subTracks.value}" var="track" varStatus="track_status">
          <mm:singleTrack track="${track}"/>
          <br>
         </c:forEach>
-        </td>
-        <td valign="top">
-             <mm:allTracks tracks="${subTracks.value}" dccId="${sub.dCCid}"/>
-            </td>
-            </tr>
-            </table>
-            </c:if>
-         </c:forEach>
+      </td>
+      <td valign="top">
+        <mm:allTracks tracks="${subTracks.value}" dccId="${sub.dCCid}"/>
+      </td>
+      </tr>
+      </table>
+  </c:if>
+</c:forEach>
 
 <%-- REPOSITORY --%>
 
