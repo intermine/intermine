@@ -701,6 +701,7 @@ grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $1, " -> "
 grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $1, " -> ", $4 }' > $DATADIR/superseded.table
 grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $1, " -> ", $5 }' >> $DATADIR/superseded.table
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
+awk '{print $1}' $DATADIR/superseded.table >> $DATADIR/all.dead
 fi
 
 cd $MIRROR/new
