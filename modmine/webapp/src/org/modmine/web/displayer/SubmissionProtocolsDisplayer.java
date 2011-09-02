@@ -22,6 +22,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.model.bio.Protocol;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -44,15 +45,20 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SubmissionProtocolsDisplayer extends ReportDisplayer
 {
-	protected static final Logger LOG = Logger.getLogger(SubmissionProtocolsDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(SubmissionProtocolsDisplayer.class);
 
-	public SubmissionProtocolsDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
-		super(config, im);
-	}
+    /**
+     * constructor
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
+    public SubmissionProtocolsDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+        super(config, im);
+    }
 
-	@Override
-	public void display(HttpServletRequest request, ReportObject reportObject) {
-		// Removed logics from SubmissionProtocolsController
+    @Override
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        // Removed logics from SubmissionProtocolsController
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -82,27 +88,30 @@ public class SubmissionProtocolsDisplayer extends ReportDisplayer
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults results;
-		try {
-			results = executor.execute(q);
+        try {
+            results = executor.execute(q);
 
-	        if (results.size() > 2000) {
-	            request.setAttribute("subId", o.getId());
-	            return;
-	        }
+            if (results.size() > 2000) {
+                request.setAttribute("subId", o.getId());
+                return;
+            }
 
-	        PagedTable pagedTable = new PagedTable(results);
-	        // NB: you need to set a maximum, default is 10!
-	        pagedTable.setPageSize(2000);
-	        request.setAttribute("pagedResults", pagedTable);
+            PagedTable pagedTable = new PagedTable(results);
+            // NB: you need to set a maximum, default is 10!
+            pagedTable.setPageSize(2000);
+            request.setAttribute("pagedResults", pagedTable);
 
-		} catch (ObjectStoreException e) {
-			e.printStackTrace();
-		}
+        } catch (ObjectStoreException e) {
+            e.printStackTrace();
+        }
 
         Set<Protocol> pt = new HashSet<Protocol>();
+        Set<ResultFile> rf = new HashSet<ResultFile>();
         pt = o.getProtocols();
+        rf = o.getResultFiles();
 
         request.setAttribute("DCCid", o.getdCCid());
         request.setAttribute("protocols", pt);
-	}
+        request.setAttribute("files", rf);
+    }
 }
