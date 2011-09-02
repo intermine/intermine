@@ -204,6 +204,7 @@ div.summary-popup .main-heading {
     font-size: 1.2em;
     margin: 0px;
     padding-top: 1em;
+    font-weight: bold;
 }
 
 h4 {
@@ -235,6 +236,7 @@ div.summary-header {
 
 .list-creation-info {
     padding-left: 0.5em;
+    padding-top: 1em;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
