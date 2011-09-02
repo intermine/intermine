@@ -72,13 +72,20 @@
       <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
       <property name="screenDetailsFile" location="/micklem/data/drsc/current/RNAi_screen_details"/>
     </source>
+<!--
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239"/>
-<!--  <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/> -->
     </source>
+    -->
+    <!-- Added r25 -->
+    <source name="ensembl-compara" type="ensembl-compara" dump="true">
+      <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
+      <property name="ensemblcompara.organisms" value="7227 6239 9606 10090"/>
+    </source>
+    
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
       <property name="biopax.organisms" value="7227 6239"/>
