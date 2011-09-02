@@ -14,6 +14,7 @@ lib/InterMine/Model/TestModel.pm
 lib/InterMine/Model/testmodel_model.xml
 lib/InterMine/Model/Types.pm
 MANIFEST			This list of files
+META.json
 META.yml
 README
 t/00-load.t
@@ -21,9 +22,9 @@ t/01_model/01_field.t
 t/01_model/02_class.t
 t/01_model/02_class_instantiate.t
 t/01_model/03_model.t
+t/01_model/04_paths.t
 t/data/expected_model.xml
 t/data/testmodel_model.xml
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
-META.json
