@@ -107,10 +107,18 @@
         table {
             border-spacing: 0px;
             font-size: 0.95em;
+            table-layout: fixed;
+        }
+
+        /* Target Webkit browsers */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            table {
+                table-layout: auto;
+            }
         }
 
         table td {
-            padding: 0.1em 0em;
+            padding: 0.0em 0em;
         }
 
         table.sub-table {
@@ -118,6 +126,13 @@
             display: inline-block;
             margin: 0px;
             border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        table.sub-table td {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         #ojtable_datatable tr {
@@ -133,7 +148,6 @@
         table.sub-table tr:first-child {
             border-top: none;
         }
-
 
     </style>
 
@@ -170,7 +184,15 @@
             var ret = "<table class='sub-table'>";
             _(value).each(function(cellValue, i) {
                 var cssClass = (i % 2 == 0) ? "even" : "odd";
-                ret += '<tr class="' + cssClass + '" style="height:' + height + '%" percentage="' + height + '"><td>';
+                var title = null;
+                if (_(cellValue).isString() || value == null) {
+                    title = cellValue + "";
+                }
+                ret += '<tr class="' + cssClass + '" style="height:' + height + '%" percentage="' + height + '"><td';
+                if (title != null) {
+                    ret += ' title="' + title + '"';
+                }
+                ret += ">";
                 ret += renderCell(cellValue);
                 ret += "</td></tr>";
             });
@@ -179,11 +201,11 @@
 
         function adjustRowHeights() {
             var $table = $('#ojtable_datatable');
-            var factor = 1.85; // The magic number will probably vary with padding, and should be calculated (TODO)
+            var factor = 1.5; // The magic number will probably vary with padding, and should be calculated (TODO)
             $table.children("tbody").children("tr").each(function(i, e) {
                 var $row = $(e);
-                var maxRows = factor * calculateMaxRows($row);
-                $row.css("height", (maxRows) + "em");
+                var maxRows = calculateMaxRows($row);
+                $row.css("height", (factor * maxRows) + "em");
             });
             if (!$.browser.webkit) {
                 translatePercentagesToExplicitHeights($table);
@@ -194,9 +216,10 @@
             $table.children("tbody").children("tr").each(function(i, e) {
                 var $row = $(e);
                 var rowH = $row.outerHeight(true);
-                var rowW = $row.outerWidth();
+                var rowW = $row.outerWidth() / $row.children("td").length;
                 console.log("Main row height: " + rowH);
                 $row.children("td").children("table").children('tbody').each(function(i, e) {
+
                     var $tbody = $(e);
                     var $trs = $tbody.children('tr');
                     $trs.each(function(i, e) {
@@ -227,20 +250,21 @@
         }
 
         function calculateMaxRows($row) {
-            perCol = [];
-            $row.children("td").each(function(i, e) {
+            var perCol = $row.children("td").map(function(i, e) {
+                var noOfGroups = 1;
                 var $cell = $(e);
-                var $subrows = $cell.children("table").children("tbody").children("tr");
-                var rows = $subrows.length || 1;
-                var numberInMostDeeplyNestedTable = 1;
-                $subrows.each(function(i, e) {
-                    var rowsHere = $subrows.children("td").children("table").children("tbody").children("tr").length;
-                    if (rowsHere > numberInMostDeeplyNestedTable) {
-                        numberInMostDeeplyNestedTable = rowsHere;
-                    }
-                });
-                perCol.push(rows * numberInMostDeeplyNestedTable);
-            });
+                var $td = $cell;
+                var $last = $td;
+                while ($td.children("table").length) {
+                    $last = $td;
+                    $td = $td.children("table").children("tbody").children("tr").children("td"); 
+                    noOfGroups = $last.length;
+                }
+                var groupSizes = $last.map(function(i, e) {
+                    return $(e).children("table").children("tbody").children("tr").length;
+                }).get();
+                return(noOfGroups * (_(groupSizes).max() || 1));
+            }).get();
             return _(perCol).max();
         }
 
@@ -254,9 +278,14 @@
                     "00002",
                     [ "DepartmentA-A", "DepartmentA-B", "EmpA-C" ], 
                     [ 
-                      [ "EmpA-A-A", "EmpA-A-B", "EmpA-A-C" ], 
+                      [ "EmpNameA-A-A", "EmpNameA-A-B", "EmpNameA-A-C" ], 
                       [], 
-                      [ "EmpA-C-A", "EmpA-C-B" ]
+                      [ "EmpNameA-C-A", "EmpNameA-C-B" ]
+                    ], 
+                    [ 
+                      [ "EmpAgeA-A-A", "EmpAgeA-A-B", "EmpAgeA-A-C" ], 
+                      [], 
+                      [ "EmpAgeA-C-A", "EmpAgeA-C-B" ]
                     ], 
                     [ "ContractorA-A" ], 
                     [ 
@@ -269,18 +298,21 @@
                       ]
                     ]
                   ],
-                  
                   [ 
                     "CompanyB", 
                     "00003",
                     [ "DepartmentB-A", "DepartmentB-B" ], 
                     [ 
-                      [ "EmpB-A-A", "EmpB-A-B", "EmpB-A-C" ], 
-                      [ "EmpB-B-A", "EmpB-B-B" ] 
+                      [ "EmpNameB-A-A", "EmpNameB-A-B", "EmpNameB-A-C" ], 
+                      [ "EmpNameB-B-A", "EmpNameB-B-B" ] 
+                    ], 
+                    [ 
+                      [ "EmpAgeB-A-A", "EmpAgeB-A-B", "EmpAgeB-A-C" ], 
+                      [ "EmpAgeB-B-A", "EmpAgeB-B-B" ] 
                     ], 
                     [ "ContractorB-A", "ContractorB-B" ],
                     [ 
-                      [ "OldComB-A-A", "OldComB-A-B", null ], 
+                      [ "OldComB-A-A", "OldComB-A-B with lots of pointless extra information that nobody really wants or needs to read", null ], 
                       [ "OldComB-B-A" ]
                     ] ,
                     [
@@ -300,8 +332,12 @@
                     "00001",
                     [ "DepartmentC-A", "DepartmentC-B" ], 
                     [ 
-                      [ "EmpC-A-A", "EmpC-A-B", "EmpC-A-C" ], 
-                      [ "EmpC-B-A", "EmpC-B-B", "EmpC-B-C", "EmpC-B-D" ] 
+                      [ "EmpNameC-A-A", "EmpNameC-A-B", "EmpNameC-A-C" ], 
+                      [ "EmpNameC-B-A", "EmpNameC-B-B", "EmpNameC-B-C", "EmpNameC-B-D" ] 
+                    ], 
+                    [ 
+                      [ "EmpAgeC-A-A", "EmpAgeC-A-B", "EmpAgeC-A-C" ], 
+                      [ "EmpAgeC-B-A", "EmpAgeC-B-B", "EmpAgeC-B-C", "EmpAgeC-B-D" ] 
                     ], 
                     [ "ContractorC-A", "ContractorC-B", "ContractorC-C", "ContractorC-D" ],
                     [ 
@@ -331,7 +367,8 @@
                     {sTitle: "Company", fnRender: cellRenderer},
                     {sTitle: "VAT No", fnRender: cellRenderer},
                     {sTitle: "Department", bSortable: false, fnRender: cellRenderer},
-                    {sTitle: "Employee", bSortable: false, fnRender: cellRenderer},
+                    {sTitle: "Employee Name", bSortable: false, fnRender: cellRenderer},
+                    {sTitle: "Employee Age", bSortable: false, fnRender: cellRenderer},
                     {sTitle: "Contractor",  bSortable: false,fnRender: cellRenderer},
                     {sTitle: "Old Company",  bSortable: false,fnRender: cellRenderer},
                     {sTitle: "Old Com Deps",  bSortable: false,fnRender: cellRenderer}
