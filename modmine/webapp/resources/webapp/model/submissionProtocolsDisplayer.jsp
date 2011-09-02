@@ -310,10 +310,9 @@ jQuery(document).ready(function () {
 
 </TD>
 </tr>
-</table>
-
 </c:when>
 <c:otherwise>
+</table>
 
 <%-- too many rows: just do a normal query --%>
 <im:querylink
