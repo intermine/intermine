@@ -294,7 +294,7 @@
   <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" />
   <attribute name="RNAsize" type="java.lang.String" />
   <attribute name="notice" type="java.lang.String" />
-  <attribute name="replacesSubmission(s)" type="java.lang.String" />
+  <attribute name="replacesSubmission" type="java.lang.String" />
 
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
