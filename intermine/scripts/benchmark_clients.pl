@@ -140,7 +140,13 @@ for my $name (sort keys %$routines) {
 
 my ($shortest) = sort values %times;
 
+
 for my $name (sort keys %$routines) {
     print "$name took $times{$name} seconds\n";
 }
+
+open (my $fh, '>>', "benchmark.results") or die "Could not open result file";
+my $line = join(",", map {$times{$_}} sort keys %times);
+print $fh "$line\n";
+close($fh);
 
