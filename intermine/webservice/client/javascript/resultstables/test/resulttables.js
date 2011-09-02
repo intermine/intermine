@@ -252,7 +252,11 @@ InterMine = {
     "Model": Model,
     "Query": Query,
     "models": {},
-    "summaryFields": {}
+    "summaryFields": {},
+    "settings": {
+        "defaultListName": "New List",
+        "addColumnHeaders": true
+    }
 };
 
 if (typeof console == "undefined") { window.console = {"log": function() {}} };
@@ -557,7 +561,7 @@ function summariseQuery($popup, url, pq, pinned, clicked, summaryPath, filterTer
             query: query.serialise(), 
             summaryPath: summaryPath, 
             filterTerm: filterTerm,
-            size: 1000,
+            size: 1000
         },
         url: url,
         error: function() {console.log(arguments)},
@@ -745,7 +749,7 @@ var getAdder = function(pq, box, path, dataTable, clicked, url, pinned) { return
 var itemState = {
     "pinned": 0, 
     "excluded": 1,
-    "nothing": 2,
+    "nothing": 2
 };
 
 var getSelectorFn = function($conBox, item, state, selector, pq, clicked, dataTable, path) { return function(ev) {
@@ -1034,9 +1038,11 @@ function getColumnSummariser(id, pq, url) { return function(ev) {
         var exportParams = [
             {name: "query", value: clone.serialise()},
             {name: "summaryPath", value: summaryPath},
-            {name: "format", value: "tab"},
-            {name: "columnheaders", value: "1"}
+            {name: "format", value: "tab"}
         ];
+        if (InterMine.settings.addColumnHeaders) {
+            exportParams.push({name: "columnheaders", value: "1"});
+        }
         var filterTerm = $conBox.find('input').val();
         if (filterTerm) {
             exportParams.push({name: "filterTerm", value: filterTerm});
@@ -1132,6 +1138,7 @@ function updateListPreview(id, base) {
     var types = __(typeOfObj[id]).values().compact().uniq().value();
     var type = (types.length) ? model.findCommonTypeOfMultipleClasses(types) : "item";
     var $wrapper = $('#' + id + "_wrapper");
+    $wrapper.find('.selected-count').text(itemCount);
 
     if (itemCount > 0) {
         var query = new Query({
@@ -1155,8 +1162,15 @@ function updateListPreview(id, base) {
                 _(resultset.results).each(function(row) {
                     var $li = $('<li>').appendTo($ul);
                     __(row).keys().each(function(idx) {
-                        $li.append($('<span>').attr("title", resultset.columnHeaders[idx]).text(row[idx].value));
+                        $li.append($('<span class="attr">').attr("title", resultset.columnHeaders[idx]).text(row[idx].value));
                         $li.append(" ");
+                    });
+                    var objId = row[0].id;
+                    $('<span title="remove" class="ui-icon ui-icon-close item-remover">').appendTo($li).click(function() {
+                        console.log("removing " + objId);
+                        chosenListIds[id] = _(chosenListIds[id]).without(objId + "");
+                        updateCheckBoxes(id, base);
+                        updateListPreview(id, base);
                     });
                 });
             }
@@ -1469,8 +1483,23 @@ function initTable(pq, id, base, token) {
                     $('body').append($menu);
                 };
 
+                $coder.attr("title", "Access this data using the API");
+                var coderCallBack;
+                if (InterMine.settings.defaultAPIFormat) {
+                    var apiFormat = InterMine.settings.defaultAPIFormat;
+                    $coder.button("option", "label", apiFormat);
+                    if (apiFormat == "XML") {
+                        coderCallBack = showXML;
+                    } else if (apiFormat == "URL") {
+                        coderCallBack = showURL;
+                    } else {
+                        coderCallBack = getCodeShower(apiFormat);
+                    }
+                } else {
+                    coderCallBack = displayLangMenu;
+                }
+                $coder.click(coderCallBack);
                 $codeSelector.click(displayLangMenu).attr("title", "Choose API access method");
-                $coder.click(displayLangMenu).attr("title", "Access this data using the API");
 
                 var $dls = jQuery('<span>');
                 var $downloader = jQuery('<button>').text("Download");
@@ -1492,6 +1521,9 @@ function initTable(pq, id, base, token) {
                         {name: "query", value: vq.serialise()},
                         {name: "format", value: format.toLowerCase()}
                     ];
+                    if (InterMine.settings.addColumnHeaders) {
+                        params.push({name: "columnheaders", value: 1});
+                    }
                     var dlUrl = url + "?" + jQuery.param(params);
                     if (format == "XML" || format == "JSONROWS") {
                         window.open(dlUrl);
@@ -1521,7 +1553,16 @@ function initTable(pq, id, base, token) {
                     $('body').append($menu);
                 };
 
-                $downloader.click(displayDLMenu).attr("title", "Download the complete result set");
+                $downloader.attr("title", "Download the complete result set");
+                var downloaderCallBack;
+                if (InterMine.settings.defaultExportFormat) {
+                    var exportFormat = InterMine.settings.defaultExportFormat;
+                    $downloader.button("option", "label", exportFormat);
+                    downloaderCallBack = getDownloader(exportFormat);
+                } else {
+                    downloaderCallBack = displayDLMenu;
+                }
+                $downloader.click(downloaderCallBack);
                 $dlSelector.click(displayDLMenu).attr("title", "Choose format to download results in");
 
                 var $listButton = jQuery('<button>').text("Create List").click(function() {
@@ -1531,11 +1572,13 @@ function initTable(pq, id, base, token) {
                     listCreationState[id] = true;
                     $dt.find('td input').attr("checked", false);
                     var $popup = jQuery('<div class="summary-popup list-popup"></div>');
-                    var $h3 = jQuery('<h3>').addClass("main-heading");
+                    var $h3 = jQuery('<span>').addClass("main-heading");
                     $('<span class="list-creation-info">List Preview (<span class="selected-count">0</span> <span class="selected-types">items</span> selected) </span>').appendTo($h3);
 
+                    var listName = InterMine.settings.defaultListName;
+                    var listDesc = InterMine.settings.defaultListDescription || "No Description";
                     var $topBox = jQuery('<div class="summary-header"></div>').appendTo($popup).append($h3);
-                    $('<div><table><tr><td>Name:</td><td><span class="new-list-name list-editable">New List</span></td></tr><tr><td>Description:</td><td><span class="new-list-description list-editable">No description</span></td></tr></table></div>').appendTo($popup);
+                    $('<div><table><tr><td>Name:</td><td><span class="new-list-name list-editable">' + listName + '</span></td></tr><tr><td>Description:</td><td><span class="new-list-description list-editable">' + listDesc + '</span></td></tr></table></div>').appendTo($popup);
                     $popup.find('.list-editable').editable(function(value, settings) {return value}, {onblur: "submit", submit: "OK", tooltip: "Click to edit"});
                     var $centreBox = jQuery('<div>').addClass("list-items-scroller").appendTo($popup);
                     var $ul = jQuery('<ul>').addClass("list-items").appendTo($centreBox);
@@ -1604,6 +1647,11 @@ function initTable(pq, id, base, token) {
                         }
                     });
                 });
+
+                var $grower = $('<span>').addClass("grower ui-icon ui-icon ui-icon-grip-dotted-horizontal");
+                $dt.find('.dataTables_info').after($grower);
+
+                $dt.resizable({resize: function(event, ui) {var scrollY = $dt.parent().outerHeight() - 210; $dt.find('.dataTables_scrollBody').css('height', scrollY + "px"); $dataTable.fnAdjustColumnSizing()}, alsoResize: $dt.parent()});
 
                 $dt.find('.colvis_button').mouseover(function() {$(this).addClass("ui-state-hover");}).mouseout(function() {$(this).removeClass("ui-state-hover")});
 
