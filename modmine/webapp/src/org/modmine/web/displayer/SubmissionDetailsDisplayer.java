@@ -94,6 +94,7 @@ public class SubmissionDetailsDisplayer extends ReportDisplayer
         request.setAttribute("uniquelyMappedReadCount", s.getUniquelyMappedReadCount());
         request.setAttribute("totalReadCount", s.getTotalMappedReadCount());
         request.setAttribute("notice", s.getNotice());
+        request.setAttribute("url", s.getUrl());
 
     }
 }
