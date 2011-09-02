@@ -9,9 +9,12 @@ import re
 
 # Use core json for 2.6+, simplejson for <=2.5
 try:
-    import json
+    import simplejson as json # Prefer this as it is faster
 except ImportError: # pragma: no cover
-    import simplejson as json
+    try:
+        import json
+    except ImportError:
+        raise ImportError("Could not find any JSON module to import - please install simplejson to continue")
 
 # Local intermine imports
 from intermine.query import Query, Template
