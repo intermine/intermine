@@ -57,12 +57,13 @@ subtype FieldHash,  as HashRef[Field];
 
 # PATH
 
-subtype JoinedPathString, as Str, where { /^[[:alnum:]\.,\s]+$/ };
+my $path_re = qr/([[:alnum:]_]+\.)*[[:alnum:]_]+/;
+subtype JoinedPathString, as Str, where { /^ ( $path_re (,?\s*|\s+) )+ $path_re $/x };
 subtype PathString,
-    as Str, where { /^[[[:alnum:]\.]*[[:alnum:]]$/ },
+    as Str, where { /^$path_re$/ },
     message {
     (defined)
-        ? "PathString can only contain 'A-Z', '0-9' and '.', not '$_'"
+        ? "PathString can only contain 'A-Z', '0-9', '_' and '.', not '$_'"
         : "PathString must be defined";
     };
 subtype PathList, as ArrayRef [PathString];
