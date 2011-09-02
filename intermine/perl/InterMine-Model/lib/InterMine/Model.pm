@@ -11,7 +11,7 @@ use Time::HiRes qw/gettimeofday/;
 
 use constant TYPE_PREFIX => "InterMine";
 
-our $VERSION = '0.9802';
+our $VERSION = '0.9803';
 
 =head1 NAME
 
