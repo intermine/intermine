@@ -240,6 +240,7 @@
             console.log(padding);
             $tr.children("td").css("height", (newPxs - padding) + "px");
             $tr.children("td").css("width", width + "px");
+            $tr.children("td").children("table").css("width", width + "px");
             $tr.children("td").children("table").children("tbody").each(function(i, e) {
                 var $tbody = $(e);
                 var $trs = $tbody.children('tr');
