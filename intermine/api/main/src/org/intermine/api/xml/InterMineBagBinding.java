@@ -70,10 +70,11 @@ public class InterMineBagBinding
                 writer.writeAttribute("description", bag.getDescription());
             }
             writer.writeAttribute("status", bag.getState());
-            List<String> keyFieldValues = bag.getContentsASKeyFieldValues();
-            for (String keyFieldValue : keyFieldValues) {
+            List<InterMineBag.BagValue> keyFieldValues = bag.getContentsAsKeyFieldAndExtraValue();
+            for (InterMineBag.BagValue bagValues : keyFieldValues) {
                 writer.writeEmptyElement("bagValue");
-                writer.writeAttribute("value", keyFieldValue);
+                writer.writeAttribute("value", bagValues.getValue());
+                writer.writeAttribute("extra", bagValues.getExtra());
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {

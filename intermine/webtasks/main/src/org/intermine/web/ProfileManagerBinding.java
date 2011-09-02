@@ -13,12 +13,14 @@ package org.intermine.web;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -30,6 +32,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.api.tracker.xml.TrackManagerBinding;
 import org.intermine.api.tracker.xml.TrackManagerHandler;
@@ -40,6 +43,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -205,8 +209,16 @@ class ProfileManagerHandler extends DefaultHandler
             } else {
                 version = Integer.parseInt(value);
             }
-            //templateTrackHandler = new TemplateTrackHandler(
-              //                     profileManager.getProfileObjectStoreWriter());
+            ObjectStoreWriter osw = profileManager.getProfileObjectStoreWriter();
+            try {
+                Connection con = ((ObjectStoreInterMineImpl) osw).getConnection();
+                if (!DatabaseUtil.tableExists(con, "bagvalues")) {
+                    DatabaseUtil.createBagValuesTables(con);
+                }
+                ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
+            } catch (SQLException sqle) {
+                LOG.error("Problem retrieving connection", sqle);
+            }
         }
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
@@ -235,7 +247,7 @@ class ProfileManagerHandler extends DefaultHandler
             Profile profile = profileHandler.getProfile();
             profileManager.createProfileWithoutBags(profile);
             try {
-                Map<String, Set<String>> bagValues = profileHandler.getBagsValues();
+                Map<String, Set<BagValue>> bagValues = profileHandler.getBagsValues();
                 for (InterMineBag bag : profile.getSavedBags().values()) {
                     bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
                 }

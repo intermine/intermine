@@ -221,9 +221,9 @@ public class ProfileManagerTest extends InterMineAPITestCase
         //osbag_int loaded after user login
         assertEquals(expectedBagContents, (sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
 
-        List<String> contentsAsKey = (sallyProfile.getSavedBags().get("sally_bag3")).getContentsASKeyFieldValues();
-        assertEquals("EmployeeA3", contentsAsKey.get(0));
-        assertEquals("EmployeeB2", contentsAsKey.get(1));
+        List<InterMineBag.BagValue> contentsAsKey = (sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsKeyFieldAndExtraValue();
+        assertEquals("EmployeeA3", contentsAsKey.get(0).value);
+        assertEquals("EmployeeB2", contentsAsKey.get(1).value);
 
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());

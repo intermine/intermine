@@ -143,7 +143,7 @@ public class InitialiserPlugin implements PlugIn
 
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
-        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
+        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
@@ -301,7 +301,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os)
+    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os, Properties webProperties)
         throws ServletException {
         BagQueryConfig bagQueryConfig = null;
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
@@ -310,6 +310,20 @@ public class InitialiserPlugin implements PlugIn
                 bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
             } catch (Exception e) {
                 throw new ServletException("Error loading class bag queries", e);
+            }
+            InputStream isBag = getClass().getClassLoader().getResourceAsStream("extraBag.properties");
+            Properties bagProperties = new Properties();
+            if (isBag != null) {
+                try {
+                    bagProperties.load(isBag);
+                    bagQueryConfig.setConnectField(bagProperties.getProperty("extraBag.connectField"));
+                    bagQueryConfig.setExtraConstraintClassName(bagProperties.getProperty("extraBag.className"));
+                    bagQueryConfig.setConstrainField(bagProperties.getProperty("extraBag.constrainField"));
+                } catch (IOException e) {
+                      throw new ServletException(e);
+                }
+            } else {
+                LOG.error("Could not find extraBag.properties file");
             }
         } else {
             // can used defaults so just log a warning

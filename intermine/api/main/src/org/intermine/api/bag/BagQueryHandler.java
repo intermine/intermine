@@ -80,14 +80,6 @@ public class BagQueryHandler extends DefaultHandler
     public void startElement(@SuppressWarnings("unused") String uri,
             @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
         throws SAXException {
-        if ("extra-bag-query-class".equals(qName)) {
-            connectField = attrs.getValue("connect-field");
-            className = attrs.getValue("class-name");
-            constrainField = attrs.getValue("constrain-field");
-            bagQueryConfig.setConnectField(connectField);
-            bagQueryConfig.setExtraConstraintClassName(className);
-            bagQueryConfig.setConstrainField(constrainField);
-        }
         if ("bag-type".equals(qName)) {
             type = attrs.getValue("type");
             if (!model.hasClassDescriptor(pkg + "." + type)) {
