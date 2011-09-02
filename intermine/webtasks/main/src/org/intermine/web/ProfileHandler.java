@@ -19,6 +19,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
@@ -44,7 +45,7 @@ class ProfileHandler extends DefaultHandler
     private Map<String, InterMineBag> savedBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
-    private Map<String, Set<String>> bagsValues;
+    private Map<String, Set<BagValue>> bagsValues;
     private ObjectStoreWriter osw;
     private int version;
     private String apiKey = null;
@@ -118,7 +119,7 @@ class ProfileHandler extends DefaultHandler
      * Return a map of bag values for each bag.
      * @return the map of bag values
      */
-    public Map<String, Set<String>> getBagsValues() {
+    public Map<String, Set<BagValue>> getBagsValues() {
         return bagsValues;
     }
 
@@ -138,7 +139,7 @@ class ProfileHandler extends DefaultHandler
                 apiKey = attrs.getValue("apikey");
             }
             if (attrs.getValue("localAccount") != null) {
-            	isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
+                isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
             }
         }
         if ("bags".equals(qName)) {

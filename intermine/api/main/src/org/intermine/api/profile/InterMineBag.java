@@ -10,6 +10,8 @@ package org.intermine.api.profile;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,17 +22,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -41,14 +47,16 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.TypeUtil;
@@ -94,10 +102,10 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-        BagState status, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+        BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
         throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, status, os, profileId, uosw);
+        init(name, description, dateCreated, state, os, profileId, uosw);
     }
 
     /**
@@ -115,10 +123,10 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-        BagState status, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
+        BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
         List<String> keyFieldNames) throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, status, os, profileId, uosw);
+        init(name, description, dateCreated, state, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
     }
 
@@ -229,62 +237,29 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns a List of key field values of the objects contained by this bag.
-     * Removed any duplicates
-     * @return the list of key field values
+     * Returns a List of BagValue (key field value and extra value) of the objects contained by this bag.
+     * @return the list of BagValue
      */
-    public List<String> getContentsASKeyFieldValues() {
-        List<String> keyFieldValueList = new ArrayList<String>();
+    public List<BagValue> getContentsAsKeyFieldAndExtraValue() {
         if (isCurrent()) {
-            Query q = new Query();
-            q.setDistinct(false);
-            try {
-                QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
-                q.addFrom(qc);
-                if (keyFieldNames.isEmpty()) {
-                    throw new RuntimeException("set the keyFieldNames before calling "
-                                              + "getContentsASKeyFieldValues method");
-                }
-                for (String keyFieldName : keyFieldNames) {
-                    q.addToSelect(new QueryField(qc, keyFieldName));
-                }
-                QueryField idField = new QueryField(qc, "id");
-                BagConstraint c = new BagConstraint(idField, ConstraintOp.IN, osb);
-                q.setConstraint(c);
-                Results res = os.execute(q);
-                for (Object rowObj : res) {
-                    ResultsRow<?> row = (ResultsRow<?>) rowObj;
-                    String value;
-                    for (int index = 0; index < keyFieldNames.size(); index++) {
-                        value = (String) row.get(index);
-                        if (value != null && !"".equals(value)) {
-                            if (!keyFieldValueList.contains(value)) {
-                                keyFieldValueList.add(value);
-                            }
-                            break;
-                        }
-                    }
-                }
-                return keyFieldValueList;
-            } catch (ClassNotFoundException cne) {
-                return new ArrayList<String>();
-            }
+            return getContentsFromOsb();
         } else {
             //we are upgrading bags, the osbag_int is empty, we need to use bagvalues table
             Connection conn = null;
             Statement stm = null;
             ResultSet rs = null;
-            List<String> primaryIdentifiersList = new ArrayList<String>();
+            List<BagValue> primaryIdentifiersList = new ArrayList<BagValue>();
             ObjectStoreInterMineImpl uos = null;
             try {
                 uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
                 conn = uos.getConnection();
                 stm = conn.createStatement();
-                String sql = "SELECT value FROM " + BAG_VALUES + " WHERE savedbagid = "
+                String sql = "SELECT value, extra FROM " + BAG_VALUES + " WHERE savedbagid = "
                              + savedBagId;
                 rs = stm.executeQuery(sql);
                 while (rs.next()) {
-                    primaryIdentifiersList.add(rs.getString(1));
+                    primaryIdentifiersList.add(new BagValue(rs.getString(1),
+                                               (rs.getString(2) != null) ? rs.getString(2) : ""));
                 }
             } catch (SQLException sqe) {
                 LOG.error("Connection problems during loadings primary identifiers fields for"
@@ -308,46 +283,152 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns the values of the key field objects with id specified in input and contained in
-     * the bag. Removed any duplicates
+     * Returns the values of the key field objects and extra attribute (if it exists) contained in the bag.
+     * The values are retrieved using the objectstorebag.
      * @param ids the collection of id
      * @return the list of values
      */
-    @SuppressWarnings("unchecked")
-    public List<String> getKeyFieldValues(Collection<Integer> ids) {
-        List<String> keyFieldValueList = new ArrayList<String>();
+    private List<BagValue> getContentsFromOsb() {
+        return getContentsFromOsb(null);
+    }
+
+    /**
+     * Returns the values of the key field objects and extra attribute (if it exists) having the id
+     * specified in input and contained in the bag.The values are retrieved using the objectstorebag.
+     * @param ids the collection of id
+     * @return the list of values
+     */
+    private List<BagValue> getContentsFromOsb(Collection<Integer> ids) {
+        List<BagValue> keyFieldValueList = new ArrayList<BagValue>();
+        Properties bagProperties = new Properties();
+        InputStream isBag = getClass().getClassLoader().getResourceAsStream("extraBag.properties");
+        String extraClassName = null;
+        String extraConnectField = null;
+        String extraConstrainField = null;
+        if (isBag != null) {
+            try {
+                bagProperties.load(isBag);
+                extraConnectField = bagProperties.getProperty("extraBag.connectField");
+                extraClassName = bagProperties.getProperty("extraBag.className");
+                extraConstrainField = bagProperties.getProperty("extraBag.constrainField");
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                LOG.error("Problems loading extraBag.properties. ", ioe);
+            }
+        } else {
+            System.out.println("Could not find extraBag.properties file");
+            LOG.error("Could not find extraBag.properties file");
+        }
+        boolean hasExtraValue = false;
+        if (extraClassName != null) {
+            for (ClassDescriptor cd : classDescriptors) {
+                FieldDescriptor fd = cd.getFieldDescriptorByName(extraConnectField);
+                if (fd != null && fd instanceof ReferenceDescriptor) {
+                    hasExtraValue = true;
+                    break;
+                }
+            }
+        }
+
         Query q = new Query();
         q.setDistinct(false);
-        if (keyFieldNames.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
         try {
             QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
             q.addFrom(qc);
+            QueryClass qce = null;
+            if (hasExtraValue) {
+                qce = new QueryClass(Class.forName(extraClassName));
+                q.addFrom(qce);
+                q.addToSelect(new QueryField(qce, extraConstrainField));
+            }
+            if (keyFieldNames.isEmpty()) {
+                return Collections.EMPTY_LIST;
+            }
             for (String keyFieldName : keyFieldNames) {
                 q.addToSelect(new QueryField(qc, keyFieldName));
             }
             QueryField idField = new QueryField(qc, "id");
-            BagConstraint idsConstraints = new BagConstraint(idField, ConstraintOp.IN, ids);
-            q.setConstraint(idsConstraints);
-            Results res = os.execute(q, 1000, false, true, true);
+            BagConstraint constraint;
+            if (ids == null || ids.isEmpty()) {
+                constraint = new BagConstraint(idField, ConstraintOp.IN, osb);
+            } else {
+                constraint = new BagConstraint(idField, ConstraintOp.IN, ids);
+            }
+            if (!hasExtraValue) {
+                q.setConstraint(constraint);
+            } else {
+                ConstraintSet constraintSet = new ConstraintSet(ConstraintOp.AND);
+                constraintSet.addConstraint(constraint);
+                ContainsConstraint extraConstraint = new ContainsConstraint(
+                                                       new QueryObjectReference(qc, extraConnectField),
+                                                       ConstraintOp.CONTAINS,
+                                                       qce);
+                constraintSet.addConstraint(extraConstraint);
+                q.setConstraint(constraintSet);
+            }
+            Results res = os.execute(q);
             for (Object rowObj : res) {
                 ResultsRow<?> row = (ResultsRow<?>) rowObj;
                 String value;
-                for (int index = 0; index < keyFieldNames.size(); index++) {
+                String extra = "";
+                int index = 0;
+                if (hasExtraValue) {
+                    extra = (String) row.get(0);
+                    index++;
+                }
+                for (; index < keyFieldNames.size() + 1; index++) {
                     value = (String) row.get(index);
                     if (value != null && !"".equals(value)) {
-                        if (!keyFieldValueList.contains(value)) {
-                            keyFieldValueList.add(value);
-                        }
+                        keyFieldValueList.add(new BagValue(value, extra));
                         break;
                     }
                 }
             }
             return keyFieldValueList;
         } catch (ClassNotFoundException cne) {
-            return new ArrayList<String>();
+            return new ArrayList<BagValue>();
         }
+    }
+
+    /**
+     * Returns a List of BagValue (key field value and extra value) of the objects contained by this bag.
+     * @return the list of BagValue
+     */
+    public List<BagValue> getContentsOrderByExtraValue() {
+        Connection conn = null;
+        Statement stm = null;
+        ResultSet rs = null;
+        List<BagValue> primaryIdentifiersList = new ArrayList<BagValue>();
+        ObjectStoreInterMineImpl uos = null;
+        try {
+            uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
+            conn = uos.getConnection();
+            stm = conn.createStatement();
+            String sql = "SELECT value, extra FROM " + BAG_VALUES + " WHERE savedbagid = "
+                         + savedBagId + " ORDER BY extra DESC";
+            rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                primaryIdentifiersList.add(new BagValue(rs.getString(1),
+                                          (rs.getString(2) != null) ? rs.getString(2) : ""));
+            }
+        } catch (SQLException sqe) {
+            LOG.error("Connection problems during loadings primary identifiers fields for"
+                      + "the bag " + name, sqe);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                    if (stm != null) {
+                        stm.close();
+                    }
+                } catch (SQLException sqle) {
+                    LOG.error("Problems closing resources in the method "
+                        + "getContentsASPrimaryIdentifierValues for the bag " + name, sqle);
+                }
+            }
+            uos.releaseConnection(conn);
+        }
+        return primaryIdentifiersList;
     }
 
     /**
@@ -442,7 +523,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param bagValues the list of the key field values of the objects contained by the bag
      * @throws ObjectStoreException if something goes wrong
      */
-    public void saveWithBagValues(Integer profileId, Collection<String> bagValues)
+    public void saveWithBagValues(Integer profileId, Collection<BagValue> bagValues)
         throws ObjectStoreException {
         this.profileId = profileId;
         SavedBag savedBag = store();
@@ -773,7 +854,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void addBagValues() {
         if (profileId != null) {
-            List<String> values = getContentsASKeyFieldValues();
+            List<BagValue> values = getContentsAsKeyFieldAndExtraValue();
             addBagValues(values);
         }
     }
@@ -783,7 +864,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     private void addBagValuesFromIds(Collection<Integer> ids) {
         if (profileId != null) {
-            List<String> values = getKeyFieldValues(ids);
+            List<InterMineBag.BagValue> values = getContentsFromOsb(ids);
             addBagValues(values);
         }
     }
@@ -792,7 +873,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Save the values given in input into bagvalues table
      * @param bagValues the values to save
      */
-    public void addBagValues(Collection<String> bagValues) {
+    public void addBagValues(Collection<BagValue> bagValues) {
         Connection conn = null;
         Batch batch = null;
         try {
@@ -800,10 +881,10 @@ public class InterMineBag implements WebSearchable, Cloneable
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
                 batch = new Batch(new BatchWriterPostgresCopyImpl());
-                String[] colNames = new String[] {"savedbagid", "value"};
-                for (String value : bagValues) {
-                    batch.addRow(conn, BAG_VALUES, null, colNames,
-                                new Object[] {savedBagId, value});
+                String[] colNames = new String[] {"savedbagid", "value", "extra"};
+                for (BagValue bagValue : bagValues) {
+                    batch.addRow(conn, BAG_VALUES, savedBagId, colNames,
+                                new Object[] {savedBagId, bagValue.value, bagValue.extra});
                 }
                 batch.flush(conn);
                 conn.commit();
@@ -886,6 +967,31 @@ public class InterMineBag implements WebSearchable, Cloneable
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+    }
+    public class BagValue {
+        String value = null;
+        String extra = null;
+
+        public BagValue (String value, String extra) {
+            this.value = value;
+            this.extra = extra;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getExtra() {
+            return extra;
+        }
+
+        public void setExtra(String extra) {
+            this.extra = extra;
         }
     }
 }

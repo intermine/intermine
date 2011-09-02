@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.InterMineBag.BagValue;
+import org.intermine.web.logic.bag.BagQueryUpgrade;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -58,14 +61,23 @@ public class BagUpgradeAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         InterMineBag savedBag = profile.getSavedBags().get(bagName);
         if (bagQueryResult == null) {
-            List<String> primaryIdentifiersList =
-                savedBag.getContentsASKeyFieldValues();
             BagQueryRunner bagRunner = im.getBagQueryRunner();
-            bagQueryResult = bagRunner.searchForBag(savedBag.getType(), primaryIdentifiersList, "", false);
+            BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagRunner, savedBag);
+            bagQueryResult = bagQueryUpgrade.getBagQueryResult();
             session.setAttribute("bagQueryResult_" + bagName, bagQueryResult);
         }
         request.setAttribute("newBagName", bagName);
         request.setAttribute("bagType", savedBag.getType());
         return mapping.findForward("bagUploadConfirm");
+    }
+
+    private BagQueryResult combineBagQueryResult(List<BagQueryResult> bagQueryResultList) {
+        BagQueryResult bagQueryResult = new BagQueryResult();
+        for (BagQueryResult bqr : bagQueryResultList) {
+            bagQueryResult.getMatches().putAll(bqr.getMatches());
+            bagQueryResult.getIssues().putAll(bqr.getIssues());
+            bagQueryResult.getUnresolved().putAll(bqr.getUnresolved());
+        }
+        return bagQueryResult;
     }
 }

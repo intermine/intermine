@@ -878,7 +878,7 @@ public final class DatabaseUtil
     public static void createBagValuesTables(Connection con)
         throws SQLException {
         String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text, extra text)";
-        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value)";
+        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value, extra)";
         con.createStatement().execute(sqlTable);
         con.createStatement().execute(sqlIndex);
     }

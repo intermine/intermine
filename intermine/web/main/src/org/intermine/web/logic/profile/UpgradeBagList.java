@@ -10,6 +10,7 @@ package org.intermine.web.logic.profile;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
@@ -21,8 +22,10 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryUpgrade;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -49,11 +52,10 @@ public class UpgradeBagList implements Runnable
         for (InterMineBag bag : savedBags.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 savedBagsStatus.put(bag.getName(), Constants.UPGRADING_BAG);
-                List<String> primaryIdentifiersList =
-                    bag.getContentsASKeyFieldValues();
+                
+                BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
+                BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
-                    BagQueryResult result = bagQueryRunner.searchForBag(bag.getType(),
-                                            primaryIdentifiersList, "", false);
                     if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                         Map<Integer, List> matches = result.getMatches();
                         bag.upgradeOsb(matches.keySet(), false);
@@ -63,15 +65,12 @@ public class UpgradeBagList implements Runnable
                         bag.setState(BagState.TO_UPGRADE);
                         savedBagsStatus.put(bag.getName(), BagState.TO_UPGRADE.toString());
                     }
-                } catch (ClassNotFoundException cnfe) {
-                    LOG.warn("The type " + bag.getType() + "isn't in the model."
-                             + "Impossible upgrade the bag list " + bag.getTitle(), cnfe);
-                } catch (InterMineException ie) {
-                    LOG.warn("Impossible upgrade the bags list " + bag.getTitle(), ie);
                 } catch (ObjectStoreException ose) {
                     LOG.warn("Impossible upgrade the bags list", ose);
                 }
             }
         }
     }
+    
+    
 }

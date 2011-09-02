@@ -24,6 +24,7 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -51,10 +52,11 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagName;
     private String bagType;
     private String bagDescription;
+    private String bagState;
     private InterMineBag bag;
     private int elementsInOldBag;
-    private Set<String> bagValues;
-    private Map<String, Set<String>> bagContents;
+    private Set<BagValue> bagValues;
+    private Map<String, Set<BagValue>> bagContents;
     private Map<String, List<FieldDescriptor>>  classKeys;
 
     /**
@@ -68,7 +70,7 @@ public class InterMineBagHandler extends DefaultHandler
      * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
      */
     public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
-            Map<String, InterMineBag> bags, Map<String, Set<String>> bagsValues, Integer userId) {
+            Map<String, InterMineBag> bags, Map<String, Set<BagValue>> bagsValues, Integer userId) {
         this.uosw = uosw;
         this.osw = osw;
         this.bags = bags;
@@ -95,10 +97,11 @@ public class InterMineBagHandler extends DefaultHandler
             Attributes attrs) throws SAXException {
         try {
             if ("bag".equals(qName)) {
-                bagValues = new HashSet<String>();
+                bagValues = new HashSet<BagValue>();
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
+                bagState = attrs.getValue("status");
                 Date dateCreated;
                 try {
                     dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
@@ -121,7 +124,8 @@ public class InterMineBagHandler extends DefaultHandler
             if ("bagValue".equals(qName) && bag != null) {
                 elementsInOldBag++;
                 String value = attrs.getValue("value");
-                bagValues.add(value);
+                String extra = attrs.getValue("extra");
+                bagValues.add(bag.new BagValue(value, extra));
             }
         } catch (ObjectStoreException e) {
             throw new SAXException(e);

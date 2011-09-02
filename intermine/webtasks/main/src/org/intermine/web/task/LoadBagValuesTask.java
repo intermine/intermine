@@ -10,6 +10,7 @@ package org.intermine.web.task;
  *
  */
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -74,6 +75,9 @@ public class LoadBagValuesTask extends Task
         ObjectStore os = null;
         ObjectStore uos = null;
         ObjectStoreWriter uosw = null;
+        InputStream test = this.getClass().getClassLoader().getResourceAsStream("extraBag.properties");
+        if (test == null) { System.out.println("extraBag.properties not found!!");return;
+        }
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
             uos = ObjectStoreFactory.getObjectStore(userProfileAlias);
@@ -100,7 +104,8 @@ public class LoadBagValuesTask extends Task
                     }
                 }
             } catch (SQLException sqle) {
-                throw new BuildException("Problems connecting bagvalues table", sqle);
+                sqle.printStackTrace();
+                throw new BuildException("Problems creating bagvalues table or intermine_state column", sqle);
             } finally {
                 try {
                     if (conn != null) {
@@ -138,6 +143,7 @@ public class LoadBagValuesTask extends Task
                         System .out.println("Error loading class descriptions.");
                         e.printStackTrace();
                     }
+
                     Map<String, List<FieldDescriptor>>  classKeys =
                         ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
 
