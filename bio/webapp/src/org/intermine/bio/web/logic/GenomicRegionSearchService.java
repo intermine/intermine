@@ -180,15 +180,27 @@ public class GenomicRegionSearchService
             }
         }
 
+        // Exclude preset feature types (global) to display
+        // Data should be comma separated class names
+        String excludedFeatureTypes = webProperties.getProperty(
+            "genomicRegionSearch.featureTypesExcluded.global");
+
+        List<String> excludedFeatureTypeList = new ArrayList<String>();
+        if (excludedFeatureTypes == null || "".equals(excludedFeatureTypes)) {
+            excludedFeatureTypeList = null;
+        } else {
+            excludedFeatureTypeList = Arrays.asList(excludedFeatureTypes.split(","));
+        }
+
         if ("".equals(orgFeatureJSONString)) {
-            orgFeatureJSONString = prepareWebData(orgList);
+            orgFeatureJSONString = prepareWebData(orgList, excludedFeatureTypeList);
             return orgFeatureJSONString;
         } else {
             return orgFeatureJSONString;
         }
     }
 
-    private String prepareWebData(List<String> orgList) {
+    private String prepareWebData(List<String> orgList, List<String> excludedFeatureTypeList) {
 
         Query q = new Query();
         q.setDistinct(true);
@@ -257,6 +269,11 @@ public class GenomicRegionSearchService
 
         // Get all feature types
         for (Set<String> ftSet : resultsMap.values()) {
+            // Exclude some feature types
+            if (excludedFeatureTypeList != null) {
+                ftSet.removeAll(excludedFeatureTypeList);
+            }
+
             if (featureTypesInOrgs == null) {
                 featureTypesInOrgs = new HashSet<String>();
                 featureTypesInOrgs.addAll(ftSet);
@@ -1386,6 +1403,9 @@ public class GenomicRegionSearchService
         return taxIds;
     }
 
+    /**
+     *  To serve UCSC Lift-Over
+     */
     public void serveLiftOver() {
 
     }
