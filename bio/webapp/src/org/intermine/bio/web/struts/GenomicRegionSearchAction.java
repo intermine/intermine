@@ -78,37 +78,43 @@ public class GenomicRegionSearchAction extends InterMineAction
         Properties webProperties = SessionMethods.getWebProperties(
                 request.getSession().getServletContext());
         String liftOver = webProperties.getProperty("genomicRegionSearch.liftOver");
-        String url = webProperties.getProperty("genomicRegionSearch.liftOver.url");
+        String liftOverServiceUrl = webProperties.getProperty("genomicRegionSearch.liftOver.url");
 
-        String liftOverServiceAvailable = (String) grsForm.get("liftover-service-available");
-        String genomeVersionSource = (String) grsForm.get("liftover-genome-version-source");
-        String genomeVersionTarget = (String) grsForm.get("liftover-genome-version-target");
+        if ("true".equals(liftOver) && !"".equals(liftOverServiceUrl)
+                && liftOverServiceUrl != null) {
 
-        // liftOverServiceAvailable == true
-        // liftOver == true
-        // url != null or empty
-        // genomeVersionSource != null or empty
-        // genomeVersionTarget != null or empty
-        // genomeVersionSource != genomeVersionTarget
-        if ("true".equals(liftOverServiceAvailable) && "true".equals(liftOver) && url.length() > 0
-                && !genomeVersionSource.equals(genomeVersionTarget)) {
+            String liftOverServiceAvailable = (String) grsForm.get("liftover-service-available");
+            String genomeVersionSource = (String) grsForm.get("liftover-genome-version-source");
+            String genomeVersionTarget = (String) grsForm.get("liftover-genome-version-target");
 
-            LiftOverService los = new LiftOverService();
-            Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
-                    grsService.getConstraint().getGenomicRegionList(),
-                    organism, genomeVersionSource, genomeVersionTarget, url);
+            // liftOverServiceAvailable == true
+            // liftOver == true
+            // url != null or empty
+            // genomeVersionSource != null or empty
+            // genomeVersionTarget != null or empty
+            // genomeVersionSource != genomeVersionTarget
+            if ("true".equals(liftOverServiceAvailable)
+                    && "true".equals(liftOver)
+                    && liftOverServiceUrl.length() > 0
+                    && !genomeVersionSource.equals(genomeVersionTarget)) {
 
-            // TODO verbose
-            if (liftedGenomicRegionMap == null) {
-                // 1.service unavailable
-                // 2.fail to convert
-                request.setAttribute(
-                        "liftOverStatus",
-                        "<i>liftOver service is temporarily inaccessible, "
-                        + "genomic region coordinates are not converted</i>");
-            } else {
-                grsService.getConstraint().setGenomicRegionList(
-                        liftedGenomicRegionMap.get("lifedGenomicRegions"));
+                LiftOverService los = new LiftOverService();
+                Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
+                        grsService.getConstraint().getGenomicRegionList(),
+                        organism, genomeVersionSource, genomeVersionTarget, liftOverServiceUrl);
+
+                // TODO verbose
+                if (liftedGenomicRegionMap == null) {
+                    // 1.service unavailable
+                    // 2.fail to convert
+                    request.setAttribute(
+                            "liftOverStatus",
+                            "<i>liftOver service is temporarily inaccessible, "
+                            + "genomic region coordinates are not converted</i>");
+                } else {
+                    grsService.getConstraint().setGenomicRegionList(
+                            liftedGenomicRegionMap.get("lifedGenomicRegions"));
+                }
             }
         }
 
