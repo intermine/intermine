@@ -139,10 +139,10 @@
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/micklem/data/ontologies/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/micklem/data/ontologies/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -453,7 +453,7 @@
         <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-        <property name="src.data.file" location="/micklem/data/ontologies/current/fly_development.obo"/>
+        <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
     </source>
     <source name="worm-development-ontology" type="worm-development-ontology">
         <property name="src.data.file" location="/micklem/data/wormbase/worm-development-ontology/current/worm_development.obo"/>
