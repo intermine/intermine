@@ -775,7 +775,7 @@ public class GenomicRegionSearchService
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
         if (chrInfoMap == null) {
             chrInfoMap = GenomicRegionSearchQueryRunner
-                    .getChromosomeInfo(interMineAPI);
+                    .getChromosomeInfo(interMineAPI, profile);
         }
 
         return chrInfoMap;
