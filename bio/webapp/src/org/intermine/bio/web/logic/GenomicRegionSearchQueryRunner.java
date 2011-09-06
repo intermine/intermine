@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,8 +31,6 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
@@ -191,9 +189,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
      *
      * @param im - the InterMineAPI
+     * @param profile a user of webapp
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(
+            InterMineAPI im, Profile profile) {
 
         // a Map contains orgName and its chrInfo accordingly
         // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
@@ -201,46 +201,29 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             new HashMap<String, Map<String, ChromosomeInfo>>();
 
         try {
-            Query q = new Query();
+            PathQuery query = new PathQuery(im.getModel());
 
-            QueryClass qcOrg = new QueryClass(Organism.class);
-            QueryClass qcChr = new QueryClass(Chromosome.class);
+            // Add views
+            query.addViews("Chromosome.organism.shortName",
+                    "Chromosome.primaryIdentifier",
+                    "Chromosome.length");
 
-            // Result columns
-            QueryField qfOrgName = new QueryField(qcOrg, "shortName");
-            QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
-            QueryField qfChrLength = new QueryField(qcChr, "length");
+            // Add orderby
+            query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-            // As in SQL SELECT ?,?,?
-            q.addToSelect(qfOrgName);
-            q.addToSelect(qfChrPID);
-            q.addToSelect(qfChrLength);
-
-            // As in SQL FROM ?,?
-            q.addFrom(qcChr);
-            q.addFrom(qcOrg);
-
-            // As in SQL WHERE ?
-            QueryObjectReference organism = new QueryObjectReference(qcChr,
-                    "organism");
-            ContainsConstraint ccOrg = new ContainsConstraint(organism,
-                    ConstraintOp.CONTAINS, qcOrg);
-            q.setConstraint(ccOrg);
-
-            Results results = im.getObjectStore().execute(q);
+            ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
 
             // a List contains all the chrInfo (organism, chrPID, length)
             List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
             // a Set contains all the orgName
             Set<String> orgSet = new HashSet<String>();
 
-            // Handle results
-            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+            while (results.hasNext()) {
+                List<ResultElement> row = results.next();
 
-                String org = (String) row.get(0);
-                String chrPID = (String) row.get(1);
-                Integer chrLength = (Integer) row.get(2);
+                String org = (String) row.get(0).getField();
+                String chrPID = (String) row.get(1).getField();
+                Integer chrLength = (Integer) row.get(2).getField();
 
                 // Add orgName to HashSet to filter out duplication
                 orgSet.add(org);
