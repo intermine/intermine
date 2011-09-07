@@ -62,7 +62,7 @@ $log->info("Running $0");
 # Set-up the intermine item-creating apparatus
 my $release = ($opt_r) ? '.' . $opt_r : '';
 my $model_file =
-  $script_dir . "/../../../$mine_name/dbmodel/build/main/genomic_model.xml";
+  $script_dir . "/../../../$mine_name/dbmodel/build/model/genomic_model.xml";
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties" . $release;
 
 for ( $model_file, $properties_file ) {
