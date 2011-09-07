@@ -72,7 +72,8 @@ public class PublicationAnnotationsDisplayer extends ReportDisplayer
         }
         Profile profile = SessionMethods.getProfile(session);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        for (String type : params.split("[, ]+")) {
+        for (String path : params.split("[, ]+")) {
+            String type = getType(path);
             List<Class<?>> lc = getClass(type, im.getModel());
             if (lc.isEmpty()) {
                 // invalid class name
@@ -81,11 +82,18 @@ public class PublicationAnnotationsDisplayer extends ReportDisplayer
             }
             PathQuery q = new PathQuery(im.getModel());
             q.addView(type + ".id");
-            q.addConstraint(Constraints.eq(type + ".publications.id", object.getId().toString()));
+            q.addConstraint(Constraints.eq(path + ".publications.id", object.getId().toString()));
             if (!q.isValid()) {
-                // no publications collection found
-                LOG.error("No publications collection found: " + type);
-                continue;
+                // try again
+                q = new PathQuery(im.getModel());
+                q.addView(type + ".id");
+                q.addConstraint(Constraints.eq(path + ".publication.id",
+                        object.getId().toString()));
+                if (!q.isValid()) {
+                    //  no publications collection found
+                    LOG.error("No publications reference or collection found: " + path);
+                    continue;
+                }
             }
             ExportResultsIterator values = executor.execute(q);
             Collection<InterMineObject> results = new HashSet<InterMineObject>();
@@ -110,6 +118,13 @@ public class PublicationAnnotationsDisplayer extends ReportDisplayer
             // return empty list
         }
         return lc;
+    }
+
+    private String getType(String path) {
+        if (path.contains(".")) {
+            return path.split("\\.")[0];
+        }
+        return path;
     }
 
     private int formatResults(Collection<InterMineObject> results,
