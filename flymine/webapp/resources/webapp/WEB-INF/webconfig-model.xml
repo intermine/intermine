@@ -383,7 +383,9 @@
 
   <class className="org.intermine.model.bio.Pathway">
     <headerconfig>
-      <titles mainTitles="identifier|name"/>
+        <titles>
+            <title mainTitles="identifier|name" />
+        </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier" />
@@ -462,7 +464,9 @@
 
   <class className="org.intermine.model.bio.Publication">
     <headerconfig>
-      <titles mainTitles="firstAuthor|year" />
+  <titles>
+    <title mainTitles="title" />
+ </titles>
     </headerconfig>
     <inlinelist>
       <table path="authors.name" showLinksToObjects="true" />
@@ -728,7 +732,12 @@
                      placement="Function"
                      types="Gene,Protein"/>
 
-
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
+                     jspName="model/publicationAnnotationsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     parameters="Gene,Protein"
+                     types="Publication"/>
 
   </reportdisplayers>
 
