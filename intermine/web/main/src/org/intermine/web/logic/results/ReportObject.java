@@ -248,7 +248,7 @@ public class ReportObject
             if (mainTitles != null) {
                 allTitles.addAll(mainTitles.keySet());
             }
-            if (mainTitles != null) {
+            if (mainTitles != null && subTitles != null) {
                 allTitles.addAll(subTitles.keySet());
             }
             if (allTitles.size() > 0) {
