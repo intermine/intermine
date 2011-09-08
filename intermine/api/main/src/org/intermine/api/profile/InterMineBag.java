@@ -37,6 +37,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -232,6 +233,36 @@ public class InterMineBag implements WebSearchable, Cloneable
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
+        SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
+        return ((List) res);
+    }
+
+    /**
+     * Returns a List which contains the ids given in input and contained
+     * in this bag as Integer IDs.
+     * @return a List of Integers
+     */
+    public List<Integer> getIdsContained(Collection<Integer> ids) {
+        Query q = new Query();
+        q.setDistinct(false);
+        try {
+            Class<? extends InterMineObject> clazz = (Class<InterMineObject>) Class.forName(getQualifiedType());
+            QueryClass qc = new QueryClass(clazz);
+            QueryField idField = new QueryField(qc, "id");
+            q.addToSelect(idField);
+            q.addFrom(qc);
+
+            BagConstraint constraint1 = new BagConstraint(idField, ConstraintOp.IN, ids);
+            BagConstraint constraint2 = new BagConstraint(idField, ConstraintOp.IN, osb);
+            ConstraintSet constraintSet = new ConstraintSet(ConstraintOp.AND);
+            constraintSet.addConstraint(constraint1);
+            constraintSet.addConstraint(constraint2);
+            q.setConstraint(constraintSet);
+
+        } catch (ClassNotFoundException nfe) {
+            LOG.error("Error retriving class for bag: " + name, nfe);
+        }
+
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
         return ((List) res);
     }
@@ -757,6 +788,16 @@ public class InterMineBag implements WebSearchable, Cloneable
             throw new IncompatibleTypesException("Cannot add type " + type
                     + " to bag of type " + getType() + ".");
         }
+        if (profileId != null) {
+            //we add only the ids not already contained
+            Collection<Integer> idsContained = getIdsContained(ids);
+            for (Integer idContained : idsContained) {
+                ids.remove(idContained);
+            }
+            if (!ids.isEmpty()) {
+                addBagValuesFromIds(ids);
+            }
+        }
         ObjectStoreWriter oswProduction = null;
         try {
             oswProduction = os.getNewWriter();
@@ -765,9 +806,6 @@ public class InterMineBag implements WebSearchable, Cloneable
             if (oswProduction != null) {
                 oswProduction.close();
             }
-        }
-        if (profileId != null) {
-            addBagValuesFromIds(ids);
         }
     }
 
@@ -814,7 +852,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
         if (profileId != null) {
-            addBagValues();
+            updateBagValues();
         }
     }
 
@@ -845,7 +883,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
         if (profileId != null && updateBagValues) {
-            deleteBagValues();
+            updateBagValues();
         }
     }
 
@@ -908,7 +946,10 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private void deleteBagValues() {
+    /**Update the bagvalues table with the items contained in osb_int table
+     * 
+     */
+    private void updateBagValues() {
         deleteAllBagValues();
         addBagValues();
     }
