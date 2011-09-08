@@ -708,6 +708,13 @@
                      parameters="{'dataSets': ['TreeFam data set', 'Drosophila 12 Genomes Consortium homology']}"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
+                     jspName="model/publicationAnnotationsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     types="Publication"/>
+
   </reportdisplayers>
 
    <widgets>
