@@ -712,7 +712,7 @@
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
-                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence,Submission"
                      types="Publication"/>
 
   </reportdisplayers>
