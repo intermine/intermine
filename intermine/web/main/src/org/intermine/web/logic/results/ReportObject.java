@@ -248,7 +248,7 @@ public class ReportObject
             if (mainTitles != null) {
                 allTitles.addAll(mainTitles.keySet());
             }
-            if (mainTitles != null && subTitles != null) {
+            if (subTitles != null) {
                 allTitles.addAll(subTitles.keySet());
             }
             if (allTitles.size() > 0) {
@@ -624,7 +624,8 @@ public class ReportObject
             }
             DisplayReference newReference = null;
             try {
-                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys(), objectType);
+                newReference = new DisplayReference(proxy, ref, webConfig, im.getClassKeys(),
+                        objectType);
             } catch (Exception e) {
                 e.printStackTrace();
             }
