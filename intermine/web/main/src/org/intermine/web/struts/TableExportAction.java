@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -143,7 +144,14 @@ public class TableExportAction extends InterMineAction
                 newPathQuery.removeOrderBy(orderElement.getOrderPath());
             }
         }
-
+        for (Entry<String, Boolean> outerEntry : newPathQuery.getOuterMap().entrySet()) {
+            if (outerEntry.getValue().equals(Boolean.TRUE)) {
+               String joinPath = outerEntry.getKey();
+               if (!newPathQuery.getView().contains(joinPath)) {
+                   newPathQuery.setOuterJoinStatus(joinPath, null);
+               }
+            }
+        }
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         return new PagedTable(executor.execute(newPathQuery));
