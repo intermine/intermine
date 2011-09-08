@@ -430,6 +430,13 @@
                      replacesFields="atlasExpression"
                      placement="summary"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
+                     jspName="model/publicationAnnotationsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     types="Publication"/>
 </reportdisplayers>
 
 <!-- widgets -->
