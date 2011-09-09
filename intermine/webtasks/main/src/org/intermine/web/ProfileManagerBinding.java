@@ -280,4 +280,10 @@ class ProfileManagerHandler extends DefaultHandler
             trackHandler.endElement(uri, localName, qName);
         }
     }
+
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if (profileHandler != null) {
+            profileHandler.characters(ch, start, length);
+        }
+    }
 }

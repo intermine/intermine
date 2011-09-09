@@ -178,4 +178,13 @@ class ProfileHandler extends DefaultHandler
             subHandler.endElement(uri, localName, qName);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if (subHandler != null && subHandler instanceof TemplateQueryHandler) {
+            subHandler.characters(ch, start, length);
+        }
+    }
 }
