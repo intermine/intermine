@@ -659,13 +659,11 @@
                      placement="Regulation"
                      types="Gene"/>
 
-<!--
     <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
                      jspName="model/rnaiDisplayer.jsp"
                      replacesFields=""
                      placement="Regulation"
                      types="Gene"/>
--->
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
