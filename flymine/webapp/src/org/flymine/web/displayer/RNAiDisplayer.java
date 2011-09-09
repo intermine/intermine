@@ -11,6 +11,7 @@ package org.flymine.web.displayer;
  */
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -25,12 +26,10 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.ReportDisplayer;
@@ -46,6 +45,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class RNAiDisplayer extends ReportDisplayer
 {
     private static final Set<String> RESULT_SCORES = new LinkedHashSet<String>();
+
 
     /**
      * @param config report object config
@@ -65,54 +65,52 @@ public class RNAiDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-        Map<String, Set<ResultElement>> rnaiResults = initMap();
-        Path rnaiResultPath = null;
-        try {
-            rnaiResultPath = new Path(im.getModel(), "Gene.rnaiResults.rnaiScreen");
-        } catch (PathException e) {
-            return;
-        }
+        Map<String, Map<ResultElement, ResultElement>> rnaiResults = initMap();
         Gene gene = (Gene) reportObject.getObject();
         PathQuery q = getQuery(im, gene.getId());
-        Profile profile = SessionMethods.getProfile(request.getSession());
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = executor.execute(q);
-        boolean noResults = (it.hasNext() ? false : true);
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            String rnaiResult =  (String) row.get(0).getField();
-            InterMineObject rnaiScreen = (InterMineObject) row.get(1).getObject();
-            ResultElement re = new ResultElement(rnaiScreen, rnaiResultPath, true);
-            Util.addToSetMap(rnaiResults, rnaiResult, re);
+        boolean noResults = true;
+        if (q.isValid()) {
+            Profile profile = SessionMethods.getProfile(request.getSession());
+            PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+            ExportResultsIterator it = executor.execute(q);
+            while (it.hasNext()) {
+                List<ResultElement> row = it.next();
+                String score =  (String) row.get(0).getField();
+                ResultElement screen =  (ResultElement) row.get(1);
+                ResultElement pub =  (ResultElement) row.get(2);
+                Map<ResultElement, ResultElement> screens = rnaiResults.get(score);
+                screens.put(screen, pub);
+                noResults = false;
+            }
         }
         if (noResults) {
-            final String noRNAiMessage = "No RNAi results found";
-            request.setAttribute("noRNAiMessage", noRNAiMessage);
+            request.setAttribute("noRNAiMessage", "No RNAi results found");
         } else {
-            request.setAttribute("rnaiResults", rnaiResults);
+            request.setAttribute("results", rnaiResults);
         }
     }
 
     /*
-    <query name="" model="genomic" view="Gene.rnaiResults.result Gene.rnaiResults.rnaiScreen.name
-    Gene.rnaiResults.rnaiScreen.publication.pubMedId" sortOrder="Gene.rnaiResults.result asc">
-    <constraint path="Gene.rnaiResults" type="RNAiScreenHit"/>
-   </query>
+<query name="" model="genomic" view="RNAiScreen.rnaiScreenHits.result RNAiScreen.name
+RNAiScreen.publication.pubMedId RNAiScreen.rnaiScreenHits.gene.primaryIdentifier"
+sortOrder="RNAiScreen.name asc">
+</query>
     */
     private static PathQuery getQuery(InterMineAPI im, Integer geneId) {
         PathQuery q = new PathQuery(im.getModel());
-        q.addViews("Gene.rnaiResults.result", "Gene.rnaiResults.rnaiScreen.name",
-                "Gene.rnaiResults.rnaiScreen.publication.pubMedId");
-        q.addConstraint(Constraints.eq("Gene.id", "" + geneId));
-        q.addConstraint(Constraints.type("Gene.rnaiResults", "RNAiScreenHit"));
-        q.addOrderBy("Gene.rnaiResults.result", OrderDirection.ASC);
+        q.addViews("RNAiScreen.rnaiScreenHits.result", "RNAiScreen.name",
+                "RNAiScreen.publication.pubMedId");
+        q.addConstraint(Constraints.eq("RNAiScreen.rnaiScreenHits.gene.id", "" + geneId));
+        q.addOrderBy("RNAiScreen.name", OrderDirection.ASC);
         return q;
     }
 
-    private Map<String, Set<ResultElement>> initMap() {
-        Map<String, Set<ResultElement>> scores = new LinkedHashMap();
+    // we want the scores to be in order - strong first, etc.
+    private Map<String, Map<ResultElement, ResultElement>> initMap() {
+        Map<String, Map<ResultElement, ResultElement>> scores
+            = new LinkedHashMap<String, Map<ResultElement, ResultElement>>();
         for (String score : RESULT_SCORES) {
-            Util.addToSetMap(scores, score, new HashSet<ResultElement>());
+            scores.put(score, new LinkedHashMap<ResultElement, ResultElement>());
         }
         return scores;
     }
