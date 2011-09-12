@@ -23,13 +23,16 @@
           var jSONObject = jQuery.parseJSON(mines);
           generate(jSONObject, "#intermine_links");
       });
-      //var jSONObject = [{"mineName":"ZFINMine"}, {"mineName":"modMine","organisms":[{"genes":{"shortName":"D. melanogaster","orthologues":{"displayIdentifier":"ap","primaryIdentifier":"FBgn0000099"}},"shortName":"D. melanogaster"},{"shortName":"D. virilis","orthologues":[{"displayIdentifier":"Dsim\\GD10352","primaryIdentifier":"FBgn0182124"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0171416"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0017741"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0041262"},{"displayIdentifier":"Dpse\\ap","primaryIdentifier":"FBgn0064417"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0154548"},{"displayIdentifier":"Dana\\GF13843","primaryIdentifier":"FBgn0090870"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0064607"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0236786"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0127893"},{"displayIdentifier":"\"\"","primaryIdentifier":"FBgn0142349"}]}]}, {"mineName":"metabolicMine"}, {"mineName":"YeastMine"}, {"mineName":"RatMine"}]
+	  //var jSONObject = [{"mineName":"ZFINMine","organisms":[{"shortName":"D. rerio","orthologues":[{"displayIdentifier":"\"\"","primaryIdentifier":"ENSDARG00000044216"}]},{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"\"\"","primaryIdentifier":"ENSG00000140718"}},"shortName":"H. sapiens"}]}, {"mineName":"modMine"}, {"mineName":"YeastMine"}, {"mineName":"FlyMine","organisms":[{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"ENSG00000140718","primaryIdentifier":"FTO"}},"shortName":"H. sapiens"}]}, {"mineName":"RatMine"}];
   }
 
   function generate(jSONObject, target) {
-      jQuery(target).html("<ul class='mines'></ul>");
-      target += " ul.mines";
-
+	  jQuery('<ul/>', {
+    	  'class': 'mines'
+      })
+      .appendTo(target);
+	  target += ' ul.mines';
+      
       // for each mine in question...
       jQuery.each(jSONObject, function(key, entry) {
           if (entry['organisms'] != undefined) {
@@ -78,12 +81,11 @@
 
                   // gene item
                   if (organismEntry['genes'] != undefined) {
-                      jQuery('<li/>', {
-                          text: organismEntry['genes']['orthologues']['displayIdentifier']
+                	  var ortho = organismEntry['genes']['orthologues'];
+                	  jQuery('<li/>', {
+                          text: (ortho['displayIdentifier'] == '""') ? ortho['primaryIdentifier'] : ortho['displayIdentifier']
                       })
                       .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
-
-                      //identifier = organismEntry['genes']['orthologues']['primaryIdentifier'];
                   }
                   // orthologues list
                   if (organismEntry['orthologues'] != undefined) {
@@ -97,19 +99,12 @@
                               text: identifier
                           })
                           .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
-
-                          //identifier = orthoEntry['primaryIdentifier'];
                       });
                   }
                   // add separators & linkify
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
-                        // sometimes we do not have a symbol and have a string of bunny ears...
-                        //if (jQuery(this).text() != '""') {
-                          var linkText = jQuery(this).text();
-                        //} else {
-                        //  var linkText = identifier;
-                        //}
+                        var linkText = jQuery(this).text();
                         jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + linkText + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
                       }
                       if (i > 0) {
