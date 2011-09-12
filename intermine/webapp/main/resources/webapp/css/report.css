@@ -109,6 +109,9 @@ form#fly-atlas-options table tr.even td { border-width:1px 0; border-style:solid
 form#fly-atlas-options table tr td.border-left { border-left:1px solid; }
 form#fly-atlas-options table tr td { padding:6px; }
 
+/* RNAi displayer */
+#rnai-displayer a.link { margin-left:6px; font-size:12px; }
+
 /* resizing on small screens */
 @media only screen and (max-width:1440px) {
     /* header summary fields */

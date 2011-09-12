@@ -314,7 +314,8 @@ div.collection-table.results table { border-top-color:#5C0075; }
 div.basic-table h3 { background:#F4EEF7; border-top-color:#5C0075; color:#5C0075; text-shadow:1px 1px 1px #FFF; }
 div.basic-table table a,
 div.basic-table table a:hover,
-div.basic-table table a:visited { color:#5C0075; }
+div.basic-table table a:visited,
+div.basic-table a.link { color:#5C0075; }
 div.basic-table.gray h3,
 div.basic-table.grey h3 { background:#F6F5F7; border-top-color:#6E6E6E; color:#ABABAB; }
 /* collection of collection tables */
