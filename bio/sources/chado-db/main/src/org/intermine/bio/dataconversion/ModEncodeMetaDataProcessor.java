@@ -3697,6 +3697,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
         FIELD_NAME_MAP.put("Embargo Date", "embargoDate");
         FIELD_NAME_MAP.put("dcc_id", "DCCid");
+        FIELD_NAME_MAP.put("replaces", "replacesSubmission");
         FIELD_NAME_MAP.put("PubMed ID", "pubMedId");
         FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Mid Initials", NOT_TO_BE_LOADED);
