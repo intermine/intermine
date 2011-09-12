@@ -183,7 +183,7 @@ public class GeneExpressionAtlasExpressions {
             ExpressionList aExpressions = results.get(aK);
             ExpressionList bExpressions = results.get(bK);
 
-            if (aExpressions.tStatistic < aExpressions.tStatistic) {
+            if (aExpressions.tStatistic < bExpressions.tStatistic) {
                 return 1;
             } else {
                 if (aExpressions.tStatistic > bExpressions.tStatistic) {
