@@ -8,7 +8,7 @@
 
 
 <!-- publicationCountsDisplayer.jsp -->
-<div class="basic-table">
+<div id="publication-counts-displayer" class="collection-table">
 <h3>Publications</h3>
 
 <c:choose>
@@ -17,34 +17,75 @@
   </c:when>
   <c:otherwise>
     <table>
-    <thead>
-	    <tr>
-	        <th>PubMed</th>
-	        <th>Title</th>
-	        <th>Number of genes mentioned</th>
-	    </tr>
-	</thead>
-	<tbody>
-    <c:forEach items="${results}" var="entry">
-
-      <c:set var="pub" value="${entry.key}" />
-      <c:set var="total" value="${entry.value}" />
-
-       <tr>
-            <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.pubMedId}"/></html:link></td>
-            <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
-            <td><c:out value="${total}"/></td>
-        </tr>
-
-    </c:forEach>
-    </tbody>
+	    <thead>
+		    <tr>
+		        <th>PubMed</th>
+		        <th>Title</th>
+		        <th>Number of genes mentioned</th>
+		    </tr>
+		</thead>
+		<tbody>
+	    <c:forEach items="${results}" var="entry" varStatus="status">
+			<c:set var="pub" value="${entry.key}" />
+			<c:set var="total" value="${entry.value}" />
+			<tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
+				<td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.pubMedId}"/></html:link></td>
+			  	<td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
+			  	<td><c:out value="${total}"/></td>
+			</tr>
+	
+	    </c:forEach>
+	    </tbody>
     </table>
-    
-    <div class="show-in-table outer">
-      <html:link action="/collectionDetails?id=${object.id}&amp;field=publications&amp;trail=${param.trail}">
-        Show all in a table &raquo;
-      </html:link>
-    </div>
+
+	  <div class="toggle" style="display:none;">
+	    <a class="less" style="float:right; display:none; margin-left:20px;"><span>Collapse</span></a>
+	    <a class="more" style="float:right;"><span>Show more rows</span></a>
+	  </div>
+	
+	<div class="show-in-table" style="display:none;">
+		<html:link action="/collectionDetails?id=${object.id}&amp;field=publications&amp;trail=${param.trail}">
+	    	Show all in a table &raquo;
+	    </html:link>
+	</div>
+	
+    <script type="text/javascript">
+    (function() {
+    	var t = jQuery('#publication-counts-displayer');
+        var rows = t.find("table tbody tr");
+        if (rows.length > 10) {
+          t.find("div.toggle").show();
+          
+          t.find('div.toggle a.more').click(function(e) {
+            t.find("table tbody tr:hidden").each(function(i) {
+              if (i < 10) {
+                jQuery(this).show();
+              }
+            });
+            t.find("div.toggle a.less").show();
+            if (t.find("table tbody tr:hidden").length == 0) {
+            	t.find('div.toggle a.more').hide();
+            }
+            if (t.find("table tbody tr:visible").length >= 30) {
+            	t.find("div.show-in-table").show();
+            }
+          });
+          
+          t.find('div.toggle a.less').click(function(e) {
+            var that = this;
+            rows.each(function(i) {
+              if (i > 9) {
+                jQuery(this).hide();
+                jQuery(that).hide();
+              }
+            });
+            t.find('div.toggle a.more').show();
+            t.scrollTo('fast', 'swing', -20);
+            t.find("div.show-in-table").hide();
+          });
+        }
+    })();
+    </script>
   </c:otherwise>
 </c:choose>
 </div>

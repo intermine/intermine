@@ -23,12 +23,12 @@ function trimTable(e) {
       });
       var target = (jQuery.browser.msie) ? table.parent() : table.parent().parent();
       jQuery('<div/>', {
-          className: 'toggle',
-          html: jQuery('<a/>', {
-              className: 'more',
-              text: 'Show more rows',
-              title: 'Show more rows',
-              click: function(event) {
+          'class': 'toggle',
+          'html': jQuery('<a/>', {
+              'class': 'more',
+              'text': 'Show more rows',
+              'title': 'Show more rows',
+              'click': function(event) {
                 showMoreRows(e, 1, 10);
                 event.preventDefault();
               }
@@ -66,15 +66,15 @@ function showMoreRows(e, round, maxCount) {
   // first round, show collapser
   if (round == 1) {
     jQuery('<a/>', {
-      href: '#',
-      className: 'less',
-      style: 'float:right;',
-      text: 'Collapse',
-      title: 'Collapse',
-      html: jQuery('<span/>', {
-        text: 'Collapse'
+      'href': '#',
+      'class': 'less',
+      'style': 'float:right;',
+      'text': 'Collapse',
+      'title': 'Collapse',
+      'html': jQuery('<span/>', {
+        'text': 'Collapse'
       }),
-      click: function(event) {
+      'click': function(event) {
         collapseTable(e, maxCount);
         event.preventDefault();
       }
@@ -91,10 +91,10 @@ function showMoreRows(e, round, maxCount) {
     // update toggle count
     table.parent().parent().find('div.toggle a.more').remove();
     jQuery('<a/>', {
-      className: 'more',
-      text: 'Show more rows',
-      title: 'Show more rows',
-      click: function(event) {
+      'class': 'more',
+      'text': 'Show more rows',
+      'title': 'Show more rows',
+      'click': function(event) {
         showMoreRows(e, round, maxCount);
         event.preventDefault();
       }
@@ -133,13 +133,13 @@ function collapseTable(e, maxCount) {
   table.parent().parent().find('div.toggle a.more').remove();
 
   jQuery('<a/>', {
-    className: 'more',
-    text: 'Show more rows',
-    title: 'Show more rows',
-    html: jQuery('<span/>', {
-      text: 'Show more rows'
+    'class': 'more',
+    'text': 'Show more rows',
+    'title': 'Show more rows',
+    'html': jQuery('<span/>', {
+      'text': 'Show more rows'
     }),
-    click: function(event) {
+    'click': function(event) {
       showMoreRows(e, 1, maxCount);
       event.preventDefault();
     }
@@ -178,14 +178,14 @@ function collapseTemplate(e, maxCount) {
 
   // append a toggler back
   jQuery('<a/>', {
-    href: '#',
-    className: 'toggler',
-    text: 'Show more rows',
-    title: 'Show more rows',
-    html: jQuery('<span/>', {
-      text: 'Show 10 rows'
+    'href': '#',
+    'class': 'toggler',
+    'text': 'Show more rows',
+    'title': 'Show more rows',
+    'html': jQuery('<span/>', {
+      'text': 'Show 10 rows'
     }),
-    click: function(event) {
+    'click': function(event) {
       showMoreRowsTemplate(e, 1, maxCount);
       event.preventDefault();
     }
@@ -228,15 +228,15 @@ function showMoreRowsTemplate(e, round, maxCount) {
   // first round, show collapser
   if (round == 1) {
     jQuery('<a/>', {
-      href: '#',
-      className: 'collapser',
-      style: 'float:right;',
-      text: 'Collapse',
-      title: 'Collapse',
-      html: jQuery('<span/>', {
-        text: 'Collapse'
+      'href': '#',
+      'class': 'collapser',
+      'style': 'float:right;',
+      'text': 'Collapse',
+      'title': 'Collapse',
+      'html': jQuery('<span/>', {
+        'text': 'Collapse'
       }),
-      click: function(event) {
+      'click': function(event) {
         collapseTemplate(e, maxCount);
         event.preventDefault();
       }
@@ -254,14 +254,14 @@ function showMoreRowsTemplate(e, round, maxCount) {
     table.parent().parent().find('p.in_table a.toggler').remove();
     // update toggle count
     jQuery('<a/>', {
-      href: '#',
-      className: 'toggler',
-      text: 'Collapse',
-      title: 'Collapse',
-      html: jQuery('<span/>', {
-        text: 'Show 10 rows'
+      'href': '#',
+      'class': 'toggler',
+      'text': 'Collapse',
+      'title': 'Collapse',
+      'html': jQuery('<span/>', {
+        'text': 'Show 10 rows'
       }),
-      click: function(event) {
+      'click': function(event) {
         showMoreRowsTemplate(e, round, maxCount);
         event.preventDefault();
       }
