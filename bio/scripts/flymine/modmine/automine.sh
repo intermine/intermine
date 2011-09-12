@@ -647,6 +647,9 @@ grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston,
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' > $DATADIR/white.live
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i oliver, | awk '{print $1}' > $DATADIR/oliver.live
 
+cat celniker.live lai.live > celnikerlai.live
+cat waterston.live piano.live > waterstonpiano.live
+
 }
 
 function getFiles {
@@ -690,18 +693,29 @@ else
 wget -O - $FTPURL/list.txt | sort > $FTPARK/`date "+%y%m%d"`.list
 rm $DATADIR/ftplist
 ln -s $FTPARK/`date "+%y%m%d"`.list $DATADIR/ftplist
+
 # get the list of live dccid and use it as loop variable
 grep released $DATADIR/ftplist | grep false | grep -vw true | awk '{print $1}' > $DATADIR/all.live
 LOOPVAR=`cat $DATADIR/all.live`
 doProjectList
+
 # get also the list of deprecated entries with their replacement
-#grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+# this is now obsolete, still useful for doc?
 grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $1, " -> ", $3 }' > $DATADIR/deprecation.table
 # true of superseded can be on 3 or 4 position, and the superseding sub in 4 or 5
 grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $1, " -> ", $4 }' > $DATADIR/superseded.table
 grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $1, " -> ", $5 }' >> $DATADIR/superseded.table
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 awk '{print $1}' $DATADIR/superseded.table >> $DATADIR/all.dead
+
+# do the deprecations file
+grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
+grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
+grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $5","$1 }' >> $DATADIR/depr
+
+mv $DATADIR/deprecations $FTPARK/dep.`date "+%y%m%d"`
+sort -u $DATADIR/depr > $DATADIR/deprecations
+
 fi
 
 cd $MIRROR/new
