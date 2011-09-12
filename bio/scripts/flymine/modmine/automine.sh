@@ -647,8 +647,8 @@ grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston,
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' > $DATADIR/white.live
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i oliver, | awk '{print $1}' > $DATADIR/oliver.live
 
-cat celniker.live lai.live > celnikerlai.live
-cat waterston.live piano.live > waterstonpiano.live
+cat $DATADIR/celniker.live $DATADIR/lai.live > $DATADIR/celnikerlai.live
+cat $DATADIR/waterston.live $DATADIR/piano.live > $DATADIR/waterstonpiano.live
 
 }
 
