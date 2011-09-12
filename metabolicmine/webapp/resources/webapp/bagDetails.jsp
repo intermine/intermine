@@ -149,25 +149,25 @@
 		            if (t.length > 120) {
 		                jQuery('table.fields td.description div.text p').html('')
 		                .append(jQuery('<span/>', {
-		                    className: 'text',
-		                    text: t.substring(0, 100)
+		                    'class': 'text',
+		                    'text': t.substring(0, 100)
 		                }))
 		                .append(jQuery('<span/>', {
-		                    className: 'ellipsis',
-		                    html: '&hellip;'
+		                    'class': 'ellipsis',
+		                    'html': '&hellip;'
 		                }))
 		                .append(jQuery('<span/>', {
-		                    className: 'hidden',
-		                    text: t.substring(100, t.length)
+		                    'class': 'hidden',
+		                    'text': t.substring(100, t.length)
 		                }))
 		                .append(jQuery('<a/>', {
-		                    className: 'more',
-		                    text: 'more'
+		                    'class': 'more',
+		                    'text': 'more'
 		                }));
 		            } else {
 		            	jQuery('<span/>', {
-		            	    className: 'text',
-		            	    text: t
+		            	    'class': 'text',
+		            	    'text': t
 		            	}).appendTo('table.fields td.description div.text p');
 		            	
 		                // toggler
@@ -401,11 +401,11 @@
 	      				var sourceTr = this;
 	      				<%-- copy over the relevant row columns --%>
 	      				jQuery('<tr/>', {
-	      					html: function() {
+	      					'html': function() {
 	      						var tr = this;
 	      	      				jQuery.each(previewColumns, function(index, value) {
 	      	      					jQuery('<td/>', {
-	      	      						text: function() {
+	      	      						'text': function() {
 	      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
 	      	      						}
 	      	      					}).appendTo(tr);

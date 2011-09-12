@@ -186,14 +186,14 @@
 	        	jQuery('#' + tableId).find("h3 div.right").text(exactSize + ' results');
 	        	jQuery('#' + tableId + ' table tbody tr').hide();
 	        	jQuery('<div/>', {
-	        		className: 'toggle'
+	        		'class': 'toggle'
 	        	}).append(
 	                	jQuery('<a/>', {
-	        		    title: 'Collapse/Hide',
-	        		    className: 'less',
-	        		    text: 'Collapse',
-	        		    style: 'float:right; display:none;',
-	        		    click: function(e) {
+	        		    'title': 'Collapse/Hide',
+	        		    'class': 'less',
+	        		    'text': 'Collapse',
+	        		    'style': 'float:right; display:none;',
+	        		    'click': function(e) {
 	        		    	jQuery('#' + tableId + ' div.show-in-table').hide();
 	        		    	jQuery('#' + tableId + ' table tbody tr').hide();
 	        		    	jQuery('#' + tableId + ' table').parent().hide();
@@ -206,12 +206,12 @@
 	        		})
 		        ).append(
 		            	jQuery('<a/>', {
-		    		    title: 'Show more items',
-		    		    className: 'more',
-		    		    text: function() {
+		    		    'title': 'Show more items',
+		    		    'class': 'more',
+		    		    'text': function() {
 		    		    	return 'Show ' + ((exactSize < 11) ? 'all ' + exactSize : 'first ' + 10) + ' rows';
 		    		    },
-		    		    click: function(e) {
+		    		    'click': function(e) {
 		    		    	jQuery('#' + tableId + ' table').parent().show();
 		    		    	jQuery('#' + tableId + ' table tbody tr:hidden').each(function(index) {
 		    		    	    if (index < 10) {

@@ -44,25 +44,25 @@
               // mine
               if (minePortalDetails["bgcolor"] != null && minePortalDetails["frontcolor"] != null) { // we have colors! aaaw, pretty...
                 jQuery('<li/>', {
-                    id: 'mine-' + key,
-                    className: 'mine'
+                    'id': 'mine-' + key,
+                    'class': 'mine'
                 })
                 .append(jQuery('<span/>', {
-                    style: 'background-color:' + minePortalDetails["bgcolor"] + ';color:' + minePortalDetails["frontcolor"],
-                    text: entry['mineName']
+                    'style': 'background-color:' + minePortalDetails["bgcolor"] + ';color:' + minePortalDetails["frontcolor"],
+                    'text': entry['mineName']
                 }))
                 .append(jQuery('<ul/>', {
-                    className: 'organisms'
+                    'class': 'organisms'
                 }))
                 .appendTo(target);
               } else {
                 jQuery('<li/>', {
-                    id: 'mine-' + key,
-                    className: 'mine',
-                    text: entry['mineName']
+                    'id': 'mine-' + key,
+                    'class': 'mine',
+                    'text': entry['mineName']
                 })
                 .append(jQuery('<ul/>', {
-                    className: 'organisms'
+                    'class': 'organisms'
                 }))
                 .appendTo(target);
               }
@@ -71,11 +71,11 @@
               jQuery.each(entry['organisms'], function(organismKey, organismEntry) {
                   // organism
                   jQuery('<li/>', {
-                      className: 'organism-' + organismKey,
-                      text: organismEntry['shortName']
+                      'class': 'organism-' + organismKey,
+                      'text': organismEntry['shortName']
                   })
                   .append(jQuery('<ul/>', {
-                      className: 'entries'
+                      'class': 'entries'
                   }))
                   .appendTo(target + " li#mine-" + key + " ul.organisms");
 
@@ -83,7 +83,7 @@
                   if (organismEntry['genes'] != undefined) {
                 	  var ortho = organismEntry['genes']['orthologues'];
                 	  jQuery('<li/>', {
-                          text: (ortho['displayIdentifier'] == '""') ? ortho['primaryIdentifier'] : ortho['displayIdentifier']
+                          'text': (ortho['displayIdentifier'] == '""') ? ortho['primaryIdentifier'] : ortho['displayIdentifier']
                       })
                       .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
                   }
@@ -96,7 +96,7 @@
                             }
 
                           jQuery('<li/>', {
-                              text: identifier
+                              'text': identifier
                           })
                           .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
                       });

@@ -33,12 +33,12 @@
     <%-- show link to show more? --%>
     if (listLength <= 0) {
       jQuery('<li/>', {
-          className: 'show-more',
-          html: jQuery('<a/>', {
-              href: '#',
-              title: 'Show more items',
-              text: 'Show more',
-              click: function(e) {
+          'class': 'show-more',
+          'html': jQuery('<a/>', {
+              'href': '#',
+              'title': 'Show more items',
+              'text': 'Show more',
+              'click': function(e) {
                 showMoreInlineList(listDiv);
                 e.preventDefault();
               }
