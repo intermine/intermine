@@ -89,6 +89,9 @@ public class BeginAction extends InterMineAction
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
         // the default value from web.properties and save it in the session
+
+        // TODO multiple Galaxy instances send requests, GALAXY_URL will be overwritten, we assume
+        // there is only one Galaxy server, thus GALAXY_URL is saved in the session per user.
         if (request.getParameter("GALAXY_URL") != null) {
             request.getSession().setAttribute("GALAXY_URL",
                     request.getParameter("GALAXY_URL"));
@@ -173,7 +176,7 @@ public class BeginAction extends InterMineAction
         // frontpage bags/lists
         BagManager bm = im.getBagManager();
         request.setAttribute("frontpageBags", bm.getGlobalBagsWithTag("im:frontpage"));
-        
+
         // organism dropdown on list upload
         // only implemented in metabolicMine right now
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
