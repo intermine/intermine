@@ -36,6 +36,7 @@ reverse_primer
 sequence_collection
 sequence_feature
 sequence_variant
+SNP
 snRNA
 snoRNA
 TF_binding_site
