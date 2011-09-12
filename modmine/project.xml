@@ -573,17 +573,6 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- KARPEN -->
-        <source name="modencode-karpen-metadata" type="chado-db" dump="true" >
-            <property name="organisms" value="7227"/>
-            <property name="dataSourceName" value="modENCODE"/>
-            <property name="dataSetTitle" value="modENCODE submission"/>
-            <property name="source.db.name" value="modencode-karpen-metadata"/>
-            <property name="processors"
-                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-            <property name="converter.class"
-                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-        </source>
         <!-- WHITE -->
         <source name="modencode-white-metadata" type="chado-db" dump="true">
             <property name="organisms" value="7227"/>
@@ -613,6 +602,17 @@
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
             <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+        <!-- KARPEN -->
+        <source name="modencode-karpen-metadata" type="chado-db" dump="true" >
+            <property name="organisms" value="7227"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-karpen-metadata"/>
             <property name="processors"
                                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
             <property name="converter.class"
