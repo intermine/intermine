@@ -28,8 +28,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 }
 
   function generate(jSONObject, target, url) {
-      jQuery(target).html("<ul class='organisms'></ul>");
-      target += " ul.organisms";
+	  jQuery('<ul/>', {
+    	  'class': 'organisms'
+      })
+      .appendTo(target);
+	  target += ' ul.organisms';
+	  
       // for each organism for which the mine has orthologues
       var i = 3;
       jQuery.each(jSONObject, function(key, entry) {
@@ -38,13 +42,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
             if (entry['isHomologue'] == true) {
                 homologue = "&orthologue=" + entry['shortName'];
             }
-            var style = (i <= 0) ? 'display:none;' : '';
             jQuery('<li/>', {
-                id: 'organism-' + key,
-                style: style,
-                html: jQuery('<a/>', {
-                    href: url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
-                    text: entry['shortName']
+                'id': 'organism-' + key,
+                'style': (i <= 0) ? 'display:none;' : '',
+                'html': jQuery('<a/>', {
+                    'href': url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
+                    'text': entry['shortName']
                 })
             }).appendTo(target);
             i--;
@@ -52,11 +55,11 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       });
       if (i < 0) {
           jQuery('<li/>', {
-        	  className: 'toggler',
-              html: jQuery('<a/>', {
-                  text: 'Show all',
-                  href: '#',
-                  click: function(e) {
+        	  'class': 'toggler',
+              'html': jQuery('<a/>', {
+                  'text': 'Show all',
+                  'href': '#',
+                  'click': function(e) {
                 	  jQuery(this).parents(':eq(1)').find('li:hidden').show();
                 	  jQuery(this).remove();
                 	  e.preventDefault();

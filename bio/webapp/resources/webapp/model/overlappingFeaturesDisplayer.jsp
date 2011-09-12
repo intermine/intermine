@@ -81,13 +81,13 @@
             if (count < 0) {
                 var that = this;
                 jQuery('<a/>', {
-                    className: 'more',
-                    title: 'Show more rows',
-                    style: 'float:right; margin-right:20px;',
-                    html: jQuery('<span/>', {
-                        text: 'Show more rows'
+                    'class': 'more',
+                    'title': 'Show more rows',
+                    'style': 'float:right; margin-right:20px;',
+                    'html': jQuery('<span/>', {
+                        'text': 'Show more rows'
                     }),
-                    click: function(f) {
+                    'click': function(f) {
                       // show another 10 rows
                       var limit = 10;
                       jQuery("#overlapping-features.collection-of-collections #" + jQuery(that).attr('id') + ".collection-table table tbody tr:hidden").each(function(i, val) {

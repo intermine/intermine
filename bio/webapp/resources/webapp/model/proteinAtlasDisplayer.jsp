@@ -134,15 +134,15 @@
       jQuery(this).hover(
             function() {
                 jQuery('<span/>', {
-                    className: 'tooltip',
-                    html: function() {
+                    'class': 'tooltip',
+                    'html': function() {
                       var tooltip = new Array();
                       jQuery(that).parent().find("div.expression."+level).each(function() {
                           tooltip.push(jQuery(this).find('span.tissue').text());
                       });
                       return tooltip.join('<br/>');
                     },
-                    click: function() {
+                    'click': function() {
                       jQuery(that).parent().click();
                     }
                 }).appendTo(that);
