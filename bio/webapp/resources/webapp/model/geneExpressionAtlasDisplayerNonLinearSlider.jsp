@@ -12,7 +12,7 @@
 #${sliderIdentifier}.slider-wrap .slider { float:right; padding:6px 2px; margin-top:1px; }
 #${sliderIdentifier}.slider-wrap .slider a { font-size:10px; float:left; cursor:pointer; width:22px; }
 #${sliderIdentifier}.slider-wrap .slider a span { display:block; }
-#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; margin-top:20px; }
+#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:42px; float:left; padding:2px; font-size:11px; margin-top:20px; }
 #${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/non-linear-scale.png') repeat-y top left; position:relative; }
 #${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:12px; height:23px; background-repeat:no-repeat; background-position:top left; }
 #${sliderIdentifier}.slider-wrap .dragdealer .handle.gray { background-image:url('model/images/slider-gray.gif'); }
