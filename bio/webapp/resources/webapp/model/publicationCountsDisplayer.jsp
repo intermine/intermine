@@ -16,13 +16,15 @@
     <p>${noResults}</p>
   </c:when>
   <c:otherwise>
-
     <table>
-    <tr>
-        <th>PubMed</th>
-        <th>Title</th>
-        <th>Number of genes mentioned</th>
-    </tr>
+    <thead>
+	    <tr>
+	        <th>PubMed</th>
+	        <th>Title</th>
+	        <th>Number of genes mentioned</th>
+	    </tr>
+	</thead>
+	<tbody>
     <c:forEach items="${results}" var="entry">
 
       <c:set var="pub" value="${entry.key}" />
@@ -35,11 +37,14 @@
         </tr>
 
     </c:forEach>
+    </tbody>
     </table>
+    
     <div class="show-in-table outer">
       <html:link action="/collectionDetails?id=${object.id}&amp;field=publications&amp;trail=${param.trail}">
         Show all in a table &raquo;
       </html:link>
+    </div>
   </c:otherwise>
 </c:choose>
 </div>
