@@ -10,7 +10,20 @@
   #gene-expression-atlas div.wrap { overflow-x:auto; }
   #gene-expression-atlas div.inside { min-width:1000px; }
   #gene-expression-atlas div.sidebar { display:inline; float:left; margin-left:10px; }
-  #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; }
+  #gene-expression-atlas div.sidebar h4,
+  #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; width:430px; }
+  #gene-expression-atlas div.sidebar h4 { margin:0; }
+  #gene-expression-atlas div.sidebar div.description { width:100%; }
+  #gene-expression-atlas div.sidebar div.description a.more { display:none; }
+  #gene-expression-atlas div.sidebar div.description div.content { position:relative; }
+  #gene-expression-atlas div.sidebar div.description.preview div.wrap { text-align:center; }
+  #gene-expression-atlas div.sidebar div.description.preview a.more { display:inline-block; padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px;
+  	box-shadow:0 1px 2px #EFEFEF; background:url("images/report/arrow_expand.gif") no-repeat scroll 2px 50% transparent; color:#1F7492;
+  	cursor:pointer; margin:2px 0; }
+  #gene-expression-atlas div.sidebar div.description.preview div.content { overflow:hidden; height:50px; cursor:pointer; }
+  #gene-expression-atlas div.sidebar div.description.preview div.content div.overlay { display:block; width:430px; height:20px;
+  	background:url('model/images/white-to-transparent-gradient-20px.png') repeat-x top left; position:absolute; top:30px; left:0; }
+  #gene-expression-atlas div.sidebar div.description.preview { display:block; }
   #gene-expression-atlas div.sidebar div.legend ul { margin-top:4px; }
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
   #gene-expression-atlas div.sidebar div.legend span.up { background:#59BB14; }
@@ -135,12 +148,11 @@
   <%-- sidebar --%>
   <div class="sidebar">
     <div class="legend">
-      <strong>Expression</strong>*
+      <strong>Expression</strong>
       <ul class="expression">
         <li><span class="up"></span> Upregulation</li>
         <li><span class="down"></span> Downregulation</li>
       </ul>
-      <p class="small">* Provide displayer description please.</p>
     </div>
 
     <div class="settings">
@@ -159,7 +171,7 @@
         <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
       </fieldset>
 
-      <strong>2) Adjust the p value</strong>
+      <strong>2) Adjust the p-value**</strong>
       <fieldset class="p-value">
         <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
           <tiles:put name="sliderIdentifier" value="p-value" />
@@ -167,7 +179,7 @@
         </tiles:insert>
       </fieldset>
 
-      <strong>3) Adjust the t-statistic</strong>
+      <strong>3) Adjust the t-statistic*</strong>
       <fieldset class="t-statistic">
         <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
           <tiles:put name="sliderIdentifier" value="t-statistic" />
@@ -180,9 +192,36 @@
     </div>
     
     <input class="toggle-table" type="button" value="Toggle table">
+    
+    <div class="description preview">
+	    <div class="content">
+		    <div class="overlay"></div>
+		    <h4>* Moderated t-statistic</h4>
+		    <p class="small">The basic statistic used for significance analysis is the moderated
+			t-statistic, which is computed for each probe and for each contrast.
+			This has the same interpretation as an ordinary t-statistic except
+			that the standard errors have been moderated across genes, i.e.,
+			shrunk towards a common value, using a simple Bayesian model. This has
+			the effect of borrowing information from the ensemble of genes to aid
+			with inference about each individual gene.<br />
+			The moderated t-statistic (t) is the ratio of the log fold change to
+			its standard error.</p>
+			
+			<h4>** p-value</h4>
+			<p class="small">The p-value (p-value) is obtained from the moderated t-statistic,
+			usually after adjustment for multiple testing: "fdr" which is
+			Benjamini and Hochberg's method to control the false discovery rate.</p>
+		</div>
+		<div class="wrap"><a class="more">Read more</a></div>
+	</div>
   </div>
 
   <script type="text/javascript">
+  	<%-- toggler for the sidebar description --%>
+  	jQuery('#gene-expression-atlas div.sidebar div.description.preview').click(function() {
+  		jQuery(this).removeClass('preview');
+  	});
+  
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
       if (liszt.length > 0) {
