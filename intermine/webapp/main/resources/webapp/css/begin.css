@@ -572,7 +572,6 @@ html, body {
 #templates div.content {
     background: #FFF url("../themes/purple/homepage/bochs-bottom-grad.png") repeat-x bottom;
     bottom: 1px solid #dfdfdf;
-    min-height: 285px;
     padding: 14px;
     padding-bottom: 0;
 }
@@ -580,17 +579,16 @@ html, body {
 #templates div.content p.more {
     background: url("../themes/purple/homepage/full-divider.png") repeat-x top;
     padding: 4px 0;
-    margin-top: 20px;
     line-height: 28px;
+    position: absolute;
+    bottom: 0;
+    width:906px;
 }
 
 #templates div.content p.more a {
     background: url("../themes/purple/homepage/more-pitchurka.png") no-repeat left;
     text-decoration: underline;
     padding-left: 16px;
-}
-
-#templates div.content p.more a:hover {;
 }
 
 #templates #tab-content #ribbon {
@@ -601,6 +599,7 @@ html, body {
     height: 153px;
     display: block;
     background: url("../themes/purple/homepage/ribbon-forest.png") no-repeat top right;
+    z-index:2;
 }
 
 #templates #tab-content #try {
@@ -619,6 +618,7 @@ html, body {
     color: #292727;
     line-height: 20px;
     margin-top: 10px;
+    padding-bottom: 60px;
 }
 
 #templates ul a {
