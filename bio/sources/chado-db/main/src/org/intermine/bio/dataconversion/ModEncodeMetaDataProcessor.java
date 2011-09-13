@@ -603,6 +603,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         Integer previousAppliedProtocolId = new Integer(0);
         boolean isADeletedSub = false;
+        
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             Integer protocolId = new Integer(res.getInt("protocol_id"));
@@ -610,15 +611,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer dataId = new Integer(res.getInt("data_id"));
             String direction = res.getString("direction");
 
-            
             // the results are ordered, first ap have a subId
             // if we find a deleted sub, we know that subsequent records with null
             // subId belongs to the deleted sub
-            if (submissionId == null ) {
-                if (isADeletedSub == true) continue;
+            // note that while the subId is null in the database, it is = 0 here
+            if (submissionId == 0) {
+                if (isADeletedSub) {
+                    // LOG.info("DEL: skipping"  + isADeletedSub );                 
+                    continue;
+                }
             } else {
                 if (deletedSubMap.containsKey(submissionId)) {
                     isADeletedSub = true;
+                    // LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
                     continue;
                 } else {
                     isADeletedSub = false;
