@@ -10,7 +10,6 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
@@ -306,27 +306,31 @@ public class ModelTest extends TestCase
 
         Model smallModel = getSmallModel();
 
+        ClassDescriptor im = model.getClassDescriptorByName("org.intermine.model.InterMineObject");
         // the order of nodes at any give level is undefined, so check by level
         List<ClassDescriptor> actual = smallModel.getTopDownLevelTraversal();
 
+        // level zero
+        assertEquals(im, actual.get(0));
+
         // level one
-        assertEquals(smallModel.getClassDescriptorByName("A"), actual.get(0));
+        assertEquals(smallModel.getClassDescriptorByName("A"), actual.get(1));
 
         // level two
         Set<ClassDescriptor> expected = new HashSet<ClassDescriptor>();
         expected.add(smallModel.getClassDescriptorByName("B"));
         expected.add(smallModel.getClassDescriptorByName("G"));
-        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(1, 3)));
+        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(2, 4)));
 
         // level two
         expected = new HashSet<ClassDescriptor>();
         expected.add(smallModel.getClassDescriptorByName("C"));
         expected.add(smallModel.getClassDescriptorByName("E"));
         expected.add(smallModel.getClassDescriptorByName("F"));
-        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(3, 6)));
+        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(4, 7)));
 
         // level four
-        assertEquals(smallModel.getClassDescriptorByName("D"), actual.get(6));
+        assertEquals(smallModel.getClassDescriptorByName("D"), actual.get(7));
     }
 
     public void testGetBottomUpTraversal() throws Exception {
@@ -347,13 +351,15 @@ public class ModelTest extends TestCase
 
         Model smallModel = getSmallModel();
 
+        ClassDescriptor im = model.getClassDescriptorByName("org.intermine.model.InterMineObject");
+
         // the order of nodes at any give level is undefined, so check by level
         List<ClassDescriptor> actual = smallModel.getBottomUpLevelTraversal();
 
-        // level one
+        // level zero
         assertEquals(smallModel.getClassDescriptorByName("D"), actual.get(0));
 
-        // level two
+        // level one
         Set<ClassDescriptor> expected = new HashSet<ClassDescriptor>();
         expected.add(smallModel.getClassDescriptorByName("C"));
         expected.add(smallModel.getClassDescriptorByName("E"));
@@ -366,8 +372,11 @@ public class ModelTest extends TestCase
         expected.add(smallModel.getClassDescriptorByName("G"));
         assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(4, 6)));
 
-        // level four
+        // level three
         assertEquals(smallModel.getClassDescriptorByName("A"), actual.get(6));
+
+        // level four
+        assertEquals(im, actual.get(7));
     }
 
     /**
