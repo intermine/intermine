@@ -9,10 +9,12 @@
 <script type="text/javascript" src="js/dragdealer.js"></script>
 
 <style>
-#${sliderIdentifier}.slider-wrap .slider { float:right; padding:6px 2px; margin-top:1px; }
+#${sliderIdentifier}.slider-wrap { width:410px; }
+#${sliderIdentifier}.slider-wrap .slider { display:inline-block; padding:6px 2px; margin-top:1px; width:344px; }
 #${sliderIdentifier}.slider-wrap .slider a { font-size:10px; float:left; cursor:pointer; width:22px; }
 #${sliderIdentifier}.slider-wrap .slider a span { display:block; }
-#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:56px; float:left; padding:2px; font-size:11px; margin-top:20px; }
+#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:56px; float:left; padding:2px; font-size:11px; margin-top:18px;
+	vertical-align:top; }
 #${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/non-linear-scale.png') repeat-y top left;
 	position:relative; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; border:1px solid #CCC; }
 #${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:9px; height:20px; background: rgb(237,237,237);
@@ -37,6 +39,7 @@
 </style>
 
 <div id="${sliderIdentifier}" class="slider-wrap">
+  <input type="text" class="value" value="${defaultValue}" autocomplete="off">
   <div class="slider">
     <a style="margin-left:3px;" title="1"><span>1<sup>&nbsp;</sup></span>|</a>
     <a style="margin-left:45px;" title="1e-2"><span>10<sup>-2</sup></span>|</a>
@@ -52,7 +55,6 @@
       <div class="handle gray"></div>
     </div>
   </div>
-  <input type="text" class="value" value="${defaultValue}" autocomplete="off">
   <div style="clear:both;"></div>
 </div>
 
