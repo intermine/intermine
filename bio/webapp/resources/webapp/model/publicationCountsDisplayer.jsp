@@ -17,23 +17,23 @@
   </c:when>
   <c:otherwise>
     <table>
-      <thead>
+      <thead class="persistent">
         <tr>
             <th>PubMed</th>
             <th>Title</th>
             <th>Number of ${type}s mentioned</th>
         </tr>
-    </thead>
-    <tbody>
-      <c:forEach items="${results}" var="entry" varStatus="status">
-      <c:set var="pub" value="${entry.key}" />
-      <c:set var="total" value="${entry.value}" />
-      <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
-        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.pubMedId}"/></html:link></td>
-          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
-          <td><c:out value="${total}"/></td>
-      </tr>
-      </c:forEach>
+      </thead>
+      <tbody>
+	    <c:forEach items="${results}" var="entry" varStatus="status">
+	      <c:set var="pub" value="${entry.key}" />
+	      <c:set var="total" value="${entry.value}" />
+	      <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
+	        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.pubMedId}"/></html:link></td>
+	          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
+	          <td><c:out value="${total}"/></td>
+	      </tr>
+	    </c:forEach>
       </tbody>
     </table>
 
