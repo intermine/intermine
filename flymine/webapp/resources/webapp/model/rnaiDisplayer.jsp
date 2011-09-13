@@ -25,7 +25,7 @@
         <thead>
           <tr><th colspan="2">${score}</th></tr>
         </thead>
-        
+
         <c:choose>
         <c:when test="${!empty parentEntry.value}">
         <tbody>
@@ -57,24 +57,31 @@
         </c:choose>
       </div>
     </c:forEach>
+
+
+    <div class="show-in-table outer">
+      <html:link action="/collectionDetails?id=${object.id}&amp;field=rnaiResults&amp;trail=${param.trail}">
+        Show all in a table &raquo;
+      </html:link>
+    </div>
     <script type="text/javascript">
-	   	jQuery('#rnai-displayer div.score').each(function(i) {
-	   		var t = jQuery(this);
-	   		if ((t.attr('id') in {'weak-hit':'', 'not-a-hit':'', 'not-screened':''}) && (t.find('table tbody tr').length > 0)) {
-	   			t.find('table,p.smallnote').hide();
-	   			jQuery('<a/>', {
-	   				'class': 'link show',
-	   			    'html': function() {
-	   			    	return 'Show <strong>' + t.find('table thead tr th').text() + '</strong> RNAi in ' + t.find('table tbody tr').length + ' screens';
-	   			    },
-	   			    'click': function() {
-	   			    	jQuery(this).parent().find('table').show().parent().find('a.show').remove();
-	   			    	//jQuery(this).remove();
-	   			    }
-	   			})
-	   			.appendTo(t); 
-	   		}
-	   	});
+       jQuery('#rnai-displayer div.score').each(function(i) {
+         var t = jQuery(this);
+         if ((t.attr('id') in {'weak-hit':'', 'not-a-hit':'', 'not-screened':''}) && (t.find('table tbody tr').length > 0)) {
+           t.find('table,p.smallnote').hide();
+           jQuery('<a/>', {
+             'class': 'link show',
+               'html': function() {
+                 return 'Show <strong>' + t.find('table thead tr th').text() + '</strong> RNAi in ' + t.find('table tbody tr').length + ' screens';
+               },
+               'click': function() {
+                 jQuery(this).parent().find('table').show().parent().find('a.show').remove();
+                 //jQuery(this).remove();
+               }
+           })
+           .appendTo(t);
+         }
+       });
     </script>
   </c:otherwise>
 </c:choose>

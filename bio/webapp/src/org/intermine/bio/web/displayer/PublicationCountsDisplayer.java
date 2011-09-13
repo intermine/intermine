@@ -80,6 +80,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
             publications.put(pub, count.toString());
         }
         request.setAttribute("results", publications);
+        request.setAttribute("type", type);
         if (results.isEmpty()) {
             request.setAttribute("noResults", "No publications found");
         }
