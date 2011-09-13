@@ -474,7 +474,7 @@ public class Model
             queue.add(rootCld);
             while (!queue.isEmpty()) {
                 ClassDescriptor node = queue.remove();
-                if (!node.equals(rootCld) && !topDownOrderClasses.contains(node)) {
+                if (!topDownOrderClasses.contains(node)) {
                     topDownOrderClasses.add(node);
                 }
                 // add direct subclasses to the queue
