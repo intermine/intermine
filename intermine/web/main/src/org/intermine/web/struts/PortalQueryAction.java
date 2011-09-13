@@ -207,9 +207,9 @@ public class PortalQueryAction extends InterMineAction
                             className, bagList, addparameter);
                     // No matches
                     if (converted.size() <= 0) {
-                        actionMessages.add(Constants.PORTAL_MSG,
-                            new ActionMessage("portal.noorthologues", addparameter, extId));
-                        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+//                        actionMessages.add(Constants.PORTAL_MSG,
+//                            new ActionMessage("portal.noorthologues", addparameter, extId));
+//                        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(extId,
@@ -258,8 +258,7 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("id", id).forward();
     }
 
-    private ActionForward goToNoResults(ActionMapping mapping,
-            @SuppressWarnings("unused") HttpSession session) {
+    private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
         ActionForward forward = mapping.findForward("noResults");
         return new ForwardParameters(forward).addParameter("trail", "").forward();
     }
