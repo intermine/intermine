@@ -33,6 +33,53 @@ im.alternatingColors = function() {
 	}
 };
 
+// will turn thead.persistent into persistent header 
+im.persistentTableHeaders = function() {
+	// traverse all tables that have a <thead> element with .persistent
+	jQuery('table thead.persistent').each(function(i) {
+		var head  = jQuery(this).find('tr'),
+			table = head.closest('table');
+		// continue only if we have exactly one <tr> element in the head
+		// ... and at least two elements in the actual table
+		if (head.length == 1 && table.find('tbody tr').length > 1) {
+			// duplicate the row and apply different classes to static/fixed positioned elements
+			fixed = head.addClass('static-header').clone().attr('class', 'fixed-header').appendTo(this);
+			// apply fixed positioning
+			fixed.css({'position':'fixed', 'top':'21px', 'z-index':2, 'width':head.width()}).hide();
+			
+			// now we need to fix the width of the columns much like in the original head
+			resizeFixedHead = function() {
+				head.find('th').each(function(i) {
+					jQuery(fixed.find('th')[i]).css('width', jQuery(this).width());
+				});
+			}
+			resizeFixedHead();
+			
+			// monitor the showing/hiding of table rows throw more/collapse
+			// ... and resize the head as we have different number of rows now
+			// TODO: not working for all tables
+			table.parent().find('div.toggle a').click(function() { resizeFixedHead(); });
+		}
+	});
+	
+	// monitor scroll events and see if we no longer see the static one
+	jQuery(window).scroll(function() {
+		jQuery('table thead.persistent').each(function(i) {
+			var table  = jQuery(this).closest('table'),
+				offset = table.offset(),
+				top    = jQuery(window).scrollTop(),
+				fixed  = jQuery(this).find('tr.fixed-header');
+		
+			// then swap the 'visibility' of the fixed head
+			if ((top > offset.top) && (top < offset.top + table.height())) {
+				fixed.show();
+			} else {
+				fixed.hide();
+			}
+		});
+	}).trigger("scroll");
+}
+
 // return a path to the current element
 im.elementPath = function(e) {
 	e = jQuery(e);
@@ -131,5 +178,8 @@ jQuery.fn.extend({
 
 // on load methods
 jQuery(document).ready(function() {
+	// fix n-th child in IE and apply .odd/.even classes to tables 
 	im.alternatingColors();
+	// make table headers persistent
+	im.persistentTableHeaders();
 });
