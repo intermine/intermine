@@ -65,7 +65,7 @@ public class OrthologueConverter extends BagConverter
      * runs the orthologue conversion pathquery and returns list of intermine IDs
      * used in the portal
      * @param profile the user's profile
-     * @param bagType the class of the list, has to be gene I think
+     * @param bagType not used, always gene
      * @param bagList list of intermine object IDs
      * @param organismName name of homologue's organism
      * @return list of intermine IDs
@@ -73,7 +73,7 @@ public class OrthologueConverter extends BagConverter
     public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String organismName) {
         PathQuery pathQuery = constructPathQuery(organismName);
-        pathQuery.addConstraint(Constraints.inIds(bagType, bagList));
+        pathQuery.addConstraint(Constraints.inIds("Gene", bagList));
         pathQuery.addView("Gene.homologues.homologue.id");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
@@ -105,7 +105,7 @@ public class OrthologueConverter extends BagConverter
                 + "Gene.homologues.dataSets.name");
 
         // homologue.type = "orthologue"
-        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
+        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
 
         // organism
         q.addConstraint(Constraints.lookup("Gene.organism", parameter, ""));
