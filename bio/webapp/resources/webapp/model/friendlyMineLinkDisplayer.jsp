@@ -40,7 +40,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
         if (entry['identifiers'] != undefined) {
             var homologue = '';
             if (entry['isHomologue'] == true) {
-                homologue = "&orthologues=" + entry['shortName'];
+                homologue = "&orthologue=" + entry['shortName'];
             }
             jQuery('<li/>', {
                 'id': 'organism-' + key,
