@@ -7,7 +7,9 @@
   #gene-expression-atlas div.chart { float:left; }
   #gene-expression-atlas h3 { background-image:url("images/icons/ebi.gif"); background-position:6px 2px; background-repeat:no-repeat;
     line-height:20px; padding-left:28px; }
-  #gene-expression-atlas div.sidebar { float:right; width:35%; }
+  #gene-expression-atlas div.wrap { overflow-x:auto; }
+  #gene-expression-atlas div.inside { min-width:1000px; }
+  #gene-expression-atlas div.sidebar { display:inline; float:left; margin-left:10px; }
   #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; }
   #gene-expression-atlas div.sidebar div.legend ul { margin-top:4px; }
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
@@ -20,12 +22,11 @@
   #gene-expression-atlas div.settings ul.sort li { margin-left:10px !important; background:url('images/icons/sort-up.gif') no-repeat center left;
     padding-left:16px; cursor:pointer; }
   #gene-expression-atlas div.settings ul.sort li.active { background:url('images/icons/sort.gif') no-repeat center left; font-weight:bold; }
-  #gene-expression-atlas fieldset { border:0; }
+  #gene-expression-atlas fieldset { border:0; width:300px; }
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
   #gene-expression-atlas div.collection-table { display:none; }
   #gene-expression-atlas input.toggle-table { margin-bottom:20px; }
   
-  #gene-expression-atlas-chart { width:60%; margin-right:5%; }
   #gene-expression-atlas-chart span { text-align:center; display:block; margin-left:50%; color:#1F7492; font-size:11px;
   	font-style:italic; margin-bottom:20px; }
   #gene-expression-atlas-chart iframe { display:block; clear:both; }
@@ -34,6 +35,8 @@
 <div id="gene-expression-atlas">
 <h3 class="goog">Gene Expression Atlas Expressions</h3>
 
+<div class="wrap">
+<div class="inside">
 <div class="chart" id="gene-expression-atlas-chart"></div>
 
   <script type="text/javascript">
@@ -454,6 +457,8 @@
   </script>
 
 <div style="clear:both;"></div>
+</div>
+</div>
 
 <%-- collection table --%>
 <div class="collection-table">
@@ -523,5 +528,4 @@
     });
 })();
 </script>
-
 </div>
