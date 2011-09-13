@@ -684,11 +684,12 @@
                      parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
                      types="Publication"/>
 
+    <!-- currently only works with classes with publications collection -->
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
                      jspName="model/publicationCountsDisplayer.jsp"
                      replacesFields="publications"
                      placement="summary"
-                     types="Gene"/>
+                     types="BioEntity"/>
 
   </reportdisplayers>
 
