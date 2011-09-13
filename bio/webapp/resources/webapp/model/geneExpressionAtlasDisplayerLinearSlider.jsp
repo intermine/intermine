@@ -12,25 +12,43 @@
 #${sliderIdentifier}.slider-wrap .slider { float:right; padding:6px 2px; margin-top:1px; }
 #${sliderIdentifier}.slider-wrap .slider a { font-size:10px; float:left; cursor:pointer; width:22px; }
 #${sliderIdentifier}.slider-wrap .slider a span { display:block; }
-#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:60px; float:left; padding:2px; font-size:11px; margin-top:20px; }
-#${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/linear-scale.png') repeat-y top left; position:relative; }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:12px; height:23px; background-repeat:no-repeat; background-position:top left; }
-#${sliderIdentifier}.slider-wrap .dragdealer .handle.gray { background-image:url('model/images/slider-gray.gif'); }
+#${sliderIdentifier}.slider-wrap input.value { border:1px solid #CCC; width:56px; float:left; padding:2px; font-size:11px; margin-top:20px; }
+#${sliderIdentifier}.slider-wrap .dragdealer { width:340px; position:relative; height:3px; background:url('model/images/linear-scale.png') repeat-y top left;
+	position:relative; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; border:1px solid #CCC; }
+#${sliderIdentifier}.slider-wrap .dragdealer .handle { position:absolute; top:-9px; cursor:pointer; width:9px; height:20px; background: rgb(237,237,237);
+	background: -moz-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(241,241,241,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(237,237,237,1)), color-stop(100%,rgba(241,241,241,1)));
+	background: -webkit-linear-gradient(top, rgba(237,237,237,1) 0%,rgba(241,241,241,1) 100%);
+	background: -o-linear-gradient(top, rgba(237,237,237,1) 0%,rgba(241,241,241,1) 100%);
+	background: -ms-linear-gradient(top, rgba(237,237,237,1) 0%,rgba(241,241,241,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#f1f1f1',GradientType=0 );
+	background: linear-gradient(top, rgba(237,237,237,1) 0%,rgba(241,241,241,1) 100%);
+	border: 1px solid #BFBFBF; -webkit-border-radius: 8px; -webkit-border-bottom-right-radius: 4px; -webkit-border-bottom-left-radius: 4px;
+	-moz-border-radius: 8px; -moz-border-radius-bottomright: 4px; -moz-border-radius-bottomleft: 4px; border-radius: 8px; border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px; }
+#${sliderIdentifier}.slider-wrap .dragdealer .handle:hover { border-color:#999; background: rgb(228,228,228);
+	background: -moz-linear-gradient(top, rgba(228,228,228,1) 0%, rgba(234,234,234,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(228,228,228,1)), color-stop(100%,rgba(234,234,234,1)));
+	background: -webkit-linear-gradient(top, rgba(228,228,228,1) 0%,rgba(234,234,234,1) 100%);
+	background: -o-linear-gradient(top, rgba(228,228,228,1) 0%,rgba(234,234,234,1) 100%);
+	background: -ms-linear-gradient(top, rgba(228,228,228,1) 0%,rgba(234,234,234,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e4e4e4', endColorstr='#eaeaea',GradientType=0 );
+	background: linear-gradient(top, rgba(228,228,228,1) 0%,rgba(234,234,234,1) 100%); }
 </style>
 
 <div id="${sliderIdentifier}" class="slider-wrap">
   <div class="slider">
-    <a style="margin-left:3px;" title=""><span></span>|</a>
-    <a style="margin-left:11px;" title=""><span></span>|</a>
-    <a style="margin-left:11px;" title=""><span></span>|</a>
-    <a style="margin-left:10px;" title=""><span></span>|</a>
+    <a style="margin-left:4px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
-    <a style="margin-left:10px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
     <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:12px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:11px;" title=""><span></span>|</a>
+    <a style="margin-left:10px; width:10px;" title=""><span></span>|</a>
     <div style="clear:both;"></div>
     <div id="${sliderIdentifier}-slider" class="dragdealer">
       <div class="handle gray"></div>
