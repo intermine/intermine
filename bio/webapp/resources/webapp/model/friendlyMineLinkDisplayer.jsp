@@ -28,19 +28,19 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 }
 
   function generate(jSONObject, target, url) {
-	  jQuery('<ul/>', {
-    	  'class': 'organisms'
+    jQuery('<ul/>', {
+        'class': 'organisms'
       })
       .appendTo(target);
-	  target += ' ul.organisms';
-	  
+    target += ' ul.organisms';
+
       // for each organism for which the mine has orthologues
       var i = 3;
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
             var homologue = '';
             if (entry['isHomologue'] == true) {
-                homologue = "&orthologue=" + entry['shortName'];
+                homologue = "&orthologues=" + entry['shortName'];
             }
             jQuery('<li/>', {
                 'id': 'organism-' + key,
@@ -55,17 +55,17 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       });
       if (i < 0) {
           jQuery('<li/>', {
-        	  'class': 'toggler',
+            'class': 'toggler',
               'html': jQuery('<a/>', {
                   'text': 'Show all',
                   'href': '#',
                   'click': function(e) {
-                	  jQuery(this).parents(':eq(1)').find('li:hidden').show();
-                	  jQuery(this).remove();
-                	  e.preventDefault();
+                    jQuery(this).parents(':eq(1)').find('li:hidden').show();
+                    jQuery(this).remove();
+                    e.preventDefault();
                   }
               })
-          }).appendTo(target);    	  
+          }).appendTo(target);
       }
   }
 
@@ -76,12 +76,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 <tiles:importAttribute />
 <div id="friendlyMines">
   <c:forEach items="${mines}" var="entry">
-  	<div class="mine">
-	    <span style="background:${entry.value.bgcolor};color:${entry.value.frontcolor};">${entry.key}</span>
-	    <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
-	    <script type="text/javascript" charset="utf-8">
-	      getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
-	    </script>
+    <div class="mine">
+      <span style="background:${entry.value.bgcolor};color:${entry.value.frontcolor};">${entry.key}</span>
+      <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
+      <script type="text/javascript" charset="utf-8">
+        getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
+      </script>
     </div>
   </c:forEach>
 </div>
