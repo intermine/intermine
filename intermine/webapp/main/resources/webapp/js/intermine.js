@@ -46,7 +46,7 @@ im.persistentTableHeaders = function(e) {
 			// duplicate the row and apply different classes to static/fixed positioned elements
 			fixed = head.addClass('static-header').clone().attr('class', 'fixed-header').appendTo(head.parent());
 			// apply fixed positioning
-			fixed.css({'position':'fixed', 'top':'21px', 'z-index':2, 'width':head.width()}).hide();
+			fixed.css({'position':'fixed', 'top':'21px', 'z-index':2, 'width':"100%"}).hide();
 			
 			// now we need to fix the width of the columns much like in the original head
 			head.find('th').each(function(i) {				
@@ -89,13 +89,20 @@ im.persistentTableHeaders = function(e) {
 		jQuery('div.collection-table.persistent').each(function(i) {
 			var table  = jQuery(this).find('table'),
 				offset = table.offset(),
-				top    = jQuery(window).scrollTop() + 21 + table.find('thead tr').height(),
+				top    = jQuery(window).scrollTop() + 21,
 				fixed  = table.find('thead tr.fixed-header');
 		
 			// then swap the 'visibility' of the fixed head
 			if (table.length > 0) {
-				if ((top > offset.top) && (top < offset.top + table.height())) {
-					fixed.show();
+				if ((top > offset.top) && (top < offset.top + table.height() - fixed.height())) {
+					if (!fixed.is(':visible')) {
+						fixed.show();
+						
+						// recalculate their width for good measure
+						table.find('thead tr.static-header th').each(function(i) {
+							jQuery(table.find('thead tr.fixed-header th')[i]).css('width', jQuery(this).width());
+						});
+					}
 				} else {
 					fixed.hide();
 				}
