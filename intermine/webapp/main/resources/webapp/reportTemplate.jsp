@@ -30,7 +30,7 @@
   <p class="description" style="display:none;">${templateQuery.description}</p>
 
   <%-- JS target for the table --%>
-  <div class="collection-table persistent"></div>
+  <div class="collection-table"></div>
 
   <script type="text/javascript">
     <c:choose>

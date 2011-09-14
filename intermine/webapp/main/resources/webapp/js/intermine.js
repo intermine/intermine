@@ -70,12 +70,9 @@ im.persistentTableHeaders = function(e) {
 	// undefined, grab them all
 	if (e == undefined) {
 		// traverse all 'collection' tables that have a .persistent class
-		jQuery('div.collection-table.persistent').each(function(i) {
-			makeEm(this);
-		});
-		
 		// monitor the showing/hiding of table rows throw more/collapse
 		jQuery('div.collection-table.persistent').each(function(i) {
+			makeEm(this);
 			monitorEm(this);
 		});
 	} else {
@@ -214,6 +211,4 @@ jQuery.fn.extend({
 jQuery(document).ready(function() {
 	// fix n-th child in IE and apply .odd/.even classes to tables 
 	im.alternatingColors();
-	// make table headers persistent
-	im.persistentTableHeaders();
 });
