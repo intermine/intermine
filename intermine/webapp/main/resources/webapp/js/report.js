@@ -28,6 +28,7 @@ function trimTable(e) {
               'class': 'more',
               'text': 'Show more rows',
               'title': 'Show more rows',
+              'style': 'float:right;',
               'click': function(event) {
                 showMoreRows(e, 1, 10);
                 event.preventDefault();
@@ -68,7 +69,7 @@ function showMoreRows(e, round, maxCount) {
     jQuery('<a/>', {
       'href': '#',
       'class': 'less',
-      'style': 'float:right;',
+      'style': 'float:right;margin-left:20px;',
       'text': 'Collapse',
       'title': 'Collapse',
       'html': jQuery('<span/>', {
@@ -79,13 +80,14 @@ function showMoreRows(e, round, maxCount) {
         event.preventDefault();
       }
     }).appendTo(table.parent().parent().find('div.toggle'));
+    // also show all show
+    table.parent().parent().find('div.show-in-table').css('display', '');
   }
 
   // if the count is > 0 (< 30 entries) or 4th round (30+ entries) at this
   // point, show a link to table instead
   if (count > 0 || round == ((numberOfTableRowsToShow/10)-1)) {
     table.parent().parent().find('div.toggle a.more').hide();
-    table.parent().parent().find('div.show-in-table').css('display', '');
   } else {
     round = parseInt(round) + 1;
     // update toggle count
@@ -94,6 +96,7 @@ function showMoreRows(e, round, maxCount) {
       'class': 'more',
       'text': 'Show more rows',
       'title': 'Show more rows',
+      'style': 'float:right;',
       'click': function(event) {
         showMoreRows(e, round, maxCount);
         event.preventDefault();
@@ -136,6 +139,7 @@ function collapseTable(e, maxCount) {
     'class': 'more',
     'text': 'Show more rows',
     'title': 'Show more rows',
+    'style': 'float:right;',
     'html': jQuery('<span/>', {
       'text': 'Show more rows'
     }),
@@ -182,6 +186,7 @@ function collapseTemplate(e, maxCount) {
     'class': 'toggler',
     'text': 'Show more rows',
     'title': 'Show more rows',
+    'style': 'float:right;',
     'html': jQuery('<span/>', {
       'text': 'Show 10 rows'
     }),
@@ -230,7 +235,7 @@ function showMoreRowsTemplate(e, round, maxCount) {
     jQuery('<a/>', {
       'href': '#',
       'class': 'collapser',
-      'style': 'float:right;',
+      'style': 'float:right;margin-left:20px;',
       'text': 'Collapse',
       'title': 'Collapse',
       'html': jQuery('<span/>', {
@@ -256,6 +261,7 @@ function showMoreRowsTemplate(e, round, maxCount) {
     jQuery('<a/>', {
       'href': '#',
       'class': 'toggler',
+      'style': 'float:right;margin-left:20px;',
       'text': 'Collapse',
       'title': 'Collapse',
       'html': jQuery('<span/>', {
