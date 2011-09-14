@@ -466,7 +466,7 @@
                                     </c:choose>
                                   </c:if>
                                   <td>
-                                    <a href="template.do?name=${template.name}"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"themes/metabolic/homepage/arrow-green-ico.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a>
+                                    <a href="template.do?name=${template.name}&scope=global"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"themes/metabolic/homepage/arrow-green-ico.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a>
                                   </td>
                                 </c:forEach>
                               </table>
