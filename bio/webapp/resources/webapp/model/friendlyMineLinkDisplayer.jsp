@@ -78,7 +78,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
   <c:forEach items="${mines}" var="entry">
     <div class="mine">
       <span style="background:${entry.value.bgcolor};color:${entry.value.frontcolor};">${entry.key}</span>
-      <div id="intermine_orthologue_links_${entry.key}" class="loading">&nbsp;</div>
+      <div id="intermine_orthologue_links_${entry.key}" class="loading"></div>
       <script type="text/javascript" charset="utf-8">
         getFriendlyMineLinks('${entry.key}', '${entry.value.url}', '${organisms}', '${identifierList}');
       </script>

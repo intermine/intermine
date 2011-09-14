@@ -1,5 +1,5 @@
 
-#friendlyMines div.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
+#friendlyMines div.loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; height:20px; width:20px }
 
 #bagTable{
     padding:5px;}
