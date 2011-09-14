@@ -471,6 +471,7 @@ public class Model
 
             // start from InterMineObject which is the root
             LinkedList<ClassDescriptor> queue = new LinkedList<ClassDescriptor>();
+            queue.addAll(getSimpleObjectClassDescriptors());
             queue.add(rootCld);
             while (!queue.isEmpty()) {
                 ClassDescriptor node = queue.remove();
@@ -504,6 +505,24 @@ public class Model
         }
         return bottomUpOrderClasses;
     }
+
+    /**
+     * Return ClassDescriptors for simple objects only - simple objects are light weight objects
+     * without an id and with no inheritance.  They can't be interfaces and inherit directly from
+     * java.lang.Object.
+     * @return a set of ClassDescriptors for all simple objects in the model
+     */
+    protected Set<ClassDescriptor> getSimpleObjectClassDescriptors() {
+        Set<ClassDescriptor> simpleObjectClds = new HashSet<ClassDescriptor>();
+        for (ClassDescriptor cld : getClassDescriptors()) {
+            Set<String> superNames = cld.getSuperclassNames();
+            if (superNames.size() == 1 && superNames.contains("java.lang.Object")) {
+                simpleObjectClds.add(cld);
+            }
+        }
+        return simpleObjectClds;
+    }
+
 
     /**
      * @return true if generated classes are available
