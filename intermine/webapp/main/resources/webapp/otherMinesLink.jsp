@@ -23,23 +23,24 @@
           var jSONObject = jQuery.parseJSON(mines);
           generate(jSONObject, "#intermine_links");
       });
-	  //var jSONObject = [{"mineName":"ZFINMine","organisms":[{"shortName":"D. rerio","orthologues":[{"displayIdentifier":"\"\"","primaryIdentifier":"ENSDARG00000044216"}]},{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"\"\"","primaryIdentifier":"ENSG00000140718"}},"shortName":"H. sapiens"}]}, {"mineName":"modMine"}, {"mineName":"YeastMine"}, {"mineName":"FlyMine","organisms":[{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"ENSG00000140718","primaryIdentifier":"FTO"}},"shortName":"H. sapiens"}]}, {"mineName":"RatMine"}];
+    //var jSONObject = [{"mineName":"ZFINMine","organisms":[{"shortName":"D. rerio","orthologues":[{"displayIdentifier":"\"\"","primaryIdentifier":"ENSDARG00000044216"}]},
+    //{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"\"\"","primaryIdentifier":"ENSG00000140718"}},"shortName":"H. sapiens"}]},
+    //{"mineName":"modMine"}, {"mineName":"YeastMine"}, {"mineName":"FlyMine","organisms":[{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"ENSG00000140718","primaryIdentifier":"FTO"}},"shortName":"H. sapiens"}]}, {"mineName":"RatMine"}];
   }
 
   function generate(jSONObject, target) {
-	  jQuery('<ul/>', {
-    	  'class': 'mines'
+    jQuery('<ul/>', {
+        'class': 'mines'
       })
       .appendTo(target);
-	  target += ' ul.mines';
-      
+    target += ' ul.mines';
+
       // for each mine in question...
       jQuery.each(jSONObject, function(key, entry) {
           if (entry['organisms'] != undefined) {
               // details dict
               var minePortalDetails = minePortals[entry['mineName'].toLowerCase()];
-
-              var organismAttribute = '';   // only used for orthologue links
+              var orthologue = '';   // only used for orthologue links
 
               // mine
               if (minePortalDetails["bgcolor"] != null && minePortalDetails["frontcolor"] != null) { // we have colors! aaaw, pretty...
@@ -81,8 +82,8 @@
 
                   // gene item
                   if (organismEntry['genes'] != undefined) {
-                	  var ortho = organismEntry['genes']['orthologues'];
-                	  jQuery('<li/>', {
+                    var ortho = organismEntry['genes']['orthologues'];
+                    jQuery('<li/>', {
                           'text': (ortho['displayIdentifier'] == '""') ? ortho['primaryIdentifier'] : ortho['displayIdentifier']
                       })
                       .appendTo(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries");
@@ -94,7 +95,7 @@
                             if (identifier == '""') {
                                 identifier = orthoEntry['primaryIdentifier'];
                             }
-
+                            orthologue = '&orthologue=' + organismEntry['shortName'];
                           jQuery('<li/>', {
                               'text': identifier
                           })
@@ -105,7 +106,7 @@
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
                         var linkText = jQuery(this).text();
-                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + linkText + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
+                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + linkText + orthologue + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());
@@ -117,7 +118,7 @@
   }
   </script>
 
-  <h3 class="goog">Link to other InterMines</h3>
+  <h3 class="goog">Link to other Mines</h3>
       <div id="intermine_links" class="loading">&nbsp;</div><br>
         <script type="text/javascript" charset="utf-8">
           getMineLinks('${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');
