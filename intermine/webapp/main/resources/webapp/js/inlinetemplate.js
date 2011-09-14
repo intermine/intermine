@@ -51,8 +51,6 @@ function loadInlineTemplate(i) {
     complete: function(jXHR, textStatus) {
         // get rid of the loading spinner
     	jQuery(e).parent().find('div.loading-spinner').remove();
-    	// attach persistent header
-    	im.persistentTableHeaders(e);
     }
   });
 

@@ -30,7 +30,7 @@
 
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
         <%-- ############# --%>
-        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table persistent">
+        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
         <h3>
           <c:if test="${IS_SUPERUSER}">
             <div class="right">
