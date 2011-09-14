@@ -617,16 +617,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // note that while the subId is null in the database, it is = 0 here
             if (submissionId == 0) {
                 if (isADeletedSub) {
-                    // LOG.info("DEL: skipping"  + isADeletedSub );                 
+                    //LOG.info("DEL: skipping"  + isADeletedSub );                 
                     continue;
                 }
             } else {
                 if (deletedSubMap.containsKey(submissionId)) {
                     isADeletedSub = true;
-                    // LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
+                    //LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
                     continue;
                 } else {
                     isADeletedSub = false;
+                    //LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
                 }
             }
 
@@ -1590,7 +1591,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // the results are ordered, first ap have a subId
             // if we find a deleted sub, we know that subsequent records with null
             // subId belongs to the deleted sub
-            if (submissionId == null ) {
+            if (submissionId == 0 ) {
                 if (isADeletedSub == true) continue;
             } else {
                 if (deletedSubMap.containsKey(submissionId)) {
