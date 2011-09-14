@@ -10,19 +10,16 @@ package org.intermine.web.logic.profile;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryUpgrade;
@@ -52,13 +49,15 @@ public class UpgradeBagList implements Runnable
         for (InterMineBag bag : savedBags.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 savedBagsStatus.put(bag.getName(), Constants.UPGRADING_BAG);
-                
+
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
                     if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                         Map<Integer, List> matches = result.getMatches();
-                        bag.upgradeOsb(matches.keySet(), false);
+                        //we set temporary the updateBagValues parameter to true
+                        //in this way will update the extra field recently added
+                        bag.upgradeOsb(matches.keySet(), true);
                         savedBagsStatus.put(bag.getName(), BagState.CURRENT.toString());
                     } else {
                         session.setAttribute("bagQueryResult_" + bag.getName(), result);
