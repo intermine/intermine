@@ -202,8 +202,8 @@ jQuery.fn.extend({
 	isInView: function(visibility) {
 		return im.isInView(this, visibility);
 	},
-	persistentTableHeaders: function(collection) {
-		return im.persistentTableHeaders(collection);
+	persistentTableHeaders: function() {
+		return im.persistentTableHeaders(this);
 	}
 });
 
@@ -211,4 +211,6 @@ jQuery.fn.extend({
 jQuery(document).ready(function() {
 	// fix n-th child in IE and apply .odd/.even classes to tables 
 	im.alternatingColors();
+	// persistent table headers
+	im.persistentTableHeaders();
 });
