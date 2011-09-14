@@ -8,7 +8,7 @@
 
 
 <!-- publicationCountsDisplayer.jsp -->
-<div id="publication-counts-displayer" class="collection-table persistent">
+<div id="publication-counts-displayer" class="collection-table">
 <h3>Publications</h3>
 
 <c:choose>
