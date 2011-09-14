@@ -19,7 +19,8 @@
 <br/>
 <div style="font-size: 1.2em;">
 <p>
-Kharchenko at al., Nature (in press) produced a genome-wide map of 9 chromatin states for <i>D. melanogaster</i> in the S2 embryonic cell line the BG3 neuronal cell line.
+Kharchenko at al., <a target ="new" href="http://dx.doi.org/10.1038/nature09725">Nature 471, pp. 480-485</a>
+ produced a genome-wide map of 9 chromatin states for <i>D. melanogaster</i> in the S2 embryonic cell line the BG3 neuronal cell line.
 </p>
 </div>
 <br/>
