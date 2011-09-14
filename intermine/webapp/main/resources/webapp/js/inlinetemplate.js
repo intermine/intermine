@@ -52,7 +52,7 @@ function loadInlineTemplate(i) {
         // get rid of the loading spinner
     	jQuery(e).parent().find('div.loading-spinner').remove();
     	// attach persistent header
-    	//im.persistentTableHeaders(e);
+    	im.persistentTableHeaders(e);
     }
   });
 
