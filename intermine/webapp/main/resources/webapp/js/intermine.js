@@ -34,10 +34,10 @@ im.alternatingColors = function() {
 };
 
 // will turn thead.persistent into persistent header 
-im.persistentTableHeaders = function() {
-	// traverse all 'collection' tables that have a .persistent class
-	jQuery('div.collection-table.persistent').each(function(i) {
-		var collection = jQuery(this),
+im.persistentTableHeaders = function(e) {
+	
+	function makeEm(collection) {
+		var collection = jQuery(collection),
 			table 	   = collection.find('table'),
 			head  	   = table.find('thead tr');
 		// continue only if we have exactly one <tr> element in the head
@@ -49,27 +49,47 @@ im.persistentTableHeaders = function() {
 			fixed.css({'position':'fixed', 'top':'21px', 'z-index':2, 'width':head.width()}).hide();
 			
 			// now we need to fix the width of the columns much like in the original head
-			resizeFixedHead = function() {
-				head.find('th').each(function(i) {
-					jQuery(fixed.find('th')[i]).css('width', jQuery(this).width());
-				});
-			}
-			resizeFixedHead();
-			
-			// monitor the showing/hiding of table rows throw more/collapse
-			collection.find('div.toggle a').click(function() {
-				// ... and resize the head as we have different number of rows now
-				resizeFixedHead();
+			head.find('th').each(function(i) {				
+				jQuery(fixed.find('th')[i]).css('width', jQuery(this).width());
 			});
-		}
-	});
+		}		
+	}
+	
+	function monitorEm(collection) {
+		var collection = jQuery(collection);
+		collection.find('div.toggle').click(function() {
+			// ... and resize the head as we have different number of rows now
+			var head = collection.find('table thead');
+			
+			head.find('tr.static-header th').each(function(i) {
+				jQuery(head.find('tr.fixed-header th')[i]).css('width', jQuery(this).width());
+			});
+		});		
+	}
+	
+	// undefined, grab them all
+	if (e == undefined) {
+		// traverse all 'collection' tables that have a .persistent class
+		jQuery('div.collection-table.persistent').each(function(i) {
+			makeEm(this);
+		});
+		
+		// monitor the showing/hiding of table rows throw more/collapse
+		jQuery('div.collection-table.persistent').each(function(i) {
+			monitorEm(this);
+		});
+	} else {
+		// make them and monitor them e
+		makeEm(e);
+		monitorEm(e);
+	}
 	
 	// monitor scroll events and see if we no longer see the static one
 	jQuery(window).scroll(function() {
 		jQuery('div.collection-table.persistent').each(function(i) {
 			var table  = jQuery(this).find('table'),
 				offset = table.offset(),
-				top    = jQuery(window).scrollTop(),
+				top    = jQuery(window).scrollTop() + 21 + table.find('thead tr').height(),
 				fixed  = table.find('thead tr.fixed-header');
 		
 			// then swap the 'visibility' of the fixed head
@@ -177,6 +197,9 @@ jQuery.fn.extend({
 	},
 	isInView: function(visibility) {
 		return im.isInView(this, visibility);
+	},
+	persistentTableHeaders: function(collection) {
+		return im.persistentTableHeaders(collection);
 	}
 });
 
