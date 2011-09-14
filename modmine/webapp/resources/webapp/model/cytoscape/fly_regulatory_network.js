@@ -101,6 +101,7 @@ function showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_
             var data = evt.target.data;
 
             url = webapp_baseurl + "/" + webapp_path + "/portal.do?externalid=" + data.id + "&class=Gene";
+            // url = webapp_baseurl + "/" + webapp_path + "/report.do?id=" + data.id;
             window.open(url);
         })
 
