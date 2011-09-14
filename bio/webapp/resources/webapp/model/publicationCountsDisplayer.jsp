@@ -8,7 +8,7 @@
 
 
 <!-- publicationCountsDisplayer.jsp -->
-<div id="publication-counts-displayer" class="collection-table">
+<div id="publication-counts-displayer" class="collection-table persistent">
 <h3>Publications</h3>
 
 <c:choose>
@@ -17,7 +17,7 @@
   </c:when>
   <c:otherwise>
     <table>
-      <thead class="persistent">
+      <thead>
         <tr>
             <th>PubMed</th>
             <th>Title</th>
