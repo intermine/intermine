@@ -10,7 +10,6 @@ package org.intermine.web.task;
  *
  */
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -75,37 +74,38 @@ public class LoadBagValuesTask extends Task
         ObjectStore os = null;
         ObjectStore uos = null;
         ObjectStoreWriter uosw = null;
-        InputStream test = this.getClass().getClassLoader().getResourceAsStream("extraBag.properties");
-        if (test == null) { System.out.println("extraBag.properties not found!!");return;
-        }
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
             uos = ObjectStoreFactory.getObjectStore(userProfileAlias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
+
         if (uos instanceof ObjectStoreInterMineImpl) {
             Connection conn = null;
             Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
-                if (!DatabaseUtil.tableExists(conn, "bagvalues")) {
-                    DatabaseUtil.createBagValuesTables(conn);
+
+                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")
+                    && DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                        System .out.println("You must not execute the task load-bagvalues-table. Run the task update-savedbag-table task.");
+                        return;
                 }
-                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")){
-                    if(!DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
+                if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")) {
                         DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
                             DatabaseUtil.Type.text);
                         DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_state",
                             BagState.CURRENT.toString());
-                    } else {
-                        System .out.println("You must not execute the task load-bagvalues-table. Run the task update-savedbag-table task.");
-                        return;
-                    }
                 }
+
+                if (!DatabaseUtil.tableExists(conn, "bagvalues")) {
+                    DatabaseUtil.createBagValuesTables(conn);
+                }
+
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                throw new BuildException("Problems creating bagvalues table or intermine_state column", sqle);
+                throw new BuildException("Problems creating bagvalues table", sqle);
             } finally {
                 try {
                     if (conn != null) {
@@ -129,18 +129,18 @@ public class LoadBagValuesTask extends Task
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             if (StringUtils.isBlank(savedBag.getName())) {
-                System .out.println("Failed to load bag with blank name");
+                log("Failed to load bag with blank name");
             } else {
                 try {
                     InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
-                    System .out.println("Start loading bag: " + bag.getName() + " - id: "
+                    log("Start loading bag: " + bag.getName() + " - id: "
                             + bag.getSavedBagId());
                     Properties classKeyProps = new Properties();
                     try {
                         classKeyProps.load(this.getClass().getClassLoader()
                                 .getResourceAsStream("class_keys.properties"));
                     } catch (Exception e) {
-                        System .out.println("Error loading class descriptions.");
+                        log("Error loading class descriptions.");
                         e.printStackTrace();
                     }
 
@@ -151,16 +151,21 @@ public class LoadBagValuesTask extends Task
                             classKeys, bag.getType());
                     bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
-                    System .out.println("Loaded bag: " + bag.getName() + " - id: "
+                    log("Loaded bag: " + bag.getName() + " - id: "
                             + bag.getSavedBagId());
                 } catch (UnknownBagTypeException e) {
-                    System .out.println("Ignoring a bag '" + savedBag.getName() + " because type: "
+                    log("Ignoring a bag '" + savedBag.getName() + " because type: "
                              + savedBag.getType() + " is not in the model.");
                     e.printStackTrace();
                 } catch (ObjectStoreException ose) {
                     throw new BuildException("Exception while creating InterMineBag", ose);
                 }
             }
+        }
+        try {
+            uosw.close();
+        } catch (ObjectStoreException ose) {
+            throw new BuildException("Problems closing the writer", ose);
         }
     }
 }
