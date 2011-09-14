@@ -135,7 +135,7 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
         //verify if intermine_state exists in the savedbag table and if it has the right type
-        if (!verifySavedBagTable(userprofileOSW)) {
+        if (!verifyListTables(userprofileOSW)) {
             return;
         }
         //verify if we the webapp needs to upgrade the lists
@@ -534,14 +534,6 @@ public class InitialiserPlugin implements PlugIn
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
             }
-            if (!DatabaseUtil.tableExists(con, "bagvalues")) {
-                DatabaseUtil.createBagValuesTables(con);
-            } else {
-                if(!DatabaseUtil.columnExists(con, "bagvalues", "extra")) {
-                    DatabaseUtil.addColumn(con, "bagvalues", "extra",
-                            DatabaseUtil.Type.text);
-                }
-            }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
             throw new ServletException("Unable to upgrade UserProfile DB");
@@ -659,16 +651,18 @@ public class InitialiserPlugin implements PlugIn
         return null;
     }
 
-    private boolean verifySavedBagTable(ObjectStore uos) {
+    private boolean verifyListTables(ObjectStore uos) {
         Connection con = null;
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
-            if (DatabaseUtil.tableExists(con, "savedbag")) {
-                if (DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
+            if (!DatabaseUtil.tableExists(con, "bagvalues")) {
+                blockingErrorKeys.add("errors.savedbagtable.runLoadBagValuesTableAnt");
+                return false;
+            } else {
+                if (!DatabaseUtil.columnExists(con, "bagvalues", "extra") 
+                    || DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
                     blockingErrorKeys.add("errors.savedbagtable.runUpdateSavedBagTableAnt");
                     return false;
-                } else if (DatabaseUtil.columnExists(con, "savedbag", "intermine_state")) {
-                    return true;
                 }
             }
         } catch (SQLException sqle) {
@@ -676,8 +670,7 @@ public class InitialiserPlugin implements PlugIn
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
-        blockingErrorKeys.add("errors.savedbagtable.runLoadBagValuesTableAnt");
-        return false;
+        return true;
     }
 
     /**
