@@ -661,7 +661,7 @@ public class InitialiserPlugin implements PlugIn
             } else {
                 if (!DatabaseUtil.columnExists(con, "bagvalues", "extra") 
                     || DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
-                    blockingErrorKeys.add("errors.savedbagtable.runUpdateSavedBagTableAnt");
+                    blockingErrorKeys.add("errors.savedbagtable.runListTablesAnt");
                     return false;
                 }
             }
