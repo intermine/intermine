@@ -10,6 +10,7 @@ package org.intermine.metadata;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,7 +21,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
@@ -288,6 +288,14 @@ public class ModelTest extends TestCase
         assertEquals(modelString, model.toString());
     }
 
+    public void testGetSimpleObjectClassDescriptors() throws Exception {
+        Model simpleObjectModel = getSimpleObjectModel();
+
+        ClassDescriptor simple = simpleObjectModel.getClassDescriptorByName("Simple");
+        Set<ClassDescriptor> expected = new HashSet<ClassDescriptor>(Collections.singleton(simple));
+        assertEquals(expected, simpleObjectModel.getSimpleObjectClassDescriptors());
+    }
+
     public void testGetTopDownTraversal() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
 
@@ -379,9 +387,25 @@ public class ModelTest extends TestCase
         assertEquals(im, actual.get(7));
     }
 
+
+    // simple objects come before InterMineObject in traversal order, they have no inheritance
+    public void testGetTopDownTraversalSimpleObjects() throws Exception {
+        Model simpleObjectModel = getSimpleObjectModel();
+
+        List<ClassDescriptor> expected = new ArrayList<ClassDescriptor>();
+        expected.add(simpleObjectModel.getClassDescriptorByName("Simple"));
+        expected.add(simpleObjectModel.getClassDescriptorByName("org.intermine.model.InterMineObject"));
+        expected.add(simpleObjectModel.getClassDescriptorByName("A"));
+        expected.add(simpleObjectModel.getClassDescriptorByName("B"));
+
+        assertEquals(expected, simpleObjectModel.getTopDownLevelTraversal());
+    }
+
     /**
      * Return a model with inheritance structure:
      *
+     *  InterMineObject
+     *         |
      *         A
      *       /   \
      *      B     G
@@ -409,6 +433,19 @@ public class ModelTest extends TestCase
 
         Model smallModel = new Model("small", "", smallModelClds);
         return smallModel;
+    }
+
+    private Model getSimpleObjectModel() throws MetaDataException {
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+        ClassDescriptor a = new ClassDescriptor("A", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        clds.add(a);
+        ClassDescriptor b = new ClassDescriptor("B", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        clds.add(b);
+        ClassDescriptor s = new ClassDescriptor("Simple", "java.lang.Object", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        clds.add(s);
+
+        Model simpleObjectModel = new Model("simple", "", clds);
+        return simpleObjectModel;
     }
 
 }
