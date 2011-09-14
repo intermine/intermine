@@ -27,7 +27,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.GOTerm;
+import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Organism;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
@@ -119,14 +119,14 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             PathQuery query = buildQuery(model, new Integer(reportObject.getId()));
             ExportResultsIterator result = executor.execute(query);
 
-            Map<String, Map<GOTerm, Set<String>>> goTermsByOntology =
-                new HashMap<String, Map<GOTerm, Set<String>>>();
+            Map<String, Map<OntologyTerm, Set<String>>> goTermsByOntology =
+                new HashMap<String, Map<OntologyTerm, Set<String>>>();
 
             while (result.hasNext()) {
                 List<ResultElement> row = result.next();
                 String parentTerm = (String) row.get(0).getField();
                 parentTerm = parentTerm.replaceAll("_", " ");
-                GOTerm term = (GOTerm) row.get(1).getObject();
+                OntologyTerm term = (OntologyTerm) row.get(1).getObject();
                 String code = (String) row.get(2).getField();
                 addToOntologyMap(goTermsByOntology, parentTerm, term, code);
             }
@@ -143,11 +143,11 @@ public class GeneOntologyDisplayer extends ReportDisplayer
         }
     }
 
-    private void addToOntologyMap(Map<String, Map<GOTerm, Set<String>>> goTermsByOntology,
-            String namespace, GOTerm term, String evidenceCode) {
-        Map<GOTerm, Set<String>> termToEvidence = goTermsByOntology.get(namespace);
+    private void addToOntologyMap(Map<String, Map<OntologyTerm, Set<String>>> goTermsByOntology,
+            String namespace, OntologyTerm term, String evidenceCode) {
+        Map<OntologyTerm, Set<String>> termToEvidence = goTermsByOntology.get(namespace);
         if (termToEvidence == null) {
-            termToEvidence = new HashMap<GOTerm, Set<String>>();
+            termToEvidence = new HashMap<OntologyTerm, Set<String>>();
             goTermsByOntology.put(namespace, termToEvidence);
         }
         Set<String> codes = termToEvidence.get(term);
