@@ -185,14 +185,13 @@
 	        if (${pagedResults.exactSize} > 1) {
 	        	jQuery('#' + tableId).find("h3 div.right").text(exactSize + ' results');
 	        	jQuery('#' + tableId + ' table tbody tr').hide();
-	        	jQuery('<div/>', {
-	        		'class': 'toggle'
-	        	}).append(
+	        	jQuery('#' + tableId + ' div.collection-table div.toggle')
+	        	.append(
 	                	jQuery('<a/>', {
 	        		    'title': 'Collapse/Hide',
 	        		    'class': 'less',
 	        		    'text': 'Collapse',
-	        		    'style': 'float:right; display:none;',
+	        		    'style': 'float:right;display:none;margin-left:20px;',
 	        		    'click': function(e) {
 	        		    	jQuery('#' + tableId + ' div.show-in-table').hide();
 	        		    	jQuery('#' + tableId + ' table tbody tr').hide();
@@ -208,10 +207,12 @@
 		            	jQuery('<a/>', {
 		    		    'title': 'Show more items',
 		    		    'class': 'more',
+		    		    'style': 'float:right;',
 		    		    'text': function() {
 		    		    	return 'Show ' + ((exactSize < 11) ? 'all ' + exactSize : 'first ' + 10) + ' rows';
 		    		    },
 		    		    'click': function(e) {
+		    		    	jQuery('#' + tableId + ' div.show-in-table').show();
 		    		    	jQuery('#' + tableId + ' table').parent().show();
 		    		    	jQuery('#' + tableId + ' table tbody tr:hidden').each(function(index) {
 		    		    	    if (index < 10) {
@@ -226,12 +227,10 @@
 		        		    	jQuery('#' + tableId + ' div.toggle a.less').show();
 		    		    	} else {
 		        		    	jQuery(this).parent().remove();
-		        		    	jQuery('#' + tableId + ' div.show-in-table').show();
 		    		    	}
 		    		    }
 		    		})
-		    	)
-	        	.appendTo('#' + tableId + ' div.collection-table');
+		    	);
 	        } else {
 	        	jQuery('#' + tableId).find("h3 div.right").text('1 result');
 				jQuery('#' + tableId + ' table').parent().show();

@@ -1539,7 +1539,7 @@ div.template h3 img { vertical-align:middle; }
 div.template div.right { display:inline; float:right; }
 /* togglers */
 div.collection-table div.toggle,
-div.collection-of-collections div.toggle { padding:2px; text-align:center; font-size:12px; }
+div.collection-of-collections div.toggle { padding:2px; font-size:12px; }
 div.collection-table div.toggle a,
 div.collection-of-collections div.toggle a { padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px; box-shadow:0 1px 2px #EFEFEF; cursor:pointer; }
 div.collection-table div.toggle a.less,

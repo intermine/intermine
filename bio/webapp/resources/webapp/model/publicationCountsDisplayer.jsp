@@ -56,6 +56,7 @@
           t.find("div.toggle").show();
 
           t.find('div.toggle a.more').click(function(e) {
+        	t.find("div.show-in-table").show();
             t.find("table tbody tr:hidden").each(function(i) {
               if (i < 10) {
                 jQuery(this).show();
@@ -64,9 +65,6 @@
             t.find("div.toggle a.less").show();
             if (t.find("table tbody tr:hidden").length == 0) {
               t.find('div.toggle a.more').hide();
-            }
-            if (t.find("table tbody tr:visible").length >= 30) {
-              t.find("div.show-in-table").show();
             }
           });
 

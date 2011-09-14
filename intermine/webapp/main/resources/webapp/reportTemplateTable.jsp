@@ -38,7 +38,9 @@
   </c:otherwise>
 </c:choose>
 
-<%-- show in table --%>
+<%-- more or less show in table --%>
+<div class="toggle"></div>
+
 <div class="show-in-table" style="display:none;">
 <c:choose>
   <c:when test="${resultsTable.exactSize == 0}">
