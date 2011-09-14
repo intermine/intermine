@@ -171,7 +171,7 @@
                         <c:when test="${row.key == 'templates'}">
                           <ul>
                             <c:forEach var="template" items="${row.value}">
-                              <li><a href="template.do?name=${template.name}"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-16.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a></li>
+                              <li><a href="template.do?name=${template.name}&scope=global"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-16.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a></li>
                             </c:forEach>
                           </ul>
                           <p class="more"><a href="templates.do?filter=${aspectTitle}">More queries</a></p>
@@ -184,27 +184,27 @@
         </div>
       </c:if>
 
-	<c:if test="${fn:length(frontpageBags) > 0}">
-		<div id="lists">
-			<h4>Lists</h4>
-			<p><c:out value="${WEB_PROPERTIES['begin.listsBox.description']}" /></p>
-			<ul>
-				<c:forEach var="bag" items="${frontpageBags}">
-				<li>
-					<h5><a href="bagDetails.do?scope=all&bagName=<c:out value="${fn:replace(bag.value.title, ' ', '+')}"/>">${bag.value.title}</a></h5>
-					<span>(${bag.value.size}&nbsp;<b>${bag.value.type}<c:if test="${bag.value.size > 1}">s</c:if></b>)</span>
-					<c:if test="${!empty(bag.value.description)}">
-						<p>${bag.value.description}</p>
-					</c:if>
-				</li>
-				</c:forEach>
-			</ul>
-			
-			<p class="more">
-				<a href="bag.do?subtab=view">More lists</a>
-			</p>
-		</div>
-	</c:if>
+  <c:if test="${fn:length(frontpageBags) > 0}">
+    <div id="lists">
+      <h4>Lists</h4>
+      <p><c:out value="${WEB_PROPERTIES['begin.listsBox.description']}" /></p>
+      <ul>
+        <c:forEach var="bag" items="${frontpageBags}">
+        <li>
+          <h5><a href="bagDetails.do?scope=all&bagName=<c:out value="${fn:replace(bag.value.title, ' ', '+')}"/>">${bag.value.title}</a></h5>
+          <span>(${bag.value.size}&nbsp;<b>${bag.value.type}<c:if test="${bag.value.size > 1}">s</c:if></b>)</span>
+          <c:if test="${!empty(bag.value.description)}">
+            <p>${bag.value.description}</p>
+          </c:if>
+        </li>
+        </c:forEach>
+      </ul>
+
+      <p class="more">
+        <a href="bag.do?subtab=view">More lists</a>
+      </p>
+    </div>
+  </c:if>
 
         <div id="low">
             <div id="rss" style="display:none;">
@@ -315,7 +315,7 @@
                         feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
                         feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
 
-                        // build table row                        
+                        // build table row
                         row = '<tr>' + '<td class="date">' + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
                         + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
                         + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'

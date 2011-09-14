@@ -42,6 +42,7 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -87,11 +88,11 @@ public class BeginAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = SessionMethods.getWebProperties(servletContext);
 
+        // if user was just building a template, remove.  See #2619
+        session.removeAttribute(Constants.NEW_TEMPLATE);
+
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
         // the default value from web.properties and save it in the session
-
-        // TODO multiple Galaxy instances send requests, GALAXY_URL will be overwritten, we assume
-        // there is only one Galaxy server, thus GALAXY_URL is saved in the session per user.
         if (request.getParameter("GALAXY_URL") != null) {
             request.getSession().setAttribute("GALAXY_URL",
                     request.getParameter("GALAXY_URL"));
