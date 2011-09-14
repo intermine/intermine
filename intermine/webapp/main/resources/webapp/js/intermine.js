@@ -35,15 +35,16 @@ im.alternatingColors = function() {
 
 // will turn thead.persistent into persistent header 
 im.persistentTableHeaders = function() {
-	// traverse all tables that have a <thead> element with .persistent
-	jQuery('table thead.persistent').each(function(i) {
-		var head  = jQuery(this).find('tr'),
-			table = head.closest('table');
+	// traverse all 'collection' tables that have a .persistent class
+	jQuery('div.collection-table.persistent').each(function(i) {
+		var collection = jQuery(this),
+			table 	   = collection.find('table'),
+			head  	   = table.find('thead tr');
 		// continue only if we have exactly one <tr> element in the head
 		// ... and at least two elements in the actual table
 		if (head.length == 1 && table.find('tbody tr').length > 1) {
 			// duplicate the row and apply different classes to static/fixed positioned elements
-			fixed = head.addClass('static-header').clone().attr('class', 'fixed-header').appendTo(this);
+			fixed = head.addClass('static-header').clone().attr('class', 'fixed-header').appendTo(head.parent());
 			// apply fixed positioning
 			fixed.css({'position':'fixed', 'top':'21px', 'z-index':2, 'width':head.width()}).hide();
 			
@@ -56,25 +57,28 @@ im.persistentTableHeaders = function() {
 			resizeFixedHead();
 			
 			// monitor the showing/hiding of table rows throw more/collapse
-			// ... and resize the head as we have different number of rows now
-			// TODO: not working for all tables
-			table.parent().find('div.toggle a').click(function() { resizeFixedHead(); });
+			collection.find('div.toggle a').click(function() {
+				// ... and resize the head as we have different number of rows now
+				resizeFixedHead();
+			});
 		}
 	});
 	
 	// monitor scroll events and see if we no longer see the static one
 	jQuery(window).scroll(function() {
-		jQuery('table thead.persistent').each(function(i) {
-			var table  = jQuery(this).closest('table'),
+		jQuery('div.collection-table.persistent').each(function(i) {
+			var table  = jQuery(this).find('table'),
 				offset = table.offset(),
 				top    = jQuery(window).scrollTop(),
-				fixed  = jQuery(this).find('tr.fixed-header');
+				fixed  = table.find('thead tr.fixed-header');
 		
 			// then swap the 'visibility' of the fixed head
-			if ((top > offset.top) && (top < offset.top + table.height())) {
-				fixed.show();
-			} else {
-				fixed.hide();
+			if (table.length > 0) {
+				if ((top > offset.top) && (top < offset.top + table.height())) {
+					fixed.show();
+				} else {
+					fixed.hide();
+				}
 			}
 		});
 	}).trigger("scroll");
