@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.WebSearchable;
@@ -360,7 +359,6 @@ public class InterMineBag implements WebSearchable, Cloneable
                 }
             }
         }
-
         Query q = new Query();
         q.setDistinct(false);
         try {
