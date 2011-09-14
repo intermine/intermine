@@ -147,6 +147,7 @@ public final class RegulatoryNetworkDBUtil
 
         interactionEdgeSetFly = new LinkedHashSet<CytoscapeNetworkEdgeData>();
 
+        // TODO fly doesn't use IM Object id
         PathQuery query = new PathQuery(model);
         query.addViews(
                 "Regulation.type", // interaction type, e.g. TF-TF

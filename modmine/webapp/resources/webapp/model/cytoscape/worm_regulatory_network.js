@@ -176,7 +176,7 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
         vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
             var data = evt.target.data;
 
-            url = webapp_baseurl + "/" + webapp_path + "/objectDetails.do?id=" + data.id;
+            url = webapp_baseurl + "/" + webapp_path + "/report.do?id=" + data.id;
             window.open(url);
         })
 
