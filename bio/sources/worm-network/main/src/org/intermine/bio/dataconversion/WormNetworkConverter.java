@@ -34,8 +34,8 @@ import org.intermine.xml.full.Item;
  * miRNAs have three data fields: symbol, full names, position.
  *
  * @author
- * 
- * TODO: merge with the fly one 
+ *
+ * TODO: merge with the fly one
  */
 
 public class WormNetworkConverter extends BioDirectoryConverter
@@ -64,7 +64,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
     // key:symbol [vpos, hpos]
     private Map<String, String[]> miRNAMap = new HashMap<String, String[]>();
 
-    
+
     // remove duplication when creating gene items
     // key:primaryId/symbol - value:bioentity.identifier
     private Map<String, String> geneItems = new HashMap<String, String>();
@@ -79,10 +79,11 @@ public class WormNetworkConverter extends BioDirectoryConverter
         resolverFactory = new WormBaseChadoIdResolverFactory("gene");
         orgRefId = getOrganism(WORM_TAXON_ID);
     }
-        
+
 
     /**
      * Called for each file found by ant.
+     *
      *
      * {@inheritDoc}
      */
@@ -233,9 +234,9 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                 Item regulation = createRegulation(INTERACTION_TYPE_TF_TF);
 
                                 // Create target gene
-                                String targetVpos = 
+                                String targetVpos =
                                     tfMap.get(targetIdentifier)[0];
-                                String targetType = 
+                                String targetType =
                                     tfMap.get(targetIdentifier)[1];
                                 String targetGenePid =
                                     createGene(null, targetIdentifier);
@@ -264,7 +265,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                         targetVpos, targetGenePid);
                                 Item targetNetworkPropertyHpos = addNetworkProperty(TOPOS_HPOS,
                                         targetHpos, targetGenePid);
-                                
+
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
                                 regulation.setReference("target", geneItems.get(targetGenePid));
                                 store(regulation);
@@ -293,7 +294,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                 String targetType =
                                     tfMap.get(targetIdentifier)[1];
                                 String targetGenePid =
-                                    createGene(targetIdentifier, targetIdentifier);
+                                    createGene(null, targetIdentifier);
 
                                 Item targetNetworkPropertyVpos = addNetworkProperty(TOPOS_VPOS,
                                         targetVpos, targetGenePid);
@@ -395,7 +396,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
      */
     private String createGene(String primaryId, String symbol) throws ObjectStoreException {
 
-        if (primaryId == null) { 
+        if (primaryId == null) {
             // a few symbols are secondary identifiers for WB, let's use the primary one
             // TODO improve resolver
             if ("mir-239a".equalsIgnoreCase(symbol)) {
@@ -410,8 +411,8 @@ public class WormNetworkConverter extends BioDirectoryConverter
             if ("lin-15b".equalsIgnoreCase(symbol)) {
                 symbol = "lin-15B";
             }
-            
-            
+
+
             IdResolver resolver = resolverFactory.getIdResolver();
             int resCount = resolver.countResolutions(WORM_TAXON_ID, symbol);
             if (resCount == 0) {

@@ -391,37 +391,37 @@ public final class RegulatoryNetworkDBUtil
             Integer targetId = (Integer) row.get(6).getField();
 
             // TODO Hack for a database issue
-            if ("blmp-1".equals(targetSymbol)) {
-                targetId = 1644007904;
-            }
-
-            if ("unc-130".equals(targetSymbol)) {
-                targetId = 1644015202;
-            }
-
-            if ("mab-5".equals(targetSymbol)) {
-                targetId = 1644006300;
-            }
-
-            if ("mdl-1".equals(targetSymbol)) {
-                targetId = 1644006399;
-            }
-
-            if ("elt-3".equals(targetSymbol)) {
-                targetId = 1644003204;
-            }
-
-            if ("lin-11".equals(targetSymbol)) {
-                targetId = 1644006039;
-            }
-
-            if ("skn-1".equals(targetSymbol)) {
-                targetId = 1644009973;
-            }
-
-            if ("egl-27".equals(targetSymbol)) {
-                targetId = 1644003074;
-            }
+//            if ("blmp-1".equals(targetSymbol)) {
+//                targetId = 1644007904;
+//            }
+//
+//            if ("unc-130".equals(targetSymbol)) {
+//                targetId = 1644015202;
+//            }
+//
+//            if ("mab-5".equals(targetSymbol)) {
+//                targetId = 1644006300;
+//            }
+//
+//            if ("mdl-1".equals(targetSymbol)) {
+//                targetId = 1644006399;
+//            }
+//
+//            if ("elt-3".equals(targetSymbol)) {
+//                targetId = 1644003204;
+//            }
+//
+//            if ("lin-11".equals(targetSymbol)) {
+//                targetId = 1644006039;
+//            }
+//
+//            if ("skn-1".equals(targetSymbol)) {
+//                targetId = 1644009973;
+//            }
+//
+//            if ("egl-27".equals(targetSymbol)) {
+//                targetId = 1644003074;
+//            }
 
             CytoscapeNetworkEdgeData aEdge = new RegulatoryNetworkEdgeData();
 
