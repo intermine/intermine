@@ -140,6 +140,16 @@ public class Type
         return Collections.unmodifiableMap(fieldConfigMap);
     }
 
+    /**
+     * Return a FieldConfig for a particular field if it has been specified, otherwise return null
+     * @param fieldName the field to look up config for
+     * @return the FieldConfig or null
+     */
+    public FieldConfig getFieldConfig(String fieldName) {
+        return fieldConfigMap.get(fieldName);
+    }
+
+
    /**
      * Add a long displayer for this Type
      * @param disp the Displayer to add
