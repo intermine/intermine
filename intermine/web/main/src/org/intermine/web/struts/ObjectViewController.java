@@ -24,9 +24,9 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.results.ReportObject;
-import org.intermine.web.logic.results.ReportObjectFactory;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -50,7 +50,7 @@ public class ObjectViewController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
+        final WebConfig webConfig = SessionMethods.getWebConfig(session.getServletContext());
 
         String idString = (String) context.getAttribute("id");
 
@@ -68,15 +68,8 @@ public class ObjectViewController extends TilesAction
             return null;
         }
 
-        ReportObject dobj = reportObjects.get(object);
-        FieldConfig fc = null;
-        for (FieldConfig fct : dobj.getFieldConfigs()) {
-            if (fct.getFieldExpr() == fieldName) {
-                fc = fct;
-                break;
-            }
-        }
-
+        String clsName = DynamicUtil.getSimpleClass(object).getName();
+        FieldConfig fc = webConfig.getFieldConfig(clsName, fieldName);
 
         // truncate fields by default, unless it says otherwise in config
         boolean doNotTruncate = false;

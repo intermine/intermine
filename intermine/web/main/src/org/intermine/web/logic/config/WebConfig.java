@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +37,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -431,6 +434,34 @@ public class WebConfig
      */
     public Map<String, Type> getTypes() {
         return types;
+    }
+
+    /**
+     * Return a FieldConfigs for a particular class or an empty list if no config is defined.
+     * @param clsName the class to fetch field configs for
+     * @return the FieldConfigs or an empty collection
+     */
+    public Collection<FieldConfig> getFieldConfigs(String clsName) {
+        Type type = types.get(clsName);
+        if (type != null) {
+            return type.getFieldConfigs();
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Return the FieldConfig for a particular field of the specified field, or null if field not
+     * configured.
+     * @param clsName the class to fetch field config for
+     * @param fieldName the field to fetch config for
+     * @return Collection<FieldConfig>
+     */
+    public FieldConfig getFieldConfig(String clsName, String fieldName) {
+        Type type = types.get(clsName);
+        if (type != null) {
+            return type.getFieldConfig(fieldName);
+        }
+        return null;
     }
 
     /**

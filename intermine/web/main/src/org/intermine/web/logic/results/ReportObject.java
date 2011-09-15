@@ -12,7 +12,6 @@ package org.intermine.web.logic.results;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -279,12 +278,8 @@ public class ReportObject
      * @return Collection<FieldConfig>
      */
     public Collection<FieldConfig> getFieldConfigs() {
-        Map<String, Type> types = webConfig.getTypes();
         String qualifiedType = DynamicUtil.getSimpleClass(object).getName();
-        if (types.containsKey(qualifiedType)) {
-            return types.get(qualifiedType).getFieldConfigs();
-        }
-        return Collections.emptyList();
+        return webConfig.getFieldConfigs(qualifiedType);
     }
 
     /**
