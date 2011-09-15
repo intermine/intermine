@@ -19,21 +19,23 @@
     <table>
       <thead>
         <tr>
-            <th>PubMed</th>
+            <th>Author</th>
+            <th>Date</th>
             <th>Title</th>
             <th>Number of ${type}s mentioned</th>
         </tr>
       </thead>
       <tbody>
-	    <c:forEach items="${results}" var="entry" varStatus="status">
-	      <c:set var="pub" value="${entry.key}" />
-	      <c:set var="total" value="${entry.value}" />
-	      <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
-	        <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.pubMedId}"/></html:link></td>
-	          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
-	          <td><c:out value="${total}"/></td>
-	      </tr>
-	    </c:forEach>
+      <c:forEach items="${results}" var="entry" varStatus="status">
+        <c:set var="pub" value="${entry.key}" />
+        <c:set var="total" value="${entry.value}" />
+        <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
+          <td><c:out value="${pub.firstAuthor}"/></td>
+          <td><c:out value="${pub.year}"/></td>
+          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
+          <td><c:out value="${total}"/></td>
+        </tr>
+      </c:forEach>
       </tbody>
     </table>
 
@@ -56,7 +58,7 @@
           t.find("div.toggle").show();
 
           t.find('div.toggle a.more').click(function(e) {
-        	t.find("div.show-in-table").show();
+          t.find("div.show-in-table").show();
             t.find("table tbody tr:hidden").each(function(i) {
               if (i < 10) {
                 jQuery(this).show();
