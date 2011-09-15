@@ -1,6 +1,6 @@
 package InterMine::Item;
 
-our $VERSION = 0.950;
+our $VERSION = 0.980;
 
 =head1 NAME
 
@@ -81,7 +81,7 @@ sub new {
     confess "no model argument in $class constructor\n";
   }
   for my $key (keys %opts) {
-    if ($key ne "model" && $key ne "id" && $key ne "classname" && $key ne "implements") {
+    if ($key ne "model" && $key ne "id" && $key ne "classname" && $key ne "implements" && $key ne "ignore_null") {
       confess "unknown argument to $class->new(): $key\n";
     }
   }
@@ -101,7 +101,7 @@ sub new {
 
   my $self = {
               id => $opts{id}, ':model' => $opts{model}, ':classname' => $classname,
-              ':implements' => $implements_arg
+              ':implements' => $implements_arg, ':ignore_null' => $opts{ignore_null},
              };
 
   if ($classname ne '') {
@@ -161,7 +161,7 @@ sub set {
   my $name = shift;
   my $value = shift;
 
-  if (!defined $value) {
+  if (!defined $value && !$self->{':ignore_null'}) {
     confess "value undefined while setting $name\n";
   }
 
@@ -458,6 +458,7 @@ sub as_xml
 {
   my $self = shift;
   my $writer = shift;
+  my $ignore_null = shift;
   my $id = $self->{id};
   my $classname = $self->{':classname'} || "";
   my $implements = $self->{':implements'} || "";
@@ -469,6 +470,10 @@ sub as_xml
     next if $key =~ /^:/;
     if ($key ne 'id' && $key ne 'class') {
       my $val = $self->{$key};
+
+      if (not defined $val and $ignore_null) {
+          next;
+      }
 
       confess "Item is invalid - it has an undefined field value"
         unless defined $val; #causes script to die if $val == undef
