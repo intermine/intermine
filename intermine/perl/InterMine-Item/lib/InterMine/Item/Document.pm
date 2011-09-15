@@ -189,7 +189,7 @@ sub write {
         $writer->startTag('items');
     }
     while ( my $item = shift @{ $self->{unwritten_items} } ) {
-        $item->as_xml($writer);
+        $item->as_xml($writer, $self->{ignore_null});
     }
     return;
 }
@@ -251,7 +251,8 @@ sub make_item {
         classname  => $classname,
         implements => $implements,
         model      => $self->{model},
-        id         => $self->{id_counter}
+        id         => $self->{id_counter},
+        ignore_null => $self->{ignore_null},
     );
 
     while ( my ( $k, $v ) = each %attr ) {
