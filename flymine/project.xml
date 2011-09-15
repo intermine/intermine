@@ -546,7 +546,7 @@
       <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="true"/>
+      <property name="biopax.curated" value="false"/>
     </source>
 
     <source name="reactome-curated" type="biopax">
