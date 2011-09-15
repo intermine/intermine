@@ -82,30 +82,32 @@ im.persistentTableHeaders = function(e) {
 	}
 	
 	// monitor scroll events and see if we no longer see the static one
-	jQuery(window).scroll(function() {
-		jQuery('div.collection-table.persistent').each(function(i) {
-			var table  = jQuery(this).find('table'),
-				offset = table.offset(),
-				top    = jQuery(window).scrollTop() + 21,
-				fixed  = table.find('thead tr.fixed-header');
-		
-			// then swap the 'visibility' of the fixed head
-			if (table.length > 0) {
-				if ((top > offset.top) && (top < offset.top + table.height() - fixed.height())) {
-					if (!fixed.is(':visible')) {
-						fixed.show();
-						
-						// recalculate their width for good measure
-						table.find('thead tr.static-header th').each(function(i) {
-							jQuery(table.find('thead tr.fixed-header th')[i]).css('width', jQuery(this).width());
-						});
+	if (jQuery('div.collection-table.persistent').length > 0) {
+		jQuery(window).scroll(function() {
+			jQuery('div.collection-table.persistent').each(function(i) {
+				var table  = jQuery(this).find('table'),
+					offset = table.offset(),
+					top    = jQuery(window).scrollTop() + 21,
+					fixed  = table.find('thead tr.fixed-header');
+			
+				// then swap the 'visibility' of the fixed head
+				if (table.length > 0) {
+					if ((top > offset.top) && (top < offset.top + table.height() - fixed.height())) {
+						if (!fixed.is(':visible')) {
+							fixed.show();
+							
+							// recalculate their width for good measure
+							table.find('thead tr.static-header th').each(function(i) {
+								jQuery(table.find('thead tr.fixed-header th')[i]).css('width', jQuery(this).width());
+							});
+						}
+					} else {
+						fixed.hide();
 					}
-				} else {
-					fixed.hide();
 				}
-			}
-		});
-	}).trigger("scroll");
+			});
+		}).trigger("scroll");
+	}
 }
 
 // return a path to the current element
