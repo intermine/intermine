@@ -12,14 +12,10 @@ package org.intermine.web.logic.results;
 
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A factory for ReportObjects.  If get() is called and the is no existing ReportObject for the
@@ -30,14 +26,20 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class ReportObjectFactory extends CacheMap<InterMineObject, ReportObject>
 {
-    private HttpSession session = null;
+    private final InterMineAPI im;
+    private final WebConfig webConfig;
+    private final Properties webProperties;
 
     /**
      * Create a new ReportObjectCache for the given session.
-     * @param session the HTTP session
+     * @param im the InterMine API
+     * @param webConfig global web configuration
+     * @param webProperties web properties
      */
-    public ReportObjectFactory(HttpSession session) {
-        this.session = session;
+    public ReportObjectFactory(InterMineAPI im, WebConfig webConfig, Properties webProperties) {
+        this.im = im;
+        this.webConfig = webConfig;
+        this.webProperties = webProperties;
     }
 
     /**
@@ -61,10 +63,6 @@ public class ReportObjectFactory extends CacheMap<InterMineObject, ReportObject>
 
         if (reportObject == null) {
             try {
-                final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                ServletContext servletContext = session.getServletContext();
-                WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-                Properties webProperties = SessionMethods.getWebProperties(servletContext);
                 reportObject = new ReportObject(imObj, webConfig, im, webProperties);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to make a reportObject", e);

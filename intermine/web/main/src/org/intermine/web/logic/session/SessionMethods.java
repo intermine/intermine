@@ -431,13 +431,17 @@ public final class SessionMethods
      * @return the (possibly new) ReportObjects Map
      */
     public static ReportObjectFactory getReportObjects(HttpSession session) {
+        ServletContext servletContext = session.getServletContext();
         ReportObjectFactory reportObjects =
-            (ReportObjectFactory) session.getAttribute(Constants.REPORT_OBJECT_CACHE);
+            (ReportObjectFactory) servletContext.getAttribute(Constants.REPORT_OBJECT_CACHE);
 
         // Build map from object id to ReportObject
         if (reportObjects == null) {
-            reportObjects = new ReportObjectFactory(session);
-            session.setAttribute(Constants.REPORT_OBJECT_CACHE, reportObjects);
+            InterMineAPI im = getInterMineAPI(session);
+            WebConfig webConfig = getWebConfig(servletContext);
+            Properties webProperties = getWebProperties(servletContext);
+            reportObjects = new ReportObjectFactory(im, webConfig, webProperties);
+            servletContext.setAttribute(Constants.REPORT_OBJECT_CACHE, reportObjects);
         }
 
         return reportObjects;
@@ -454,7 +458,6 @@ public final class SessionMethods
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
                     new HashMap<String, TemplateQuery>(), null, true));
-        session.setAttribute(Constants.REPORT_OBJECT_CACHE, new ReportObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
