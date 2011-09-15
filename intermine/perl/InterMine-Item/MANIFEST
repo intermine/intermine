@@ -3,14 +3,14 @@ Changes
 ignore.txt
 lib/InterMine/Item.pm
 lib/InterMine/Item/Document.pm
-Makefile.PL
 MANIFEST			This list of files
-META.yml
 README
 t/00-load.t
 t/01_items/01_construct.t
 t/01_items/02_xml.t
-t/02_document.t
+t/02_default_document_behaviour.t
+t/03_null_flag.t
+t/04_die_on_null.t
 t/boilerplate.t
 t/data/testmodel_model.xml
 t/manifest.t
