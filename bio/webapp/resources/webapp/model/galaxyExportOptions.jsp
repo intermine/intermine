@@ -21,6 +21,7 @@
         jQuery("#info").val("");
         jQuery("#dbkey").val("");
         jQuery("#URL").val("${tableURL}");
+        jQuery("#size").val("${size}");
         jQuery("input[name='exportOptions']").filter("[value='view']").attr('checked', true);
     }
 
@@ -29,6 +30,7 @@
         jQuery("#info").val("${org}");
         jQuery("#dbkey").val("${dbkey}");
         jQuery("#URL").val("${bedURL}");
+        jQuery("#size").val("");
         jQuery("input[name='exportOptions']").filter("[value='feature']").attr('checked', true);
     }
   }
@@ -37,6 +39,8 @@
   {
     jQuery("#data_type").val("txt");
     jQuery("#URL").val("${tableURL}");
+    jQuery("#queryXML").val('${query}');
+    jQuery("#size").val("${size}");
     jQuery("#info").val("");
     jQuery("#dbkey").val("");
 
@@ -92,6 +96,9 @@ li { margin-bottom:0.5em; }
     <fieldset class="submit"><input name="submit" type="submit" value="Send to Galaxy" /></fieldset>
 
     <input id="URL" type="hidden" name="URL">
+    <input id="queryXML" type="hidden" name="query">
+    <input id="size" type="hidden" name="size">
+    <input type="hidden" name="URL_method" value="post">
     <input id="data_type" type="hidden" name="data_type">
     <input id="dbkey" type="hidden" name="dbkey">
     <input id="info" type="hidden" name="info">
