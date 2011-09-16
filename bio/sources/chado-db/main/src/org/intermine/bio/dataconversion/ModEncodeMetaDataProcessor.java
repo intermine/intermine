@@ -1168,6 +1168,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String s2 = s.replace("%E2%80%99", "'");
             return s2;
         }
+        if (s.contains("%2B")) {
+            // +: for Celniker experiment "Tissue-specific Transcriptional Profiling..."
+            String s2 = s.replace("%2B", "+");
+            return s2;
+        }
         return s;
     }
 
