@@ -191,10 +191,10 @@
 
          if (jQuery("#pasteInput").val() != "") {
                // Regex validation
-               var ddotsRegex = /[^:]+: ?\d+\.\.\d+$/;
-               var tabRegex = /[^\t]+\t\d+\t\d+$/;
-               var dashRegex = /[^:]+: ?\d+\-\d+$/;
-               var snpRegex = /[^:]+: ?\d+$/;
+               var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
+               var tabRegex = /^[^\t\s]+(\t\d+){2}/; // this will match the line start with
+               var dashRegex = /^[^:\t\s]+: ?\d+\-\d+$/;
+               var snpRegex = /^[^:\t\s]+: ?\d+$/;
 
                var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
                var lineNum;
@@ -204,9 +204,12 @@
                      alert("Line " + lineNum + " is empty...");
                      return false;
                  }
-                 if (!spanArray[i].match(ddotsRegex) && !spanArray[i].match(tabRegex) && !spanArray[i].match(dashRegex) && !spanArray[i].match(snpRegex)) {
-                     alert(spanArray[i] + " doesn't match any supported format...");
-                     return false;
+                 if (!spanArray[i].match(ddotsRegex) &&
+                     !spanArray[i].match(tabRegex) &&
+                     !spanArray[i].match(dashRegex) &&
+                     !spanArray[i].match(snpRegex)) {
+                        alert(spanArray[i] + " doesn't match any supported format...");
+                        return false;
                  }
            }
          }
