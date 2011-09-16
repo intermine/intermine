@@ -21,6 +21,7 @@
         <tr>
             <th>Author</th>
             <th>Date</th>
+            <th>Journal</th>
             <th>Title</th>
             <th>Number of ${type}s mentioned</th>
         </tr>
@@ -32,6 +33,7 @@
         <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
           <td><c:out value="${pub.firstAuthor}"/></td>
           <td><c:out value="${pub.year}"/></td>
+          <td><c:out value="${pub.journal}"/></td>
           <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pub.id}"><c:out value="${pub.title}"/></html:link></td>
           <td><c:out value="${total}"/></td>
         </tr>
