@@ -10,7 +10,6 @@ package org.intermine.bio.web.struts;
  *
  */
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -67,7 +66,6 @@ import org.intermine.web.util.URLGenerator;
 
 public class GalaxyExportOptionsController extends TilesAction
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(GalaxyExportOptionsController.class);
 
     /**
@@ -88,6 +86,7 @@ public class GalaxyExportOptionsController extends TilesAction
         Model model = im.getModel();
         PathQuery query = new PathQuery(model);
 
+        // org and dbkey for galaxy use
         Set<String> orgSet = new HashSet<String>();
         Set<String> genomeBuildSet = new HashSet<String>();
 
@@ -100,7 +99,7 @@ public class GalaxyExportOptionsController extends TilesAction
                 orgSet.add(orgName);
             }
 
-            // TODO this could be configurable?
+            // Refer to GenomicRegionSearchService.getExportFeaturesQuery method
             String path = "SequenceFeature";
             query.addView(path + ".primaryIdentifier");
             query.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
@@ -208,22 +207,20 @@ public class GalaxyExportOptionsController extends TilesAction
         String queryXML = PathQueryBinding.marshal(query, "", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);
 
-        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
+//        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
 
         String tableURL = new URLGenerator(request).getPermanentBaseURL()
-                        + "/service/query/results?query="
-                        + encodedQueryXML
-                        + "&size=1000000";
+            + "/service/query/results";
 
         request.setAttribute("tableURL", tableURL);
+        request.setAttribute("query", queryXML);
+        request.setAttribute("size", 1000000);
 
         // If can export as BED
         request.setAttribute("canExportAsBED", canExportAsBED);
         if (canExportAsBED) {
             String bedURL = new URLGenerator(request).getPermanentBaseURL()
-                + "/service/query/results/bed?query="
-                + encodedQueryXML
-                + "&";
+                + "/service/query/results/bed";
 
             request.setAttribute("bedURL", bedURL);
 
@@ -275,7 +272,6 @@ public class GalaxyExportOptionsController extends TilesAction
                 }
             }
         }
-
         return retPaths;
     }
 
