@@ -80,19 +80,19 @@ public abstract class PathConstraint
         return null;
     }
 
-	public static String getExtraValue(PathConstraint con) {
-		if (con instanceof PathConstraintLookup) {
-			return ((PathConstraintLookup) con).getExtraValue();
-		} else {
-			return null;
-		}
-	}
+    public static String getExtraValue(PathConstraint con) {
+        if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getExtraValue();
+        } else {
+            return null;
+        }
+    }
 
-	public static String getType(PathConstraint con) {
-		if (con instanceof PathConstraintSubclass) {
-			return ((PathConstraintSubclass) con).getType();
-		} else {
-			return null;
-		}
-	}
+    public static String getType(PathConstraint con) {
+        if (con instanceof PathConstraintSubclass) {
+            return ((PathConstraintSubclass) con).getType();
+        } else {
+            return null;
+        }
+    }
 }
