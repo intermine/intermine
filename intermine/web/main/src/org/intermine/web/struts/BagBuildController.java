@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -133,10 +134,10 @@ public class BagBuildController extends TilesAction
                 }
             }
             request.setAttribute("typesWithConnectingField", typesWithConnectingField);
-            final String extraClassDefaultValue = getDefaultValue(request, im);
-            if (!StringUtils.isEmpty(extraClassDefaultValue)) {
+            final String defaultValue = getDefaultValue(request, im);
+            if (StringUtils.isNotEmpty(defaultValue)) {
                 BuildBagForm bbf = (BuildBagForm) form;
-                bbf.setExtraFieldValue(extraClassDefaultValue);
+                bbf.setExtraFieldValue(defaultValue);
             }
         }
         return null;

@@ -135,7 +135,7 @@ public class FriendlyMineManager
             String mineName = mineProps.getProperty("name");
             String url = mineProps.getProperty("url");
             String logo = mineProps.getProperty("logo");
-            String defaultValue = mineProps.getProperty("defaultValue");
+            String defaultValues = mineProps.getProperty("defaultValues");
             String mapping = mineProps.getProperty("defaultMapping");
 
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
@@ -148,33 +148,33 @@ public class FriendlyMineManager
 
             if (mineName.equals(localMineName)) {
                 if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo, defaultValue);
+                    parseLocalConfig(url, logo, defaultValues);
                 }
             } else {
                 Mine mine = mines.get(mineId);
                 if (mine == null) {
-                    parseRemoteConfig(mineName, mineId, defaultValue, mapping, url, logo);
+                    parseRemoteConfig(mineName, mineId, defaultValues, mapping, url, logo);
                 }
             }
         }
         return mines;
     }
 
-    private void parseLocalConfig(String url, String logo, String defaultValue) {
+    private void parseLocalConfig(String url, String logo, String defaultValues) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
             localMine.setLogo(logo);
-            localMine.setDefaultValue(defaultValue);
+            localMine.setDefaultValues(defaultValues);
             setLocalValues(im);
         }
     }
 
-    private void parseRemoteConfig(String mineName, String mineId, String defaultValue,
+    private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
             String mapping, String url, String logo) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
         mine.setLogo(logo);
-        mine.setDefaultValue(defaultValue);
+        mine.setDefaultValues(defaultValues);
         mines.put(mineId, mine);
     }
 

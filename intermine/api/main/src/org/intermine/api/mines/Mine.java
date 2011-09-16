@@ -28,7 +28,8 @@ public class Mine
     protected String name = null;
     protected String url = null;
     protected String logo = null;
-    protected String defaultValue = null, defaultMapping = null;
+    protected String defaultMapping = null;
+    protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
     // holds a set of values available to query for this mine
     private Set<String> mineValues;
@@ -131,15 +132,30 @@ public class Mine
     /**
      * @return the defaultValue
      */
-    public String getDefaultValue() {
-        return defaultValue;
+    public Set<String> getDefaultValues() {
+        return defaultValues;
     }
 
     /**
-     * @param defaultValue the defaultValue to set
+     * @return the defaultValue
      */
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+    public String getDefaultValue() {
+        if (defaultValues.isEmpty()) {
+            return null;
+        }
+        Object[] values = defaultValues.toArray();
+        return values[0].toString();
+    }
+
+
+    /**
+     * @param defaultValue the defaultValues to set, comma delim
+     */
+    public void setDefaultValues(String defaultValue) {
+        String[] bits = defaultValue.split("[ ,]+");
+        for (String bit : bits) {
+            defaultValues.add(bit);
+        }
     }
 
     /**

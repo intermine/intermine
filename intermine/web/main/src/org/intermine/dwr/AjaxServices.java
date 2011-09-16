@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,8 +47,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.mines.FriendlyMineManager;
-import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.mines.FriendlyMineQueryRunner;
+import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
@@ -732,6 +735,35 @@ public class AjaxServices
         return results.toString();
     }
 
+
+    /**
+     * used on REPORT page
+     *
+     * For a gene, display pathways found in other mines for orthologous genes
+     *
+     * @param mineName mine to query
+     * @param orthologues list of genes to query for
+     * @return the links to friendly intermines
+     */
+    public static String getFriendlyMinePathways(String mineName, String orthologues) {
+
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        Mine mine = linkManager.getMine(mineName);
+
+        final String xmlQuery = "<query name=\"\" model=\"genomic\" view=\"Gene.pathways.id "
+            + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\""
+            + "op=\"LOOKUP\" value=\"eve\" extraValue=\"\"/></query>";
+        try {
+            return FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery).toString();
+        } catch (IOException e) {
+            LOG.error("Couldn't query " + mine.getName() + " for pathways", e);
+            return null;
+        }
+    }
 
     /**
      * Saves information, that some element was toggled - displayed or hidden.

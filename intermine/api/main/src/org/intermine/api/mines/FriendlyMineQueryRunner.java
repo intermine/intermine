@@ -11,8 +11,11 @@ package org.intermine.api.mines;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,11 +39,12 @@ import org.intermine.util.Util;
  */
 public final class FriendlyMineQueryRunner
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final Logger LOG = Logger.getLogger(FriendlyMineQueryRunner.class);
     private static final String WEBSERVICE_URL = "/service";
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final String TEMPLATE_PATH = "/template/results?size=1000&format=tab&name=";
+    private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
     private static final String VALUES_URL = WEBSERVICE_URL + TEMPLATE_PATH
         + Constants.VALUES_TEMPLATE + Constants.IDENTIFIER_CONSTRAINT;
     private static final String MAP_URL = WEBSERVICE_URL + TEMPLATE_PATH + Constants.MAP_TEMPLATE
@@ -281,6 +285,47 @@ public final class FriendlyMineQueryRunner
             return reader;
         } catch (Exception e) {
             LOG.info("Unable to access " + urlString + " exception: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Query a mine and recieve map of results.  only processes first two columns
+     *
+     * @param mine mine to query
+     * @param xmlQuery query to run
+     * @return map of results
+     * @throws IOException if something goes wrong
+     */
+    public static Map<String, String> runJSONWebServiceQuery(Mine mine, String xmlQuery)
+        throws IOException {
+        Map<String, String> results = new HashMap<String, String>();
+        BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
+        if (reader == null) {
+            LOG.info("no results found for " + mine.getName() + " for query " + xmlQuery);
+            return Collections.emptyMap();
+        }
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            String[] bits = line.split("\\t");
+            String key = bits[0];
+            String value = bits[1];
+            if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
+                Util.addToSetMap(results, key, value);
+            }
+        }
+        return results;
+    }
+
+    private static BufferedReader runWebServiceQuery(Mine mine, String xmlQuery) {
+        try {
+            String urlString = mine.getUrl() + QUERY_PATH + URLEncoder.encode(xmlQuery, "UTF-8")
+                + "&format=jsonobjects";
+            URL url = new URL(urlString);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            return reader;
+        } catch (Exception e) {
+            LOG.info("Unable to access " + mine.getName() + " exception: " + e.getMessage());
             return null;
         }
     }
