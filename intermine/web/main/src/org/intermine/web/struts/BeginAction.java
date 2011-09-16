@@ -178,23 +178,6 @@ public class BeginAction extends InterMineAction
         BagManager bm = im.getBagManager();
         request.setAttribute("frontpageBags", bm.getGlobalBagsWithTag("im:frontpage"));
 
-        // organism dropdown on list upload
-        // only implemented in metabolicMine right now
-        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        if (extraClassName != null) {
-            final String extraClassDefaultValue = getDefaultValue(request, im);
-            if (!StringUtils.isEmpty(extraClassDefaultValue)) {
-                request.setAttribute("extraClassDefaultValue", extraClassDefaultValue);
-            }
-
-            request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
-
-            List extraClassFieldValues = BagBuildController.getFieldValues(im.getObjectStore(),
-                    im.getObjectStoreSummary(), extraClassName, bagQueryConfig.getConstrainField());
-            request.setAttribute("extraClassFieldValues", extraClassFieldValues);
-        }
-
         // cookie business
         if (!hasUserVisited(request)) {
             // set cookie
@@ -238,16 +221,5 @@ public class BeginAction extends InterMineAction
         cookie.setMaxAge(365 * 24 * 60 * 60);
         response.addCookie(cookie);
         return response;
-    }
-
-    private String getDefaultValue(HttpServletRequest request, InterMineAPI im) {
-        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
-                .getServletContext());
-        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
-        Mine mine = linkManager.getLocalMine();
-        if (mine != null) {
-            return mine.getDefaultValue();
-        }
-        return null;
     }
 }

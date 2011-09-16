@@ -189,28 +189,33 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
             final JSONObject jsonMine = getJSONMine(filteredMines, mine.getName());
             Set<JSONObject> organisms = new HashSet<JSONObject>();
             addCurrentOrganism(organisms, mines, mine.getName(), organismShortName);
-            String remoteMineDefaultOrganism = mine.getDefaultValue();
+            Set<String> remoteMineDefaultOrganisms = mine.getDefaultValues();
             boolean queryRemoteMine = true;
-            Set<String> matchingHomologues = localHomologues.get(remoteMineDefaultOrganism);
 
-            // for default organism, do we have local orthologues?
-            if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
-                Map<String, Set<String[]>> orthologueMap = new HashMap<String, Set<String[]>>();
-                for (String homologue : matchingHomologues) {
-                    // if so, does remote mine have this gene?
-                    String[] homologueIdentifiers = FriendlyMineQueryRunner.getObjectInOtherMine(
-                            mine, URLEncoder.encode("" + remoteMineDefaultOrganism, "UTF-8"),
-                            homologue);
-                    if (homologueIdentifiers != null && homologueIdentifiers.length == 2
-                            && homologueIdentifiers[0] != null) {
-                        Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
-                                homologueIdentifiers);
+            for (String remoteMineDefaultOrganism : remoteMineDefaultOrganisms) {
+                Set<String> matchingHomologues = localHomologues.get(remoteMineDefaultOrganism);
+
+                // for default organism, do we have local orthologues?
+                if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
+                    Map<String, Set<String[]>> orthologueMap = new HashMap<String, Set<String[]>>();
+                    for (String homologue : matchingHomologues) {
+                        // if so, does remote mine have this gene?
+                        String[] homologueIdentifiers =
+                            FriendlyMineQueryRunner.getObjectInOtherMine(
+                                    mine, URLEncoder.encode(""
+                                            + remoteMineDefaultOrganism, "UTF-8"),
+                                    homologue);
+                        if (homologueIdentifiers != null && homologueIdentifiers.length == 2
+                                && homologueIdentifiers[0] != null) {
+                            Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
+                                    homologueIdentifiers);
+                        }
                     }
-                }
-                if (!orthologueMap.isEmpty()) {
-                    queryRemoteMine = false;
-                    JSONObject organism = getJSONOrganism(orthologueMap);
-                    organisms.add(organism);
+                    if (!orthologueMap.isEmpty()) {
+                        queryRemoteMine = false;
+                        JSONObject organism = getJSONOrganism(orthologueMap);
+                        organisms.add(organism);
+                    }
                 }
             }
 
@@ -293,16 +298,17 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
         ExportResultsIterator it = executor.execute(getLocalOrthologueQuery(im, identifier));
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
-            String orthologuePrimaryIdentifier = (String) row.get(0).getField();
-//            String orthologueSymbol = (String) row.get(1).getField();
+            String geneOrganismName = (String) row.get(0).getField();
+            String orthologuePrimaryIdentifier = (String) row.get(1).getField();
             String organismName = (String) row.get(2).getField();
+            if (geneOrganismName.equals(organismName)) {
+                // ignore homologues for now
+                continue;
+            }
             String orthologueIdentifer = null;
             if (!StringUtils.isEmpty(orthologuePrimaryIdentifier)) {
                 orthologueIdentifer = orthologuePrimaryIdentifier;
             }
-//            if (!StringUtils.isEmpty(orthologueSymbol)) {
-//                orthologueIdentifer = orthologueSymbol;
-//            }
             if (!StringUtils.isEmpty(orthologueIdentifer)) {
                 Util.addToSetMap(relatedDataMap, organismName, orthologueIdentifer);
             }
@@ -312,8 +318,8 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
 
     private static PathQuery getLocalOrthologueQuery(InterMineAPI im, String identifier) {
         PathQuery q = new PathQuery(im.getModel());
-        q.addViews("Gene.homologues.homologue.primaryIdentifier",
-                "Gene.homologues.homologue.symbol",
+        q.addViews("Gene.organism.shortName",
+                "Gene.homologues.homologue.primaryIdentifier",
                 "Gene.homologues.homologue.organism.shortName");
         q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         q.addConstraint(Constraints.eq("Gene.primaryIdentifier", identifier));
