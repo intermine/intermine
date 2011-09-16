@@ -617,20 +617,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // note that while the subId is null in the database, it is = 0 here
             if (submissionId == 0) {
                 if (isADeletedSub) {
-                    //LOG.info("DEL: skipping"  + isADeletedSub );                 
+                    LOG.debug("DEL: skipping"  + isADeletedSub );                 
                     continue;
                 }
             } else {
                 if (deletedSubMap.containsKey(submissionId)) {
                     isADeletedSub = true;
-                    //LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
+                    LOG.debug("DEL: " + submissionId + " ->" + isADeletedSub );
                     continue;
                 } else {
                     isADeletedSub = false;
-                    //LOG.info("DEL: " + submissionId + " ->" + isADeletedSub );
+                    LOG.debug("DEL: " + submissionId + " ->" + isADeletedSub );
                 }
             }
-
 
             // build a data node for each iteration
             if (appliedDataMap.containsKey(dataId)) {
@@ -660,8 +659,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (direction.equalsIgnoreCase("output")) {
                         node.outputs.add(dataId);
                         mapSubmissionAndData(submissionId, dataId);
-                        dataSubmissionMap.put(dataId, submissionId);
-                    }
+                   }
                 }
 
                 // if it is not the first iteration, let's store it
@@ -855,6 +853,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
+                        // TODO check this
+                        LOG.info("XXXL " + submissionId );
                     }
                 }
 
@@ -1592,7 +1592,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // if we find a deleted sub, we know that subsequent records with null
             // subId belongs to the deleted sub
             if (submissionId == 0 ) {
-                if (isADeletedSub == true) continue;
+                if (isADeletedSub == true) {
+                    continue;
+                }
             } else {
                 if (deletedSubMap.containsKey(submissionId)) {
                     isADeletedSub = true;
@@ -1681,6 +1683,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // check if not belonging to a deleted sub
             Integer submissionId = dataSubmissionMap.get(dataId);
+            
             if (submissionId == null || deletedSubMap.containsKey(submissionId)) continue;
             
             String name = res.getString("name");
@@ -1731,6 +1734,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.name = name;
             aData.url = url;
             appliedDataMap.put(dataId, aData);
+            
             count++;
         }
         LOG.info("created " + count + " SubmissionData");
@@ -3658,8 +3662,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 ReferenceList collection = new ReferenceList("inputs");
                 for (Integer inputId : ap.inputs) {
                     collection.addRefId(appliedDataMap.get(inputId).itemIdentifier);
+//                    if (collection.getRefIds().contains(null)) {
+//                        LOG.info("Applied Protocol " + thisAP + " of protocol " + ap.protocolId
+//                                + " and inputs " + ap.inputs );                    
+//                    }
                 }
-                getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
+                
+                if (collection.getRefIds().contains(null)) {
+                    LOG.warn("Applied Protocol " + thisAP +
+                            " has only inputs not corresponding to any output in previous protocol" +
+                            " and cannot be linked in the DAG.");
+                    continue;
+                }
+               getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
 
             if (!ap.outputs.isEmpty()) {
@@ -3667,7 +3682,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (Integer outputId : ap.outputs) {
                     collection.addRefId(appliedDataMap.get(outputId).itemIdentifier);
                 }
-                getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
+               getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
         }
         LOG.info("TIME setting DAG references: " + (System.currentTimeMillis() - bT) + " ms");
