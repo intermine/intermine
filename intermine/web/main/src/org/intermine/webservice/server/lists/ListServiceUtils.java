@@ -19,7 +19,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-class ListServiceUtils {
+public class ListServiceUtils {
 
     private ListServiceUtils() {
         // Uninstantiatable
