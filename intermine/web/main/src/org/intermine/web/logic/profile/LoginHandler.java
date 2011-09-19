@@ -55,7 +55,7 @@ public abstract class LoginHandler extends InterMineAction
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         Profile profile = pm.getProfile(username);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isOneBagNotCurrent(profile)) {
+        if (im.getBagManager().isAnyBagNotCurrent(profile)) {
                 recordMessage(new ActionMessage("login.upgradeListStarted"), request);
         } else if (im.getBagManager().isOneBagToUpgrade(profile)) {
                 recordMessage(new ActionMessage("login.upgradeListManually"), request);
@@ -142,7 +142,7 @@ public abstract class LoginHandler extends InterMineAction
         }
         SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isOneBagNotCurrent(profile)) {
+        if (im.getBagManager().isAnyBagNotCurrent(profile)) {
             new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
         }
         return profile;
