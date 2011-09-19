@@ -1,6 +1,7 @@
-var duplicateArray = new Array();
-var tdColorArray = new Array();
-var highlightColor = '#FFF3D3';
+var duplicateArray = new Array(),
+	tdColorArray   = new Array(),
+	highlightColor = '#FFF3D3',
+	identifiersInTheBag = jQuery("#matchIDs").val().split(" ");
 
 function initForm(buildNewBag) {
     if (buildNewBag == null || buildNewBag != 'true') {
@@ -30,19 +31,12 @@ function checkIfAlreadyInTheBag() {
 }
 
 /**
- * give us a list of items in the bag currently
- */
-function getIdentifiersInTheBag() {
-  return jQuery("#matchIDs").val().split(" ");
-}
-
-/**
  * check if value is already in a bag
  * @param identifier, actual object ID
  * @returns {Boolean}
  */
 function isIdentifierInTheBag(identifier) {
-  var array = getIdentifiersInTheBag();
+  var array = identifiersInTheBag;
   for (var i = 0; i < array.length; i++) {
     if (identifier == array[i]) {
       return true;
