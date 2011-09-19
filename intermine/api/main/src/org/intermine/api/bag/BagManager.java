@@ -155,7 +155,7 @@ public class BagManager
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
-    public boolean isOneBagToUpgrade(Profile profile) {
+    public boolean isAnyBagToUpgrade(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             if (bag.getState().equals(BagState.TO_UPGRADE.toString())) {
