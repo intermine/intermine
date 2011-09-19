@@ -106,7 +106,11 @@
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
                         var linkText = jQuery(this).text();
-                        jQuery(this).html("<a href='" + minePortalDetails["url"] + "/portal.do?externalids=" + linkText + orthologue + "&class=Gene&origin=FlyMine'>" + linkText + "</a>");
+                      	jQuery('<a/>', {
+                      		'href': minePortalDetails["url"] + "/portal.do?externalids=" + linkText + orthologue + "&class=Gene&origin=FlyMine",
+                      		'text': 'linkText',
+                      		'target': '_blank'
+                      	}).appendTo(jQuery(this));
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());
