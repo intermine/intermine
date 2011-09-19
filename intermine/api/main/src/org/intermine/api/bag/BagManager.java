@@ -85,7 +85,11 @@ public class BagManager
 	public Map<String, InterMineBag> getGlobalBagsWithTag(String tag) {
 		return getBagsWithTag(superProfile, tag);
 	}
-    
+
+	public Map<String, InterMineBag> getGlobalBagsWithTags(List<String> tags) {
+		return getBagsWithTags(superProfile, tags);
+	}	
+	
     /**
      * Fetch bags from given protocol with a particular tag assigned to them.
      * @param profile the user to fetch bags from
@@ -106,6 +110,36 @@ public class BagManager
         return bagsWithTag;
     }
 
+    /**
+     * Give me profile bags matching a set of tags
+     * @param profile
+     * @param tags
+     * @return
+     */
+    protected Map<String, InterMineBag> getBagsWithTags(Profile profile, List<String> tags) {
+        Map<String, InterMineBag> bagsWithTags = new HashMap<String, InterMineBag>();
+
+        outer:
+        	for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
+            // gimme the bag
+        	InterMineBag bag = entry.getValue();
+            // bag's tags
+            List<Tag> bagTags = getTagsForBag(bag);
+            // do we have a winner?
+            inner:
+	            for (String requiredTag : tags) {
+	            	for (Tag bagTag : bagTags) {
+	            		if (bagTag.getTagName().equals(requiredTag)) {
+	            			continue inner;
+	            		}
+	            	}
+	            	continue outer;
+	            }
+            bagsWithTags.put(entry.getKey(), entry.getValue());
+        }
+        return bagsWithTags;
+    }    
+    
     /**
      * Add tags to a bag.
      * @param tags A list of tag names to add

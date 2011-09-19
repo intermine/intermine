@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -176,7 +177,10 @@ public class BeginAction extends InterMineAction
 
         // frontpage bags/lists
         BagManager bm = im.getBagManager();
-        request.setAttribute("frontpageBags", bm.orderBags(bm.getGlobalBagsWithTag("im:frontpage")));
+        List<String> requiredTags = new ArrayList<String>();
+        requiredTags.add("im:frontpage");
+        requiredTags.add("im:public");
+        request.setAttribute("frontpageBags", bm.orderBags(bm.getGlobalBagsWithTags(requiredTags)));
 
         // cookie business
         if (!hasUserVisited(request)) {
