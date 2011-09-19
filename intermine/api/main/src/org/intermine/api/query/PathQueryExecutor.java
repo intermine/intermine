@@ -10,13 +10,18 @@ package org.intermine.api.query;
  *
  */
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
@@ -40,6 +45,7 @@ public class PathQueryExecutor extends QueryExecutor
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
+    private static final long MAX_WAIT_TIME = 2000;
     private int batchSize = DEFAULT_BATCH_SIZE;
 
     /**
@@ -146,11 +152,64 @@ public class PathQueryExecutor extends QueryExecutor
         return q;
     }
 
+    /**
+     * Make the Lower-level Query object to run from the the higher level
+     * PathQuery one.
+     * @param pq the PathQuery to translate.
+     * @return The Query to run.
+     */
     public Query makeQuery(PathQuery pq) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map<String, BagQueryResult> returnBagQueryResults =
             new HashMap<String, BagQueryResult>();
+
+        checkListStatus(pq);
+
         return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
+    }
+    
+    /**
+     * Check that the lists in the query are all current. Wait up to 20 seconds
+     * (or the value of MAX_WAIT_TIME) for them to become current.
+     * @param pq The query with the lists to check.
+     */
+    private void checkListStatus(PathQuery pq) {
+        Set<String> listNames = pq.getBagNames();
+        Set<InterMineBag> lists = new HashSet<InterMineBag>();
+        for (String listName : listNames) {
+            lists.add(bagManager.getUserOrGlobalBag(profile, listName));
+        }
+
+        Date maximumWaitUntil = new Date(System.currentTimeMillis() + MAX_WAIT_TIME);
+        boolean canContinue = false;
+        
+        LISTCHECKS:
+        while (new Date().before(maximumWaitUntil) && !canContinue) {
+            canContinue = true;
+            for (InterMineBag list : lists) {
+                String status = list.getState();
+                if (!BagState.CURRENT.toString().equals(status)) {
+                    canContinue = false;
+                } else if (BagState.TO_UPGRADE.toString().equals(status)) {
+                    break LISTCHECKS;
+                }
+            }
+        }
+        Set<String> listsWithIssues = new HashSet<String>();
+        for (InterMineBag list : lists) {
+            if (!BagState.CURRENT.toString().equals(list.getState())) {
+                if (BagState.NOT_CURRENT.toString().equals(list.getState())) {
+                    listsWithIssues.add(list.getName() + "[currently being upgraded]");
+                } else if (BagState.TO_UPGRADE.toString().equals(list.getState())) {
+                    listsWithIssues.add(list.getName() + "[requires manual resolution]");
+                }
+            }
+        }
+        if (!listsWithIssues.isEmpty()) {
+            throw new RuntimeException("Cannot run this query, " 
+                    + "as the following lists are not current: "
+                    + StringUtils.join(listsWithIssues, ", "));
+        }
     }
 
 }
