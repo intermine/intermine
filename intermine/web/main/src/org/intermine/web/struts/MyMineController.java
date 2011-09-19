@@ -112,7 +112,7 @@ public class MyMineController extends TilesAction
         if ((request.getParameter("subtab") != null && "lists".equals(request
                 .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
                         && "lists".equals(webState.getSubtab("subtabmymine")))) {
-            if (im.getBagManager().isOneBagToUpgrade(profile)) {
+            if (im.getBagManager().isAnyBagToUpgrade(profile)) {
                 ActionMessages actionMessages = getMessages(request);
                 actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
                                    new ActionMessage("login.upgradeListManually"));

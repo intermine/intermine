@@ -76,7 +76,7 @@ public class WebSearchableListController extends TilesAction
         Map filteredWebSearchables;
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (type.equals(TagTypes.BAG) && im.getBagManager().isOneBagToUpgrade(SessionMethods.getProfile(session))) {
+        if (type.equals(TagTypes.BAG) && im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
             ActionMessages actionMessages = getMessages(request);
             actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
             saveMessages(request, actionMessages);
