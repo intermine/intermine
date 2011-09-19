@@ -58,32 +58,20 @@ An individual 'submission' is a single instance of an experiment which tests var
     </c:forEach>
   </td>
 
-  <%-- TMP FIX for 
-  http://intermine.modencode.org/release-22/experiment.do?experiment=Stranded%20Cell%20Line%20Transcriptional%20Profiling%20Using%20Illumina%20poly%2528A%2529%252B%20RNA-seq
-  escaping the url encoding
-  --%>
+<%-- FIX for experiments with + in the name (needs to be encoded)   --%>
 <td><h4>  
   <c:choose>
-<%--
-  <c:when test="${fn:startsWith(exp.name, 'Stranded Cell Line Transcriptional Profiling Using Illumina')}">
-<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
-Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
---%>
-<c:when test="${fn:contains(exp.name, '%')}">
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
+   <c:when test="${fn:contains(exp.name, '+')}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}">
 ${exp.name}
-  </html:link></h4>
+</html:link></h4>
   </c:when>
   <c:otherwise>
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}
-  </html:link></h4>
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}
+</html:link></h4>
   </c:otherwise>
-  </c:choose>
-
-  
-  <%-- END FIX , substitute
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
-  --%>
+ </c:choose>
+<%-- END FIX --%>
 
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>

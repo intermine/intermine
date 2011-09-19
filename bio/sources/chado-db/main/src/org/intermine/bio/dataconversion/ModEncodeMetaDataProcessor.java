@@ -1143,6 +1143,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * method to clean a wiki reference (url to a named page) in chado
+     * used also for experiment names
      * @param w       the wiki reference
      */
     private String cleanWikiLinks(String w) {
@@ -1166,6 +1167,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (s.contains("%E2%80%99")) {
             // prime: for the Piano experiment
             String s2 = s.replace("%E2%80%99", "'");
+            return s2;
+        }
+        if (s.contains("%28A%29%2B")) {
+            // this is (A)+, in 
+            // Stranded Cell Line Transcriptional Profiling Using Illumina poly%28A%29%2B RNA-seq
+            String s2 = s.replace("%28A%29%2B", "(A)+");
             return s2;
         }
         if (s.contains("%2B")) {
