@@ -24,3 +24,15 @@ span.apikey.nokey {
 select {
   margin: 10px;
 }
+
+div.status-table {
+	margin:20px 0;
+}
+
+div.status-table table {
+	margin-bottom:10px;
+}
+
+div.status-table p {
+	margin:10px 0;
+}

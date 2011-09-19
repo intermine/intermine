@@ -16,15 +16,26 @@
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
 
+<script type="text/javascript">
+if (!im.bagWorks) {
+    im.bagWorks = {};
+    <%-- config JS bag works here --%>
+    im.bagWorks.upgradingMessage = 'Your lists are being automatically upgraded, please wait.';
+    im.bagWorks.timeout = 1000;
+} else if (typeof im.bagWorks != 'object') {
+    throw new Error("im.bagWorks already exists");
+}
+</script>
+
 <im:body id="bagHistory">
 
-  <p>
+  <h1>
     <fmt:message key="history.savedbags.intro"/>
      <c:if test="${!PROFILE.loggedIn}">
       - <html:link action="/login?returnto=/mymine.do?subtab=lists"><fmt:message key="history.savedbags.login"/></html:link>&nbsp;&nbsp;
     </c:if>
-  </p>
-<br/>
+  </h1>
+
   <c:choose>
     <c:when test="${empty PROFILE.savedBags}">
       <div class="altmessage">
@@ -33,26 +44,51 @@
     </c:when>
     <c:otherwise>
 
-    <table>
-    <tr><td>
-
-      <html:form action="/modifyBag">
-
-        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0" id="bagTable">
-          <tr>
-            <th>
-              <input type="checkbox" id="selected_bag"
-                     onclick="selectColumnCheckbox(this.form, 'bag')">
-            </th>
-            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.namecolumnheader"/></th>
-            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.descriptioncolumnheader"/></th>
-            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
-            <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
-            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
-            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.currentcolumnheader"/></th>
-          </tr>
-          <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
+	<html:form action="/modifyBag">
+	<c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
+		
+		<div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT'}">style="display:none;"</c:if>>
+		<c:choose>
+			<c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
+				<h2>Lists to upgrade</h2>
+				<p>You need to manually upgrade the following lists in order to use them.</p>
+			</c:when>
+			<c:when test="${statusSavedBag.key == 'NOT_CURRENT' && fn:length(statusSavedBag.value) > 0}">
+				<script type="text/javascript">
+				(function() {
+					<%-- lists are being upgraded (should be anyways) --%>
+					jQuery('div.topBar.errors').clone().addClass('loading').show().text(im.bagWorks.upgradingMessage)
+					.appendTo(jQuery('div.topBar.errors').parent());
+					im.bagWorks.notCurrentLists = new Array();
+					<c:forEach items="${statusSavedBag.value}" var="list">
+					im.bagWorks.notCurrentLists.push('${list.value.name}');
+					</c:forEach>
+				})();
+				</script>
+			</c:when>
+		</c:choose>
+		
+    	<table class="bag-table sortable-onload-2 rowstyle-alt no-arrow">
+    	  <thead>
+	          <tr>
+	            <th>
+	              <input type="checkbox" id="selected_bag"
+	                     onclick="selectColumnCheckbox(this.form, 'bag')">
+	            </th>
+	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.namecolumnheader"/></th>
+	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.descriptioncolumnheader"/></th>
+	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
+	            <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
+	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
+	            <c:if test="${statusSavedBag.key == 'TO_UPGRADE'}">
+	            	<th align="left" nowrap class="upgrade">Upgrade list</th>
+	            </c:if>
+	          </tr>
+          </thead>
+          <tbody>
+          <c:forEach items="${statusSavedBag.value}" var="savedBag" varStatus="status">
             <tr>
+              <td class="list-name" style="display:none;">${savedBag.value.name}</td>
               <td class="sorting" align="center">
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>
@@ -102,55 +138,101 @@
                 </c:choose>
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
-              <td id="status_${savedBag.value.name}" class="sorting" align="right">
-                <c:choose>
-                <c:when test="${savedBag.value.state == 'CURRENT'}"><fmt:message key="history.currentBag"/></c:when>
-                <c:otherwise>
-                    <c:choose>
-                      <c:when test="${savedBag.value.state == 'NOT_CURRENT'}"><fmt:message key="history.notCurrentBag"/>
-                      <input id="notCurrent" type="hidden" name="notCurrent" value="true"/>
-                      </c:when>
-                      <c:otherwise>
-                       <str:encodeUrl var="nameForURL">${savedBag.value.name}</str:encodeUrl>
-                       <html:link action="/bagUpgrade?bagName=${nameForURL}" styleClass="bagToUpgrade"><fmt:message key="history.bagToUpgrade"/></html:link>
-                     </c:otherwise>
-                    </c:choose>
-                </c:otherwise>
-                </c:choose>
+              
+              <%-- to upgrade link --%>
+              <c:if test="${savedBag.value.state == 'TO_UPGRADE'}">
+              <td class="upgrade">
+              	<str:encodeUrl var="nameForURL">${savedBag.value.name}</str:encodeUrl>
+                <html:link title="Upgrade this list" action="/bagUpgrade?bagName=${nameForURL}" styleClass="bagToUpgrade"></html:link>
               </td>
+              </c:if>
+              
             </tr>
           </c:forEach>
+          </tbody>
         </table>
-        <br/>
-        <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
-          New list name:
-          <html:text property="newBagName" size="12"/>
-            <input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
-            <input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
-           <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
+        
+        <%-- list works --%>
+        <c:if test="${statusSavedBag.key == 'CURRENT'}">
+	        <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
+	          New list name:
+	          <html:text property="newBagName" size="12"/>
+	            <input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
+	            <input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
+	           <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
+	        </c:if>
+	        <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
+	        <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
+	
+	        <html:hidden property="pageName" value="MyMine"/>
+	        <html:hidden property="listsButton" value="" styleId="listsButton"/>
         </c:if>
-        <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
-        <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
-
-        <html:hidden property="pageName" value="MyMine"/>
-        <html:hidden property="listsButton" value="" styleId="listsButton"/>
+        
+        </div>
+        
+      </c:forEach>
       </html:form>
-      </td>
-      </tr></table>
-      <br/>
 
     </c:otherwise>
   </c:choose>
 <script type="text/javascript">
-jQuery(document).ready(function() {
-    if(document.getElementById('bagTable') != null ) {
-        if (document.getElementById('notCurrent') != null)
-           setTimeout('refreshSavedBagStatus()', 1000);
+(function() {
+	<%-- attach handler to select all in a table --%>
+	jQuery('table.bag-table th input[type="checkbox"]').click(function() {
+		jQuery(this).closest('table').find('tr td input[type="checkbox"]').attr('checked', jQuery(this).is(':checked'));
+	});
+	
+	<%-- poll for lists that are "current" or "to upgrade" --%>
+    if (im.bagWorks.notCurrentLists) {
+    	
+    	function remainingLists() {
+			if (!jQuery('div.topBar.errors.loading div.count').exists()) {
+				jQuery('<div/>', {
+					'class': 'count',
+					'style': 'display:inline; margin-left:5px;',
+				}).appendTo('div.topBar.errors.loading');
+			}
+			if (im.bagWorks.notCurrentLists.length > 0) {
+				jQuery('div.topBar.errors.loading div.count').html(function() {
+					return '<strong>' + im.bagWorks.notCurrentLists.length + '</strong> ' +
+					((im.bagWorks.notCurrentLists.length > 1) ? 'lists' : 'list') + ' remaining.';
+				});
+			} else {
+				jQuery('div.topBar.errors.loading').remove();
+			}
+    	}
+    	remainingLists();
+    	
+    	jQuery('<h2/>', {
+    		'text': 'Your current lists'
+    	}).prependTo(jQuery('div.CURRENT.status-table'));
+    	
+		im.bagWorks.timeout = window.setInterval(function() {		    
+			AjaxServices.getSavedBagStatus(function(json) {
+		    	var jSONObject = jQuery.parseJSON(json);
+	            jQuery.each(jSONObject, function(i) {
+	            	var list = jSONObject[i],
+	            		j	 = im.bagWorks.notCurrentLists.indexOf(list['name']);
+	            	if (j >= 0) {
+	            		jQuery('div.status-table.NOT_CURRENT table tbody tr').each(function(i) {
+	            			if (jQuery(this).find('td.list-name').text() == list['name']) {
+	            				jQuery('div.status-table.' + list['status']).show();
+	            				jQuery(this).clone()
+	            				.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
+	            				.highlight();
+	            			}
+	            		});
+	            		im.bagWorks.notCurrentLists.splice(j, 1);
+	            		remainingLists();
+	            	}
+	            });
+	            <%-- shall we poll any further? --%>
+	            if (im.bagWorks.notCurrentLists.length == 0) window.clearInterval(im.bagWorks.timeout);
+		    });
+		}, im.bagWorks.timeout);
     }
-})
+})();
 </script>
 </im:body>
-
-
 
 <!-- /historyBagView.jsp -->

@@ -798,10 +798,11 @@ function reDrawConstraintLogic() {
   });
 }
 
+/** @deprecated */
 function refreshSavedBagStatus() {
     AjaxServices.getSavedBagStatus(function(savedBagStatus) {
         var allCurrent = true;
-        if(savedBagStatus) {
+        if (savedBagStatus) {
             var jSONObject = jQuery.parseJSON(savedBagStatus);
             jQuery.each(jSONObject, function(key, entry) {
                 var bagName = entry['bagName'];

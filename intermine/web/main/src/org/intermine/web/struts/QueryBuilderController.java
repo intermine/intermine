@@ -65,9 +65,9 @@ public class QueryBuilderController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Profile profile = SessionMethods.getProfile(session);
         if (im.getBagManager().isAnyBagToUpgrade(profile)) {
-            ActionMessages actionMessages = getMessages(request);
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
-            saveMessages(request, actionMessages);
+            ActionMessages actionErrors = getErrors(request);
+            actionErrors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            saveErrors(request, actionErrors);
         }
         populateRequest(request, response);
         return null;

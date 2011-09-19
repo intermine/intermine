@@ -77,9 +77,9 @@ public class WebSearchableListController extends TilesAction
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (type.equals(TagTypes.BAG) && im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
-            ActionMessages actionMessages = getMessages(request);
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
-            saveMessages(request, actionMessages);
+            ActionMessages actionErrors = getErrors(request);
+            actionErrors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            saveErrors(request, actionErrors);
         }
         if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {

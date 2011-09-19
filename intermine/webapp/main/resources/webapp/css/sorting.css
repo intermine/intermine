@@ -56,7 +56,7 @@ tr[class="alt"] td {
 td[class~="alt"]{
         background: #fff url(../images/col_alt.jpg) no-repeat !important; border-width: 1px 1px 1px 1px;}
         
-.sorting{
+.sorting {
     padding: 6px 12px 6px 12px;
     font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;color: #4f6b72;}
         
@@ -69,4 +69,7 @@ td[class~="alt"]{
   padding:0 2px 1px 2px; background-color: #E7F1FB; border:1px solid #bbb; font-size:10px; line-height:20px;
 }
 
-
+.upgrade {font-size:10px;}
+td.upgrade { border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7; }
+td.upgrade a {background-image:url('../images/icons/upgrade-list-g.png') !important; background-repeat:no-repeat;
+	background-position:50% 50% !important; height:45px; width:102px; display:block; }
