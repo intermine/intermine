@@ -3336,8 +3336,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         } else {
                             direction = "input";
                         }
-                        
-                        
                         createResultFile(ad.value, ad.name, ad.url, direction, submissionId);
                         subFiles.add(ad.value);
                     }
@@ -3377,7 +3375,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private String unversionName(String fileName) {
         
-        String versionRegex = "\\.*_*[WS|ws]+\\d\\d\\d+";
+//        String versionRegex = "\\.*_*[WS|ws]+\\d\\d\\d+";
+        String versionRegex = "\\.*_*[Ww][Ss]+\\d\\d\\d+";
         LOG.debug("FFFF: " + fileName + "--->>" +
                 "====>" + fileName.replaceAll(versionRegex, ""));        
         return fileName.replaceAll(versionRegex, "");
