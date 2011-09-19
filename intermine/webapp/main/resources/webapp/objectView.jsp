@@ -20,7 +20,7 @@
   <c:when test="${!empty resultElement.linkRedirect}">
     <c:set var="detailsLink" value="${resultElement.linkRedirect}"
       scope="request" />
-    <c:set var="extlink" value="extlink" />
+    <c:set var="extlink" value="class='extlink' target='_blank'" />
   </c:when>
   <c:otherwise>
     <c:set var="detailsLink"
@@ -52,14 +52,14 @@
 
           <%-- LINK --%>
           <c:otherwise>
-            <a href="${object}" class="value extlink"><c:out value="${object}" escapeXml="false" /></a>
+            <a href="${object}" class="value extlink" target="_blank"><c:out value="${object}" escapeXml="false" /></a>
           </c:otherwise>
         </c:choose>
       </c:when>
       <c:when
         test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
         <%-- key field, truncate --%>
-        <a href="${detailsLink}"${extlink}><im:abbreviate
+        <a href="${detailsLink}" ${extlink}><im:abbreviate
           value="${object}" length="${maxLength}" /></a>
       </c:when>
       <c:when
@@ -70,7 +70,7 @@
       </c:when>
       <c:when test="${resultElement.keyField}">
         <%-- key field --%>
-        <a href="${detailsLink}"${extlink}><c:out value="${object}" default="${nullFieldText}" escapeXml="false" /></a>
+        <a href="${detailsLink}" ${extlink}><c:out value="${object}" default="${nullFieldText}" escapeXml="false" /></a>
         <c:if
           test="${(!empty columnType) && (resultElement.type != columnType)}">
              [<c:out value="${resultElement.type}" />]
@@ -86,7 +86,7 @@
   <c:otherwise>
     <span style="white-space: nowrap"> <c:forEach var="cld" items="${leafClds}">
       <span class="type"><c:out value="${cld.unqualifiedName}" /></span>
-    </c:forEach> [<a href="${detailsLink}"${extlink}><fmt:message
+    </c:forEach> [<a href="${detailsLink}" ${extlink}><fmt:message
       key="results.details" /></a>] </span>
     <br />
     <div style="margin-left: 8px"><c:set var="reportObject"
