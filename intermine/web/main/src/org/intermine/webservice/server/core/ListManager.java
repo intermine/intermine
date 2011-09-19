@@ -12,6 +12,7 @@ package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import org.intermine.web.logic.session.SessionMethods;
  **/
 public class ListManager
 {
+    private static final long MAX_WAIT = 2000;
     private final BagManager bagManager;
     private final Profile profile;
 
@@ -62,6 +64,13 @@ public class ListManager
      * @return A collection of lists the current user can access.
      */
     public Collection<InterMineBag> getLists() {
+        Date waitUntil = new Date(System.currentTimeMillis() + MAX_WAIT);
+        // Wait up to 20 secs for the bags to be updated.
+        while (new Date().before(waitUntil)) {
+            if (!bagManager.isAnyBagNotCurrent(profile)) {
+                break;
+            }
+        }
         return bagManager.getUserAndGlobalBags(profile).values();
     }
 
