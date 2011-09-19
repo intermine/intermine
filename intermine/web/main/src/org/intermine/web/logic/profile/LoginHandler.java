@@ -109,11 +109,6 @@ public abstract class LoginHandler extends InterMineAction
             // The current profile was for an anonymous guest.
             renamedBags = mergeProfiles(currentProfile, profile);
         }
-        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isOneBagNotCurrent(profile)) {
-            new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
-        }
 
         return renamedBags;
     }
@@ -144,6 +139,11 @@ public abstract class LoginHandler extends InterMineAction
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         if (profile.getUsername().equals(pm.getSuperuser())) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
+        }
+        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        if (im.getBagManager().isOneBagNotCurrent(profile)) {
+            new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
         }
         return profile;
     }
