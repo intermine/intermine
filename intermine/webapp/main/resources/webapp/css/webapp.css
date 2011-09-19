@@ -61,7 +61,7 @@ a.extlink, a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover 
     padding-right: 15px;
     margin-right: 15px;
     white-space: nowrap;
-    background: url('../images/extlink.gif') right center no-repeat;
+    background: url('../images/icons/external_link.png') right top no-repeat;
 }
 
 pre {
