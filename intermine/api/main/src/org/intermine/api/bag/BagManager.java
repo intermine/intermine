@@ -11,12 +11,14 @@ package org.intermine.api.bag;
  */
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagState;
@@ -166,7 +168,7 @@ public class BagManager
     }
 
     /**
-     * Fetch all global bags and user bags combined in the same map.  If user has a bag with the
+     * Fetch all global bags and user bags combined in the same map. If user has a bag with the
      * same name as a global bag the user's bag takes precedence.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
@@ -182,6 +184,17 @@ public class BagManager
 
         return allBags;
     }
+    
+    /**
+     * Order a map of bags by im:order:n tag
+     * @param bags
+     * @return
+     */
+    public Map<String, InterMineBag> orderBags(Map<String, InterMineBag> bags) {
+        Map<String, InterMineBag> bagsOrdered = new TreeMap<String, InterMineBag>(new ByTagOrder());
+        bagsOrdered.putAll(bags);
+        return bagsOrdered;
+    }    
 
     /**
      * Fetch a global bag by name.
@@ -368,4 +381,59 @@ public class BagManager
         }
         return objectStoreBags;
     }
+    
+    /**
+     * Compare lists based on their im:order:n tag
+     * @author radek
+     *
+     */
+    public class ByTagOrder implements Comparator<String> {
+
+    	/**
+    	 * For a list of tags corresponding to a bag, give us the order set in im:order:n
+    	 * @param tags
+    	 * @return
+    	 */
+    	private Integer resolveOrderFromTagsList(List<Tag> tags) {
+    		for (Tag t : tags) {
+        		String name = t.getTagName();
+        		if (name.startsWith("im:order:")) {
+        			return Integer.parseInt(name.replaceAll("[^0-9]", ""));
+        		}
+        	}
+    		return 666;
+    	}
+    	
+        @Override
+        public int compare(String aK, String bK) {
+        	// get the order from the tags for the bags for the superduper profile
+        	Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(aK)));
+        	Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(bK)));
+
+            if (aO < bO) {
+                return -1;
+            } else {
+                if (aO > bO) {
+                    return 1;
+                } else {
+                    CaseInsensitiveComparator cic = new CaseInsensitiveComparator();
+                    return cic.compare(aK, bK);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Lower-case key comparator
+     * @author radek
+     *
+     */
+    public class CaseInsensitiveComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String aK, String bK) {
+            return aK.toLowerCase().compareTo(bK.toLowerCase());
+        }
+    }
+    
 }

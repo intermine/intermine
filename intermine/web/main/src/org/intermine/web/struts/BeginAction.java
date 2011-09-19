@@ -176,7 +176,7 @@ public class BeginAction extends InterMineAction
 
         // frontpage bags/lists
         BagManager bm = im.getBagManager();
-        request.setAttribute("frontpageBags", bm.getGlobalBagsWithTag("im:frontpage"));
+        request.setAttribute("frontpageBags", bm.orderBags(bm.getGlobalBagsWithTag("im:frontpage")));
 
         // cookie business
         if (!hasUserVisited(request)) {
