@@ -47,7 +47,8 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                 'style': (i <= 0) ? 'display:none;' : '',
                 'html': jQuery('<a/>', {
                     'href': url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
-                    'text': entry['shortName']
+                    'text': entry['shortName'],
+                    'target': '_blank'
                 })
             }).appendTo(target);
             i--;
