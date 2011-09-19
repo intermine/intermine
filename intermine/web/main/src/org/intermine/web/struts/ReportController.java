@@ -77,7 +77,7 @@ public class ReportController extends InterMineAction
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         if (im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
-            recordMessage(new ActionMessage("login.upgradeListManually"), request);
+            recordError(new ActionMessage("login.upgradeListManually"), request);
         }
         // fetch & set requested object
         InterMineObject requestedObject = getRequestedObject(im, request);

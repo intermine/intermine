@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -343,6 +344,26 @@ public class Profile
         return Collections.unmodifiableMap(savedBags);
     }
 
+    /**
+     * Get the saved bags in a map of "status key" -> map of lists
+     * @return
+     */
+    public Map<String, Map<String, InterMineBag>> getSavedBagsByStatus() {
+        Map<String, Map<String, InterMineBag>> result = new LinkedHashMap<String, Map<String, InterMineBag>>();
+        // maintain order on the JSP page
+        result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
+        result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
+        result.put("CURRENT", new HashMap<String, InterMineBag>());
+        
+        for (InterMineBag bag : savedBags.values()) {
+        	String state = bag.getState();
+        	// XXX: this can go pear shaped if new statei [sic] are introduced
+            Map<String, InterMineBag> stateMap = result.get(state); 
+        	stateMap.put(bag.getName(), bag);
+        }
+        return result;
+    }    
+    
     /**
      * Get the value of savedBags current
      * @return the value of savedBags

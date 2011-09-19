@@ -621,7 +621,7 @@ a.constraintId {
 }
 
 /* ???? */
-a.brokenTmplLink, a.bagToUpgrade {
+a.brokenTmplLink {
     color: #d00;
 }
 
@@ -929,6 +929,8 @@ ol#news a {
     border: 1px solid #E6DB55;
     color: #000 !important;
 }
+
+.topBar.errors.loading { background-image:url("../images/wait18.gif"); }
 
 .messages p, .errors p, .topBar.lookupWarn p, .topBar.lookupError p, .topBar.lookupReport p {
     display: inline;

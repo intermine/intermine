@@ -187,6 +187,38 @@ im.isInView = function(e, visibility) {
     return (visibility == 'partial') ?  ((elementBottom >= pageTop) && (elementTop <= pageBottom)) : ((elementBottom < pageBottom) && (elementTop > pageTop));
 };
 
+// provide a lightweight jQuery.animate("highlight") alternative
+im.highlight = function(e) {
+	var startRGB 			 = [255, 243, 211],
+		endRGB	 			 = [255, 255, 255],
+		finalBackgroundValue = 'transparent',
+		totalSteps			 = 75,
+		currentStep			 = 0,
+		speed				 = 20,
+		power				 = 4;
+	
+	e.highlight = window.setInterval(function() {
+		e.css("background", newRGB(startRGB, endRGB, totalSteps, currentStep++, power));
+	    if (currentStep > totalSteps) {
+	    	e.css("background", finalBackgroundValue);
+	        window.clearInterval(e.highlight);
+	    }
+	}, speed);
+	
+	function arrayToRGB(array) {
+		return "rgb(" + array[0] + "," + array[1] + "," + array[2] + ")";
+	}
+	
+	// determine new RGB value in a range
+	function newRGB(startRGB, endRGB, totalSteps, currentStep, power) {
+		var newRGB = Array();
+		for (var i = 0; i < 3; i++) {
+			newRGB[i] = Math.ceil(startRGB[i] + (Math.pow(((1 / totalSteps) * currentStep), power) * (endRGB[i] - startRGB[i])));
+		}
+		return arrayToRGB(newRGB);
+	}
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
@@ -206,6 +238,9 @@ jQuery.fn.extend({
 	},
 	persistentTableHeaders: function() {
 		return im.persistentTableHeaders(this);
+	},
+	highlight: function() {
+		return im.highlight(this);
 	}
 });
 

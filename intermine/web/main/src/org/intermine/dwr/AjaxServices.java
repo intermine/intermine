@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -1401,37 +1402,31 @@ public class AjaxServices
         return defaultList;
     }
 
-    public String getSavedBagStatus() {
-        Collection<JSONObject> jsonSavedBagStatus = new HashSet<JSONObject>();
+    @SuppressWarnings("unchecked")
+	public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
-        Profile profile = SessionMethods.getProfile(session);
-        Map<String, String> savedBagStatus =
+        @SuppressWarnings("unchecked")
+		Map<String, String> savedBagStatus =
             (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-        JSONObject jsonSavedBag = null;
-        String bagName = null;
-        String status = null;
+        
+        // this is where my lists go
+        Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
             for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
-                jsonSavedBag = new JSONObject();
-                bagName = entry.getKey();
-                status = entry.getValue();
-                jsonSavedBag.put("bagName", bagName);
-                jsonSavedBag.put("status", status);
-                try {
-                    if (status.equals(BagState.CURRENT.toString())) {
-                        jsonSavedBag.put("size", profile.getSavedBags().get(bagName).getSize());
-                    } else {
-                        jsonSavedBag.put("size", 0);
-                    }
-                } catch (ObjectStoreException ose) {
-                    LOG.error("Error retriving the size of beg: " + bagName, ose);
+            	// save to the resulting JSON object only if these are 'actionable' lists
+                if (entry.getValue().equals(BagState.CURRENT.toString()) ||
+                		entry.getValue().equals(BagState.TO_UPGRADE.toString())) {
+                	JSONObject list = new JSONObject();
+                	list.put("name", entry.getKey());
+                	list.put("status", entry.getValue());
+                    lists.add(list);
                 }
-                jsonSavedBagStatus.add(jsonSavedBag);
             }
         } catch (JSONException jse) {
             LOG.error("Errors generating json objects", jse);
         }
-        return jsonSavedBagStatus.toString();
+        
+        return lists.toString();
     }
 
 }
