@@ -1,11 +1,16 @@
 package org.intermine.webservice.server.lists;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.BagDoesNotExistException;
@@ -116,23 +121,51 @@ public class ListServiceUtils {
         if (classes.size() == 1) {
             return classes.iterator().next().getUnqualifiedName();
         }
-        ClassDescriptor currentClass = null;
+        
         Set<String> classNames = new HashSet<String>();
         for (ClassDescriptor cd: classes) {
             classNames.add(cd.getUnqualifiedName());
         }
         String nameString = StringUtils.join(classNames, ", ");
+        Set<ClassDescriptor> superClasses = null;
         for (ClassDescriptor cd: classes) {
-            String thisType = cd.getName();
-            if (currentClass == null || currentClass.getAllSuperclassNames().contains(thisType)) {
-                currentClass = cd;
-                continue;
-            }
-            if (!cd.getAllSuperclassNames().contains(currentClass.getName())) {
-                throw new BadRequestException("Incompatible types: " + nameString);
+            if (superClasses == null) {
+                superClasses = new HashSet<ClassDescriptor>(cd.getAllSuperDescriptors());
+                superClasses.add(cd);
+            } else {
+                Set<ClassDescriptor> toIntersect = cd.getAllSuperDescriptors();
+                toIntersect.add(cd);
+                superClasses.retainAll(toIntersect);
             }
         }
-        return currentClass.getUnqualifiedName();
+        CollectionUtils.filter(classes, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                ClassDescriptor cd = (ClassDescriptor) arg0;
+                return cd.getAllSuperclassNames().contains("org.intermine.model.InterMineObject");
+            }
+        });
+        if (superClasses.isEmpty()) {
+            throw new BadRequestException("Incompatible types: " + nameString);
+        }
+        List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(superClasses);
+
+        Collections.sort(superList, new Comparator<ClassDescriptor>() {
+            @Override
+            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
+                int depth1 = o1.getAllSuperDescriptors().size();
+                int depth2 = o2.getAllSuperDescriptors().size();
+                if (depth1 <= depth2) {
+                    return 1;
+                } else if (depth1 >= depth2) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+            
+        });
+        return superList.get(0).getUnqualifiedName();
     }
 
 }
