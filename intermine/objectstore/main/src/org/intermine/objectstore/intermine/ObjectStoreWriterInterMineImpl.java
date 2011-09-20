@@ -1186,8 +1186,17 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             createTempBagTables(c, query);
             flushOldTempBagTables(c);
         }
-        String sql = SqlGenerator.generate(query, schema, db, null, SqlGenerator.ID_ONLY,
-                bagConstraintTables);
+        
+        // Queries may be on classes (where the select is a class) or a normal field query
+        int kind;
+        if (query.getSelect().get(0) instanceof QueryClass) {
+            kind = SqlGenerator.ID_ONLY;
+        } else {
+            kind = SqlGenerator.QUERY_NORMAL;
+        }
+        
+        String sql = SqlGenerator.generate(query, schema, db, null, kind, bagConstraintTables);
+        
         try {
             if (everOptimise()) {
                 PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(query);
@@ -1206,7 +1215,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             registerStatement(s);
             try {
                 String alias = query.getAliases().get(query.getSelect().get(0));
-                if (query.getSelect().get(0) instanceof QueryClass) {
+                // Queries on QueryClasses don't have nice aliases for us to use...
+                if (kind == SqlGenerator.ID_ONLY) {
                     alias = "id";
                 }
                 sql = "INSERT INTO " + INT_BAG_TABLE_NAME + " (" + BAGID_COLUMN + ", "
