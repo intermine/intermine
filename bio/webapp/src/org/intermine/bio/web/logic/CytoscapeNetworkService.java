@@ -45,7 +45,7 @@ import org.intermine.web.logic.session.SessionMethods;
 */
 public class CytoscapeNetworkService
 {
-    private static final int LARGE_NETWORK_ELEMENT_COUNT = 1; //2000;
+    private static final int LARGE_NETWORK_ELEMENT_COUNT = 2000;;
     private static final String LARGE_NETWORK = "large_network";
     private static final String NO_INTERACTION_FROM =
         "No interaction data found from data sources: ";
