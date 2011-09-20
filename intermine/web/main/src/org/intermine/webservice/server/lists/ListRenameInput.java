@@ -36,6 +36,12 @@ public class ListRenameInput extends ListInput {
             return getListName();
         }
     }
+    
+    @Override
+    protected String produceName() {
+        // Don't provide default names - makes no sense in this context
+        return request.getParameter(NAME_PARAMETER);
+    }
 
     @Override
     protected void validateRequiredParams() {

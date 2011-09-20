@@ -44,6 +44,7 @@ public class ListInput {
     public final static String REPLACE_PARAMETER = "replaceExisting";
     public final static String TEMP_SUFFIX = "_temp";
     public final static String EXTRA_PARAMETER = "extraValue";
+    private static final String DEFAULT_LIST_NAME = "new_list";
 
     /**
      * Parse the values from the request, and validate them.
@@ -55,7 +56,7 @@ public class ListInput {
         this.bagManager = bagManager;
         profile = SessionMethods.getProfile(request.getSession());
 
-        this.listName = request.getParameter(NAME_PARAMETER);
+        this.listName = produceName();
         this.description = request.getParameter(DESCRIPTION_PARAMETER);
         this.replaceExisting = Boolean.parseBoolean(REPLACE_PARAMETER);
         this.type = request.getParameter(TYPE_PARAMETER);
@@ -64,7 +65,27 @@ public class ListInput {
         init();
         validate();
     }
-
+    
+    protected String produceName() {
+        // Give the user a default name if none is provided.
+        String nameParam = request.getParameter(NAME_PARAMETER);
+        String name;
+        if (StringUtils.isBlank(nameParam)) {
+            nameParam = DEFAULT_LIST_NAME;
+            name = nameParam;
+            Set<String> listNames = bagManager.getUserAndGlobalBags(profile).keySet();
+            int counter = 2;
+            
+            while (listNames.contains(name)) {
+                name = nameParam + "_" + counter;
+                counter++;
+            }
+        } else {
+            name = nameParam;
+        }
+        return name;
+    }
+    
     public String getListName() {
         return this.listName;
     }
