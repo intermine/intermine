@@ -10,6 +10,7 @@ package org.intermine.bio.web.struts;
  *
  */
 
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
+import org.intermine.bio.web.logic.CytoscapeNetworkService;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
@@ -56,9 +58,7 @@ public class CytoscapeNetworkExportAction extends Action
                                  HttpServletResponse response)
         throws Exception {
 
-        String type = (String) request.getParameter("type"); // tab or csv
-        // A comma delimited string of ids
-        String fullInteractingGeneSetStr = (String) request.getParameter("fullInteractingGeneSet");
+        String type = request.getParameter("type"); // tab or csv
 
         if ("sif".equals(type)) {
             response.setContentType("text/plain");
@@ -84,12 +84,29 @@ public class CytoscapeNetworkExportAction extends Action
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.pdf\"");
         }
-        if ("tab".equals(type)) {
+
+        if ("tab".equals(type) || "csv".equals(type)) {
+            // A comma delimited string of ids
+            String fullInteractingGeneSetStr = request.getParameter("fullInteractingGeneSet");
             toExportNetworkAsList(type, fullInteractingGeneSetStr, request, response);
             return null;
         }
-        if ("csv".equals(type)) {
-            toExportNetworkAsList(type, fullInteractingGeneSetStr, request, response);
+
+        // Handle large network
+        if ("large_network".equals(type)) {
+            String fullInteractingGeneSetStr = request.getParameter("fullInteractingGeneSet");
+
+            CytoscapeNetworkService networkSrv = new CytoscapeNetworkService();
+            String networkdata = networkSrv.getNetwork(
+                    fullInteractingGeneSetStr, request.getSession());
+
+            response.setContentType("text/xml");
+            response.setHeader("Content-Disposition", "attachment; filename=\"network.xgmml\"");
+            PrintWriter out = response.getWriter();
+            out.println(networkdata);
+            out.flush();
+            out.close();
+
             return null;
         }
 

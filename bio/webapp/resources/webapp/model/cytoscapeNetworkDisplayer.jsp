@@ -115,7 +115,7 @@
       jQuery('#cwtabsbyside ul').first().find('li a').each(function(index) {
         <%-- push targets --%>
         sidebarPages.push(jQuery(this).attr('href'));
-        <%-- attaché onclick behavior --%>
+        <%-- attach onclick behavior --%>
         jQuery(this).click(function(e) {
           var that = this;
           jQuery.each(sidebarPages, function(index, target) {
@@ -264,7 +264,22 @@
                                              .css({'font-style': 'italic', 'border': 'none'})
                                              .height(0)
                                              .width(600);
-                } else {
+                }
+                else if (response.match("^"+"large_network")) {
+                    var html = '<form action="cytoscapeNetworkExport.do" id="export-large-network-form" method="post" style="display: none;">' +
+                               '<input type="hidden" name="type" value="large_network" />' +
+                               '<input type="hidden" name="fullInteractingGeneSet" value="' + fullInteractingGeneSet + '" />' +
+                               '</form>' +
+                               '<span>The network contains more than 2000 elements, the interaction can become sluggish in the displayer. Please ' +
+                               '<a href="javascript:;"onclick="javascript: jQuery(\'#export-large-network-form\').submit();return false;">Download the network data</a>' +
+                               ' and import it to <a href="http://www.cytoscape.org/" target="_blank">Cytoscape desktop</a> and use <b>Force-Directed Layout</b> to view or <span class="fakelink" onclick="javascript: if (jQuery(\'#cwinlinetable\').is(\':hidden\')) {jQuery(\'#cwinlinetable\').show().scrollTo(\'slow\', \'swing\', -20); } else {jQuery(\'#cwinlinetable\').hide();}">view interaction data in a table.</span></span>';
+
+                    jQuery(target).html(html)
+                                  .css({'font-style': 'italic', 'border': 'none'})
+                                  .height(0)
+                                  .width(600);
+                }
+                else {
                     networkdata = response;
                     <%-- attach overflow --%>
                     jQuery("#interactions-wrap").css('overflow-x', 'auto');
