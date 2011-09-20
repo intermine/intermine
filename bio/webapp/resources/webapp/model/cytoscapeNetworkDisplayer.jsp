@@ -237,21 +237,18 @@
     var target = "#cwcontent";
 
     if (dataNotIncludedMessage != "") {
-        jQuery(target).html(dataNotIncludedMessage)
+        jQuery("#interactions-wrap").html(dataNotIncludedMessage)
                            .css({'font-style': 'italic', 'border': 'none'})
-                           .height(0)
                            .width(600);
     }
     else if (orgWithNoDataMessage != "") {
-      jQuery(target).html(orgWithNoDataMessage)
+      jQuery("#interactions-wrap").html(orgWithNoDataMessage)
                                .css({'font-style': 'italic', 'border': 'none'})
-                               .height(0)
                                .width(600);
     }
-
     else {
         // AJAX POST
-        jQuery(target).html("Please wait while the network data loads...");
+        jQuery("#cwcontent").html("Please wait while the network data loads...");
         jQuery.ajax({
             type: "POST",
             url: "cytoscapeNetworkAjax.do",
@@ -260,9 +257,8 @@
             success: function(response) {
                 if (response.match("^"+"No interaction data found from data sources:")) {
                     geneWithNoDatasourceMessage = response; // case: no interaction data found from the data sources
-                    jQuery(target).html(geneWithNoDatasourceMessage)
+                    jQuery("#interactions-wrap").html(geneWithNoDatasourceMessage)
                                              .css({'font-style': 'italic', 'border': 'none'})
-                                             .height(0)
                                              .width(600);
                 }
                 else if (response.match("^"+"large_network")) {
@@ -274,10 +270,9 @@
                                '<a href="javascript:;"onclick="javascript: jQuery(\'#export-large-network-form\').submit();return false;">Download the network data</a>' +
                                ' and import it to <a href="http://www.cytoscape.org/" target="_blank">Cytoscape desktop</a> and use <b>Force-Directed Layout</b> to view or <span class="fakelink" onclick="javascript: if (jQuery(\'#cwinlinetable\').is(\':hidden\')) {jQuery(\'#cwinlinetable\').show().scrollTo(\'slow\', \'swing\', -20); } else {jQuery(\'#cwinlinetable\').hide();}">view interaction data in a table.</span></span>';
 
-                    jQuery(target).html(html)
+                    jQuery("#interactions-wrap").html(html)
                                   .css({'font-style': 'italic', 'border': 'none'})
-                                  .height(0)
-                                  .width(600);
+                                  .width(550);
                 }
                 else {
                     networkdata = response;
@@ -290,7 +285,7 @@
                 }
             },
             error:function (xhr, ajaxOptions, thrownError) {
-                jQuery(target).html("There was a problem retrieving the result.");
+                jQuery("#interactions-wrap").html("There was a problem retrieving the network data.");
             }
         });
     }
