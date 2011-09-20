@@ -12,19 +12,20 @@
 function getFriendlyMinePathways(mine, orthologues) {
 
     AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-        im.log(pathways);
         var jSONObject = jQuery.parseJSON(pathways);
         if (jSONObject['results'].length > 0) {
-            generate(jSONObject, "#intermine_pathways_" + mine, mine);
+        	generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
         } else {
             jQuery("#intermine_pathways_" + mine).html("No pathways found.");
+     	    jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+    		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
+    	    });
         }
     });
 }
 
-function generate(jSONObject, target, mine) {
+function generateFriendlyMinePathways(jSONObject, target, mine) {
 	var url = '';
-	im.log(jSONObject);
 	if (jSONObject['mineURL'] != undefined) {
 	  url = jSONObject['mineURL'];
 	}
@@ -45,8 +46,6 @@ function generate(jSONObject, target, mine) {
 	   jQuery('#mine-pathway-displayer table thead th').each(function(i) {
 		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
 	   });
-	} else {
-	   jQuery(target).closest('td').remove();
 	}
 }
 
@@ -79,9 +78,11 @@ function generate(jSONObject, target, mine) {
                 No pathways found
               </c:when>
               <c:otherwise>
+              <ul>
             <c:forEach items="${gene.pathways}" var="pathway">
-                <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}"><c:out value="${pathway.name}"/></html:link><br/>
+                <li><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}"><c:out value="${pathway.name}"/></html:link></li>
             </c:forEach>
+            </ul>
             </c:otherwise>
             </c:choose>
         </td>

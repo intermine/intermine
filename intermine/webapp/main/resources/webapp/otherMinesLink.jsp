@@ -21,14 +21,14 @@
           jQuery('#intermine_links').toggleClass('loading');
           // parse to JSON (requires jQuery 1.4.1+)
           var jSONObject = jQuery.parseJSON(mines);
-          generate(jSONObject, "#intermine_links");
+          generateMineLinks(jSONObject, "#intermine_links");
       });
     //var jSONObject = [{"mineName":"ZFINMine","organisms":[{"shortName":"D. rerio","orthologues":[{"displayIdentifier":"\"\"","primaryIdentifier":"ENSDARG00000044216"}]},
     //{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"\"\"","primaryIdentifier":"ENSG00000140718"}},"shortName":"H. sapiens"}]},
     //{"mineName":"modMine"}, {"mineName":"YeastMine"}, {"mineName":"FlyMine","organisms":[{"genes":{"shortName":"H. sapiens","orthologues":{"displayIdentifier":"ENSG00000140718","primaryIdentifier":"FTO"}},"shortName":"H. sapiens"}]}, {"mineName":"RatMine"}];
   }
 
-  function generate(jSONObject, target) {
+  function generateMineLinks(jSONObject, target) {
     jQuery('<ul/>', {
         'class': 'mines'
       })
