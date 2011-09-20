@@ -105,12 +105,12 @@
                   // add separators & linkify
                   jQuery(target + " li#mine-" + key + " ul.organisms li.organism-" + organismKey + " ul.entries li").each(function(i) {
                       if (minePortalDetails["url"] != null) { // we have mine portal link, linkify
-                        var linkText = jQuery(this).text();
-                        jQuery('<a/>', {
-                          'href': minePortalDetails["url"] + "/portal.do?externalids=" + linkText + orthologue + "&class=Gene&origin=FlyMine",
-                          'text': linkText,
-                          'target': '_blank'
-                        }).appendTo(jQuery(this));
+                        jQuery(this).html(
+                      	jQuery('<a/>', {
+                      		'href': minePortalDetails["url"] + "/portal.do?externalids=" + jQuery(this).text() + orthologue + "&class=Gene&origin=FlyMine",
+                      		'text': jQuery(this).text(),
+                      		'target': '_blank'
+                      	}));
                       }
                       if (i > 0) {
                         jQuery(this).html(", " + jQuery(this).html());
