@@ -604,4 +604,34 @@ public class Path
     public Model getModel() {
         return model;
     }
+    
+    /**
+     * Return true if the first element in the path has the class given in input as type
+     * @param cls the class
+     * @return true if the first element contains the class
+     */
+    public boolean startContainsClass(String cls) {
+        String rootClass = startCld.getType().getSimpleName();
+        if (rootClass.equals(cls)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Return true if there is an element containing the field given in input
+     * @param cls the class containing the field
+     * @param field the field
+     * @return true if there is an element containing the class
+     */
+    public boolean elementsContainField(String cls, String field) {
+        for (int index = 0; index < elements.size(); index++) {
+            if (elements.get(index).equals(field)) {
+                 if (getElementClassDescriptors().get(index).getType().getSimpleName().equals(cls)) {
+                     return true;
+                 }
+             }
+        }
+        return false;
+    }
 }
