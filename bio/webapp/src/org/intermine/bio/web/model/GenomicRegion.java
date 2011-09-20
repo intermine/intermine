@@ -149,6 +149,11 @@ public class GenomicRegion
         }
         return false;
     }
+    
+    @Override 
+    public String toString() {
+        return getOriginalRegion() + (getOriginalRegion().equals(getExtendedRegion()) ? "" : " +/- " + extendedRegionSize);
+    }
 
     /**
      * @return hashCode
