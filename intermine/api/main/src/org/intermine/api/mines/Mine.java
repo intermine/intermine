@@ -28,7 +28,6 @@ public class Mine
     protected String name = null;
     protected String url = null;
     protected String logo = null;
-    protected String defaultMapping = null;
     protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
     // holds a set of values available to query for this mine

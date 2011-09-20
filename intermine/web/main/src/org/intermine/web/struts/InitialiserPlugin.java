@@ -47,6 +47,7 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -188,6 +189,10 @@ public class InitialiserPlugin implements PlugIn
         setupClassSummaryInformation(servletContext, oss, os.getModel());
 
         doRegistration(webProperties);
+
+        FriendlyMineManager friendlyMineManager
+            = FriendlyMineManager.getInstance(im, webProperties);
+        im.setFriendlyMineManager(friendlyMineManager);
     }
 
     private void doRegistration(Properties webProperties) {
@@ -196,7 +201,6 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStore getProductionObjectStore(Properties webProperties) throws ServletException {
-        ObjectStore os;
         String osAlias = (String) webProperties.get("webapp.os.alias");
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
@@ -379,33 +383,33 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void loadOpenIDProviders(ServletContext context) throws ServletException {
-    	Set<String> providers = new HashSet<String>();
-    	Properties providerProps = new Properties();
+        Set<String> providers = new HashSet<String>();
+        Properties providerProps = new Properties();
 
-    	InputStream is = getClass().getClassLoader().getResourceAsStream("openid-providers.properties");
-    	if (is == null) {
-    		LOG.info("couldn't find openid providers, using system class-loader");
-    		is = ClassLoader.getSystemClassLoader().getResourceAsStream("openid-properties.properties");
-    	}
-    	if (is != null) {
-	    	try {
-				providerProps.load(is);
-			} catch (IOException e) {
-				throw new ServletException(e);
-			}
-    	} else {
-    		LOG.error("Could not find openid-providers.properties");
-    	}
+        InputStream is = getClass().getClassLoader().getResourceAsStream("openid-providers.properties");
+        if (is == null) {
+            LOG.info("couldn't find openid providers, using system class-loader");
+            is = ClassLoader.getSystemClassLoader().getResourceAsStream("openid-properties.properties");
+        }
+        if (is != null) {
+            try {
+                providerProps.load(is);
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
+        } else {
+            LOG.error("Could not find openid-providers.properties");
+        }
 
-    	for (Object key: providerProps.keySet()) {
-    		String keyString = (String) key;
-    		if (!keyString.endsWith(".alias")) {
-    			providers.add(keyString);
-    			LOG.info("Added " + keyString);
-    		}
-    	}
+        for (Object key: providerProps.keySet()) {
+            String keyString = (String) key;
+            if (!keyString.endsWith(".alias")) {
+                providers.add(keyString);
+                LOG.info("Added " + keyString);
+            }
+        }
 
-    	SessionMethods.setOpenIdProviders(context, providers);
+        SessionMethods.setOpenIdProviders(context, providers);
     }
 
 
@@ -659,7 +663,7 @@ public class InitialiserPlugin implements PlugIn
                 blockingErrorKeys.add("errors.savedbagtable.runLoadBagValuesTableAnt");
                 return false;
             } else {
-                if (!DatabaseUtil.columnExists(con, "bagvalues", "extra") 
+                if (!DatabaseUtil.columnExists(con, "bagvalues", "extra")
                     || DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
                     blockingErrorKeys.add("errors.savedbagtable.runListTablesAnt");
                     return false;

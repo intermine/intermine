@@ -19,12 +19,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -677,11 +676,9 @@ public class AjaxServices
      */
     public static String getFriendlyMineReportLinks(String organismName,
             String primaryIdentifier, String symbol) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        FriendlyMineManager olm = FriendlyMineManager.getInstance(im, webProperties);
+        FriendlyMineManager fmm = im.getFriendlyMineManager();
         InterMineLinkGenerator linkGen = null;
         Class<?> clazz
             = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
@@ -693,7 +690,7 @@ public class AjaxServices
             LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
-        return linkGen.getLinks(olm, null, organismName, primaryIdentifier).toString();
+        return linkGen.getLinks(fmm, null, organismName, primaryIdentifier).toString();
     }
 
     /**
@@ -710,12 +707,9 @@ public class AjaxServices
                 || StringUtils.isEmpty(identifiers)) {
             return null;
         }
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Properties webProperties = SessionMethods.getWebProperties(servletContext);
-
-        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        FriendlyMineManager linkManager = im.getFriendlyMineManager();
         InterMineLinkGenerator linkGen = null;
         Class<?> clazz
             = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
@@ -747,21 +741,24 @@ public class AjaxServices
      * @return the links to friendly intermines
      */
     public static String getFriendlyMinePathways(String mineName, String orthologues) {
-
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        FriendlyMineManager linkManager = im.getFriendlyMineManager();
         Mine mine = linkManager.getMine(mineName);
 
         final String xmlQuery = "<query name=\"\" model=\"genomic\" view=\"Gene.pathways.id "
-            + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\""
-            + "op=\"LOOKUP\" value=\"eve\" extraValue=\"\"/></query>";
+            + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\" "
+            + "op=\"LOOKUP\" value=\"" + orthologues + "\" extraValue=\"\"/></query>";
         try {
-            return FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery).toString();
+            JSONObject results
+                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            results.put("mineURL", mine.getUrl());
+            return results.toString();
         } catch (IOException e) {
             LOG.error("Couldn't query " + mine.getName() + " for pathways", e);
+            return null;
+        } catch (JSONException e) {
+            LOG.error("Error adding Mine URL to pathways results", e);
             return null;
         }
     }
@@ -1403,29 +1400,29 @@ public class AjaxServices
     }
 
     @SuppressWarnings("unchecked")
-	public String getSavedBagStatus() throws JSONException {
+    public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-		Map<String, String> savedBagStatus =
+        Map<String, String> savedBagStatus =
             (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-        
+
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
             for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
-            	// save to the resulting JSON object only if these are 'actionable' lists
+                // save to the resulting JSON object only if these are 'actionable' lists
                 if (entry.getValue().equals(BagState.CURRENT.toString()) ||
-                		entry.getValue().equals(BagState.TO_UPGRADE.toString())) {
-                	JSONObject list = new JSONObject();
-                	list.put("name", entry.getKey());
-                	list.put("status", entry.getValue());
+                        entry.getValue().equals(BagState.TO_UPGRADE.toString())) {
+                    JSONObject list = new JSONObject();
+                    list.put("name", entry.getKey());
+                    list.put("status", entry.getValue());
                     lists.add(list);
                 }
             }
         } catch (JSONException jse) {
             LOG.error("Errors generating json objects", jse);
         }
-        
+
         return lists.toString();
     }
 

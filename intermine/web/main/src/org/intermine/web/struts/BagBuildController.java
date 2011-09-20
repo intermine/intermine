@@ -177,9 +177,7 @@ public class BagBuildController extends TilesAction
     }
 
     private String getDefaultValue(HttpServletRequest request, InterMineAPI im) {
-        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
-                .getServletContext());
-        FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        FriendlyMineManager linkManager = im.getFriendlyMineManager();
         Mine mine = linkManager.getLocalMine();
         if (mine != null) {
             return mine.getDefaultValue();
