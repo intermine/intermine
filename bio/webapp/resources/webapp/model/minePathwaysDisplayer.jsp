@@ -14,34 +14,40 @@ function getFriendlyMinePathways(mine, orthologues) {
     AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
         im.log(pathways);
         var jSONObject = jQuery.parseJSON(pathways);
-        // switch off loading img
-        jQuery('#intermine_pathways_' + mine).toggleClass('loading');
         if (jSONObject['results'].length > 0) {
-            generate(jSONObject, "#intermine_pathways_" + mine);
+            generate(jSONObject, "#intermine_pathways_" + mine, mine);
         } else {
             jQuery("#intermine_pathways_" + mine).html("No pathways found.");
         }
     });
 }
 
-function generate(jSONObject, target) {
-          var url = '';
-          im.log(jSONObject);
-          if (jSONObject['mineURL'] != undefined) {
-            url = jSONObject['mineURL'];
-          }
-
-          if (jSONObject['results'] != undefined) {
-             jQuery.each(jSONObject['results'], function(index, pathway) {
-                  jQuery('<li/>', {
-                    'html': jQuery('<a/>', {
-                    'href': url + "/report.do?id=" + pathway['id'],
-                    'text': pathway['name'],
-                    'target': '_blank'
-                })
-                }).appendTo(target);
-             });
-          }
+function generate(jSONObject, target, mine) {
+	var url = '';
+	im.log(jSONObject);
+	if (jSONObject['mineURL'] != undefined) {
+	  url = jSONObject['mineURL'];
+	}
+	
+	if (jSONObject['results'] != undefined) {
+	   jQuery('<ul/>').appendTo(target);
+	   jQuery.each(jSONObject['results'], function(index, pathway) {
+	        jQuery('<li/>', {
+	          'html': jQuery('<a/>', {
+	          'href': url + "/report.do?id=" + pathway['id'],
+	          'text': pathway['name'],
+	          'target': '_blank'
+	      })
+	      }).appendTo(target + ' ul');
+	   });
+	   
+	   
+	   jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
+	   });
+	} else {
+	   jQuery(target).closest('td').remove();
+	}
 }
 
 </script>
@@ -52,18 +58,18 @@ function generate(jSONObject, target) {
 
     <!-- one column for each mine -->
     <table>
-      <tbody>
+      <thead>
       <tr>
             <!-- this mine -->
             <th><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></th>
 
             <!-- other mines -->
             <c:forEach items="${mines}" var="entry">
-                 <c:set var="mine" value="${entry.key}" />
-                 <th>${mine.name}</th>
+                 <th class="loading">${entry.key.name}</th>
             </c:forEach>
       </tr>
-
+	  </thead>
+	  <tbody>
       <tr>
           <!-- this mine -->
         <td>
@@ -83,10 +89,9 @@ function generate(jSONObject, target) {
         <!-- other mines -->
         <c:forEach items="${mines}" var="entry">
             <td>
-            <c:set var="mine" value="${entry.key}" />
-            <div id="intermine_pathways_${mine.name}" class="loading"></div>
+            <div id="intermine_pathways_${entry.key.name}"></div>
             <script type="text/javascript" charset="utf-8">
-                getFriendlyMinePathways('${mine.name}', '${entry.value}');
+                getFriendlyMinePathways('${entry.key.name}', '${entry.value}');
             </script>
             </td>
         </c:forEach>

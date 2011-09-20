@@ -112,6 +112,13 @@ form#fly-atlas-options table tr td { padding:6px; }
 /* RNAi displayer */
 #rnai-displayer a.link { margin-left:6px; font-size:12px; }
 
+/* Pathways displayer */
+#mine-pathway-displayer td { vertical-align:top; }
+
+/* Pathways displayer */
+#mine-pathway-displayer th.loading { background-image:url('../images/icons/ajax-loader.gif'); padding-left:22px;
+	background-repeat:no-repeat; background-position:0 5px; }
+
 /* resizing on small screens */
 @media only screen and (max-width:1440px) {
     /* header summary fields */
