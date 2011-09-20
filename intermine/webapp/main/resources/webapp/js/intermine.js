@@ -219,6 +219,31 @@ im.highlight = function(e) {
 	}
 };
 
+// a queue object for delayed execution of long running code
+im.queue = {
+	'timer': null,
+	'q': [],
+	put: function(fn, context, time) {
+		var setTimer = function(time) {
+			im.queue.timer = setTimeout(function() {
+				time = im.queue.put();
+	            if (im.queue.q.length) setTimer(time);
+	        }, time || 2);
+	    }
+
+		if (fn) {
+			im.queue.q.push([fn, context, time]);
+	        if (im.queue.q.length == 1) setTimer(time);
+	        return;
+	    }
+
+		var next = im.queue.q.shift();
+	    if (!next) return 0;
+	    next[0].call(next[1] || window);
+	    return next[2];
+	}
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
