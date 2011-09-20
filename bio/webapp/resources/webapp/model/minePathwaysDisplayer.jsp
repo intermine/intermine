@@ -4,10 +4,13 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 
 <!-- minePathwaysDisplayer.jsp -->
+<div id="mine-pathway-displayer" class="collection-table">
+
 <script type="text/javascript" charset="utf-8">
 function getFriendlyMinePathways(mine, orthologues) {
 
@@ -44,27 +47,24 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 	   
 	   
 	   jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
+		   if (jQuery(this).find('span').text() == mine) jQuery(this).removeClass('loading');
 	   });
 	}
 }
 
 </script>
 
-<div id="mine-pathway-displayer" class="collection-table">
 <h3>Pathways</h3>
-
-
     <!-- one column for each mine -->
     <table>
       <thead>
       <tr>
             <!-- this mine -->
-            <th><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></th>
+            <th><span><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></span></th>
 
             <!-- other mines -->
             <c:forEach items="${mines}" var="entry">
-                 <th class="loading">${entry.key.name}</th>
+                 <th class="loading"><span>${entry.key.name}</span></th>
             </c:forEach>
       </tr>
 	  </thead>
@@ -100,5 +100,23 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
       </tbody>
     </table>
 
+<script type="text/javascript">
+var minePortals = {};
+<c:forEach var="portal" items="${minePortals}">
+    var mineDetails = {};
+    <c:forEach var="portalDetail" items="${portal.value}">
+        mineDetails["<c:out value='${portalDetail.key}'/>"] = "<c:out value='${portalDetail.value}'/>";
+    </c:forEach>
+    minePortals["<c:out value='${fn:toLowerCase(portal.key)}'/>"] = mineDetails;
+</c:forEach>
+
+jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+	var settings = minePortals[jQuery(this).text().toLowerCase()];
+	if (settings != undefined) {
+		jQuery(this).find('span').css({'backgroundColor':settings['bgcolor'], 'color':settings['frontcolor']});
+	}
+});
+
+</script>
 </div>
 <!-- /publicationCountsDisplayer.jsp -->
