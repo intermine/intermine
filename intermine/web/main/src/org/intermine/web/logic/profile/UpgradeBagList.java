@@ -80,7 +80,8 @@ public class UpgradeBagList implements Runnable
     }
 
     /**
-     * Verify that the only issues existing have type OTHER and the ids contained already existing in the list
+     * Verify that the only issues existing have type OTHER and the ids contained already
+     * existing in the list.
      * If the condition is verified the list can be upgraded automatically
      * @param result
      * @return
