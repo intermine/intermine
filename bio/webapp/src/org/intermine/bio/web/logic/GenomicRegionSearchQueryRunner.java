@@ -111,17 +111,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         (new Thread(this)).start();
     }
 
+    /**
+     * Store the results from the query on the session. 
+     */
     @Override
     public void run() {
-        queryExecutor();
-    }
-
-    /**
-     * The method to run all the queries.
-     */
-    @SuppressWarnings("rawtypes")
-    private void queryExecutor() {
-
         // Use spanOverlapFullResultMap to store the data in the session
         @SuppressWarnings("unchecked")
         Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap =
@@ -133,54 +127,62 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
         }
 
+        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
+            try {
+                Map<GenomicRegion, List<List<String>>> spanOverlapDisplayMap = executeQuery();
+                spanOverlapFullResultMap.put(spanUUIDString, spanOverlapDisplayMap);
+                request.getSession().setAttribute("spanOverlapFullResultMap", spanOverlapFullResultMap);
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+    }
+
+    /**
+     * The method to run all the queries.
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<GenomicRegion, List<List<String>>> executeQuery() {
+
         Map<GenomicRegion, List<List<String>>> spanOverlapResultDisplayMap = Collections
                 .synchronizedMap(new LinkedHashMap<GenomicRegion, List<List<String>>>());
 
-        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
-            spanOverlapFullResultMap.put(spanUUIDString, spanOverlapResultDisplayMap);
-            request.getSession().setAttribute("spanOverlapFullResultMap", spanOverlapFullResultMap);
+        ObjectStore os = SessionMethods.getInterMineAPI(request).getObjectStore();
 
-            try {
-                ObjectStore os = SessionMethods.getInterMineAPI(
-                        request.getSession()).getObjectStore();
+        for (Entry<GenomicRegion, Query> e : queryMap.entrySet()) {
+            Results results = os.execute(e.getValue());
 
-                for (Entry<GenomicRegion, Query> e : queryMap.entrySet()) {
-                    Results results = os.execute(e.getValue());
+            List<List<String>> spanResults = new ArrayList<List<String>>();
+            if (results == null || results.isEmpty()) {
+                spanOverlapResultDisplayMap.put(e.getKey(), null);
+            }
+            else {
+                for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                    ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-                    List<List<String>> spanResults = new ArrayList<List<String>>();
-                    if (results == null || results.isEmpty()) {
-                        spanOverlapResultDisplayMap.put(e.getKey(), null);
-                    }
-                    else {
-                        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-                            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+                    List<String> resultRow = new ArrayList<String>();
 
-                            List<String> resultRow = new ArrayList<String>();
+                    for (Object o : row) {
+                        String item = new String();
 
-                            for (Object o : row) {
-                                String item = new String();
+                        // NULL for symbol or PID
+                        o = o == null ? new String() : o;
 
-                                // NULL for symbol or PID
-                                o = o == null ? new String() : o;
-
-                                if (o instanceof Class) {
-                                    item = ((Class) o).getSimpleName();
-                                } else {
-                                    item = o.toString();
-                                }
-
-                                resultRow.add(item);
-                            }
-                            spanResults.add(resultRow);
+                        if (o instanceof Class) {
+                            item = ((Class) o).getSimpleName();
+                        } else {
+                            item = o.toString();
                         }
-                        spanOverlapResultDisplayMap.put(e.getKey(), spanResults);
-                    }
-                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                        resultRow.add(item);
+                    }
+                    spanResults.add(resultRow);
+                }
+                spanOverlapResultDisplayMap.put(e.getKey(), spanResults);
             }
         }
+
+        return spanOverlapResultDisplayMap;
     }
 
     /**
