@@ -1,12 +1,20 @@
-var duplicateArray = new Array(),
-	tdColorArray   = new Array(),
-	highlightColor = '#FFF3D3',
-	identifiersInTheBag = jQuery("#matchIDs").val().split(" ");
+var duplicateArray 		= new Array(),
+	tdColorArray   		= new Array(),
+	highlightColor 		= '#FFF3D3',
+	bagList 			= jQuery('input#matchIDs').val(),
+	identifiersInTheBag = bagList.split(" ");
 
 function initForm(buildNewBag) {
     if (buildNewBag == null || buildNewBag != 'true') {
         jQuery("#newBagName").attr('disabled', 'disabled');
     }
+}
+
+/**
+ * Turn bagList back to its input field form
+ */
+function updateMatchIDs() {
+	jQuery('input#matchIDs').val(bagList);
 }
 
 /**
@@ -85,6 +93,8 @@ function addId2Bag(objectId, row, parentId, issueType) {
       });
 
       if (!isIdentifierInTheBag(objectId)) {
+    	identifiersInTheBag.push(objectId);
+    	  
         // update the number of matches count
         updateCount('#matchCount', 1);
 
@@ -150,6 +160,9 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
     });
 
     if (isIdentifierInTheBag(objectId)) {
+      // remove the item from the identifiers
+      identifiersInTheBag.splice(identifiersInTheBag.indexOf(objectId), 1);
+    	
       // update the number of matches count
       updateCount('#matchCount', -1);
 
@@ -280,14 +293,12 @@ function unHighlightRow(rowId) {
  * @return
  */
 function addIdToListOfMatches(identifier) {
-  var bagList = jQuery('input#matchIDs').val();
-
   if (bagList.indexOf(identifier) == -1) {
     // add an extra space if we have elements inside already
     if (bagList.length > 0) {
       bagList += " ";
     }
-    jQuery('input#matchIDs').val(bagList + identifier);
+    bagList += identifier;
   }
 }
 
@@ -297,54 +308,71 @@ function addIdToListOfMatches(identifier) {
  * @return
  */
 function removeIdFromListOfMatches(identifier) {
-  // get the list of identifiers
-  var bagList = jQuery("#matchIDs").val();
-
   // if we have found the identifier in the string
   if (bagList.indexOf(identifier) > -1) { // jQuery.inArray() not consistent...
     // remove the identifier from an array
     bagList = jQuery.grep(bagList.split(' '), function(value) { return value != identifier; });
     // turn array into string and replace all "," with a space
-    jQuery("#matchIDs").val(bagList.toString().replace(new RegExp(",","g"), ' '));
+    bagList = bagList.toString().replace(new RegExp(",","g"), ' ');
   } else {
     // trying to remove an element that is not in the list
   }
 }
 
 function addAll(issue, flatArray){
-  // split string into rows
-  // a,b,c,d|e,f,g,h
-  var a = flatArray.split("|");
-    if (a.length > 1000 || (a.length > 200 && BrowserDetect.browser == 'Explorer')) {
-        var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
-        if (! (r == true)) {
-            return;
-        }
-    }
-  for (i = 0; i < a.length -1; i++) {
-    // split rows into vars
-    var b = a[i].split(",");
-    addId2Bag(b[0], b[1], b[2], b[3]);
-  }
-  toggleBagLinks(issue, 'add');
+	// split string into rows
+	// a,b,c,d|e,f,g,h
+	var a = flatArray.split("|");
+	if (a.length > 200) {
+	    var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+	    if (! (r == true)) {
+	        return;
+	    }
+	    // show a loading message that the identifiers are being resolved
+	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'addingIdentifiers')
+	    .html('Additional matches are being resolved, please wait.')
+	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
+	}
+	
+    jQuery.each(a, function(i, v) {
+    	// use a queue for long running code
+    	im.queue.put(function() {
+    		// split rows into vars
+    		var b = v.split(",");
+    		addId2Bag(b[0], b[1], b[2], b[3]);
+    	}, this);	  
+    });
+    
+    toggleBagLinks(issue, 'add');
+    jQuery('#addingIdentifiers').remove();
 }
 
 function removeAll(issue, flatArray){
-  // split string into rows
-  // a,b,c,d|e,f,g,h
-  var a = flatArray.split("|");
-    if (a.length > 1000 || (a.length > 500 && BrowserDetect.browser == 'Explorer')) {
-        var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+    // split string into rows
+    // a,b,c,d|e,f,g,h
+    var a = flatArray.split("|");
+    if (a.length > 200) {
+    	var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
         if (! (r == true)) {
-            return;
+        	return;
         }
+	    // show a loading message that the identifiers are being resolved
+	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'removingIdentifiers')
+	    .html('Removing identifiers from a bag, please wait.')
+	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
     }
-  for (i = 0; i < a.length -1; i++) {
-    // split rows into vars
-    var b = a[i].split(",");
-    removeIdFromBag(b[0], b[1], b[2], b[3]);
-  }
-  toggleBagLinks(issue, 'remove');
+    
+    jQuery.each(a, function(i, v) {
+    	// use a queue for long running code
+    	im.queue.put(function() {
+    		// split rows into vars
+    		var b = v.split(",");
+    		removeIdFromBag(b[0], b[1], b[2], b[3]);
+    	}, this);	  
+    });
+    
+    toggleBagLinks(issue, 'remove');
+    jQuery('#removingIdentifiers').remove();
 }
 
 function toggleBagLinks(issue, action) {
