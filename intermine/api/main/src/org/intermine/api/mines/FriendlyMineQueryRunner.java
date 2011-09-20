@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.config.Constants;
 import org.intermine.util.Util;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Class to manage orthologue linkouts to other intermines on the list analysis page
@@ -290,37 +293,52 @@ public final class FriendlyMineQueryRunner
     }
 
     /**
-     * Query a mine and recieve map of results.  only processes first two columns
+     * Query a mine and recieve map of results.  only processes first two columns set as id and
+     * name
      *
      * @param mine mine to query
      * @param xmlQuery query to run
      * @return map of results
      * @throws IOException if something goes wrong
      */
-    public static Map<String, String> runJSONWebServiceQuery(Mine mine, String xmlQuery)
+    public static JSONObject runJSONWebServiceQuery(Mine mine, String xmlQuery)
         throws IOException {
-        Map<String, String> results = new HashMap<String, String>();
+        Set<JSONObject> results = new LinkedHashSet<JSONObject>();
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
             LOG.info("no results found for " + mine.getName() + " for query " + xmlQuery);
-            return Collections.emptyMap();
+            return null;
         }
         String line = null;
         while ((line = reader.readLine()) != null) {
             String[] bits = line.split("\\t");
-            String key = bits[0];
-            String value = bits[1];
-            if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
-                Util.addToSetMap(results, key, value);
+            if (bits.length == 0) {
+                return null;
+            }
+            JSONObject gene = new JSONObject();
+            try {
+                gene.put("id", bits[0]);
+                gene.put("name", bits[1]);
+                results.add(gene);
+            } catch (JSONException e) {
+                LOG.info("couldn't parse results for " + mine.getName() + " for query " + xmlQuery);
+                continue;
             }
         }
-        return results;
+        JSONObject jsonMine = new JSONObject();
+        try {
+            jsonMine.put("results", results);
+        } catch (JSONException e) {
+            LOG.info("couldn't process results for " + mine.getName() + " for query " + xmlQuery);
+            return null;
+        }
+        return jsonMine;
     }
 
     private static BufferedReader runWebServiceQuery(Mine mine, String xmlQuery) {
         try {
-            String urlString = mine.getUrl() + QUERY_PATH + URLEncoder.encode(xmlQuery, "UTF-8")
-                + "&format=jsonobjects";
+            String urlString = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH
+                + URLEncoder.encode(xmlQuery, "UTF-8");
             URL url = new URL(urlString);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             return reader;

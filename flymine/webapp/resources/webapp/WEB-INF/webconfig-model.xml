@@ -676,8 +676,14 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
                      jspName="model/publicationCountsDisplayer.jsp"
                      replacesFields="publications"
-                     placement="summary"
+                     placement="Genes"
                      types="BioEntity"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
+                     jspName="model/minePathwaysDisplayer.jsp"
+                     replacesFields="pathways"
+                     placement="summary"
+                     types="Gene"/>
 
   </reportdisplayers>
 
