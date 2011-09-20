@@ -11,6 +11,7 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -935,7 +936,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         if (allSuperDescriptors == null) {
             allSuperDescriptors = findAllSuperDescriptors();
         }
-        return allSuperDescriptors;
+        return new HashSet<ClassDescriptor>(allSuperDescriptors);
     }
 
     private Set<ClassDescriptor> findAllSuperDescriptors() {
