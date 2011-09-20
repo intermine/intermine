@@ -11,9 +11,6 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +22,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.bio.web.logic.CytoscapeNetworkService;
-import org.intermine.util.StringUtil;
 
 /**
  * Network data will be created and loaded by calling this class via ajax.
@@ -50,19 +46,12 @@ public class CytoscapeNetworkAjaxAction extends Action
 
         // === Get request paras ===
         // gene ids
-        String fullInteractingGeneSetStr = (String) request.getParameter("fullInteractingGeneSet");
-
-        // === Prepare data ===
-        List<String> fullInteractingGeneList = StringUtil.tokenize(fullInteractingGeneSetStr, ",");
-
-        Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
-        for (String s : fullInteractingGeneList) {
-            fullInteractingGeneSet.add(Integer.valueOf(s));
-        }
+        String fullInteractingGeneSetStr = request.getParameter("fullInteractingGeneSet");
 
         // === Create network data ===
         CytoscapeNetworkService networkSrv = new CytoscapeNetworkService();
-        String network = networkSrv.getNetwork(fullInteractingGeneSet, session);
+        String network = networkSrv.getNetwork(
+                fullInteractingGeneSetStr, session);
 
         // === Print out network data ===
         response.setContentType("text/xml");

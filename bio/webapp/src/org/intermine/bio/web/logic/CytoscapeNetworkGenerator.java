@@ -83,7 +83,7 @@ public class CytoscapeNetworkGenerator
             .append("<dc:format>Cytoscape-XGMML</dc:format>")
             .append("</rdf:Description>")
             .append("</rdf:RDF>")
-            .append("</attr>")
+            .append("</att>")
             .append("<att type=\"string\" name=\"backgroundColor\" value=\"#ffffff\"/>")
             .append("<att type=\"real\" name=\"GRAPH_VIEW_ZOOM\" value=\"1\"/>")
             .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_X\" value=\"0\"/>")
@@ -123,7 +123,7 @@ public class CytoscapeNetworkGenerator
                         + node.getSourceLabel() + "\">");
             }
             sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
-                .append("<graphics x=\"\" y=\"\" w=\"24\" outline=\"#666666\" fill=\"#f5f5f5\" "
+                .append("<graphics x=\"0\" y=\"0\" w=\"24\" outline=\"#666666\" fill=\"#f5f5f5\" "
                     + "cy:nodeTransparency=\"0.8\" width=\"1\" cy:nodeLabelFont=\"Arial-0-11\" "
                     + "h=\"24\" labelanchor=\"c\" type=\"ELLIPSE\"/>")
                 .append("</node>");

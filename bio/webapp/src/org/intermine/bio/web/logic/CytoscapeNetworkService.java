@@ -12,11 +12,13 @@ package org.intermine.bio.web.logic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpSession;
 
@@ -43,15 +45,23 @@ import org.intermine.web.logic.session.SessionMethods;
 */
 public class CytoscapeNetworkService
 {
+    private static final int LARGE_NETWORK_ELEMENT_COUNT = 1; //2000;
+    private static final String LARGE_NETWORK = "large_network";
+    private static final String NO_INTERACTION_FROM =
+        "No interaction data found from data sources: ";
+
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkService.class);
 
     /**
      * {@inheritDoc}
      * @throws ObjectStoreException
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
-    public String getNetwork(Set<Integer> fullInteractingGeneSet,
-            HttpSession session) throws ObjectStoreException {
+    public String getNetwork(String fullInteractingGeneSetStr,
+            HttpSession session) throws ObjectStoreException,
+            InterruptedException, ExecutionException {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session); // Get InterMineAPI
         ObjectStore os = im.getObjectStore(); // Get OS
@@ -61,6 +71,14 @@ public class CytoscapeNetworkService
 
         Map<String, Set<String>> interactionInfoMap = CytoscapeNetworkUtil
         .getInteractionInfo(model, executor);
+
+        // === Prepare data ===
+        List<String> fullInteractingGeneList = StringUtil.tokenize(fullInteractingGeneSetStr, ",");
+
+        Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
+        for (String s : fullInteractingGeneList) {
+            fullInteractingGeneSet.add(Integer.valueOf(s));
+        }
 
         //=== Query interactions ===
         CytoscapeNetworkDBQueryRunner queryRunner = new CytoscapeNetworkDBQueryRunner();
@@ -72,8 +90,7 @@ public class CytoscapeNetworkService
             Gene aTestGene = (Gene) os.getObjectById(fullInteractingGeneSet.iterator().next());
             String orgName = aTestGene.getOrganism().getName();
             String dataSourceStr = StringUtil.join(interactionInfoMap.get(orgName), ",");
-            String geneWithNoDatasourceMessage = "No interaction data found from data sources: "
-                + dataSourceStr;
+            String geneWithNoDatasourceMessage = NO_INTERACTION_FROM + dataSourceStr;
 
             return geneWithNoDatasourceMessage;
         }
@@ -105,11 +122,18 @@ public class CytoscapeNetworkService
         Map<String, CytoscapeNetworkEdgeData> interactionEdgeMap = getInteractionEdgeMap(
                 results, im);
 
+        // case: input genes have no interactions
         if (interactionEdgeMap.size() == 0) {
-            return "";
+            return "No interaction data for input genes (>1)";
+        }
+
+        // Simple network filter
+        if (interactionNodeMap.size() + interactionEdgeMap.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
+            return LARGE_NETWORK;
         }
 
         CytoscapeNetworkGenerator dataGen = new CytoscapeNetworkGenerator();
+
         String networkdata = dataGen.createGeneNetworkInXGMML(
                 interactionNodeMap, interactionEdgeMap);
 
