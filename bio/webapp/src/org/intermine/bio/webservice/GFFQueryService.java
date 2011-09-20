@@ -144,7 +144,7 @@ public class GFFQueryService extends AbstractQueryService
      * @return a map
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected Map<String, String> getSoClassNames(ServletContext servletContext)
+    public static Map<String, String> getSoClassNames(ServletContext servletContext)
         throws ServletException {
         final String soClassNames = "SO_CLASS_NAMES";
         Properties soNameProperties;
@@ -170,7 +170,7 @@ public class GFFQueryService extends AbstractQueryService
      *
      * @param paths list of path views
      */
-    protected void removeFirstItemInPaths(List<String> paths) {
+    public static void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
             String path = paths.get(i);
             paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
