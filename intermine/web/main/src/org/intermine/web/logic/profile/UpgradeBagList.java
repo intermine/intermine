@@ -10,8 +10,13 @@ package org.intermine.web.logic.profile;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -20,6 +25,7 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryUpgrade;
@@ -47,18 +53,15 @@ public class UpgradeBagList implements Runnable
         Map<String, String> savedBagsStatus = SessionMethods.getNotCurrentSavedBagsStatus(session);
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-        	try {
-        		Thread.sleep(5000);
-        	} catch (Exception e) {
-        		//
-        	}
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 savedBagsStatus.put(bag.getName(), Constants.UPGRADING_BAG);
 
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
-                    if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
+                    if (result.getUnresolved().isEmpty()
+                        && (result.getIssues().isEmpty() 
+                            || onlyOtherIssuesAlreadyContained(result))) {
                         Map<Integer, List> matches = result.getMatches();
                         //we set temporary the updateBagValues parameter to true
                         //in this way will update the extra field recently added
@@ -75,6 +78,50 @@ public class UpgradeBagList implements Runnable
             }
         }
     }
-    
-    
+
+    /**
+     * Verify that the only issues existing have type OTHER and the ids contained already existing in the list
+     * If the condition is verified the list can be upgraded automatically
+     * @param result
+     * @return
+     */
+    private boolean onlyOtherIssuesAlreadyContained(BagQueryResult result) {
+        if(result.getIssues().get(BagQueryResult.DUPLICATE).isEmpty()
+            && result.getIssues().get(BagQueryResult.TYPE_CONVERTED).isEmpty()
+            && result.getIssues().get(BagQueryResult.WILDCARD).isEmpty()) {
+
+            Map<String, Map<String, List>> otherMatchMap = result.getIssues()
+            .get(BagQueryResult.OTHER);
+            Set<Integer> matchesIds = result.getMatches().keySet();
+            if (otherMatchMap != null) {
+                Map<String, ArrayList<Object>> lowQualityMatches = new LinkedHashMap<String,
+                ArrayList<Object>>();
+                Iterator otherMatchesIter = otherMatchMap.values().iterator();
+                while (otherMatchesIter.hasNext()) {
+                    Map<String, ArrayList<Object>> inputToObjectsMap = (Map) otherMatchesIter.next();
+                    Map<String, ArrayList<Object>> inputToObjectsMapUpdated = new LinkedHashMap<String, ArrayList<Object>>();
+                    for (String key : inputToObjectsMap.keySet()) {
+                        ArrayList<Object> listObjects = inputToObjectsMap.get(key);
+                        ArrayList<Object> listObjectsUpdated = new ArrayList<Object>();
+                        for (Object obj : listObjects) {
+                            InterMineObject intermineObj= (InterMineObject) obj;
+                            if (matchesIds.isEmpty() || !matchesIds.contains(intermineObj.getId())) {
+                               listObjectsUpdated.add(obj);
+                            }
+                        }
+                        if (!listObjectsUpdated.isEmpty()) {
+                            inputToObjectsMapUpdated.put(key, listObjects);
+                        }
+                    }
+                   if (!inputToObjectsMapUpdated.isEmpty()) {
+                       lowQualityMatches.putAll(inputToObjectsMapUpdated);
+                   }
+                }
+                if (lowQualityMatches.isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
