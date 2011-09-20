@@ -8,6 +8,7 @@
 <!-- begin.jsp -->
 <html:xhtml />
 
+
 <div id="ctxHelpDiv" class="welcome" style="display:none;">
   <div class="topBar info">
     <div id="ctxHelpTxt" class="welcome"></div>
@@ -31,9 +32,13 @@
 <br />
 <p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong> and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong> results and access the GBrowse <strong>genome browser</strong>.  Explore some of the tools provided below.</p>
 <br />
+<p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong> uses genome annotations <strong>${WEB_PROPERTIES['genomeVersion.fly']}</strong> for fly and <strong>${WEB_PROPERTIES['genomeVersion.worm']}</strong> for worm.</p>
+<br />
 <h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
         <div class="span-42 last">
-              <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
+          
+
+        <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
             </div>
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
