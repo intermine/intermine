@@ -17,7 +17,7 @@
   function exportRadioClicks()
   {
     if (jQuery(this).val() == "view") {
-        jQuery("#data_type").val("txt");
+        jQuery("#data_type").val("tabular");
         jQuery("#info").val("");
         jQuery("#dbkey").val("");
         jQuery("#URL").val("${tableURL}");
@@ -37,7 +37,7 @@
 
   function initForm()
   {
-    jQuery("#data_type").val("txt");
+    jQuery("#data_type").val("tabular");
     jQuery("#URL").val("${tableURL}");
     jQuery("#queryXML").val('${query}');
     jQuery("#size").val("${size}");
