@@ -60,7 +60,7 @@ public class CytoscapeNetworkService
      * @throws InterruptedException
      */
     public String getNetwork(String fullInteractingGeneSetStr,
-            HttpSession session) throws ObjectStoreException,
+            HttpSession session, boolean ignoreLargeNetworkTest) throws ObjectStoreException,
             InterruptedException, ExecutionException {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session); // Get InterMineAPI
@@ -127,9 +127,12 @@ public class CytoscapeNetworkService
             return "No interaction data for input genes (>1)";
         }
 
-        // Simple network filter
-        if (interactionNodeMap.size() + interactionEdgeMap.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
-            return LARGE_NETWORK;
+        if (!ignoreLargeNetworkTest) {
+            // Simple network filter
+            if (interactionNodeMap.size() + interactionEdgeMap.size()
+                    >= LARGE_NETWORK_ELEMENT_COUNT) {
+                return LARGE_NETWORK;
+            }
         }
 
         CytoscapeNetworkGenerator dataGen = new CytoscapeNetworkGenerator();

@@ -98,7 +98,7 @@ public class CytoscapeNetworkExportAction extends Action
 
             CytoscapeNetworkService networkSrv = new CytoscapeNetworkService();
             String networkdata = networkSrv.getNetwork(
-                    fullInteractingGeneSetStr, request.getSession());
+                    fullInteractingGeneSetStr, request.getSession(), true);
 
             response.setContentType("text/xml");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.xgmml\"");
