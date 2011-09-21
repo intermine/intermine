@@ -17,21 +17,21 @@ function getRatDiseases(orthologues) {
         // switch off loading img
         jQuery('#intermine_rat_disease').toggleClass('loading');
         if (jSONObject && jSONObject['results'].length > 0) {
-            generate(jSONObject, "#intermine_rat_disease");
+            generateDiseases(jSONObject, "#intermine_rat_disease");
         } else {
             jQuery("#intermine_rat_disease").html("No diseases found.");
         }
     });
 }
 
-function generate(jSONObject, target) {
+function generateDiseases(jSONObject, target) {
           var url = '';
-          im.log(jSONObject);
           if (jSONObject['mineURL'] != undefined) {
             url = jSONObject['mineURL'];
           }
 
           if (jSONObject['results'] != undefined) {
+             jQuery('<ul/>').appendTo(target);
              jQuery.each(jSONObject['results'], function(index, pathway) {
                   jQuery('<li/>', {
                     'html': jQuery('<a/>', {
