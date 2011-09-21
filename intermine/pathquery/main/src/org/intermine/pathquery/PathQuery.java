@@ -2180,4 +2180,158 @@ public class PathQuery implements Cloneable
 
         return sw.toString();
     }
+
+    public synchronized void updatePathQueryWithRenamedClass(String prevClass, String newClass)
+        throws PathException {
+        // Update view paths
+        updateView(prevClass, newClass, null, null);
+        // Update constraints
+        updateConstraints(prevClass, newClass, null, null);
+        // Update outer join paths
+        updateOuterJoins(prevClass, newClass, null, null);
+        // Update description paths
+        updateDescriptionsPath(prevClass, newClass, null, null);
+        // Update order by paths
+        updateOrderByPath(prevClass, newClass, null, null);
+    }
+
+    public synchronized void updatePathQueryWithRenamedField(String cls, String prevField,
+        String newField) throws PathException {
+        // Update view paths
+        updateView(cls, null, prevField, newField);
+        // Update constraints
+        updateConstraints(cls, null, prevField, newField);
+        // Update outer join paths
+        updateOuterJoins(cls, null, prevField, newField);
+        // Update description paths
+        updateDescriptionsPath(cls, null, prevField, newField);
+        // Update order by paths
+        updateOrderByPath(cls, null, prevField, newField);
+    }
+
+    private void updateView (String cls, String newClass, String prevField, String newField)
+        throws PathException{
+        String viewPath = "";
+        Path p;
+        for (int index = 0; index < view.size(); index++) {
+            viewPath = view.get(index);
+            p = new Path(model, viewPath);
+            if ((newField == null && p.startContainsClass(cls))
+                || (newField != null && p.elementsContainField(cls, prevField))) {
+                if (newField == null) {
+                    viewPath = viewPath.replace(cls, newClass);
+                } else {
+                    viewPath = viewPath.replace(prevField, newField);
+                }
+                view.remove(index);
+                view.add(index, viewPath);
+            }
+        }
+        
+    }
+
+    private void updateConstraints(String cls, String newClass, String prevField, String newField)
+        throws PathException {
+        String path;
+        Path p;
+        PathConstraint newPathConstraint;
+        for (PathConstraint pathConstraint : constraints.keySet()) {
+            path = pathConstraint.getPath();
+            p = new Path(model, path);
+            if ((newField == null && p.startContainsClass(cls))
+                    || (newField != null && p.elementsContainField(cls, prevField))) {
+                if (newField == null) {
+                    path = path.replace(cls, newClass);
+                } else {
+                    path = path.replace(prevField, newField);
+                }
+                newPathConstraint = createNewPathConstraint(pathConstraint, path);
+                replaceConstraint(pathConstraint, newPathConstraint);
+            }
+        }
+    }
+
+    private void updateOuterJoins(String cls, String newClass, String prevField, String newField)
+        throws PathException {
+        Path p;
+        for (String joinPath : outerJoinStatus.keySet()) {
+            p = new Path(model, joinPath);
+            if ((newField == null && p.startContainsClass(cls))
+                || (newField != null && p.elementsContainField(cls, prevField))) {
+                if (newField == null) {
+                    outerJoinStatus.put(joinPath.replace(cls, newClass),
+                                       outerJoinStatus.get(joinPath));
+                } else {
+                    outerJoinStatus.put(joinPath.replace(prevField, newField),
+                                        outerJoinStatus.get(joinPath));
+                }
+                outerJoinStatus.remove(joinPath);
+            }
+        }
+    }
+
+    private void updateDescriptionsPath(String cls, String newClass, String prevField,
+                                        String newField) throws PathException {
+        Path p;
+        for (String descPath : descriptions.keySet()) {
+            p = new Path(model, descPath);
+            if ((newField == null && p.startContainsClass(cls))
+                || (newField != null && p.elementsContainField(cls, prevField))) {
+                if (newField == null) {
+                    descriptions.put(descPath.replace(cls, newClass), descriptions.get(descPath));
+                } else {
+                    descriptions.put(descPath.replace(prevField, newField), descriptions.get(descPath));
+                }
+                descriptions.remove(descPath);
+            }
+        }
+    }
+
+    private void updateOrderByPath(String cls, String newClass, String prevField, String newField)
+        throws PathException {
+        String path;
+        Path p;
+        OrderElement orderElement;
+        for (int index = 0; index < orderBy.size(); index++) {
+            orderElement = (OrderElement) orderBy.get(index);
+            path = orderElement.getOrderPath();
+            p = new Path(model, path);
+            if ((newField == null && p.startContainsClass(cls))
+                || (newField != null && p.elementsContainField(cls, prevField))) {
+                orderBy.remove(index);
+                if (newField == null) {
+                    orderBy.add(index, new OrderElement(path.replace(cls, newClass),
+                                                        orderElement.getDirection()));
+                } else {
+                    orderBy.add(index, new OrderElement(path.replace(prevField, newField),
+                                                       orderElement.getDirection()));
+                }
+            }
+        }
+    }
+
+    private PathConstraint createNewPathConstraint(PathConstraint pathConstraint, String newPath) {
+        PathConstraint newPathConstraint = null;
+        ConstraintOp op = pathConstraint.getOp();
+        if (pathConstraint instanceof PathConstraintAttribute) {
+            newPathConstraint = new PathConstraintAttribute(newPath, op,
+                                ((PathConstraintAttribute) pathConstraint).getValue());
+        } else if (pathConstraint instanceof PathConstraintBag) {
+            newPathConstraint = new PathConstraintBag(newPath, op,
+                                ((PathConstraintBag) pathConstraint).getBag());
+        } else if (pathConstraint instanceof PathConstraintLookup) {
+            newPathConstraint = new PathConstraintLookup(newPath,
+                                ((PathConstraintLookup) pathConstraint).getValue(),
+                                ((PathConstraintLookup) pathConstraint).getExtraValue());
+        } else if (pathConstraint instanceof PathConstraintSubclass) {
+            newPathConstraint = new PathConstraintSubclass(newPath,
+                    ((PathConstraintSubclass) pathConstraint).getType());
+        } else if (pathConstraint instanceof PathConstraintLoop) {
+            newPathConstraint = new PathConstraintLoop(newPath, op,
+                     ((PathConstraintLoop) pathConstraint).getLoopPath());
+        } else if (pathConstraint instanceof PathConstraintNull) {
+            newPathConstraint = new PathConstraintNull(newPath, op);
+        }
+        return newPathConstraint;
+    }
 }
