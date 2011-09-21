@@ -764,6 +764,40 @@ public class AjaxServices
     }
 
     /**
+     * Return list of disease ontology terms associated with list of provided rat genes.  Returns
+     * JSONObject as string with ID (intermine ID) and name (ontologyTerm.name)
+     *
+     * @param orthologues list of rat genes
+     * @return JSONobject.toString of JSON object
+     */
+    public static String getRatDiseases(String orthologues) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        Mine mine = linkManager.getMine("RatMine");
+
+        final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
+            + "\"Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name\"> "
+            + "<pathDescription pathString=\"Gene.doAnnotation.ontologyTerm\" "
+            + "description=\"Disease Ontology Term\"/> "
+            + "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"" + orthologues
+            + "\" extraValue=\"\"/></query>";
+        try {
+            JSONObject results
+                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            if (results != null) {
+                results.put("mineURL", mine.getUrl());
+                return results.toString();
+            }
+        } catch (IOException e) {
+            LOG.error("Couldn't query ratmine for diseases", e);
+        } catch (JSONException e) {
+            LOG.error("Couldn't process ratmine disease results", e);
+        }
+        return null;
+    }
+
+    /**
      * Saves information, that some element was toggled - displayed or hidden.
      *
      * @param elementId element id
