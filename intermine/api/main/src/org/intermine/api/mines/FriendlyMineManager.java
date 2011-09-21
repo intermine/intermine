@@ -136,7 +136,8 @@ public class FriendlyMineManager
             String url = mineProps.getProperty("url");
             String logo = mineProps.getProperty("logo");
             String defaultValues = mineProps.getProperty("defaultValues");
-            String mapping = mineProps.getProperty("defaultMapping");
+            String bgcolor = mineProps.getProperty("bgcolor");
+            String frontcolor = mineProps.getProperty("frontcolor");
 
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
                     || StringUtils.isEmpty(logo)) {
@@ -148,32 +149,38 @@ public class FriendlyMineManager
 
             if (mineName.equals(localMineName)) {
                 if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo, defaultValues);
+                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor);
                 }
             } else {
                 Mine mine = mines.get(mineId);
                 if (mine == null) {
-                    parseRemoteConfig(mineName, mineId, defaultValues, mapping, url, logo);
+                    parseRemoteConfig(mineName, mineId, defaultValues, url, logo, bgcolor,
+                            frontcolor);
                 }
             }
         }
         return mines;
     }
 
-    private void parseLocalConfig(String url, String logo, String defaultValues) {
+    private void parseLocalConfig(String url, String logo, String defaultValues,
+            String bgcolor, String frontcolor) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
             localMine.setLogo(logo);
+            localMine.setBgcolor(bgcolor);
+            localMine.setFrontcolor(frontcolor);
             localMine.setDefaultValues(defaultValues);
             setLocalValues(im);
         }
     }
 
     private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
-            String mapping, String url, String logo) {
+            String url, String logo, String bgcolor, String frontcolor) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
         mine.setLogo(logo);
+        mine.setBgcolor(bgcolor);
+        mine.setFrontcolor(frontcolor);
         mine.setDefaultValues(defaultValues);
         mines.put(mineId, mine);
     }
