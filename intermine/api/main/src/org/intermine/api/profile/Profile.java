@@ -438,6 +438,23 @@ public class Profile
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);
     }
+    
+    /**
+     * Update the type of bag.
+     * If there is no such bag associated with the account, no action is performed.
+     * @param name the bag name
+     * @param newType the type to set
+     * @throws ObjectStoreException if problems deleting bag
+     */
+    public void updateBagType(String name, String newType) throws ObjectStoreException {
+        if (!savedBags.containsKey(name)) {
+            throw new BagDoesNotExistException(name + " not found");
+        }
+        InterMineBag bagToUpdate = savedBags.get(name);
+        if (isLoggedIn()) {
+            bagToUpdate.setType(newType);
+        }
+    }
 
 
     /**
