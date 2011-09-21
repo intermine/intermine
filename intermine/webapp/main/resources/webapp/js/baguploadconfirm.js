@@ -323,16 +323,21 @@ function addAll(issue, flatArray){
 	// split string into rows
 	// a,b,c,d|e,f,g,h
 	var a = flatArray.split("|");
-	if (a.length > 200) {
+	if (a.length > 100) {
 	    var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
 	    if (! (r == true)) {
 	        return;
 	    }
 	    // show a loading message that the identifiers are being resolved
 	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'addingIdentifiers')
-	    .html('Additional matches are being resolved, please wait.')
+	    .html('<p>Additional matches are being resolved, please wait.</p>')
 	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
 	}
+	
+	// loading img
+	jQuery('<div/>', {
+		'class': 'loading'
+	}).appendTo(jQuery("#sidebar ul li." + issue));
 	
     jQuery.each(a, function(i, v) {
     	// use a queue for long running code
@@ -343,24 +348,33 @@ function addAll(issue, flatArray){
     	}, this);	  
     });
     
-    toggleBagLinks(issue, 'add');
-    jQuery('#addingIdentifiers').remove();
+    // queue in switching of links and message
+    im.queue.put(function() {
+    	jQuery("#sidebar ul li." + issue + ' div.loading').remove();
+        toggleBagLinks(issue, 'add');
+        jQuery('#addingIdentifiers').remove();    	
+    }, this)
 }
 
 function removeAll(issue, flatArray){
     // split string into rows
     // a,b,c,d|e,f,g,h
     var a = flatArray.split("|");
-    if (a.length > 200) {
+    if (a.length > 100) {
     	var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
         if (! (r == true)) {
         	return;
         }
 	    // show a loading message that the identifiers are being resolved
 	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'removingIdentifiers')
-	    .html('Removing identifiers from a bag, please wait.')
+	    .html('<p>Removing identifiers from a bag, please wait.</p>')
 	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
     }
+    
+	// loading img
+	jQuery('<div/>', {
+		'class': 'loading'
+	}).appendTo(jQuery("#sidebar ul li." + issue));    
     
     jQuery.each(a, function(i, v) {
     	// use a queue for long running code
@@ -371,8 +385,12 @@ function removeAll(issue, flatArray){
     	}, this);	  
     });
     
-    toggleBagLinks(issue, 'remove');
-    jQuery('#removingIdentifiers').remove();
+    // queue in switching of links and message
+    im.queue.put(function() {
+    	jQuery("#sidebar ul li." + issue + ' div.loading').remove();
+        toggleBagLinks(issue, 'remove');
+        jQuery('#removingIdentifiers').remove();    	
+    }, this);
 }
 
 function toggleBagLinks(issue, action) {
