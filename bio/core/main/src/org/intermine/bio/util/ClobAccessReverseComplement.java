@@ -51,33 +51,59 @@ public class ClobAccessReverseComplement extends ClobAccess
      * @return the complement character
      */
     public char translate(char in) {
+
+        boolean inputWasLowerCase = false;
+        if (Character.isLowerCase(in)) {
+            in = Character.toUpperCase(in);
+            inputWasLowerCase = true;
+        }
+
         switch (in) {
-            case 'c':
-                return 'g';
             case 'C':
-                return 'G';
-            case 'g':
-                return 'c';
+                return returnChar('G', inputWasLowerCase);
             case 'G':
-                return 'C';
-            case 'a':
-                return 't';
+                return returnChar('C', inputWasLowerCase);
             case 'A':
-                return 'T';
-            case 't':
-                return 'a';
+                return returnChar('T', inputWasLowerCase);
             case 'T':
-                return 'A';
-            case 'n':
-                return 'N';
+                return returnChar('A', inputWasLowerCase);
             case 'N':
-                return 'N';
+                return returnChar('N', inputWasLowerCase);
+            case 'U':
+                return returnChar('A', inputWasLowerCase);
+            case 'Y':
+                return returnChar('R', inputWasLowerCase);
+            case 'R':
+                return returnChar('Y', inputWasLowerCase);
+            case 'S':
+                return returnChar('S', inputWasLowerCase);
+            case 'W':
+                return returnChar('W', inputWasLowerCase);
+            case 'K':
+                return returnChar('M', inputWasLowerCase);
+            case 'M':
+                return returnChar('K', inputWasLowerCase);
+            case 'B':
+                return returnChar('V', inputWasLowerCase);
+            case 'V':
+                return returnChar('B', inputWasLowerCase);
+            case 'D':
+                return returnChar('H', inputWasLowerCase);
+            case 'H':
+                return returnChar('D', inputWasLowerCase);
             case '.':
-                return '.';
+                return returnChar('.', inputWasLowerCase);
             default:
                 throw new IllegalArgumentException("DNA sequence is invalid - cannot contain "
                         + in);
         }
+    }
+
+    private char returnChar(char c, boolean toLowerCase) {
+        if (toLowerCase) {
+            return Character.toLowerCase(c);
+        }
+        return c;
     }
 
     /**
