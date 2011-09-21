@@ -66,28 +66,29 @@ public class CytoscapeNetworkGenerator
      */
     private StringBuffer addHeaderToGeneNetworkInXGMML(StringBuffer sb) {
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-            .append("<graph label=\"gene_interactions.xgmml\" xmlns:dc=\"http://purl.org/dc/"
-                    + "elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:"
-                    + "rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:cy=\"http:"
-                    + "//www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" >")
-            .append("<att name=\"documentVersion\" value=\"0.1\"/>")
+            .append("<graph label=\"network.xgmml\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+                    + " xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+                    + " xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\""
+                    + " xmlns:cy=\"http://www.cytoscape.org\""
+                    + " xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">")
+            .append("<att name=\"documentVersion\" value=\"1.1\"/>")
             .append("<att name=\"networkMetadata\">")
             .append("<rdf:RDF>")
             .append("<rdf:Description rdf:about=\"http://www.cytoscape.org/\">")
-            .append("<dc:type>Gene-Gene Interaction</dc:type>")
+            .append("<dc:type>Protein-Protein Interaction</dc:type>")
             .append("<dc:description>N/A</dc:description>")
             .append("<dc:identifier>N/A</dc:identifier>")
             .append("<dc:date>YYYY-MM-YYHH:MM:SS</dc:date>")
-            .append("<dc:title>gene_interactions.xgmml</dc:title>")
+            .append("<dc:title>network.xgmml</dc:title>")
             .append("<dc:source>http://www.cytoscape.org/</dc:source>")
             .append("<dc:format>Cytoscape-XGMML</dc:format>")
             .append("</rdf:Description>")
             .append("</rdf:RDF>")
             .append("</att>")
             .append("<att type=\"string\" name=\"backgroundColor\" value=\"#ffffff\"/>")
-            .append("<att type=\"real\" name=\"GRAPH_VIEW_ZOOM\" value=\"1\"/>")
-            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_X\" value=\"0\"/>")
-            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_Y\" value=\"0\"/>");
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_ZOOM\" value=\"1.0\"/>")
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_X\" value=\"0.0\"/>")
+            .append("<att type=\"real\" name=\"GRAPH_VIEW_CENTER_Y\" value=\"0.0\"/>");
 
         return sb;
     }
@@ -123,7 +124,7 @@ public class CytoscapeNetworkGenerator
                         + node.getSourceLabel() + "\">");
             }
             sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
-                .append("<graphics x=\"0\" y=\"0\" w=\"24\" outline=\"#666666\" fill=\"#f5f5f5\" "
+                .append("<graphics x=\"0\" y=\"0\" outline=\"#666666\" fill=\"#f5f5f5\" "
                     + "cy:nodeTransparency=\"0.8\" width=\"1\" cy:nodeLabelFont=\"Arial-0-11\" "
                     + "h=\"24\" labelanchor=\"c\" type=\"ELLIPSE\"/>")
                 .append("</node>");

@@ -51,7 +51,7 @@ public class CytoscapeNetworkAjaxAction extends Action
         // === Create network data ===
         CytoscapeNetworkService networkSrv = new CytoscapeNetworkService();
         String network = networkSrv.getNetwork(
-                fullInteractingGeneSetStr, session);
+                fullInteractingGeneSetStr, session, false);
 
         // === Print out network data ===
         response.setContentType("text/xml");
