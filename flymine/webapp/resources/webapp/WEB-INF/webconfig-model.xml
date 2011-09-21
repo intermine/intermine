@@ -685,6 +685,12 @@
                      placement="summary"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.DiseaseDisplayer"
+                     jspName="model/diseaseDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
+
   </reportdisplayers>
 
    <widgets>
