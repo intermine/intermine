@@ -44,12 +44,14 @@
       <%-- TODO: scroll to target --%>
 
     } else {
-      // still need to call queryBuilderChange
-      $('img_'+path).src='images/plus.gif';
-      path = path.substring(0, path.lastIndexOf('.'));
-      new Ajax.Request('<html:rewrite action="/queryBuilderChange"/>',
-        {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
-      $(id).innerHTML='';
+      <%-- collapsing --%>
+      jQuery.get('<html:rewrite action="/queryBuilderChange"/>' + '?method=ajaxCollapse&path=' +
+    		  ((path.split(".").length > 2) ? path.substring(0, path.lastIndexOf('.')) : path),
+    	  function(r) {
+	          jQuery('#img_' + path.replace(/\./g, "\\.")).attr('src', 'images/plus.gif');
+	          jQuery('#' + id.replace(/\./g, "\\.")).remove();
+    	  }
+      );
     }
 
     return false;
