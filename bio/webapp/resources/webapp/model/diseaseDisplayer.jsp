@@ -39,7 +39,7 @@ function generateDiseases(jSONObject, target) {
                     'text': pathway['name'],
                     'target': '_blank'
                 })
-                }).appendTo(target);
+                }).appendTo(target + ' ul');
              });
           }
 }
