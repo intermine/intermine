@@ -32,6 +32,7 @@ import org.intermine.model.bio.Gene;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.CacheMap;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.ReportDisplayer;
@@ -45,8 +46,8 @@ import org.intermine.web.logic.results.ReportObject;
  */
 public class MinePathwaysDisplayer extends ReportDisplayer
 {
-
-
+    private static Map<ReportObject, Map<Mine, String>> minePathwayCache
+        = new CacheMap<ReportObject, Map<Mine, String>>();
     protected static final Logger LOG = Logger.getLogger(MinePathwaysDisplayer.class);
 
     /**
@@ -61,13 +62,20 @@ public class MinePathwaysDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
+
         Gene gene = (Gene) reportObject.getObject();
         request.setAttribute("gene", gene);
-        Map<String, Set<String>> orthologues = getLocalHomologues(gene);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
-        Collection<Mine> mines = linkManager.getFriendlyMines();
-        Map<Mine, String> mineToOrthologues = buildHomologueMap(mines, orthologues);
-        request.setAttribute("mines", mineToOrthologues);
+
+        if (minePathwayCache.get(reportObject) != null) {
+            request.setAttribute("mines", minePathwayCache.get(reportObject).values());
+        } else {
+            Map<String, Set<String>> orthologues = getLocalHomologues(gene);
+            FriendlyMineManager linkManager = im.getFriendlyMineManager();
+            Collection<Mine> mines = linkManager.getFriendlyMines();
+            Map<Mine, String> mineToOrthologues = buildHomologueMap(mines, orthologues);
+            request.setAttribute("mines", mineToOrthologues);
+            minePathwayCache.put(reportObject, mineToOrthologues);
+        }
     }
 
     /* Using the provided list of organisms available in this mine, build list of genes to query
