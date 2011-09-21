@@ -17,55 +17,55 @@ function getFriendlyMinePathways(mine, orthologues) {
     AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
         var jSONObject = jQuery.parseJSON(pathways);
         if (jSONObject['results'].length > 0) {
-        	generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
+          generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
         } else {
             jQuery("#intermine_pathways_" + mine).html(jQuery("<p/>", {
-            	'text': "No pathways found."
+              'text': "No pathways found."
             }));
         }
- 	    jQuery('#mine-pathway-displayer table thead th').each(function(i) {
- 		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
- 	    });
+       jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+        if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
+       });
     });
 }
 
 function generateFriendlyMinePathways(jSONObject, target, mine) {
-	var url = '';
-	if (jSONObject['mineURL'] != undefined) {
-	  url = jSONObject['mineURL'];
-	}
-	
-	if (jSONObject['results'] != undefined) {
-	   jQuery('<ul/>').appendTo(target);
-	   var i;
-	   jQuery.each(jSONObject['results'], function(index, pathway) {
-	        jQuery('<li/>', {
-	          'html': jQuery('<a/>', {
-	          'href': url + "/report.do?id=" + pathway['id'],
-	          'text': pathway['name'],
-	          'target': '_blank',
-	          'class': 'external',
-	          'style': (index > 9) ? 'display:none;' : ''
-	      })
-	      }).appendTo(target + ' ul');
-	      i = index;
-	   });
-	   if (i > 10) {
-		   jQuery('<div/>', {
-			   'class': 'toggle',
-			   'style': 'margin-top:5px'
-		   })
-		   .append(jQuery('<a/>', {
-			   'class': 'more',
-			   'text': 'Show ' + (i - 9) + ' more pathway' + (((i - 9) > 1) ? 's' : ''),
-			   'click': function() {
-				   jQuery(target).find(':hidden').show();
-				   jQuery(this).remove();
-			   }
-		   }))
-		   .appendTo(target);
-	   }
-	}
+  var url = '';
+  if (jSONObject['mineURL'] != undefined) {
+    url = jSONObject['mineURL'];
+  }
+
+  if (jSONObject['results'] != undefined) {
+     jQuery('<ul/>').appendTo(target);
+     var i;
+     jQuery.each(jSONObject['results'], function(index, pathway) {
+          jQuery('<li/>', {
+            'html': jQuery('<a/>', {
+            'href': url + "/report.do?id=" + pathway['id'],
+            'text': pathway['name'],
+            'target': '_blank',
+            'class': 'external',
+            'style': (index > 9) ? 'display:none;' : ''
+        })
+        }).appendTo(target + ' ul');
+        i = index;
+     });
+     if (i > 10) {
+       jQuery('<div/>', {
+         'class': 'toggle',
+         'style': 'margin-top:5px'
+       })
+       .append(jQuery('<a/>', {
+         'class': 'more',
+         'text': 'Show ' + (i - 9) + ' more pathway' + (((i - 9) > 1) ? 's' : ''),
+         'click': function() {
+           jQuery(target).find(':hidden').show();
+           jQuery(this).remove();
+         }
+       }))
+       .appendTo(target);
+     }
+  }
 }
 
 </script>
@@ -80,11 +80,12 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 
             <!-- other mines -->
             <c:forEach items="${mines}" var="entry">
-                 <th class="loading"><span>${entry.key.name}</span></th>
+                 <c:set var="mine" value="${entry.key}" />
+                 <th class="loading"><span style="background-color: ${mine.bgcolor};" color:"${mine.frontcolor};">${mine.name}</span></th>
             </c:forEach>
       </tr>
-	  </thead>
-	  <tbody>
+    </thead>
+    <tbody>
       <tr>
           <!-- this mine -->
         <td>
@@ -96,44 +97,44 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
               <c:otherwise>
               <div id="intermine_pathways_thisMine">
               <ul>
-	            <c:forEach items="${gene.pathways}" var="pathway" varStatus="status">
-	                <li>
-	                	<c:choose>
-	                		<c:when test="${status.index > 9}">
-	                			<c:set var="style" value="display:none;" />
-	                		</c:when>
-	                		<c:otherwise>
-	                			<c:set var="style" value="" />
-	                		</c:otherwise>
-	                	</c:choose>
-	                	<html:link style="${style}" href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}">
-	                		<c:out value="${pathway.name}"/>
-	                	</html:link>
-	                </li>
-	            </c:forEach>
-	          </ul>
-	          </div>
-            
+              <c:forEach items="${gene.pathways}" var="pathway" varStatus="status">
+                  <li>
+                    <c:choose>
+                      <c:when test="${status.index > 9}">
+                        <c:set var="style" value="display:none;" />
+                      </c:when>
+                      <c:otherwise>
+                        <c:set var="style" value="" />
+                      </c:otherwise>
+                    </c:choose>
+                    <html:link style="${style}" href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}">
+                      <c:out value="${pathway.name}"/>
+                    </html:link>
+                  </li>
+              </c:forEach>
+            </ul>
+            </div>
+
             <c:if test="${fn:length(style) > 0}">
-            	<script type="text/javascript">
-            	   var target = '#intermine_pathways_thisMine ul',
-            	   	   i	  = jQuery(target).find('li').length - 10;
-	     		   jQuery('<div/>', {
-	    			   'class': 'toggle',
-	    			   'style': 'margin-top:5px'
-	    		   })
-	    		   .append(jQuery('<a/>', {
-	    			   'class': 'more',
-	    			   'text': 'Show ' + i + ' more pathway' + ((i > 1) ? 's' : ''),
-	    			   'click': function() {
-	    				   jQuery(target).find(':hidden').show();
-	    				   jQuery(this).remove();
-	    			   }
-	    		   }))
-	    		   .appendTo(target);
-            	</script>
+              <script type="text/javascript">
+                 var target = '#intermine_pathways_thisMine ul',
+                      i	  = jQuery(target).find('li').length - 10;
+              jQuery('<div/>', {
+               'class': 'toggle',
+               'style': 'margin-top:5px'
+             })
+             .append(jQuery('<a/>', {
+               'class': 'more',
+               'text': 'Show ' + i + ' more pathway' + ((i > 1) ? 's' : ''),
+               'click': function() {
+                 jQuery(target).find(':hidden').show();
+                 jQuery(this).remove();
+               }
+             }))
+             .appendTo(target);
+              </script>
             </c:if>
-            
+
             </c:otherwise>
             </c:choose>
         </td>
@@ -150,24 +151,5 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
       </tr>
       </tbody>
     </table>
-
-<script type="text/javascript">
-var minePortals = {};
-<c:forEach var="portal" items="${minePortals}">
-    var mineDetails = {};
-    <c:forEach var="portalDetail" items="${portal.value}">
-        mineDetails["<c:out value='${portalDetail.key}'/>"] = "<c:out value='${portalDetail.value}'/>";
-    </c:forEach>
-    minePortals["<c:out value='${fn:toLowerCase(portal.key)}'/>"] = mineDetails;
-</c:forEach>
-
-jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-	var settings = minePortals[jQuery(this).text().toLowerCase()];
-	if (settings != undefined) {
-		jQuery(this).find('span').css({'backgroundColor':settings['bgcolor'], 'color':settings['frontcolor']});
-	}
-});
-
-</script>
 </div>
 <!-- /publicationCountsDisplayer.jsp -->
