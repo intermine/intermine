@@ -77,7 +77,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private Integer profileId;
     private Integer savedBagId;
     private String name;
-    protected final String type;
+    private String type;
     private String description;
     private Date dateCreated;
     private List<String> keyFieldNames = new ArrayList<String>();
@@ -620,6 +620,18 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public String getType() {
         return type;
+    }
+
+    /**
+     * @param type the type to set
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void setType(String type)
+        throws ObjectStoreException {
+        if (os.getModel().getClassDescriptorByName(type) != null) {
+            this.type = type;
+            store();
+        }
     }
 
     /**
