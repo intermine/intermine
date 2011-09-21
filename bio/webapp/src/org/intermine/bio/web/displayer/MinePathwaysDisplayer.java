@@ -110,8 +110,9 @@ public class MinePathwaysDisplayer extends ReportDisplayer
      * @param request
      * @return
      */
-    private HashMap<String, LinkedHashMap<String, String>> getMinesSettings(HttpServletRequest request) {
-    	Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+    private HashMap<String, LinkedHashMap<String, String>> getMinesSettings(
+            HttpServletRequest request) {
+        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
         String localMineName = webProperties.getProperty("project.title");
         Properties props = PropertiesUtil.stripStart("intermines",
@@ -145,7 +146,7 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         }
         return minePortals;
     }
-    
+
     private PathQuery getQuery(Gene gene) {
         PathQuery q = new PathQuery(im.getModel());
         q.addViews("Gene.homologues.homologue.primaryIdentifier",
