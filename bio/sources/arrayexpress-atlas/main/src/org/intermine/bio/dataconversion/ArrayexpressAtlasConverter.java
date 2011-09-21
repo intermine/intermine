@@ -39,8 +39,8 @@ import org.json.JSONObject;
 public class ArrayexpressAtlasConverter extends BioDirectoryConverter
 {
     //
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private static final String DATASET_TITLE = "ArrayExpress dataset";
+    private static final String DATA_SOURCE_NAME = "ArrayExpress";
     private Map<String, String> genes = new HashMap<String, String>();
 
     private String taxonId = "9606";
