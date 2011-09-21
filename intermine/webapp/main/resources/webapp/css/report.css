@@ -90,7 +90,8 @@ div.container_12 { padding-top:30px; }
 .sidebar #external-links ul li ul li ul li { display:inline; }
 .sidebar #external-links ul li.mine { margin-bottom:5px; }
 .sidebar #external-links li.external a,
-.sidebar #external-links ul li a { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
+.sidebar #external-links ul li a,
+a.external { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
 
 /* a loading elsewhere */
 #gBrowse .loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; margin:0 auto; min-width:200px; min-height:20px; display:block; }

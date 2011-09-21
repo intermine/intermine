@@ -9,7 +9,7 @@
 
 
 <!-- minePathwaysDisplayer.jsp -->
-<div id="mine-pathway-displayer" class="collection-table">
+<div id="mine-pathway-displayer" class="collection-table column-border">
 
 <script type="text/javascript" charset="utf-8">
 function getFriendlyMinePathways(mine, orthologues) {
@@ -19,11 +19,13 @@ function getFriendlyMinePathways(mine, orthologues) {
         if (jSONObject['results'].length > 0) {
         	generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
         } else {
-            jQuery("#intermine_pathways_" + mine).html("No pathways found.");
-     	    jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-    		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
-    	    });
+            jQuery("#intermine_pathways_" + mine).html(jQuery("<p/>", {
+            	'text': "No pathways found."
+            }));
         }
+ 	    jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+ 		   if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
+ 	    });
     });
 }
 
@@ -35,20 +37,34 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 	
 	if (jSONObject['results'] != undefined) {
 	   jQuery('<ul/>').appendTo(target);
+	   var i;
 	   jQuery.each(jSONObject['results'], function(index, pathway) {
 	        jQuery('<li/>', {
 	          'html': jQuery('<a/>', {
 	          'href': url + "/report.do?id=" + pathway['id'],
 	          'text': pathway['name'],
-	          'target': '_blank'
+	          'target': '_blank',
+	          'class': 'external',
+	          'style': (index > 9) ? 'display:none;' : ''
 	      })
 	      }).appendTo(target + ' ul');
+	      i = index;
 	   });
-	   
-	   
-	   jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-		   if (jQuery(this).find('span').text() == mine) jQuery(this).removeClass('loading');
-	   });
+	   if (i > 10) {
+		   jQuery('<div/>', {
+			   'class': 'toggle',
+			   'style': 'margin-top:5px'
+		   })
+		   .append(jQuery('<a/>', {
+			   'class': 'more',
+			   'text': 'Show ' + (i - 9) + ' more pathway' + (((i - 9) > 1) ? 's' : ''),
+			   'click': function() {
+				   jQuery(target).find(':hidden').show();
+				   jQuery(this).remove();
+			   }
+		   }))
+		   .appendTo(target);
+	   }
 	}
 }
 
@@ -78,11 +94,46 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
                 No pathways found
               </c:when>
               <c:otherwise>
+              <div id="intermine_pathways_thisMine">
               <ul>
-            <c:forEach items="${gene.pathways}" var="pathway">
-                <li><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}"><c:out value="${pathway.name}"/></html:link></li>
-            </c:forEach>
-            </ul>
+	            <c:forEach items="${gene.pathways}" var="pathway" varStatus="status">
+	                <li>
+	                	<c:choose>
+	                		<c:when test="${status.index > 9}">
+	                			<c:set var="style" value="display:none;" />
+	                		</c:when>
+	                		<c:otherwise>
+	                			<c:set var="style" value="" />
+	                		</c:otherwise>
+	                	</c:choose>
+	                	<html:link style="${style}" href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}">
+	                		<c:out value="${pathway.name}"/>
+	                	</html:link>
+	                </li>
+	            </c:forEach>
+	          </ul>
+	          </div>
+            
+            <c:if test="${fn:length(style) > 0}">
+            	<script type="text/javascript">
+            	   var target = '#intermine_pathways_thisMine ul',
+            	   	   i	  = jQuery(target).find('li').length - 10;
+	     		   jQuery('<div/>', {
+	    			   'class': 'toggle',
+	    			   'style': 'margin-top:5px'
+	    		   })
+	    		   .append(jQuery('<a/>', {
+	    			   'class': 'more',
+	    			   'text': 'Show ' + i + ' more pathway' + ((i > 1) ? 's' : ''),
+	    			   'click': function() {
+	    				   jQuery(target).find(':hidden').show();
+	    				   jQuery(this).remove();
+	    			   }
+	    		   }))
+	    		   .appendTo(target);
+            	</script>
+            </c:if>
+            
             </c:otherwise>
             </c:choose>
         </td>
