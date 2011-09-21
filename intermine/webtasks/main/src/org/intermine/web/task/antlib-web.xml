@@ -29,4 +29,7 @@
     <typedef
         name="update-list-tables"
         classname="org.intermine.web.task.UpdateListTablesTask"/>
+    <typedef
+        name="model-update"
+        classname="org.intermine.web.task.ModelUpdateTask"/>
 </antlib>

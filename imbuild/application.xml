@@ -129,6 +129,11 @@
                         userProfileAlias="${userprofile.objectstore.name}"/>
   </target>
 
+  <target name="model-update" depends="-init-properties, -init-build-db">
+    <model-update osAlias="${objectstore.name}"
+                  userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
   <!-- RELEASE / REMOVE FROM TOMCAT -->
 
   <target name="release-webapp" depends="-init-properties, init">
