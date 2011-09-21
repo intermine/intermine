@@ -28,6 +28,7 @@ public class Mine
     protected String name = null;
     protected String url = null;
     protected String logo = null;
+    protected String bgcolor, frontcolor;
     protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
     // holds a set of values available to query for this mine
@@ -78,6 +79,34 @@ public class Mine
      */
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    /**
+     * @return bgcolor
+     */
+    public String getBgcolor() {
+        return bgcolor;
+    }
+
+    /**
+     * @param bgcolor background color
+     */
+    public void setBgcolor(String bgcolor) {
+        this.bgcolor = bgcolor;
+    }
+
+    /**
+     * @return frontcolor
+     */
+    public String getFrontcolor() {
+        return frontcolor;
+    }
+
+    /**
+     * @param frontcolor front color
+     */
+    public void setFrontcolor(String frontcolor) {
+        this.frontcolor = frontcolor;
     }
 
     /**
