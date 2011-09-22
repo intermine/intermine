@@ -9,9 +9,11 @@ package org.intermine.web;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -127,12 +129,11 @@ public class ModelUpdate {
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             Profile profile = pm.getProfile(savedBag.getUserProfile().getUsername());
-            System.out.println(savedBag.getName() + " will be deleted");
-/*            try {
-                  profile.deleteBag(savedBag.getName());
+            try {
+                profile.deleteBag(savedBag.getName());
             } catch (ObjectStoreException ose) {
-                log("Problems deleting bag: " + savedBag.getName());
-            }*/
+                System.out.println("Problems deleting bag: " + savedBag.getName());
+            }
         }
     }
 
@@ -152,13 +153,12 @@ public class ModelUpdate {
             String type = savedBag.getType();
             String newType = renamedClasses.get(type);
             Profile profile = pm.getProfile(savedBag.getUserProfile().getUsername());
-            System.out.println(savedBag.getName() + " will be updated");
             try {
                 if (newType != null) {
                     profile.updateBagType(savedBag.getName(), newType);
                 }
             } catch (ObjectStoreException ose) {
-                ose.printStackTrace();
+                System.out.println("Problems updating savedBag " + savedBag.getName() + ose.getMessage());
             }
         }
     }
@@ -167,6 +167,7 @@ public class ModelUpdate {
         Map<String, SavedQuery> savedQueries;
         Map<String, TemplateQuery> templateQueries;
         String cls, prevField;
+        List<String> problems = new ArrayList<String>();
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
         q.addToSelect(qc);
@@ -180,28 +181,50 @@ public class ModelUpdate {
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
                 for (String prevClass : renamedClasses.keySet()) {
-                    pathQuery.updatePathQueryWithRenamedClass(prevClass,
-                             renamedClasses.get(prevClass));
+                    problems = pathQuery.updatePathQueryWithRenamedClass(prevClass,
+                        renamedClasses.get(prevClass));
+                    if (!problems.isEmpty()) {
+                        System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
+                        + " with renamed class " + prevClass + ": " + problems);
+                        continue;
+                    }
                 }
                 for (String key : renamedFields.keySet()) {
                     int index = key.indexOf(".");
                     cls = key.substring(0, index);
                     prevField = key.substring(index + 1);
-                    pathQuery.updatePathQueryWithRenamedField(cls, prevField, renamedFields.get(key));
+                    problems = pathQuery.updatePathQueryWithRenamedField(cls, prevField,
+                        renamedFields.get(key));
+                    if (!problems.isEmpty()) {
+                        System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
+                                + " with renamed field " + prevField + ": " + problems);
+                        continue;
+                    }
                 }
                 profile.saveQuery(savedQuery.getName(), savedQuery);
             }
             templateQueries = profile.getSavedTemplates();
             for (TemplateQuery templateQuery : templateQueries.values()) {
                 for (String prevClass : renamedClasses.keySet()) {
-                    templateQuery.updatePathQueryWithRenamedClass(prevClass,
-                                 renamedClasses.get(prevClass));
+                    problems = templateQuery.updatePathQueryWithRenamedClass(prevClass,
+                        renamedClasses.get(prevClass));
+                    if (!problems.isEmpty()) {
+                        System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
+                                + " with renamed class " + prevClass + ": " + problems);
+                        continue;
+                    }
                 }
                 for (String key : renamedFields.keySet()) {
                     int index = key.indexOf(".");
                     cls = key.substring(0, index);
                     prevField = key.substring(index + 1);
-                    templateQuery.updatePathQueryWithRenamedField(cls, prevField, renamedFields.get(key));
+                    problems = templateQuery.updatePathQueryWithRenamedField(cls, prevField,
+                        renamedFields.get(key));
+                    if (!problems.isEmpty()) {
+                        System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
+                                + " with renamed field " + prevField + ": " + problems);
+                        continue;
+                    }
                 }
                 profile.saveTemplate(templateQuery.getName(), templateQuery);
             }
