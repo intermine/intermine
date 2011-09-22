@@ -7,7 +7,6 @@
      <collection name="validations" referenced-type="ValidationState" />
      <collection name="consequences" referenced-type="Consequence"/>
      <reference name="source" referenced-type="Source"/>
-     <collection name="genotypes" referenced-type="Genotype" reverse-reference="snp"/>
    </class>
    <class name="ValidationState" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
@@ -19,15 +18,5 @@
    </class>
   <class name="Source" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
-   </class>
-   <class name="Strain" is-interface="true">
-     <attribute name="name" type="java.lang.String"/>
-     <collection name="genotypes" referenced-type="Genotype" reverse-reference="strain"/>
-   </class>
-   <class name="Genotype" extends="java.lang.Object" is-interface="false">
-     <attribute name="allele1" type="java.lang.String"/>
-     <attribute name="allele2" type="java.lang.String"/>
-     <reference name="snp" referenced-type="SNP" reverse-reference="genotypes"/>
-     <reference name="strain" referenced-type="Strain" reverse-reference="genotypes"/>
    </class>
 </classes>
