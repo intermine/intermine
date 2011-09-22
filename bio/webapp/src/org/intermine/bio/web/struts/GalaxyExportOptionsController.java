@@ -124,7 +124,7 @@ public class GalaxyExportOptionsController extends TilesAction
                 query.addConstraint(Constraints.inIds(path, ids));
             } else {
                 if (featureIds.contains("'")) {
-                    featureIds = featureIds.replaceAll("'", "\\'");
+                    featureIds = featureIds.replaceAll("'", "\\\\'");
                 }
                 query.addConstraint(Constraints.lookup(path, featureIds, null));
             }
