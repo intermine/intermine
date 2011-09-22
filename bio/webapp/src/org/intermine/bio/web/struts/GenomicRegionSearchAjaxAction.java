@@ -246,10 +246,10 @@ public class GenomicRegionSearchAjaxAction extends Action
         // Can read from web.properties to get pre-defined views
         Set<String> exportFeaturesViews = null;
 
-        // == Experiment code ==
+        // == Experimental code ==
         String exportFeaturesViewsStr = SessionMethods.getWebProperties(
                 session.getServletContext()).getProperty(
-                "genomicRegionSearch.query.exportFeatures.views");
+                "genomicRegionSearch.query." + facet + ".views");
 
         if (exportFeaturesViewsStr != null) {
             try {
@@ -259,7 +259,7 @@ public class GenomicRegionSearchAjaxAction extends Action
                 throw new RuntimeException(e);
             }
         }
-        // == End of experiment code ==
+        // == End of experimental code ==
 
         PathQuery q = grsService.getExportFeaturesQuery(featureIdSet,
                 facet, exportFeaturesViews);
