@@ -45,25 +45,18 @@ import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.bio.web.struts.GenomicRegionSearchForm;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.OverlapConstraint;
-import org.intermine.objectstore.query.OverlapRange;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -632,12 +625,11 @@ public class GenomicRegionSearchService
      */
     public Map<GenomicRegion, Query> createQueryList() {
         return GenomicRegionSearchUtil.createQueryList(
-                grsc.getGenomicRegionList(), 
-                grsc.getExtendedRegionSize(), 
-                getChromosomeInfomationMap().get(grsc.getOrgName()), 
-                grsc.getOrgName(), 
-                grsc.getFeatureTypes());
-        
+            grsc.getGenomicRegionList(),
+            grsc.getExtendedRegionSize(),
+            getChromosomeInfomationMap().get(grsc.getOrgName()),
+            grsc.getOrgName(),
+            grsc.getFeatureTypes());
     }
 
     /**
@@ -1024,6 +1016,7 @@ public class GenomicRegionSearchService
 
             // get list of featureTypes
             String ftHtml = categorizeFeatureTypes(features, s);
+            Set<String> ftSet = getFeatureTypeSet(features, s);
 
             /*
              * order: 0.id
@@ -1063,6 +1056,11 @@ public class GenomicRegionSearchService
                     sb.append("<i>Original input: " + os + "</i><br>");
                 }
 
+                String facet = "SequenceFeature";
+                if (ftSet.size() == 1) {
+                    facet = ftSet.iterator().next();
+                }
+
                 sb.append("<div style='align:center; padding-bottom:12px'>"
                         + "<span class='fakelink exportDiv'> Export data </span>"
                         + "<img class='exportDiv' style='position:relative; top:3px;' "
@@ -1070,16 +1068,16 @@ public class GenomicRegionSearchService
                         + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
                         + "<a href='#javascript: exportFeatures(\""
                         + span + "\", "
-                        + "\"SequenceFeature\", \"tab\");' class='ext_link'>TAB</a></li>"
+                        + "\"" + facet + "\", \"tab\");' class='ext_link'>TAB</a></li>"
                         + "<li class='csv'><a href='#javascript: exportFeatures(\""
                         + span
-                        + "\", \"SequenceFeature\", \"csv\");' class='ext_link'>CSV</a></li>"
+                        + "\", \"" + facet + "\", \"csv\");' class='ext_link'>CSV</a></li>"
                         + "<li class='gff'><a href='#javascript: exportFeatures(\""
                         + span
-                        + "\", \"SequenceFeature\", \"gff3\");' class='ext_link'>GFF3</a>"
+                        + "\", \"" + facet + "\", \"gff3\");' class='ext_link'>GFF3</a>"
                         + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
                         + span
-                        + "\", \"SequenceFeature\", \"sequence\");' class='ext_link'>SEQ</a>"
+                        + "\", \"" + facet + "\", \"sequence\");' class='ext_link'>SEQ</a>"
                         + "</li></ul></div><div style='align:center'>"
                         + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
                         + "\");' class='ext_link'> Export to Galaxy <img border='0' "
@@ -1177,10 +1175,7 @@ public class GenomicRegionSearchService
      */
     public String categorizeFeatureTypes(List<List<String>> features, GenomicRegion s) {
         String id = s.getChr() + "-" + s.getStart() + "-" + s.getEnd();
-        Set<String> ftSet = new TreeSet<String>();
-        for (List<String> feature : features) {
-            ftSet.add(feature.get(3)); // the 3rd is feature type
-        }
+        Set<String> ftSet = getFeatureTypeSet(features, s);
 
         String ftHtml = "<div>"
             + "<a href=\"javascript: createList('" + s.getExtendedRegion() + "', '" + id + "');\">"
@@ -1196,6 +1191,21 @@ public class GenomicRegionSearchService
         ftHtml += "</select></div>";
 
         return ftHtml;
+    }
+
+    /**
+     * Get all feature types in a set
+     * @param features list of sequence features
+     * @param s GenomicRegion
+     * @return a set of feature types of a genomic region
+     */
+    public Set<String> getFeatureTypeSet(List<List<String>> features, GenomicRegion s) {
+        Set<String> ftSet = new TreeSet<String>();
+        for (List<String> feature : features) {
+            ftSet.add(feature.get(3)); // the 3rd is feature type
+        }
+
+        return ftSet;
     }
 
     /**
