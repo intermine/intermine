@@ -67,6 +67,7 @@ div.modelbrowse {
   float:left;
   width:500px;
   /*margin-right:10px;*/
+  position:relative;
 }
 
 #browserbody {
@@ -296,3 +297,6 @@ span.tree_tee .ver
     position: relative;
     top: 2px;
  }
+ 
+#queryBuilderBrowser div.loading { display:block; width:500px; height:400px; top:43px; left:0; position:absolute;
+	background:rgba(255, 255, 255, 0.90) url('../images/icons/ajax-loader.gif') no-repeat center; }

@@ -178,12 +178,11 @@ im.scrollTo = function(e, speed, easing, offset, onComplete) {
 
 // is element in the viewport?
 im.isInView = function(e, visibility) {
-    var pageTop = jQuery(window).scrollTop();
-    var pageBottom = pageTop + jQuery(window).height();
-
-    var elementTop = jQuery(e).offset().top;
-    var elementBottom = elementTop + jQuery(e).height();
-
+    var pageTop       = jQuery(window).scrollTop(),
+    	pageBottom    = pageTop + jQuery(window).height(),
+    	elementTop    = jQuery(e).offset().top,
+    	elementBottom = elementTop + jQuery(e).height();
+    
     return (visibility == 'partial') ?  ((elementBottom >= pageTop) && (elementTop <= pageBottom)) : ((elementBottom < pageBottom) && (elementTop > pageTop));
 };
 
