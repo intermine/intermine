@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!-- submissionDetailsDisplayer.jsp -->
 
@@ -54,6 +55,12 @@
                   <tr>
                     <td>Embargo Date:</td>
                     <td><span style="border: 2px solid green; white-space: nowrap;">This dataset is no longer embargoed</span></td>
+                  </tr>
+                  </c:if>
+                  <c:if test="${not empty replacesSubmission}">
+                  <tr>
+                    <td>Replaces Submission(s):</td>
+                    <td><strong>modENCODE_${fn:replace(replacesSubmission, ',', ', modENCODE_')}<strong></td>
                   </tr>
                   </c:if>
                   <c:if test="${not empty qualityControl}">

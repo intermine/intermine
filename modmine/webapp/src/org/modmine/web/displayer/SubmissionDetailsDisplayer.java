@@ -78,6 +78,7 @@ public class SubmissionDetailsDisplayer extends ReportDisplayer
         request.setAttribute("publicReleaseDate", publicReleaseDate);
         request.setAttribute("qualityControl", s.getQualityControl());
         request.setAttribute("replicate", s.getReplicate());
+        request.setAttribute("replacesSubmission", s.getReplacesSubmission());
         request.setAttribute("subId", s.getId());
         request.setAttribute("labId", s.getLab().getId());
         request.setAttribute("labName", s.getLab().getName());
