@@ -92,7 +92,7 @@ public class GalaxyExportOptionsController extends TilesAction
 
         // Build GenomicRegion pathquery, the request is from GenomicRegionSearch "export to Galaxy"
         if (request.getParameter("featureIds") != null) {
-            String featureIds = request.getParameter("featureIds");
+            String featureIds = request.getParameter("featureIds").trim();
             String orgName = request.getParameter("orgName");
 
             if (orgName != null && !"".equals(orgName)) {
@@ -123,6 +123,9 @@ public class GalaxyExportOptionsController extends TilesAction
             if (isIds) {
                 query.addConstraint(Constraints.inIds(path, ids));
             } else {
+                if (featureIds.contains("'")) {
+                    featureIds = featureIds.replaceAll("'", "\\'");
+                }
                 query.addConstraint(Constraints.lookup(path, featureIds, null));
             }
 
