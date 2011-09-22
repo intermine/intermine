@@ -46,6 +46,10 @@ import org.intermine.web.logic.export.Exporter;
  **/
 public class SequenceExporter implements Exporter
 {
+
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
+
     private ObjectStore os;
     private OutputStream out;
     private int featureIndex;
@@ -206,10 +210,10 @@ public class SequenceExporter implements Exporter
             }
             for (ResultElement re : row) {
                 // to avoid failure in modmine when no experimental factors (sub 2745)
-                if(re == null) {
+                if (re == null) {
                     continue;
                 }
-                
+
                 if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {

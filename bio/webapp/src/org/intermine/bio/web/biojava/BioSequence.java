@@ -16,15 +16,20 @@ import org.biojava.bio.symbol.SymbolList;
 import org.intermine.model.bio.BioEntity;
 
 /**
- * An implementation of the BioJava Sequence interface that uses FlyMine objects underneath.
+ * An implementation of the BioJava Sequence interface that uses InterMine objects underneath.
  *
  * @author Kim Rutherford
  */
 public class BioSequence extends SimpleSequence
 {
     /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * The BioEntity that was passed to the constructor.
      */
+    @SuppressWarnings("unused")
     private BioEntity bioEntity = null;
 
     /**
