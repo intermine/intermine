@@ -11,98 +11,6 @@
 
 <html:xhtml/>
 
-    <style type="text/css">
-
-    span.tree_tee .ver
-    {
-        border:1px solid black;
-        border-right-style:none;
-        border-top-style:none;
-        border-bottom-style:none;
-        padding-top:1px;
-        padding-bottom:8px;
-        position: relative;
-        left: 10px;
-    }
-
-    .tree_tee .hor
-    {
-        border:1px solid black;
-        border-right-style:none;
-        border-left-style:none;
-        border-top-style:none;
-        margin-right:12px;
-        color: white;
-        position: relative;
-        left: 10px;
-        top: -7px
-    }
-
-    .tree_straight .ver
-    {
-        border:1px solid black;
-        border-right-style:none;
-        border-top-style:none;
-        border-bottom-style:none;
-        margin-right:6px;
-        padding-top:1px;
-        padding-bottom:8px;
-        position: relative;
-        left: 10px;
-     }
-
-    .tree_straight .hor
-    {
-         color: #ffffff;
-    }
-
-    .tree_ell .ver
-    {
-        border:1px solid black;
-        border-right-style:none;
-        border-top-style:none;
-        border-bottom-style:none;
-        position: relative;
-        left: 10px;
-        top: -6px
-     }
-
-    .tree_ell .hor
-    {
-        border:1px solid black;
-        border-right-style:none;
-        border-left-style:none;
-        border-top-style:none;
-        margin-right:12px;
-        color: white;
-        position: relative;
-        left: 10px;
-        top: -7px
-     }
-
-    .tree_blank .ver
-    {
-        background-color: #ffffff;
-        font-size: 1px;
-        color: #ffffff;
-    }
-
-    .tree_blank .hor
-    {
-         background-color: #ffffff;
-         font-size: 1px;
-         color: #ffffff;
-         padding-right:13px;
-     }
-
-     .toggle
-     {
-        position: relative;
-        top: 2px;
-     }
-
-    </style>
-    <div class="browserline">
       <c:if test="${node.indentation > 0}">
         &nbsp;&nbsp;&nbsp;&nbsp;
         <c:forEach var="structure" items="${node.structure}">
@@ -233,13 +141,13 @@
         <c:choose>
           <c:when test="${!node.selected && !isNull && summary && KEYLESS_CLASSES_MAP[node.type] == null}">
             <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
-              <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show"/>
+              <img class="arrow" src="images/show-ref.gif" width="60" height="13"/>
             </html:link>
           </c:when>
           <c:when test="${summary}"><img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show"/></c:when>
           <c:when test="${!node.selected && !isNull}">
             <html:link action="/queryBuilderChange?method=addToView&amp;path=${node.pathString}#anchor=${node.pathString}" title="${selectNodeTitle}">
-              <img class="arrow" src="images/show.gif" width="43" height="13" title="show"/>
+              <img class="arrow" src="images/show.gif" width="43" height="13"/>
             </html:link>
           </c:when>
           <c:otherwise><img class="arrow" src="images/show-disabled.gif" width="43" height="13" title="show"/></c:otherwise>
@@ -252,7 +160,7 @@
           <c:otherwise>
             <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
                 onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
-              <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
+              <img class="arrow" src="images/constrain.gif" width="70" height="13"/>
             </html:link>
           </c:otherwise>
         </c:choose>
@@ -278,10 +186,5 @@
           <im:helplink text="${strikeThruHelp}"/>
         </c:if>
       </c:if>
-    </div>
-    <%-- this if preserves correct interaction with statically rendered tree --%>
-    <c:if test="${node.button == '+'}">
-      <div id="${node.pathString}"></div><!-- div+ ${node.pathString} -->
-    </c:if>
 
 <!-- /queryBuilderBrowserLine.jsp -->

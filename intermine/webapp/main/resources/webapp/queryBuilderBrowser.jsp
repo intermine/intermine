@@ -11,45 +11,26 @@
 
 <html:xhtml/>
 <script type="text/javascript">
-  <!--
   function toggleNode(id, path) {
-    if ($(id).innerHTML=='') {
-        <%-- can't touch these --%>
-        var parents = jQuery("#" + id.replace(/\./g, "\\.")).parents("*");
-        var cantTouchThese = new Array();
-        for (var i = 0; i < parents.length; i++) {
-          var parentId = jQuery(parents[i]).attr('id');
-          if (typeof parentId !== 'undefined' && parentId !== false && parentId.length > 0) {
-            cantTouchThese.push(parentId);
-          }
-        }
-
-        <%-- collapse all expanded --%>
-        jQuery("div.browserline img.toggle").each(function() {
-            if (jQuery(this).attr("src").indexOf("minus") != -1) {
-                var id = jQuery(this).parent().attr('title');
-                var target = id.replace(/\./g, "\\.");
-                <%-- clear the target div if not our new toggle's daddy --%>
-                if (jQuery("#" + target).exists() && cantTouchThese.indexOf(id) < 0) {
-                  jQuery("#" + target).html('');
-                  jQuery(this).attr('src', 'images/plus.gif');
-                }
-            }
-        });
-
-      new Ajax.Updater(id, '<html:rewrite action="/queryBuilderChange"/>',
-        {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
-      $('img_'+path).src='images/minus.gif';
-
-      <%-- TODO: scroll to target --%>
-
+	var image = jQuery("#img_" + path.replace(/\./g, "\\.")),
+		qbURL = '<html:rewrite action="/queryBuilderChange"/>',
+		id    = id.replace(/\./g, "\\.");
+    
+	if (image.attr('src') == 'images/plus.gif') {
+      <%-- expanding --%>
+      jQuery.get(qbURL + '?method=ajaxExpand&path=' + (path),
+    	  function(data) {
+	          image.attr('src', 'images/minus.gif');
+	          jQuery("div#" + id).after(data);
+    	  }
+      );
     } else {
       <%-- collapsing --%>
-      jQuery.get('<html:rewrite action="/queryBuilderChange"/>' + '?method=ajaxCollapse&path=' +
+      jQuery.get(qbURL + '?method=ajaxCollapse&path=' +
     		  ((path.split(".").length > 2) ? path.substring(0, path.lastIndexOf('.')) : path),
-    	  function(r) {
-	          jQuery('#img_' + path.replace(/\./g, "\\.")).attr('src', 'images/plus.gif');
-	          jQuery('#' + id.replace(/\./g, "\\.")).remove();
+    	  function() {
+	          image.attr('src', 'images/plus.gif');
+	          jQuery('[id^="' + id + '\\."]').remove();
     	  }
       );
     }
@@ -58,9 +39,6 @@
   }
 
   function addConstraint(path, displayPath) {
-    /*if (isExplorer()) {
-      return true;
-    }*/
     displayPath = displayPath || path;
     new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
       {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true,
@@ -74,12 +52,6 @@
     });
     return false;
   }
-
-  function isExplorer() {
-    return (navigator.appVersion.toLowerCase().indexOf('msie') >= 0);
-  }
-
-  //-->
 </script>
 
   <div class="heading">
