@@ -26,7 +26,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
@@ -74,7 +73,9 @@ public final class SequenceFeatureExportUtil
                     .getType());
             if (Protein.class.isAssignableFrom(prefixClass)
                 || SequenceFeature.class.isAssignableFrom(prefixClass)
-                || Sequence.class.isAssignableFrom(prefixClass)) {
+                // Sequence not supported by BioSequence when exporting
+//                || Sequence.class.isAssignableFrom(prefixClass)
+                ) {
                 if (!retPaths.contains(prefix)) {
                     retPaths.add(prefix);
                 }

@@ -85,7 +85,7 @@ public abstract class BioSequenceFactory
     }
 
     /**
-     * Create a new BioSequence from a Protein
+     * Create a new BioSequence from a BioEntity
      * @param bioEnt the bio entity
      * @param type the SequenceType
      * @return a new BioSequence object or null if the Protein doesn't have a Sequence
