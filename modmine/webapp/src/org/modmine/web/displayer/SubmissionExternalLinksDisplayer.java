@@ -51,8 +51,6 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
     // Map<DCCid, Map<database, List<accession, url>>>
     private static Map<String, Map<String, List<String>>> submissionDatabaseRecordsInfo = null;
 
-    private static String dbRecordsJSON = null;
-
     protected static final Logger LOG = Logger.getLogger(SubmissionExternalLinksDisplayer.class);
 
     /**
@@ -141,70 +139,71 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
 
     private static synchronized String getDbRecordsJSON(ObjectStore os, Profile profile,
             InterMineAPI im, String dccId) {
-        if (dbRecordsJSON == null) {
-            PathQuery query = new PathQuery(os.getModel());
 
-            // Add views
-            query.addViews("Submission.databaseRecords.database",
-                    "Submission.databaseRecords.accession",
-                    "Submission.databaseRecords.url");
+        String dbRecordsJSON = null;
 
-            // Add constraints and you can edit the constraint values below
-            query.addConstraint(Constraints.eq("Submission.DCCid", dccId));
+        PathQuery query = new PathQuery(os.getModel());
 
-            ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+        // Add views
+        query.addViews("Submission.databaseRecords.database",
+                "Submission.databaseRecords.accession",
+                "Submission.databaseRecords.url");
 
-            if (results == null || !results.hasNext()) {
-                return null;
-            } else {
-                Map<String, Set<String>> dbRecordMap =
-                    new LinkedHashMap<String, Set<String>>();
+        // Add constraints and you can edit the constraint values below
+        query.addConstraint(Constraints.eq("Submission.DCCid", dccId));
 
-                while (results.hasNext()) {
-                    List<ResultElement> row = results.next();
+        ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
 
-                    String db = (String) row.get(0).getField();
-                    String acc = (String) row.get(1).getField();
-                    String url = (String) row.get(2).getField();
+        if (results == null || !results.hasNext()) {
+            return null;
+        } else {
+            Map<String, Set<String>> dbRecordMap =
+                new LinkedHashMap<String, Set<String>>();
 
-                    String a;
+            while (results.hasNext()) {
+                List<ResultElement> row = results.next();
 
-                    if ("To be confirmed".equals(acc)) {
-                        a = acc;
-                    } else {
-                        // To escape double qoute in json
-                        a = "<a target=\\\"_blank\\\" href=\\\"" + url + "\\\">" + acc + "</a>";
-                    }
+                String db = (String) row.get(0).getField();
+                String acc = (String) row.get(1).getField();
+                String url = (String) row.get(2).getField();
 
-                    if (dbRecordMap.containsKey(db)) {
-                        dbRecordMap.get(db).add(a);
-                    } else {
-                        Set<String> ll = new LinkedHashSet<String>();
-                        ll.add(a);
+                String a;
 
-                        dbRecordMap.put(db, ll);
-                    }
+                if ("To be confirmed".equals(acc)) {
+                    a = acc;
+                } else {
+                    // To escape double qoute in json
+                    a = "<a target=\\\"_blank\\\" href=\\\"" + url + "\\\">" + acc + "</a>";
                 }
 
-                // Parse map to JSON
-                List<Object> dbl = new ArrayList<Object>();
-                for (Entry<String, Set<String>> e : dbRecordMap.entrySet()) {
-                    Map<String, Object> dbm = new LinkedHashMap<String, Object>();
-                    dbm.put("dbName", e.getKey());
-                    List<Object> r = new ArrayList<Object>();
-                    for (String s : e.getValue()) {
-                        r.add(s);
-                    }
-                    dbm.put("dbRecords", r);
-                    dbl.add(dbm);
+                if (dbRecordMap.containsKey(db)) {
+                    dbRecordMap.get(db).add(a);
+                } else {
+                    Set<String> ll = new LinkedHashSet<String>();
+                    ll.add(a);
+
+                    dbRecordMap.put(db, ll);
                 }
-
-                JSONArray ja = new JSONArray(dbl);
-
-                // Note: replace "\" in java -> "\\\\"
-                dbRecordsJSON = ja.toString().replaceAll("<\\\\/a>", "</a>");
             }
+
+            // Parse map to JSON
+            List<Object> dbl = new ArrayList<Object>();
+            for (Entry<String, Set<String>> e : dbRecordMap.entrySet()) {
+                Map<String, Object> dbm = new LinkedHashMap<String, Object>();
+                dbm.put("dbName", e.getKey());
+                List<Object> r = new ArrayList<Object>();
+                for (String s : e.getValue()) {
+                    r.add(s);
+                }
+                dbm.put("dbRecords", r);
+                dbl.add(dbm);
+            }
+
+            JSONArray ja = new JSONArray(dbl);
+
+            // Note: replace "\" in java -> "\\\\"
+            dbRecordsJSON = ja.toString().replaceAll("<\\\\/a>", "</a>");
+            return dbRecordsJSON;
         }
-        return dbRecordsJSON;
     }
 }
