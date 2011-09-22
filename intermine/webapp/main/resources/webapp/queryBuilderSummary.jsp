@@ -10,54 +10,68 @@
 <!-- queryBuilderSummary.jsp -->
 
 <html:xhtml/>
-
 <script>
   function showInModel(path) {
-    <%-- collapse all expanded --%>
-    jQuery("div.browserline img.toggle").each(function() {
-        if (jQuery(this).attr("src").indexOf("minus") != -1) {
-            var id = jQuery(this).parent().attr('title');
-            var target = id.replace(/\./g, "\\.");
-            <%-- clear the target div --%>
-            if (jQuery("#" + target).exists()) {
-              jQuery("#" + target).html('');
-              jQuery(this).attr('src', 'images/plus.gif');
-            }
-        }
+	var nodes  = path.split('.');
+	if (nodes.length > 3) {
+		jQuery('<div/>', {
+			'class': 'loading',
+			'style': 'top:'
+		}).appendTo(jQuery("#queryBuilderBrowser"));
+	}
+	
+    <%-- 'collapse' all expanded --%>
+    jQuery("div.browserline").each(function(index) {
+    	if (index > 0 && !jQuery(this).hasClass('indent-1')) {
+    		jQuery(this).remove();
+    	} else {
+    		var img = jQuery(this).find('img.toggle');
+    		if (img.attr('src') != 'images/plus-disabled.gif') {
+    			img.attr('src', 'images/plus.gif');
+    		}
+    	}
     });
-
-    // go through the path we want to show and continuously expand
-    var nodes = path.split('.');
-    for (var i = 0; i < nodes.length; i++) {
-        var node = new Array();
-        for (var j = 0; j <= i; j++) node.push(nodes[j]);
-        if (node.length > 1) {
-          node = node.join('.');
-          new Ajax.Updater(node, '<html:rewrite action="/queryBuilderChange"/>',
-                { parameters:'method=ajaxExpand&path='+node,
-                  asynchronous:true
-                });
+    
+    <%-- these nodes will need to be expanded --%>
+    var result = [];
+    for (var i = 1; i < nodes.length; i++) {
+        var node = [];
+        for (var j = 0; j <= i; j++) {
+        	node.push(nodes[j]);
         }
+        result.push(node.join('.'));
     };
-
-
-    /*
-    var url = window.location.pathname;
-    if (url.indexOf("#anchor") > 0) {
-      url = url.substring(0, url.indexOf("#anchor"));
+    deQueue();
+    
+    <%-- enqueue toggling mainly to switch the toggler image in time --%>
+    function deQueue() {
+    	var path  	= result.splice(0, 1)[0],
+			id    	= path.replace(/\./g, "\\."),
+			image 	= jQuery("img#img_" + id + '.toggle'),
+			browser = jQuery("#browserbody");
+	    jQuery.get('<html:rewrite action="/queryBuilderChange"/>' + '?method=ajaxExpand&path=' + (path),
+	      	function(data) {
+	  	        jQuery("div#" + id).after(data);
+	  	    	image.attr('src', 'images/minus.gif');
+	  	    	if (result.length > 0) {
+	  	    		deQueue();
+	  	    	} else {
+	  	    		browser.animate({
+	  	    			scrollTop: jQuery("div#" + id).offset().top - browser.height() + browser.scrollTop()
+	  	    			}, 'fast', function() {
+	  	    				jQuery("#queryBuilderBrowser").find('div.loading').remove();
+	  	    				jQuery("div#" + id).highlight();
+	  	    			}
+	  	    		);
+	  	    	}
+	      	}
+	    );
     }
-    document.location.href = url + "#anchor=" + node;
-    location.reload();
-    im.log("http://" + window.location.host + url + "#anchor=" + node);
-    */
-
+    
     return false;
   }
 
   function editConstraint(path, code, displayPath) {
-    /*if (isExplorer()) {
-      return true;
-    }*/
     displayPath = displayPath || path;
     new Ajax.Updater('queryBuilderConstraint', '<html:rewrite action="/queryBuilderChange"/>',
       {parameters:'method=ajaxEditConstraint&code='+code,
