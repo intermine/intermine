@@ -208,3 +208,91 @@ img.tinyQuestionMark {
 
 #sidebar { margin-left:830px;height:35px;
   width:495px;}
+
+span.tree_tee .ver
+{
+    border:1px solid black;
+    border-right-style:none;
+    border-top-style:none;
+    border-bottom-style:none;
+    padding-top:1px;
+    padding-bottom:8px;
+    position: relative;
+    left: 10px;
+}
+
+.tree_tee .hor
+{
+    border:1px solid black;
+    border-right-style:none;
+    border-left-style:none;
+    border-top-style:none;
+    margin-right:12px;
+    color: white;
+    position: relative;
+    left: 10px;
+    top: -7px
+}
+
+.tree_straight .ver
+{
+    border:1px solid black;
+    border-right-style:none;
+    border-top-style:none;
+    border-bottom-style:none;
+    margin-right:6px;
+    padding-top:1px;
+    padding-bottom:8px;
+    position: relative;
+    left: 10px;
+ }
+
+.tree_straight .hor
+{
+     color: #ffffff;
+}
+
+.tree_ell .ver
+{
+    border:1px solid black;
+    border-right-style:none;
+    border-top-style:none;
+    border-bottom-style:none;
+    position: relative;
+    left: 10px;
+    top: -6px
+ }
+
+.tree_ell .hor
+{
+    border:1px solid black;
+    border-right-style:none;
+    border-left-style:none;
+    border-top-style:none;
+    margin-right:12px;
+    color: white;
+    position: relative;
+    left: 10px;
+    top: -7px
+ }
+
+.tree_blank .ver
+{
+    background-color: #ffffff;
+    font-size: 1px;
+    color: #ffffff;
+}
+
+.tree_blank .hor
+{
+     background-color: #ffffff;
+     font-size: 1px;
+     color: #ffffff;
+     padding-right:13px;
+ }
+
+ .toggle
+ {
+    position: relative;
+    top: 2px;
+ }

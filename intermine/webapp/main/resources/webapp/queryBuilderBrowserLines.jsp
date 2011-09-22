@@ -9,33 +9,25 @@
 
 <html:xhtml/>
 
-<c:set var="indent" value="0"/>
-<%-- Table tag is tricky here. It closes all the nested divs so when
-there is some closing div missing than it doesn't spoil query builder page.
+<%--
+<style>
+.indent-1 {background:rgba(255, 0, 0, 0.05);}
+.indent-2 {background:rgba(0, 255, 0, 0.05);}
+.indent-3 {background:rgba(0, 0, 255, 0.05);}
+.indent-4 {background:rgba(255, 0, 255, 0.05);}
+</style>
 --%>
-<table cellpadding="0" cellspacing="0" border="0"><tr><td>
+
+<c:set var="indent" value="0"/>
+
 <c:forEach var="node" items="${nodes}">
-  <%-- This hideous stuff surrounds branches of the statically
-    rendered tree with the right div ids. This kind of thing
-    would be a lot easier if we were rendering a real tree
-    rather than just a list of Nodes.. --%>
-  <c:if test="${!noTreeIds && node.indentation > indent}">
-    <div id="${previousNodePath}"><!--open div ${previousNodePath}-->
-  </c:if>
-  <c:if test="${!noTreeIds && node.indentation < indent}">
-    </div><!--close div ${previousNodePath}-->
-  </c:if>
-  <c:set var="indent" value="${node.indentation}"/>
+  
   <c:set var="node" value="${node}" scope="request"/>
-  <!--browser line ${node.pathString} indent ${node.indentation}-->
-  <tiles:insert page="/queryBuilderBrowserLine.jsp"/>
-  <c:set var="previousNodePath" value="${node.pathString}"/>
-</c:forEach>
-<%-- Closes all opened divs --%>
-<c:forEach begin="1" end="${indent}">
+  
+  <div id="${node.pathString}" class="browserline indent-${node.indentation}">
+  	<tiles:insert page="/queryBuilderBrowserLine.jsp"/>
   </div>
+
 </c:forEach>
-</td></tr></table>
+
 <!-- /queryBuilderBrowserLines.jsp -->
-
-
