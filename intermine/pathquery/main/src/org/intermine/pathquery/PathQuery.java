@@ -2181,8 +2181,9 @@ public class PathQuery implements Cloneable
         return sw.toString();
     }
 
-    public synchronized void updatePathQueryWithRenamedClass(String prevClass, String newClass)
+    public synchronized List<String> updatePathQueryWithRenamedClass(String prevClass, String newClass)
         throws PathException {
+        deVerify();
         // Update view paths
         updateView(prevClass, newClass, null, null);
         // Update constraints
@@ -2193,10 +2194,14 @@ public class PathQuery implements Cloneable
         updateDescriptionsPath(prevClass, newClass, null, null);
         // Update order by paths
         updateOrderByPath(prevClass, newClass, null, null);
+
+        List<String> problems = verifyQuery();
+        return problems;
     }
 
-    public synchronized void updatePathQueryWithRenamedField(String cls, String prevField,
+    public synchronized List<String> updatePathQueryWithRenamedField(String cls, String prevField,
         String newField) throws PathException {
+        deVerify();
         // Update view paths
         updateView(cls, null, prevField, newField);
         // Update constraints
@@ -2207,6 +2212,9 @@ public class PathQuery implements Cloneable
         updateDescriptionsPath(cls, null, prevField, newField);
         // Update order by paths
         updateOrderByPath(cls, null, prevField, newField);
+
+        List<String> problems = verifyQuery();
+        return problems;
     }
 
     private void updateView (String cls, String newClass, String prevField, String newField)
