@@ -16,13 +16,13 @@
 <html:xhtml />
 
 <link href="model/jquery_contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
-<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/cupertino/jquery-ui-1.8.11.custom.css"/>
+<link type="text/css" rel="stylesheet" href="model/jquery_ui/css/cupertino/jquery-ui-1.8.13.custom.css"/>
 <script type="text/javascript" src="model/jquery_contextMenu/jquery.contextMenu.js"></script>
 <script type="text/javascript" src="model/jquery_expander/jquery.expander.js"></script>
 <script type="text/javascript" src="model/jquery_periodicalupdater/jquery.periodicalupdater.js"></script>
 <script type="text/javascript" src="model/jquery_progressbar/jquery.progressbar.js"></script>
 <script type="text/javascript" src="model/jquery_download/jquery.download.js"></script>
-<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.10.custom.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_ui/jquery-ui-1.8.13.custom.min.js'/>"></script>
 
 <script type="text/javascript" class="source">
 
@@ -116,8 +116,8 @@
 
     function exportToGalaxy(span) {
         jQuery.post("spanUploadAjax.do", { spanUUIDString: '${spanUUIDString}', getFeatures: "true", spanString: span }, function(featurePids){
-            inputs ='<input type="hidden" name="type" value="galaxy" /><input type="hidden" name="value" value="' + featurePids + '" />';
-            jQuery('<form action="exportOptions.do" method="post">'+inputs+'</form>').appendTo('body').submit().remove();
+            inputs ='<input type="hidden" name="type" value="galaxy" /><input type="hidden" name="featureIds" value="' + featurePids + '" />';
+            jQuery('<form action="galaxyExportOptions.do" method="post">'+inputs+'</form>').appendTo('body').submit().remove();
         }, "text");
     }
 
