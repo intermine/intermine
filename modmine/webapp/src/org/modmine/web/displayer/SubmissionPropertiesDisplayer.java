@@ -45,7 +45,7 @@ import org.json.JSONArray;
  */
 public class SubmissionPropertiesDisplayer extends ReportDisplayer
 {
-    private static String submissionPropertyJSON = null;
+//    private static String submissionPropertyJSON = null;
 
     protected static final Logger LOG = Logger.getLogger(SubmissionPropertiesDisplayer.class);
 
@@ -137,49 +137,50 @@ public class SubmissionPropertiesDisplayer extends ReportDisplayer
 
     private static synchronized String getSubmissionPropertyJSON(Submission sub) {
 
-        if (submissionPropertyJSON == null) {
-            Map<String, Map<Integer, String>> submissionPropertyMap =
-                new HashMap<String, Map<Integer, String>>();
+        String submissionPropertyJSON = null;
 
-            Set<SubmissionProperty> spSet = sub.getProperties();
+        Map<String, Map<Integer, String>> submissionPropertyMap =
+            new HashMap<String, Map<Integer, String>>();
 
-            if (spSet == null || spSet.size() < 1) {
-                return null;
-            } else {
-                for (SubmissionProperty sp : sub.getProperties()) {
-                    if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
-                        if (!submissionPropertyMap.containsKey(sp.getType())) {
-                            Map<Integer, String> propertyMap = new HashMap<Integer, String>();
-                            propertyMap.put(sp.getId(), sp.getName());
-                            submissionPropertyMap.put(sp.getType(), propertyMap);
-                        } else {
-                            submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
-                        }
+        Set<SubmissionProperty> spSet = sub.getProperties();
+
+        if (spSet == null || spSet.size() < 1) {
+            return null;
+        } else {
+            for (SubmissionProperty sp : sub.getProperties()) {
+                if ("SubmissionPropertyShadow".equals(sp.getClass().getSimpleName())) {
+                    if (!submissionPropertyMap.containsKey(sp.getType())) {
+                        Map<Integer, String> propertyMap = new HashMap<Integer, String>();
+                        propertyMap.put(sp.getId(), sp.getName());
+                        submissionPropertyMap.put(sp.getType(), propertyMap);
+                    } else {
+                        submissionPropertyMap.get(sp.getType()).put(sp.getId(), sp.getName());
                     }
                 }
-
-                // Parse map to json
-                List<Object> propertiesList = new ArrayList<Object>();
-
-                for (Entry<String, Map<Integer, String>> e : submissionPropertyMap.entrySet()) {
-                    Map<String, Object> propertiesMap = new LinkedHashMap<String, Object>();
-                    propertiesMap.put("type", e.getKey());
-                    List<Object> valueList = new ArrayList<Object>();
-                    for (Entry<Integer, String> en : ((Map<Integer, String>) e
-                            .getValue()).entrySet()) {
-                        Map<String, Object> valueMap = new LinkedHashMap<String, Object>();
-                        valueMap.put("id", en.getKey());
-                        valueMap.put("name", en.getValue());
-                        valueList.add(valueMap);
-                    }
-                    propertiesMap.put("value", valueList);
-                    propertiesList.add(propertiesMap);
-                }
-
-                JSONArray ja = new JSONArray(propertiesList);
-                submissionPropertyJSON = ja.toString();
             }
+
+            // Parse map to json
+            List<Object> propertiesList = new ArrayList<Object>();
+
+            for (Entry<String, Map<Integer, String>> e : submissionPropertyMap.entrySet()) {
+                Map<String, Object> propertiesMap = new LinkedHashMap<String, Object>();
+                propertiesMap.put("type", e.getKey());
+                List<Object> valueList = new ArrayList<Object>();
+                for (Entry<Integer, String> en : ((Map<Integer, String>) e
+                        .getValue()).entrySet()) {
+                    Map<String, Object> valueMap = new LinkedHashMap<String, Object>();
+                    valueMap.put("id", en.getKey());
+                    valueMap.put("name", en.getValue());
+                    valueList.add(valueMap);
+                }
+                propertiesMap.put("value", valueList);
+                propertiesList.add(propertiesMap);
+            }
+
+            JSONArray ja = new JSONArray(propertiesList);
+            submissionPropertyJSON = ja.toString();
+
+            return submissionPropertyJSON;
         }
-        return submissionPropertyJSON;
     }
 }
