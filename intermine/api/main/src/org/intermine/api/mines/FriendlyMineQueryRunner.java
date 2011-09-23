@@ -15,16 +15,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.config.Constants;
+import org.intermine.util.CacheMap;
 import org.intermine.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,13 +54,20 @@ public final class FriendlyMineQueryRunner
     private static final String MAP_URL = WEBSERVICE_URL + TEMPLATE_PATH + Constants.MAP_TEMPLATE
         + Constants.IDENTIFIER_CONSTRAINT;
     private static final String WILDCARD = "*";
+    private static Map<MultiKey, JSONObject> queryResultsCache
+        = new CacheMap<MultiKey, JSONObject>();
+    private static final String EMPTY = "\"\""; // webservices returns "" as empty
 
     private FriendlyMineQueryRunner() {
         // don't
     }
 
     /**
-     * Test for value in a mine.  Returns the identifier of the object if presents or NULL if not.
+     * Test for value in a mine.  Returns array (length=2) of identifiers.
+     *
+     *  [0] = primaryIdentifier
+     *  [1] = symbol or (if symbol is NULL) primaryIdentifier
+     *
      * Identifier returned my be different because the given identifier may be a synonym or a
      * better identifier was found (eg. symbol over primaryIdentifier)
      *
@@ -70,6 +78,7 @@ public final class FriendlyMineQueryRunner
      */
     public static String[] getObjectInOtherMine(Mine mine, String constraintValue,
             String identifier) {
+        // TODO replace with query
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + Constants.REPORT_TEMPLATE + Constants.LOOKUP_CONSTRAINT + identifier
             + Constants.EXTRA_VALUE_CONSTRAINT + constraintValue;
@@ -90,14 +99,17 @@ public final class FriendlyMineQueryRunner
                     LOG.info(msg);
                     return null;
                 }
-                String newIdentifier = bits[0];
-                String symbol = bits[1];
-                if (!StringUtils.isEmpty(newIdentifier)) {
+                String symbol = bits[0];
+                String newIdentifier = bits[1];
+                if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
                     identifiers[0] = newIdentifier;
                     identifiers[1] = newIdentifier;
                 }
-                if (!StringUtils.isEmpty(symbol)) {
+                if (!StringUtils.isEmpty(symbol) && !EMPTY.equals(symbol)) {
                     identifiers[1] = symbol;
+                    if (StringUtils.isEmpty(newIdentifier)) {
+                        identifiers[0] = symbol;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -105,6 +117,66 @@ public final class FriendlyMineQueryRunner
             return null;
         }
         return identifiers;
+    }
+
+    /**
+     * Test for values in a mine.  Returns array (length=2) of identifiers.
+     *
+     *  [0] = primaryIdentifier OR NULL
+     *  [1] = symbol or (if symbol is NULL) primaryIdentifier OR NULL
+     *
+     * Identifier returned my be different because the given identifier may be a synonym or a
+     * better identifier was found (eg. symbol over primaryIdentifier)
+     *
+     * @param mine Mine to test
+     * @param constraintValue extra constraint value
+     * @param identifiers identifier of objects
+     * @return identifier of the object if presents or NULL if not.
+     */
+    public static Set<String[]> getObjectsInOtherMine(Mine mine, String constraintValue,
+            String identifiers) {
+        // TODO replace with query
+        final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
+            + Constants.REPORT_TEMPLATE + Constants.LOOKUP_CONSTRAINT + identifiers
+            + Constants.EXTRA_VALUE_CONSTRAINT + constraintValue;
+
+        Set<String[]> results = new HashSet<String[]>();
+        try {
+            BufferedReader reader = runWebServiceQuery(webserviceURL);
+            if (reader == null) {
+                LOG.error(mine.getName() + " does not have template " + webserviceURL);
+                return null;
+            }
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] bits = line.split("\\t");
+                String[] identifierPair = new String[2];
+                if (bits.length != 2) {
+                    final String msg = "Couldn't process links for " + mine.getName()
+                        + ".  Expected two columns, found " + bits.length + " columns instead."
+                        + webserviceURL;
+                    LOG.info(msg);
+                    return null;
+                }
+                String symbol = bits[0];
+                String newIdentifier = bits[1];
+                if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
+                    identifierPair[0] = newIdentifier;
+                    identifierPair[1] = newIdentifier;
+                }
+                if (!StringUtils.isEmpty(symbol) && !EMPTY.equals(symbol)) {
+                    identifierPair[1] = symbol;
+                    if (StringUtils.isEmpty(newIdentifier)) {
+                        identifierPair[0] = symbol;
+                    }
+                }
+                results.add(identifierPair);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL, e);
+            return null;
+        }
+        return results;
     }
 
     /**
@@ -119,6 +191,7 @@ public final class FriendlyMineQueryRunner
      */
     public static Map<String, Set<String[]>> runRelatedDataQuery(Mine mine, String constraintValue,
             String identifier) {
+        // TODO replace template with custom query
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + Constants.RELATED_DATA_TEMPLATE + Constants.RELATED_DATA_CONSTRAINT_1 + identifier
             + Constants.RELATED_DATA_CONSTRAINT_2 + constraintValue;
@@ -140,12 +213,16 @@ public final class FriendlyMineQueryRunner
                     return null;
                 }
                 String key = bits[0];
-                String primaryIdentifier = bits[1];
+                String newIdentifier = bits[1];
                 String symbol = bits[2];
-                if (StringUtils.isEmpty(primaryIdentifier) && StringUtils.isEmpty(symbol)) {
-                    continue;
+                String[] identifiers = new String[2];
+                if (!StringUtils.isEmpty(newIdentifier)) {
+                    identifiers[0] = newIdentifier;
+                    identifiers[1] = newIdentifier;
                 }
-                String[] identifiers = {primaryIdentifier, symbol};
+                if (!StringUtils.isEmpty(symbol)) {
+                    identifiers[1] = symbol;
+                }
                 Util.addToSetMap(results, key, identifiers);
             }
         } catch (Exception e) {
@@ -303,6 +380,11 @@ public final class FriendlyMineQueryRunner
      */
     public static JSONObject runJSONWebServiceQuery(Mine mine, String xmlQuery)
         throws IOException {
+        MultiKey key = new MultiKey(mine, xmlQuery);
+        JSONObject jsonMine = queryResultsCache.get(key);
+        if (jsonMine != null) {
+            return jsonMine;
+        }
         Set<JSONObject> results = new LinkedHashSet<JSONObject>();
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
@@ -325,13 +407,14 @@ public final class FriendlyMineQueryRunner
                 continue;
             }
         }
-        JSONObject jsonMine = new JSONObject();
+        jsonMine = new JSONObject();
         try {
             jsonMine.put("results", results);
         } catch (JSONException e) {
             LOG.info("couldn't process results for " + mine.getName() + " for query " + xmlQuery);
             return null;
         }
+        queryResultsCache.put(key, jsonMine);
         return jsonMine;
     }
 

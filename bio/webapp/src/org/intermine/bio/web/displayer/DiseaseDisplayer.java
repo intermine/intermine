@@ -28,7 +28,6 @@ import org.intermine.model.bio.Gene;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.util.Util;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -41,7 +40,6 @@ import org.intermine.web.logic.results.ReportObject;
 public class DiseaseDisplayer extends ReportDisplayer
 {
     private static final String RAT = "R. norvegicus";
-
     protected static final Logger LOG = Logger.getLogger(DiseaseDisplayer.class);
 
     /**

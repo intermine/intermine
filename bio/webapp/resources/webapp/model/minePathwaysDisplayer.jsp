@@ -79,9 +79,9 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <th><span><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></span></th>
 
             <!-- other mines -->
-            <c:forEach items="${mines}" var="entry">
-                 <c:set var="mine" value="${entry.key}" />
-                 <th class="loading"><span style="background-color: ${mine.bgcolor};" color:"${mine.frontcolor};">${mine.name}</span></th>
+            <c:forEach items="${minesForPathways}" var="entry">
+                <c:set var="mine" value="${entry.key}" />
+                <th class="loading"><span style="background-color: ${mine.bgcolor};" color:"${mine.frontcolor};">${mine.name}</span></th>
             </c:forEach>
       </tr>
     </thead>
@@ -118,7 +118,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <c:if test="${fn:length(style) > 0}">
               <script type="text/javascript">
                  var target = '#intermine_pathways_thisMine ul',
-                      i	  = jQuery(target).find('li').length - 10;
+                      i	= jQuery(target).find('li').length - 10;
               jQuery('<div/>', {
                'class': 'toggle',
                'style': 'margin-top:5px'
@@ -140,11 +140,12 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
         </td>
 
         <!-- other mines -->
-        <c:forEach items="${mines}" var="entry">
+        <c:forEach items="${minesForPathways}" var="entry">
             <td>
-            <div id="intermine_pathways_${entry.key.name}"></div>
+            <c:set var="mine" value="${entry.key}" />
+            <div id="intermine_pathways_${mine.name}"></div>
             <script type="text/javascript" charset="utf-8">
-                getFriendlyMinePathways('${entry.key.name}', '${entry.value}');
+                getFriendlyMinePathways('${mine.name}', '${entry.value}');
             </script>
             </td>
         </c:forEach>

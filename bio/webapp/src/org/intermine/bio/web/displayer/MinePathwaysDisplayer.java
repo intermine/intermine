@@ -65,17 +65,17 @@ public class MinePathwaysDisplayer extends ReportDisplayer
 
         Gene gene = (Gene) reportObject.getObject();
         request.setAttribute("gene", gene);
-
+        Map<Mine, String> mineToOrthologues = null;
         if (minePathwayCache.get(reportObject) != null) {
-            request.setAttribute("mines", minePathwayCache.get(reportObject).values());
+            mineToOrthologues = minePathwayCache.get(reportObject);
         } else {
             Map<String, Set<String>> orthologues = getLocalHomologues(gene);
             FriendlyMineManager linkManager = im.getFriendlyMineManager();
             Collection<Mine> mines = linkManager.getFriendlyMines();
-            Map<Mine, String> mineToOrthologues = buildHomologueMap(mines, orthologues);
-            request.setAttribute("mines", mineToOrthologues);
+            mineToOrthologues = buildHomologueMap(mines, orthologues);
             minePathwayCache.put(reportObject, mineToOrthologues);
         }
+        request.setAttribute("minesForPathways", mineToOrthologues);
     }
 
     /* Using the provided list of organisms available in this mine, build list of genes to query
