@@ -147,7 +147,14 @@ public class TableExportAction extends InterMineAction
         for (Entry<String, Boolean> outerEntry : newPathQuery.getOuterMap().entrySet()) {
             if (outerEntry.getValue().equals(Boolean.TRUE)) {
                String joinPath = outerEntry.getKey();
-               if (!newPathQuery.getView().contains(joinPath)) {
+               boolean outherJoinStatusRelevant = false;
+               for (String viewPath : newPathQuery.getView()) {
+                   if (viewPath.startsWith(joinPath)) {
+                       outherJoinStatusRelevant = true;
+                       break;
+                   }
+               }
+               if (!outherJoinStatusRelevant) {
                    newPathQuery.setOuterJoinStatus(joinPath, null);
                }
             }
