@@ -2,59 +2,66 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-  <script type="text/javascript" charset="utf-8">
+<script type="text/javascript" charset="utf-8">
 
-  function getFriendlyMineLinks(mine, url, organismShortName, identifier, symbol) {
-      AjaxServices.getFriendlyMineReportLinks(mine, organismShortName, identifier, symbol, function(organisms) {
-          jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
-          if (organisms) {
-            var jSONObject = jQuery.parseJSON(organisms);
-            generateMineLinks(jSONObject, url, organismShortName, "#intermine_orthologue_links_" + mine);
-          } else {
-            jQuery("#intermine_orthologue_links_" + mine).html("No results found.");
-          }
-      });
-  }
-
-  function generateMineLinks(jSONObject, url, organismShortName, target) {
-
-    jQuery('<ul/>', {
-        'class': 'organisms'
-    })
-    .appendTo(target);
-    target += ' ul.organisms';
-
-
-    jQuery.each(jSONObject, function(key, entry) {
-        if (entry['genes'] != undefined) {
-            jQuery.each(entry['genes'], function(geneKey, geneEntry) {
-                var identifier = geneEntry['displayIdentifier'];
-                if (identifier == '""') {
-                    identifier = geneEntry['primaryIdentifier'];
-                }
-                jQuery('<li/>', {
-                    'text': identifier
-                })
-                .appendTo(target);
-            });
+function getFriendlyMineLinks(mine, url, organismShortName, identifier, symbol) {
+    AjaxServices.getFriendlyMineReportLinks(mine, organismShortName, identifier, symbol, function(response) {
+    	var jSONObject = jQuery.parseJSON(response)
+    	jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
+        if (jSONObject.length > 0) {
+          generateMineLinks(jSONObject, url, organismShortName, "#intermine_orthologue_links_" + mine);
+        } else {
+          jQuery("#intermine_orthologue_links_" + mine).html("<p>No results found.</p>");
         }
     });
+}
 
-    // add separators & linkify
-    jQuery(target + " li").each(function(i) {
-        var homologue = '';
-        if (organismShortName == jSONObject['shortName']) {
-            homologue = '&orthologue=' + organismShortName;
-        }
-        jQuery(this).html(
-            jQuery('<a/>', {
-                'href': url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine",
-                'text': jQuery(this).text(),
-                'target': '_blank'
-         }));
-    });
- }
-  </script>
+function generateMineLinks(jSONObject, url, organismShortName, target) {
+
+  jQuery('<ul/>', {
+      'class': 'organisms'
+  })
+  .appendTo(target);
+  target += ' ul.organisms';
+  
+  <%-- traverse organisms --%>
+  jQuery.each(jSONObject, function(k, organism) {
+  	var shortName = organism['shortName'];
+      if (organism['genes'] != undefined) {
+      	<%-- create the organism list item --%>
+      	jQuery('<li/>', {
+      		'class': 'organism-' + k,
+      		'text': shortName
+      	})
+      	.append(function() {
+      		<%-- create a list of organism - genes found --%>
+      		return jQuery('<ul/>', {
+      			'class': 'entries'
+      		})
+      		.append(function() {
+      			var self = this;
+      			jQuery.each(organism['genes'], function(geneKey, gene) {
+      				jQuery('<li/>', {
+      					'class': 'gene-' + geneKey,
+      				})
+      				.append(jQuery('<a/>', {
+      					'text': (gene['displayIdentifier'] != '""') ? gene['displayIdentifier'] : gene['primaryIdentifier'],
+      				 	'target': '_blank'
+      				})
+      				.attr('href', function() {
+      					var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
+      					return (url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
+      				})
+      				)
+      				.appendTo(self);
+      			});
+      		});
+      	})
+      	.appendTo(target);
+      }
+  });
+}
+</script>
 
 <h3 class="goog">Link to other Mines</h3>
 <div id="friendlyMines">
