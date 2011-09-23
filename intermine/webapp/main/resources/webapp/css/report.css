@@ -83,12 +83,13 @@ div.container_12 { padding-top:30px; }
 #in-lists div.body[style] { border:0 !important; padding:0 0 0 6px !important; }
 
 /* links in other mines & external links */
-.sidebar #external-links .loading { background:url('../images/icons/ajax-loader.gif') no-repeat center; }
+.sidebar #external-links .loading { background:url('../images/icons/ajax-loader.gif') no-repeat left center; display:block;
+	width:100%; height:18px; margin-bottom:5px; }
 .sidebar #external-links ul { margin-left:6px; }
 .sidebar #external-links ul li ul { padding-left:6px; }
-.sidebar #external-links ul li ul li { ; }
-.sidebar #external-links ul li ul li ul li { display:inline; }
-.sidebar #external-links ul li.mine { margin-bottom:5px; }
+.sidebar #external-links ul li ul li { display:inline-block; }
+.sidebar #external-links ul li ul li:not(:last-child):after { content:','; margin-right:4px; }
+.sidebar #external-links div.mine { margin-bottom:5px; }
 .sidebar #external-links li.external a,
 .sidebar #external-links ul li a,
 a.external { background:url('../images/icons/external_link.png') no-repeat top right; padding-right:10px; }
