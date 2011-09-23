@@ -106,7 +106,7 @@ mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
 #echo "Dumping modmine-build in modfast..."
 #pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
 
-#create release on archive server
+#create release on production server
 echo
 echo "Creating new production modmine-r$REL on modprod0..."
 createdb -E SQL_ASCII -h modprod0 -U modmine modmine-r$REL
@@ -209,7 +209,7 @@ function start_archive_webapp {
 RETURNDIR=$PWD
 echo
 echo "Dumping $PREL userprofile..."
-pg_dump -c -i -h modprod0 -U modmine -f $ARKDIR/userprofiles/modmine-r$PREL-userprofile modmine-r$PREL-userprofile
+pg_dump -c -i -h modprod0 -U modmine -f $ARKDIR/userprofiles/modmine-r$PREL-userprofile modmine-prod-userprofile
 
 echo; echo "Creating userprofile on modalone.."
 createdb -h modalone -U modmine  modmine-r$PREL-userprofile
@@ -227,7 +227,8 @@ gzip $ARKDIR/userprofiles/osbag_int-r$PREL.sql
 
 echo; echo "Creating properties file for archived webapp r$PREL..."
 cd /home/modmine/.intermine
-sed 's/modprod0/modalone/g' modmine.properties.r$PREL | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
+#sed 's/modprod0/modalone/g' modmine.properties.r$PREL | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
+sed 's/modprod0/modalone/g' modmine.properties.r$PREL | sed 's/modmine-prod-userprofile/modmine-'"$PREL"'-userprofile/g' | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
 
 echo; echo "Starting archived webapp r$PREL..."
 cd /home/modmine/svn/modmine-$PREL/modmine/webapp
@@ -271,18 +272,6 @@ then
 prepare_production
 fi
 
-interact "Archiving xml files for all the projects:"
-if [ "$DOIT" != "n" ]
-then
-tar_xml
-fi
-
-interact "Dumping chadoes for all the projects:"
-if [ "$DOIT" != "n" ]
-then
-dump_chadoes
-fi
-
 interact "Archiving new (current) mine modmine-r$REL:"
 if [ "$DOIT" != "n" ]
 then
@@ -299,5 +288,17 @@ interact "Start archived webapp modmine $PREL:"
 if [ "$DOIT" != "n" ]
 then
 start_archive_webapp
+fi
+
+interact "Archiving xml files for all the projects:"
+if [ "$DOIT" != "n" ]
+then
+tar_xml
+fi
+
+interact "Dumping chadoes for all the projects:"
+if [ "$DOIT" != "n" ]
+then
+dump_chadoes
 fi
 
