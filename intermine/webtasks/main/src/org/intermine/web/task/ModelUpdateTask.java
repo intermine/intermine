@@ -11,12 +11,12 @@ package org.intermine.web.task;
  */
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.ModelUpdate;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathException;
-import org.intermine.web.ModelUpdate;
 
 public class ModelUpdateTask extends Task {
     private String osAlias;
@@ -48,12 +48,12 @@ public class ModelUpdateTask extends Task {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
-        ModelUpdate modelUpdate = new ModelUpdate(os, uosw);
+/*        ModelUpdate modelUpdate = new ModelUpdate(os, uosw);
         try {
             modelUpdate.update();
         } catch (PathException pe) {
             throw new BuildException("Exception while updating", pe);
-        }
+        }*/
     }
 
 }
