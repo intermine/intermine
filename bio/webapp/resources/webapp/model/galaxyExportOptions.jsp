@@ -79,7 +79,7 @@ li { margin-bottom:0.5em; }
 
       <li id="exportTableView">
           <fieldset>
-             <input type="radio" name="exportOptions" checked="checked" value="view"/><label>Send results as a table</label>
+             <input type="radio" name="exportOptions" checked="checked" value="view"/><label>Send results as tab separated values</label>
           </fieldset>
       </li>
 
