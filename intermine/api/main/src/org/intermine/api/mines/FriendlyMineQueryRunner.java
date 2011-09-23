@@ -99,8 +99,8 @@ public final class FriendlyMineQueryRunner
                     LOG.info(msg);
                     return null;
                 }
-                String symbol = bits[0];
-                String newIdentifier = bits[1];
+                String newIdentifier = bits[0];
+                String symbol = bits[1];
                 if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
                     identifiers[0] = newIdentifier;
                     identifiers[1] = newIdentifier;
@@ -158,8 +158,8 @@ public final class FriendlyMineQueryRunner
                     LOG.info(msg);
                     return null;
                 }
-                String symbol = bits[0];
-                String newIdentifier = bits[1];
+                String newIdentifier = bits[0];
+                String symbol = bits[1];
                 if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
                     identifierPair[0] = newIdentifier;
                     identifierPair[1] = newIdentifier;
