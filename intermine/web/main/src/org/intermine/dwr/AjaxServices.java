@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -669,12 +668,13 @@ public class AjaxServices
      * match more than one entry in the remote mine but this will be handled by the portal of the
      * remote mine.
      *
+     * @param mineName name of mine to query
      * @param organismName gene.organism
      * @param primaryIdentifier identifier for gene
      * @param symbol identifier for gene or NULL
      * @return the links to friendly intermines
      */
-    public static String getFriendlyMineReportLinks(String organismName,
+    public static String getFriendlyMineReportLinks(String mineName, String organismName,
             String primaryIdentifier, String symbol) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -690,7 +690,7 @@ public class AjaxServices
             LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
-        return linkGen.getLinks(fmm, null, organismName, primaryIdentifier).toString();
+        return linkGen.getLinks(fmm, mineName, organismName, primaryIdentifier).toString();
     }
 
     /**
@@ -775,7 +775,9 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         FriendlyMineManager linkManager = im.getFriendlyMineManager();
         Mine mine = linkManager.getMine("RatMine");
-
+        if (mine == null) {
+            return null;
+        }
         final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
             + "\"Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name\"  "
             + "sortOrder=\"Gene.doAnnotation.ontologyTerm.name asc\"> "

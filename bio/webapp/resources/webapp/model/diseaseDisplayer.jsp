@@ -11,17 +11,20 @@
 
 <script type="text/javascript" charset="utf-8">
 function getRatDiseases(orthologues) {
-
     AjaxServices.getRatDiseases(orthologues, function(diseases) {
-        var jSONObject = jQuery.parseJSON(diseases);
-        // switch off loading img
-        jQuery('#intermine_rat_disease').toggleClass('loading');
-        if (jSONObject && jSONObject['results'].length > 0) {
-            generateDiseases(jSONObject, "#intermine_rat_disease");
+        if (diseases) {
+            var jSONObject = jQuery.parseJSON(diseases);
+            // switch off loading img
+            jQuery('#intermine_rat_disease').toggleClass('loading');
+            if (jSONObject && jSONObject['results'].length > 0) {
+               generateDiseases(jSONObject, "#intermine_rat_disease");
+            } else {
+              jQuery("#intermine_rat_disease").html("No diseases found.");
+            }
         } else {
-            jQuery("#intermine_rat_disease").html("No diseases found.");
+              jQuery("#intermine_rat_disease").html("No diseases found.");
         }
-    });
+     });
 }
 
 function generateDiseases(jSONObject, target) {

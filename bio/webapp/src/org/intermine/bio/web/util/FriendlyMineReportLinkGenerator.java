@@ -12,12 +12,14 @@ package org.intermine.bio.web.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +36,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
+import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
@@ -47,16 +50,16 @@ import org.json.JSONObject;
 public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerator
 {
     private static final Logger LOG = Logger.getLogger(FriendlyMineReportLinkGenerator.class);
-    private static CacheMap<MultiKey, Map<String, JSONObject>> intermineLinkCache
-        = new CacheMap<MultiKey, Map<String, JSONObject>>();
-    private Map<String, JSONObject> filteredMines;
+    private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
+        = new CacheMap<MultiKey, Collection<JSONObject>>();
+
+    private boolean debug = true;
 
     /**
      * Constructor
      */
     public FriendlyMineReportLinkGenerator() {
         super();
-        filteredMines = new HashMap<String, JSONObject>();
     }
 
     /**
@@ -69,48 +72,61 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
      * @param olm LinkManager
      * @param organismShortName organism.shortName, eg. C. elegans
      * @param primaryIdentifier identifier for gene
-     * @param mineName NULL
+     * @param mineName name of mine to query
      * @return map from mine to organism-->genes
      */
     public Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
             String organismShortName, String primaryIdentifier) {
-
-        MultiKey key = new MultiKey(primaryIdentifier, organismShortName);
-        if (intermineLinkCache.get(key) != null) {
-            return intermineLinkCache.get(key).values();
+        MultiKey key = new MultiKey(mineName, primaryIdentifier, organismShortName);
+        if (intermineLinkCache.get(key) != null && !debug) {
+            return intermineLinkCache.get(key);
         }
-
-        Map<String, JSONObject> minesWithGene = new HashMap<String, JSONObject>();
+        Map<String, Set<JSONObject>> organismToGenes = new HashMap<String, Set<JSONObject>>();
+        Mine mine = olm.getMine(mineName);
         try {
-            getMinesWithThisGene(olm, minesWithGene, organismShortName, primaryIdentifier);
-            getMinesWithOrthologues(olm, filteredMines, minesWithGene, organismShortName,
-                    primaryIdentifier);
-            intermineLinkCache.put(key, filteredMines);
+            queryForGenes(mine, organismToGenes, organismShortName, primaryIdentifier);
+            queryForHomologues(olm, mine, organismToGenes, organismShortName, primaryIdentifier);
         } catch (UnsupportedEncodingException e) {
             LOG.error("error encoding organism name", e);
         } catch (JSONException e) {
             LOG.error("error generating JSON objects", e);
         }
-        return filteredMines.values();
+
+        Collection<JSONObject> organisms = new ArrayList<JSONObject>();
+
+        // now we have a list of orthologues, add to JSON Organism object
+        for (Entry<String, Set<JSONObject>> entry : organismToGenes.entrySet()) {
+            String organismName = entry.getKey();
+            Set<JSONObject> homologues = entry.getValue();
+            JSONObject organism = new JSONObject();
+            try {
+                organism.put("shortName", organismName);
+                organism.put("genes", homologues);
+            } catch (JSONException e) {
+                LOG.error("Problem reading JSON", e);
+                return null;
+            }
+            organisms.add(organism);
+        }
+        intermineLinkCache.put(key, organisms);
+        return organisms;
     }
 
     /**
-     * Generate a list of genes and orthologues for remote mines.
+     * Query mine for gene
      *
      * 1. Query local mine for orthologues for gene given.
      * 2. if orthologue found query remote mine for that gene
      * 3. if orthologue not found query remote mine for orthologues
      *
-     * @param olm LinkManager
-     * @param mines list of mines
+     * @param mine to query
      * @param organismShortName organism.shortName, eg. C. elegans
      * @param primaryIdentifier identifier for gene
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    private static void getMinesWithThisGene(FriendlyMineManager olm,
-            Map<String, JSONObject> minesToGenes, String organismShortName,
-            String primaryIdentifier)
+    private static void queryForGenes(Mine mine, Map<String, Set<JSONObject>> organisms,
+            String organismShortName, String primaryIdentifier)
         throws JSONException, UnsupportedEncodingException {
         if (organismShortName == null) {
             LOG.error("error created links to other mines for this gene, no organism provided");
@@ -122,133 +138,105 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
             return;
         }
         String encodedOrganism = URLEncoder.encode("" + organismShortName, "UTF-8");
-
-        // query each friendly mine, return matches.  value can be identifier or symbol
-        // we only return one value even if there are multiple matches, the portal at the remote
-        // mine will handle duplicates
-        Map<Mine, String[]> minesWithGene = getObjectInOtherMines(olm, encodedOrganism,
-                primaryIdentifier);
-
-        if (minesWithGene == null) {
+        String[] identifiers = getObjectInOtherMines(mine, encodedOrganism, primaryIdentifier);
+        if (identifiers == null) {
             return;
         }
-
-        for (Map.Entry<Mine, String[]> entry : minesWithGene.entrySet()) {
-            Mine mine = entry.getKey();
-            String[] identifiers = entry.getValue();
-            minesToGenes.put(mine.getName(), getJSONOrganism(organismShortName, identifiers));
-        }
+        JSONObject gene = getJSONGene(identifiers);
+        Util.addToSetMap(organisms, organismShortName, gene);
     }
 
     /**
-     * Returns list of friendly mines that contain value of interest.  Used for
-     * the links on the report page.
-     *
-     * @param constraintValue optional additional constraint, eg. organism
-     * @param identifier identifier to query
-     * @param collection list of friendly mines
-     * @return the list of valid mines for the given list
-     */
-    private static Map<Mine, String[]> getObjectInOtherMines(FriendlyMineManager olm,
-            String constraintValue, String identifier) {
-        Map<Mine, String[]> minesWithData = new HashMap<Mine, String[]>();
-        for (Mine mine : olm.getFriendlyMines()) {
-            String[] identifiers = FriendlyMineQueryRunner.getObjectInOtherMine(mine,
-                    constraintValue, identifier);
-            if (identifiers != null && identifiers.length == 2 && identifiers[0] != null) {
-                minesWithData.put(mine, identifiers);
-            }
-        }
-        return minesWithData;
-    }
-
-    /**
-     * generate a list of genes and orthologues for remote mines.
+     * generate a list of orthologues for remote mine
      *
      * 1. Query local mine for orthologues for gene given.
      * 2. if orthologue found query remote mine for that gene
      * 3. if orthologue not found query remote mine for orthologues
      *
-     * @param olm LinkManager
-     * @param filteredMines list of mines with genes
+     * @param mine mine to query
      * @param organismShortName organism.shortName, eg. C. elegans
      * @param primaryIdentifier identifier for gene
      * @throws JSONException if we have JSON problems
      * @throws UnsupportedEncodingException
      */
-    private static void getMinesWithOrthologues(FriendlyMineManager olm,
-            Map<String, JSONObject> filteredMines, Map<String, JSONObject> mines,
-            String organismShortName, String primaryIdentifier)
+    private static void queryForHomologues(FriendlyMineManager olm, Mine mine,
+            Map<String, Set<JSONObject>> organisms, String organismShortName,
+            String primaryIdentifier)
         throws JSONException, UnsupportedEncodingException {
-
-        String encodedOrganism = URLEncoder.encode("" + organismShortName, "UTF-8");
         Map<String, Set<String>> localHomologues = getLocalOrthologues(olm, organismShortName,
                 primaryIdentifier);
-
-        for (Mine mine : olm.getFriendlyMines()) {
-            final JSONObject jsonMine = getJSONMine(filteredMines, mine.getName());
-            Set<JSONObject> organisms = new HashSet<JSONObject>();
-            addCurrentOrganism(organisms, mines, mine.getName(), organismShortName);
-            Set<String> remoteMineDefaultOrganisms = mine.getDefaultValues();
-            boolean queryRemoteMine = true;
-
-            for (String remoteMineDefaultOrganism : remoteMineDefaultOrganisms) {
-                Set<String> matchingHomologues = localHomologues.get(remoteMineDefaultOrganism);
-
-                // for default organism, do we have local orthologues?
-                if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
-                    Map<String, Set<String[]>> orthologueMap = new HashMap<String, Set<String[]>>();
-                    for (String homologue : matchingHomologues) {
-                        // if so, does remote mine have this gene?
-                        String[] homologueIdentifiers =
-                            FriendlyMineQueryRunner.getObjectInOtherMine(
-                                    mine, URLEncoder.encode(""
-                                            + remoteMineDefaultOrganism, "UTF-8"),
-                                    homologue);
-                        if (homologueIdentifiers != null && homologueIdentifiers.length == 2
-                                && homologueIdentifiers[0] != null) {
-                            Util.addToSetMap(orthologueMap, remoteMineDefaultOrganism,
-                                    homologueIdentifiers);
-                        }
-                    }
-                    if (!orthologueMap.isEmpty()) {
-                        queryRemoteMine = false;
-                        JSONObject organism = getJSONOrganism(orthologueMap);
-                        organisms.add(organism);
-                    }
+        boolean queryRemoteMine = true;
+        for (String remoteMineOrganism : mine.getDefaultValues()) {
+            // check if local mine has orthologues for organism in remote mine
+            Set<String> matchingHomologues = localHomologues.get(remoteMineOrganism);
+            if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
+                // test if remote mine has these genes
+                Map<String, Set<String[]>> results = getObjectsInOtherMine(mine, remoteMineOrganism,
+                        matchingHomologues);
+                if (!results.isEmpty()) {
+                    queryRemoteMine = false;
+                    organisms.putAll(processHomologues(results));
                 }
             }
+        }
 
-            /**
-             * Query the remote mine if:
-             * - local mine has no orthologues
-             * - remote mine does not have corresponding gene for the orthologue found in local mine
-             */
-            if (queryRemoteMine) {
-                Map<String, Set<String[]>> remoteOrthologues
-                    = FriendlyMineQueryRunner.runRelatedDataQuery(mine, encodedOrganism,
-                            primaryIdentifier);
-                if (remoteOrthologues != null && !remoteOrthologues.isEmpty()) {
-                    JSONObject organism = getJSONOrganism(remoteOrthologues);
-                    organisms.add(organism);
-                }
-            }
-            if (!organisms.isEmpty()) {
-                jsonMine.put("organisms", organisms);
+        /**
+         * Query the remote mine if:
+         * - local mine has no orthologues
+         * - remote mine does not have corresponding gene for the orthologue found in local mine
+         */
+        if (queryRemoteMine) {
+            String encodedOrganism = URLEncoder.encode("" + organismShortName, "UTF-8");
+            Map<String, Set<String[]>> results = FriendlyMineQueryRunner.runRelatedDataQuery(mine,
+                    encodedOrganism, primaryIdentifier);
+            if (results != null && !results.isEmpty()) {
+                organisms = processHomologues(results);
             }
         }
     }
 
-    private static void addCurrentOrganism(Set<JSONObject> organisms, Map<String, JSONObject> mines,
-            String mineName, String organismShortName)
+    private static Map<String, Set<JSONObject>> processHomologues(
+            Map<String, Set<String[]>> results)
         throws JSONException {
-        JSONObject genes = mines.get(mineName);
-        if (genes != null) {
-            JSONObject organism = new JSONObject();
-            organism.put("shortName", organismShortName);
-            organism.put("genes", genes);
-            organisms.add(organism);
+        Map<String, Set<JSONObject>> homologues = new HashMap<String, Set<JSONObject>>();
+        for (Map.Entry<String, Set<String[]>> entry : results.entrySet()) {
+            String organismName = entry.getKey();
+            Set<String[]> identifierSets = entry.getValue();
+            for (String[] identifiers : identifierSets) {
+                JSONObject gene = getJSONGene(identifiers);
+                Util.addToSetMap(homologues, organismName, gene);
+            }
         }
+        return homologues;
+    }
+
+    // does remote mine have these genes, query run for each organism
+    private static Map<String, Set<String[]>> getObjectsInOtherMine(Mine mine,
+            String remoteMineDefaultOrganism, Set<String> matchingHomologues) {
+        Map<String, Set<String[]>> homologues = new HashMap<String, Set<String[]>>();
+        String homologueString = StringUtil.join(matchingHomologues, ",");
+        Set<String[]> homologueIdentifiers;
+        try {
+            homologueIdentifiers = FriendlyMineQueryRunner.getObjectsInOtherMine(mine,
+                    URLEncoder.encode("" + remoteMineDefaultOrganism, "UTF-8"), homologueString);
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        // query isn't guaranteed to return valid identifiers, filter
+        boolean hasValidResults = false;
+        Set<String[]> validIdentifiers = new HashSet<String[]>();
+        for (String[] homologuePair : homologueIdentifiers) {
+            if (homologuePair != null && homologuePair.length == 2 && homologuePair[0] != null) {
+                validIdentifiers.add(homologuePair);
+                hasValidResults = true;
+            }
+        }
+        if (hasValidResults) {
+            homologues.put(remoteMineDefaultOrganism, validIdentifiers);
+            return homologues;
+        }
+        return null;
     }
 
     private static JSONObject getJSONGene(String[] identifiers)
@@ -259,34 +247,6 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
         return gene;
     }
 
-    // used for genes, not homologues
-    private static JSONObject getJSONOrganism(String organismName, String[] identifiers)
-        throws JSONException {
-        JSONObject gene = getJSONGene(identifiers);
-        JSONObject organism = new JSONObject();
-        organism.put("shortName", organismName);
-        organism.put("orthologues", gene);
-        return organism;
-    }
-
-    private static JSONObject getJSONOrganism(Map<String, Set<String[]>> orthologueMap)
-        throws JSONException {
-        String organismName = null;
-        Set<JSONObject> genes = new HashSet<JSONObject>();
-        for (Map.Entry<String, Set<String[]>> entry : orthologueMap.entrySet()) {
-            organismName = entry.getKey();
-            Set<String[]> identifierSets = entry.getValue();
-//            Collection<String[]> parsedIdentifierSets = removeDuplicateEntries(identifierSets);
-            for (String[] identifiers : identifierSets) {
-                JSONObject gene = getJSONGene(identifiers);
-                genes.add(gene);
-            }
-        }
-        JSONObject organism = new JSONObject();
-        organism.put("shortName", organismName);
-        organism.put("orthologues", genes);
-        return organism;
-    }
 
     // query local mine for orthologues
     private static Map<String, Set<String>> getLocalOrthologues(FriendlyMineManager olm,
@@ -302,15 +262,11 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
             String orthologuePrimaryIdentifier = (String) row.get(1).getField();
             String organismName = (String) row.get(2).getField();
             if (geneOrganismName.equals(organismName)) {
-                // ignore homologues for now
+                // ignore paralogues for now
                 continue;
             }
-            String orthologueIdentifer = null;
             if (!StringUtils.isEmpty(orthologuePrimaryIdentifier)) {
-                orthologueIdentifer = orthologuePrimaryIdentifier;
-            }
-            if (!StringUtils.isEmpty(orthologueIdentifer)) {
-                Util.addToSetMap(relatedDataMap, organismName, orthologueIdentifer);
+                Util.addToSetMap(relatedDataMap, organismName, orthologuePrimaryIdentifier);
             }
         }
         return relatedDataMap;
@@ -327,14 +283,13 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
         return q;
     }
 
-    private static JSONObject getJSONMine(Map<String, JSONObject> mines, String mineName)
-        throws JSONException {
-        JSONObject jsonMine = mines.get(mineName);
-        if (jsonMine == null) {
-            jsonMine = new JSONObject();
-            jsonMine.put("mineName", mineName);
-            mines.put(mineName, jsonMine);
+    private static String[] getObjectInOtherMines(Mine mine, String constraintValue,
+            String identifier) {
+        String[] identifiers = FriendlyMineQueryRunner.getObjectInOtherMine(mine, constraintValue,
+                identifier);
+        if (identifiers != null && identifiers.length == 2 && identifiers[0] != null) {
+            return identifiers;
         }
-        return jsonMine;
+        return null;
     }
 }
