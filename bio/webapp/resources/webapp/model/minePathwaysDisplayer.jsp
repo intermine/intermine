@@ -15,17 +15,19 @@
 function getFriendlyMinePathways(mine, orthologues) {
 
     AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-        var jSONObject = jQuery.parseJSON(pathways);
+    	var jSONObject = jQuery.parseJSON(pathways),
+    		position;
+    	
+    	jQuery('#mine-pathway-displayer table thead th').each(function(i) {
+            if (jQuery(this).text() == mine) position = i;
+           });    	
+    	
         if (jSONObject['results'].length > 0) {
           generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
         } else {
-            jQuery("#intermine_pathways_" + mine).html(jQuery("<p/>", {
-              'text': "No pathways found."
-            }));
+            jQuery("#intermine_pathways_" + mine).text('None');
         }
-       jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-        if (jQuery(this).text() == mine) jQuery(this).removeClass('loading');
-       });
+       jQuery('#mine-pathway-displayer table thead th:eq(' + position + ')').removeClass('loading');
     });
 }
 
