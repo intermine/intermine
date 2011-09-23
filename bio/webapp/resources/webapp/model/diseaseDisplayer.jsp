@@ -9,62 +9,57 @@
 
 <!-- diseaseDisplayer.jsp -->
 
+<div id="mine-rat-disease" class="collection-table">
+<h3 class="loading">Diseases (from RatMine)</h3>
+
+<table>
+  <tbody>
+  <tr>
+    <td>
+        <div id="intermine_rat_disease"></div>
+      </td>
+  </tr>
+  </tbody>
+</table>
+
 <script type="text/javascript" charset="utf-8">
-function getRatDiseases(orthologues) {
-    AjaxServices.getRatDiseases(orthologues, function(diseases) {
-        if (diseases) {
+function generateDiseases(jSONObject, target) {
+   var url;
+   if (jSONObject['mineURL'] != undefined) {
+     url = jSONObject['mineURL'];
+   }
+
+   if (jSONObject['results'] != undefined) {
+      jQuery('<ul/>').appendTo(target);
+      jQuery.each(jSONObject['results'], function(index, pathway) {
+           jQuery('<li/>', {
+             'html': jQuery('<a/>', {
+             'href': url + "/report.do?id=" + pathway['id'],
+             'text': pathway['name'],
+             'target': '_blank'
+         })
+         }).appendTo(target + ' ul');
+      });
+   }
+}
+
+(function() {
+    AjaxServices.getRatDiseases('${ratGenes}', function(diseases) {
+        jQuery("#mine-rat-disease h3").removeClass('loading');
+    	if (diseases) {
             var jSONObject = jQuery.parseJSON(diseases);
-            // switch off loading img
-            jQuery('#intermine_rat_disease').toggleClass('loading');
             if (jSONObject && jSONObject['results'].length > 0) {
                generateDiseases(jSONObject, "#intermine_rat_disease");
             } else {
-              jQuery("#intermine_rat_disease").html("No diseases found.");
+              jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
             }
         } else {
-              jQuery("#intermine_rat_disease").html("No diseases found.");
+              jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
         }
      });
-}
-
-function generateDiseases(jSONObject, target) {
-          var url = '';
-          if (jSONObject['mineURL'] != undefined) {
-            url = jSONObject['mineURL'];
-          }
-
-          if (jSONObject['results'] != undefined) {
-             jQuery('<ul/>').appendTo(target);
-             jQuery.each(jSONObject['results'], function(index, pathway) {
-                  jQuery('<li/>', {
-                    'html': jQuery('<a/>', {
-                    'href': url + "/report.do?id=" + pathway['id'],
-                    'text': pathway['name'],
-                    'target': '_blank'
-                })
-                }).appendTo(target + ' ul');
-             });
-          }
-}
+})();
 
 </script>
-
-<div id="mine-rat-disease" class="collection-table">
-<h3>Diseases (from RatMine)</h3>
-
-    <!-- one column for each mine -->
-    <table>
-      <tbody>
-      <tr>
-        <td>
-            <div id="intermine_rat_disease" class="loading"></div>
-            <script type="text/javascript" charset="utf-8">
-                getRatDiseases('${ratGenes}');
-            </script>
-          </td>
-      </tr>
-      </tbody>
-    </table>
 
 </div>
 <!-- /diseaseDisplayer.jsp -->
