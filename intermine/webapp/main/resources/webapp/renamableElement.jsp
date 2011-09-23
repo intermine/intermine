@@ -20,7 +20,7 @@
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
   <span id="linkBag_${name}">
   <c:choose>
-         <c:when test="${type == 'bag' && state == 'CURRENT'}">
+         <c:when test="${type == 'bag' && (state == 'CURRENT' || state == 'NOT_CURRENT')}">
            <html:link action="/bagDetails?bagName=${nameForURL}">
              <c:out value="${name}"/>
            </html:link>
@@ -41,7 +41,7 @@
   </span>
  </span>
  <span id="editName_${name}">
- <c:if test="${(type != 'bag' || (type == 'bag' && state == 'CURRENT'))}">
+ <c:if test="${(type != 'bag' || (type == 'bag' && (state == 'CURRENT' || state == 'NOT_CURRENT')))}">
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
   </a>

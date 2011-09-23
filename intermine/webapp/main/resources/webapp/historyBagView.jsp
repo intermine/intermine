@@ -217,8 +217,20 @@ if (!im.bagWorks) {
 	            		jQuery('div.status-table.NOT_CURRENT table tbody tr').each(function(i) {
 	            			if (jQuery(this).find('td.list-name').text() == list['name']) {
 	            				jQuery('div.status-table.' + list['status']).show();
-	            				jQuery(this).clone()
-	            				.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
+	            				var newList = jQuery(this).clone();
+	            				
+	            				if (list['status'] == 'TO_UPGRADE') {
+	            					jQuery('<td/>', {
+	            						'class': 'upgrade'
+	            					})
+	            					.append(jQuery('<a/>', {
+	            						'href': '<html:rewrite action="/bagUpgrade"/>' + '?bagName=' + newList.find('td.list-name').text().replace(/ /g, '+'),
+	            						'class': 'bagToUpgrade'
+	            					}))
+	            					.appendTo(newList);
+	            				}
+	            				
+	            				newList.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
 	            				.highlight();
 	            			}
 	            		});
