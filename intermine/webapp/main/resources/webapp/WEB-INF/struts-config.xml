@@ -459,6 +459,7 @@
     <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController"/>
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
+    <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
