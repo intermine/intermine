@@ -80,7 +80,7 @@ public class PathQueryBinding
      * @param version the version number of the xml format, an attribute of the ProfileManager
      */
     public void doMarshal(PathQuery query, String queryName, String modelName,
-            XMLStreamWriter writer, @SuppressWarnings("unused") int version) {
+            XMLStreamWriter writer, int version) {
         try {
             writer.writeStartElement("query");
             writer.writeAttribute("name", queryName);
@@ -232,9 +232,9 @@ public class PathQueryBinding
      * @param writer a writer to add data to
      * @throws XMLStreamException if something goes wrong
      */
-    public void doAdditionalConstraintStuff(@SuppressWarnings("unused") PathQuery query,
-            @SuppressWarnings("unused") PathConstraint constraint,
-            @SuppressWarnings("unused") XMLStreamWriter writer) throws XMLStreamException {
+    public void doAdditionalConstraintStuff(PathQuery query,
+            PathConstraint constraint,
+            XMLStreamWriter writer) throws XMLStreamException {
     }
 
     /**
