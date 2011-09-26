@@ -136,5 +136,4 @@
 <!-- End of Worm Regulatory Network configuration -->
 
 <action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>
-
-
+<action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>

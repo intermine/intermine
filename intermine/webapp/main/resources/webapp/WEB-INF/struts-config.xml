@@ -457,7 +457,6 @@
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
     <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController"/>
-    <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
 
