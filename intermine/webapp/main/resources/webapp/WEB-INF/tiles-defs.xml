@@ -256,7 +256,7 @@
     <put name="pageName" value="keywordsearchresults"/>
   </definition>
   <definition name="reportDisplayer.tile" path="/reportDisplayer.jsp" controllerUrl="/initReportDisplayer.do"/>
-  <definition name="otherMinesLink.tile" path="/model/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
+  <definition name="otherMinesLink.tile" path="/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
   <definition name="track.tile" path="/track.jsp" />
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
