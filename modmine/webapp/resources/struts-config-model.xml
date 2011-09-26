@@ -135,3 +135,4 @@
 <action path="/initWormRegulatoryNetwork"  type="org.modmine.web.WormRegulatoryNetworkController" />
 <!-- End of Worm Regulatory Network configuration -->
 
+<action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>

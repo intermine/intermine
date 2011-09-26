@@ -28,3 +28,4 @@
   <put name="pageName" value="genomicRegionSearchResults" />
 </definition>
 
+<definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>

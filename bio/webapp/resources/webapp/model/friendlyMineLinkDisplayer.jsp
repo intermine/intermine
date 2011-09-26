@@ -28,6 +28,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 }
 
   function generate(jSONObject, target, url) {
+    url =+ "/portal.do";
     jQuery('<ul/>', {
         'class': 'organisms'
       })
@@ -46,9 +47,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                 'id': 'organism-' + key,
                 'style': (i <= 0) ? 'display:none;' : '',
                 'html': jQuery('<a/>', {
-                    'href': url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
+                    'href': '#',
                     'text': entry['shortName'],
-                    'target': '_blank'
+                    'target': '_blank',
+                    'click': function(e) {
+                        jQuery.post(url, { externalids: entry['identifiers'], class: "Gene" });
+                    }
                 })
             }).appendTo(target);
             i--;
@@ -69,7 +73,6 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
           }).appendTo(target);
       }
   }
-
 </script>
 
 <h3 class="goog">View homologues in other Mines:</h3>
