@@ -28,7 +28,7 @@ import org.intermine.web.logic.session.SessionMethods;
  **/
 public class ListManager
 {
-    private static final long MAX_WAIT = 2000;
+    private static final long MAX_WAIT = 20000;
     private final BagManager bagManager;
     private final Profile profile;
 
@@ -72,6 +72,10 @@ public class ListManager
             }
         }
         return bagManager.getUserAndGlobalBags(profile).values();
+    }
+    
+    public boolean isAnyBagUnresolvable() {
+        return bagManager.isAnyBagToUpgrade(profile);
     }
 
     /**
