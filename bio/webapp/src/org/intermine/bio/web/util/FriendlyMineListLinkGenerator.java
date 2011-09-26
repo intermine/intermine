@@ -99,9 +99,9 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         List<String> organismsInList = Arrays.asList(values.split(","));
         List<String> identifierSet = Arrays.asList(identifiers.split(","));
         Mine mine = linkManager.getMine(mineName);
-        if (mine == null) {
+        if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
-            return null;
+            return Collections.emptyList();
         }
         Set<String> homologues = mine.getMatchingMapKeys(null, organismsInList);
 

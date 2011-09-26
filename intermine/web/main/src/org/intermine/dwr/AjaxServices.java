@@ -690,7 +690,12 @@ public class AjaxServices
             LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
             return null;
         }
-        return linkGen.getLinks(fmm, mineName, organismName, primaryIdentifier).toString();
+        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organismName,
+                primaryIdentifier);
+        if (results == null || results.isEmpty()) {
+            return null;
+        }
+        return results.toString();
     }
 
     /**
@@ -741,17 +746,27 @@ public class AjaxServices
      * @return the links to friendly intermines
      */
     public static String getFriendlyMinePathways(String mineName, String orthologues) {
+        if (StringUtils.isEmpty(orthologues)) {
+            return null;
+        }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         FriendlyMineManager linkManager = im.getFriendlyMineManager();
         Mine mine = linkManager.getMine(mineName);
-
+        if (mine == null || mine.getReleaseVersion() == null) {
+            // mine is dead
+            return null;
+        }
         final String xmlQuery = "<query name=\"\" model=\"genomic\" view=\"Gene.pathways.id "
             + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\" "
             + "op=\"LOOKUP\" value=\"" + orthologues + "\" extraValue=\"\"/></query>";
         try {
             JSONObject results
                 = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            if (results == null) {
+                LOG.error("Couldn't query " + mine.getName() + " for pathways");
+                return null;
+            }
             results.put("mineURL", mine.getUrl());
             return results.toString();
         } catch (IOException e) {
@@ -771,11 +786,15 @@ public class AjaxServices
      * @return JSONobject.toString of JSON object
      */
     public static String getRatDiseases(String orthologues) {
+        if (StringUtils.isEmpty(orthologues)) {
+            return null;
+        }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         FriendlyMineManager linkManager = im.getFriendlyMineManager();
         Mine mine = linkManager.getMine("RatMine");
-        if (mine == null) {
+        if (mine == null || mine.getReleaseVersion() == null) {
+            // mine is dead
             return null;
         }
         final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
