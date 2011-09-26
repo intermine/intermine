@@ -394,28 +394,35 @@
 	      			previewColumns.push(value);
 	      		  }
 	      		});
-	      		if (previewColumns.length > 0) {
-	      			var limit = 3;
-	      			jQuery("#list-table table tbody tr").each(function(index) {
-	      				limit--;
-	      				var sourceTr = this;
-	      				<%-- copy over the relevant row columns --%>
-	      				jQuery('<tr/>', {
-	      					'html': function() {
-	      						var tr = this;
-	      	      				jQuery.each(previewColumns, function(index, value) {
-	      	      					jQuery('<td/>', {
-	      	      						'text': function() {
-	      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
-	      	      						}
-	      	      					}).appendTo(tr);
-	      	      				});
-	      					}
-	      				}).appendTo("#preview-table table tbody");
-	      				
-	      				if (limit <= 0) return false;
-	      			});
+	      		
+	      		<%-- no config, add the "first" two columns --%>
+	      		if (previewColumns.length == 0) {
+	      			previewColumns.push(columns[1]);
+	      			if (columns.length > 2) {
+	      				previewColumns.push(columns[2]);
+	      			}
 	      		}
+	      		
+      			var limit = 3;
+      			jQuery("#list-table table tbody tr").each(function(index) {
+      				limit--;
+      				var sourceTr = this;
+      				<%-- copy over the relevant row columns --%>
+      				jQuery('<tr/>', {
+      					'html': function() {
+      						var tr = this;
+      	      				jQuery.each(previewColumns, function(index, value) {
+      	      					jQuery('<td/>', {
+      	      						'text': function() {
+      	      							return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
+      	      						}
+      	      					}).appendTo(tr);
+      	      				});
+      					}
+      				}).appendTo("#preview-table table tbody");
+      				
+      				if (limit <= 0) return false;
+      			});
 	      		
 		      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
 		      function toggleResults() {

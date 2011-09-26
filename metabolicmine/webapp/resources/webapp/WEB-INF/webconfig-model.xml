@@ -143,7 +143,7 @@
       <table path="synonyms.value" showInHeader="true" lineLength="100" />
     </inlinelist>
     <fields>
-        <fieldconfig fieldExpr="primaryIdentifier"/>
+        <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
         <fieldconfig fieldExpr="primaryAccession"/>
         <fieldconfig fieldExpr="organism.name"/>
     </fields>
@@ -319,8 +319,8 @@
 
   <class className="org.intermine.model.bio.SNP">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
+      <fieldconfig fieldExpr="symbol" showInListAnalysisPreviewTable="true"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="true" />
