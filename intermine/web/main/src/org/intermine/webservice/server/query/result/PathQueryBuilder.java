@@ -18,10 +18,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 
 
 /**
@@ -63,11 +65,17 @@ public class PathQueryBuilder
                         + formatMessage(pathQuery.verifyQuery()));
             }
 
-            // check bags used by this query exist
+            // check bags used by this query exist and are current
             Set<String> missingBags = new HashSet<String>();
+            Set<String> toUpgrade = new HashSet<String>();
             for (String bagName : pathQuery.getBagNames()) {
                 if (!savedBags.containsKey(bagName)) {
                     missingBags.add(bagName);
+                } else {
+                    InterMineBag bag = savedBags.get(bagName);
+                    if (!BagState.CURRENT.equals(bag.getState())) {
+                        toUpgrade.add(bagName);
+                    }
                 }
             }
             if (!missingBags.isEmpty()) {
@@ -75,6 +83,10 @@ public class PathQueryBuilder
                         "XML is well formatted but you do not have access to the "
                         + "following mentioned lists: " + missingBags 
                         + " query: " + xml);
+            }
+            if (!toUpgrade.isEmpty()) {
+                throw new InternalErrorException("XML is well formatted, but the following lists" +
+                		" are not 'current', and need to be manually upgraded: " + toUpgrade);
             }
         } else {
             logger.debug("Received invalid xml: " + xml);
