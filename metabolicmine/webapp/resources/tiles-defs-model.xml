@@ -35,3 +35,4 @@
 </definition>
 
 <definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>
+<definition name="otherMinesLink.tile" path="/model/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
