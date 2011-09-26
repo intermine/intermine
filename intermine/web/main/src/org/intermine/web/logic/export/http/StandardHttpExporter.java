@@ -53,7 +53,7 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      * @return true if given PagedTable can be exported with this exporter
      */
     @Override
-    public boolean canExport(@SuppressWarnings("unused") final PagedTable pt) {
+    public boolean canExport(final PagedTable pt) {
         return true;
     }
 
