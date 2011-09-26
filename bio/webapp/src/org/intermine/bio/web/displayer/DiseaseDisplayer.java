@@ -56,7 +56,9 @@ public class DiseaseDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
         Gene gene = (Gene) reportObject.getObject();
         Set<String> orthologues = getLocalHomologues(gene);
-        request.setAttribute("ratGenes", StringUtil.join(orthologues, ","));
+        if (orthologues != null && !orthologues.isEmpty()) {
+            request.setAttribute("ratGenes", StringUtil.join(orthologues, ","));
+        }
     }
 
     private PathQuery getQuery(Gene gene) {

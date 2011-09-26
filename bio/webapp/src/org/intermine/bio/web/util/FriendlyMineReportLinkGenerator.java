@@ -52,8 +52,7 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
     private static final Logger LOG = Logger.getLogger(FriendlyMineReportLinkGenerator.class);
     private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
         = new CacheMap<MultiKey, Collection<JSONObject>>();
-
-    private boolean debug = true;
+    private boolean debug = false;
 
     /**
      * Constructor
@@ -83,13 +82,19 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
         }
         Map<String, Set<JSONObject>> organismToGenes = new HashMap<String, Set<JSONObject>>();
         Mine mine = olm.getMine(mineName);
+        if (mine == null || mine.getReleaseVersion() == null) {
+            // mine is dead
+            return null;
+        }
         try {
             queryForGenes(mine, organismToGenes, organismShortName, primaryIdentifier);
             queryForHomologues(olm, mine, organismToGenes, organismShortName, primaryIdentifier);
         } catch (UnsupportedEncodingException e) {
             LOG.error("error encoding organism name", e);
+            return null;
         } catch (JSONException e) {
             LOG.error("error generating JSON objects", e);
+            return null;
         }
 
         Collection<JSONObject> organisms = new ArrayList<JSONObject>();

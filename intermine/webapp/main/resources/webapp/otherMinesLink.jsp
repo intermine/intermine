@@ -6,9 +6,9 @@
 
 function getFriendlyMineLinks(mine, url, organismShortName, identifier, symbol) {
     AjaxServices.getFriendlyMineReportLinks(mine, organismShortName, identifier, symbol, function(response) {
-    	var jSONObject = jQuery.parseJSON(response)
-    	jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
-        if (jSONObject.length > 0) {
+      var jSONObject = jQuery.parseJSON(response)
+      jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
+        if (jSONObject && jSONObject.length > 0) {
           generateMineLinks(jSONObject, url, organismShortName, "#intermine_orthologue_links_" + mine);
         } else {
           jQuery("#intermine_orthologue_links_" + mine).html("<p>No results found.</p>");
@@ -23,41 +23,41 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
   })
   .appendTo(target);
   target += ' ul.organisms';
-  
+
   <%-- traverse organisms --%>
   jQuery.each(jSONObject, function(k, organism) {
-  	var shortName = organism['shortName'];
+    var shortName = organism['shortName'];
       if (organism['genes'] != undefined) {
-      	<%-- create the organism list item --%>
-      	jQuery('<li/>', {
-      		'class': 'organism-' + k,
-      		'text': shortName
-      	})
-      	.append(function() {
-      		<%-- create a list of organism - genes found --%>
-      		return jQuery('<ul/>', {
-      			'class': 'entries'
-      		})
-      		.append(function() {
-      			var self = this;
-      			jQuery.each(organism['genes'], function(geneKey, gene) {
-      				jQuery('<li/>', {
-      					'class': 'gene-' + geneKey,
-      				})
-      				.append(jQuery('<a/>', {
-      					'text': (gene['displayIdentifier'] != '""') ? gene['displayIdentifier'] : gene['primaryIdentifier'],
-      				 	'target': '_blank'
-      				})
-      				.attr('href', function() {
-      					var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
-      					return (url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
-      				})
-      				)
-      				.appendTo(self);
-      			});
-      		});
-      	})
-      	.appendTo(target);
+        <%-- create the organism list item --%>
+        jQuery('<li/>', {
+          'class': 'organism-' + k,
+          'text': shortName
+        })
+        .append(function() {
+          <%-- create a list of organism - genes found --%>
+          return jQuery('<ul/>', {
+            'class': 'entries'
+          })
+          .append(function() {
+            var self = this;
+            jQuery.each(organism['genes'], function(geneKey, gene) {
+              jQuery('<li/>', {
+                'class': 'gene-' + geneKey,
+              })
+              .append(jQuery('<a/>', {
+                'text': (gene['displayIdentifier'] != '""') ? gene['displayIdentifier'] : gene['primaryIdentifier'],
+                 'target': '_blank'
+              })
+              .attr('href', function() {
+                var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
+                return (url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
+              })
+              )
+              .appendTo(self);
+            });
+          });
+        })
+        .appendTo(target);
       }
   });
 }

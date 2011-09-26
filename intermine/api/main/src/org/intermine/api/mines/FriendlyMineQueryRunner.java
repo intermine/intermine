@@ -78,7 +78,9 @@ public final class FriendlyMineQueryRunner
      */
     public static String[] getObjectInOtherMine(Mine mine, String constraintValue,
             String identifier) {
-        // TODO replace with query
+        if (mine == null || mine.getReleaseVersion() == null) {
+            return null;
+        }
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + Constants.REPORT_TEMPLATE + Constants.LOOKUP_CONSTRAINT + identifier
             + Constants.EXTRA_VALUE_CONSTRAINT + constraintValue;
@@ -135,7 +137,9 @@ public final class FriendlyMineQueryRunner
      */
     public static Set<String[]> getObjectsInOtherMine(Mine mine, String constraintValue,
             String identifiers) {
-        // TODO replace with query
+        if (mine == null || mine.getReleaseVersion() == null) {
+            return null;
+        }
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + Constants.REPORT_TEMPLATE + Constants.LOOKUP_CONSTRAINT + identifiers
             + Constants.EXTRA_VALUE_CONSTRAINT + constraintValue;
@@ -191,7 +195,9 @@ public final class FriendlyMineQueryRunner
      */
     public static Map<String, Set<String[]>> runRelatedDataQuery(Mine mine, String constraintValue,
             String identifier) {
-        // TODO replace template with custom query
+        if (mine == null || mine.getReleaseVersion() == null) {
+            return null;
+        }
         final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + TEMPLATE_PATH
             + Constants.RELATED_DATA_TEMPLATE + Constants.RELATED_DATA_CONSTRAINT_1 + identifier
             + Constants.RELATED_DATA_CONSTRAINT_2 + constraintValue;
