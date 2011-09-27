@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <tiles:importAttribute/>
 
@@ -68,13 +69,23 @@
   });
 </script>
 <div id="sidebar">
+   <c:if test="${fn:length(viewStrings) <= 0}">
    <div id="bigGreen" class='button inactive'>
+   <div class="left"></div>
+   <input id="showResult" type="submit" name="showResult"
+          value='<fmt:message key="view.showresults"/>'/>
+          <div class="right"></div>
+   </div>
+   </c:if>
+   <c:if test="${fn:length(viewStrings) > 0}">
+   <div id="bigGreen" class='button'/>
       <div class="left"></div>
           <html:form action="/queryBuilderViewAction">
           <input id="showResult" type="submit" name="showResult"
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>
   </div>
+  </c:if>
   <div style="clear:both;"></div>
 </div>
 <div id="queryBuilderContainer">
