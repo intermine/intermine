@@ -36,10 +36,12 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new EnsemblComparaConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0013672", Collections.singleton("FBgn0013672"));
-        resolverFactory.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
-        converter.resolver = resolverFactory.getIdResolver(false);
+        MockIdResolverFactory flyResolverFactory = new MockIdResolverFactory("Gene");
+        flyResolverFactory.addResolverEntry("7227", "FBgn0013672", Collections.singleton("FBgn0013672"));
+        flyResolverFactory.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
+        converter.flyResolverFactory = flyResolverFactory;
+        DoNothingIdResolverFactory humanResolverFactory = new DoNothingIdResolverFactory("Gene");
+        converter.humanResolverFactory = humanResolverFactory;
     }
 
     public void testProcess() throws Exception {

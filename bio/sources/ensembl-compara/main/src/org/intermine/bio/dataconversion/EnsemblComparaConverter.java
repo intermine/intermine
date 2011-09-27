@@ -46,7 +46,10 @@ public class EnsemblComparaConverter extends BioFileConverter
     private static final String DATASET_TITLE = "Ensembl Compara data set";
     private static final String DATA_SOURCE_NAME = "Ensembl";
     private Map<String, String> genes = new HashMap<String, String>();
-    protected IdResolver resolver;
+    protected IdResolverFactory flyResolverFactory;
+    protected IdResolverFactory humanResolverFactory;
+    private IdResolver flyResolver = null;
+    private IdResolver humanResolver;
     private Map<String, String> configs = new HashMap<String, String>();
     private static String evidenceRefId = null;
 
@@ -58,8 +61,8 @@ public class EnsemblComparaConverter extends BioFileConverter
     public EnsemblComparaConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        IdResolverFactory resolverFactory = new FlyBaseIdResolverFactory("gene");
-        resolver = resolverFactory.getIdResolver(false);
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        humanResolverFactory = new EnsemblIdResolverFactory();
     }
 
     /**
@@ -180,7 +183,7 @@ public class EnsemblComparaConverter extends BioFileConverter
             return null;
         }
         String newIdentifier = identifier;
-        if ("7227".equals(taxonId)) {
+        if ("7227".equals(taxonId) || "9606".equals(taxonId)) {
             newIdentifier = resolveGene(taxonId, identifier);
             if (newIdentifier == null) {
                 return null;
@@ -204,15 +207,31 @@ public class EnsemblComparaConverter extends BioFileConverter
 
     private String resolveGene(String taxonId, String identifier) {
         String id = identifier;
-        if ("7227".equals(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, identifier);
+        if ("7227".equals(taxonId)) {
+            if (flyResolver == null) {
+                flyResolver = flyResolverFactory.getIdResolver(false);
+            }
+            int resCount = flyResolver.countResolutions(taxonId, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                         + identifier + " count: " + resCount + " FBgn: "
-                        + resolver.resolveId(taxonId, identifier));
+                        + flyResolver.resolveId(taxonId, identifier));
                 return null;
             }
-            id = resolver.resolveId(taxonId, identifier).iterator().next();
+            id = flyResolver.resolveId(taxonId, identifier).iterator().next();
+        }
+        if ("9606".equals(taxonId)) {
+            if (humanResolver == null) {
+                humanResolver = humanResolverFactory.getIdResolver();
+            }
+            int resCount = humanResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                        + identifier + " count: " + resCount + " resolved to: "
+                        + humanResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            id = humanResolver.resolveId(taxonId, identifier).iterator().next();
         }
         return id;
     }
