@@ -58,7 +58,8 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> regions = new HashMap<String, String>();
     private String termId = null;
-    protected IdResolverFactory resolverFactory;
+    protected IdResolverFactory flyResolverFactory;
+    protected IdResolverFactory humanResolverFactory;
     private static final String INTERACTION_TYPE = "physical";
     private static final String ENSEMBL = "ensembl";
     private Map<String, String[]> config = new HashMap<String, String[]>();
@@ -80,8 +81,8 @@ public class PsiConverter extends BioFileConverter
         super(writer, model, "IntAct", "IntAct interactions data set");
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
-
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        humanResolverFactory = new EnsemblIdResolverFactory();
         try {
             termId = getTerm("MI:0117");
         } catch (SAXException e) {
@@ -653,7 +654,7 @@ public class PsiConverter extends BioFileConverter
 
         private String resolveGeneIdentifier(String taxonId, String datasource, String id) {
             if ("7227".equals(taxonId)) {
-                IdResolver resolver = resolverFactory.getIdResolver(false);
+                IdResolver resolver = flyResolverFactory.getIdResolver(false);
                 if (resolver != null) {
                     String identifier = id;
                     int resCount = resolver.countResolutions(taxonId, identifier);
@@ -685,6 +686,21 @@ public class PsiConverter extends BioFileConverter
                             + " to organism repository");
                 }
                 if (id.startsWith(ensemblPrefix)) {
+                    if ("9606".equals(taxonId)) {
+                        IdResolver resolver = humanResolverFactory.getIdResolver(false);
+                        if (resolver != null) {
+                            String identifier = id;
+                            int resCount = resolver.countResolutions(taxonId, identifier);
+                            if (resCount != 1) {
+                                LOG.info("RESOLVER: failed to resolve gene to one identifier, "
+                                        + "ignoring gene: " + identifier + " count: " + resCount
+                                        + " results: " + resolver.resolveId(taxonId, identifier));
+                                return null;
+                            }
+                            identifier = resolver.resolveId(taxonId, identifier).iterator().next();
+                            return identifier;
+                        }
+                    }
                     return id;
                 } else {
                     LOG.info("gene for taxon ID had invalid ensembl identifier:" + id
