@@ -28,7 +28,6 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
 }
 
   function generate(jSONObject, target, url) {
-    url =+ "/portal.do";
     jQuery('<ul/>', {
         'class': 'organisms'
       })
@@ -47,12 +46,9 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                 'id': 'organism-' + key,
                 'style': (i <= 0) ? 'display:none;' : '',
                 'html': jQuery('<a/>', {
-                    'href': '#',
+                    'href': url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
                     'text': entry['shortName'],
-                    'target': '_blank',
-                    'click': function(e) {
-                        jQuery.post(url, { externalids: entry['identifiers'], class: "Gene" });
-                    }
+                    'target': '_blank'
                 })
             }).appendTo(target);
             i--;
