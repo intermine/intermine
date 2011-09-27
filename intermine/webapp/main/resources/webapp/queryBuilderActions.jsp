@@ -6,15 +6,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div id="sidebar">
-   <div id="bigGreen"
-   <c:if test="${fn:length(viewStrings) <= 0}">class='button inactive'</c:if>
-   <c:if test="${fn:length(viewStrings) > 0}">class='button'</c:if>>
+   <c:if test="${fn:length(viewStrings) <= 0}">
+   <div id="bigGreen" class='button inactive'>
+   <div class="left"></div>
+   <input id="showResult" type="submit" name="showResult"
+          value='<fmt:message key="view.showresults"/>'/>
+          <div class="right"></div>
+   </div>
+   </c:if>
+   <c:if test="${fn:length(viewStrings) > 0}">
+   <div id="bigGreen" class='button'/>
       <div class="left"></div>
           <html:form action="/queryBuilderViewAction">
           <input id="showResult" type="submit" name="showResult"
           value='<fmt:message key="view.showresults"/>'/>
           </html:form><div class="right"></div>
   </div>
+  </c:if>
 </div>
 <!-- queryBuilderActions.jsp -->
 <div class="queryActions">
