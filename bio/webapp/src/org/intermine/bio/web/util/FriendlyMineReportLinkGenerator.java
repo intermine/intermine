@@ -178,7 +178,7 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
                 // test if remote mine has these genes
                 Map<String, Set<String[]>> results = getObjectsInOtherMine(mine, remoteMineOrganism,
                         matchingHomologues);
-                if (!results.isEmpty()) {
+                if (results != null && !results.isEmpty()) {
                     queryRemoteMine = false;
                     organisms.putAll(processHomologues(results));
                 }
