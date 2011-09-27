@@ -7,6 +7,20 @@
 
 <html:xhtml/>
 
+<script type="text/javascript">
+(function() {
+    project_title = "${WEB_PROPERTIES['project.title']}";
+    project_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+    project_path = "${WEB_PROPERTIES['webapp.path']}";
+
+    // from controller
+    fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
+    dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
+    orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
+
+})();
+</script>
+
 <style type="text/css">
     /* The Cytoscape Web container must have its dimensions set. */
     html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
@@ -225,14 +239,6 @@
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/displaynetwork.js'/>"></script>
 <script type="text/javascript">
 (function() {
-    var project_title = "${WEB_PROPERTIES['project.title']}";
-    var project_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
-    var project_path = "${WEB_PROPERTIES['webapp.path']}";
-
-    // from controller
-    var fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
-    var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
-    var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
 
     var target = "#cwcontent";
 
