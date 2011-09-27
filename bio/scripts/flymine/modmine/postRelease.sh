@@ -13,10 +13,8 @@ INTERACT=y
 DOIT=y
 
 #PRO="oliver snyder"
-#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white celniker waterston"
-#PRO="lieb oliver snyder karpen white celniker waterstonpiano"
-PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
-#PRO="lai lieb henikoff macalpine oliver snyder karpen piano white"
+#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+PRO="lieb macalpine snyder karpen celnikerlai waterstonpiano"
 
 progname=$0
 
@@ -228,7 +226,7 @@ gzip $ARKDIR/userprofiles/osbag_int-r$PREL.sql
 echo; echo "Creating properties file for archived webapp r$PREL..."
 cd /home/modmine/.intermine
 #sed 's/modprod0/modalone/g' modmine.properties.r$PREL | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
-sed 's/modprod0/modalone/g' modmine.properties.r$PREL | sed 's/modmine-prod-userprofile/modmine-'"$PREL"'-userprofile/g' | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
+sed 's/modprod0/modalone/g' modmine.properties.r$PREL | sed 's/modmine-prod-userprofile/modmine-r'"$PREL"'-userprofile/g' | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
 
 echo; echo "Starting archived webapp r$PREL..."
 cd /home/modmine/svn/modmine-$PREL/modmine/webapp
