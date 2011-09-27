@@ -81,15 +81,15 @@ public class UpgradeBagList implements Runnable
 
     /**
      * Verify that the only issues existing have type OTHER and the ids contained already
-     * existing in the list.
+     * exist in the list.
      * If the condition is verified the list can be upgraded automatically
      * @param result
      * @return
      */
     private boolean onlyOtherIssuesAlreadyContained(BagQueryResult result) {
-        if(result.getIssues().get(BagQueryResult.DUPLICATE).isEmpty()
-            && result.getIssues().get(BagQueryResult.TYPE_CONVERTED).isEmpty()
-            && result.getIssues().get(BagQueryResult.WILDCARD).isEmpty()) {
+        if(result.getIssues().get(BagQueryResult.DUPLICATE) == null
+            && result.getIssues().get(BagQueryResult.TYPE_CONVERTED) == null
+            && result.getIssues().get(BagQueryResult.WILDCARD) == null) {
 
             Map<String, Map<String, List>> otherMatchMap = result.getIssues()
             .get(BagQueryResult.OTHER);
