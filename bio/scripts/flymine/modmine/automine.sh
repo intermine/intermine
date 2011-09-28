@@ -916,8 +916,9 @@ then
 
 if [ "$FULL" = "y" ]
 then
-loadChadoSubs lai
-loadChadoSubs piano
+interact "Reloading all chadoes. All existing databases in $DBHOST will be rebuilt."
+#loadChadoSubs lai
+#loadChadoSubs piano
 loadChadoSubs henikoff
 loadChadoSubs lieb
 loadChadoSubs oliver
@@ -925,8 +926,14 @@ loadChadoSubs macalpine
 loadChadoSubs snyder
 loadChadoSubs karpen
 loadChadoSubs white
-loadChadoSubs celniker
-loadChadoSubs waterston
+loadChadoSubs celnikerlai
+loadChadoSubs waterstonpiano
+
+interact "Updating chado DBs: adding deletion flag and deprecations."
+
+$SCRIPTDIR/flag_deleted.sh
+$SCRIPTDIR/add_deprecations.sh
+
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
