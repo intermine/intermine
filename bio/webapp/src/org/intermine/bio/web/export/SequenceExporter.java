@@ -28,7 +28,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.IntPresentSet;
@@ -272,7 +271,8 @@ public class SequenceExporter implements Exporter
     public static boolean canExportStatic(List<Class<?>> clazzes) {
         return (ExportHelper.getClassIndex(clazzes,
                 SequenceFeature.class) >= 0
-                || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0 || ExportHelper
-                .getClassIndex(clazzes, Sequence.class) >= 0);
+                || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
+//                || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0
+                );
     }
 }
