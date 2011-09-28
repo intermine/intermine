@@ -327,7 +327,7 @@ public class TemplateAction extends InterMineAction
             templateValues.put(node, nodeValues);
             for (PathConstraint c : template.getEditableConstraints(node)) {
                 String key = Integer.toString(template.getEditableConstraints().indexOf(c) + 1);
-                TemplateValue value;
+                TemplateValue value = null;
 
                 SwitchOffAbility switchOffAbility = template.getSwitchOffAbility(c);
                 if (tf.getSwitchOff(key) != null) {
@@ -343,9 +343,20 @@ public class TemplateAction extends InterMineAction
                 } else {
                     if (tf.getSwitchOff(key) != null
                         && tf.getSwitchOff(key).equalsIgnoreCase(SwitchOffAbility.OFF.toString())) {
-                        String constraintValue = constraintStringValue(c);
-                        value = new TemplateValue(c, c.getOp(), constraintValue,
-                                TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+                        if (c instanceof PathConstraintMultiValue) {
+                            String multiValueAttribute = tf.getMultiValueAttribute(key);
+                            if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {
+                                List<String> multiValues = new ArrayList<String>();
+                                multiValues.addAll(Arrays.asList(multiValueAttribute.split(",")));
+                                value = new TemplateValue(c, c.getOp(),
+                                        TemplateValue.ValueType.SIMPLE_VALUE, multiValues,
+                                        switchOffAbility);
+                            }
+                        } else {
+                            String constraintValue = constraintStringValue(c);
+                            value = new TemplateValue(c, c.getOp(), constraintValue,
+                                    TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+                        }
                     } else {
                         String op = (String) tf.getAttributeOps(key);
                         if (op == null) {
