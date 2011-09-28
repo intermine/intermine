@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.model.FastPathObject;
-import org.intermine.model.InterMineObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
 import org.intermine.util.TypeUtil;
@@ -151,8 +150,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public synchronized Class<? extends FastPathObject> getType() {
         if (type == null) {
             try {
-                @SuppressWarnings("unchecked") Class<FastPathObject> tmpType = (Class) Class
-                .forName(className);
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                Class<FastPathObject> tmpType = (Class) Class.forName(className);
                 if (!FastPathObject.class.isAssignableFrom(tmpType)) {
                     throw new RuntimeException("Class " + className + " is not a FastPathObject");
                 }

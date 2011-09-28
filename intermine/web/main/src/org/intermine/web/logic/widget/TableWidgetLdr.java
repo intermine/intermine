@@ -62,7 +62,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 public class TableWidgetLdr
 {
     private List<String> columns;
-    private List flattenedResults;
+    private List<ArrayList<String[]>> flattenedResults;
     private String title, description;
     private int widgetTotal = 0;
     private InterMineBag bag;
@@ -116,7 +116,7 @@ public class TableWidgetLdr
 
         Query q = getQuery(false, null);
 
-        List results;
+        List<?> results;
         try {
             results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
@@ -142,11 +142,11 @@ public class TableWidgetLdr
             }
         }
 
-        flattenedResults = new ArrayList<ArrayList>();
+        flattenedResults = new ArrayList<ArrayList<String[]>>();
 
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             String countLinkKey = "";
 
             boolean isFirst = true;
@@ -243,7 +243,7 @@ public class TableWidgetLdr
      * get the flattened results
      * @return the flattened results
      */
-    public List getFlattenedResults() {
+    public List<ArrayList<String[]>> getFlattenedResults() {
         return flattenedResults;
     }
 
@@ -449,14 +449,13 @@ public class TableWidgetLdr
         return widgetTotal;
     }
 
-    @SuppressWarnings("unchecked")
     private static int calcTotal(ObjectStore os, Query q) {
         Results res = os.execute(q);
-        Iterator iter = res.iterator();
+        Iterator<?> iter = res.iterator();
         //Iterator iter = os.executeSingleton(q).iterator();
         int n = 0;
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             n = ((java.lang.Long) resRow.get(0)).intValue();
         }
         return n;
@@ -467,20 +466,19 @@ public class TableWidgetLdr
      * @return list of lists of records to export
      * @throws Exception if something goes horribly wrong
      */
-    @SuppressWarnings("unchecked")
     public List<List<String>> getExportResults(String[] selected) throws Exception {
 
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
-        Map<Object, Object> termToLabel = new HashMap();
+        Map<String, String> termToLabel = new HashMap<String, String>();
         Query q = getQuery(false, selectedIds);
 
         Results res = os.execute(q);
-        Iterator iter = res.iterator();
-        HashMap<String, List<String>> termsToIds = new HashMap();
+        Iterator<?> iter = res.iterator();
+        HashMap<String, List<String>> termsToIds = new HashMap<String, List<String>>();
         boolean hasLabelColumn = false;
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             String term = resRow.get(0).toString();   // annotation (like go term)
             String id = null;
             if (resRow.size() > 2) {
@@ -498,7 +496,7 @@ public class TableWidgetLdr
 
         for (String term : selectedIds) {
             if (termsToIds.get(term) != null) {
-                List row = new LinkedList();
+                List<String> row = new LinkedList<String>();
                 row.add(term);                    // identifier
                 if (hasLabelColumn) {
                     row.add(termToLabel.get(term));     // label, like term name
