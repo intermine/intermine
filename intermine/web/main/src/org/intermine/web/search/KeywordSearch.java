@@ -1458,7 +1458,21 @@ public final class KeywordSearch
                 queryString = queryString.replace(s, "*");
             }
         }
-        return queryString.toLowerCase();
+        return toLowerCase(queryString);
+    }
+
+    private static String toLowerCase(String s) {
+        StringBuffer sb = new StringBuffer();
+        String[] bits = s.split(" ");
+        for (String b : bits) {
+            // booleans have to stay UPPER
+            if ("OR".equals(b) || "AND".equals(b) || "NOT".equals(b)) {
+                sb.append(b + " ");
+            } else {
+                sb.append(b.toLowerCase() + " ");
+            }
+        }
+        return sb.toString().trim();
     }
 
     private static void loadIndexFromDatabase(ObjectStore os, String path) {
