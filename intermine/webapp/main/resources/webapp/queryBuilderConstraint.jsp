@@ -105,15 +105,6 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <label for="attribute2">
                     <fmt:message key="query.constraint.false" />
                   </label>
-                  <c:choose>
-                      <c:when test="${dec.path.type == 'Boolean'}">
-                      <input type="radio" name="attributeValue" id="attribute4" value="NULL"
-                      <c:if test="${selectedValue == 'NULL'}">checked</c:if>/>
-                      <label for="attribute4">
-                        <fmt:message key="query.constraint.null" />
-                      </label>
-                      </c:when>
-                  </c:choose>
                 <br/>
               </c:when>
               <c:otherwise>
