@@ -25,7 +25,7 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source> 
-    <source name="arrayexpress-atlas" type="arrayexpress-atlas">
+    <source name="arrayexpress-atlas" type="arrayexpress-atlas" dump="true">
      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/"/>
     </source>
     <source name="protein-atlas" type="protein-atlas">
