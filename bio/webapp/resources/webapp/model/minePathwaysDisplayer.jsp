@@ -94,7 +94,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 
             <c:choose>
               <c:when test="${empty gene.pathways}">
-                No pathways found
+                None
               </c:when>
               <c:otherwise>
               <div id="intermine_pathways_thisMine">
