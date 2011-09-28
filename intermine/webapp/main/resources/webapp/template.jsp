@@ -147,7 +147,7 @@
               <%-- if Boolean --%>
               <td class="constraint_${index}">
               <c:choose>
-              <c:when test="${dec.boolean}">
+              <c:when test="${dec.boolean && !dec.nullSelected}">
               <html:hidden property="attributeOps(${index})" styleId="attributeOps(${index})" value="0" disabled="false" />
               <html:radio property="attributeValues(${index})" styleId="attributeValues(${index})" value="true"/>
               <fmt:message key="query.constraint.true" />
