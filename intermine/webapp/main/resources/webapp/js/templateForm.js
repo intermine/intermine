@@ -176,15 +176,20 @@ function disableFields(index, disable) {
         document.getElementById("attributeOptions(" + index + ")").disabled = disable;
     }
     // if attributeValues is a radio button
-    if (document.getElementById("attributeValues(" + index + ")")[0]) {
-        document.getElementById("attributeValues(" + index + ")")[0].disabled = disable;
-        document.getElementById("attributeValues(" + index + ")")[1].disabled = disable;
+    if (document.getElementById("attributeValues(" + index + ")")) {
+        if (document.getElementById("attributeValues(" + index + ")")[0]) {
+            document.getElementById("attributeValues(" + index + ")")[0].disabled = disable;
+            document.getElementById("attributeValues(" + index + ")")[1].disabled = disable;
+        }
     }
     if (document.getElementById("extraValues(" + index + ")")) {
         document.getElementById("extraValues(" + index + ")").disabled = disable;
     }
     if (document.getElementById("useBagConstraint(" + index + ")")) {
         document.getElementById("useBagConstraint(" + index + ")").disabled = disable;
+    }
+    if (document.getElementById("nullConstraint(" + index + ")")) {
+        document.getElementById("nullConstraint(" + index + ")").disabled = disable;
     }
     if (document.getElementById("bagOp(" + index + ")") != undefined)
         document.getElementById("bagOp(" + index + ")").disabled = disable;
