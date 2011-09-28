@@ -86,7 +86,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
             trackerDelegate.trackTemplate("template1", superUser, "sessionId2");
             trackerDelegate.trackTemplate("template1", testUser, "sessionId3");
             trackerDelegate.trackTemplate("template2", testUser, "sessionId3");
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             String sql = "SELECT COUNT(*) FROM templatetrack";
             Statement stm = conn.createStatement();
             ResultSet rs = stm.executeQuery(sql);
