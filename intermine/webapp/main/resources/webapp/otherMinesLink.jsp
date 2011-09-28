@@ -62,7 +62,7 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
   });
 }
 </script>
-<c:if test="${otherMines}">
+<c:if test="${!empty otherMines}">
 <h3 class="goog">Link to other Mines</h3>
 <div id="friendlyMines">
   <c:forEach items="${otherMines}" var="mine">
