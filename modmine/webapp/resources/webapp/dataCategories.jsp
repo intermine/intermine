@@ -80,7 +80,7 @@
   <tr>
   <td> <i>C. elegans</i> </td>
     <td> Genome annotation - Release ${WEB_PROPERTIES['genomeVersion.worm']} </td>
-    <td><a href="http://www.wormbase.org" target="_new">WormBase</a> - ${WEB_PROPERTIES['genomeVersion.worm']</td>
+    <td><a href="http://www.wormbase.org" target="_new">WormBase</a> - ${WEB_PROPERTIES['genomeVersion.worm']}</td>
     <td> - </td>
     <td> &nbsp;</td>
 </tr>
