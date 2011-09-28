@@ -13,8 +13,8 @@ INTERACT=y
 DOIT=y
 
 #PRO="oliver snyder"
-#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
-PRO="lieb macalpine snyder karpen celnikerlai waterstonpiano"
+PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="lieb macalpine snyder karpen celnikerlai waterstonpiano"
 
 progname=$0
 
