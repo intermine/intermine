@@ -151,15 +151,16 @@ function checkSelected(formName) {
 }
 
 function submitWidgetForm(widgetId,type,extra) {
-    var formName = 'widgetaction'+widgetId;
-    if(!checkSelected(formName)) {
-        document.getElementById('selected_all' + widgetId).checked = true;
-        toggleAllChecks(formName, widgetId);
+    if (document.getElementById('selected_all' + widgetId) != null) {
+        var formName = 'widgetaction'+widgetId;
+        if(formName && !checkSelected(formName)) {
+            document.getElementById('selected_all' + widgetId).checked = true;
+            toggleAllChecks(formName, widgetId);
+        }
+        $('action'+widgetId).value=type;
+        $('export' + widgetId).value=extra;
+        $('widgetaction' + widgetId).submit();
     }
-    $('action'+widgetId).value=type;
-    $('export' + widgetId).value=extra;
-    $('widgetaction' + widgetId).submit();
-
 }
 
 function displayNotAnalysed(widgetId,type,extra) {
