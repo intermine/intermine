@@ -62,8 +62,8 @@ public final class TemplatePopulator
         Set<List<TemplateValue>> providedValues = new HashSet<List<TemplateValue>>(
                 newConstraints.values());
 
-        for (String editablePath : template.getEditablePaths()) {
-            List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
+        for (String editablePath : origTemplate.getEditablePaths()) {
+            List<PathConstraint> constraints = origTemplate.getEditableConstraints(editablePath);
             List<TemplateValue> values = newConstraints.get(editablePath);
 
             // TODO this is a temporary fix, this section of code should be re-written without
