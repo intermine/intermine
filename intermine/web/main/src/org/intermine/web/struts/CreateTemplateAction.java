@@ -83,7 +83,7 @@ public class CreateTemplateAction extends InterMineAction
         Profile superUser = im.getProfileManager().getSuperuserProfile();
         if (!superUser.equals(profile)) {
             if (superUser.getSavedTemplates().containsKey(template.getName())) {
-                recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
+                recordError(new ActionMessage("errors.createtemplate.existinginpublic", template.getName()),
                         request);
                 seenProblem = true;
             }
