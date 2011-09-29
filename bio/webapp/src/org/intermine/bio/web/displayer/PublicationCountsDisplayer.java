@@ -101,6 +101,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         }
 
         QueryField qfReportGeneId = new QueryField(qcReportGene, "id");
+        QueryField qfDate = new QueryField(qcPub, "year");
 
         // constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -134,6 +135,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         q.addToGroupBy(qcPub);
 
         q.addToOrderBy(qf);
+        q.addToOrderBy(qfDate, "desc");
         return q;
     }
 }
