@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -260,7 +262,11 @@ public final class FriendlyMineReportLinkGenerator extends InterMineLinkGenerato
         InterMineAPI im = olm.getInterMineAPI();
         ProfileManager profileManager = im.getProfileManager();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        ExportResultsIterator it = executor.execute(getLocalOrthologueQuery(im, identifier));
+        PathQuery q = getLocalOrthologueQuery(im, identifier);
+        if (!q.isValid()) {
+            return Collections.emptyMap();
+        }
+        ExportResultsIterator it = executor.execute(q);
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String geneOrganismName = (String) row.get(0).getField();
