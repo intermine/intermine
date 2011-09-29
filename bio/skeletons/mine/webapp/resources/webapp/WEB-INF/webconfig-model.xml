@@ -82,6 +82,12 @@
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
+  
+  <class className="org.intermine.model.bio.Ontology">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
 
   <class className="org.intermine.model.bio.OntologyTerm">
     <headerconfig>
@@ -186,13 +192,13 @@
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
                      replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Function"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
                      replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
-                     placement="Genes"
+                     placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
@@ -204,7 +210,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields=""
-                     placement="Function"
+                     placement="Proteins"
                      types="Gene,Protein"/>
 
   </reportdisplayers>
