@@ -84,6 +84,7 @@ public class DisplayConstraint
     private String selectedBagValue;
     private ConstraintOp selectedBagOp;
     private List<Object> templateSummary;
+    private boolean showExtraConstraint = false;
 
     /**
      * Construct for a new constraint that is being added to a query.
@@ -147,6 +148,9 @@ public class DisplayConstraint
         this.query = query;
         this.bagManager = bagManager;
         this.isBagSelected = false;
+        if (isExtraConstraint()) {
+            this.showExtraConstraint = true;
+        }
     }
 
     private String getEndClass(Path path) {
@@ -564,6 +568,21 @@ public class DisplayConstraint
         } else {
             return false;
         }
+    }
+
+    public boolean isShowExtraConstraint() {
+        return showExtraConstraint;
+    }
+
+    public void setShowExtraConstraint(boolean showExtraConstraint) {
+        this.showExtraConstraint = showExtraConstraint;
+    }
+
+    public String getExtraValueFieldClass() {
+        if (isExtraConstraint()) {
+            return bagQueryConfig.getExtraConstraintClassName();
+        }
+        return null;
     }
 
     /**
