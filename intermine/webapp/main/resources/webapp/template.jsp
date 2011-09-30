@@ -212,8 +212,16 @@
 
                   <%-- normal inputfield, no auto completer exists --%>
                   <c:otherwise>
+                     <c:if test="${dec.bagSelected}">
                      <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})"
-                       styleId="attributeValues(${index})" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
+                       styleId="attributeValues(${index})"
+                       value="${dec.originalValue}"/>
+                     </c:if>
+                     <c:if test="${!dec.bagSelected}">
+                     <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})"
+                       styleId="attributeValues(${index})"
+                       value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
+                     </c:if>
                    </c:otherwise>
                 </c:choose>
                 </span>

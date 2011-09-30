@@ -230,6 +230,16 @@ public class DisplayConstraint
     }
 
     /**
+     * 
+     */
+    public String getOriginalValue() {
+        if (con != null) {
+            return constraintStringValue(con);
+        }
+        return null;
+    }
+
+    /**
      * Returns the value collection if the constraint is a multivalue, otherwise return null.
      *
      * @return a Collection of Strings
