@@ -164,6 +164,13 @@
         jQuery("#sequence-feature-displayer div.toggle a.more").remove();
     }
   });
+  
+  <%-- fixup number of columns --%>
+  var l = jQuery('#sequence-feature-displayer table tr:first td').length,
+  	   m = jQuery('#sequence-feature-displayer table tr:last td').length;
+  if (l != m) {
+	  jQuery('#sequence-feature-displayer table tr:last td:last').attr('colspan', l - m + 1);
+  }
 })();
 </script>
 
