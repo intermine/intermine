@@ -233,7 +233,7 @@
 
          <%-- dropdown (probably organism) --%>
          <c:choose>
-          <c:when test="${dec.extraConstraint}">
+          <c:when test="${dec.extraConstraint && dec.showExtraConstraint}">
           <span style="color:#eee;">
                 <label class="marg">
                   <fmt:message key="bagBuild.extraConstraint">
