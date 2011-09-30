@@ -34,6 +34,7 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathQuery;
@@ -158,7 +159,11 @@ public class TemplateController extends TilesAction
             displayConstraintList.add(displayConstraint);
             // to allow struts tag to set the combo checked
             if (displayConstraint.isBoolean()) {
-                tf.setAttributeValues("" + (index + 1), displayConstraint.getSelectedValue());
+                if (!displayConstraint.isBagSelected()) {
+                    tf.setAttributeValues("" + (index + 1), displayConstraint.getSelectedValue());
+                } else {
+                    tf.setAttributeValues("" + (index + 1), displayConstraint.getOriginalValue());
+                }
             }
             if (pathConstraint instanceof PathConstraintNull) {
                 tf.setNullConstraint("" + (index + 1), displayConstraint.getSelectedValue());
