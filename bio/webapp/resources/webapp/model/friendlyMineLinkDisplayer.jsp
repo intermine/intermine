@@ -46,9 +46,34 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                 'id': 'organism-' + key,
                 'style': (i <= 0) ? 'display:none;' : '',
                 'html': jQuery('<a/>', {
-                    'href': url + "/portal.do?externalids=" + entry['identifiers']  + "&class=Gene&origin=FlyMine" + homologue,
+                	'href': '#',
                     'text': entry['shortName'],
-                    'target': '_blank'
+                    'target': '_blank',
+                    click: function(e) {
+                    	jQuery('<form/>', {
+                    		'target': '_blank',
+                    		'method': 'post',
+                    		'action': url + '/portal.do',
+                    		'style': 'display:none;'
+                    	})
+                    	.append(jQuery('<input/>', {
+                    		'name': 'externalids',
+                    		'value': entry['identifiers']
+                    	}))
+                    	.append(jQuery('<input/>', {
+                    		'name': 'class',
+                    		'value': 'Gene'
+                    	}))
+                    	.append(jQuery('<input/>', {
+                    		'name': 'origin',
+                    		'value': 'FlyMine' + homologue
+                    	}))
+                    	.appendTo('#friendlyMines')
+                    	.submit()
+                    	.remove();
+                    	
+                    	e.preventDefault();
+                    }
                 })
             }).appendTo(target);
             i--;
