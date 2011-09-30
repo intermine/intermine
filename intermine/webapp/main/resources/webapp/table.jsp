@@ -278,6 +278,7 @@
       // get only the digits
       jQuery("strong#numberOfResults").text(document.resultsCountText.replace(/[^\d]/g, ""));
     }
+    toggleToolbarButtons();
   });
 </script>
 
