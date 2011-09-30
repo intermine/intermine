@@ -189,6 +189,7 @@
 </c:when>
 <c:otherwise>
 <h3 class="goog gray">Protein Atlas Tissue Expression</h3>
+<p>No expression data available for this gene.</p>
 </c:otherwise>
 </c:choose>
 </div>

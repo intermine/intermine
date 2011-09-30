@@ -46,7 +46,14 @@
 </style>
 
 <div id="gene-expression-atlas">
-<h3 class="goog">Gene Expression Atlas Expressions</h3>
+
+<c:choose>
+<c:when test="${empty(expressions.byName)}">
+<h3 class="goog gray">ArrayExpress Atlas Gene Expression</h3>
+<p>No expression data available for this gene.</p>
+</c:when>
+<c:otherwise>
+<h3 class="goog">ArrayExpress Atlas Gene Expression</h3>
 
 <div class="wrap">
 <div class="inside">
@@ -307,7 +314,7 @@
         <%-- modify the chart properties --%>
         var options = {
           isStacked:		true,
-          width:			windowSize()/2,
+          width:			windowSize()/2.2,
           height:			(9 * n) + 50,
           chartArea:		{left: windowSize()/4, top: 0, height: 9 * n},
           backgroundColor: 	["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
@@ -567,4 +574,6 @@
     });
 })();
 </script>
+</c:otherwise>
+</c:choose>
 </div>
