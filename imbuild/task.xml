@@ -188,7 +188,8 @@ Couldn't find ${build.properties.file}
                       destFile="${build.task.dir}/@{osname}-schema.xml"/>
         <build-db osName="@{osname}"
                   tempdir="${build.tmp.dir}"
-                  schemafile="@{osname}-schema.xml"/>
+                  schemafile="@{osname}-schema.xml"
+                  model="@{model}"/>
         <db-insert-model osName="@{osname}" modelName="@{model}"/>
       </sequential>
     </macrodef>
