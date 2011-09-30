@@ -261,7 +261,7 @@
             dataType: "text",
             data: "fullInteractingGeneSet=" + encodeURIComponent('${fullInteractingGeneSet}'),
             success: function(response) {
-                if (response.match("^"+"No interaction data found from data sources:")) {
+                if (response.match("^"+"No interaction data found from data sources:") || response.match("^"+"No interaction data found")) {
                     geneWithNoDatasourceMessage = response; // case: no interaction data found from the data sources
                     jQuery("#interactions-wrap").html(geneWithNoDatasourceMessage)
                                              .css({'font-style': 'italic', 'border': 'none'})
