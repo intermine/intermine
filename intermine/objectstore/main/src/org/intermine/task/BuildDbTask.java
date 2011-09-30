@@ -54,6 +54,7 @@ public class BuildDbTask extends Task
     protected String databaseAlias;
     protected String schemaFile;
     private String os;
+    private String model;
 
     /**
      * Sets the objectstore
@@ -67,6 +68,14 @@ public class BuildDbTask extends Task
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Sets the model
+     * @param model String used to identify the model (useprofrile, genomic...)
+     */
+    public void setModel(String model) {
+        this.model = model;
     }
 
     /**
@@ -244,6 +253,26 @@ public class BuildDbTask extends Task
         }
 
         tempFile.delete();
+
+        //create bagvalues table in userprofile
+        if (model.contains("userprofile")) {
+            c = null;
+            try {
+                c = database.getConnection();
+                c.setAutoCommit(true);
+                DatabaseUtil.createBagValuesTables(c);
+            } catch (SQLException e) {
+                LOG.info("Failed to create bagvalues table: " + e);
+            } finally {
+                if (c != null) {
+                    try {
+                        c.close();
+                    } catch (SQLException e) {
+                        // ignore
+                    }
+                }
+            }
+        }
     }
 }
 
