@@ -1485,6 +1485,7 @@ div.floatRight { float:right; }
 #permalink div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
 #permalink div.popup input { width:392px; }
 
+
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */
 div.inline-list { margin:0 0 30px 0; }
@@ -1539,6 +1540,8 @@ div.template { margin:0 0 30px 0; }
 div.template h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.template h3 img { vertical-align:middle; }
 div.template div.right { display:inline; float:right; }
+div.template h3 div.favorites { display:inline; }
+div.template h3 div.favorites img { vertical-align:middle; margin-bottom:2px; }
 /* togglers */
 div.collection-table div.toggle,
 div.collection-of-collections div.toggle { padding:2px; font-size:12px; }
