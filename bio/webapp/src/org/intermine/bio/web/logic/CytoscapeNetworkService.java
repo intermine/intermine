@@ -49,6 +49,8 @@ public class CytoscapeNetworkService
     private static final String LARGE_NETWORK = "large_network";
     private static final String NO_INTERACTION_FROM =
         "No interaction data found from data sources: ";
+    private static final String NO_INTERACTION_FOR_INPUT_GENE =
+        "No interaction data found";
 
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkService.class);
@@ -74,6 +76,10 @@ public class CytoscapeNetworkService
 
         // === Prepare data ===
         List<String> fullInteractingGeneList = StringUtil.tokenize(fullInteractingGeneSetStr, ",");
+
+        if (fullInteractingGeneList.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
+                return LARGE_NETWORK;
+        }
 
         Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
         for (String s : fullInteractingGeneList) {
@@ -124,7 +130,7 @@ public class CytoscapeNetworkService
 
         // case: input genes have no interactions
         if (interactionEdgeMap.size() == 0) {
-            return "No interaction data for input genes (>1)";
+            return NO_INTERACTION_FOR_INPUT_GENE;
         }
 
         if (!ignoreLargeNetworkTest) {
@@ -141,7 +147,7 @@ public class CytoscapeNetworkService
                 interactionNodeMap, interactionEdgeMap);
 
         return networkdata;
-    }
+    }    
 
     /**
      * Create a map of CytoscapeNetworkNodeData objects for parsing them to xgmml.
