@@ -36,6 +36,11 @@ public class DisplayConstraintHelpMessages
                         + " to a particular " + con.getExtraConstraintClassName() + ".");
             }
             sb.append(getBagMessage(con));
+        } else if (con.isNullSelected()) {
+            sb.append("Select a value.");
+        } else if (con.getBags() != null) {
+            sb.append("Select a value.");
+            sb.append(getBagMessage(con));
         } else if (con.getPossibleValues() != null && !con.getPossibleValues().isEmpty()) {
             sb.append("Choose a value from the dropdown.  To choose multiple values set the"
                     + " operation to IN or NOT IN.");
@@ -44,9 +49,6 @@ public class DisplayConstraintHelpMessages
                 sb.append(", you can use * as a wildcard");
             }
             sb.append(".");
-            sb.append(getBagMessage(con));
-        } else if (con.getBags() != null) {
-            sb.append("Select a value.");
             sb.append(getBagMessage(con));
         }
         if (sb.length() == 0) {
