@@ -15,15 +15,19 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Location;
@@ -53,6 +57,7 @@ public class SequenceExporter implements Exporter
     private OutputStream out;
     private int featureIndex;
     private int writtenResultsCount = 0;
+    private final Map<String, List<FieldDescriptor>> classKeys;
 
     /**
      * Constructor.
@@ -63,12 +68,14 @@ public class SequenceExporter implements Exporter
      *            output stream
      * @param featureIndex
      *            index of cell in row that contains object to be exported
+     * @param classKeys for the model
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-            int featureIndex) {
+            int featureIndex, Map<String, List<FieldDescriptor>> classKeys) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
+        this.classKeys = classKeys;
     }
 
     /**
@@ -159,8 +166,7 @@ public class SequenceExporter implements Exporter
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
 
-        String primaryIdentifier = protein.getPrimaryIdentifier();
-        makeHeader(header, primaryIdentifier, object, row);
+        makeHeader(header, object, row);
 
         return bioSequence;
     }
@@ -172,23 +178,27 @@ public class SequenceExporter implements Exporter
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
-        String primaryIdentifier = feature.getPrimaryIdentifier();
-        makeHeader(header, primaryIdentifier, object, row);
+        makeHeader(header, object, row);
         return bioSequence;
     }
 
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
-    private void makeHeader(StringBuffer header, String primaryIdentifier,
-            Object object, List<ResultElement> row) {
+    private void makeHeader(StringBuffer header, Object object, List<ResultElement> row) {
 
         List<String> headerBits = new ArrayList<String>();
 
         // add the Object's (Protein or LocatedSequenceFeature)
         // primaryIdentifier at the first place
         // in the header
-        headerBits.add(primaryIdentifier);
+        Object keyFieldValue =
+            ClassKeyHelper.getKeyFieldValue((FastPathObject) object, this.classKeys);
+        if (keyFieldValue != null) {
+            headerBits.add(keyFieldValue.toString());
+        } else {
+            headerBits.add("-");
+        }
 
         // two instances
         if (object instanceof SequenceFeature) {
@@ -220,7 +230,7 @@ public class SequenceExporter implements Exporter
                     } else {
                         // ignore the primaryIdentifier and Location in
                         // ResultElement
-                        if (fieldValue.toString().equals(primaryIdentifier)
+                        if (fieldValue.toString().equals(keyFieldValue)
                                 || (fieldValue instanceof Location)) {
                             continue;
                         } else {
@@ -238,7 +248,7 @@ public class SequenceExporter implements Exporter
                     if (fieldValue == null) {
                         headerBits.add("-");
                     } else {
-                        if (fieldValue.toString().equals(primaryIdentifier)) {
+                        if (fieldValue.toString().equals(keyFieldValue)) {
                             continue;
                         } else {
                             headerBits.add(fieldValue.toString());
