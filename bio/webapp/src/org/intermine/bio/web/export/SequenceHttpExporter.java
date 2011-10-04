@@ -104,7 +104,8 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         for (Column column: pt.getColumns()) {
             Path path = column.getPath();
 
-            String pathString = path.toString();
+            // need path string without and [] denoting subclasses
+            String pathString = path.toStringNoConstraints();
             if (path.endIsAttribute()
                 && pathString.startsWith(sequencePathString)
                 && !pathString.substring(sequencePathString.length() + 1).contains(".")) {
@@ -113,7 +114,8 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             }
         }
 
-        SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
+        SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex,
+                im.getClassKeys());
         ExportResultsIterator iter = null;
         try {
             iter = getResultRows(pt, request);
@@ -149,7 +151,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         List<Path> sequencePaths = SequenceFeatureExportUtil.getExportClassPaths(pt.getPathQuery());
 
         for (Path seqPath: sequencePaths) {
-            Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
+            Class<?> seqPathClass = seqPath.getLastClassDescriptor().getType();
             if (SequenceFeature.class.isAssignableFrom(seqPathClass)) {
                 // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in
                 // paths, because chromosome.chromosomeLocation is empty and it caused empty

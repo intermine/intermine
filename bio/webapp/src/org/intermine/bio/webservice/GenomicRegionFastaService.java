@@ -15,7 +15,7 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 public class GenomicRegionFastaService extends AbstractRegionExportService {
 
     protected static final String SUFFIX = ".fasta";
-    
+
     public GenomicRegionFastaService(InterMineAPI im) {
         super(im);
     }
@@ -26,7 +26,7 @@ public class GenomicRegionFastaService extends AbstractRegionExportService {
         Exporter exporter;
         try {
             ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index);
+            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys());
             ExportResultsIterator iter = null;
             try {
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);

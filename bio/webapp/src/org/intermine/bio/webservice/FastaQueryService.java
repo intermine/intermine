@@ -94,7 +94,7 @@ public class FastaQueryService extends AbstractQueryService
         Exporter exporter;
         try {
             ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index);
+            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys());
             ExportResultsIterator iter = null;
             try {
                 Profile profile = SessionMethods.getProfile(session);
