@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.2/style/light.css">
 
 <!-- You need to set a place holder element in your page to hold the resultant table - this can also hold apology text/content -->
-<div id="queryplaceholder"><p class="apology">We are very sorry that your table could not be loaded - please note that at present we are not able to embed private templates or queries that refer to private lists.</p></div>
+<div id="queryplaceholder"><p class="apology">Please be patient while the results of your query are retrieved.</p></div>
 
 <script type="text/javascript">
 /* Your query can be defined as XML */
