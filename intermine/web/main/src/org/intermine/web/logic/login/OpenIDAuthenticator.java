@@ -66,7 +66,7 @@ public class OpenIDAuthenticator extends HttpServlet {
 		manager = new OpenIdManager();
 		ServletContext context = config.getServletContext();
 		Properties webProperties = SessionMethods.getWebProperties(context);
-		String prefix = webProperties.getProperty("project.sitePrefix");
+		String prefix = webProperties.getProperty("webapp.baseurl");
 		String path = webProperties.getProperty("webapp.path");
 		manager.setRealm(prefix);
 		returnTo = prefix + "/" + path + "/openid";
