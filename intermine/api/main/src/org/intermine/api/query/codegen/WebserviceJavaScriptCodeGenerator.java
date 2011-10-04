@@ -62,7 +62,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
 
     protected static final String PLACEHOLDER =
         "<!-- You need to set a place holder element in your page to hold the resultant table - this can also hold apology text/content -->" + ENDL
-        + "<div id=\"queryplaceholder\"><p class=\"apology\">We are very sorry that your table could not be loaded - please note that at present we are not able to embed private templates or queries that refer to private lists.</p></div>" + ENDL + ENDL;
+        + "<div id=\"queryplaceholder\"><p class=\"apology\">Please be patient while the results of your query are retrieved.</p></div>" + ENDL + ENDL;
 
     protected static final String BOILERPLATE = "<script type=\"text/javascript\">" + ENDL;
     protected static final String QUERY_METHOD = "IMBedding.loadQuery(query, ";
