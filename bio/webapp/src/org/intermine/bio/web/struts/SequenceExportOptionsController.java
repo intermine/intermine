@@ -48,7 +48,8 @@ public class SequenceExportOptionsController extends TilesAction
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
-        List<Path> exportClassPaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
+        List<Path> exportClassPaths =
+            SequenceFeatureExportUtil.getExportClassPaths(pt.getPathQuery());
 
         Map<String, String> pathMap = new LinkedHashMap<String, String>();
 

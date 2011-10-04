@@ -93,7 +93,8 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         if (sequencePathString == null) {
             // fall back case: pick the first sequence object that occurs in the view
-            List<Path> sequencePaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
+            List<Path> sequencePaths =
+                SequenceFeatureExportUtil.getExportClassPaths(pt.getPathQuery());
             sequencePathString = sequencePaths.iterator().next().toString();
         }
         sequencePathString = sequencePathString.replaceAll(" > ", ".");
@@ -145,7 +146,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
-        List<Path> sequencePaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
+        List<Path> sequencePaths = SequenceFeatureExportUtil.getExportClassPaths(pt.getPathQuery());
 
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
