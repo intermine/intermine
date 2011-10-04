@@ -1,6 +1,7 @@
 package org.intermine.bio.webservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.intermine.bio.web.model.RegionParseException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +31,14 @@ public class GenomicRegionSearchListInput extends ListInput {
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
     
+    /**
+     * A representation of a request to a region based webservice. It knows how 
+     * to parse and validate its own input.
+     * @param request
+     * @param bagManager
+     * @param im
+     * @throws JSONException
+     */
     public GenomicRegionSearchListInput(HttpServletRequest request,
             BagManager bagManager, InterMineAPI im) throws JSONException {
         super(request, bagManager);
@@ -44,7 +54,7 @@ public class GenomicRegionSearchListInput extends ListInput {
             parsed.setInterbase(jsonRequest.getBoolean("isInterbase"));
         }
         if (!jsonRequest.isNull("extension")) {
-            parsed.setExtension(jsonRequest.getInt("extension"));
+            parsed.setExtension(jsonRequest.optInt("extension", 0));
         }
         JSONArray fts = jsonRequest.getJSONArray("featureTypes");
         int noOfTypes = fts.length();
@@ -61,7 +71,6 @@ public class GenomicRegionSearchListInput extends ListInput {
             regions.add(regs.getString(i));
         }
         parsed.setRegions(regions);
-        
         return parsed;
     }
     
@@ -72,6 +81,7 @@ public class GenomicRegionSearchListInput extends ListInput {
     public class GenomicRegionSearchInfo {
         private String organism;
         private List<String> featureTypes;
+        private Set<ClassDescriptor> featureCds;
         private List<String> regions;
         private int extension = 0;
         private boolean isInterbase = false;
@@ -89,29 +99,54 @@ public class GenomicRegionSearchListInput extends ListInput {
         public List<String> getFeatureTypes() {
             return featureTypes;
         }
+        
+        /** 
+         * Set the feature types for this request. Immediately parses the class
+         * names to ClassDescriptors and fails as soon as possible.
+         * @param featureTypes
+         */
         public void setFeatureTypes(List<String> featureTypes) {
             this.featureTypes = featureTypes;
-        }
-        
-        public Set<ClassDescriptor> getFeatureCds() {
-            Set<ClassDescriptor> fcdSet = new HashSet<ClassDescriptor>();
+            this.featureCds = new HashSet<ClassDescriptor>();
+            
+            Set<String> badTypes = new HashSet<String>();
             Model model = api.getModel();
-            for (String f : getFeatureTypes()) {
+            for (String f : this.featureTypes) {
                 ClassDescriptor cld = model.getClassDescriptorByName(f);
-                fcdSet.add(cld);
-                for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                    fcdSet.add(subCld);
+                if (cld == null) {
+                    badTypes.add(f);
+                } else {
+                    featureCds.add(cld);
+                    for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                        featureCds.add(subCld);
+                    }
                 }
             }
-            return fcdSet;
+            if (!badTypes.isEmpty()) {
+                throw new BadRequestException("The following feature types are not " 
+                        + "valid feature class names: " + badTypes);
+            }
+        }
+        
+        /**
+         * Returns an unmodifiable set of the classdescriptors corresponding to the
+         * feature types in this query.
+         * @return
+         */
+        public Set<ClassDescriptor> getFeatureCds() {
+            return Collections.unmodifiableSet(featureCds);
         }
 
+        /**
+         * Returns an unmodifiable set of the classes that the Class-Descriptors
+         * in this query represent.
+         */
         public Set<Class<?>> getFeatureClasses() {
             Set<Class<?>> ftSet = new HashSet<Class<?>>();
             for (ClassDescriptor cld : getFeatureCds()) {
                 ftSet.add(cld.getType());
             }
-            return ftSet;
+            return Collections.unmodifiableSet(ftSet);
         }
 
         public List<String> getRegions() {
