@@ -625,6 +625,11 @@ a.brokenTmplLink {
     color: #d00;
 }
 
+span.brokenTmplLink {
+    color: #d00;
+    text-decoration: line-through;
+}
+
 /* =IMG
  -------------------------*/
 .roundcorners img, .gradientbox img, .plainbox img {

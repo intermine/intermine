@@ -103,11 +103,9 @@
                 <td class="sorting">
                 <c:choose>
                   <c:when test="${!validQuery}">
-
-                      <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
-                      <strike>${savedQuery.value.name}</strike>
-                      </html:link>
-
+                      <span id="linkBag_${savedQuery.key}" class="brokenTmplLink">
+                      ${savedQuery.value.name}
+                      </span>
                   </c:when>
                   <c:otherwise>
                     <tiles:insert name="renamableElement.jsp">
@@ -179,10 +177,16 @@
                     </c:otherwise>
                   </c:choose>
                   |
+                  <c:choose>
+                  <c:when test="${validQuery}">
                   <span class="fakelink"
                      onclick="return doQueryAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=load&type=${type}&amp;name=')"
                      titleKey="history.action.edit.hover">
-                    <fmt:message key="history.action.edit"/></span>
+                    <fmt:message key="history.action.edit"/>
+                  </span>
+                  </c:when>
+                  <c:otherwise><fmt:message key="history.action.edit"/></c:otherwise>
+                  </c:choose>
                   |
                   <c:if test="${type == 'history'}">
                     <c:if test="${PROFILE.loggedIn}">
