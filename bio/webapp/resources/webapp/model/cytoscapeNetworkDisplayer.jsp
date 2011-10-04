@@ -169,11 +169,13 @@
 <div id="cwinlinetable" class="collection-table nowrap nomargin">
   <h3>Interactions</h3>
   <div style="overflow-x:auto;">
-    <tiles:insert name="resultsTable.tile">
-         <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
-         <tiles:put name="currentPage" value="objectDetails" />
-         <tiles:put name="inlineTable" value="true" />
-    </tiles:insert>
+    <c:if test='${not empty cytoscapeNetworkPagedResults}'>
+      <tiles:insert name="resultsTable.tile">
+           <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
+           <tiles:put name="currentPage" value="objectDetails" />
+           <tiles:put name="inlineTable" value="true" />
+      </tiles:insert>
+    </c:if>
   </div>
   <div class="toggle" style="display:none;">
     <a class="less" style="float:right; display:none; margin-left:20px;"><span>Collapse</span></a>
@@ -272,9 +274,15 @@
                                '<input type="hidden" name="type" value="large_network" />' +
                                '<input type="hidden" name="fullInteractingGeneSet" value="' + fullInteractingGeneSet + '" />' +
                                '</form>' +
+                               '<form action="loadQuery.do" id="network-inline-query-form" method="post" style="display: none;">' +
+                               '<input type="hidden" name="skipBuilder" value="true" />' +
+                               '<input type="hidden" name="query" value=\'${queryXML}\' />' +
+                               '<input type="hidden" name="trail" value="|query" />' +
+                               '<input type="hidden" name="method" value="xml" />' +
+                               '</form>' +
                                '<span>The network contains more than 2000 elements, the interaction can become sluggish in the displayer. Please ' +
                                '<a href="javascript:;"onclick="javascript: jQuery(\'#export-large-network-form\').submit();return false;">Download the network data</a>' +
-                               ' and import it to <a href="http://www.cytoscape.org/" target="_blank">Cytoscape desktop</a> and use <b>Force-Directed Layout</b> to view or <span class="fakelink" onclick="javascript: if (jQuery(\'#cwinlinetable\').is(\':hidden\')) {jQuery(\'#cwinlinetable\').show().scrollTo(\'slow\', \'swing\', -20); } else {jQuery(\'#cwinlinetable\').hide();}">view interaction data in a table.</span></span>';
+                               ' and import it to <a href="http://www.cytoscape.org/" target="_blank">Cytoscape desktop</a> and use <b>Force-Directed Layout</b> to view or <a href="javascript:;"onclick="javascript: jQuery(\'#network-inline-query-form\').submit();">view interaction data in a table.</a></span>';
 
                     jQuery("#interactions-wrap").html(html)
                                   .css({'font-style': 'italic', 'border': 'none'})

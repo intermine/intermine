@@ -26,6 +26,7 @@ import org.intermine.bio.web.logic.CytoscapeNetworkDBQueryRunner;
 import org.intermine.bio.web.logic.CytoscapeNetworkUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
 import org.intermine.objectstore.ObjectStore;
@@ -33,6 +34,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -46,6 +48,10 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class CytoscapeNetworkDisplayer extends ReportDisplayer
 {
+    private static final int LARGE_NETWORK_ELEMENT_COUNT = 2000;;
+//    private static final String LARGE_NETWORK = "large_network";
+    private static String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
+    private static String EXCEPTION_OCCURED = "An exception occured";
 
     /**
      * Construct with config and the InterMineAPI.
@@ -71,6 +77,11 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         Map<String, Set<String>> interactionInfoMap = CytoscapeNetworkUtil
                 .getInteractionInfo(model, executor);
 
+        if (interactionInfoMap == null) {
+            request.setAttribute("dataNotIncludedMessage", DATA_NOT_INTEGRATED);
+            return;
+        }
+
         //=== Handle object ===
         // From gene report page
         InterMineObject object = reportObject.getObject();
@@ -93,35 +104,40 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
             }
         }
 
-        //=== Query a full set of interacting genes ===
-        CytoscapeNetworkDBQueryRunner queryRunner = new CytoscapeNetworkDBQueryRunner();
-        Set<Integer> fullInteractingGeneSet = queryRunner.getInteractingGenes(
-                featureType, startingFeatureSet, model, executor);
-        request.setAttribute("fullInteractingGeneSet",
-                StringUtil.join(fullInteractingGeneSet, ","));
-
         //=== Validation ===
-        if (interactionInfoMap == null) {
-            String dataNotIncludedMessage = "Interaction data is not integrated.";
-            request.setAttribute("dataNotIncludedMessage", dataNotIncludedMessage);
-        }
-
         // Check if interaction data available for the organism
-        Gene hubGene;
+        BioEntity hubNode;
+
         try {
-            hubGene = (Gene) os.getObjectById((Integer) fullInteractingGeneSet.toArray()[0]);
-            String orgName = hubGene.getOrganism().getName();
+            if (bag != null) {
+                hubNode = (BioEntity) os.getObjectById((Integer) startingFeatureSet.toArray()[0]);
+            } else {
+                hubNode = (BioEntity) object;
+            }
+
+            String orgName = hubNode.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
                 String orgWithNoDataMessage = "No interaction data found for "
                         + orgName + " genes";
                 request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
+                return;
             }
         } catch (ObjectStoreException e) {
-            request.setAttribute("exception", "An exception occured");
+            request.setAttribute("exception", EXCEPTION_OCCURED);
             e.printStackTrace();
         }
 
-        // Add view interaction inline table
+
+        //=== Query a full set of interacting genes ===
+        CytoscapeNetworkDBQueryRunner queryRunner = new CytoscapeNetworkDBQueryRunner();
+        Set<Integer> fullInteractingGeneSet = queryRunner.getInteractingGenes(
+                featureType, startingFeatureSet, model, executor);
+
+        // set fullInteractingGeneSet in request
+        request.setAttribute("fullInteractingGeneSet",
+                StringUtil.join(fullInteractingGeneSet, ","));
+
+        // === Create inline table query ===
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.symbol",
                 "Gene.primaryIdentifier",
@@ -138,16 +154,28 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
                 fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 
-        try {
-            WebResultsExecutor we = im.getWebResultsExecutor(profile);
-            WebResults webResults = we.execute(q);
-            PagedTable pagedResults = new PagedTable(webResults,
-                    reportObject.getNumberOfTableRowsToShow().intValue());
-            pagedResults.setTableid("CytoscapeNetworkDisplayer");
-            request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
-        }
+        // === Test large network ===
+        if (fullInteractingGeneSet.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
+            // set large_network in request
+//            request.setAttribute("large_network", LARGE_NETWORK);
 
+            // set inline query xml in request
+            String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
+                    PathQuery.USERPROFILE_VERSION);
+            request.setAttribute("queryXML", queryXML);
+
+        } else {
+            // set inline table in request
+            try {
+                WebResultsExecutor we = im.getWebResultsExecutor(profile);
+                WebResults webResults = we.execute(q);
+                PagedTable pagedResults = new PagedTable(webResults,
+                        reportObject.getNumberOfTableRowsToShow().intValue());
+                pagedResults.setTableid("CytoscapeNetworkDisplayer");
+                request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
