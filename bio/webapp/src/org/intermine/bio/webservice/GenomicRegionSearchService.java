@@ -99,7 +99,11 @@ public class GenomicRegionSearchService extends ListMakerService {
         try {
             return new GenomicRegionSearchListInput(req, bagManager, im);
         } catch (JSONException e) {
-            throw new BadRequestException(e);
+            String msg = e.getMessage();
+            if (msg == null) {
+                throw new BadRequestException("Error parsing region search input");
+            }
+            throw new BadRequestException("Error parsing region search input: " + e.getMessage());
         }
     }
 
