@@ -54,7 +54,7 @@
 </div>
 </im:boxarea>
 
-<c:if test="${!empty OPENID_PROVIDERS}">
+<c:if test="${!empty OPENID_PROVIDERS && WEB_PROPERTIES['openid.allowed'] != 'false'}">
   <im:debug message="${OPENID_PROVIDERS}"/>
   <im:boxarea stylename="plainbox" fixedWidth="60%">
 	<h3><fmt:message key="login.openid"/></h3>
