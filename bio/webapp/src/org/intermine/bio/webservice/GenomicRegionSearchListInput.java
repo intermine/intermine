@@ -1,6 +1,7 @@
 package org.intermine.bio.webservice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +19,11 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.bio.web.model.RegionParseException;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,8 +82,9 @@ public class GenomicRegionSearchListInput extends ListInput {
     }
 
     public class GenomicRegionSearchInfo {
+        private final String SF = "org.intermine.model.bio.SequenceFeature";
         private String organism;
-        private List<String> featureTypes;
+        private Set<String> featureTypes;
         private Set<ClassDescriptor> featureCds;
         private List<String> regions;
         private int extension = 0;
@@ -96,17 +100,20 @@ public class GenomicRegionSearchListInput extends ListInput {
         public void setOrganism(String organism) {
             this.organism = organism;
         }
-        public List<String> getFeatureTypes() {
-            return featureTypes;
+        public Set<String> getFeatureTypes() {
+            return Collections.unmodifiableSet(featureTypes);
         }
         
         /** 
          * Set the feature types for this request. Immediately parses the class
          * names to ClassDescriptors and fails as soon as possible.
-         * @param featureTypes
+         * 
+         * @param featureTypes A collection of feature type names. 
+         * @throws BadRequestException if the feature types are not mappable to classes, and if 
+         *                             those classes are not Sequence Features.
          */
-        public void setFeatureTypes(List<String> featureTypes) {
-            this.featureTypes = featureTypes;
+        public void setFeatureTypes(Collection<String> featureTypes) {
+            this.featureTypes = new HashSet<String>(featureTypes);
             this.featureCds = new HashSet<ClassDescriptor>();
             
             Set<String> badTypes = new HashSet<String>();
@@ -116,6 +123,14 @@ public class GenomicRegionSearchListInput extends ListInput {
                 if (cld == null) {
                     badTypes.add(f);
                 } else {
+                    try {
+                        if (!SF.equals(f) && !ClassDescriptor.findSuperClassNames(model, f).contains(SF)) {
+                            throw new BadRequestException(f + " is not a " + SF);
+                        }
+                    } catch (MetaDataException e) {
+                        // This should never happen.
+                        throw new InternalErrorException(e);
+                    }
                     featureCds.add(cld);
                     for (ClassDescriptor subCld : model.getAllSubs(cld)) {
                         featureCds.add(subCld);
