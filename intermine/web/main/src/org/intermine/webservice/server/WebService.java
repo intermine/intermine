@@ -358,7 +358,7 @@ public abstract class WebService
         t.printStackTrace(ps);
         ps.flush();
 
-        if (!(t instanceof NullPointerException) && (code == Output.SC_INTERNAL_SERVER_ERROR)) {
+        if (code == Output.SC_INTERNAL_SERVER_ERROR) {
             logger.error("Service failed by internal error. Request parameters: \n"
                             + requestParametersToString() + b.toString());
         } else {
