@@ -82,7 +82,7 @@ public class ExportOptionsController extends TilesAction
                 pathsMap.put(pathString, title);
             }
             request.setAttribute("pathsMap", pathsMap);
-            String pathStrings = StringUtil.join(initialPaths, " ");
+            String pathStrings = StringUtil.join(pathsMap.keySet(), " ");
             request.setAttribute("pathsString", pathStrings);
         } catch (Exception e) {
             LOG.error("Exception", e);
