@@ -900,9 +900,11 @@ public class GenomicRegionSearchService
 
         for (Entry<GenomicRegion, List<List<String>>> e : resultMap.entrySet()) {
 
-            for (List<String> sf : e.getValue()) {
-                if (sf.get(3).equals(featureType)) { // 3 featureType
-                    featureIdSet.add(Integer.valueOf(sf.get(0))); // 0 id
+            if (e.getValue() != null) {
+                for (List<String> sf : e.getValue()) {
+                    if (sf.get(3).equals(featureType)) { // 3 featureType
+                        featureIdSet.add(Integer.valueOf(sf.get(0))); // 0 id
+                    }
                 }
             }
         }
