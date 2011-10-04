@@ -59,7 +59,8 @@ public class SequenceFeatureExportOptionsController extends TilesAction
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
         if ("sequence".equals(type)) {
-            List<Path> exportClassPaths = SequenceFeatureExportUtil.getExportClassPaths(pt);
+            List<Path> exportClassPaths =
+                SequenceFeatureExportUtil.getExportClassPaths(pt.getPathQuery());
 
             Map<String, String> pathMap = new LinkedHashMap<String, String>();
 
