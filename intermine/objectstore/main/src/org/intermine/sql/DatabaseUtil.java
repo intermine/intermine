@@ -878,7 +878,8 @@ public final class DatabaseUtil
     public static void createBagValuesTables(Connection con)
         throws SQLException {
         String sqlTable = "CREATE TABLE bagvalues (savedbagid integer, value text, extra text)";
-        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value, extra)";
+        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues "
+            + "(savedbagid, value, extra)";
         con.createStatement().execute(sqlTable);
         con.createStatement().execute(sqlIndex);
     }
@@ -912,12 +913,12 @@ public final class DatabaseUtil
      * @param tableName The table to add the database too
      * @param columnName The column to add
      * @param type The SQL type to add
-     * @throws SQLException
+     * @throws SQLException if something goes wrong
      */
     public static void addColumn(Connection con, String tableName, String columnName, Type type)
         throws SQLException {
         if (!DatabaseUtil.tableExists(con, tableName)) {
-            throw new IllegalArgumentException("there is no table named " + tableName + "in this"
+            throw new IllegalArgumentException("there is no table named " + tableName + " in this"
                     + " database to add a new column to");
         }
         if (DatabaseUtil.columnExists(con, tableName, columnName)) {
