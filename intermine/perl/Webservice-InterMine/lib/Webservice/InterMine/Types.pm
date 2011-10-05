@@ -278,7 +278,7 @@ subtype IllegalQueryName, as Str, where { /[^\w\.,\s-]/ };
 enum QueryType, [ 'template', 'saved-query', ];
 class_type QueryHandler, { class => 'Webservice::InterMine::Query::Handler', };
 class_type Query,        { class => 'Webservice::InterMine::Query::Core', };
-subtype ListableQuery, as Query, where {$_->does('Webservice::InterMine::Query::Roles::Listable')};
+role_type ListableQuery, {role => 'Webservice::InterMine::Query::Roles::Listable'};
 subtype ListOfListableQueries, as ArrayRef[ListableQuery];
 coerce QueryName, from IllegalQueryName, 
     via { 

@@ -2,7 +2,7 @@ package Webservice::InterMine::Query::Roles::Listable;
 
 use MooseX::Role::WithOverloading;
 
-requires 'list_upload_path', 'service_root', 'get_request_parameters', 'service';
+requires 'list_upload_path', 'service_root', 'get_request_parameters', 'service', 'list_append_path';
 
 use overload 
    '|' => \&overload_adding,
