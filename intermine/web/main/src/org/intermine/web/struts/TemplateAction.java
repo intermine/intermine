@@ -303,6 +303,7 @@ public class TemplateAction extends InterMineAction
                 && ("perl".equalsIgnoreCase(codeGenTemplate)
                      || "java".equalsIgnoreCase(codeGenTemplate)
                      || "python".equalsIgnoreCase(codeGenTemplate)
+                     || "ruby".equalsIgnoreCase(codeGenTemplate)
                      || "javascript".equalsIgnoreCase(codeGenTemplate)
                     )) {
             return true;
