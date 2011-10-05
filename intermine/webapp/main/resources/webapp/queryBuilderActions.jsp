@@ -65,6 +65,8 @@
       <span>|</span>
       <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=python&source=pathQuery" target="_blank">Python</a>
       <span>|</span>
+      <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=ruby&source=pathQuery" target="_blank">Ruby</a>
+      <span>|</span>
       <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=java&source=pathQuery" target="_blank">Java</a>
       <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
     </td>

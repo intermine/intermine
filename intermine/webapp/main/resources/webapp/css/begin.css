@@ -804,3 +804,7 @@ html, body {
 #lists a:hover {
 	color: #000;
 }
+
+#api-langs li {
+    float: left;
+}
