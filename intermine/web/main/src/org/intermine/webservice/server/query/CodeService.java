@@ -36,6 +36,7 @@ import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaScriptCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePerlCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePythonCodeGenerator;
+import org.intermine.api.query.codegen.WebserviceRubyCodeGenerator;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -62,6 +63,8 @@ public class CodeService extends AbstractQueryService {
             return new WebservicePythonCodeGenerator();
         } else if ("javascript".equals(lang) || "js".equals(lang)) {
             return new WebserviceJavaScriptCodeGenerator();
+        } else if ("ruby".equals(lang) || "js".equals(lang)) {
+            return new WebserviceRubyCodeGenerator();
         } else {
             throw new BadRequestException("Unknown code generation language: " + lang);
         }
