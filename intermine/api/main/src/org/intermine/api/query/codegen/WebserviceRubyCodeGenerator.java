@@ -55,7 +55,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
         sb.append("#          http://intermine.org/docs/ruby-docs/" + ENDL);
         sb.append("#     and: http://intermine.org/docs/ruby-bio-docs/" + ENDL);
         sb.append("#" + ENDL);
-        sb.append("# The following two lines will be needed in every python script:" + ENDL);
+        sb.append("# The following two lines will be needed in every script:" + ENDL);
         sb.append("require \"rubygems\"" + ENDL);
         sb.append("require \"intermine/service\"" + ENDL);
         sb.append("service = Service.new(\"" + info.getServiceBaseURL() + "\"");
