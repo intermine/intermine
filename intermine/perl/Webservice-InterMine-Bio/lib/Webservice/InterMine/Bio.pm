@@ -9,11 +9,11 @@ Webservice::InterMine::Bio - Access data from InterMine queries in biological fo
 
 =head1 VERSION
 
-Version 0.98
+Version 0.9802
 
 =cut
 
-our $VERSION = '0.9801';
+our $VERSION = '0.9802';
 
 
 =head1 SYNOPSIS
