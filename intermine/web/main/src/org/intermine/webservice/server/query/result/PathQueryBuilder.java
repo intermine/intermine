@@ -73,7 +73,7 @@ public class PathQueryBuilder
                     missingBags.add(bagName);
                 } else {
                     InterMineBag bag = savedBags.get(bagName);
-                    if (!BagState.CURRENT.equals(bag.getState())) {
+                    if (BagState.CURRENT != BagState.valueOf(bag.getState())) {
                         toUpgrade.add(bagName);
                     }
                 }
@@ -90,7 +90,6 @@ public class PathQueryBuilder
             }
         } else {
             logger.debug("Received invalid xml: " + xml);
-
             throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
         }
     }
