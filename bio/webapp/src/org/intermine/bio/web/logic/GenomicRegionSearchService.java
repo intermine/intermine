@@ -182,7 +182,7 @@ public class GenomicRegionSearchService
         if (excludedFeatureTypes == null || "".equals(excludedFeatureTypes)) {
             excludedFeatureTypeList = null;
         } else {
-            excludedFeatureTypeList = Arrays.asList(excludedFeatureTypes.split(","));
+            excludedFeatureTypeList = Arrays.asList(excludedFeatureTypes.split("[, ]+"));
         }
 
         if ("".equals(orgFeatureJSONString)) {
