@@ -216,16 +216,17 @@
             </div>
 
             <div id="api">
-                <h4>Perl, Python<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-                <img src="images/begin/perl-java-python-ico.png" alt="perl java" />
+                <h4>Perl, Python, Ruby and <span>&nbsp;&amp;&nbsp;</span> Java API</h4>
+                <img src="images/begin/java-perl-python-ruby-2.png" alt="perl java python ruby" />
                 <p>
                     Access our <c:out value="${WEB_PROPERTIES['project.title']}"/> data via
                     our Application Programming Interface (API) too!
                     We provide client libraries in the following languages:
                 </p>
-                <ul>
+                <ul id="api-langs">
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=ruby">Ruby</a>
                     <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
                 </ul>
             </div>

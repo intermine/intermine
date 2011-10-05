@@ -19,6 +19,11 @@
           <tiles:insert name="apiPython.tile"/>
         </div>
     </c:when>
+    <c:when test="${subtabs[subtabName] == 'ruby'}">
+        <div align="center" style="padding-top: 20px;">
+          <tiles:insert name="apiRuby.tile"/>
+        </div>
+    </c:when>
     <c:otherwise>
           <div align="center" style="padding-top: 20px;">
           <tiles:insert name="apiJava.tile"/>
