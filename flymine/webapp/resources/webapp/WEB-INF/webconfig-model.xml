@@ -661,9 +661,9 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="comments"
                      placement="Function"
-                     types="Gene,Protein"/>
+                     types="Protein"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
                      jspName="model/publicationAnnotationsDisplayer.jsp"
