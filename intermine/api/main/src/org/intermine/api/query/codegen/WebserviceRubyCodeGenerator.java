@@ -152,7 +152,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
             String path = pc.getPath();
             ConstraintOp op = pc.getOp();
             
-            String subk = op.toString().toLowerCase().replace(' ', '_');
+            String subk = (op == null) ? null : op.toString().toLowerCase().replace(' ', '_');
             String subv = null;
             String rhs = null;
             
@@ -187,20 +187,24 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                 }
             } else if ("PathConstraintNull".equals(className)) {
                 if (op.equals(ConstraintOp.IS_NULL))  {
-                    subk = "=";
+                    rhs = "nil";
                 } else if (op.equals(ConstraintOp.IS_NOT_NULL)) {
                     subk = "!=";
+                    subv = "nil";
                 } else {
                     throw new InvalidQueryException("Unknown null-constraint op (" + op + ")");
                 }
-                subv = "nil";
             } else {
                 throw new InvalidQueryException("Unknown constraint class (" + className +")");
             }
             if (rhs == null) {
-                rhs = "{:" + subk + " => " + subv + "}";
+                rhs = "{" 
+                      + ((subk.startsWith("!") || subk.startsWith("=")) ? dblQuote(subk) : ":" + subk) 
+                      + " => " 
+                      + subv 
+                      + "}";
             }
-            wc = "where(\"" + path + "\" => " + rhs + ")";
+            wc = "where(" + dblQuote(path) + " => " + rhs + ")";
         }
 
         public String toString() {
@@ -221,26 +225,28 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
             throw new InvalidQueryException(e1.getMessage());
         }
 
+
+        // Put on subclasses first.
+        try {
+            for (Entry<String, String> entry: query.getSubclasses().entrySet()) {
+                sb.append(INDENT + new RubyWhereClause(entry.getKey(), entry.getValue()) + "." + ENDL);
+            }
+        } catch (PathException e) {
+            throw new InvalidQueryException(e.getMessage());
+        }
+
         if (query.getView() == null || query.getView().isEmpty()) {
             throw new InvalidQueryException("No fields selected for output (view is empty)");
-        } else {
-            sb.append(INDENT + "select(");
-            sb.append(new PresentedList<String>(deheadify(query.getView())));
-            sb.append(")." + ENDL);
         }
+        sb.append(INDENT + "select(");
+        sb.append(new PresentedList<String>(deheadify(query.getView())));
+        sb.append(")." + ENDL);
         
         // Add constraints
         if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
             // Add comments for constraints
             sb.append(INDENT + "# You can edit the constraint values below" + ENDL);
 
-            try {
-                for (Entry<String, String> entry: query.getSubclasses().entrySet()) {
-                    sb.append(INDENT + new RubyWhereClause(entry.getKey(), entry.getValue()) + "." + ENDL);
-                }
-            } catch (PathException e) {
-                throw new InvalidQueryException(e.getMessage());
-            }
             int coded_cons = 0;
             for (PathConstraint pc : query.getConstraints().keySet()) {
                 if (query.getConstraints().get(pc) == null) {
