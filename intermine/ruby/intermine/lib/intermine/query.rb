@@ -276,6 +276,12 @@ module InterMine::PathQuery
         # URLs for internal consumption.
         attr_reader :list_upload_uri, :list_append_uri
 
+        # The number of rows to return - defaults to nil (all rows)
+        attr_accessor :size
+
+        # The index of the first row to return - defaults to 0 (first row)
+        attr_accessor :start
+
         # Construct a new query object. You should not use this directly.
         # Instead use the factory methods in Service. 
         #
@@ -290,6 +296,8 @@ module InterMine::PathQuery
             if root
                 @root = InterMine::Metadata::Path.new(root, model).rootClass
             end
+            @size = nil
+            @start = 0
             @constraints = []
             @joins = []
             @views = []
@@ -377,6 +385,38 @@ module InterMine::PathQuery
             return Results::ResultsReader.new(@url, self, start, size)
         end
 
+        # Set the maximum number of rows this query will return. 
+        #
+        # This method can be used to set a default maximum size for 
+        # a query. Set to nil for all rows. The value given here 
+        # will be overridden by any value supplied by #each_row
+        # or #each_result, unless that value is nil, in which 
+        # case this value will be used. If unset, the query will return all results.
+        #
+        # Returns self for method chaining.
+        #
+        # See also #size= and #offset
+        #
+        def limit(size)
+            @size = size
+            return self
+        end
+
+        # Set the index of the first row of results this query will return. 
+        #
+        # This method can be used to set a value for the query offset. 
+        # The value given here will be overridden by any value supplied by #each_row
+        # or #each_result. If unset, results will start from the first row.
+        #
+        # Returns self for method chaining.
+        #
+        # See also #start= and #limit
+        #
+        def offset(start) 
+            @start = start
+            return self
+        end
+
         # Iterate over the results of this query one row at a time.
         #
         # Rows support both array-like index based access as well as 
@@ -390,7 +430,9 @@ module InterMine::PathQuery
         #     puts r.to_h # Materialize the row an a Hash
         #   end
         #
-        def each_row(start=0, size=nil)
+        def each_row(start=nil, size=nil)
+            start = start.nil? ? @start : start
+            size  = size.nil? ? @size : size
             results_reader(start, size).each_row {|row|
                 yield row
             }
@@ -405,7 +447,9 @@ module InterMine::PathQuery
         #     end
         #   end
         #
-        def each_result(start=0, size=nil)
+        def each_result(start=nil, size=nil)
+            start = start.nil? ? @start : start
+            size  = size.nil? ? @size : size
             results_reader(start, size).each_result {|row|
                 yield row
             }
@@ -430,7 +474,9 @@ module InterMine::PathQuery
         #   rows.last["symbol"]
         #   => "eve"
         #
-        def rows(start=0, size=nil)
+        def rows(start=nil, size=nil)
+            start = start.nil? ? @start : start
+            size  = size.nil? ? @size : size
             res = []
             results_reader(start, size).each_row {|row|
                 res << row
@@ -445,7 +491,9 @@ module InterMine::PathQuery
         #  genes.last.symbol
         #  => "eve"
         #
-        def results(start=0, size=nil)
+        def results(start=nil, size=nil)
+            start = start.nil? ? @start : start
+            size  = size.nil? ? @size : size
             res = []
             results_reader(start, size).each_result {|row|
                 res << row

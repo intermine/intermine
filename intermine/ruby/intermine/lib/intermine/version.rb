@@ -1,3 +1,3 @@
 module Intermine
-  VERSION = "0.98.06"
+  VERSION = "0.98.07"
 end
