@@ -7,7 +7,7 @@ default_sources:
   - "GOAnnotation"
   - "Intact"
   - "IntactVocabulary"
-  - "Interpro"
+  - "InterPro"
   - "MGIIdentifiers"
   - "NCBIGene"
   - "PubMed"
