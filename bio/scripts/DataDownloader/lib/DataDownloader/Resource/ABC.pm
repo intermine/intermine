@@ -56,6 +56,11 @@ has sub_directory => (
     auto_deref => 1,
 );
 
+sub as_string {
+    my $self = shift;
+    return sprintf("%s (%s) %s => %s", $self->get_title, $self->get_subtitle, $self->get_file, $self->get_destination);
+}
+
 has logger => (
     isa        => class_type('Log::Handler'),
     is         => 'ro',
