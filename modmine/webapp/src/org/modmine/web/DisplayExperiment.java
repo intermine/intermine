@@ -276,8 +276,8 @@ public class DisplayExperiment
      * for this experiment
      */
     public int getRepositedCount() {
-        Set<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
-        return rep.size();
+        Integer count = MetadataCache.getExperimentRepositoryCount(os).get(name);
+        return count;
     }
 
     /**
