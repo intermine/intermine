@@ -19,7 +19,11 @@ class BedIterator(object):
         params = self.query.to_query_params()
         if not self.ucsc_compatible:
             params["ucscCompatible"] = "no"
-        i = self.service.get_results(self.path, params, "tsv", self.query.views)
+        try:
+            path = self.query.bed_path
+        except: 
+            path = self.path
+        i = self.service.get_results(path, params, "tsv", self.query.views)
         return i
 
     def __str__(self):
@@ -56,7 +60,11 @@ class GFF3Iterator(object):
 
     def _get_iter(self):
         params = self.query.to_query_params()
-        i = self.service.get_results(self.path, params, "tsv", self.query.views)
+        try:
+            path = self.query.gff3_path
+        except: 
+            path = self.path
+        i = self.service.get_results(path, params, "tsv", self.query.views)
         return i
 
     def __str__(self):
@@ -90,7 +98,11 @@ class FastaIterator(object):
 
     def _get_iter(self):
         params = self.query.to_query_params()
-        i = self.service.get_results(self.path, params, "tsv", self.query.views)
+        try:
+            path = self.query.fasta_path
+        except: 
+            path = self.path
+        i = self.service.get_results(path, params, "tsv", self.query.views)
         return i
 
     def __str__(self):

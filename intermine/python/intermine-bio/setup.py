@@ -110,7 +110,7 @@ setup(
         name = "intermine-bio",
         packages = ["interminebio"],
         cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.98.01",
+        version = "0.98.02",
         description = "Biological Extensions to the InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
