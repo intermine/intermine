@@ -405,7 +405,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                     extra = (String) row.get(0);
                     index++;
                 }
-                for (; index < keyFieldNames.size() + 1; index++) {
+                for (; index < row.size(); index++) {
                     value = (String) row.get(index);
                     if (value != null && !"".equals(value)) {
                         keyFieldValueList.add(new BagValue(value, extra));
@@ -957,7 +957,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**Update the bagvalues table with the items contained in osb_int table
-     * 
+     *
      */
     private void updateBagValues() {
         deleteAllBagValues();
