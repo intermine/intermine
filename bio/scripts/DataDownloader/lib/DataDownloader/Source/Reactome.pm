@@ -21,7 +21,6 @@ use constant {
 };
 use constant ORGANISMS => (
     "Drosophila melanogaster", 
-    "Saccharomyces cerevisiae",
     "Caenorhabditis elegans",
     "Mus musculus",
     "Homo sapiens",

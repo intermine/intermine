@@ -15,7 +15,6 @@ use constant {
 use constant ORGANISMS => (
     "Drosophila_melanogaster",
     "Caenorhabditis_elegans", 
-    "Saccharomyces_cerevisiae",
     "Mus_musculus",
     "Homo_sapiens",
 );
