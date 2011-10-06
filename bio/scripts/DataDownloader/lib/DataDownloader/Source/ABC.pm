@@ -5,6 +5,8 @@ use MooseX::ABC;
 use MooseX::FollowPBP;
 use Moose::Util::TypeConstraints;
 
+use Ouch ':traditional';
+
 require DataDownloader::Resource::HTTP;
 require DataDownloader::Resource::FTP;
 
@@ -100,7 +102,13 @@ sub fetch_all_data {
         confess "This source has no resources configured";
     }
     for my $source ($self->get_all_sources) {
-        $source->fetch();
+        my $e = try {
+            $source->fetch();
+        };
+        if (catch_all) {
+            $self->debug("Error fetching " . $source->as_string());
+            throw $e;
+        }
     }
 }
 
