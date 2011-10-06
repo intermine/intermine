@@ -10,6 +10,8 @@ package org.intermine.web.logic.profile;
  *
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -27,6 +30,10 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
@@ -37,6 +44,7 @@ import org.intermine.web.struts.InterMineAction;
  */
 public abstract class LoginHandler extends InterMineAction
 {
+    private static final Logger LOG = Logger.getLogger(LoginHandler.class);
     /**
      * Abstract class containing the methods for login in and copying current
      * history, bags,... into profile
@@ -56,9 +64,9 @@ public abstract class LoginHandler extends InterMineAction
         Profile profile = pm.getProfile(username);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (im.getBagManager().isAnyBagNotCurrent(profile)) {
-        		recordError(new ActionMessage("login.upgradeListStarted"), request);
+            recordError(new ActionMessage("login.upgradeListStarted"), request);
         } else if (im.getBagManager().isAnyBagToUpgrade(profile)) {
-                recordError(new ActionMessage("login.upgradeListManually"), request);
+            recordError(new ActionMessage("login.upgradeListManually"), request);
         }
         return renamedBags;
     }
@@ -142,8 +150,23 @@ public abstract class LoginHandler extends InterMineAction
         }
         SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isAnyBagNotCurrent(profile)) {
-            new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+        Connection con = null;
+        try {
+            con = ((ObjectStoreWriterInterMineImpl) pm.getProfileObjectStoreWriter())
+                                                             .getDatabase().getConnection();
+            if (im.getBagManager().isAnyBagNotCurrent(profile)
+                && !DatabaseUtil.isBagValuesEmpty(con)) {
+                new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+            }
+        } catch (SQLException sqle) {
+            LOG.error("Problems retriving the connection", sqle);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException sqle) {
+            }
         }
         return profile;
     }
