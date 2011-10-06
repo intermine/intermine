@@ -122,10 +122,10 @@ It has produced
 <td>
 <%-- FEATURES --%>
       <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
-     <c:if test="${fc_status.count > 1 }"><br> </c:if>
+     <c:if test="${fc_status.count > 1 }"></c:if>
 
 ${fc.featureType}:&nbsp;${fc.featureCounts}
-
+<br>
 
 <%-- too crowded: rm here, still available in the experiment page
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">
@@ -135,11 +135,12 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
       </i>
       </c:if>
 --%>
-     <c:if test="${fc_status.last }"><br> </c:if>
+     <c:if test="${fc_status.last && exp.expressionLevelCount == 0}"><br> </c:if>
       </c:forEach>
 
     <c:if test="${exp.expressionLevelCount > 0}">
        with ${exp.expressionLevelCount} expression levels.
+       <br><br>
     </c:if>
 
 <p/>
@@ -153,12 +154,13 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
            <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
          </c:otherwise>
        </c:choose>
-<br></br>
+     <br>
      </c:if>
 <%-- REPOSITORY ENTRIES --%>
      <c:if test="${exp.repositedCount > 0}">
 
       <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
+      <c:if test="${rep_status.first}"></c:if>
       ${rep.value}
       <c:choose>
         <c:when test="${rep.value == 1}">
@@ -169,7 +171,7 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
         </c:otherwise>
       </c:choose>
       in ${rep.key}
-      <br></br>
+      <br>
       </c:forEach>
      </c:if>
  
