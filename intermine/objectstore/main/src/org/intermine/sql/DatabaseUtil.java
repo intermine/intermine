@@ -885,6 +885,24 @@ public final class DatabaseUtil
     }
 
     /**
+     * Verify if 'bagvalues' table is empty
+     * @param con the Connection to use
+     * @throws SQLException if there is a database problem
+     */
+    public static boolean isBagValuesEmpty(Connection con)
+        throws SQLException {
+        String sqlCount = "select count(*) from bagvalues";
+        ResultSet result = con.createStatement().executeQuery(sqlCount);
+        result.next();
+        int bagValuesSize = result.getInt(1);
+        if (bagValuesSize == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Add a column in the table specified in input. A connection is obtained to the database
      * and automatically released after the addition of the column.
      * @param database the database to use
