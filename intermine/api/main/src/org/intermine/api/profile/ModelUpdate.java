@@ -9,7 +9,6 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,15 +32,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.pathquery.PathConstraintBag;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathConstraintLoop;
-import org.intermine.pathquery.PathConstraintNull;
-import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
@@ -49,16 +39,18 @@ public class ModelUpdate {
     private ObjectStoreWriter uosw;
     private ProfileManager pm;
     private Model model;
+    private Model oldModel;
     private Set<String> deletedClasses = new HashSet<String>();
     private Map<String, String> renamedClasses = new HashMap<String, String>();
     private Map<String, String> renamedFields = new HashMap<String, String>();
     public static final String DELETED = "deleted";
     public static final String RENAMED = "renamed-";
 
-    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw) {
+    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, String oldModelName) {
         this.uosw = uosw;
-        pm = new ProfileManager(os, uosw);
-        model = os.getModel();
+        this.pm = new ProfileManager(os, uosw);
+        this.model = os.getModel();
+        this.oldModel = Model.getInstanceByName(oldModelName);
         String keyAsString;
         String className;
         String fieldName;
@@ -79,13 +71,15 @@ public class ModelUpdate {
             if (!keyAsString.contains(".")) {
                 //it's a class update
                 className = keyAsString;
-                if (update.equals(DELETED)) {
-                    deletedClasses.add(className);
-                } else if (update.contains(RENAMED)) {
-                    String newClassName = update.replace(RENAMED, "").trim();
-                    if (!newClassName.equals("")
-                        && model.getClassDescriptorByName(newClassName) != null) {
-                        renamedClasses.put(className, newClassName);
+                if (oldModel.getClassDescriptorByName(className) != null) {
+                    if (update.equals(DELETED)) {
+                        deletedClasses.add(className);
+                    } else if (update.contains(RENAMED)) {
+                        String newClassName = update.replace(RENAMED, "").trim();
+                        if (!newClassName.equals("")
+                            && model.getClassDescriptorByName(newClassName) != null) {
+                            renamedClasses.put(className, newClassName);
+                        }
                     }
                 }
             } else {
@@ -106,6 +100,18 @@ public class ModelUpdate {
                 }
             }
         }
+    }
+
+    public Set<String> getDeletedClasses() {
+        return deletedClasses;
+    }
+
+    public Map<String, String> getRenamedClasses() {
+        return renamedClasses;
+    }
+
+    public Map<String, String> getRenamedFields() {
+        return renamedFields;
     }
 
     public void update() throws PathException {
@@ -174,7 +180,7 @@ public class ModelUpdate {
         Map<String, SavedQuery> savedQueries;
         Map<String, TemplateQuery> templateQueries;
         String cls, prevField;
-        List<String> problems = new ArrayList<String>();
+        List<String> problems;
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
         q.addToSelect(qc);
@@ -187,10 +193,9 @@ public class ModelUpdate {
             savedQueries = profile.getSavedQueries();
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
-                //TO DO pass newModel
-                PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, model);
+                PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, oldModel);
                 for (String prevClass : renamedClasses.keySet()) {
-                    pathQueryUpdate.getPathQueryWithRenamedClass(prevClass, renamedClasses.get(prevClass), problems);
+                    problems = pathQueryUpdate.updateWithRenamedClass(prevClass, renamedClasses.get(prevClass));
                     if (!problems.isEmpty()) {
                         System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
                         + " with renamed class " + prevClass + ": " + problems);
@@ -201,7 +206,7 @@ public class ModelUpdate {
                     int index = key.indexOf(".");
                     cls = key.substring(0, index);
                     prevField = key.substring(index + 1);
-                    pathQueryUpdate.getPathQueryWithRenamedField(cls, prevField, renamedFields.get(key), problems);
+                    problems = pathQueryUpdate.updateWithRenamedField(cls, prevField, renamedFields.get(key));
                     if (!problems.isEmpty()) {
                         System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
                                 + " with renamed field " + prevField + ": " + problems);
@@ -212,11 +217,10 @@ public class ModelUpdate {
             }
             templateQueries = profile.getSavedTemplates();
             for (TemplateQuery templateQuery : templateQueries.values()) {
-                //TO DO pass newModel
-                PathQueryUpdate templateQueryUpdate = new PathQueryUpdate(templateQuery, model, model);
+                PathQueryUpdate templateQueryUpdate = new PathQueryUpdate(templateQuery, model, oldModel);
                 for (String prevClass : renamedClasses.keySet()) {
-                    templateQueryUpdate.getPathQueryWithRenamedClass(prevClass,
-                        renamedClasses.get(prevClass), problems);
+                    problems = templateQueryUpdate.updateWithRenamedClass(prevClass,
+                        renamedClasses.get(prevClass));
                     if (!problems.isEmpty()) {
                         System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
                                 + " with renamed class " + prevClass + ": " + problems);
@@ -227,8 +231,8 @@ public class ModelUpdate {
                     int index = key.indexOf(".");
                     cls = key.substring(0, index);
                     prevField = key.substring(index + 1);
-                    templateQueryUpdate.getPathQueryWithRenamedField(cls, prevField,
-                        renamedFields.get(key), problems);
+                    problems = templateQueryUpdate.updateWithRenamedField(cls, prevField,
+                        renamedFields.get(key));
                     if (!problems.isEmpty()) {
                         System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
                                 + " with renamed field " + prevField + ": " + problems);
