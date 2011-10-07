@@ -11,6 +11,7 @@ package org.intermine.web.task;
  */
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,8 @@ public class LoadBagValuesTask extends Task
 {
     private String osAlias;
     private String userProfileAlias;
+    private ObjectStore uos = null;
+    private ObjectStore os = null;
 
     /**
      * Set the alias of the main object store.
@@ -71,16 +74,79 @@ public class LoadBagValuesTask extends Task
      * @throws BuildException if there is a problem while
      */
     public void execute() {
-        ObjectStore os = null;
-        ObjectStore uos = null;
-        ObjectStoreWriter uosw = null;
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
             uos = ObjectStoreFactory.getObjectStore(userProfileAlias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
+        updateUserProfileDatabase();
+        ObjectStoreWriter uosw = null;
+        try {
+            uosw = uos.getNewWriter();
+        } catch (ObjectStoreException ose) {
+            throw new BuildException("Problems retrieving the new writer", ose);
+        }
+        Query q = new Query();
+        QueryClass qc = new QueryClass(SavedBag.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Results bags = uos.execute(q, 1000, false, false, true);
+        if (bags.size() == 0) {
+            log("There are no users's saved list.");
+            return;
+        }
+        if (!verifyProductionDatabase(bags)) {
+            log("The task will not be executed. Verify to use the same production database that" +
+            " created the users's saved lists.");
+            return;
+        }
 
+        //start loading bagvalues
+        for (Iterator i = bags.iterator(); i.hasNext();) {
+            ResultsRow row = (ResultsRow) i.next();
+            SavedBag savedBag = (SavedBag) row.get(0);
+            if (StringUtils.isBlank(savedBag.getName())) {
+                log("Failed to load bag with blank name");
+            } else {
+                try {
+                    InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
+                    log("Start loading bag: " + bag.getName() + " - id: "
+                            + bag.getSavedBagId());
+                    Properties classKeyProps = new Properties();
+                    try {
+                        classKeyProps.load(this.getClass().getClassLoader()
+                                .getResourceAsStream("class_keys.properties"));
+                    } catch (Exception e) {
+                        log("Error loading class descriptions.");
+                        e.printStackTrace();
+                    }
+
+                    Map<String, List<FieldDescriptor>>  classKeys =
+                        ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+
+                    List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+                            classKeys, bag.getType());
+                    bag.setKeyFieldNames(keyFielNames);
+                    bag.addBagValues();
+                    log("Loaded bag: " + bag.getName() + " - id: "
+                            + bag.getSavedBagId());
+                } catch (UnknownBagTypeException e) {
+                    log("Ignoring a bag because type: is not in the model.");
+                    e.printStackTrace();
+                } catch (ObjectStoreException ose) {
+                    throw new BuildException("Exception while creating InterMineBag", ose);
+                }
+            }
+        }
+        try {
+            uosw.close();
+        } catch (ObjectStoreException ose) {
+            throw new BuildException("Problems closing the writer", ose);
+        }
+    }
+
+    private void updateUserProfileDatabase() {
         if (uos instanceof ObjectStoreInterMineImpl) {
             Connection conn = null;
             Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
@@ -115,57 +181,46 @@ public class LoadBagValuesTask extends Task
                 }
             }
         }
-        try {
-            uosw = uos.getNewWriter();
-        } catch (ObjectStoreException ose) {
-            throw new BuildException("Problems retrieving the new writer", ose);
-        }
-        Query q = new Query();
-        QueryClass qc = new QueryClass(SavedBag.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        Results bags = uos.execute(q, 1000, false, false, true);
+    }
+
+    private boolean verifyProductionDatabase(Results bags) {
+        //verify that we are pointing out the production database that created the users's saved lists.
+        //select osbid from savedbag
+        int totalBags = bags.size();
+        int bagsMatching = 0;
+        StringBuffer osbids = new StringBuffer();
         for (Iterator i = bags.iterator(); i.hasNext();) {
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
-            if (StringUtils.isBlank(savedBag.getName())) {
-                log("Failed to load bag with blank name");
-            } else {
+            osbids.append(savedBag.getOsbId() + ",");
+        }
+        if (!"".equals(osbids)) {
+            osbids.deleteCharAt(osbids.length() - 1);
+            Connection conn = null;
+            try {
+                conn = ((ObjectStoreInterMineImpl) os).getDatabase().getConnection();
+                String sqlCountBagsMatching = "SELECT COUNT(DISTINCT bagid) FROM osbag_int WHERE bagid IN (" + osbids + ")";
+                ResultSet result = conn.createStatement().executeQuery(sqlCountBagsMatching);
+                result.next();
+                bagsMatching = result.getInt(1);
+
+                if ( bagsMatching/totalBags < 0.9) {
+                    return false;
+                }
+                return true;
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+                throw new BuildException("Exception while connecting ", sqle);
+            } finally {
                 try {
-                    InterMineBag bag = new InterMineBag(os, savedBag.getId(), uosw);
-                    log("Start loading bag: " + bag.getName() + " - id: "
-                            + bag.getSavedBagId());
-                    Properties classKeyProps = new Properties();
-                    try {
-                        classKeyProps.load(this.getClass().getClassLoader()
-                                .getResourceAsStream("class_keys.properties"));
-                    } catch (Exception e) {
-                        log("Error loading class descriptions.");
-                        e.printStackTrace();
+                    if (conn != null) {
+                        conn.close();
                     }
-
-                    Map<String, List<FieldDescriptor>>  classKeys =
-                        ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-
-                    List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
-                            classKeys, bag.getType());
-                    bag.setKeyFieldNames(keyFielNames);
-                    bag.addBagValues();
-                    log("Loaded bag: " + bag.getName() + " - id: "
-                            + bag.getSavedBagId());
-                } catch (UnknownBagTypeException e) {
-                    log("Ignoring a bag '" + savedBag.getName() + " because type: "
-                             + savedBag.getType() + " is not in the model.");
-                    e.printStackTrace();
-                } catch (ObjectStoreException ose) {
-                    throw new BuildException("Exception while creating InterMineBag", ose);
+                } catch (SQLException sqle) {
                 }
             }
-        }
-        try {
-            uosw.close();
-        } catch (ObjectStoreException ose) {
-            throw new BuildException("Problems closing the writer", ose);
+        } else {
+            return true;
         }
     }
 }
