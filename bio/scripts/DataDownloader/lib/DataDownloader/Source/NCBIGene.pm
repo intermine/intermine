@@ -14,6 +14,7 @@ use constant {
         FILE => "Homo_sapiens.gene_info.gz", 
         HOST => "ftp.ncbi.nih.gov",
         REMOTE_DIR => "gene/DATA/GENE_INFO/Mammalia",
+        EXTRACT => 1,
     }],
 };
 
