@@ -23,6 +23,7 @@ public class ModelUpdateTask extends Task {
     private String userProfileAlias;
     private ObjectStore os = null;
     private ObjectStoreWriter uosw = null;
+    private String newModel;
 
     /**
      * Set the alias of the main object store.
@@ -40,6 +41,14 @@ public class ModelUpdateTask extends Task {
         this.userProfileAlias = userProfileAlias;
     }
 
+    /**
+     * Set the newModel 
+     * @param newModel the String
+     */
+    public void setNewModel(String newModel) {
+        this.newModel = newModel;
+    }
+
     public void execute() {
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
@@ -48,12 +57,12 @@ public class ModelUpdateTask extends Task {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
-/*        ModelUpdate modelUpdate = new ModelUpdate(os, uosw);
+        ModelUpdate modelUpdate = new ModelUpdate(os, uosw, newModel);
         try {
             modelUpdate.update();
         } catch (PathException pe) {
             throw new BuildException("Exception while updating", pe);
-        }*/
+        }
     }
 
 }
