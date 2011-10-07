@@ -50,6 +50,7 @@ public class Profile
     protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
     protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
 
+    protected Map<String, InterMineBag> savedInvalidBags = new TreeMap<String, InterMineBag>();
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
     private final SearchRepository searchRepository;
@@ -91,6 +92,27 @@ public class Profile
         }
         searchRepository = new SearchRepository(this, Scope.USER);
         this.token = token;
+    }
+
+    /**
+     * Construct a Profile
+     * @param manager the manager for this profile
+     * @param username the username for this profile
+     * @param userId the id of this user
+     * @param password the password for this profile
+     * @param savedQueries the saved queries for this profile
+     * @param savedBags the saved bags for this profile
+     * @param savedInvalidBags the saved bags which type doesn't match with the model
+     * @param savedTemplates the saved templates for this profile
+     * @param token The token to use as an API key
+     */
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+                   Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
+                   Map<String, InterMineBag> savedInvalidBags,
+                   Map<String, TemplateQuery> savedTemplates, String token, boolean isLocal) {
+        this(manager, username, userId, password, savedQueries, savedBags, savedTemplates, token,
+            isLocal);
+        this.savedInvalidBags = savedInvalidBags;
     }
 
     /**
@@ -425,20 +447,26 @@ public class Profile
      * @throws ObjectStoreException if problems deleting bag
      */
     public void deleteBag(String name) throws ObjectStoreException {
-        if (!savedBags.containsKey(name)) {
+        if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToDelete = savedBags.get(name);
+        InterMineBag bagToDelete;
+        if (savedBags.containsKey(name)) {
+            bagToDelete = savedBags.get(name);
+            savedBags.remove(name);
+        } else {
+            bagToDelete = savedInvalidBags.get(name);
+            savedInvalidBags.remove(name);
+        }
         if (isLoggedIn()) {
             bagToDelete.delete();
         }
-        savedBags.remove(name);
 
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);
     }
-    
+
     /**
      * Update the type of bag.
      * If there is no such bag associated with the account, no action is performed.
@@ -447,10 +475,15 @@ public class Profile
      * @throws ObjectStoreException if problems deleting bag
      */
     public void updateBagType(String name, String newType) throws ObjectStoreException {
-        if (!savedBags.containsKey(name)) {
+        if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToUpdate = savedBags.get(name);
+        InterMineBag bagToUpdate;
+        if (savedBags.containsKey(name)) {
+            bagToUpdate = savedBags.get(name);
+        } else {
+            bagToUpdate = savedInvalidBags.get(name);
+        }
         if (isLoggedIn()) {
             bagToUpdate.setType(newType);
         }

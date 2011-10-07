@@ -270,6 +270,7 @@ public class ProfileManager
         }
 
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
+        Map<String, InterMineBag> savedInvalidBags = new HashMap<String, InterMineBag>();
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
         q.addFrom(qc);
@@ -288,15 +289,18 @@ public class ProfileManager
                 if (StringUtils.isBlank(savedBag.getName())) {
                     LOG.warn("Failed to load bag with blank name on login for user: " + username);
                 } else {
+                    InterMineBag bag = null;
                     try {
-                        InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                        bag = new InterMineBag(os, bagId, uosw);
                         bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
                                              classKeys, bag.getType()));
                         savedBags.put(bag.getName(), bag);
                     } catch (UnknownBagTypeException e) {
-                        LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
-                                + username + "' because type: " + savedBag.getType()
-                                + " is not in the model.", e);
+                        LOG.warn("The bag '" + savedBag.getName() + " for user '"
+                                + username + "' with type: " + savedBag.getType()
+                                + " is not in the model. It will be saved into invalidBags", e);
+                        bag = new InterMineBag(os, bagId, uosw, false);
+                        savedInvalidBags.put(bag.getName(), bag);
                     }
                 }
             }
@@ -348,7 +352,7 @@ public class ProfileManager
             }
         }
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
-                savedQueries, savedBags, savedTemplates, userProfile.getApiKey(),
+                savedQueries, savedBags, savedInvalidBags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount());
         profileCache.put(username, profile);
         return profile;
