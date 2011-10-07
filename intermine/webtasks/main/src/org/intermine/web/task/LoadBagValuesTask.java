@@ -204,7 +204,7 @@ public class LoadBagValuesTask extends Task
                 result.next();
                 bagsMatching = result.getInt(1);
 
-                if ( bagsMatching/totalBags < 0.9) {
+                if ( bagsMatching/totalBags < 0.8) {
                     return false;
                 }
                 return true;
