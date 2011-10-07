@@ -38,9 +38,12 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       var i = 3;
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
-            var homologue = '';
+            var homologue;
             if (entry['isHomologue'] == true) {
-                homologue = "&orthologue=" + entry['shortName'];
+            	homologue = jQuery('<input/>', {
+            		'name': 'orthologue',
+            		'value': entry['shortName']
+            	})
             }
             jQuery('<li/>', {
                 'id': 'organism-' + key,
@@ -49,8 +52,8 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                 	'href': '#',
                     'text': entry['shortName'],
                     'target': '_blank',
-                    click: function(e) {
-                    	jQuery('<form/>', {
+                    click: function(e) {                    	
+                    	var form = jQuery('<form/>', {
                     		'target': '_blank',
                     		'method': 'post',
                     		'action': url + '/portal.do',
@@ -66,11 +69,17 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                     	}))
                     	.append(jQuery('<input/>', {
                     		'name': 'origin',
-                    		'value': 'FlyMine' + homologue
+                    		'value': 'FlyMine'
                     	}))
-                    	.appendTo('#friendlyMines')
-                    	.submit()
-                    	.remove();
+                    	.append(homologue)
+                    	.appendTo('#friendlyMines');
+                    	
+                    	form.find('input').each(function() {
+                    		im.log(jQuery(this).attr('name') + ": " + jQuery(this).val());
+                    	});
+                    	
+                    	//form.submit()
+                    	form.remove();
                     	
                     	e.preventDefault();
                     }
