@@ -40,48 +40,48 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
         if (entry['identifiers'] != undefined) {
             var homologue;
             if (entry['isHomologue'] == true) {
-            	homologue = jQuery('<input/>', {
-            		'name': 'orthologue',
-            		'value': entry['shortName']
-            	})
+              homologue = jQuery('<input/>', {
+                'name': 'orthologue',
+                'value': entry['shortName']
+              })
             }
             jQuery('<li/>', {
                 'id': 'organism-' + key,
                 'style': (i <= 0) ? 'display:none;' : '',
                 'html': jQuery('<a/>', {
-                	'href': '#',
+                  'href': '#',
                     'text': entry['shortName'],
                     'target': '_blank',
-                    click: function(e) {                    	
-                    	var form = jQuery('<form/>', {
-                    		'target': '_blank',
-                    		'method': 'post',
-                    		'action': url + '/portal.do',
-                    		'style': 'display:none;'
-                    	})
-                    	.append(jQuery('<input/>', {
-                    		'name': 'externalids',
-                    		'value': entry['identifiers']
-                    	}))
-                    	.append(jQuery('<input/>', {
-                    		'name': 'class',
-                    		'value': 'Gene'
-                    	}))
-                    	.append(jQuery('<input/>', {
-                    		'name': 'origin',
-                    		'value': 'FlyMine'
-                    	}))
-                    	.append(homologue)
-                    	.appendTo('#friendlyMines');
-                    	
-                    	form.find('input').each(function() {
-                    		im.log(jQuery(this).attr('name') + ": " + jQuery(this).val());
-                    	});
-                    	
-                    	//form.submit()
-                    	form.remove();
-                    	
-                    	e.preventDefault();
+                    click: function(e) {
+                      var form = jQuery('<form/>', {
+                        'target': '_blank',
+                        'method': 'post',
+                        'action': url + '/portal.do',
+                        'style': 'display:none;'
+                      })
+                      .append(jQuery('<input/>', {
+                        'name': 'externalids',
+                        'value': entry['identifiers']
+                      }))
+                      .append(jQuery('<input/>', {
+                        'name': 'class',
+                        'value': 'Gene'
+                      }))
+                      .append(jQuery('<input/>', {
+                        'name': 'origin',
+                        'value': 'FlyMine'
+                      }))
+                      .append(homologue)
+                      .appendTo('#friendlyMines');
+
+                      form.find('input').each(function() {
+                        im.log(jQuery(this).attr('name') + ": " + jQuery(this).val());
+                      });
+
+                      form.submit()
+                      form.remove();
+
+                      e.preventDefault();
                     }
                 })
             }).appendTo(target);
