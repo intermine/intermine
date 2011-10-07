@@ -74,9 +74,9 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
                       .append(homologue)
                       .appendTo('#friendlyMines');
 
-                      form.find('input').each(function() {
-                        im.log(jQuery(this).attr('name') + ": " + jQuery(this).val());
-                      });
+                      //form.find('input').each(function() {
+                      //  im.log(jQuery(this).attr('name') + ": " + jQuery(this).val());
+                      //});
 
                       form.submit()
                       form.remove();
