@@ -1,0 +1,6 @@
+<!-- heading.tt -->
+<div id="heading">
+    <div id="banner"><h1>[% title %]</h1></div>
+    <img id="logo" src="[% proxy.uri_for('/images/intermine_logo.png') %]" alt="Logo" width="600" height="75"/>
+    <div class="clearall"></div>
+</div>

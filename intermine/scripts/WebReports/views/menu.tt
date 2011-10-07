@@ -1,0 +1,14 @@
+<!-- menu.tt -->
+    <div id="menu">
+        <ul>
+            <li>
+                <a href="[% proxy.uri_for('/analytics') %]">Google Analytics Reports</a>
+            </li>
+            <li>
+                <a href="[% proxy.uri_for('/models') %]">Model Comparison</a>
+            </li>
+            <li>
+                <a href="[% proxy.uri_for('/analytics') %]">Template Comparison</a>
+            </li>
+        </ul>
+    </div>
