@@ -103,13 +103,20 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
             // mine is dead
             return Collections.emptyList();
         }
-        Set<String> homologues = mine.getMatchingMapKeys(null, organismsInList);
 
-        if (homologues.isEmpty()) {
-            // test if local mine has orthologues
-            return checkLocalMine(linkManager, mine, organismsInList, identifierSet);
+        // check local mine first because we trust our mine most
+        Collection<JSONObject> results = checkLocalMine(linkManager, mine, organismsInList,
+                identifierSet);
+        if (!results.isEmpty()) {
+            return results;
         }
-        return convertToJSON(homologues, identifierSet, true);
+
+        // trust remote mine to convert
+        Set<String> homologues = mine.getMatchingMapKeys(null, organismsInList);
+        if (!homologues.isEmpty()) {
+            return convertToJSON(homologues, identifierSet, true);
+        }
+        return Collections.emptyList();
     }
 
     // test if local mine has orthologues
@@ -120,12 +127,12 @@ public final class FriendlyMineListLinkGenerator extends InterMineLinkGenerator
         Mine localMine = linkManager.getLocalMine();
 
         // D. rerio --> Dmel
-        Set<String> homologues = localMine.getMatchingMapKeys(mine.getMineValues(),
+        Set<String> homologues = localMine.getMatchingMapKeys(mine.getDefaultValues(),
                 organismsInList);
         if (homologues.isEmpty()) {
             // one more try
             // look for Dmel --> D. rerio
-            homologues = localMine.getMatchingMapValues(mine.getMineValues(), organismsInList);
+            homologues = localMine.getMatchingMapValues(mine.getDefaultValues(), organismsInList);
             isOrthologue = false;
         }
         if (homologues.isEmpty()) {
