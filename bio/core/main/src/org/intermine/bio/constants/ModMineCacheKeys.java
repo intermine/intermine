@@ -54,6 +54,13 @@ public final class ModMineCacheKeys
     public static final String SUB_SEQUENCED_FEATURE_TYPE
         = "submissionSequencedFeatureTypes";
 
+    
+    
+    /**
+     * Key to submission file source count cache entry.
+     */
+    public static final String SUB_FILE_SOURCE_COUNT
+        = "submissionFileSourceCounts";
 
 
 }

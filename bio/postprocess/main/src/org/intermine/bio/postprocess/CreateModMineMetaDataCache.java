@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.BindingSite;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
@@ -52,11 +53,15 @@ import org.intermine.util.TypeUtil;
 public final class CreateModMineMetaDataCache
 {
     private static final Logger LOG = Logger.getLogger(CreateModMineMetaDataCache.class);
-
+    
     private CreateModMineMetaDataCache() {
         // don't
     }
 
+    
+
+    
+    
     /**
      * Run queries to generate summary information for the modMine database and store resulting
      * properties file in the database.
@@ -76,6 +81,9 @@ public final class CreateModMineMetaDataCache
         readUniqueExperimentFeatureCounts(os, props);
         readSubmissionLocatedFeature(os, props);
         readSubmissionSequencedFeature(os, props);
+
+        
+        readSubmissionFileSourceCounts(os, props);
 
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         MetadataManager.store(db, MetadataManager.MODMINE_METADATA_CACHE,
@@ -492,4 +500,164 @@ public final class CreateModMineMetaDataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read sequenced features types, took: " + timeTaken + " ms.");
     }
+    
+ //======   
+    
+    
+    private static void readSubmissionFileSourceCounts(ObjectStore os, Properties props) {
+        long startTime = System.currentTimeMillis();
+
+        Model model = os.getModel();
+        Query q = new Query();
+        q.setDistinct(false);
+
+        QueryClass qcSub = new QueryClass(model.getClassDescriptorByName(
+                "Submission").getType());
+        QueryClass qcLsf = new QueryClass(BindingSite.class);
+        // QueryClass qcLsf = new QueryClass(SequenceFeature.class);
+        // QueryClass qcEL =
+        // new
+        // QueryClass(model.getClassDescriptorByName("BindingSite").getType());
+
+        QueryField qfDccId = new QueryField(qcSub, "DCCid");
+        QueryField qfClass = new QueryField(qcLsf, "class");
+        QueryField qfFile = new QueryField(qcLsf, "sourceFile");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        // q.addFrom(qcEL);
+
+        q.addToSelect(qfDccId);
+        q.addToSelect(qfClass);
+        q.addToSelect(qfFile);
+        q.addToSelect(new QueryFunction());
+
+        q.addToGroupBy(qfDccId);
+        q.addToGroupBy(qfClass);
+        q.addToGroupBy(qfFile);
+
+        q.addToOrderBy(qfDccId);
+        q.addToOrderBy(qfClass);
+        q.addToOrderBy(qfFile);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub,
+                "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features,
+                ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+        // QueryCollectionReference el = new QueryCollectionReference(qcLsf,
+        // "expressionLevels");
+        // ContainsConstraint ccEl = new ContainsConstraint(el,
+        // ConstraintOp.CONTAINS, qcEL);
+        // cs.addConstraint(ccEl);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        @SuppressWarnings("unchecked")
+        Iterator<ResultsRow> iter = (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            String dccId = (String) row.get(0);
+            Class<?> feat = (Class<?>) row.get(1);
+            String fileName = (String) row.get(2);
+            Long count = (Long) row.get(3);
+
+            String key = ModMineCacheKeys.SUB_FILE_SOURCE_COUNT + "."
+            + dccId + "." + TypeUtil.unqualifiedName(feat.getName()) + "."
+            + fileName;
+            
+            props.put(key, "" + count);
+        }
+
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read submissionFileSourceCounts cache, took: " + timeTaken
+                + "ms");
+    }
+
+    
+//    private static void readSubmissionRepositoryEntries(ObjectStore os) {
+//        //
+//        long startTime = System.currentTimeMillis();
+//        try {
+//            Query q = new Query();
+//            QueryClass qcSubmission = new QueryClass((Class.forName(os.getModel().getPackageName()
+//                    + ".Submission")));
+//            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+//            q.addFrom(qcSubmission);
+//            q.addToSelect(qfDCCid);
+//
+//            QueryClass qcRepositoryEntry = 
+//                new QueryClass((Class.forName(os.getModel().getPackageName() + ".DatabaseRecord")));
+//                       
+//            QueryField qfDatabase = new QueryField(qcRepositoryEntry,
+//                    "database");
+//            QueryField qfAccession = new QueryField(qcRepositoryEntry,
+//                    "accession");
+//            QueryField qfUrl = new QueryField(qcRepositoryEntry, "url");
+//            q.addFrom(qcRepositoryEntry);
+//            q.addToSelect(qfDatabase);
+//            q.addToSelect(qfAccession);
+//            q.addToSelect(qfUrl);
+//
+//            // join the tables
+//            QueryCollectionReference ref1 = new QueryCollectionReference(
+//                    qcSubmission, "databaseRecords");
+//            ContainsConstraint cc = new ContainsConstraint(ref1,
+//                    ConstraintOp.CONTAINS, qcRepositoryEntry);
+//
+//            q.setConstraint(cc);
+//            q.addToOrderBy(qfDCCid);
+//            q.addToOrderBy(qfDatabase);
+//
+//            Results results = os.execute(q);
+//
+//            submissionRepositedCache = new HashMap<String, List<String[]>>();
+//
+//            Integer counter = 0;
+//
+//            // Integer prevSub = new Integer(-1);
+//            String prevSub = null;
+//            List<String[]> subRep = new ArrayList<String[]>();
+//            Iterator<?> i = results.iterator();
+//            while (i.hasNext()) {
+//                ResultsRow<?> row = (ResultsRow<?>) i.next();
+//
+//                counter++;
+//                String dccId = (String) row.get(0);
+//                String db = (String) row.get(1);
+//                String acc = (String) row.get(2);
+//                String url = (String) row.get(3);
+//                String[] thisRecord = {db, acc, url};
+//
+//                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
+//                    if (prevSub != null) {
+//                        if (counter.equals(results.size())) {
+//                            prevSub = dccId;
+//                            subRep.add(thisRecord);
+//                        }
+//                        List<String[]> subRepIn = new ArrayList<String[]>();
+//                        subRepIn.addAll(subRep);
+//                        submissionRepositedCache.put(prevSub, subRepIn);
+//                        subRep.clear();
+//                    }
+//                    prevSub = dccId;
+//                }
+//                subRep.add(thisRecord);
+//            }
+//        } catch (Exception err) {
+//            err.printStackTrace();
+//        }
+//        long timeTaken = System.currentTimeMillis() - startTime;
+//        LOG.info("Primed Repository entries cache, took: " + timeTaken
+//                + "ms size = " + submissionRepositedCache.size());
+//    }
+ 
+    
+    
+    
 }
