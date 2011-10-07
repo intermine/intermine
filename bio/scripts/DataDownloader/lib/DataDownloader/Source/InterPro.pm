@@ -8,10 +8,12 @@ use constant {
     DESCRIPTION => "Protein Family and Domain data from Interpro",
     SOURCE_LINK => 'http://www.ebi.ac.uk/interpro',
     SOURCE_DIR  => 'interpro',
-    HOST        => "ftp.ebi.ac.uk",
-    REMOTE_DIR  => "pub/databases/interpro",
-    REF_FILE    => 'interpro.xml.gz',
-    EXTRACT => 1,
+    SOURCES => [{
+        FILE => "interpro.xml.gz", 
+        HOST => "ftp.ebi.ac.uk",
+        REMOTE_DIR => "pub/databases/interpro",
+        EXTRACT => 1,
+    }],
 };
 
-
+1;
