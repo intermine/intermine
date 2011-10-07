@@ -1,0 +1,34 @@
+<!-- models.tt -->
+[% title = settings.models.title %]
+
+[% INCLUDE heading.tt %]
+<div id="page">
+    [% INCLUDE menu.tt %]
+
+    <p class="guff">[% settings.models.spiel %]</p>
+
+    <div id="display-selection">
+        <input type="radio" name="model-display" value="per-mine" checked="checked"/>Mine By Mine
+        <input type="radio" name="model-display" value="class-comparison"/>Class Comparison<br/>
+    </div>
+
+    <div id="model-data">
+        <span id="throbber-explanation" class="throbbing">Loading...</span>
+        <img id="throbber" class="throbbing" src="[% proxy.uri_for('/images/throbber.gif') %]" alt="loading"/>
+    </div>
+
+    <table id="model-comparison">
+        <tr><th>Class Name</th></tr>
+    </table>
+
+</div>
+
+<script type="text/javascript"/>
+    var mines = {
+        [% FOREACH pair IN settings.mines.pairs %]
+            "[% pair.key %]": "[% pair.value %]",
+        [% END %]
+    };
+</script>
+
+<script type="text/javascript" src="[% proxy.uri_for('/javascripts/models.js') %]"></script>
