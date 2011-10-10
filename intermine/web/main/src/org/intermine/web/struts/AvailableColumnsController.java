@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -31,6 +32,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -49,24 +51,35 @@ public class AvailableColumnsController extends InterMineAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        String queryXml = request.getParameter("query");
         String table = request.getParameter("table");
-        PagedTable pt = SessionMethods.getResultsTable(session, table);
-        request.setAttribute("availableColumns", getColumnsThatCanBeAdded(pt));
+
+        if (queryXml != null) {
+            PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
+                    PathQuery.USERPROFILE_VERSION);
+            request.setAttribute("availableColumns", getColumnsThatCanBeAdded(pathQuery));
+
+        } else {
+            PagedTable pagedTable = SessionMethods.getResultsTable(session, table);
+            PathQuery query = pagedTable.getWebTable().getPathQuery();
+            request.setAttribute("availableColumns", getColumnsThatCanBeAdded(query));
+        }
+
         return null;
     }
 
-    private Map<String, String> getColumnsThatCanBeAdded(PagedTable pt) {
+    private Map<String, String> getColumnsThatCanBeAdded(PathQuery query) {
         Map<String, String> ret = new LinkedHashMap<String, String>();
-        PathQuery query = pt.getWebTable().getPathQuery();
-        List<String> availPaths = getPathsThatCanBeAdded(pt);
+        List<String> availPaths = getPathsThatCanBeAdded(query);
         for (String availPath : availPaths) {
             ret.put(availPath, WebUtil.formatColumnName(
                     query.getGeneratedPathDescription(availPath)));
         }
+
         return ret;
     }
 
@@ -80,8 +93,7 @@ public class AvailableColumnsController extends InterMineAction
      * @param pt results table
      * @return columns that can be added
      */
-    private List<String> getPathsThatCanBeAdded(PagedTable pt) {
-        PathQuery pathQuery = pt.getWebTable().getPathQuery();
+    private List<String> getPathsThatCanBeAdded(PathQuery pathQuery) {
         List<String> ret = new ArrayList<String>();
 
         ret.addAll(getAllLastFieldsPaths(pathQuery));
