@@ -42,6 +42,7 @@ override clean_up => sub {
         @wanted_members, 
         '-d', $not_curated );
     $self->execute_system_command(@args);
+    unlink($self->get_destination_dir->file("biopax.zip"));
 };
 
 1;
