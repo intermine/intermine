@@ -43,7 +43,6 @@ my $update_interval = setting('update_interval');
 
 use constant RESULT_OPTIONS => ( as => 'jsonobjects' );
 
-
 sub service {
     my $service_args = setting('service_args');
     my $service  = Webservice::InterMine->get_service(@$service_args);
@@ -54,7 +53,7 @@ before sub {
     try {
         service->refresh_lists;
     } catch {
-        send_error("Could not connect to service: " . to_dumper(setting('service_args')), 500);
+        send_error("Could not connect to service: ($_) " . to_dumper(setting('service_args')), 500);
     }
 };
 
@@ -66,7 +65,12 @@ before_template sub {
 };
 
 get '/' => sub {
-    return template index => { lists => [get_lists()] };
+    return redirect "/lists";
+    #return template index => { lists => [get_lists()] };
+};
+
+get '/about' => sub {
+    return template "about" => { lists => [get_lists()] };
 };
 
 get '/templates' => sub {
@@ -286,14 +290,10 @@ get '/list/:list.table' => sub {
     my $table_data = [
         map {
             [map {
-        my $value = (blessed($_->{value}) and $_->{value}->can('TO_JSON')) 
+                my $value = (blessed($_->{value}) and $_->{value}->can('TO_JSON')) 
                     ? $_->{value}->TO_JSON
-                    : (defined($_->{value})) 
-                        ? $_->{value}
-                        : '[NULL]';
-                '<a href="' 
-                    . proxy->uri_for('/' . $_->{class} . '/id/' . $_->{id})
-                    . '">' . $value . '</a>'
+                    : (defined($_->{value})) ? $_->{value} : '[NULL]';
+                sprintf("<a href=\"%s\">%s</a>", proxy->uri_for('/' . $_->{class} . '/id/' . $_->{id}), $value)
             } @$_]
         } @$rows
     ];
@@ -474,7 +474,11 @@ sub do_gene_report {
       or return template item_error => { query => $query, params };
 
     my $display_name = $obj->{symbol} || $obj->{primaryIdentifier};
-    my $identifier = $obj->{primaryIdentifier} || $obj->{symbol} || $obj->{secondaryIdentifier}; 
+
+    my $type       = "Gene";
+    my $keys       = get_class_keys_for($type);
+
+    my $identifier = get_identifier($type, $item, $keys);
     my @comments = get_user_comments($identifier);
 
     my $cd = service->model->get_classdescriptor_by_name( $obj->{class} );
@@ -512,6 +516,7 @@ sub do_gene_report {
         lists        => [@lists],
         all_lists    => [@all_lists],
         contained_in => {%contained_in},
+        identifier   => $identifier,
         templates    => get_templates('Gene'),
     };
 };
@@ -558,9 +563,8 @@ sub do_item_report {
 
     my $type       = ucfirst( params->{'type'} );
     my $keys       = get_class_keys_for($type);
-    my $identifier = join( ';',
-        map { defined( $item->{"$type.$_"} ) ? $item->{"$type.$_"} : '' }
-          @$keys );
+
+    my $identifier = get_identifier($type, $item, $keys);
 
     my $displayname;
     for my $k (@$keys) {
@@ -585,6 +589,14 @@ sub do_item_report {
     };
 }
 
+sub get_identifier {
+    my ($type, $item, $keys) = @_;
+    my $identifier = join( ';',
+        map { defined( $item->{"$type.$_"} ) ? $type . $_ . '=' . $item->{"$type.$_"} : '' }
+          @$keys );
+    return $identifier;
+}
+
 sub get_templates : Memoize {
     my $type = shift;
     opendir( my $dir, 'views' );
@@ -604,8 +616,11 @@ sub get_user_comments {
 
     # TODO - change DB schema so it refers to items
     my $identifier = shift;
-    my $gene_rs = schema('usercomments')->resultset('Gene')
+    my $gene_rs = schema('usercomments')->resultset('Item')
                                         ->find_or_create( { identifer => $identifier } );
+
+    debug("Looking for " . $identifier);
+    debug("Found " . $gene_rs->comments->count);
     my @comments = $gene_rs->comments->get_column('value')->all;
     return @comments;
 }
@@ -613,17 +628,17 @@ sub get_user_comments {
 post '/addcomment' => sub {
     my $id      = params->{id};
     my $comment = params->{comment};
-    my $gene_rs = schema('usercomments')->resultset('Gene')
+    my $gene_rs = schema('usercomments')->resultset('Item')
       ->find_or_create( { identifer => $id } );
     $gene_rs->add_to_comments( { value => $comment } );
     return to_json( { id => $id, comment => $comment } );
 };
 
 post '/removecomment' => sub {
-    my $id      = params->{geneid};
+    my $id      = params->{id};
     my $comment = params->{commenttext};
     my $gene_rs =
-      schema('usercomments')->resultset('Gene')
+      schema('usercomments')->resultset('Item')
       ->find_or_create( { identifer => $id } );
     $gene_rs->delete_related( 'comments', { value => $comment } );
     return to_json( { id => $id, comment => $comment } );

@@ -1,0 +1,35 @@
+[% INCLUDE banner.tt %]
+
+<div id="content">
+    <p class="overview">
+        Welcome to the [% settings.project.title %]. This site presents genomics data from
+        <a icon="out" href="[% settings.mine_base_url %]">[% settings.service_args.0 %]</a>
+        and allows you to annotate the data by adding comments on item analysis pages. 
+        This site currently has [% lists.size  %] lists for you to view and edit, but you 
+        can create new ones and within this interface. To see them, 
+        visit the <a href="[% proxy.uri_for('/lists') %]"><em>lists</em></a>
+        tab above. You can also search for your own
+        items of interest using the <a href="[% proxy.uri_for('/templates') %]"><em>Search Tools</em></a>.
+    </p>
+    <p> 
+        This site is stand-alone webapp written in <a href="http://www.perl.org">Perl</a>
+        and running on the <a href="http://perldancer.org">Dancer web-framework</a>. Most of the
+        data shown here is stored remotely 
+        at <a href="[% settings.mine_base_url %]">[% settings.service_args.0 %]</a> and 
+        fetched using webservices. This data is integrated with user curatable comments 
+        stored locally in a small <a href="http://www.sqlite.org/">SQLite</a> database. This 
+        site is meant to demo the feasibility of connecting to an InterMine as a data-provider, 
+        while integrating other sources of annotation locally.
+    </p>
+
+</div>
+
+<div class="footerbar" id="external-links">
+    <ul class="menu">
+        <li><a icon="out" id="mine-link" href="[% settings.mine_base_url %]">[% settings.service_args.0 %]</a></li>
+        <li><a icon="out" id="intermine-link" href="http://www.intermine.org">InterMine</a></li>
+    </ul>
+</div>
+        
+
+
