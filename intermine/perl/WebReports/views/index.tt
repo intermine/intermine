@@ -1,0 +1,9 @@
+<!-- index.tt -->
+[% title = settings.project.title %]
+
+[% INCLUDE heading.tt %]
+<div id="page">
+    [% INCLUDE menu.tt %]
+
+    <p>[% settings.project.spiel %]</p>
+</div>

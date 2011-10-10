@@ -1,0 +1,36 @@
+<!-- analysis.tt -->
+[% title = settings.$things.title %]
+
+[% INCLUDE heading.tt %]
+<div id="page">
+    [% INCLUDE menu.tt %]
+
+    <p class="guff">[% settings.$things.spiel %]</p>
+
+    <div id="display-selection">
+        <input type="radio" name="things-display" value="per-mine" checked="checked"/>Mine By Mine
+        <input type="radio" name="things-display" value="class-comparison"/>[% thing %] Comparison<br/>
+    </div>
+
+    <div id="thing-data">
+        <span id="throbber-explanation" class="throbbing">Loading...</span>
+        <img id="throbber" class="throbbing" src="[% proxy.uri_for('/images/throbber.gif') %]" alt="loading"/>
+    </div>
+
+    <table id="thing-comparison">
+        <tr><th>[% thing %] Name</th></tr>
+    </table>
+
+</div>
+
+<script type="text/javascript"/>
+    var mines = {
+        [% FOREACH pair IN settings.mines.pairs %]
+            "[% pair.key %]": "[% pair.value %]",
+        [% END %]
+    };
+</script>
+
+<script type="text/javascript" src="[% proxy.uri_for("/javascripts/analysis.js") %]"></script>
+<script type="text/javascript" src="[% proxy.uri_for("/javascripts/${things}.js") %]"></script>
+<!-- end analysis.tt -->
