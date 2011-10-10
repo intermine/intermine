@@ -53,6 +53,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -133,6 +134,7 @@ public class GalaxyExportOptionsController extends TilesAction
 
         } else { // request from normal result table
             String tableName = request.getParameter("table");
+            request.setAttribute("table", tableName);
             PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
             // Check if can export as BED
@@ -212,10 +214,10 @@ public class GalaxyExportOptionsController extends TilesAction
 
 //        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
 
-        String tableURL = new URLGenerator(request).getPermanentBaseURL()
+        String tableViewURL = new URLGenerator(request).getPermanentBaseURL()
             + "/service/query/results";
 
-        request.setAttribute("tableURL", tableURL);
+        request.setAttribute("tableURL", tableViewURL);
         request.setAttribute("query", queryXML);
         request.setAttribute("size", 1000000);
 
@@ -243,6 +245,17 @@ public class GalaxyExportOptionsController extends TilesAction
             request.setAttribute("org", org);
             request.setAttribute("dbkey", dbkey);
         }
+
+        // PathMap
+        Map<String, String> pathsMap = new LinkedHashMap<String, String>();
+        List<String> views = query.getView();
+        for (String view : views) {
+            String title = query.getGeneratedPathDescription(view);
+            title = WebUtil.formatColumnName(title);
+            pathsMap.put(view, title);
+        }
+
+        request.setAttribute("pathsMap", pathsMap);
 
         return null;
     }

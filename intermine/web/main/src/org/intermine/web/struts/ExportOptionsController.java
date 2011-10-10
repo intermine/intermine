@@ -81,6 +81,7 @@ public class ExportOptionsController extends TilesAction
                 title = WebUtil.formatColumnName(title);
                 pathsMap.put(pathString, title);
             }
+
             request.setAttribute("pathsMap", pathsMap);
             String pathStrings = StringUtil.join(pathsMap.keySet(), " ");
             request.setAttribute("pathsString", pathStrings);
