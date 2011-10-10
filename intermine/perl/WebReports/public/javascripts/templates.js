@@ -29,9 +29,6 @@ function addTemplateHeaderInfo($div, t, cons) {
     $('<h4>').text(text)
              .addClass("field-shower")
              .appendTo($div);
-    $('<span>').text(cons.length + " constraints")
-               .addClass("field-shower")
-               .appendTo($div);
 }
 
 function addViews($div, t) {
@@ -41,13 +38,18 @@ function addViews($div, t) {
             return v.split(/\./).slice(1).join(".");
         });
         $('<span>').text("Root: " + root).appendTo($div);
-        $('<span>').text("View columns: " + views.join(", "))
-                    .appendTo($div);
+        $('<span>').addClass("field-shower").text(views.length + " output columns").appendTo($div);
+        var $ul = $('<ul>').addClass("view-summary hidden")
+                       .appendTo($div);
+        _(views).each(function(v) {$('<li>').text(v).appendTo($ul)});
     }
 }
 
 function addConstraintLines($div, cons) {
-    var $ul = $('<ul>').addClass("con-summaries")
+    $('<span>').text(cons.length + " constraints")
+               .addClass("field-shower")
+               .appendTo($div);
+    var $ul = $('<ul>').addClass("con-summaries hidden")
                        .appendTo($div);
     _(cons).each(function(c) {
         var $li = $('<li>').appendTo($ul);

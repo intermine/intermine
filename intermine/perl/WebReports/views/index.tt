@@ -5,5 +5,5 @@
 <div id="page">
     [% INCLUDE menu.tt %]
 
-    <p>[% settings.project.spiel %]</p>
+    <p class="intro">[% settings.project.spiel %]</p>
 </div>

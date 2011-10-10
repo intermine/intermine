@@ -303,6 +303,10 @@ div.clearall {
     clear: both;
 }
 
+p.intro {
+    float: left;
+}
+
 p.guff {
     font-size: 1.2em;
     margin: 0;
@@ -365,11 +369,7 @@ p.guff {
     color: #333;
 }
 
-.thing-summary {
-    display: none;
-}
-
-.field-summaries {
+.thing-summary, .field-summaries, .hidden {
     display: none;
 }
 
@@ -406,7 +406,7 @@ table#thing-comparison {
 }
 
 #thing-comparison td {
-    font-size: 0.85em;
+    font-size: 12px;
 }
 
 #thing-comparison, #thing-comparison td {
