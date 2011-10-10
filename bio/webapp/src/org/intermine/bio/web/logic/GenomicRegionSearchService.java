@@ -998,6 +998,7 @@ public class GenomicRegionSearchService
 
         String baseURL = webProperties.getProperty("webapp.baseurl");
         String path = webProperties.getProperty("webapp.path");
+        String galaxyDisplay = webProperties.getProperty("galaxy.display");
 
         List<GenomicRegion> subGenomicRegionList = genomicRegionList.subList(fromIdx, toIdx + 1);
 
@@ -1084,13 +1085,21 @@ public class GenomicRegionSearchService
                         + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
                         + span
                         + "\", \"" + facet + "\", \"sequence\");' class='ext_link'>SEQ</a>"
-                        + "</li></ul></div><div style='align:center'>"
-                        + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
-                        + "\");' class='ext_link'> Export to Galaxy <img border='0' "
-                        + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
-                        + "class='arrow' style='height:5%; width:5%'></a></div>" + ftHtml
-                        + "</td><td><a target='' title='' href='" + baseURL + "/" + path
-                        + "/report.do?id=" + firstId + "'>");
+                        + "</li></ul></div>");
+
+                // Display galaxy export
+                if (!"false".equals(galaxyDisplay)) {
+                    sb.append("<div style='align:center'>"
+                            + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
+                            + "\");' class='ext_link'> Export to Galaxy <img border='0' "
+                            + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
+                            + "class='arrow' style='height:5%; width:5%'></a></div>"
+                    );
+                }
+
+                sb.append(ftHtml
+                    + "</td><td><a target='' title='' href='" + baseURL + "/" + path
+                    + "/report.do?id=" + firstId + "'>");
 
                 if (firstSymbol == null || "".equals(firstSymbol)) {
                     sb.append("<strong><i>unknown symbol</i></strong>");
