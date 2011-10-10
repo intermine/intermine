@@ -15,6 +15,8 @@
 <definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
   controllerUrl="/initGalaxyExportOptions.do" />
 
+<!-- Beginning of Genomic Region Search configuration -->
+
 <definition name="genomicRegionSearchOptions.page" extends="layout.template">
   <put name="body" value="genomicRegionSearchOptions.tile" />
   <put name="pageName" value="genomicRegionSearch" />
@@ -27,5 +29,7 @@
   <put name="body" value="/model/genomicRegionSearchResultsBase.jsp" />
   <put name="pageName" value="genomicRegionSearchResults" />
 </definition>
+
+<!-- End of Genomic Region Search configuration -->
 
 <definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>
