@@ -334,11 +334,11 @@ p.guff {
     overflow: hidden;
 }
 
-.model-summary, .one-line-summary {
+.thing-summary, .one-line-summary {
     padding: 0.5em;
 }
 
-.one-line-summary, .class-summary {
+.one-line-summary, .unit-summary {
     width: 100%;
     display: inline-block;
     border-bottom: 1px solid #ccc;
@@ -365,7 +365,7 @@ p.guff {
     color: #333;
 }
 
-.model-summary {
+.thing-summary {
     display: none;
 }
 
@@ -373,7 +373,7 @@ p.guff {
     display: none;
 }
 
-.class-summary span {
+.unit-summary span {
     margin-right: 0.3em;
 }
 
@@ -382,7 +382,7 @@ p.guff {
     font-style: oblique;
 }
 
-#model-comparison {
+#thing-comparison {
     display: none;
 }
 
@@ -391,21 +391,25 @@ p.guff {
     font-size: 1.2em;
 }
 
-table#model-comparison {
+table#thing-comparison {
     border-collapse: collapse;
     margin: 1em;
     font-size: 1.5em;
 }
 
-#model-comparison th, #model-comparison td {
+#thing-comparison th, #thing-comparison td {
     padding: 0.2em;
 }
 
-#model-comparison th {
+#thing-comparison th {
     background-color: #BDD73C;
 }
 
-#model-comparison, #model-comparison td {
+#thing-comparison td {
+    font-size: 0.85em;
+}
+
+#thing-comparison, #thing-comparison td {
     border: 1px solid #777;
 }
 

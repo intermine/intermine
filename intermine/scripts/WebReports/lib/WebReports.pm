@@ -11,13 +11,11 @@ get '/' => sub {
 };
 
 get '/models' => sub {
-    template 'models';
+    template analysis => {things => "models", thing => "Class"};
 };
 
-get '/model-data/:mine' => sub {
-    my $mines = setting("mines");
-    my $service = get_service($mines->{param("mine")});
-    template 'model-data' => {service => $service}, {layout => undef};
+get '/templates' => sub {
+    template analysis => {things => "templates", thing => "Template"};
 };
 
 true;
