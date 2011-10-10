@@ -17,10 +17,12 @@
 </html:link>
 <br/>
 
-<html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
-  <fmt:message key="exporter.galaxy.description"/>
-</html:link>
-<br/>
+<c:if test="${WEB_PROPERTIES['galaxy.display']} != 'false'">
+    <html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
+        <fmt:message key="exporter.galaxy.description"/>
+    </html:link>
+    <br/>
+</c:if>
 
 <c:forEach var="entry" items="${exporters}" varStatus="status">
   <c:set var="exporterId" value="${entry.key}"/>

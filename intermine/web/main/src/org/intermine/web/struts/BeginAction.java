@@ -25,16 +25,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.mines.FriendlyMineManager;
-import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -94,16 +90,23 @@ public class BeginAction extends InterMineAction
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
         // the default value from web.properties and save it in the session
-        if (request.getParameter("GALAXY_URL") != null) {
-            request.getSession().setAttribute("GALAXY_URL",
-                    request.getParameter("GALAXY_URL"));
-            String msg = properties.getProperty("galaxy.welcomeMessage");
-            SessionMethods.recordMessage(msg, session);
+        if ("false".equals(properties.getProperty("galaxy.display"))) {
+            if (request.getParameter("GALAXY_URL") != null) {
+                String disabledMsg = properties.getProperty("galaxy.disabledMessage");
+                SessionMethods.recordError(disabledMsg, session);
+            }
         } else {
-            request.getSession().setAttribute(
-                    "GALAXY_URL",
-                    properties.getProperty("galaxy.baseurl.default")
-                            + properties.getProperty("galaxy.url.value"));
+            if (request.getParameter("GALAXY_URL") != null) {
+                request.getSession().setAttribute("GALAXY_URL",
+                        request.getParameter("GALAXY_URL"));
+                String welcomeMsg = properties.getProperty("galaxy.welcomeMessage");
+                SessionMethods.recordMessage(welcomeMsg, session);
+            } else {
+                request.getSession().setAttribute(
+                        "GALAXY_URL",
+                        properties.getProperty("galaxy.baseurl.default")
+                                + properties.getProperty("galaxy.url.value"));
+            }
         }
 
         List<TemplateQuery> templates = null;
