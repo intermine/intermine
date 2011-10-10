@@ -27,7 +27,7 @@
 function removeComment(comment) {
     data = {
         "commenttext": comment, 
-        "geneid": '[% identifier.replace("'", "\\'") %]'
+        "id": '[% identifier.replace("'", "\\'") %]'
     };
     jQuery.post("[% proxy.uri_for('/removecomment') %]", data, function(results) {
         jQuery('#user-comments ul li').each(function() {

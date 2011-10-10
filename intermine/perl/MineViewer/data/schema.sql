@@ -1,12 +1,11 @@
 create table comments (
-    comment_id integer not null primary key,
-    gene integer references gene(gene_id),
+    id integer not null primary key,
+    item text references item(identifer),
     value text not null
 );
 
-create table gene (
-    gene_id integer not null primary key, 
-    identifer text not null unique
+create table item (
+    identifer text primary key
 );
 
 
