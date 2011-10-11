@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.tools.ant.BuildException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -71,33 +72,79 @@ public class ModelUpdate {
             if (!keyAsString.contains(".")) {
                 //it's a class update
                 className = keyAsString;
-                if (oldModel.getClassDescriptorByName(className) != null) {
-                    if (update.equals(DELETED)) {
-                        deletedClasses.add(className);
-                    } else if (update.contains(RENAMED)) {
-                        String newClassName = update.replace(RENAMED, "").trim();
-                        if (!newClassName.equals("")
-                            && model.getClassDescriptorByName(newClassName) != null) {
-                            renamedClasses.put(className, newClassName);
-                        }
-                    }
+                verifyClassAndField(className, null, oldModel);
+                if (update.equals(DELETED)) {
+                    deletedClasses.add(className);
+                } else if (update.contains(RENAMED)) {
+                    String newClassName = update.replace(RENAMED, "").trim();
+                    verifyClassAndField(newClassName, null, model);
+                    renamedClasses.put(className, newClassName);
+                } else {
+                    new BuildException("For the class " + className
+                                      + " only deleted or renamed- permitted.");
                 }
+
             } else {
                 //it's a field update
                 int index = keyAsString.indexOf(".");
+                className = keyAsString.substring(0, index);
                 fieldName = keyAsString.substring(index + 1);
+                verifyClassAndField(className, fieldName, oldModel);
+
                 if (update.contains(RENAMED)) {
                     update = update.replace(RENAMED, "").trim();
                     index = update.indexOf(".");
-                    className = update.substring(0, index);
+                    String newClassName = update.substring(0, index);
                     String newFieldName = update.substring(index + 1);
-                    ClassDescriptor cd = model.getClassDescriptorByName(className);
-                    if (!newFieldName.equals("")
-                        && cd != null
-                        && cd.getAttributeDescriptorByName(newFieldName) != null) {
-                        renamedFields.put(className + "." + fieldName, newFieldName);
+                    verifyClassAndField(newClassName, newFieldName, model);
+                    if (!className.equals(newClassName)) {
+                        //there is a renamed attribute in a renamed class.
+                        //add in renamedClasses this renamed class
+                        if (!renamedClasses.containsKey(className)) {
+                            renamedClasses.put(className, newClassName);
+                        } else {
+                            if (!renamedClasses.get(className).equals(newClassName)) {
+                                new BuildException("Class " + className + " has been renamed in " +
+                                    "two different classes. Please check modelUpdate.properties file");
+                            }
+                        }
                     }
+                    renamedFields.put(newClassName + "." + fieldName, newFieldName);
+                } else if (!update.contains(DELETED)) {
+                    new BuildException("For the field " + keyAsString
+                            + " only deleted or renamed- permitted.");
                 }
+            }
+        }
+    }
+
+    private void verifyClassAndField(String className, String fieldName, Model model)
+        throws BuildException {
+        if ("".equals(className)) {
+            new BuildException("Class " + className + " can not be blank."
+                    + "Please check modelUpdate.properties file");
+        }
+        ClassDescriptor cd = model.getClassDescriptorByName(className);
+        if (cd == null) {
+            if (fieldName != null) {
+                new BuildException("Class " + className + " containing " + fieldName
+                              + " not defined in the model " + model.getName()
+                              + "Please check modelUpdate.properties file");
+            } else {
+                new BuildException("Class " + className + " not defined in the model "
+                        + model.getName() + ".Please check modelUpdate.properties file");
+            }
+        }
+        if (fieldName != null) {
+            if (fieldName.equals("")) {
+                new BuildException("Attribute " + fieldName + " in the class " + className
+                    + " can not be blank."
+                    + "Please check modelUpdate.properties file");
+            }
+            if (cd.getAttributeDescriptorByName(fieldName) == null) {
+                 new BuildException("Attribute " + fieldName + " in the class " + className
+                               + " not defined in the model " + model.getName()
+                               + "Please check modelUpdate.properties file");
             }
         }
     }
