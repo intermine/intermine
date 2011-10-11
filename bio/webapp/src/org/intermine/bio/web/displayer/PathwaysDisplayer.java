@@ -16,7 +16,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.web.displayer.ReportDisplayer;
@@ -30,8 +29,7 @@ import org.intermine.web.logic.results.ReportObject;
  */
 public class PathwaysDisplayer extends ReportDisplayer
 {
-    private static final String NO_RESULTS = "No pathways found";
-    protected static final Logger LOG = Logger.getLogger(PathwaysDisplayer.class);
+
     private Map<InterMineObject, Integer> pathways = new HashMap<InterMineObject, Integer>();
     private Map<InterMineObject, Map<InterMineObject, Integer>> cache
         = new HashMap<InterMineObject, Map<InterMineObject, Integer>>();
@@ -61,12 +59,13 @@ public class PathwaysDisplayer extends ReportDisplayer
                         pathways.put(pathway, genes.size());
                     }
                 }
+                cache.put(gene, pathways);
             } catch (IllegalAccessException e) {
                 // oops
             }
         }
         if (pathways.isEmpty()) {
-            request.setAttribute("noPathwayResults", NO_RESULTS);
+            request.setAttribute("noPathwayResults", "No pathways found");
         } else {
             request.setAttribute("pathways", pathways);
         }
