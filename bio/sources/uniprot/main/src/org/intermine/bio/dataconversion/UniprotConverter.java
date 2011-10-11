@@ -60,6 +60,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
+    private boolean loadFragments = false;
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
@@ -231,6 +232,19 @@ public class UniprotConverter extends BioDirectoryConverter
         addStrains();
     }
 
+    /**
+     * Toggle whether or not to load fragments.  default to false.
+     *
+     * @param loadFragments if true, will load all proteins even if isFragment = true
+     */
+    public void setLoadfragments(String loadFragments) {
+        if ("true".equals(loadFragments)) {
+            this.loadFragments = true;
+        } else {
+            this.loadFragments = false;
+        }
+    }
+
     private void addStrains() {
         Set<String> originalTaxonIds = new HashSet<String>(taxonIds);
         for (String taxonId : originalTaxonIds) {
@@ -313,7 +327,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (strMass != null) {
                     entry.setMolecularWeight(strMass);
                 }
-                // fragments - we probably don't load any of these
                 String isFragment = "false";
                 if (getAttrValue(attrs, "fragment") != null) {
                     isFragment = "true";
@@ -538,7 +551,11 @@ public class UniprotConverter extends BioDirectoryConverter
             }
 
             if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()
-                    && !uniprotEntry.isDuplicate() && !uniprotEntry.isFragment()) {
+                    && !uniprotEntry.isDuplicate()) {
+
+                if (!loadFragments && uniprotEntry.isFragment()) {
+                    return null;
+                }
 
                 setDataSet(uniprotEntry.getDatasetRefId());
                 for (String isoformAccession: uniprotEntry.getIsoforms()) {
