@@ -8,6 +8,32 @@
 <!-- begin.jsp -->
 <html:xhtml />
 
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script>
+// get the categories from the sam web service that feeds modencode home page
+$.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/service/query/metadatacache/catexp",
+        function(data) {
+    var url = "${WEB_PROPERTIES['webapp.path']}/categorySummary.do?category=";
+    var items = [];
+    items.push('<tr>');
+    $.each(data, function(key, val) {         
+        $.each(val, function (k,v){
+            // alert("AA" + k + " ++ " + v.organisms[0].experiments[0].experiment_name);
+            items.push('<td id="' + k + '"><a href="/' + url + v.category + '">' + v.category 
+                    +  '<img src="images/right-arrow.gif" /></a></td>');
+        });
+    });
+    
+    $('<table/>', {
+        'class': 'projects',
+        html: items.join('')
+    }).appendTo('#catnavigation');
+});   
+</script>
+
+
+      
 
 <div id="ctxHelpDiv" class="welcome" style="display:none;">
   <div class="topBar info">
@@ -34,12 +60,23 @@
 <br />
 <p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong> uses genome annotations <strong>${WEB_PROPERTIES['genomeVersion.fly']}</strong> for fly and <strong>${WEB_PROPERTIES['genomeVersion.worm']}</strong> for worm.</p>
 <br />
+
+
+
+</div>
+
+
 <h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
         <div class="span-42 last">
           
-
+<%--
         <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
-            </div>
+--%>
+        <div id="catnavigation" style="padding: 10px 20px;">
+     
+        </div>
+        
+        
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
           </div>
