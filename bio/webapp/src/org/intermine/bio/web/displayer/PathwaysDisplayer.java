@@ -11,8 +11,11 @@ package org.intermine.bio.web.displayer;
  */
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,7 +70,49 @@ public class PathwaysDisplayer extends ReportDisplayer
         if (pathways.isEmpty()) {
             request.setAttribute("noPathwayResults", "No pathways found");
         } else {
-            request.setAttribute("pathways", pathways);
+            SortedMap sortedPathways = new TreeMap<InterMineObject, Integer>(
+                    new ValueComparator(pathways));
+            sortedPathways.putAll(pathways);
+            request.setAttribute("pathways", sortedPathways);
         }
     }
 }
+
+/**
+ * sorting pathway gene counts descending
+ *
+ * @author Julie
+ */
+class ValueComparator implements Comparator
+{
+    Map base;
+
+    /**
+     * @param base map
+     */
+    public ValueComparator(Map base) {
+        this.base = base;
+    }
+
+    @Override
+    public int compare(Object a, Object b) {
+        // sort descending
+        int i = ((Integer) base.get(a)).compareTo((Integer) base.get(b));
+
+        // gene counts are the same, sort by name ascending
+        if (i == 0) {
+            InterMineObject aObject = (InterMineObject) a;
+            InterMineObject bObject = (InterMineObject) b;
+
+            try {
+                String aName = (String) aObject.getFieldValue("name");
+                String bName = (String) bObject.getFieldValue("name");
+                return aName.compareTo(bName);
+            } catch (IllegalAccessException e) {
+                // bad pathway, return zero
+            }
+        }
+        return i;
+    }
+}
+
