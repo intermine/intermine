@@ -80,7 +80,7 @@ public class ModelUpdate {
                     verifyClassAndField(newClassName, null, model);
                     renamedClasses.put(className, newClassName);
                 } else {
-                    new BuildException("For the class " + className
+                    throw new BuildException("For the class " + className
                                       + " only deleted or renamed- permitted.");
                 }
 
@@ -104,14 +104,15 @@ public class ModelUpdate {
                             renamedClasses.put(className, newClassName);
                         } else {
                             if (!renamedClasses.get(className).equals(newClassName)) {
-                                new BuildException("Class " + className + " has been renamed in " +
-                                    "two different classes. Please check modelUpdate.properties file");
+                                throw new BuildException("Class " + className + " has been " +
+                                    "renamed in two different classes. Please check" +
+                                    " modelUpdate.properties file");
                             }
                         }
                     }
                     renamedFields.put(newClassName + "." + fieldName, newFieldName);
                 } else if (!update.contains(DELETED)) {
-                    new BuildException("For the field " + keyAsString
+                    throw new BuildException("For the field " + keyAsString
                             + " only deleted or renamed- permitted.");
                 }
             }
@@ -120,31 +121,29 @@ public class ModelUpdate {
 
     private void verifyClassAndField(String className, String fieldName, Model model)
         throws BuildException {
+        String checkFileMsg = "Please check modelUpdate.properties file";
         if ("".equals(className)) {
-            new BuildException("Class " + className + " can not be blank."
-                    + "Please check modelUpdate.properties file");
+            throw new BuildException("Class " + className + " can not be blank. " + checkFileMsg);
         }
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         if (cd == null) {
             if (fieldName != null) {
-                new BuildException("Class " + className + " containing " + fieldName
-                              + " not defined in the model " + model.getName()
-                              + "Please check modelUpdate.properties file");
+                throw new BuildException("Class " + className + " containing " + fieldName
+                              + " not defined in the model " + model.getName() + ". "
+                              + checkFileMsg);
             } else {
-                new BuildException("Class " + className + " not defined in the model "
-                        + model.getName() + ".Please check modelUpdate.properties file");
+                throw new BuildException("Class " + className + " not defined in the model "
+                        + model.getName() + ". " + checkFileMsg);
             }
         }
         if (fieldName != null) {
             if (fieldName.equals("")) {
-                new BuildException("Attribute " + fieldName + " in the class " + className
-                    + " can not be blank."
-                    + "Please check modelUpdate.properties file");
+                throw new BuildException("Attribute " + fieldName + " in the class " + className
+                    + " can not be blank. " + checkFileMsg);
             }
             if (cd.getAttributeDescriptorByName(fieldName) == null) {
-                 new BuildException("Attribute " + fieldName + " in the class " + className
-                               + " not defined in the model " + model.getName()
-                               + "Please check modelUpdate.properties file");
+                throw new BuildException("Attribute " + fieldName + " in the class " + className
+                               + " not defined in the model " + model.getName() + ". " + checkFileMsg);
             }
         }
     }
@@ -181,7 +180,7 @@ public class ModelUpdate {
         q.addToSelect(qc);
         q.addFrom(qc);
         QueryField typeField = new QueryField(qc, "type");
-        BagConstraint constraint = new BagConstraint(typeField, ConstraintOp.IN, deletedClasses); 
+        BagConstraint constraint = new BagConstraint(typeField, ConstraintOp.IN, deletedClasses);
         q.setConstraint(constraint);
         Results bagsToDelete = uosw.execute(q, 1000, false, false, true);
 
@@ -203,7 +202,8 @@ public class ModelUpdate {
         q.addToSelect(qc);
         q.addFrom(qc);
         QueryField typeField = new QueryField(qc, "type");
-        BagConstraint constraint = new BagConstraint(typeField, ConstraintOp.IN, renamedClasses.keySet()); 
+        BagConstraint constraint = new BagConstraint(typeField, ConstraintOp.IN,
+                                                     renamedClasses.keySet());
         q.setConstraint(constraint);
         Results bagsToUpdate = uosw.execute(q, 1000, false, false, true);
 
@@ -218,7 +218,8 @@ public class ModelUpdate {
                     profile.updateBagType(savedBag.getName(), newType);
                 }
             } catch (ObjectStoreException ose) {
-                System.out.println("Problems updating savedBag " + savedBag.getName() + ose.getMessage());
+                System.out.println("Problems updating savedBag " + savedBag.getName()
+                                   + ose.getMessage());
             }
         }
     }
