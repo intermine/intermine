@@ -29,7 +29,7 @@
         <c:set var="total" value="${entry.value}" />
         <tr <c:if test="${status.count > 10}">style="display:none"</c:if>>
           <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}"><c:out value="${pathway.name}"/></html:link></td>
-          <td><html:link action="/collectionDetails?id=${pathway.id}&amp;field=genes&amp;trail=${param.trail}"><c:out value="${total}"/></html:link></td>
+          <td><html:link action="/collectionDetails?id=${pathway.id}&amp;field=genes"><c:out value="${total}"/></html:link></td>
         </tr>
       </c:forEach>
       </tbody>
@@ -48,7 +48,7 @@
 
     <script type="text/javascript">
     (function() {
-      var t = jQuery('#publication-counts-displayer');
+      var t = jQuery('#pathways-displayer');
         var rows = t.find("table tbody tr");
         if (rows.length > 10) {
           t.find("div.toggle").show();
@@ -84,4 +84,4 @@
   </c:otherwise>
 </c:choose>
 </div>
-<!-- /publicationCountsDisplayer.jsp -->
+<!-- /pathwaysDisplayer.jsp -->
