@@ -66,27 +66,20 @@ An individual 'submission' is a single instance of an experiment which tests var
     </c:forEach>
   </td>
 
-  <%-- TMP FIX for 
-  http://intermine.modencode.org/release-22/experiment.do?experiment=Stranded%20Cell%20Line%20Transcriptional%20Profiling%20Using%20Illumina%20poly%2528A%2529%252B%20RNA-seq
-  escaping the url encoding
-  --%>
-<td><h4>  
-  <c:choose>
-  <c:when test="${fn:startsWith(exp.name, 'Stranded Cell Line Transcriptional Profiling Using Illumina')}">
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '%', '%25')}">
-  Stranded Cell Line Transcriptional Profiling Using Illumina poly(A)+ RNA-seq
+  <%-- FIX for experiments with + in the name (needs to be encoded)   --%>
+  <td><h4>  
+    <c:choose>
+     <c:when test="${fn:contains(exp.name, '+')}">
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}">
+  ${exp.name}
   </html:link></h4>
-  </c:when>
-  <c:otherwise>
+    </c:when>
+    <c:otherwise>
   <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}
   </html:link></h4>
-  </c:otherwise>
-  </c:choose>
-
-  
-  <%-- END FIX , substitute
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
-  --%>
+    </c:otherwise>
+   </c:choose>
+  <%-- END FIX --%>
 
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>
@@ -109,23 +102,25 @@ Labs:
   </c:choose>
 
 <%-- REPOSITORY ENTRIES --%>
-    <c:if test="${exp.repositedCount == 1}">
-       It has produced <b>${exp.repositedCount} entry in public repositories</b>.
+<c:if test="${exp.repositedCount > 0}">
+It has produced 
+<c:if test="${exp.repositedCount == 1}">
+<b>${exp.repositedCount} entry in public repositories</b>.
     </c:if>
     <c:if test="${exp.repositedCount > 1}">
-       It has produced <b>${exp.repositedCount} entries in public repositories</b>.
+    <b>${exp.repositedCount} entries in public repositories</b>.
     </c:if>
-
+</c:if>
 
 
 <%-- EXPERIMENTAL FACTORS --%>
      <c:if test="${fn:length(exp.factorTypes) > 0 }">
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
-           <c:out value="The experimental factor is"/>
+           <c:out value="The experimental factor is "/>
          </c:when>
          <c:otherwise>
-           <c:out value="The experimental factors are"/>
+           <c:out value="The experimental factors are "/>
          </c:otherwise>
        </c:choose>
        <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
@@ -135,23 +130,10 @@ Labs:
 <td>
 <%-- FEATURES --%>
       <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
-     <c:if test="${fc_status.count > 1 }"><br> </c:if>
-
-     <%-- TEMP patch until data is corrected. it should be (otherwise) 
-     <c:choose>
-     <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators'
-  && fc.featureType == 'ProteinBindingSite'}">
-  ${fc.featureType}:&nbsp;38114
-     </c:when>
-     <c:otherwise>
-      ${fc.featureType}:&nbsp;${fc.featureCounts}
-     </c:otherwise>
-     </c:choose>
-     --%>
-<%-- END --%>
+     <c:if test="${fc_status.count > 1 }"></c:if>
 
 ${fc.featureType}:&nbsp;${fc.featureCounts}
-
+<br>
 
 <%-- too crowded: rm here, still available in the experiment page
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">
@@ -162,11 +144,12 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
       </c:if>
 
 --%>
-     <c:if test="${fc_status.last }"><br> </c:if>
+     <c:if test="${fc_status.last && exp.expressionLevelCount == 0}"><br> </c:if>
       </c:forEach>
 
     <c:if test="${exp.expressionLevelCount > 0}">
        with ${exp.expressionLevelCount} expression levels.
+       <br><br>
     </c:if>
 
 <p/>
@@ -180,12 +163,13 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
            <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
          </c:otherwise>
        </c:choose>
-<br></br>
+     <br>
      </c:if>
 <%-- REPOSITORY ENTRIES --%>
      <c:if test="${exp.repositedCount > 0}">
 
       <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
+      <c:if test="${rep_status.first}"></c:if>
       ${rep.value}
       <c:choose>
         <c:when test="${rep.value == 1}">
@@ -196,7 +180,7 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
         </c:otherwise>
       </c:choose>
       in ${rep.key}
-      <br></br>
+      <br>
       </c:forEach>
      </c:if>
 
