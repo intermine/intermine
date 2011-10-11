@@ -66,7 +66,7 @@ public class SubmissionProtocolsDisplayer extends ReportDisplayer
 
         // submission object
         Submission o = (Submission) reportObject.getObject();
-//        LOG.info("SUBMISSION id: " + o.getId());
+        //LOG.info("SUBMISSION id: " + o.getId());
 
         // create the query
         PathQuery q = new PathQuery(os.getModel());
@@ -80,7 +80,7 @@ public class SubmissionProtocolsDisplayer extends ReportDisplayer
         q.addView("Submission.appliedProtocols.outputs.value");
 
         q.addConstraint(Constraints.eq("Submission.id", o.getId().toString()));
-        // rm the outer join for i/o: check if ok. if not add
+
         q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
         q.setOuterJoinStatus("Submission.appliedProtocols.outputs", OuterJoinStatus.OUTER);
         q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
@@ -88,6 +88,18 @@ public class SubmissionProtocolsDisplayer extends ReportDisplayer
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults results;
+
+        Set<Protocol> pt = new HashSet<Protocol>();
+        Set<ResultFile> rf = new HashSet<ResultFile>();
+
+        pt = o.getProtocols();
+        rf = o.getResultFiles();
+
+        request.setAttribute("DCCid", o.getdCCid());
+        request.setAttribute("protocols", pt);
+        request.setAttribute("files", rf);
+
+        
         try {
             results = executor.execute(q);
 
@@ -105,13 +117,5 @@ public class SubmissionProtocolsDisplayer extends ReportDisplayer
             e.printStackTrace();
         }
 
-        Set<Protocol> pt = new HashSet<Protocol>();
-        Set<ResultFile> rf = new HashSet<ResultFile>();
-        pt = o.getProtocols();
-        rf = o.getResultFiles();
-
-        request.setAttribute("DCCid", o.getdCCid());
-        request.setAttribute("protocols", pt);
-        request.setAttribute("files", rf);
     }
 }
