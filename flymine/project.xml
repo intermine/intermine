@@ -105,7 +105,7 @@
     </source>
 
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/micklem/data/test/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
 
     <source name="omim" type="omim">
