@@ -93,7 +93,7 @@
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
 
-    <source name="long-oligo" type="long-oligo">
+    <source name="long-oligo" type="long-oligo" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/old_shared_data/long-oligo"/>
