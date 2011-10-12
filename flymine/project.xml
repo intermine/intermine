@@ -125,7 +125,7 @@
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/micklem/data/flymine/anoph-expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
-      <property name="geneFile" value="/micklem/data/old_shared_data/anoph-expr/reporter_gene_mappingFile.txt"/>
+      <property name="geneFile" value="/micklem/data/flymine/anoph-expr/reporter_gene_mappingFile.txt"/>
     </source>
 
     <source name="treefam" type="treefam">
