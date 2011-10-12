@@ -443,11 +443,11 @@
       <property name="fasta.dataSourceName" value="WormBase"/>
       <property name="src.data.dir" location="/micklem/data/wormbase/ws220/fasta"/>
     </source>
+
     <source name="interpro-go" type="interpro-go">
-<!--        <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
--->
-        <property name="src.data.dir" location="/micklem/data/old_shared_data/go-annotation/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
+
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
         <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
         <property name="pubmed.organisms" value="7227 6239 7237 7230 7217 7244 7245 7240"/>
