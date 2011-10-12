@@ -82,14 +82,14 @@ public class BagManager
      * @param tag
      * @return
      */
-	public Map<String, InterMineBag> getGlobalBagsWithTag(String tag) {
-		return getBagsWithTag(superProfile, tag);
-	}
+    public Map<String, InterMineBag> getGlobalBagsWithTag(String tag) {
+        return getBagsWithTag(superProfile, tag);
+    }
 
-	public Map<String, InterMineBag> getGlobalBagsWithTags(List<String> tags) {
-		return getBagsWithTags(superProfile, tags);
-	}	
-	
+    public Map<String, InterMineBag> getGlobalBagsWithTags(List<String> tags) {
+        return getBagsWithTags(superProfile, tags);
+    }
+
     /**
      * Fetch bags from given protocol with a particular tag assigned to them.
      * @param profile the user to fetch bags from
@@ -120,26 +120,26 @@ public class BagManager
         Map<String, InterMineBag> bagsWithTags = new HashMap<String, InterMineBag>();
 
         outer:
-        	for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
+            for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             // gimme the bag
-        	InterMineBag bag = entry.getValue();
+            InterMineBag bag = entry.getValue();
             // bag's tags
             List<Tag> bagTags = getTagsForBag(bag);
             // do we have a winner?
             inner:
-	            for (String requiredTag : tags) {
-	            	for (Tag bagTag : bagTags) {
-	            		if (bagTag.getTagName().equals(requiredTag)) {
-	            			continue inner;
-	            		}
-	            	}
-	            	continue outer;
-	            }
+                for (String requiredTag : tags) {
+                    for (Tag bagTag : bagTags) {
+                        if (bagTag.getTagName().equals(requiredTag)) {
+                            continue inner;
+                        }
+                    }
+                    continue outer;
+                }
             bagsWithTags.put(entry.getKey(), entry.getValue());
         }
         return bagsWithTags;
-    }    
-    
+    }
+
     /**
      * Add tags to a bag.
      * @param tags A list of tag names to add
@@ -218,7 +218,7 @@ public class BagManager
 
         return allBags;
     }
-    
+
     /**
      * Order a map of bags by im:order:n tag
      * @param bags
@@ -228,7 +228,7 @@ public class BagManager
         Map<String, InterMineBag> bagsOrdered = new TreeMap<String, InterMineBag>(new ByTagOrder());
         bagsOrdered.putAll(bags);
         return bagsOrdered;
-    }    
+    }
 
     /**
      * Fetch a global bag by name.
@@ -415,7 +415,7 @@ public class BagManager
         }
         return objectStoreBags;
     }
-    
+
     /**
      * Compare lists based on their im:order:n tag
      * @author radek
@@ -423,26 +423,26 @@ public class BagManager
      */
     public class ByTagOrder implements Comparator<String> {
 
-    	/**
-    	 * For a list of tags corresponding to a bag, give us the order set in im:order:n
-    	 * @param tags
-    	 * @return
-    	 */
-    	private Integer resolveOrderFromTagsList(List<Tag> tags) {
-    		for (Tag t : tags) {
-        		String name = t.getTagName();
-        		if (name.startsWith("im:order:")) {
-        			return Integer.parseInt(name.replaceAll("[^0-9]", ""));
-        		}
-        	}
-    		return 666;
-    	}
-    	
+        /**
+         * For a list of tags corresponding to a bag, give us the order set in im:order:n
+         * @param tags
+         * @return
+         */
+        private Integer resolveOrderFromTagsList(List<Tag> tags) {
+            for (Tag t : tags) {
+                String name = t.getTagName();
+                if (name.startsWith("im:order:")) {
+                    return Integer.parseInt(name.replaceAll("[^0-9]", ""));
+                }
+            }
+            return 666;
+        }
+
         @Override
         public int compare(String aK, String bK) {
-        	// get the order from the tags for the bags for the superduper profile
-        	Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(aK)));
-        	Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(bK)));
+            // get the order from the tags for the bags for the superduper profile
+            Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(aK)));
+            Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(bK)));
 
             if (aO < bO) {
                 return -1;
@@ -456,7 +456,7 @@ public class BagManager
             }
         }
     }
-    
+
     /**
      * Lower-case key comparator
      * @author radek
@@ -469,5 +469,5 @@ public class BagManager
             return aK.toLowerCase().compareTo(bK.toLowerCase());
         }
     }
-    
+
 }
