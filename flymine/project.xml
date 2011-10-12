@@ -86,7 +86,7 @@
       <property name="src.data.dir" location="/micklem/data/wormbase-rnai/current"/>
     </source>
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
-      <property name="src.data.file" location="/micklem/data/old_shared_data/mage/arbeitman/arbeitman-tgt-items.xml"/>
+      <property name="src.data.file" location="/micklem/data/flymine/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
       <property name="src.data.dir" location="/micklem/data/old_shared_data/bdgp-clones"/>
