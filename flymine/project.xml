@@ -89,18 +89,18 @@
       <property name="src.data.file" location="/micklem/data/flymine/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/bdgp-clones"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/bdgp-clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
 
     <source name="long-oligo" type="long-oligo" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/long-oligo"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
 
     <source name="ensembl" type="ensembl">
-     <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/current"/>
+     <property name="src.data.dir" location="/micklem/data/flymine/ensembl/current"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
 
