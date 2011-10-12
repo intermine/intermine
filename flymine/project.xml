@@ -132,8 +132,8 @@
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 6239 7165 4932"/>
-      <property name="treefam.homologues" value="9606 10090 10116 7955"/>
+      <property name="treefam.organisms" value="7227 7165"/>
+      <property name="treefam.homologues" value="9606 10090 10116 7955 6239 4932"/>
     </source>
 
     <source name="ensembl-compara" type="ensembl-compara">
