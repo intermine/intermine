@@ -187,7 +187,7 @@
       <property name="screenDetailsFile" location="/micklem/data/drsc/current/RNAi_screen_details"/>
     </source>
     <source name="fly-fish" type="fly-fish">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/flyfish"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
@@ -558,7 +558,7 @@
     </source>
 
     <source name="bdgp-insitu" type="bdgp-insitu">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/bdgp-insitu/current"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/bdgp-insitu/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/current/fly_anatomy.obo"/>
@@ -574,13 +574,13 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir"
-                location="/micklem/data/old_shared_data/drosdel/2008-03-19/chromosome_structure_variations/"/>
+                location="/micklem/data/flymine/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
 
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/mirna/miranda/current"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
@@ -595,7 +595,7 @@
     </source>
 
     <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/affy-probes/current"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/affy-probes/current"/>
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
 
