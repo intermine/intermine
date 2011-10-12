@@ -166,7 +166,7 @@
 -->
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/micklem/data/go-annotation/current"/>
+      <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
     </source>
 
     <source name="flyreg" type="flyreg" dump="true">
