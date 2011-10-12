@@ -17,7 +17,7 @@
 </html:link>
 <br/>
 
-<c:if test="${WEB_PROPERTIES['galaxy.display']} != 'false'">
+<c:if test="${WEB_PROPERTIES['galaxy.display'] != false}">
     <html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
         <fmt:message key="exporter.galaxy.description"/>
     </html:link>
