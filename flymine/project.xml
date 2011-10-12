@@ -100,7 +100,7 @@
     </source>
 
     <source name="ensembl" type="ensembl">
-     <property name="src.data.dir" location="/micklem/data/flymine/ensembl/current"/>
+     <property name="src.data.dir" location="/micklem/data/ensembl/current"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
 
@@ -123,7 +123,7 @@
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/anoph-expr"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/anoph-expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/micklem/data/old_shared_data/anoph-expr/reporter_gene_mappingFile.txt"/>
     </source>
@@ -137,7 +137,7 @@
     </source>
 
     <source name="ensembl-compara" type="ensembl-compara">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/ensembl/compara"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
       <property name="ensemblcompara.organisms" value="7227"/>
       <property name="ensemblcompara.homologues" value="9606"/>
     </source>
