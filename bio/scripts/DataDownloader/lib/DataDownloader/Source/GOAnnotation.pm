@@ -71,6 +71,7 @@ my $uniprot_cleaner = sub {
             $self->debug("No data extracted for $taxon");
         }
     }
+    unlink $file;
 };
 
 my $goa_cleaner = sub {
@@ -92,7 +93,6 @@ sub BUILD {
             HOST       => "ftp.geneontology.org",
             REMOTE_DIR => "pub/go/ontology",
             FILE       => "gene_ontology.obo",
-            SUB_DIR    => ["go"],
         }
     );
 
