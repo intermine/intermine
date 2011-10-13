@@ -705,7 +705,7 @@
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
                      placement="Comparative Genomics"
-                     parameters="{'dataSets': ['TreeFam data set', 'Drosophila 12 Genomes Consortium homology']}"
+                     parameters="{'dataSets': ['TreeFam data set', 'Ensembl Compara data set', 'Drosophila 12 Genomes Consortium homology']}"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
