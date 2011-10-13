@@ -94,8 +94,16 @@ public class ModelUpdate {
                 if (update.contains(RENAMED)) {
                     update = update.replace(RENAMED, "").trim();
                     index = update.indexOf(".");
+                    if (index == -1) {
+                        throw new BuildException("Field " + keyAsString + " has to contain class.newfield");
+                    }
                     String newClassName = update.substring(0, index);
                     String newFieldName = update.substring(index + 1);
+                    if (fieldName.equals(newFieldName)) {
+                        throw new BuildException(keyAsString + " = " + RENAMED + update +
+                                " not permitted. Field has to be renamed. Please check" +
+                                " modelUpdate.properties file");
+                    }
                     verifyClassAndField(newClassName, newFieldName, model);
                     if (!className.equals(newClassName)) {
                         //there is a renamed attribute in a renamed class.
@@ -261,7 +269,11 @@ public class ModelUpdate {
                         continue;
                     }
                 }
-                profile.saveQuery(savedQuery.getName(), savedQuery);
+                if (pathQueryUpdate.isUpdated()) {
+                    SavedQuery updatedSavedQuery = new SavedQuery(savedQuery.getName(),
+                        savedQuery.getDateCreated(), pathQueryUpdate.getUpdatedPathQuery());
+                    profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
+                }
             }
             templateQueries = profile.getSavedTemplates();
             for (TemplateQuery templateQuery : templateQueries.values()) {
@@ -286,6 +298,12 @@ public class ModelUpdate {
                                 + " with renamed field " + prevField + ": " + problems);
                         continue;
                     }
+                }
+                if (templateQueryUpdate.isUpdated()) {
+                    TemplateQuery updatedTemplateQuery = new TemplateQuery(templateQuery.getName(),
+                        templateQuery.getTitle(), templateQuery.getComment(),
+                        templateQueryUpdate.getUpdatedPathQuery());
+                    profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
                 }
                 profile.saveTemplate(templateQuery.getName(), templateQuery);
             }
