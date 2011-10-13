@@ -12,6 +12,29 @@
     <script type="text/javascript" src="model/canvasXpress/js/canvasXpress.min.js"></script>
 
 <div class="body" id="expression_div">
+
+<script type="text/javascript" charset="utf-8">
+jQuery(document).ready(function () {
+    var feature_count = parseInt(${FeatureCount});
+    if (feature_count > 100) {
+        jQuery("#heatmapGraph").hide();
+    } else {
+        jQuery("#heatmapGraph").show();
+    }
+    
+    jQuery("#bro").click(function () {
+       if(jQuery("#heatmapGraph").is(":hidden")) {
+         jQuery("#oc").attr("src", "images/disclosed.gif");
+       } else {
+         jQuery("#oc").attr("src", "images/undisclosed.gif");
+       }
+       jQuery("#heatmapGraph").toggle("slow");
+    });
+})
+</script>
+
+
+
     <div id="heatmap_div">
         <p>
           <h2>
@@ -38,6 +61,24 @@
           </i>
         </p>
         <br/>
+
+        
+        <html:link linkName="#" styleId="bro" style="cursor:pointer">
+        <h3>
+        <c:if test="${FeatureCount > 100}">
+        Your list is big and there could be issues with the display: 
+        </c:if>
+        <b>Click to see/hide</b> the expression maps<img src="images/undisclosed.gif" id="oc"></h3>
+        </html:link>
+
+        
+        <div id="heatmapGraph" style="display: block">
+
+        <c:if test="${FeatureCount > 300}">
+        Please note that clustering functions are not available for lists with more than 300 elements. 
+        <br>
+        </c:if>
+        
         <div id="heatmapContainer">
             <table>
               <tr>
@@ -95,12 +136,15 @@
                   ${ExpressionType}
                 </c:otherwise>
               </c:choose>
+            <br>Further information: check the <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
+modENCODE submission</a>, with links to the original score files for <a href="http://submit.modencode.org/submit/public/get_file/3305/extracted/Drosophila_Cell_Lines_and_Developmental_Stages_Gene_Scores.txt" target="_blank">genes</a>
+            and <a href="http://submit.modencode.org/submit/public/get_file/3305/extracted/Drosophila_Cell_Lines_and_Developmental_Stages_Exon_Scores.txt" target="_blank">exons</a>.
             </i>
-            To see <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
-            further information about the submission</a> and <a href="http://www.modencode.org/docs/flyscores/" target="_blank">original score tables</a>.
         </div>
     </div>
 </div>
+</div>
+
 
 <script type="text/javascript">
 
@@ -134,7 +178,7 @@
                                           setMax: ${maxExpressionScore},
                                           varLabelRotate: 45,
                                           centerData: false,
-                                          autoExtend: false},
+                                          autoExtend: true},
                                           {click: function(o) {
                                                    var featureId = o.y.smps;
                                                    var condition = o.y.vars;
@@ -160,7 +204,7 @@
                                                   }}
                                          );
 
-            if (feature_count > 3) {
+            if (feature_count > 3 && feature_count < 300) {
                 hm_cl.clusterSamples();
                 hm_cl.kmeansSamples();
 
@@ -190,7 +234,7 @@
                                           setMax: ${maxExpressionScore},
                                           varLabelRotate: 45,
                                           centerData: false,
-                                          autoExtend: false},
+                                          autoExtend: true},
                                           {click: function(o) {
                                                    var featureId = o.y.smps;
                                                    var condition = o.y.vars;
@@ -216,7 +260,7 @@
                                                   }}
                                          );
 
-            if (feature_count > 3) {
+            if (feature_count > 3 && feature_count < 300) {
                 hm_ds.clusterSamples();
                 hm_ds.kmeansSamples();
 
