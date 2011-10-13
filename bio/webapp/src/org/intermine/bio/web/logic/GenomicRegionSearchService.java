@@ -58,6 +58,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
@@ -402,9 +403,10 @@ public class GenomicRegionSearchService
      *
      * @param grsForm GenomicRegionSearchForm
      * @return genomic region search constraint
+     * @throws Exception e
      */
     public ActionMessage parseGenomicRegionSearchForm(
-            GenomicRegionSearchForm grsForm) {
+            GenomicRegionSearchForm grsForm) throws Exception {
         grsc = new GenomicRegionSearchConstraint();
 
         ActionMessage actmsg = parseBasicInput(grsForm);
@@ -419,8 +421,9 @@ public class GenomicRegionSearchService
      *
      * @param grsForm GenomicRegionSearchForm
      * @return ActionMessage
+     * @throws Exception e
      */
-    public ActionMessage parseBasicInput(GenomicRegionSearchForm grsForm) {
+    public ActionMessage parseBasicInput(GenomicRegionSearchForm grsForm) throws Exception {
 
         // Parse form
         String organism = (String) grsForm.get("organism");
@@ -433,7 +436,14 @@ public class GenomicRegionSearchService
 
         // Organism
         grsc.setOrgName(organism);
-        grsc.setExtededRegionSize(Integer.parseInt(extendedRegionSize));
+
+        if (Integer.parseInt(extendedRegionSize) < 0) {
+            throw new Exception(
+                    "extendedRegionSize can't be a negative value: "
+                            + extendedRegionSize);
+        } else {
+            grsc.setExtededRegionSize(Integer.parseInt(extendedRegionSize));
+        }
 
         selectionInfo.add("<b>Selected organism: </b><i>" + organism + "</i>");
 
@@ -559,11 +569,14 @@ public class GenomicRegionSearchService
         // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
         List<GenomicRegion> spanList = new ArrayList<GenomicRegion>();
         for (String spanStr : spanStringSet) {
+
+            // The first time to create GenomicRegion object and set ExtendedRegionSize
             GenomicRegion aSpan = new GenomicRegion();
+            aSpan.setExtendedRegionSize(grsc.getExtendedRegionSize());
 
             // Use regular expression to validate user's input:
-            String ddotsRegex = "[^:]+: ?\\d+\\.\\.\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
-            String tabRegex = "[^\\t]+\\t\\d+\\t\\d+$"; // "chr:start-end" - [^:]+:\d+\-\d+
+            String ddotsRegex = "[^:]+: ?\\d+\\.{2}\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            String tabRegex = "[^\\t\\s]+\\t\\d+\\t\\d+"; // "chr:start-end" - [^:]+:\d+\-\d+
             String dashRegex = "[^:]+: ?\\d+\\-\\d+$"; // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
             String snpRegex = "[^:]+: ?\\d+$"; // "chr:singlePosition" - [^:]+:[\d]+$
 
@@ -1056,7 +1069,7 @@ public class GenomicRegionSearchService
                 // hack - feature name is null, use id
                 sb.append("<tr><td valign='top' rowspan='" + length + "'><b>" + span + "</b><br>");
 
-                if (s.isRegionExtended()) {
+                if (s.getExtendedRegionSize() > 0) {
                     String os = s.getOriginalRegion();
                     sb.append("<i>Original input: " + os + "</i><br>");
                 }
@@ -1276,10 +1289,11 @@ public class GenomicRegionSearchService
      * @param featureIds set of feature intermine ids
      * @param featureType feature class name
      * @param views user defined views in web.properties
+     * @param sortOrder user defined sortOrder in web.properties
      * @return a pathquery
      */
     public PathQuery getExportFeaturesQuery(Set<Integer> featureIds,
-            String featureType, Set<String> views) {
+            String featureType, Set<String> views, List<String> sortOrder) {
 
         PathQuery q = new PathQuery(model);
         String path = featureType;
@@ -1291,9 +1305,20 @@ public class GenomicRegionSearchService
             q.addView(path + ".chromosomeLocation.start");
             q.addView(path + ".chromosomeLocation.end");
             q.addView(path + ".organism.name");
+
+            q.addOrderBy(path + ".chromosomeLocation.start", OrderDirection.ASC);
         } else {
             for (String view : views) {
                 q.addView(view.trim().replace("{0}", path));
+            }
+
+            String orderPath = sortOrder.get(0);
+            String direction = sortOrder.get(1);
+
+            if ("asc".equals(direction)) {
+                q.addOrderBy(orderPath.trim().replace("{0}", path), OrderDirection.ASC);
+            } else if ("desc".equals(direction)) {
+                q.addOrderBy(orderPath.trim().replace("{0}", path), OrderDirection.DESC);
             }
         }
 

@@ -62,9 +62,10 @@
                     var percentage = Math.floor(100 * finishedQueryCount / spanQueryTotalCount);
                     jQuery("#progressbar").progressBar(percentage);
                     jQuery("#progressbar_status").html(finishedQueryCount + "/" + spanQueryTotalCount);
-                } else {
+                } else { // all queries finished
                     is_all_queries_finished = true;
                     jQuery("#progressbar_div").hide();
+                    displayJBrowse();
                     enableExportAll();
                     updatePageNavBarAfterQueryFinish();
                 }
@@ -366,6 +367,13 @@
 
         return total_page;
     }
+
+    function displayJBrowse() {
+      jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getDropDownList: "true" }, function(data){
+            // alert(data);
+        }, "text");
+    }
+
 </script>
 
 <style type="text/css">
@@ -487,6 +495,15 @@ img.tinyQuestionMark {
       </tbody>
     </table>
 </div>
+
+<div id="region-select-div">
+</div>
+
+<%--
+<div id="jbrowse-div">
+    <iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="http://www.metabolicmine.org/jbrowse/"></iframe>
+</div>
+--%>
 
 <div id="resultDiv" align="left" style="font-size:0.8em; padding-top:10px;">
 

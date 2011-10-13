@@ -12,7 +12,9 @@ package org.intermine.bio.web.struts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -55,10 +57,10 @@ import org.intermine.web.struts.TableExportForm;
  *
  * @author Fengyuan Hu
  */
-public class GenomicRegionSearchAjaxAction extends Action
-{
+public class GenomicRegionSearchAjaxAction extends Action {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchAjaxAction.class);
+    private static final Logger LOG = Logger
+            .getLogger(GenomicRegionSearchAjaxAction.class);
 
     private String spanUUIDString;
     private GenomicRegionSearchService grsService;
@@ -70,15 +72,17 @@ public class GenomicRegionSearchAjaxAction extends Action
     private InterMineAPI api;
 
     @SuppressWarnings("unchecked")
-    private void init(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void init(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
         this.session = request.getSession();
         this.spanUUIDString = request.getParameter("spanUUIDString");
-        this.grsService = GenomicRegionSearchUtil.getGenomicRegionSearchService(request);
-        //key - UUID
+        this.grsService = GenomicRegionSearchUtil
+                .getGenomicRegionSearchService(request);
+        // key - UUID
         this.spanOverlapFullResultMap = (Map<String, Map<GenomicRegion, List<List<String>>>>)
             session.getAttribute("spanOverlapFullResultMap");
-        this.spanConstraintMap = (HashMap<GenomicRegionSearchConstraint, String>)
-            session.getAttribute("spanConstraintMap");
+        this.spanConstraintMap = (HashMap<GenomicRegionSearchConstraint, String>) session
+                .getAttribute("spanConstraintMap");
         this.webConfig = SessionMethods.getWebConfig(request);
         this.profile = SessionMethods.getProfile(session);
         this.api = SessionMethods.getInterMineAPI(session);
@@ -87,10 +91,8 @@ public class GenomicRegionSearchAjaxAction extends Action
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
 
         init(request, response);
@@ -106,8 +108,10 @@ public class GenomicRegionSearchAjaxAction extends Action
                 && request.getParameter("fromIdx") != null
                 && request.getParameter("toIdx") != null) {
 
-            int fromIdx = Integer.parseInt((String) request.getParameter("fromIdx"));
-            int toIdx = Integer.parseInt((String) request.getParameter("toIdx"));
+            int fromIdx = Integer.parseInt((String) request
+                    .getParameter("fromIdx"));
+            int toIdx = Integer
+                    .parseInt((String) request.getParameter("toIdx"));
 
             getData(fromIdx, toIdx, response);
         }
@@ -123,7 +127,8 @@ public class GenomicRegionSearchAjaxAction extends Action
         // Check if any spans have features
         if (request.getParameter("isEmptyFeature") != null) {
             PrintWriter out = response.getWriter();
-            out.println(grsService.isEmptyFeature(spanOverlapFullResultMap.get(spanUUIDString)));
+            out.println(grsService.isEmptyFeature(spanOverlapFullResultMap
+                    .get(spanUUIDString)));
         }
 
         // Generate a html string for create list use
@@ -137,7 +142,7 @@ public class GenomicRegionSearchAjaxAction extends Action
         // Search function
         if (request.getParameter("isSearch") != null
                 && request.getParameter("spansToSearch") != null) {
-            //TODO to be implemented:
+            // TODO to be implemented:
             // 1.search should be enable after all queries finished
             // 2.parse spansToSearch to a list of Spans
             // 3.loop the result map to find matches
@@ -148,8 +153,11 @@ public class GenomicRegionSearchAjaxAction extends Action
         // Export features
         if (request.getParameter("exportFeatures") != null) {
 
-            String criteria = request.getParameter("criteria"); // all or location
-            String facet = request.getParameter("facet"); // "SequenceFeature" or any featureType
+            String criteria = request.getParameter("criteria"); // all or
+                                                                // location
+            String facet = request.getParameter("facet"); // "SequenceFeature"
+                                                            // or any
+                                                            // featureType
             String format = request.getParameter("format"); // TSV etc.
 
             exportFeatures(criteria, facet, format, request, response);
@@ -157,15 +165,24 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         // Create List
         if (request.getParameter("createList") != null) {
-            String criteria = request.getParameter("criteria"); // all or location
-            String facet = request.getParameter("facet"); // "SequenceFeature" or any featureType
+            String criteria = request.getParameter("criteria"); // all or
+                                                                // location
+            String facet = request.getParameter("facet"); // "SequenceFeature"
+                                                            // or any
+                                                            // featureType
 
             createListByFeatureType(criteria, facet, response);
 
-//            return new ForwardParameters(mapping.findForward("saveFromIdsToBag"))
-//                .addParameter("ids", ids)
-//                .addParameter("type", facet)
-//                .addParameter("source", "genomicRegionSearch").forward();
+            // return new
+            // ForwardParameters(mapping.findForward("saveFromIdsToBag"))
+            // .addParameter("ids", ids)
+            // .addParameter("type", facet)
+            // .addParameter("source", "genomicRegionSearch").forward();
+        }
+
+        // Get select (DropDownList) list
+        if (request.getParameter("getDropDownList") != null) {
+            getDropDownList(response);
         }
 
         return null;
@@ -179,12 +196,14 @@ public class GenomicRegionSearchAjaxAction extends Action
         out.close();
     }
 
-    private void getData(int fromIdx, int toIdx, HttpServletResponse response) throws IOException {
+    private void getData(int fromIdx, int toIdx, HttpServletResponse response)
+        throws IOException {
         PrintWriter out = response.getWriter();
 
         // get span list from spanConstraintMap in the session
         List<GenomicRegion> genomicRegionList = null;
-        for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap.entrySet()) {
+        for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
+                .entrySet()) {
             if (e.getValue().equals(spanUUIDString)) {
                 genomicRegionList = e.getKey().getGenomicRegionList();
             }
@@ -193,9 +212,8 @@ public class GenomicRegionSearchAjaxAction extends Action
         String orgName = grsService.getGenomicRegionOrganismConstraint(
                 spanUUIDString, spanConstraintMap);
         String htmlStr = grsService.convertResultMapToHTML(
-                spanOverlapFullResultMap.get(spanUUIDString), genomicRegionList,
-                fromIdx, toIdx, session,
-                orgName);
+                spanOverlapFullResultMap.get(spanUUIDString),
+                genomicRegionList, fromIdx, toIdx, session, orgName);
 
         out.println(htmlStr);
 
@@ -203,11 +221,12 @@ public class GenomicRegionSearchAjaxAction extends Action
         out.close();
     }
 
-    private void getFeatures(String spanString, HttpServletResponse response) throws IOException {
+    private void getFeatures(String spanString, HttpServletResponse response)
+        throws IOException {
         PrintWriter out = response.getWriter();
 
-        int flankingSize = grsService
-                .getGenomicRegionFlankingSizeConstraint(spanUUIDString, spanConstraintMap);
+        int flankingSize = grsService.getGenomicRegionFlankingSizeConstraint(
+                spanUUIDString, spanConstraintMap);
         String featureIds = grsService.getGenomicRegionOverlapFeaturesAsString(
                 spanString, flankingSize,
                 spanOverlapFullResultMap.get(spanUUIDString));
@@ -219,7 +238,8 @@ public class GenomicRegionSearchAjaxAction extends Action
     }
 
     private void exportFeatures(String criteria, String facet, String format,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
         boolean doGzip = false;
 
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
@@ -245,27 +265,37 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         // Can read from web.properties to get pre-defined views
         Set<String> exportFeaturesViews = null;
+        List<String> exportFeaturesSortOrder = null;
 
         // == Experimental code ==
         String exportFeaturesViewsStr = SessionMethods.getWebProperties(
                 session.getServletContext()).getProperty(
                 "genomicRegionSearch.query." + facet + ".views");
 
+        String exportFeaturesSortOrderStr = SessionMethods.getWebProperties(
+                session.getServletContext()).getProperty(
+                "genomicRegionSearch.query." + facet + ".sortOrder");
+
         if (exportFeaturesViewsStr != null) {
             try {
-                exportFeaturesViews = new LinkedHashSet<String>(Arrays.asList(StringUtil
-                        .split(exportFeaturesViewsStr, ",")));
+                exportFeaturesViews = new LinkedHashSet<String>(
+                        Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
+                                ",")));
+
+                exportFeaturesSortOrder =
+                        Arrays.asList(StringUtil.split(exportFeaturesSortOrderStr, " "));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         // == End of experimental code ==
 
-        PathQuery q = grsService.getExportFeaturesQuery(featureIdSet,
-                facet, exportFeaturesViews);
+        PathQuery q = grsService.getExportFeaturesQuery(featureIdSet, facet,
+                exportFeaturesViews, exportFeaturesSortOrder);
 
         String organism = new String();
-        for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap.entrySet()) {
+        for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
+                .entrySet()) {
             if (e.getValue().equals(spanUUIDString)) {
                 organism = e.getKey().getOrgName();
             }
@@ -306,11 +336,13 @@ public class GenomicRegionSearchAjaxAction extends Action
         }
 
         if ("bed".equals(format)) {
-            String ucscCompatibleCheck = "yes"; // TODO parameter pass from webpage
+            String ucscCompatibleCheck = "yes"; // TODO parameter pass from
+                                                // webpage
             exportForm = new BEDExportForm();
             exportForm.setDoGzip(doGzip);
             ((BEDExportForm) exportForm).setOrgansimString(organism);
-            ((BEDExportForm) exportForm).setUcscCompatibleCheck(ucscCompatibleCheck);
+            ((BEDExportForm) exportForm)
+                    .setUcscCompatibleCheck(ucscCompatibleCheck);
         }
 
         exporter.export(pt, request, response, exportForm);
@@ -323,17 +355,16 @@ public class GenomicRegionSearchAjaxAction extends Action
                 .get(spanUUIDString);
 
         if ("all".equals(criteria)) {
-            featureIdSet = grsService
-                    .getAllGenomicRegionOverlapFeaturesByType(featureMap, facet);
+            featureIdSet = grsService.getAllGenomicRegionOverlapFeaturesByType(
+                    featureMap, facet);
 
             criteria = criteria + "_regions";
         } else {
             int flankingSize = grsService
                     .getGenomicRegionFlankingSizeConstraint(spanUUIDString,
                             spanConstraintMap);
-            featureIdSet = grsService
-                    .getGenomicRegionOverlapFeaturesByType(criteria,
-                            flankingSize, featureMap, facet);
+            featureIdSet = grsService.getGenomicRegionOverlapFeaturesByType(
+                    criteria, flankingSize, featureMap, facet);
 
             criteria = criteria.replaceAll(":", "_").replaceAll("\\.\\.", "_");
         }
@@ -347,7 +378,8 @@ public class GenomicRegionSearchAjaxAction extends Action
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         try {
-            InterMineBag bag = profile.createBag(bagName, facet, "", im.getClassKeys());
+            InterMineBag bag = profile.createBag(bagName, facet, "",
+                    im.getClassKeys());
             bag.addIdsToBag(featureIdSet, facet);
             profile.saveBag(bag.getName(), bag);
         } catch (ObjectStoreException e) {
@@ -359,6 +391,37 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         out.flush();
         out.close();
+    }
+
+    private void getDropDownList(HttpServletResponse response)
+        throws IOException {
+
+        List<GenomicRegion> grList = new ArrayList<GenomicRegion>(
+                spanOverlapFullResultMap.get(spanUUIDString).keySet());
+        Collections.sort(grList);
+
+        List<String> grToStringList = new ArrayList<String>();
+
+        int ers = grList.get(0).getExtendedRegionSize();
+
+        // Functional programming will handle better?
+        for (GenomicRegion gr : grList) {
+            if (ers > 0) {
+                grToStringList.add(gr.getExtendedRegion());
+            } else {
+                grToStringList.add(gr.getOriginalRegion());
+            }
+
+        }
+
+        String jointed = StringUtil.join(grToStringList, ",");
+
+        PrintWriter out = response.getWriter();
+        out.println(jointed);
+
+        out.flush();
+        out.close();
+
     }
 
     // TODO more method to be created...
