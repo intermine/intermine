@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.BuildException;
-import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.RegionParseException;
@@ -51,6 +50,16 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public final class GenomicRegionSearchUtil
 {
+
+    private static final Pattern DOT_DOT =
+        Pattern.compile("[^:]+: ?\\d+\\.{2}\\d+$"); // "chr:start..end"
+    private static final Pattern BED =
+        Pattern.compile("[^\\t\\s]+\\t\\d+\\t\\d+"); // "chr(tab)start(tab)end"
+    private static final Pattern DASH =
+        Pattern.compile("[^:]+: ?\\d+\\-\\d+$"); // "chr:start-end"
+    private static final Pattern SINGLE_POS =
+        Pattern.compile("[^:]+: ?\\d+$"); // "chr:singlePosition" - [^:]+:[\d]+$
+
     private GenomicRegionSearchUtil() {
 
     }
@@ -102,16 +111,281 @@ public final class GenomicRegionSearchUtil
 
         return grsService;
     }
-    
+
+    /**
+     * Parse region from string to GenomicRegion object
+     *
+     * @param span a region string
+     * @param isInterbase 0/1-based
+     * @param chromsForOrg chr-organism info map
+     * @return GenomicRegion object
+     * @throws RegionParseException a RegionParseException
+     */
+    public static GenomicRegion parseRegion(String span, boolean isInterbase,
+            Map<String, ChromosomeInfo> chromsForOrg)
+        throws RegionParseException {
+
+        String[] parts = parseDotDotSpan(span);
+        if (parts == null) {
+            parts = parseBedSpan(span);
+        }
+        if (parts == null) {
+            parts = parseDashSpan(span);
+        }
+        if (parts == null) {
+            parts = parseSinglePositionSpan(span);
+        }
+        if (parts == null) {
+            throw new RegionParseException("Span format not recognised");
+        }
+
+        GenomicRegion region = new GenomicRegion();
+        region.setChr(parts[0].trim());
+        int start = Integer.valueOf(parts[1].trim()),
+                end = Integer.valueOf(parts[2].trim());
+        if (isInterbase) {
+            region.setStart(start + 1);
+        } else {
+            region.setStart(start);
+        }
+        region.setEnd(end);
+
+        ChromosomeInfo ci = getChromosomeInfo(chromsForOrg, region.getChr());
+
+        if ((region.getStart() >= 1 && region.getStart() <= ci.getChrLength())
+                && (region.getEnd() >= 1 && region.getEnd() <= ci.getChrLength())) {
+            if (region.getStart() > region.getEnd()) {
+                // Swap them around.
+                int oldStart = region.getStart(), oldEnd = region.getEnd();
+                region.setStart(oldStart);
+                region.setEnd(oldEnd);
+            }
+            region.setChr(ci.getChrPID());
+        } else {
+            throw new RegionParseException("start and/or end values are out of bounds "
+                    + "(0 - " + ci.getChrLength() + ")");
+        }
+
+        return region;
+    }
+
+    private static ChromosomeInfo getChromosomeInfo(
+            Map<String, ChromosomeInfo> chromsForOrg, String chr)
+        throws RegionParseException {
+        chr = chr.toLowerCase();
+        if (chromsForOrg.containsKey(chr)) {
+            return chromsForOrg.get(chr);
+        } else {
+            if (chr.startsWith("chr")) {
+                if (chromsForOrg.containsKey(chr.substring(3))) {
+                    return chromsForOrg.get(chr.substring(3));
+                }
+            }
+        }
+        throw new RegionParseException(chr + " does not match any chromosome in this organism");
+    }
+
+    private static String[] parseDotDotSpan(String span) {
+        Matcher m = DOT_DOT.matcher(span);
+        if (m.find()) {
+            String[] chr = new String[]{span.split(":")[0]};
+            return (String[]) ArrayUtils.addAll(chr, span.split(":")[1].split("\\.{2}"));
+        } else {
+            return null;
+        }
+    }
+
+    private static String[] parseBedSpan(String span) {
+        Matcher m = BED.matcher(span);
+        if (m.find()) {
+            return span.split("\t");
+        } else {
+            return null;
+        }
+    }
+
+    private static String[] parseDashSpan(String span) {
+        Matcher m = DASH.matcher(span);
+        if (m.find()) {
+            String[] chr = new String[]{span.split(":")[0]};
+            return (String[]) ArrayUtils.addAll(chr, span.split(":")[1].split("-"));
+        } else {
+            return null;
+        }
+    }
+
+    private static String[] parseSinglePositionSpan(String span) {
+        Matcher m = SINGLE_POS.matcher(span);
+        String[] ret = new String[3];
+        if (m.find()) {
+            ret[0] = span.split(":")[0];
+            ret[1] = (span.split(":"))[1];
+            ret[2] = ret[1];
+            return ret;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Create a list of queries from user regions.
+     *
+     * @param genomicRegions list of gr
+     * @param extension the flanking
+     * @param chromInfo chr info map
+     * @param organismName org short name
+     * @param featureTypes ft
+     * @return map of gr-query
+     */
+    public static Map<GenomicRegion, Query> createQueryList(
+            Collection<GenomicRegion> genomicRegions,
+            int extension,
+            Map<String, ChromosomeInfo> chromInfo,
+            String organismName,
+            Set<Class<?>> featureTypes) {
+        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
+                featureTypes, false);
+    }
+
+    /**
+     * Create a list of queries from user regions.
+     *
+     * @param genomicRegions list of gr
+     * @param extension the flanking
+     * @param chromInfo chr info map
+     * @param organismName org short name
+     * @param featureTypes ft
+     * @return map of gr-query
+     */
+    public static Map<GenomicRegion, Query> createRegionListQueries(
+            Collection<GenomicRegion> genomicRegions,
+            int extension,
+            Map<String, ChromosomeInfo> chromInfo,
+            String organismName,
+            Set<Class<?>> featureTypes) {
+        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
+                featureTypes, true);
+    }
+
+    private static Map<GenomicRegion, Query> createRegionQueries(
+            Collection<GenomicRegion> genomicRegions,
+                int extension, Map<String, ChromosomeInfo> chromInfo, String organismName,
+                Set<Class<?>> featureTypes, boolean idOnly) {
+
+        Map<GenomicRegion, Query> queryMap = new LinkedHashMap<GenomicRegion, Query>();
+
+        for (GenomicRegion aSpan : genomicRegions) {
+
+            Integer start;
+            Integer end;
+
+            if (extension > 0) {
+                aSpan = extendGenomicRegion(aSpan, extension, chromInfo);
+                start = aSpan.getExtendedStart();
+                end = aSpan.getExtendedEnd();
+            } else {
+                start = aSpan.getStart();
+                end = aSpan.getEnd();
+            }
+
+            Query q = new Query();
+            q.setDistinct(true);
+
+            String chrPID = aSpan.getChr();
+
+
+            QueryClass qcOrg = new QueryClass(Organism.class);
+            QueryClass qcChr = new QueryClass(Chromosome.class);
+            QueryClass qcFeature = new QueryClass(SequenceFeature.class);
+            QueryClass qcLoc = new QueryClass(Location.class);
+
+            QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+            QueryField qfFeatureId = new QueryField(qcFeature, "id");
+            QueryField qfFeaturePID = new QueryField(qcFeature,
+                    "primaryIdentifier");
+            QueryField qfFeatureSymbol = new QueryField(qcFeature, "symbol");
+            QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+            QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
+            QueryField qfLocStart = new QueryField(qcLoc, "start");
+            QueryField qfLocEnd = new QueryField(qcLoc, "end");
+
+            q.addToSelect(qfFeatureId);
+            q.addFrom(qcFeature);
+            q.addFrom(qcChr);
+            q.addFrom(qcOrg);
+            q.addFrom(qcLoc);
+            if (!idOnly) {
+                q.addToSelect(qfFeaturePID);
+                q.addToSelect(qfFeatureSymbol);
+                q.addToSelect(qfFeatureClass);
+                q.addToSelect(qfChr);
+                q.addToSelect(qfLocStart);
+                q.addToSelect(qfLocEnd);
+                q.addToOrderBy(qfLocStart, "ascending");
+            }
+
+            ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
+
+            q.setConstraint(constraints);
+
+            // SequenceFeature.organism = Organism
+            QueryObjectReference organism = new QueryObjectReference(qcFeature,
+                    "organism");
+            ContainsConstraint ccOrg = new ContainsConstraint(organism,
+                    ConstraintOp.CONTAINS, qcOrg);
+            constraints.addConstraint(ccOrg);
+
+            // Organism.name = orgName
+            SimpleConstraint scOrg = new SimpleConstraint(qfOrgName,
+                    ConstraintOp.EQUALS, new QueryValue(organismName));
+            constraints.addConstraint(scOrg);
+
+            // Location.feature = SequenceFeature
+            QueryObjectReference locSubject = new QueryObjectReference(qcLoc,
+                    "feature");
+            ContainsConstraint ccLocSubject = new ContainsConstraint(
+                    locSubject, ConstraintOp.CONTAINS, qcFeature);
+            constraints.addConstraint(ccLocSubject);
+
+            // Location.locatedOn = Chromosome
+            QueryObjectReference locObject = new QueryObjectReference(qcLoc,
+                    "locatedOn");
+            ContainsConstraint ccLocObject = new ContainsConstraint(locObject,
+                    ConstraintOp.CONTAINS, qcChr);
+            constraints.addConstraint(ccLocObject);
+
+            // Chromosome.primaryIdentifier = chrPID
+            SimpleConstraint scChr = new SimpleConstraint(qfChr,
+                    ConstraintOp.EQUALS, new QueryValue(chrPID));
+            constraints.addConstraint(scChr);
+
+            // SequenceFeature.class in a list
+            constraints.addConstraint(new BagConstraint(qfFeatureClass,
+                    ConstraintOp.IN, featureTypes));
+
+            OverlapRange overlapInput = new OverlapRange(new QueryValue(start),
+                    new QueryValue(end), locObject);
+            OverlapRange overlapFeature = new OverlapRange(new QueryField(
+                    qcLoc, "start"), new QueryField(qcLoc, "end"), locObject);
+            OverlapConstraint oc = new OverlapConstraint(overlapInput,
+                    ConstraintOp.OVERLAPS, overlapFeature);
+            constraints.addConstraint(oc);
+
+            queryMap.put(aSpan, q);
+        }
+
+        return queryMap;
+    }
+
     /**
      * To extend genomic region
      * @param gr GenomicRegion
      * @return GenomicRegion
      */
-    private static GenomicRegion extendGenomicRegion(GenomicRegion gr, int extension, 
+    private static GenomicRegion extendGenomicRegion(GenomicRegion gr, int extension,
             Map<String, ChromosomeInfo> chromInfo) {
 
-        gr.setExtendedRegionSize(extension);
+//        gr.setExtendedRegionSize(extension);
 
         int max = chromInfo.get(gr.getChr().toLowerCase()).getChrLength();
         int min = 1;
@@ -136,232 +410,5 @@ public final class GenomicRegionSearchUtil
 
         return gr;
     }
-    
-    private static final Pattern dotDot = Pattern.compile("[^:]+: ?\\d+\\.{2}\\d+$"); // "chr:start..end"
-    private static final Pattern bed = Pattern.compile("[^\\t\\s]+\\t\\d+\\t\\d+"); // "chr(tab)start(tab)end"
-    private static final Pattern dash = Pattern.compile("[^:]+: ?\\d+\\-\\d+$"); // "chr:start-end"
-    private static final Pattern singlePos = Pattern.compile("[^:]+: ?\\d+$"); // "chr:singlePosition" - [^:]+:[\d]+$
-    
-    public static GenomicRegion parseRegion(String span, boolean isInterbase, Map<String, ChromosomeInfo> chromsForOrg)
-            throws RegionParseException {
-        
-        String[] parts = parseDotDotSpan(span);
-        if (parts == null) {
-            parts = parseBedSpan(span);
-        }
-        if (parts == null) {
-            parts = parseDashSpan(span);
-        }
-        if (parts == null) {
-            parts = parseSinglePositionSpan(span);
-        }
-        if (parts == null) {
-            throw new RegionParseException("Span format not recognised");
-        }
-        
-        GenomicRegion region = new GenomicRegion();
-        region.setChr(parts[0].trim());
-        int start = Integer.valueOf(parts[1].trim()), 
-                end = Integer.valueOf(parts[2].trim());
-        if (isInterbase) {
-            region.setStart(start + 1);
-        } else {
-            region.setStart(start);
-        }
-        region.setEnd(end);
-
-        ChromosomeInfo ci = getChromosomeInfo(chromsForOrg, region.getChr());
-
-        if ((region.getStart() >= 1 && region.getStart() <= ci.getChrLength()) 
-                && (region.getEnd() >= 1 && region.getEnd() <= ci.getChrLength())) {
-            if (region.getStart() > region.getEnd()) {
-                // Swap them around.
-                int oldStart = region.getStart(), oldEnd = region.getEnd();
-                region.setStart(oldStart);
-                region.setEnd(oldEnd);
-            }
-            region.setChr(ci.getChrPID());
-        } else {
-            throw new RegionParseException("start and/or end values are out of bounds "
-                    + "(0 - " + ci.getChrLength() + ")");
-        }
-        
-        return region;
-    }
-    
-    private static ChromosomeInfo getChromosomeInfo(Map<String, ChromosomeInfo> chromsForOrg, String chr) throws RegionParseException {
-        chr = chr.toLowerCase();
-        if (chromsForOrg.containsKey(chr)) {
-            return chromsForOrg.get(chr);
-        } else {
-            if (chr.startsWith("chr")) {
-                if (chromsForOrg.containsKey(chr.substring(3))) {
-                    return chromsForOrg.get(chr.substring(3));
-                } 
-            } 
-        }
-        throw new RegionParseException(chr + " does not match any chromosome in this organism");
-    }
-
-    private static String[] parseDotDotSpan(String span) {
-        Matcher m = dotDot.matcher(span);
-        if (m.find()) {
-            String[] chr = new String[]{span.split(":")[0]};
-            return (String[]) ArrayUtils.addAll(chr, span.split(":")[1].split("\\.{2}"));
-        } else {
-            return null;
-        }
-    }
-
-    private static String[] parseBedSpan(String span) {
-        Matcher m = bed.matcher(span);
-        if (m.find()) {
-            return span.split("\t");
-        } else {
-            return null;
-        }
-    }
-
-    private static String[] parseDashSpan(String span) {
-        Matcher m = dash.matcher(span);
-        if (m.find()) {
-            String[] chr = new String[]{span.split(":")[0]};
-            return (String[]) ArrayUtils.addAll(chr, span.split(":")[1].split("-"));
-        } else {
-            return null;
-        }
-    }
-
-    private static String[] parseSinglePositionSpan(String span) {
-        Matcher m = singlePos.matcher(span);
-        String[] ret = new String[3];
-        if (m.find()) {
-            ret[0] = span.split(":")[0];
-            ret[1] = (span.split(":"))[1];
-            ret[2] = ret[1];
-            return ret;
-        } else {
-            return null;
-        }
-    }
-
-    public static Map<GenomicRegion, Query> createQueryList(
-            Collection<GenomicRegion> genomicRegions, 
-            int extension, 
-            Map<String, ChromosomeInfo> chromInfo, 
-            String organismName, 
-            Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
-                featureTypes, false);
-    }
-    
-    public static Map<GenomicRegion, Query> createRegionListQueries(
-            Collection<GenomicRegion> genomicRegions, 
-            int extension, 
-            Map<String, ChromosomeInfo> chromInfo, 
-            String organismName, 
-            Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
-                featureTypes, true);
-    }
-    
-    private static Map<GenomicRegion, Query> createRegionQueries(Collection<GenomicRegion> genomicRegions, 
-                int extension, Map<String, ChromosomeInfo> chromInfo, String organismName, 
-                Set<Class<?>> featureTypes, boolean idOnly) {
-
-       Map<GenomicRegion, Query> queryMap = new LinkedHashMap<GenomicRegion, Query>();
-
-       for (GenomicRegion aSpan : genomicRegions) {
-
-           aSpan = extendGenomicRegion(aSpan, extension, chromInfo);
-
-           Query q = new Query();
-           q.setDistinct(true);
-
-           String chrPID = aSpan.getChr();
-           Integer start = aSpan.getExtendedStart();
-           Integer end = aSpan.getExtendedEnd();
-
-           QueryClass qcOrg = new QueryClass(Organism.class);
-           QueryClass qcChr = new QueryClass(Chromosome.class);
-           QueryClass qcFeature = new QueryClass(SequenceFeature.class);
-           QueryClass qcLoc = new QueryClass(Location.class);
-
-           QueryField qfOrgName = new QueryField(qcOrg, "shortName");
-           QueryField qfFeatureId = new QueryField(qcFeature, "id");
-           QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
-           QueryField qfFeatureSymbol = new QueryField(qcFeature, "symbol");
-           QueryField qfFeatureClass = new QueryField(qcFeature, "class");
-           QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
-           QueryField qfLocStart = new QueryField(qcLoc, "start");
-           QueryField qfLocEnd = new QueryField(qcLoc, "end");
-
-           q.addToSelect(qfFeatureId);
-           q.addFrom(qcFeature);
-           q.addFrom(qcChr);
-           q.addFrom(qcOrg);
-           q.addFrom(qcLoc);
-           if (!idOnly) {
-               q.addToSelect(qfFeaturePID);
-               q.addToSelect(qfFeatureSymbol);
-               q.addToSelect(qfFeatureClass);
-               q.addToSelect(qfChr);
-               q.addToSelect(qfLocStart);
-               q.addToSelect(qfLocEnd);
-               q.addToOrderBy(qfLocStart, "ascending");
-           }
-
-           ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
-
-           q.setConstraint(constraints);
-
-           // SequenceFeature.organism = Organism
-           QueryObjectReference organism = new QueryObjectReference(qcFeature,
-                   "organism");
-           ContainsConstraint ccOrg = new ContainsConstraint(organism,
-                   ConstraintOp.CONTAINS, qcOrg);
-           constraints.addConstraint(ccOrg);
-
-           // Organism.name = orgName
-           SimpleConstraint scOrg = new SimpleConstraint(qfOrgName,
-                   ConstraintOp.EQUALS, new QueryValue(organismName));
-           constraints.addConstraint(scOrg);
-
-           // Location.feature = SequenceFeature
-           QueryObjectReference locSubject = new QueryObjectReference(qcLoc,
-                   "feature");
-           ContainsConstraint ccLocSubject = new ContainsConstraint(
-                   locSubject, ConstraintOp.CONTAINS, qcFeature);
-           constraints.addConstraint(ccLocSubject);
-
-           // Location.locatedOn = Chromosome
-           QueryObjectReference locObject = new QueryObjectReference(qcLoc,
-                   "locatedOn");
-           ContainsConstraint ccLocObject = new ContainsConstraint(locObject,
-                   ConstraintOp.CONTAINS, qcChr);
-           constraints.addConstraint(ccLocObject);
-
-           // Chromosome.primaryIdentifier = chrPID
-           SimpleConstraint scChr = new SimpleConstraint(qfChr,
-                   ConstraintOp.EQUALS, new QueryValue(chrPID));
-           constraints.addConstraint(scChr);
-
-           // SequenceFeature.class in a list
-           constraints.addConstraint(new BagConstraint(qfFeatureClass,
-                   ConstraintOp.IN, featureTypes));
-
-           OverlapRange overlapInput = new OverlapRange(new QueryValue(start),
-                   new QueryValue(end), locObject);
-           OverlapRange overlapFeature = new OverlapRange(new QueryField(
-                   qcLoc, "start"), new QueryField(qcLoc, "end"), locObject);
-           OverlapConstraint oc = new OverlapConstraint(overlapInput,
-                   ConstraintOp.OVERLAPS, overlapFeature);
-           constraints.addConstraint(oc);
-
-           queryMap.put(aSpan, q);
-       }
-
-       return queryMap;
-   }
 
 }

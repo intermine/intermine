@@ -16,15 +16,17 @@ package org.intermine.bio.web.model;
  *
  * @author Fengyuan Hu
  */
-public class GenomicRegion
+public class GenomicRegion implements Comparable<GenomicRegion>
 {
     private String chr;
     private Integer start;
     private Integer end;
-    // user add region flanking
-    private Integer extendedStart = 0;
-    private Integer extendedEnd = 0;
-    private int extendedRegionSize = 0;
+
+    private Integer extendedStart;
+    private Integer extendedEnd;
+    private Integer extendedRegionSize; // user add region flanking
+
+    // TODO should we add chromosome info to the model to make a genomic region unique?
 
     /**
      * Default constructor
@@ -130,7 +132,11 @@ public class GenomicRegion
      * @return chr:extendedStart..extenededEnd
      */
     public String getExtendedRegion() {
-        return chr + ":" + extendedStart + ".." + extendedEnd;
+        if (extendedRegionSize == 0) {
+            return getOriginalRegion();
+        } else {
+            return chr + ":" + extendedStart + ".." + extendedEnd;
+        }
     }
 
     /**
@@ -140,19 +146,29 @@ public class GenomicRegion
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof GenomicRegion) {
-            GenomicRegion s = (GenomicRegion) obj;
+            GenomicRegion gr = (GenomicRegion) obj;
 
-            return (chr.equals(s.getChr())
-                    && extendedStart.equals(s.getExtendedStart()) && extendedEnd
-                    .equals(s.getExtendedEnd())
-                    && start.equals(s.getStart()) && end.equals(s.getEnd()));
+            if (extendedRegionSize == 0) {
+                return (chr.equals(gr.getChr())
+                        && start.equals(gr.getStart())
+                        && end.equals(gr.getEnd()));
+            } else {
+                return (chr.equals(gr.getChr())
+                        && start.equals(gr.getStart())
+                        && end.equals(gr.getEnd())
+                        && extendedStart.equals(gr.getExtendedStart())
+                        && extendedEnd.equals(gr.getExtendedEnd())
+                        && extendedRegionSize.equals(gr.getExtendedRegionSize()));
+            }
         }
         return false;
     }
-    
-    @Override 
+
+    @Override
     public String toString() {
-        return getOriginalRegion() + (getOriginalRegion().equals(getExtendedRegion()) ? "" : " +/- " + extendedRegionSize);
+        return getOriginalRegion()
+                + (getOriginalRegion().equals(getExtendedRegion()) ? ""
+                        : " +/- " + extendedRegionSize);
     }
 
     /**
@@ -160,19 +176,60 @@ public class GenomicRegion
      */
     @Override
     public int hashCode() {
-        return chr.hashCode() + start.hashCode() + end.hashCode()
-                + extendedStart.hashCode() + extendedEnd.hashCode();
+        if (extendedRegionSize == 0) {
+            return chr.hashCode() + start.hashCode() + end.hashCode();
+        } else {
+            return chr.hashCode() + start.hashCode() + end.hashCode()
+                    + extendedStart.hashCode() + extendedEnd.hashCode()
+                    + extendedRegionSize.hashCode();
+        }
     }
 
-    /**
-     * Test if region is extended
-     * @return a boolean value
-     */
-    public boolean isRegionExtended() {
-        if (this.extendedRegionSize > 0) {
-            return true;
-        } else {
-            return false;
+    @Override
+    public int compareTo(GenomicRegion gr) {
+        final int bEFORE = -1;
+        final int eQUAL = 0;
+        final int aFTER = 1;
+
+        //this optimization is usually worthwhile, and can
+        //always be added
+        if (this == gr) {
+            return eQUAL;
         }
+
+        if (this.getChr().compareTo(gr.getChr()) < 0) {
+            return bEFORE;
+        }
+
+        if (this.getChr().equals(gr.getChr())) {
+            if (extendedRegionSize == 0) {
+                if (this.getStart() < gr.getStart()) {
+                    return bEFORE;
+                } else if (this.getStart() > gr.getStart()) {
+                    return aFTER;
+                } else {
+                    if (this.getEnd() < gr.getEnd()) {
+                        return bEFORE;
+                    } else {
+                        return aFTER;
+                    }
+                }
+            } else {
+                if (this.getExtendedStart() < gr.getExtendedStart()) {
+                    return bEFORE;
+                } else if (this.getExtendedStart() > gr.getExtendedStart()) {
+                    return aFTER;
+                } else {
+                    if (this.getExtendedEnd() < gr.getExtendedEnd()) {
+                        return bEFORE;
+                    } else {
+                        return aFTER;
+                    }
+                }
+            }
+        }
+
+
+        return eQUAL;
     }
 }
