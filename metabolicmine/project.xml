@@ -69,7 +69,7 @@
       <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo"/>
     </source>
     <source name="go" type="go" dump="true">
-      <property name="src.data.file" location="/micklem/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
