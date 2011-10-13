@@ -32,11 +32,21 @@ public class PathQueryUpdate {
     private PathQuery pathQuery;
     private PathQuery newPathQuery;
     private Model oldModel;
+    private boolean isUpdated = false;
 
     public PathQueryUpdate(PathQuery pathQuery, Model newModel, Model oldModel) {
         this.pathQuery = pathQuery;
         this.oldModel = oldModel;
         this.newPathQuery = new PathQuery(newModel);
+    }
+
+    public PathQuery getUpdatedPathQuery() {
+        return newPathQuery;
+    }
+
+    
+    public boolean isUpdated() {
+        return isUpdated;
     }
 
     public synchronized List<String> updateWithRenamedClass(
@@ -75,12 +85,8 @@ public class PathQueryUpdate {
 
     private void updateView (String cls, String newClass, String prevField, String newField)
         throws PathException {
-        String viewPath = "";
         Path p;
-        List<String> view = pathQuery.getView();
-        List<String> newView = new ArrayList<String>();
-        for (int index = 0; index < view.size(); index++) {
-            viewPath = view.get(index);
+        for (String viewPath : pathQuery.getView()) {
             p = new Path(oldModel, viewPath);
             if ((newField == null && p.startContainsClass(cls))
                 || (newField != null && p.elementsContainField(cls, prevField))) {
@@ -89,21 +95,19 @@ public class PathQueryUpdate {
                 } else {
                     viewPath = viewPath.replace(prevField, newField);
                 }
-                newView.add(index, viewPath);
+                isUpdated = true;
             }
+            newPathQuery.addView(viewPath);
         }
-        newPathQuery.addViews(newView);
     }
 
     private void updateConstraints(String cls, String newClass, String prevField, String newField)
         throws PathException {
         String path, newPath;
         Path p;
-        PathConstraint newPathConstraint;
         Map<PathConstraint, String> constraints = pathQuery.getConstraints();
         for (PathConstraint pathConstraint : constraints.keySet()) {
             path = pathConstraint.getPath();
-            newPath = path;
             p = new Path(oldModel, path);
             if ((newField == null && p.startContainsClass(cls))
                 || (newField != null && p.elementsContainField(cls, prevField))) {
@@ -112,11 +116,13 @@ public class PathQueryUpdate {
                 } else {
                     newPath = path.replace(prevField, newField);
                 }
-            newPathConstraint = createPathConstraint(pathConstraint, path);
-            newPathQuery.addConstraint(newPathConstraint);
+                newPathQuery.addConstraint(createPathConstraint(pathConstraint, newPath));
+                isUpdated = true;
+            } else {
+                newPathQuery.addConstraint(pathConstraint);
+            }
         }
     }
-}
 
     private PathConstraint createPathConstraint(PathConstraint pathConstraint, String newPath) {
         PathConstraint newPathConstraint = null;
@@ -158,8 +164,9 @@ public class PathQueryUpdate {
                 } else {
                     newJoinPath = joinPath.replace(prevField, newField);
                 }
-                newPathQuery.setOuterJoinStatus(newJoinPath, outerJoinStatus.get(joinPath));
+                isUpdated = true;
             }
+            newPathQuery.setOuterJoinStatus(newJoinPath, outerJoinStatus.get(joinPath));
         }
     }
 
@@ -178,6 +185,7 @@ public class PathQueryUpdate {
                 } else {
                     newDescriptionPath = descPath.replace(prevField, newField);
                 }
+                isUpdated = true;
             }
             newPathQuery.setDescription(newDescriptionPath, descriptions.get(descPath));
          }
@@ -187,12 +195,8 @@ public class PathQueryUpdate {
         throws PathException {
         String orderPath, newOrderPath;
         Path p;
-        OrderElement orderElement;
-        List<OrderElement> orderBy = pathQuery.getOrderBy();
-        for (int index = 0; index < orderBy.size(); index++) {
-            orderElement = (OrderElement) orderBy.get(index);
+        for (OrderElement orderElement : pathQuery.getOrderBy()) {
             orderPath = orderElement.getOrderPath();
-            newOrderPath = orderPath;
             p = new Path(oldModel, orderPath);
             if ((newField == null && p.startContainsClass(cls))
                 || (newField != null && p.elementsContainField(cls, prevField))) {
@@ -201,8 +205,11 @@ public class PathQueryUpdate {
                 } else {
                     newOrderPath = orderPath.replace(prevField, newField);
                 }
+                newPathQuery.addOrderBy(new OrderElement(newOrderPath, orderElement.getDirection()));
+                isUpdated = true;
+            } else {
+                newPathQuery.addOrderBy(orderElement);
             }
-            newPathQuery.addOrderBy(new OrderElement(newOrderPath, orderElement.getDirection()));
         }
     }
 }
