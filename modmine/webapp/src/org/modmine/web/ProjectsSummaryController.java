@@ -36,7 +36,6 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
 public class ProjectsSummaryController extends TilesAction
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     /**
      * {@inheritDoc}
