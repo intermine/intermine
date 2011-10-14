@@ -54,6 +54,9 @@
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="7227 6239 46245 7230 7244 7245"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
+<!--
+      <property name="src.data.dir" location="/micklem/data/uniprot/2011_07"/>
+-->
       <property name="createinterpro" value="true"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
@@ -531,7 +534,7 @@
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
         <!-- MACALPINE -->
-        <source name="modencode-macalpine-metadata" type="chado-db">
+        <source name="modencode-macalpine-metadata" type="chado-db"  dump="true">
             <property name="organisms" value="7227"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
