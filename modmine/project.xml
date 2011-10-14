@@ -77,7 +77,7 @@
     </source>
 
 <!--    ADDED FOR r20 -->
-    <source name="rnai" type="rnai">
+    <source name="rnai" type="rnai" dump="true">
       <property name="src.data.dir" location="/micklem/data/wormbase-rnai/current"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
@@ -94,7 +94,7 @@
     </source>
     -->
     <!-- Added r25 -->
-    <source name="ensembl-compara" type="ensembl-compara" dump="true">
+    <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
       <property name="ensemblcompara.organisms" value="7227 6239 9606 10090"/>
     </source>
