@@ -9,6 +9,5 @@
     <collection name="childFeatures" referenced-type="ProteinDomain"/>
     <collection name="contains" referenced-type="ProteinDomain"/>
     <collection name="foundIn" referenced-type="ProteinDomain"/>
-    <collection name="publications" referenced-type="Publication"/>
   </class>
 </classes>
