@@ -12,7 +12,9 @@ html, body { font-family: 'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-ser
 h2 { margin-bottom:10px; }
 
 /* report page */
-#header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll; }
+#pagecontentmax { padding-top:0; }
+#header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll;
+	padding-top:10px; }
 
 /* header */
 #object_header { width:94%; margin-left:3%; margin-right:3%; position:relative; font-size:12px; }

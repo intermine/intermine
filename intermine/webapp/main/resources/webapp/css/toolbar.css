@@ -1,8 +1,12 @@
-div#tool_bar_div{
+div#tool_bar_div {
     float:left;
     margin:0;
 	width:100%;
 	padding-bottom:4px;
+}
+
+#pagecontentcontainer.bagDetails-page div#tool_bar_div {
+	width: auto;
 }
 
 ul#button_bar, ul#button_bar li {
