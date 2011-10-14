@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -78,10 +77,9 @@ public class EntrezPublicationsRetriever
 {
     protected static final Logger LOG = Logger.getLogger(EntrezPublicationsRetriever.class);
     protected static final String ENDL = System.getProperty("line.separator");
+    // see http://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
-        "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
-        + "&rettype=docsum&retmode=xml&id=";
-    //    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
+        "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 500;
     // number of times to try the same bacth from the server
@@ -179,27 +177,26 @@ public class EntrezPublicationsRetriever
 
                 DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
                 DatabaseEntry data = new DatabaseEntry();
-//                if (db.get(txn, key, data, null).equals(OperationStatus.SUCCESS)) {
-//
-//                    try {
-//                        ByteArrayInputStream mapInputStream =
-//                            new ByteArrayInputStream(data.getData());
-//                        ObjectInputStream deserializer = new ObjectInputStream(mapInputStream);
-//                        Map<String, Object> pubMap = (Map) deserializer.readObject();
-//                        writeItems(writer, mapToItems(itemFactory, pubMap));
-//                        // System.err. println("found in cache: " + pubMedId);
-//                        seenPubMeds.add(pubMedIdInteger);
-//                    } catch (EOFException e) {
-//                        // ignore and fetch it again
-//                        System.err .println("found in cache, but igored due to cache problem: "
-//                                            + pubMedIdInteger);
-//                    }
-//                } else {
+                if (db.get(txn, key, data, null).equals(OperationStatus.SUCCESS)) {
+                    try {
+                        ByteArrayInputStream mapInputStream =
+                            new ByteArrayInputStream(data.getData());
+                        ObjectInputStream deserializer = new ObjectInputStream(mapInputStream);
+                        Map<String, Object> pubMap = (Map) deserializer.readObject();
+                        writeItems(writer, mapToItems(itemFactory, pubMap));
+                        // System.err. println("found in cache: " + pubMedId);
+                        seenPubMeds.add(pubMedIdInteger);
+                    } catch (EOFException e) {
+                        // ignore and fetch it again
+                        System.err .println("found in cache, but igored due to cache problem: "
+                                            + pubMedIdInteger);
+                    }
+                } else {
                     idsToFetch.add(pubMedIdInteger);
+                }
             }
 
             Iterator<Integer> idIter = idsToFetch.iterator();
-
             Set<Integer> thisBatch = new HashSet<Integer>();
             while (idIter.hasNext()) {
                 Integer pubMedIdInteger = idIter.next();
@@ -221,11 +218,9 @@ public class EntrezPublicationsRetriever
                             try {
                                 SAXParser.parse(new InputSource(new StringReader(buf.toString())),
                                                 new Handler(fromServerMap), false);
-                                System.out.println("fromServerMap " + fromServerMap.size());
                             } catch (Throwable e) {
                                 // try again or re-throw the Throwable
                                 throwable = e;
-                                throw new RuntimeException(e);
                             }
                             if (i == MAX_TRIES) {
                                 throw new RuntimeException("failed to parse: " + buf.toString()
@@ -391,11 +386,9 @@ public class EntrezPublicationsRetriever
     {
         Map<String, Object> pubMap;
         String name;
+        StringBuffer characters;
         boolean duplicateEntry = false;
         Map<String, Map<String, Object>> cache;
-        private Stack<String> stack = new Stack<String>();
-        private String attName = null;
-        private StringBuffer attValue = null;
 
         /**
          * Constructor
@@ -410,8 +403,16 @@ public class EntrezPublicationsRetriever
          */
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
-            stack.push(qName);
-            attValue = new StringBuffer();
+            if ("ERROR".equals(qName)) {
+                name = qName;
+            } else if ("Id".equals(qName)) {
+                name = "Id";
+            } else if ("DocSum".equals(qName)) {
+                duplicateEntry = false;
+            } else {
+                name = attrs.getValue("Name");
+            }
+            characters = new StringBuffer();
         }
 
         /**
@@ -419,34 +420,7 @@ public class EntrezPublicationsRetriever
          */
         @Override
         public void characters(char[] ch, int start, int length) {
-            int st = start;
-            int l = length;
-                // DefaultHandler may call this method more than once for a single
-                // attribute content -> hold text & create attribute in endElement
-            while (l > 0) {
-                boolean whitespace = false;
-                switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
-                }
-                if (!whitespace) {
-                    break;
-                }
-                ++st;
-                --l;
-            }
-
-            if (l > 0) {
-                StringBuffer s = new StringBuffer();
-                s.append(ch, st, l);
-                attValue.append(s);
-            }
+            characters.append(new String(ch, start, length));
         }
 
         /**
@@ -454,17 +428,17 @@ public class EntrezPublicationsRetriever
          */
         @Override
         public void endElement(String uri, String localName, String qName) {
-            stack.pop();
-            if (attName == null && StringUtils.isEmpty(attValue.toString())) {
+            // do nothing if we have seen this pubmed id before
+            if (duplicateEntry) {
                 return;
             }
-            String previousQName = null;
-            if (!stack.isEmpty()) {
-                previousQName = stack.peek();
-            }
-            if ("PMID".equals(qName)) {
-                String pubMedId = attValue.toString();
+            if ("ERROR".equals(name)) {
+                LOG.error("Unable to retrieve pubmed record: " + characters);
+            } else if ("Id".equals(name)) {
+                String pubMedId = characters.toString();
+
                 Integer pubMedIdInteger;
+
                 try {
                     pubMedIdInteger = Integer.valueOf(pubMedId);
 
@@ -478,29 +452,28 @@ public class EntrezPublicationsRetriever
                     cache.put(pubMedId, pubMap);
 
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("got non-integer pubmed id from NCBI: "
-                            + attValue.toString());
+                    throw new RuntimeException("got non-integer pubmed id from NCBI: " + pubMedId);
                 }
-            } else if ("Year".equals(qName) && "PubDate".equals(previousQName)) {
-                String year = attValue.toString();
+            } else if ("PubDate".equals(name)) {
+                String year = characters.toString().split(" ")[0];
                 try {
                     Integer.parseInt(year);
                     pubMap.put("year", year);
                 } catch (NumberFormatException e) {
-                    LOG.warn("Cannot parse year from publication: " + attValue.toString());
+                    LOG.warn("Cannot parse year from publication: " + year);
                 }
-            } else if ("Journal".equals(qName)) {
-                pubMap.put("journal", attValue.toString());
-            } else if ("ArticleTitle".equals(qName)) {
-                pubMap.put("title", attValue.toString());
-            } else if ("Volume".equals(qName)) {
-                pubMap.put("volume", attValue.toString());
-            } else if ("Issue".equals(qName)) {
-                pubMap.put("issue", attValue.toString());
-            } else if ("MedlinePgn".equals(qName)) {
-                pubMap.put("pages", attValue.toString());
-            } else if ("Author".equals(qName)) {
-                String authorString = attValue.toString();
+            } else if ("Source".equals(name)) {
+                pubMap.put("journal", characters.toString());
+            } else if ("Title".equals(name)) {
+                pubMap.put("title", characters.toString());
+            } else if ("Volume".equals(name)) {
+                pubMap.put("volume", characters.toString());
+            } else if ("Issue".equals(name)) {
+                pubMap.put("issue", characters.toString());
+            } else if ("Pages".equals(name)) {
+                pubMap.put("pages", characters.toString());
+            } else if ("Author".equals(name)) {
+                String authorString = characters.toString();
                 List<String> authorList = (List<String>) pubMap.get("authors");
                 if (authorList == null) {
                     authorList = new ArrayList<String>();
