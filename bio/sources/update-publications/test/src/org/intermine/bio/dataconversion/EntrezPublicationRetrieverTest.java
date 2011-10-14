@@ -54,6 +54,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
         assertEquals(expected, new HashSet(actual));
+//        System.out.println(actual);
     }
 
     class TestEntrezPublicationsRetriever extends EntrezPublicationsRetriever
