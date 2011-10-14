@@ -392,7 +392,7 @@ public final class CreateModMineMetaDataCache
         LOG.info("Read experiment unique feature counts, took: " + timeTaken + "ms");
     }
 
-    // TODO MOVE THIS QUERY TO CreateModMineMetaDataCache and add value to ModMineCacheKeys
+   
     private static void readSubmissionLocatedFeature(ObjectStore os, Properties props) {
 
         long startTime = System.currentTimeMillis();
